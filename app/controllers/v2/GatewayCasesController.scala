@@ -21,32 +21,35 @@ import config.AppConfig
 import controllers.RequestActions
 import models.request.AuthenticatedRequest
 import models.viewmodels._
-import models.{ApplicationType, NoPagination, Permission, Queue, Queues}
+import models.{ApplicationType, NoPagination, Permission, Queues}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future.successful
 
-class GatewayCasesController @Inject()(
-                                   verify: RequestActions,
-                                   casesService: CasesService,
-                                   mcc: MessagesControllerComponents,
-                                   val gatewayCasesView: views.html.v2.gateway_cases_view,
-                                   implicit val appConfig: AppConfig
-                                 ) extends FrontendController(mcc)
-  with I18nSupport {
+class GatewayCasesController @Inject() (
+  verify: RequestActions,
+  casesService: CasesService,
+  mcc: MessagesControllerComponents,
+  val gatewayCasesView: views.html.v2.gateway_cases_view,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def displayGatewayCases: Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request: AuthenticatedRequest[AnyContent] =>
-      val types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async {
+      implicit request: AuthenticatedRequest[AnyContent] =>
+        val types: Seq[ApplicationType] =
+          Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
 
-      for {
-        cases            <- casesService.getCasesByQueue(Queues.gateway, NoPagination(), types)
-        gatewayCases = ApplicationsTab.gateway(cases.results)
-      } yield Ok(gatewayCasesView(gatewayCases))
+        for {
+          cases <- casesService.getCasesByQueue(Queues.gateway, NoPagination(), types)
+          gatewayCases = {
+            ApplicationsTab.gateway(cases.results)
+          }
+        } yield Ok(gatewayCasesView(gatewayCases))
     }
 
 }

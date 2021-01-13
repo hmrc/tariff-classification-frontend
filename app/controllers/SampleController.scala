@@ -51,10 +51,16 @@ class SampleController @Inject() (
   protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])(
     implicit request: AuthenticatedRequest[_]
   ): Html =
-    if (options.contains("liability"))
-      views.html.change_liablity_sending_sample(c, notFilledForm)
-    else
-      views.html.change_sample_status(c, notFilledForm)
+    c.application.`type` match {
+      case ApplicationType.LIABILITY =>
+        if (options.contains("liability")) {
+          views.html.change_liablity_sending_sample(c, notFilledForm)
+        } else {
+          views.html.change_sample_status(c, notFilledForm)
+        }
+      case ApplicationType.CORRESPONDENCE => views.html.change_correspondence_sending_sample(c, notFilledForm)
+      case _ =>       views.html.change_sample_status(c, notFilledForm)
+    }
 
   override def chooseStatus(reference: String, options: Option[String]): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen

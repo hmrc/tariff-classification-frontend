@@ -16,18 +16,19 @@
 
 package controllers
 
-import java.time.Clock
+import java.time.{Clock, Instant}
 
-import controllers.v2.{AtarController, LiabilityController}
-import models.{Case, Event, Operator, Permission}
-import models.forms.ActivityFormData
+import connector.BindingTariffClassificationConnector
+import controllers.v2.{AtarController, CorrespondenceController, LiabilityController}
+import models.{Case, Event, Message, Operator, Permission}
+import models.forms.{ActivityFormData, MessageFormData}
 import models.request.AuthenticatedCaseRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
-import play.api.mvc.{Results, Result}
+import play.api.mvc.{Result, Results}
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,29 +40,37 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val keywordsService     = mock[KeywordsService]
-  private val eventService        = mock[EventsService]
-  private val operator            = Operator(id = "id")
-  private val event               = mock[Event]
-  private val atarController      = mock[AtarController]
-  private val liabilityController = mock[LiabilityController]
+  private val keywordsService          = mock[KeywordsService]
+  private val eventService             = mock[EventsService]
+  private val operator                 = Operator(id = "id")
+  private val event                    = mock[Event]
+  private val atarController           = mock[AtarController]
+  private val liabilityController      = mock[LiabilityController]
+  private val casesService             = mock[CasesService]
+  private val correspondenceController = mock[CorrespondenceController]
+  private val connector                = mock[BindingTariffClassificationConnector]
 
   override protected def beforeEach(): Unit =
     reset(
       keywordsService,
       eventService,
+      casesService,
       event,
       atarController,
-      liabilityController
+      liabilityController,
+      correspondenceController,
+      connector
     )
 
   private def controller(c: Case) = new CaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = c),
     keywordsService,
     eventService,
+    casesService,
     mcc,
     liabilityController,
     atarController,
+    correspondenceController,
     realAppConfig
   )
 
@@ -69,9 +78,11 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     new RequestActionsWithPermissions(playBodyParsers, permission, c = c),
     keywordsService,
     eventService,
+    casesService,
     mcc,
     liabilityController,
     atarController,
+    correspondenceController,
     realAppConfig
   )
 
@@ -91,6 +102,14 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
         status(result)     shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(v2.routes.LiabilityController.displayLiability("reference").url)
+      }
+
+      "case is a Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = controller(c).get("reference")(fakeRequest)
+
+        status(result)     shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(v2.routes.CorrespondenceController.displayCorrespondence("reference").url)
       }
     }
   }
@@ -114,6 +133,18 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(
           v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.SAMPLE_TAB.name).path
+        )
+      }
+      "case is a Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = await(controller(c).sampleDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.CorrespondenceController
+            .displayCorrespondence("reference")
+            .withFragment(Tab.SAMPLE_TAB.name)
+            .path
         )
       }
     }
@@ -164,6 +195,16 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.ACTIVITY_TAB.name).path
         )
       }
+
+      "case is an Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = await(controller(c).activityDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.CorrespondenceController.displayCorrespondence("reference").withFragment(Tab.ACTIVITY_TAB.name).path
+        )
+      }
     }
   }
 
@@ -210,6 +251,19 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(
           v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.ATTACHMENTS_TAB.name).path
+        )
+      }
+
+      "case is a Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = await(controller(c).attachmentsDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.CorrespondenceController
+            .displayCorrespondence("reference")
+            .withFragment(Tab.ATTACHMENTS_TAB.name)
+            .path
         )
       }
     }
@@ -330,6 +384,57 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq                = newFakeGETRequestWithCSRF(app)
       val result: Future[Result] = controller(aCase, Set()).removeKeyword(aCase.reference, keyword)(fakeReq)
       status(result)               shouldBe SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "Case addMessage" should {
+    val aMessage = Message(Cases.operatorWithPermissions.name.get, Instant.now(), "message to be added")
+
+    val aCase = Cases.correspondenceCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
+    val updatedCase = aCorrespondenceCase().copy(
+      assignee    = Some(Cases.operatorWithPermissions),
+      application = correspondenceExample.copy(messagesLogged = List(aMessage))
+    )
+
+    "add a new message when a case message is provided" in {
+
+      when(
+        casesService.addMessage(refEq(aCase), any[Message], any[Operator])(any[HeaderCarrier])
+      ) thenReturn Future(updatedCase)
+
+      val fakeReq                = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("message" -> aMessage.message)
+      val result: Future[Result] = controller(aCase, Set(Permission.ADD_NOTE)).addMessage(aCase.reference)(fakeReq)
+
+      status(result) shouldBe SEE_OTHER
+      locationOf(result) shouldBe Some(
+        routes.CaseController.get(aCase.reference).withFragment(Tab.MESSAGES_TAB.name).path
+      )
+    }
+
+    "not add a new message when a case note is not provided" in {
+      val aMessage = ""
+      val fakeReq  = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessage))
+
+      when(
+        correspondenceController.renderView(any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
+          any[AuthenticatedCaseRequest[_]]
+        )
+      ) thenReturn Future.successful(Results.Ok("error"))
+
+      val result: Future[Result] = controller(aCase, Set(Permission.ADD_NOTE)).addMessage(aCase.reference)(fakeReq)
+
+      status(result)          shouldBe OK
+      contentAsString(result) should include("error")
+
+      verifyZeroInteractions(casesService)
+    }
+
+    "redirect to unauthorised if the user does not have the right permissions" in {
+      val aMessages              = "This is a message"
+      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessages))
+      val result: Future[Result] = controller(aCase, Set()).addMessage(aCase.reference)(fakeReq)
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
