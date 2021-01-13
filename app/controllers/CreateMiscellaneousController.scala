@@ -103,6 +103,19 @@ class CreateMiscellaneousController @Inject() (
         }
     }
 
+  def editMiscDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
+      successful(
+        Ok(
+          misc_details_edit(
+            request.`case`,
+            MiscDetailsForm.miscDetailsForm(request.`case`)
+          )
+        )
+      )
+    }
+
   def postMiscDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>

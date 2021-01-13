@@ -152,6 +152,7 @@ GET         /team-miscellaneous-choice                      controllers.CreateMi
 
 GET         /new-miscellaneous-confirm                         controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
 
+GET         /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.editMiscDetails(reference: String)
 POST        /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.postMiscDetails(reference: String)
 
 
