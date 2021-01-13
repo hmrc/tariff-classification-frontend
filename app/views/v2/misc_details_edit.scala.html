@@ -37,7 +37,7 @@
 
 @correspondence_case_heading(CaseHeaderViewModel.fromCase(c))
 
-<h2 id="correspondence-details-edit" class="heading-large">@messages("case.v2.misc.case-details-edit-title")</h2>
+<h2 id="misc-details-edit" class="heading-large">@messages("case.v2.misc.case-details-edit-title")</h2>
 
 @helper.form(action = routes.CreateMiscellaneousController.postMiscDetails(c.reference), 'class -> "form" , 'id -> "misc-details-edit-form", 'novalidate -> "novalidate") {
 

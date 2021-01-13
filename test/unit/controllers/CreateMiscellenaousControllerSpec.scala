@@ -20,6 +20,7 @@ import models._
 import models.forms.v2.MiscellaneousForm
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
@@ -29,17 +30,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val form : Form[MiscApplication]= MiscellaneousForm.newMiscForm
+  val form: Form[MiscApplication] = MiscellaneousForm.newMiscForm
 
-  private val casesService = mock[CasesService]
-  private val queuesService = mock[QueuesService]
-  private val operator     = mock[Operator]
-  private val releaseCaseView = injector.instanceOf[views.html.release_case]
+  private val casesService               = mock[CasesService]
+  private val queuesService              = mock[QueuesService]
+  private val operator                   = mock[Operator]
+  private val releaseCaseView            = injector.instanceOf[views.html.release_case]
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
+  private val misc_details_edit          = injector.instanceOf[views.html.v2.misc_details_edit]
 
   private val caseWithStatusOPEN = Cases.miscCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
 
@@ -51,6 +54,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       mcc,
       releaseCaseView,
       confirmation_case_creation,
+      misc_details_edit,
       realAppConfig
     )
 
@@ -62,14 +66,15 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       mcc,
       releaseCaseView,
       confirmation_case_creation,
+      misc_details_edit,
       realAppConfig
     )
-
 
   "CreateMiscellaneousController" should {
 
     "return OK with correct HTML" in {
-      val result = await(controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES)).get()(newFakeGETRequestWithCSRF(app)))
+      val result =
+        await(controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES)).get()(newFakeGETRequestWithCSRF(app)))
 
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -107,8 +112,8 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
             newFakePOSTRequestWithCSRF(app)
               .withFormUrlEncodedBody(
                 "detailedDescription" -> "",
-                "contactName"  -> "",
-                "caseType" -> "Other"
+                "contactName"         -> "",
+                "caseType"            -> "Other"
               )
           )
       )
@@ -131,7 +136,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
       )
 
-      status(result)               shouldBe Status.OK
+      status(result)          shouldBe Status.OK
       contentAsString(result) should include("Case Queue not found.")
     }
 
@@ -149,8 +154,78 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
       )
 
-      status(result)               shouldBe Status.OK
+      status(result)          shouldBe Status.OK
       contentAsString(result) should include("We could not find a Case with reference: reference")
+    }
+
+    "editMiscDetails" should {
+
+      "return 200" in {
+        val result = await(
+          controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+            .editMiscDetails("reference")(newFakePOSTRequestWithCSRF(app))
+        )
+        status(result) shouldBe OK
+      }
+
+      "return unauthorised if the user does not have the right permissions" in {
+
+        val fakeReq = newFakeGETRequestWithCSRF(app)
+        val result = await(
+          controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
+            .editMiscDetails("reference")(newFakePOSTRequestWithCSRF(app))
+        )
+        status(result)               shouldBe SEE_OTHER
+        redirectLocation(result).get should include("unauthorized")
+      }
+    }
+
+    "postMiscDetails" should {
+
+      "redirect back to controller if the form has been submitted successfully" in {
+
+        when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCorrespondenceCase())
+
+        val fakeReq = newFakePOSTRequestWithCSRF(
+          app,
+          Map(
+            "summary"             -> "A short summary",
+            "detailedDescription" -> "A detailed desc",
+            "caseType"            -> "Appeals"
+          )
+        )
+
+        val result = await(
+          controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+            .postMiscDetails("reference")(fakeReq)
+        )
+
+        status(result) shouldBe SEE_OTHER
+
+        locationOf(result) shouldBe Some(
+          "/manage-tariff-classifications/cases/v2/" + "reference" + "/correspondence"
+        )
+      }
+
+      "return back to the view if form fails to validate" in {
+        when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+
+        val fakeReq = newFakePOSTRequestWithCSRF(
+          app,
+          Map(
+            "summary"             -> "",
+            "detailedDescription" -> "A detailed desc",
+            "caseType"            -> "Appeals"
+          )
+        )
+
+        val result = await(
+          controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+            .postMiscDetails("reference")(fakeReq)
+        )
+
+        status(result) shouldBe OK
+      }
     }
   }
 }
