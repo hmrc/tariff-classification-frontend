@@ -25,8 +25,9 @@
 @import models.LiabilityStatus
 @import views.html.partials.error_summary
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.{CaseHeaderViewModel}
 
-@this()
+@this(correspondence_case_heading: views.html.v2.correspondence_case_heading)
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -34,7 +35,10 @@
 
 @error_summary(form.errors)
 
-<h1 id="create_misc-heading" class="heading-xlarge">@messages("page.title.create_misc.h1")</h1>
+@correspondence_case_heading(CaseHeaderViewModel.fromCase(c))
+
+<h2 id="correspondence-details-edit" class="heading-large">@messages("case.v2.misc.case-details-edit-title")</h2>
+
 @helper.form(action = routes.CreateMiscellaneousController.postMiscDetails(c.reference), 'class -> "form" , 'id -> "misc-details-edit-form", 'novalidate -> "novalidate") {
 
     @helper.CSRF.formField
