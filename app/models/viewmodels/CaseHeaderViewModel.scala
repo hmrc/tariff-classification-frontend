@@ -23,8 +23,9 @@ case class CaseHeaderViewModel(
   businessName: Option[String],
   goodsName: String,
   referenceNumber: String,
-  caseStatus: CaseStatusViewModel,
-  contactEmail: Option[String] = None
+  caseSource: Option[String],
+  contact: Contact,
+  caseStatus: CaseStatusViewModel
 )
 
 object CaseHeaderViewModel {
@@ -34,8 +35,9 @@ object CaseHeaderViewModel {
       c.application.businessName,
       c.application.goodsName,
       c.reference,
-      CaseStatusViewModel.fromCase(c),
-      c.application.contactEmail
+      c.application.caseSource,
+      c.application.contact,
+      CaseStatusViewModel.fromCase(c)
     )
   }
 }

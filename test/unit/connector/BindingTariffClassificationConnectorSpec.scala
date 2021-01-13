@@ -38,6 +38,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases in 'gateway' queue" in {
       val url = buildQueryUrl(
+        types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "none",
         assigneeId   = "none",
@@ -63,6 +64,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in 'gateway' queue" in {
       val url = buildQueryUrl(
+        types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "none",
         assigneeId   = "none",
@@ -88,6 +90,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases in 'act' queue" in {
       val url = buildQueryUrl(
+        types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "2",
         assigneeId   = "none",
@@ -113,6 +116,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in 'act' queue" in {
       val url = buildQueryUrl(
+        types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "2",
         assigneeId   = "none",

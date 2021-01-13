@@ -56,11 +56,17 @@ sealed trait Application {
 
   def businessName: Option[String] =
     `type` match {
-      case ApplicationType.ATAR      => Some(asATAR.holder.businessName)
-      case ApplicationType.LIABILITY => Some(asLiabilityOrder.traderName)
+      case ApplicationType.ATAR           => Some(asATAR.holder.businessName)
+      case ApplicationType.LIABILITY      => Some(asLiabilityOrder.traderName)
+      case ApplicationType.MISCELLANEOUS  => Some(asMisc.caseType.toString())
+      case _                              => None
+    }
+
+  def caseSource: Option[String] =
+    `type` match {
       case ApplicationType.CORRESPONDENCE => asCorrespondence.correspondenceStarter
-      case ApplicationType.MISCELLANEOUS => Some(asMisc.caseType.toString())
-      case _                         => None
+      case _                              => None
+
     }
 
   def goodsName: String =
@@ -74,8 +80,8 @@ sealed trait Application {
 
   def getType: String =
     `type` match {
-      case ApplicationType.ATAR             => "ATaR"
-      case ApplicationType.LIABILITY => "Liability"
+      case ApplicationType.ATAR           => "ATaR"
+      case ApplicationType.LIABILITY      => "Liability"
       case ApplicationType.CORRESPONDENCE => "Correspondence"
       case ApplicationType.MISCELLANEOUS  => "Misc"
     }
