@@ -55,7 +55,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
   private val aCase = Cases.btiCaseExample
 
   private val service =
-    new CasesService(config, audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)
+    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, config)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

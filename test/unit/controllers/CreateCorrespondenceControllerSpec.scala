@@ -190,7 +190,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       )
       status(result) shouldBe Status.OK
 
-      contentAsString(result) should include(messages("error.empty.queue"))
+      contentAsString(result) should include(messages("release_case.question.error"))
 
     }
 
