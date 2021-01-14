@@ -64,14 +64,6 @@
         </dd>
     </div>
 
-    <div id="case-details-date-created" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.miscellaneous.case-details.date_created")
-        </dt>
-        <dd class="cya-answer" id="date-created">
-            <span class="pre-wrap">@caseDetails.caseCreatedDate</span>
-        </dd>
-    </div>
 
     <div id="case-details-detailed-description" class="grid-row">
         <dt class="cya-question">
@@ -79,6 +71,15 @@
         </dt>
         <dd class="cya-answer" id="detailed-description">
             <span class="pre-wrap">@caseDetails.detailedDescription</span>
+        </dd>
+    </div>
+
+    <div id="case-details-date-created" class="grid-row">
+        <dt class="cya-question">
+            @messages("case.v2.miscellaneous.case-details.date_created")
+        </dt>
+        <dd class="cya-answer" id="date-created">
+            <span class="pre-wrap">@caseDetails.caseCreatedDate</span>
         </dd>
     </div>
 

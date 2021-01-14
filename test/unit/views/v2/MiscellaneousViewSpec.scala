@@ -46,8 +46,8 @@ class MiscellaneousViewSpec extends ViewSpec {
     "summary",
     Some("Case Contact name"),
     "some desc",
-    "2 Jan 2005",
     Some("detailed description"),
+    "2 Jan 2005",
     Some("SOC/554/2015/JN")
   )
 
