@@ -64,6 +64,8 @@ sealed trait Application {
 
   def caseSource: Option[String] =
     `type` match {
+      case ApplicationType.ATAR           => Some(asATAR.holder.businessName)
+      case ApplicationType.LIABILITY      => Some(asLiabilityOrder.traderName)
       case ApplicationType.CORRESPONDENCE => asCorrespondence.correspondenceStarter
       case ApplicationType.MISCELLANEOUS  => Some(asMisc.caseType.toString())
       case _                              => None
@@ -74,8 +76,7 @@ sealed trait Application {
       case ApplicationType.ATAR           => asATAR.goodName
       case ApplicationType.LIABILITY      => asLiabilityOrder.goodName.getOrElse("")
       case ApplicationType.CORRESPONDENCE => asCorrespondence.summary
-      case ApplicationType.MISCELLANEOUS => asMisc.name
-
+      case ApplicationType.MISCELLANEOUS  => asMisc.name
     }
 
   def getType: String =
