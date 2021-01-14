@@ -17,7 +17,7 @@
 @import models.StoredAttachment
 @import models.response.ScanStatus
 @import utils.Dates
-@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = true, displayStateMessage : Boolean = true)(implicit messages: Messages)
+@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false, displayStateMessage : Boolean = true)(implicit messages: Messages)
 
 @if(displayStateMessage) {
     @if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
