@@ -390,24 +390,14 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = Seq(
-      ApplicationType.ATAR,
-      ApplicationType.LIABILITY,
-      ApplicationType.CORRESPONDENCE,
-      ApplicationType.MISCELLANEOUS
-    )
+    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = Seq(
-      ApplicationType.ATAR,
-      ApplicationType.LIABILITY,
-      ApplicationType.CORRESPONDENCE,
-      ApplicationType.MISCELLANEOUS
-    )
+    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
 
@@ -457,8 +447,14 @@ class CasesService @Inject() (
   def addMessage(original: Case, message: Message, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] = {
-    val applicationToUpdate = original.application.asCorrespondence
-      .copy(messagesLogged = message :: original.application.asCorrespondence.messagesLogged)
+    val applicationToUpdate = original.application.`type` match {
+      case CORRESPONDENCE =>
+        original.application.asCorrespondence
+          .copy(messagesLogged = message :: original.application.asCorrespondence.messagesLogged)
+      case MISCELLANEOUS =>
+        original.application.asMisc
+          .copy(messagesLogged = message :: original.application.asMisc.messagesLogged)
+    }
     val caseToUpdate = original.copy(application = applicationToUpdate)
     for {
       updated <- connector.updateCase(caseToUpdate)

@@ -422,19 +422,37 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
   "Service 'audit message'" should {
     val message = "this is my message"
-    val c = correspondenceCaseExample.copy(
+    val corrCase = correspondenceCaseExample.copy(
       reference   = "ref",
       status      = OPEN,
       application = correspondenceExample.copy(messagesLogged = List(Message("operator name", Instant.now, message)))
     )
 
-    "Delegate to connector" in {
-      service.auditAddMessage(c, operator)
+    val miscCase = miscellaneousCaseExample.copy(
+      reference   = "ref",
+      status      = OPEN,
+      application = miscExample.copy(messagesLogged = List(Message("operator name", Instant.now, message)))
+    )
+
+    "Delegate to connector for correspondence" in {
+      service.auditAddMessage(corrCase, operator)
 
       val payload = Map(
-        "caseReference" -> c.reference,
+        "caseReference" -> corrCase.reference,
         "operatorId"    -> operator.id,
-        "message"       -> c.application.asCorrespondence.messagesLogged.reverse.last.message
+        "message"       -> corrCase.application.asCorrespondence.messagesLogged.reverse.last.message
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("caseMessage"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+
+    "Delegate to connector for miscellaneous" in {
+      service.auditAddMessage(miscCase, operator)
+
+      val payload = Map(
+        "caseReference" -> miscCase.reference,
+        "operatorId"    -> operator.id,
+        "message"       -> miscCase.application.asMisc.messagesLogged.reverse.last.message
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseMessage"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])

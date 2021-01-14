@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import controllers.v2.{AtarController, CorrespondenceController, LiabilityController}
+import controllers.v2.{AtarController, CorrespondenceController, LiabilityController, MiscellaneousController}
 import models._
 import models.forms._
 import models.request.AuthenticatedCaseRequest
@@ -41,6 +41,7 @@ class CaseController @Inject() (
   liabilityController: LiabilityController,
   atarController: AtarController,
   correspondenceController: CorrespondenceController,
+  miscellaneousController: MiscellaneousController,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -53,6 +54,8 @@ class CaseController @Inject() (
         case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
         case ApplicationType.CORRESPONDENCE =>
           Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference))
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference))
       }
   }
 
@@ -67,6 +70,8 @@ class CaseController @Inject() (
           Redirect(
             v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.SAMPLE_TAB.name)
           )
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference).withFragment(Tab.SAMPLE_TAB.name))
       }
     }
 
@@ -90,6 +95,10 @@ class CaseController @Inject() (
         case ApplicationType.CORRESPONDENCE =>
           Redirect(
             v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ACTIVITY_TAB.name)
+          )
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(
+            v2.routes.MiscellaneousController.displayMiscellaneous(reference).withFragment(Tab.ACTIVITY_TAB.name)
           )
       }
     }
@@ -115,6 +124,10 @@ class CaseController @Inject() (
           Redirect(
             v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ATTACHMENTS_TAB.name)
           )
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(
+            v2.routes.MiscellaneousController.displayMiscellaneous(reference).withFragment(Tab.ATTACHMENTS_TAB.name)
+          )
       }
     }
 
@@ -129,6 +142,8 @@ class CaseController @Inject() (
               liabilityController.renderView(activityForm = errorForm)
             case ApplicationType.CORRESPONDENCE =>
               correspondenceController.renderView(activityForm = errorForm)
+            case ApplicationType.MISCELLANEOUS =>
+              miscellaneousController.renderView(activityForm = errorForm)
           }
         }
 
@@ -148,6 +163,8 @@ class CaseController @Inject() (
           request.`case`.application.`type` match {
             case ApplicationType.CORRESPONDENCE =>
               correspondenceController.renderView(messageForm = errorForm)
+            case ApplicationType.MISCELLANEOUS =>
+              miscellaneousController.renderView(messageForm = errorForm)
           }
         }
 

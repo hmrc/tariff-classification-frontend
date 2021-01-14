@@ -440,6 +440,9 @@ object Cases {
   def aCorrespondenceCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(correspondenceCaseExample)((current: Case, modifier) => modifier.apply(current))
 
+  def aMiscellaneousCase(withModifier: (Case => Case)*): Case =
+    withModifier.foldLeft(miscellaneousCaseExample)((current: Case, modifier) => modifier.apply(current))
+
   def aLiabilityCase(withModifier: (Case => Case)*): Case =
     withModifier.foldLeft(liabilityCaseExample)((current: Case, modifier) => modifier.apply(current))
 
@@ -448,6 +451,9 @@ object Cases {
 
   def withCorrespondenceApplication: Case => Case =
     _.copy(application = corrApplicationExample)
+
+  def withMiscellaneousApplication: Case => Case =
+    _.copy(application = miscExample)
 
   def withLiabilityApplication(
     contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
@@ -763,7 +769,7 @@ object Cases {
     "name",
     None,
     MiscCaseType.HARMONISED,
-    None,
+    Some("A detailed description"),
     sampleToBeProvided = false,
     sampleToBeReturned = false
   )
@@ -800,6 +806,24 @@ object Cases {
     None,
     None,
     corrApplicationExample,
+    None,
+    Seq(),
+    Set.empty,
+    Sample(),
+    Some(Instant.now()),
+    Some(5),
+    referredDaysElapsed = 0
+  )
+
+  val miscellaneousCaseExample : Case = Case (
+    "1",
+    CaseStatus.OPEN,
+    Instant.now(),
+    0,
+    Some("SOC/554/2015/JN"),
+    None,
+    None,
+    miscExample,
     None,
     Seq(),
     Set.empty,

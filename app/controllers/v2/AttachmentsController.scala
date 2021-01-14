@@ -18,8 +18,7 @@ package controllers.v2
 
 import akka.stream.Materializer
 import config.AppConfig
-import controllers.{RenderCaseAction, RequestActions, Tab}
-import javax.inject.{Inject, Singleton}
+import controllers.{RenderCaseAction, RequestActions}
 import models._
 import models.forms.{RemoveAttachmentForm, UploadAttachmentForm}
 import models.request.AuthenticatedCaseRequest
@@ -32,8 +31,9 @@ import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AttachmentsController @Inject() (
@@ -43,11 +43,13 @@ class AttachmentsController @Inject() (
   mcc: MessagesControllerComponents,
   liabilityController: LiabilityController,
   atarController: AtarController,
-  correspondenceController : CorrespondenceController,
+  correspondenceController: CorrespondenceController,
+  miscellaneousController: MiscellaneousController,
   remove_attachment: views.html.v2.remove_attachment,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
-)(implicit ec: ExecutionContext) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with RenderCaseAction
     with I18nSupport {
 
@@ -158,6 +160,8 @@ class AttachmentsController @Inject() (
         liabilityController.renderView(uploadAttachmentForm = formWithErrors)
       case ApplicationType.CORRESPONDENCE =>
         correspondenceController.renderView(uploadForm = formWithErrors)
+      case ApplicationType.MISCELLANEOUS =>
+        miscellaneousController.renderView(uploadForm = formWithErrors)
     }
   }
 
