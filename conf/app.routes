@@ -146,3 +146,13 @@ GET        /my-cases                                            controllers.v2.M
 GET        /gateway-cases                                       controllers.v2.GatewayCasesController.displayGatewayCases
 
 GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
+
+GET         /create-new-miscellaneous                           controllers.CreateMiscellaneousController.get()
+POST        /create-new-miscellaneous                          controllers.CreateMiscellaneousController.post()
+
+GET         /team-miscellaneous-choice                      controllers.CreateMiscellaneousController.displayQuestion(reference: String)
+
+GET         /new-miscellaneous-confirm                         controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
+
+
+

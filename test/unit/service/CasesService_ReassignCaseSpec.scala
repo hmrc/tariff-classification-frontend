@@ -46,7 +46,7 @@ class CasesService_ReassignCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   private val aCase            = Cases.btiCaseExample
 
   private val service =
-    new CasesService(realAppConfig, audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)
+    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

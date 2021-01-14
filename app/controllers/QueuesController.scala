@@ -44,12 +44,7 @@ class QueuesController @Inject() (
       val types: Seq[ApplicationType] = caseType
         .map(x => Seq[ApplicationType](ApplicationType.withName(x)))
         .getOrElse(
-          Seq(
-            ApplicationType.ATAR,
-            ApplicationType.LIABILITY,
-            ApplicationType.CORRESPONDENCE,
-            ApplicationType.MISCELLANEOUS
-          )
+          ApplicationType.values.toSeq
         )
 
       queuesService.getOneBySlug(slug) flatMap {

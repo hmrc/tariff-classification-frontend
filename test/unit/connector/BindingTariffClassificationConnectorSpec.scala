@@ -38,6 +38,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases in 'gateway' queue" in {
       val url = buildQueryUrl(
+        types        = ApplicationType.values.toSeq,
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "none",
         assigneeId   = "none",
@@ -63,6 +64,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in 'gateway' queue" in {
       val url = buildQueryUrl(
+        types        = ApplicationType.values.toSeq,
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "none",
         assigneeId   = "none",
@@ -88,6 +90,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases in 'act' queue" in {
       val url = buildQueryUrl(
+        types        = ApplicationType.values.toSeq,
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "2",
         assigneeId   = "none",
@@ -113,6 +116,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in 'act' queue" in {
       val url = buildQueryUrl(
+        types        = ApplicationType.values.toSeq,
         withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
         queueId      = "2",
         assigneeId   = "none",
@@ -169,12 +173,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
-        types = Seq(
-          ApplicationType.ATAR,
-          ApplicationType.LIABILITY,
-          ApplicationType.CORRESPONDENCE,
-          ApplicationType.MISCELLANEOUS
-        ),
+        types      = ApplicationType.values.toSeq,
         statuses   = "NEW,OPEN,REFERRED,SUSPENDED",
         assigneeId = "none",
         queueIds   = Queues.allQueues.map(_.id),
@@ -507,12 +506,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       val search = Search(
         applicationType = Some(
-          Set(
-            ApplicationType.ATAR,
-            ApplicationType.LIABILITY,
-            ApplicationType.CORRESPONDENCE,
-            ApplicationType.MISCELLANEOUS
-          )
+          ApplicationType.values
         )
       )
 

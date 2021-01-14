@@ -36,7 +36,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class CreateCorrespondenceController @Inject()(
+class CreateCorrespondenceController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   queueService: QueuesService,
@@ -53,13 +53,12 @@ class CreateCorrespondenceController @Inject()(
   private val form: Form[CorrespondenceApplication] = CorrespondenceForm.newCorrespondenceForm
   private val formReleaseChoice: Form[String] = Form(
     mapping(
-      "choice" -> fieldNonEmpty("error.empty.queue")
+      "choice" -> fieldNonEmpty("release_case.question.error")
     )(identity)(Some(_))
   )
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request =>
-      Future.successful(Ok(views.html.v2.create_correspondence(form)))
+    implicit request => Future.successful(Ok(views.html.v2.create_correspondence(form)))
   }
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
@@ -69,7 +68,7 @@ class CreateCorrespondenceController @Inject()(
         correspondenceApp =>
           casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
             Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
-        }
+          }
       )
 
   }
@@ -79,9 +78,10 @@ class CreateCorrespondenceController @Inject()(
       getCaseAndRenderChoiceView(reference)
     }
 
-  private def getCaseAndRenderChoiceView(reference: String, form: Form[String] = formReleaseChoice)(
-    implicit hc: HeaderCarrier,
-    request: AuthenticatedRequest[_]): Future[Result] =
+  private def getCaseAndRenderChoiceView(
+    reference: String,
+    form: Form[String] = formReleaseChoice
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => successful(Ok(releaseCaseQuestionView(c, form)))
       case _             => successful(Ok(views.html.case_not_found(reference)))
@@ -94,31 +94,29 @@ class CreateCorrespondenceController @Inject()(
         .bindFromRequest()
         .fold(
           errors => getCaseAndRenderChoiceView(reference, errors),
-          (choice: String) => {
+          (choice: String) =>
             choice match {
               case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
               case _     => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
             }
-          }
         )
     }
 
   def displayConfirmation(reference: String) =
     (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async { implicit request =>
-      {
-        casesService.getOne(reference).flatMap {
-          case Some(c: Case) => {
-            c.queueId
-              .map(id =>
-                queueService.getOneById(id) flatMap {
-                  case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
-                  case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
-              })
-              .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
+      casesService.getOne(reference).flatMap {
+        case Some(c: Case) => {
+          c.queueId
+            .map(id =>
+              queueService.getOneById(id) flatMap {
+                case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
+                case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
+              }
+            )
+            .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
 
-          }
-          case _ => successful(Ok(views.html.case_not_found(reference)))
         }
+        case _ => successful(Ok(views.html.case_not_found(reference)))
       }
     }
 
@@ -129,7 +127,9 @@ class CreateCorrespondenceController @Inject()(
         Ok(
           correspondence_details_edit(
             request.`case`,
-            CorrespondenceDetailsForm.correspondenceDetailsForm(request.`case`)))
+            CorrespondenceDetailsForm.correspondenceDetailsForm(request.`case`)
+          )
+        )
       )
     }
 
@@ -156,7 +156,9 @@ class CreateCorrespondenceController @Inject()(
         Ok(
           correspondence_contact_edit(
             request.`case`,
-            CorrespondenceContactForm.correspondenceContactForm(request.`case`)))
+            CorrespondenceContactForm.correspondenceContactForm(request.`case`)
+          )
+        )
       )
     }
 
@@ -172,7 +174,11 @@ class CreateCorrespondenceController @Inject()(
           updatedCase =>
             casesService
               .updateCase(updatedCase)
-              .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.CONTACT_TAB.name)))
+              .map(_ =>
+                Redirect(
+                  v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.CONTACT_TAB.name)
+                )
+              )
         )
     }
 
