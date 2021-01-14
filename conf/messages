@@ -1098,10 +1098,11 @@ case.v2.miscellaneous.page_title=Miscellaneous case details
 case.v2.miscellaneous.case-details.tab_title=Details
 
 case.v2.miscellaneous.case-details.heading= Case details
-case.v2.miscellaneous.case-details.case-name=Case name
+case.v2.miscellaneous.case-details.case-short-desc=Short case description
 case.v2.miscellaneous.case-details.date_created=Date created
 case.v2.miscellaneous.case-details.case-type=Case type
 case.v2.miscellaneous.case-details.detailed_description=Detailed description
+case.v2.miscellaneous.case-details.case-contact-name=Case contact name
 case.v2.miscellaneous.case-details.boards_file_number=Boards file number
 case.v2.miscellaneous.case-details_title=Edit details
 

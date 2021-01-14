@@ -44,6 +44,7 @@ class MiscellaneousViewSpec extends ViewSpec {
   private val detailsTab: DetailsViewModel = DetailsViewModel(
     "1",
     "summary",
+    Some("Case Contact name"),
     "some desc",
     "2 Jan 2005",
     Some("detailed description"),

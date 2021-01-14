@@ -22,6 +22,7 @@ import utils.Dates
 case class DetailsViewModel(
   caseReference: String,
   caseName: String,
+  caseContactName: Option[String],
   caseType: String,
   caseCreatedDate: String,
   detailedDescription: Option[String],
@@ -35,6 +36,7 @@ object DetailsViewModel {
     DetailsViewModel(
       cse.reference,
       caseName             = miscellaneousApplication.name,
+      caseContactName      = miscellaneousApplication.contactName,
       caseType             = miscellaneousApplication.caseType.toString,
       caseCreatedDate      = Dates.format(cse.createdDate),
       detailedDescription  = miscellaneousApplication.detailedDescription,
