@@ -36,48 +36,60 @@
         </div>
     }
 
-<dl class="dl-mb-2">
+<dl class="govuk-check-your-answers cya-questions-long">
+
+    <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.details.information")</h3>
+
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
+            @messages("case.v2.liability.c592.item_name")
+        </dt>
+        <dd class="cya-answer" id="liability-item-name">
+            @c592ViewModel.itemName
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.entry_number")
         </dt>
-        <dd class="column-one-half" id="liability-entry-number">
+        <dd class="cya-answer" id="liability-entry-number">
         @c592ViewModel.entryNumber
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.entry_date")
         </dt>
-        <dd class="column-one-half" id="liability-entry-date">
+        <dd class="cya-answer" id="liability-entry-date">
         @c592ViewModel.entryDate
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.bti_case")
         </dt>
-        <dd class="column-one-half" id="liability-bti-case">
+        <dd class="cya-answer" id="liability-bti-case">
         @c592ViewModel.btiCase
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.is_repayment_claim")
         </dt>
-        <dd class="column-one-half" id="liability-repayment-claim">
+        <dd class="cya-answer" id="liability-repayment-claim">
         @c592ViewModel.repaymentClaim
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.receipt_date")
         </dt>
-        <dd class="column-one-half" id="liability-receipt-date">
+        <dd class="cya-answer" id="liability-receipt-date">
         @c592ViewModel.receiptDate
         </dd>
     </div>
@@ -85,46 +97,37 @@
     <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
 
     <div class="grid-row">
-        <dt class="column-one-half">
-        @messages("case.v2.liability.c592.item_name")
-        </dt>
-        <dd class="column-one-half" id="liability-item-name">
-        @c592ViewModel.itemName
-        </dd>
-    </div>
-
-    <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.trader_name")
         </dt>
-        <dd class="column-one-half" id="liability-trader-name">
+        <dd class="cya-answer" id="liability-trader-name">
         @c592ViewModel.traderContact.name
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.trader_email")
         </dt>
-        <dd class="column-one-half" id="liability-trader-email">
+        <dd class="cya-answer" id="liability-trader-email">
         @c592ViewModel.traderContact.email
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.trader_telephone")
         </dt>
-        <dd class="column-one-half" id="liability-trader-telephone">
+        <dd class="cya-answer" id="liability-trader-telephone">
         @c592ViewModel.traderContact.telephone
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.trader_address")
         </dt>
-        <dd class="column-one-half" id="liability-trader-address">
+        <dd class="cya-answer" id="liability-trader-address">
             <div class="pre-wrap">@c592ViewModel.traderContact.address.buildingAndStreet</div>
             <div class="pre-wrap">@c592ViewModel.traderContact.address.townOrCity</div>
             <div class="pre-wrap">@c592ViewModel.traderContact.address.county.getOrElse("")</div>
@@ -133,30 +136,41 @@
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
+            @messages("case.v2.liability.c592.agent_name")
+        </dt>
+        <dd class="cya-answer" id="agent-name">
+            @c592ViewModel.agentName
+        </dd>
+    </div>
+
+    @if(c592ViewModel.isMigratedCase) {
+    <div class="grid-row">
+        <dt class="cya-question">
             @messages("case.v2.liability.c592.boards_file_number")
         </dt>
-        <dd class="column-one-half" id="boards-file-number">
+        <dd class="cya-answer" id="boards-file-number">
             @c592ViewModel.caseBoardsFileNumber
         </dd>
     </div>
+    }
 
     <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.commodity_code_information")</h3>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.commodity_code_entered_by_trader_or_agent")
         </dt>
-        <dd class="column-one-half" id="trader_commodity_code">
+        <dd class="cya-answer" id="trader_commodity_code">
         @c592ViewModel.commodityCodeEnteredByTraderOrAgent
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.commodity_code_suggested_by_officer")
         </dt>
-        <dd class="column-one-half" id="officer_commodity_code">
+        <dd class="cya-answer" id="officer_commodity_code">
         @c592ViewModel.commodityCodeSuggestedByOfficer
         </dd>
     </div>
@@ -165,28 +179,37 @@
     @messages("case.v2.liability.c592.contact_details_for_port_or_compliance_officer")</h3>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.name_of_port_or_compliance_officer")
         </dt>
-        <dd class="column-one-half" id="officer_name">
+        <dd class="cya-answer" id="officer_name">
         @c592ViewModel.portOrComplianceOfficerContact.name
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
+        @messages("case.v2.liability.c592.port")
+        </dt>
+        <dd class="cya-answer" id="port">
+        @c592ViewModel.port
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.email_of_port_or_compliance_officer")
         </dt>
-        <dd class="column-one-half" id="officer_email">
+        <dd class="cya-answer" id="officer_email">
         @c592ViewModel.portOrComplianceOfficerContact.email
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.telephone_of_port_or_compliance_officer")
         </dt>
-        <dd class="column-one-half" id="officer_telephone">
+        <dd class="cya-answer" id="officer_telephone">
         @c592ViewModel.portOrComplianceOfficerContact.telephone
         </dd>
     </div>
@@ -195,19 +218,19 @@
     <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.repayment_claim")</h3>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.dvr_number")
         </dt>
-        <dd class="column-one-half" id="dvr_number">
+        <dd class="cya-answer" id="dvr_number">
         @c592ViewModel.dvrNumber
         </dd>
     </div>
 
     <div class="grid-row">
-        <dt class="column-one-half">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.date_for_repayment")
         </dt>
-        <dd class="column-one-half" id="date_for_repayment">
+        <dd class="cya-answer" id="date_for_repayment">
         @c592ViewModel.dateForRepayment
         </dd>
     </div>
