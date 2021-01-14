@@ -50,6 +50,12 @@
         formControlClass = Some("w-50")
     )
 
+    @input_text(
+        field = form("contactName"),
+        label = messages("misc.create_misc.contact.name.heading"),
+        labelClass = Some("form-label bold"),
+        formControlClass = Some("w-50")
+        )
 
     @input_radiogroup(
         field = form("caseType"),
@@ -72,6 +78,14 @@
         label = messages("case.v2.correspondence.case-details-edit-description"),
         inputClass = Some("width-one-half")
     )
+
+@if(c.dateOfExtract.isDefined){
+@input_text(
+field = form("boardsFileNumber"),
+label = messages("misc.edit_misc.boards.file.heading"),
+labelClass = Some("form-label bold"),
+formControlClass = Some("w-50")
+)}
 
 @confirm_or_cancel_buttons(
 id = "edit_misc_details",

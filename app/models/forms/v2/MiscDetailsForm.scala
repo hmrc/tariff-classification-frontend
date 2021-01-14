@@ -30,28 +30,38 @@ object MiscDetailsForm extends Constraints {
         Case,
         String,
         Option[String],
-        String
+        Option[String],
+        String,
+        Option[String]
       ](
         "summary"             -> textNonEmpty("Enter a summary"),
+        "contactName"         -> optional(text),
         "detailedDescription" -> optional(text),
-        "caseType"            -> oneOf("error.empty.miscCaseType", MiscCaseType)
+        "caseType"            -> oneOf("error.empty.miscCaseType", MiscCaseType),
+        "boardsFileNumber"    -> optional(text)
       )(form2Misc(existingMisc))(misc2Form)
     ).fillAndValidate(existingMisc)
 
   private def form2Misc(existingCase: Case): (
     String,
     Option[String],
-    String
+    Option[String],
+    String,
+    Option[String]
   ) => Case = {
     case (
         summary,
+        contactName,
         detailedDescription,
-        caseType
+        caseType,
+        boardsFileNumber
         ) =>
       existingCase.copy(
+        caseBoardsFileNumber = boardsFileNumber,
         application = existingCase.application.asMisc.copy(
           name                = summary,
-          detailedDescription = (detailedDescription),
+          contactName         = contactName,
+          detailedDescription = detailedDescription,
           caseType            = MiscCaseType.withName(caseType)
         )
       )
@@ -61,7 +71,9 @@ object MiscDetailsForm extends Constraints {
     (
       String,
       Option[String],
-      String
+      Option[String],
+      String,
+      Option[String]
     )
   ] = {
     val existingMisc = existingCase.application.asMisc
@@ -69,8 +81,10 @@ object MiscDetailsForm extends Constraints {
     Some(
       (
         existingMisc.name,
+        existingMisc.contactName,
         existingMisc.detailedDescription,
-        existingMisc.caseType.toString
+        existingMisc.caseType.toString,
+        existingCase.caseBoardsFileNumber
       )
     )
   }
