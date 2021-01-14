@@ -37,6 +37,7 @@
             @success_panel(
                 messages("case.completed.atar"),
                 None,
+                None,
                 "View ATaR cases",
                 ATaRTab
             )
@@ -44,6 +45,7 @@
         @success_panel(
             messages("case.completed.liability"),
             Some(messages("case.completed.email")),
+            None,
             "View liability cases",
             LiabilitiesTab
         )
@@ -52,12 +54,14 @@
         @success_panel(
             messages("case.completed.correspondence"),
             None,
+            None,
             "View correspondence cases",
             CorrespondenceTab
         )
         } else {
         @success_panel(
             messages("case.completed.misc"),
+            None,
             None,
             "View miscellaneous cases",
             MiscellaneousTab

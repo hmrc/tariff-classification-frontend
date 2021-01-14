@@ -82,6 +82,8 @@ case.completed.liability=This liability decision is complete
 case.completed.correspondence=Correspondence case is complete
 case.completed.misc=Miscellaneous case is completed
 case.completed.email=Email the applicant with a copy of this decision
+case.referred.confirm_referred=Case referred
+case.referred.elapsed_day_count=The days elapsed count has been paused at
 change_case_status.complete=Complete
 change_case_status.refer=Refer
 change_case_status.reject=Reject
@@ -1116,5 +1118,7 @@ case.ownership.assign_case.back=Back to my cases
 
 case.change_status.move_back_to_team.heading=Move this case back to a team
 case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team
+
+
 
 

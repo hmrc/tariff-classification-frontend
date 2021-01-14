@@ -16,30 +16,56 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import controllers.routes.MyCasesController
 @import models.Case
 @import views.html.includes.main
-@import views.html.partials.{days_elapsed_paused, case_heading, back_link}
-@import models.viewmodels.NoTabSelected
+@import views.html.partials.{days_elapsed_paused, case_heading}
+@import models.viewmodels.{NoTabSelected, CorrespondenceTab, LiabilitiesTab, ATaRTab, MiscellaneousTab}
+
+@import views.html.components.success_panel
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.referred")),
     customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
-
     @case_heading(c)
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">This case has been referred</h2>
+            @if(c.application.`type` == ApplicationType.ATAR) {
+                @success_panel(
+                    messages("case.referred.confirm_referred"),
+                    None,
+                    Some(days_elapsed_paused(c)),
+                    "View ATaR cases",
+                    ATaRTab
+                )
+            } else if (c.application.`type` == ApplicationType.LIABILITY) {
+            @success_panel(
+                messages("case.referred.confirm_referred"),
+                None,
+                Some(days_elapsed_paused(c)),
+                "View liability cases",
+                LiabilitiesTab
+            )
 
-            @days_elapsed_paused(c)
-
-            <h3 class="heading-medium mt-0">Next steps</h3>
-
-            <p>Go to <a id="my-cases-link" href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>
+            } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
+            @success_panel(
+                messages("case.referred.confirm_referred"),
+                None,
+                Some(days_elapsed_paused(c)),
+                "View correspondence cases",
+                CorrespondenceTab
+            )
+            } else {
+            @success_panel(
+                messages("case.referred.confirm_referred"),
+                None,
+                Some(days_elapsed_paused(c)),
+                "View miscellaneous cases",
+                MiscellaneousTab
+            )
+            }
 
         </div>
     </div>
