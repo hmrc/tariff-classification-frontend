@@ -35,6 +35,8 @@
 
 @error_summary(activityForm.errors)
 
+@notification_banner()(request.flash, messages)
+
 @tab_heading("activity", messages("case.v2.liability.activity_tab.tab_title"))
 
  <div class="form-hint">@messages("case.v2.liability.activity_tab.hint")</div>
