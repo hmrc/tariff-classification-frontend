@@ -25,6 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings.fieldNonEmpty
+import models.forms.v2.{CorrespondenceContactForm, CorrespondenceDetailsForm}
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,7 +36,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class CreateCorrespondenceController @Inject() (
+class CreateCorrespondenceController @Inject()(
   verify: RequestActions,
   casesService: CasesService,
   queueService: QueuesService,
@@ -43,6 +44,8 @@ class CreateCorrespondenceController @Inject() (
   val releaseCaseView: views.html.release_case,
   val releaseCaseQuestionView: views.html.v2.release_option_choice,
   val confirmation_case_creation: views.html.v2.confirmation_case_creation,
+  val correspondence_details_edit: views.html.v2.correspondence_details_edit,
+  val correspondence_contact_edit: views.html.v2.correspondence_contact_edit,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -94,29 +97,83 @@ class CreateCorrespondenceController @Inject() (
           (choice: String) => {
             choice match {
               case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
-              case _  => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
+              case _     => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
             }
           }
         )
     }
 
   def displayConfirmation(reference: String) =
-    (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-      implicit request =>
-        {
-          casesService.getOne(reference).flatMap {
-            case Some(c: Case) => {
-              c.queueId
-                .map(id =>
-                  queueService.getOneById(id) flatMap {
-                    case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
-                    case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
-                })
-                .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
+    (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async { implicit request =>
+      {
+        casesService.getOne(reference).flatMap {
+          case Some(c: Case) => {
+            c.queueId
+              .map(id =>
+                queueService.getOneById(id) flatMap {
+                  case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
+                  case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
+              })
+              .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
 
-            }
-            case _ => successful(Ok(views.html.case_not_found(reference)))
           }
+          case _ => successful(Ok(views.html.case_not_found(reference)))
         }
+      }
     }
-  }
+
+  def editCorrespondence(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
+      successful(
+        Ok(
+          correspondence_details_edit(
+            request.`case`,
+            CorrespondenceDetailsForm.correspondenceDetailsForm(request.`case`)))
+      )
+    }
+
+  def postCorrespondenceDetails(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
+      CorrespondenceDetailsForm
+        .correspondenceDetailsForm(request.`case`)
+        .discardingErrors
+        .bindFromRequest
+        .fold(
+          errorForm => successful(Ok(correspondence_details_edit(request.`case`, errorForm))),
+          updatedCase =>
+            casesService
+              .updateCase(updatedCase)
+              .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)))
+        )
+    }
+
+  def editCorrespondenceContact(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
+      successful(
+        Ok(
+          correspondence_contact_edit(
+            request.`case`,
+            CorrespondenceContactForm.correspondenceContactForm(request.`case`)))
+      )
+    }
+
+  def postCorrespondenceContact(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.EDIT_CORRESPONDENCE)).async { implicit request =>
+      CorrespondenceContactForm
+        .correspondenceContactForm(request.`case`)
+        .discardingErrors
+        .bindFromRequest
+        .fold(
+          errorForm => successful(Ok(correspondence_contact_edit(request.`case`, errorForm))),
+          updatedCase =>
+            casesService
+              .updateCase(updatedCase)
+              .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.CONTACT_TAB.name)))
+        )
+    }
+
+}

@@ -16,13 +16,12 @@
 
 package controllers
 
-import models.EventType.EventType
 import models.SampleStatus.SampleStatus
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
-import org.mockito.Mockito.{never, verify, when}
+import org.mockito.Mockito.{never, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -86,7 +85,22 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
       val result =
-        await(controller(c, Set(Permission.EDIT_SAMPLE)).chooseStatus("reference", Some("liability"))(newFakeGETRequestWithCSRF(app)))
+        await(
+          controller(c, Set(Permission.EDIT_SAMPLE))
+            .chooseStatus("reference", Some("liability"))(newFakeGETRequestWithCSRF(app))
+        )
+
+      status(result) shouldBe Status.OK
+    }
+
+    "return OK when user has right permissions for correspondence" in {
+      val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
+
+      val result =
+        await(
+          controller(c, Set(Permission.EDIT_SAMPLE))
+            .chooseStatus("reference", Some("correspondence"))(newFakeGETRequestWithCSRF(app))
+        )
 
       status(result) shouldBe Status.OK
     }

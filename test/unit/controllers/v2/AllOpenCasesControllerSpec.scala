@@ -60,8 +60,8 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             Cases.aLiabilityCase().copy(daysElapsed         = 35, queueId = Some("3")),
             Cases.liabilityLiveCaseExample.copy(queueId     = Some("3")),
             Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
-            Cases.corrCaseExample.copy(queueId              = Some("2")),
-            Cases.corrCaseExample.copy(queueId              = Some("1"))
+            Cases.correspondenceCaseExample.copy(queueId    = Some("2")),
+            Cases.correspondenceCaseExample.copy(queueId    = Some("1"))
           )
         )
       )
@@ -137,8 +137,8 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             Cases.aLiabilityCase().copy(daysElapsed         = 35, queueId = Some("3")),
             Cases.liabilityLiveCaseExample.copy(queueId     = Some("3")),
             Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
-            Cases.corrCaseExample.copy(queueId              = Some("2")),
-            Cases.corrCaseExample.copy(queueId              = Some("1"))
+            Cases.correspondenceCaseExample.copy(queueId    = Some("2")),
+            Cases.correspondenceCaseExample.copy(queueId    = Some("1"))
           )
         )
       )
@@ -164,8 +164,8 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             Cases.aLiabilityCase().copy(daysElapsed         = 35, queueId = Some("3")),
             Cases.liabilityLiveCaseExample.copy(queueId     = Some("3")),
             Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
-            Cases.corrCaseExample.copy(queueId              = Some("2")),
-            Cases.corrCaseExample.copy(queueId              = Some("1"))
+            Cases.correspondenceCaseExample.copy(queueId    = Some("2")),
+            Cases.correspondenceCaseExample.copy(queueId    = Some("1"))
           )
         )
       )

@@ -20,9 +20,10 @@ cases.table.type=Type
 cases.table.elapsed-days=Days elapsed
 cases.table.empty=There are no cases in this queue.
 cases.table.move=Move to a queue
+case.menu.messages=Messages
 case.menu.trader=Applicant
 case.menu.application-details=Goods
-case.menu.sample-details=Sample
+case.menu.sample-details=Sample status
 case.menu.ruling=Ruling
 case.menu.ruling-details=Ruling details
 case.menu.ruling-published-information=Information to be published on the public rulings website
@@ -280,6 +281,7 @@ error.empty.suppress.note=Add a note giving details of why you are suppressing t
 error.empty.suspend.note=Add a note giving details of why you are suspending this case
 error.empty.refer.note=Add a note giving details of why you are referring this case
 error.empty.refer.to=Select who you are referring this case to
+error.empty.message= Enter a case message
 decision_form.error.title=You must finish these sections to complete the case
 decision_form.error.bindingCommodityCode.required=Enter a commodity code
 decision_form.error.bindingCommodityCode.valid.length=Commodity code must be between 6 and 22 numbers
@@ -857,6 +859,66 @@ case.v2.liability.take_off_referral.button=Take off referral
 case.v2.liability.reopen.button=Reopen case
 
 case.v2.liability.advanced_search.button=Search cases
+
+case.v2.correspondence.page_title=Correspondence case details
+
+case.v2.correspondence.case-details_title=Edit correspondence case details
+case.v2.correspondence.case-details.tab_title=Case Details
+case.v2.correspondence.case-details.heading=Correspondence case details
+case.v2.correspondence.case-details.summary=Summary
+case.v2.correspondence.case-details.detailed_description=Detailed description
+case.v2.correspondence.case-details.case_created=Case created
+case.v2.correspondence.case-details.boards_file_number=Boards file number
+case.v2.correspondence.case-details.similar_cases=Similar cases
+
+case.v2.correspondence.case-details-edit-title=Edit case details
+case.v2.correspondence.case-details-edit-summary=Summary
+case.v2.correspondence.case-details-edit-description=Detailed description
+case.v2.correspondence.case-details-edit-boards-file-number=Boards file number
+case.v2.correspondence.case-details-edit-similar-cases=Similar cases
+
+case.v2.correspondence.case-contact-edit-title=Edit contact details
+case.v2.correspondence.case-contact-edit-heading1=Edit details
+case.v2.correspondence.case-contact-edit-heading2=Contact details
+case.v2.correspondence.case-contact-edit-heading3=Contact address
+case.v2.correspondence.case-details-edit-case-source=Case source
+case.v2.correspondence.case-details-edit-name=Contact name
+case.v2.correspondence.case-details-edit-email=Contact email
+case.v2.correspondence.case-details-edit-phone=Contact phone
+case.v2.correspondence.case-details-edit-fax=Contact fax
+case.v2.correspondence.case-details-edit-building-and-street=Building and street
+case.v2.correspondence.case-details-edit-town-or-city=Town or city
+case.v2.correspondence.case-details-edit-county=County
+case.v2.correspondence.case-details-edit-postCode=Postcode
+case.v2.correspondence.case-details-edit-agent-name=Agent name
+
+case.v2.correspondence.contact-details_title=Edit contact details
+case.v2.correspondence.contact-details.heading=Contact Details
+case.v2.correspondence.contact-details.tab_title=Contact
+case.v2.correspondence.contact-details.case_source=Case source
+case.v2.correspondence.contact-details.contact_name=Contact name
+case.v2.correspondence.contact-details.contact_email=Contact email
+case.v2.correspondence.contact-details.contact_telephone=Contact telephone
+case.v2.correspondence.contact-details.contact_fax=Contact fax
+case.v2.correspondence.contact-details.contact_address=Contact address
+case.v2.correspondence.contact-details.agent_name=Agent name
+
+case.v2.correspondence.messages.tab_title=Messages
+case.v2.correspondence.samples.tab_title=Sample
+case.v2.correspondence.attachments.tab_title=Attachments
+case.v2.correspondence.activity.tab_title=Activity
+
+case.v2.correspondence.sample-details.hint=Sample photos are in the Attachments section.
+case.v2.correspondence.sample-details.sample-sent=Is a sample being sent?
+case.v2.correspondence.sample-details.sample-activity-title=Sample activity
+case.v2.correspondence.sample-details.sample-no-activity=No activity to show.
+
+
+case.v2.correspondence.messages-details.heading=Messages
+
+
+
+
 
 upload.button = Upload
 upload.files.title = Upload new files
