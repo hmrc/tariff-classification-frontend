@@ -33,18 +33,30 @@
 @this(case_heading: views.html.v2.case_heading)
 @(c: Case, queueName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.create_correspondence.h1"))) {
+
+@customHeading = @{
+    if(c.application.isCorrespondence) {
+        Some(messages("page.title.create_correspondence.h1"))
+}   else {
+        Some(messages("page.title.create_misc.h1"))
+    }
+}
+
+@main(bodyClasses = None, customTitle = customHeading) {
 <div class="grid-row column-two-thirds">
 
 @case_heading(CaseHeaderViewModel.fromCase(c))
 
 <div class="govuk-panel govuk-panel--confirmation">
- @if(c.application.getType == "Correspondence" || c.application.getType == "Misc" ){
- @if(!queueName.isEmpty){
-    <h1 class="heading-xlarge mt-0">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
- }else{
-   <h1 class="heading-xlarge mt-0">Correspondence case created</h1>
- }
+ @if(c.application.isCorrespondence|| c.application.isMisc){
+    @if(!queueName.isEmpty && c.application.isCorrespondence) {
+       <h1 class="heading-xlarge mt-0">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
+    }else if(queueName.isEmpty){
+      <h1 class="heading-xlarge mt-0">Correspondence case created</h1>
+    }
+    @if(!queueName.isEmpty && c.application.isMisc) {
+      <h1 class="heading-xlarge mt-0">@messages("choose_team_misc_case.released_dynamic_message", c.application.getType, queueName)</h1>
+    }
  }else{
    <h2 class="heading-large mt-0">This case has been released to the @queueName queue for classification</h2>
    <p class="heading-medium">The case status is now Open</p>
@@ -53,9 +65,8 @@
 </div>
 
 @confirmation_next_steps(
-linkText = messages("back.gateway"),
-backHref = GatewayCasesController.displayGatewayCases()
-)
-
+    linkText = messages("back.gateway"),
+    backHref = GatewayCasesController.displayGatewayCases()
+    )
 }
 </div>

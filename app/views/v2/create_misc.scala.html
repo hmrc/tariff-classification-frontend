@@ -1,0 +1,77 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes
+@import views.forms.components.RadioOption
+@import views.html.forms.components.input_radiogroup
+@import views.html.includes.main
+@import models.LiabilityOrder
+@import views.html.components.confirm_or_cancel_buttons
+@import views.html.forms.components.input_text
+@import models.LiabilityStatus
+@import views.html.partials.error_summary
+@import models.request.AuthenticatedRequest
+
+@(form: Form[MiscApplication])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("page.title.create_misc.h1"))) {
+
+@error_summary(form.errors)
+
+<h1 id="create_misc-heading" class="heading-xlarge">@messages("page.title.create_misc.h1")</h1>
+
+@helper.form(action = routes.CreateMiscellaneousController.post(), 'id -> "create_misc-form", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
+    @input_text(
+        field = form("name"),
+        label = messages("misc.create_misc.description.heading"),
+        labelClass = Some("form-label bold"),
+        formControlClass = Some("w-50")
+    )
+
+    @input_text(
+        field = form("contactName"),
+        label = messages("misc.create_misc.contact.name.heading"),
+        labelClass = Some("form-label bold"),
+        formControlClass = Some("w-50"),
+    )
+
+    @input_radiogroup(
+        field = form("caseType"),
+        label = Some(messages("misc.create_misc.type.heading")),
+        labelClass = Some("heading-small"),
+        options = Seq(
+                RadioOption(MiscCaseType.HARMONISED.toString, messages("misc.create_misc.radio.type-harmonised")),
+                RadioOption(MiscCaseType.IB.toString, messages("misc.create_misc.radio.type-ib")),
+                RadioOption(MiscCaseType.NOMENCLATURE.toString, messages("misc.create_misc.radio.type-nomenclature")),
+                RadioOption(MiscCaseType.OTHER_GOVT_DEP.toString, messages("misc.create_misc.radio.type-other-gov-dep")),
+                RadioOption(MiscCaseType.OTHER.toString, messages("misc.create_misc.radio.type-other"))
+
+            ),
+        id = "create_misc-type",
+        customGroupId = Some("typeMisc")
+        )
+
+
+    @confirm_or_cancel_buttons(
+        id = "create_misc",
+        confirmText = messages("misc.create_misc.confirm-button"),
+        cancelText = messages("liability.create_liability.cancel-button"),
+        cancelHref = routes.IndexController.get()
+        )
+    }
+}

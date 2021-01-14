@@ -44,5 +44,16 @@
         }
     </h1>
 
+    @if(caseHeader.caseType == ApplicationType.CORRESPONDENCE) {
+        <div id="contact-section" class="mb-1">
+            <div class="bold">
+                @caseHeader.caseSource.getOrElse("")
+            </div>
+            <div class="bold">
+                @caseHeader.contact.email
+            </div>
+        </div>
+    }
+
     @caseStatus(caseHeader.caseStatus)
 </div>

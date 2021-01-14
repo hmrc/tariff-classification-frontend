@@ -43,7 +43,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CasesService @Inject() (
-  appConfig: AppConfig,
   auditService: AuditService,
   emailService: EmailService,
   fileService: FileStoreService,
@@ -52,7 +51,7 @@ class CasesService @Inject() (
   pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
   rulingConnector: RulingConnector
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
   def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(
@@ -230,82 +229,123 @@ class CasesService @Inject() (
     } yield updated
 
   def completeCase(original: Case, operator: Operator)(implicit hc: HeaderCarrier, messages: Messages): Future[Case] = {
-    val date         = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
-    val startInstant = date.toInstant
-    val possibleEndInstant: Option[Instant] = original.application.isBTI match {
-      case true =>
-        Some(date.plusYears(appConfig.decisionLifetimeYears).minusDays(appConfig.decisionLifetimeDays).toInstant)
-      case _ => None
+
+    def setCaseCompleted(original: Case): Case = original.application.`type` match {
+      case ApplicationType.ATAR | ApplicationType.LIABILITY =>
+        val startDate = LocalDate
+          .now(appConfig.clock)
+          .atStartOfDay(appConfig.clock.getZone)
+
+        val endDate =
+          if (!original.application.isBTI)
+            None
+          else
+            Some(
+              startDate
+                .plusYears(appConfig.decisionLifetimeYears)
+                .minusDays(appConfig.decisionLifetimeDays)
+                .toInstant
+            )
+
+        val decisionWithDates: Decision = original.decision
+          .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
+          .copy(effectiveStartDate = Some(startDate.toInstant), effectiveEndDate = endDate)
+
+        original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
+
+      case _ =>
+        original.copy(status = CaseStatus.COMPLETED)
     }
 
-    val decisionUpdating: Decision = original.decision
-      .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
-      .copy(effectiveStartDate = Some(startInstant), effectiveEndDate = possibleEndInstant)
-    val caseUpdating = original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionUpdating))
-
     def sendCaseCompleteEmail(updated: Case): Future[Option[String]] =
-      emailService
-        .sendCaseCompleteEmail(updated, operator)
-        .map { email: EmailTemplate =>
-          Some(s"- Subject: ${email.subject}\n- Body: ${email.plain}")
-        } recover {
-        case t: Throwable =>
-          logger.error("Failed to send email", t)
-          Some("Attempted to send an email to the applicant which failed")
+      if (!updated.application.isBTI)
+        Future.successful(None)
+      else
+        emailService
+          .sendCaseCompleteEmail(updated, operator)
+          .map { email: EmailTemplate =>
+            Some(s"- Subject: ${email.subject}\n- Body: ${email.plain}")
+          } recover {
+          case t: Throwable =>
+            logger.error("Failed to send email", t)
+            Some("Attempted to send an email to the applicant which failed")
+        }
+
+    val completedCase = setCaseCompleted(original)
+
+    for {
+
+      caseWithPdf <- completedCase.decision
+                      .map(decision => uploadCaseDocuments(completedCase, decision, operator))
+                      .getOrElse {
+                        Future.successful(completedCase)
+                      }
+
+      // Update the case
+      updatedCase: Case <- connector.updateCase(caseWithPdf)
+
+      // Send the email
+      message: Option[String] <- sendCaseCompleteEmail(updatedCase)
+
+      // Create the event
+      _ <- addCompletedEvent(original, updatedCase, operator, None, message)
+
+      // Audit
+      _ = auditService.auditCaseCompleted(original, updatedCase, operator)
+
+      // Notify the Ruling store
+      _ = if (original.application.isBTI) {
+        rulingConnector
+          .notify(original.reference)
+          .recover(loggingARulingErrorFor(original.reference))
       }
+
+    } yield updatedCase
+  }
+
+  def uploadCaseDocuments(
+    completedCase: Case,
+    decision: Decision,
+    operator: Operator
+  )(implicit hc: HeaderCarrier, messages: Messages): Future[Case] = {
 
     def getCountryName(code: String): Option[String] =
       countriesService.getAllCountriesById.get(code).map(_.countryName)
 
     def createRulingPdf(pdf: PdfFile): FileUpload = {
-      val tempFile = SingletonTemporaryFileCreator.create(original.reference, "pdf")
+      val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
       Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
-      FileUpload(tempFile, s"ATaRRuling_${original.reference}.pdf", pdf.contentType)
+      FileUpload(tempFile, s"ATaRRuling_${completedCase.reference}.pdf", pdf.contentType)
     }
 
     def createLiabilityDecisionPdf(pdf: PdfFile): FileUpload = {
-      val tempFile = SingletonTemporaryFileCreator.create(original.reference, "pdf")
+      val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
       Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
-      FileUpload(tempFile, s"LiabilityDecision_${original.reference}.pdf", pdf.contentType)
+      FileUpload(tempFile, s"LiabilityDecision_${completedCase.reference}.pdf", pdf.contentType)
+    }
+
+    def generatePdf: Future[FileUpload] = completedCase.application.`type` match {
+      case ATAR =>
+        pdfService
+          .generatePdf(ruling_template(completedCase, decision, getCountryName))
+          .map(createRulingPdf)
+      case LIABILITY =>
+        pdfService
+          .generatePdf(decision_template(completedCase, decision))
+          .map(createLiabilityDecisionPdf)
     }
 
     for {
       // Generate the decision PDF
-      pdfFile <- caseUpdating.application.`type` match {
-                  case ATAR =>
-                    pdfService
-                      .generatePdf(ruling_template(caseUpdating, decisionUpdating, getCountryName)(messages, appConfig))
-                      .map(createRulingPdf(_))
-                  case LIABILITY =>
-                    pdfService
-                      .generatePdf(decision_template(caseUpdating, decisionUpdating)(messages, appConfig))
-                      .map(createLiabilityDecisionPdf(_))
-                }
+      pdfFile <- generatePdf
 
       // Upload the decision PDF to the filestore
       pdfStored <- fileService.upload(pdfFile)
 
       pdfAttachment = Attachment(id = pdfStored.id, operator = Some(operator))
 
-      caseWithPdf = caseUpdating.copy(decision = Some(decisionUpdating.copy(decisionPdf = Some(pdfAttachment))))
-
-      // Update the case
-      updated: Case <- connector.updateCase(caseWithPdf)
-
-      // Send the email
-      message: Option[String] <- if (original.application.isBTI) sendCaseCompleteEmail(updated)
-                                else Future.successful(None)
-
-      // Create the event
-      _ <- addCompletedEvent(original, updated, operator, None, message)
-
-      // Audit
-      _ = auditService.auditCaseCompleted(original, updated, operator)
-
-      // Notify the Ruling store
-      _ = if (original.application.isBTI)
-        rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
-    } yield updated
+      caseWithPdf = completedCase.copy(decision = Some(decision.copy(decisionPdf = Some(pdfAttachment))))
+    } yield caseWithPdf
   }
 
   def cancelRuling(original: Case, reason: CancelReason, f: FileUpload, note: String, operator: Operator)(
@@ -350,16 +390,24 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] =
-      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+    forTypes: Seq[ApplicationType] = Seq(
+      ApplicationType.ATAR,
+      ApplicationType.LIABILITY,
+      ApplicationType.CORRESPONDENCE,
+      ApplicationType.MISCELLANEOUS
+    )
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] =
-      Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE)
+    forTypes: Seq[ApplicationType] = Seq(
+      ApplicationType.ATAR,
+      ApplicationType.LIABILITY,
+      ApplicationType.CORRESPONDENCE,
+      ApplicationType.MISCELLANEOUS
+    )
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
 
@@ -552,9 +600,9 @@ class CasesService @Inject() (
     addEvent(original, updated, details, operator)
   }
 
-  private def addCaseCreatedEvent(liabilityCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = CaseCreated("Liability case created")
-    addEvent(liabilityCase, liabilityCase, details, operator)
+  private def addCaseCreatedEvent(caseCreated: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = CaseCreated(s"${caseCreated.application.`type`.prettyName} case created")
+    addEvent(caseCreated, caseCreated, details, operator)
   }
 
   private def extendedUseStatus: Case => Boolean =

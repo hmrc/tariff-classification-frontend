@@ -53,7 +53,7 @@ class CreateCorrespondenceController @Inject()(
   private val form: Form[CorrespondenceApplication] = CorrespondenceForm.newCorrespondenceForm
   private val formReleaseChoice: Form[String] = Form(
     mapping(
-      "choice" -> fieldNonEmpty("error.empty.queue")
+      "choice" -> fieldNonEmpty("release_case.question.error")
     )(identity)(Some(_))
   )
 

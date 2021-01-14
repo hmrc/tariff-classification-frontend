@@ -16,6 +16,17 @@
 
 package views.forms.components
 
+import models.ApplicationType
 import play.twirl.api.Html
 
-case class RadioOption(value: String, label: String, dataTarget: Option[String] = None, customHtml: Option[Html] = None)
+case class RadioOption(
+  value: String,
+  label: String,
+  dataTarget: Option[String]             = None,
+  customHtml: Option[Html]               = None,
+  applicationTypes: Set[ApplicationType] = ApplicationType.values
+) {
+
+  def validFor(applicationType: ApplicationType): Boolean =
+    applicationTypes.contains(applicationType)
+}
