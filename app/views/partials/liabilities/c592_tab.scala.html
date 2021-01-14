@@ -36,9 +36,8 @@
         </div>
     }
 
+<h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.details.information")</h3>
 <dl class="govuk-check-your-answers cya-questions-long">
-
-    <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.details.information")</h3>
 
     <div class="grid-row">
         <dt class="cya-question">
@@ -93,9 +92,11 @@
         @c592ViewModel.receiptDate
         </dd>
     </div>
+</dl>
 
-    <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
+<h3 class="heading-medium mt-30">@messages("case.v2.liability.c592.trader_information")</h3>
 
+<dl class="govuk-check-your-answers cya-questions-long">
     <div class="grid-row">
         <dt class="cya-question">
         @messages("case.v2.liability.c592.trader_name")
@@ -154,9 +155,11 @@
         </dd>
     </div>
     }
+</dl>
 
-    <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.commodity_code_information")</h3>
+<h3 class="heading-medium mt-30">@messages("case.v2.liability.c592.commodity_code_information")</h3>
 
+<dl class="govuk-check-your-answers cya-questions-long">
     <div class="grid-row">
         <dt class="cya-question">
         @messages("case.v2.liability.c592.commodity_code_entered_by_trader_or_agent")
@@ -174,10 +177,10 @@
         @c592ViewModel.commodityCodeSuggestedByOfficer
         </dd>
     </div>
+</dl>
+<h3 class="heading-medium mt-30">@messages("case.v2.liability.c592.contact_details_for_port_or_compliance_officer")</h3>
 
-    <h3 class="heading-medium mt-0">
-    @messages("case.v2.liability.c592.contact_details_for_port_or_compliance_officer")</h3>
-
+<dl class="govuk-check-your-answers cya-questions-long">
     <div class="grid-row">
         <dt class="cya-question">
         @messages("case.v2.liability.c592.name_of_port_or_compliance_officer")
@@ -215,8 +218,11 @@
     </div>
 
     @if(c592ViewModel.isRepaymentClaim){
-    <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.repayment_claim")</h3>
+</dl>
 
+<h3 class="heading-medium mt-30">@messages("case.v2.liability.c592.repayment_claim")</h3>
+
+<dl class="govuk-check-your-answers cya-questions-long">
     <div class="grid-row">
         <dt class="cya-question">
         @messages("case.v2.liability.c592.dvr_number")
