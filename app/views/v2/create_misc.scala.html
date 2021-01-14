@@ -37,7 +37,7 @@
 @helper.form(action = routes.CreateMiscellaneousController.post(), 'id -> "create_misc-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
     @input_text(
-        field = form("detailedDescription"),
+        field = form("name"),
         label = messages("misc.create_misc.description.heading"),
         labelClass = Some("form-label bold"),
         formControlClass = Some("w-50")
