@@ -41,7 +41,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
   private val releaseCaseView = injector.instanceOf[views.html.release_case]
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
 
-  private val caseWithStatusOPEN = Cases.miscCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val caseWithStatusOPEN = Cases.miscellaneousCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
 
   private def controller(c: Case) =
     new CreateMiscellaneousController(
@@ -100,7 +100,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
     "display Misc details page if form has errors POST" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscCaseExample))
+        .willReturn(successful(Cases.miscellaneousCaseExample))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
@@ -119,9 +119,9 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
     "display no results found when a queue is not found GET" in {
       given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscCaseExample.copy(queueId = Some("queue"))))
+        .willReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.miscCaseExample.copy(queueId = Some("queue")))))
+        .willReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
 
       given(queuesService.getOneById(any[String]))
         .willReturn(successful(None))
@@ -137,7 +137,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
     "display no results found when a case is not found GET" in {
       given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscCaseExample.copy(queueId = Some("queue"))))
+        .willReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
         .willReturn(successful(None))
 
