@@ -26,9 +26,7 @@
 @if(request.hasPermission(Permission.EDIT_MISCELLANEOUS)) {
 <div id="edit-miscellaneous-details" class="grid-row mb-2">
             <span class="column-one-third">
-                <a id="edit-miscellaneous-details-link" href="#">
-                    @*TODO: Add href call when relevant ticket is done
-@*                href="@controllers.routes.CreateMiscellaneousController.editMiscellaneous(caseDetails.caseReference)">*@
+                <a id="edit-miscellaneous-details-link" href="@controllers.routes.CreateMiscellaneousController.editMiscDetails(caseDetails.caseReference)">
                 @messages("case.v2.miscellaneous.case-details_title")
                 </a>
             </span>

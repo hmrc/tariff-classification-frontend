@@ -105,7 +105,7 @@ class CreateMiscellaneousController @Inject() (
 
   def editMiscDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.CREATE_CASES)).async { implicit request =>
+      verify.mustHave(Permission.EDIT_MISCELLANEOUS)).async { implicit request =>
       successful(
         Ok(
           misc_details_edit(
@@ -118,7 +118,7 @@ class CreateMiscellaneousController @Inject() (
 
   def postMiscDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.CREATE_CASES)).async { implicit request =>
+      verify.mustHave(Permission.EDIT_MISCELLANEOUS)).async { implicit request =>
       MiscDetailsForm
         .miscDetailsForm(request.`case`)
         .discardingErrors
@@ -128,7 +128,7 @@ class CreateMiscellaneousController @Inject() (
           updatedCase =>
             casesService
               .updateCase(updatedCase)
-              .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)))
+              .map(_ => Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference)))
         )
     }
 }

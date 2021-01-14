@@ -162,7 +162,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
       "return 200" in {
         val result = await(
-          controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          controller(caseWithStatusOPEN, Set(Permission.EDIT_MISCELLANEOUS))
             .editMiscDetails("reference")(newFakePOSTRequestWithCSRF(app))
         )
         status(result) shouldBe OK
@@ -196,14 +196,14 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
         )
 
         val result = await(
-          controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          controller(caseWithStatusOPEN, Set(Permission.EDIT_MISCELLANEOUS))
             .postMiscDetails("reference")(fakeReq)
         )
 
         status(result) shouldBe SEE_OTHER
 
         locationOf(result) shouldBe Some(
-          "/manage-tariff-classifications/cases/v2/" + "reference" + "/correspondence"
+          "/manage-tariff-classifications/cases/v2/" + "reference" + "/miscellaneous"
         )
       }
 
@@ -220,7 +220,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
         )
 
         val result = await(
-          controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          controller(caseWithStatusOPEN, Set(Permission.EDIT_MISCELLANEOUS))
             .postMiscDetails("reference")(fakeReq)
         )
 
