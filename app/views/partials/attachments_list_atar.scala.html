@@ -61,9 +61,7 @@
                         <span class="visually-hidden">attachment-status</span>
                         @if(file.scanStatus.isEmpty) {
                             <span id="@id" class="govuk-tag govuk-tag--blue">@messages("case.attachment.upload.status-processing")</span>
-                              <div class="refresh-content">
-                                  <span id="@id" class="refresh-content">@messages("case.attachment.refresh.content")</span>
-                              </div>
+                            <span id="@id" class="refresh-content">@messages("case.attachment.refresh.content")</span>
                         } else if(file.scanStatus.contains(ScanStatus.FAILED)) {
                         <span id="@id" class="govuk-tag govuk-tag--red">@messages("case.attachment.upload.status-failed")</span>
                         } else {
