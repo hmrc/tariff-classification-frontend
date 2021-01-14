@@ -99,7 +99,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
     // Then
     response.status shouldBe OK
-    response.body   should include("Move this case back to a queue")
+    response.body   should include("Move this case back to a team")
   }
 
   private def shouldFail = {

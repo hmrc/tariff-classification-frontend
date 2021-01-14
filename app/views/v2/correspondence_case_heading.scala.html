@@ -42,7 +42,7 @@ headingPrefix: Option[String] = None
 
     <div>
         <h3 class="govuk-heading-s">@caseHeader.businessName.getOrElse("")</h3>
-        <h3 class="govuk-heading-s">@caseHeader.contactEmail.getOrElse("")</h3>
+        <h3 class="govuk-heading-s">@caseHeader.contact.email</h3>
     </div>
 
     @caseStatus(caseHeader.caseStatus)

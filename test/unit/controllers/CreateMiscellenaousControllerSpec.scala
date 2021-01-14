@@ -111,9 +111,9 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .post()(
             newFakePOSTRequestWithCSRF(app)
               .withFormUrlEncodedBody(
-                "detailedDescription" -> "",
-                "contactName"         -> "",
-                "caseType"            -> "Other"
+                "name"        -> "",
+                "contactName" -> "",
+                "caseType"    -> "Other"
               )
           )
       )

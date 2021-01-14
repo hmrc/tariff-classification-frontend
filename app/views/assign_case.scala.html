@@ -34,24 +34,36 @@
 
     <h2 id="assign_case-heading" class="heading-large mt-0">
         @if(c.assignee.isDefined) {
-            <span id="assign_case-assigned_heading">This case is already assigned to @{assignee(c.assignee.get)}</span>
+            <span id="assign_case-assigned_heading">@messages("case.ownership.assign_case.assigned", assignee(c.assignee.get))</span>
         }
         @if(c.assignee.isEmpty) {
-            <span id="assign_case-unassigned_heading">This case is unassigned. Do you want to take ownership?</span>
+            <span id="assign_case-unassigned_heading">@messages("case.ownership.assign_case.unassigned")</span>
         }
     </h2>
 
     @if(c.assignee.isEmpty) {
-        <p>This will add the case to your my cases list</p>
+        <p>@messages("case.ownership.assign_case.description")</p>
 
         @form(action = routes.AssignCaseController.post(c.reference), 'class -> "form") {
             @CSRF.formField
-            <button class="button" id="assign_case-assign_button" type="submit">Yes, take ownership</button>
-            <a class="secondary-button" id="assign_case-continue_button" href="@routes.CaseController.get(c.reference)">No, view only</a>
+            <button class="button" id="assign_case-assign_button" type="submit">
+            @messages("case.ownership.assign_case.submit")
+            </button>
+            <a class="secondary-button" id="assign_case-continue_button" href="@routes.CaseController.get(c.reference)">
+            @messages("case.ownership.assign_case.view_only")
+            </a>
         }
     } else {
-        <p><a id="assign_case-continue_button" href="@routes.CaseController.get(c.reference)">View the case</a></p>
-        <p><a id="assign_case-back_to_my_cases" href="@routes.MyCasesController.myCases()">Back to my cases</a></p>
+        <p>
+            <a id="assign_case-continue_button" href="@routes.CaseController.get(c.reference)">
+            @messages("case.ownership.assign_case.view_case")
+            </a>
+        </p>
+        <p>
+            <a id="assign_case-back_to_my_cases" href="@routes.MyCasesController.myCases()">
+            @messages("case.ownership.assign_case.back")
+            </a>
+        </p>
     }
 
 }

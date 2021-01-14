@@ -25,13 +25,13 @@ import models.forms.mappings.FormMappings._
 object MiscellaneousForm {
 
   private val form2Misc: (String, String, String) => MiscApplication = {
-    case (detailedDescription, contactName, caseType) =>
+    case (shortDescription, contactName, caseType) =>
       MiscApplication(
         contact = Contact(contactName, "", None),
-        name = "",
+        name = shortDescription,
         contactName = Some(contactName),
         caseType = MiscCaseType.withName(caseType),
-        detailedDescription = Some(detailedDescription),
+        detailedDescription = None,
         sampleToBeProvided = false,
         sampleToBeReturned = false,
         messagesLogged = List.empty
@@ -39,11 +39,11 @@ object MiscellaneousForm {
   }
 
     private val misc2Form: MiscApplication => Option[(String, String, String)] = misc =>
-      Some((misc.detailedDescription.getOrElse(""), misc.contactName.getOrElse(""), misc.caseType.toString))
+      Some((misc.name, misc.contactName.getOrElse(""), misc.caseType.toString))
 
     val newMiscForm: Form[MiscApplication] = Form (
       mapping(
-        "detailedDescription"       -> textNonEmpty("error.empty.misc.shortDesc"),
+        "name"       -> textNonEmpty("error.empty.misc.shortDesc"),
         "contactName"      -> textNonEmpty("error.empty.misc.contactName"),
         "caseType" -> oneOf("error.empty.miscCaseType", MiscCaseType)
       )(form2Misc)(misc2Form)
