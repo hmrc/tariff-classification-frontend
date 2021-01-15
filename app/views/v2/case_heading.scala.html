@@ -29,23 +29,24 @@
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
     <div id="case-reference" class="case-reference">
-        @if(caseHeader.isMigrated){
-            Hello
-        } else {
             @caseHeader.businessName.map { businessName =>
                 @messages("case.heading.secondary", caseHeader.caseType.prettyName, caseHeader.referenceNumber, businessName)
             }.getOrElse {
                 @messages("case.heading.secondary.nosuffix", caseHeader.caseType.prettyName, caseHeader.referenceNumber)
             }
-        }
     </div>
 
     <h1 class="heading-xlarge case-title">
-        @headingText.map(HtmlFormat.escape(_)).getOrElse {
-            @headingPrefix.fold(HtmlFormat.escape(caseHeader.goodsName)) { prefix =>
-                @messages("case.title", prefix, caseHeader.goodsName)
-            }
+        @if(caseHeader.isMigrated && caseHeader.goodsName.isEmpty){
+            @messages("case.title.migrated.cases", caseHeader.referenceNumber)
+        } else {
+            @headingText.map(HtmlFormat.escape(_)).getOrElse {
+                @headingPrefix.fold(HtmlFormat.escape(caseHeader.goodsName)) { prefix =>
+                     @messages("case.title", prefix, caseHeader.goodsName)
+                    }
+             }
         }
+
     </h1>
 
     @if(caseHeader.caseType == ApplicationType.CORRESPONDENCE) {

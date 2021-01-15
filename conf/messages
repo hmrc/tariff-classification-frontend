@@ -36,6 +36,7 @@ case.menu.appeal=Appeals
 case.menu.liability=Liability
 case.menu.atar=ATaR
 case.title={0} for {1}
+case.title.migrated.cases=Case {0}
 case.heading.secondary={0} case {1} for {2}
 case.heading.secondary.nosuffix={0} case {1}
 case.status=Status
