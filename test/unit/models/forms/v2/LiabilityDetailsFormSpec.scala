@@ -86,9 +86,9 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
   private val year  = new DateTime(Instant.EPOCH.getEpochSecond, DateTimeZone.forID("Etc/UTC")).year.getAsText
 
   private val params = Map(
-    "contactName"             -> Seq("contact-name"),
-    "contactEmail"            -> Seq("contact@email.com"),
-    "contactPhone"            -> Seq("contact-phone"),
+    "contact.contactName"             -> Seq("contact-name"),
+    "contact.contactEmail"            -> Seq("contact@email.com"),
+    "contact.contactPhone"            -> Seq("contact-phone"),
     "traderName"              -> Seq("trader-name"),
     "traderEmail"             -> Seq("trader@email.com"),
     "traderPhone"             -> Seq("0123456764"),
@@ -125,7 +125,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 
         form.hasErrors         shouldBe true
         form.errors            should have(size(3))
-        form.errors.map(_.key) shouldBe Seq("traderName", "goodName", "contactName")
+        form.errors.map(_.key) shouldBe Seq("traderName", "goodName", "contact.contactName")
       }
     }
 

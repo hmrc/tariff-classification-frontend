@@ -229,9 +229,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           "goodName"             -> "item-name",
           "traderCommodityCode"  -> "",
           "officerCommodityCode" -> "",
-          "contactName"          -> "contact-name",
-          "contactEmail"         -> "valid@email.com",
-          "contactPhone"         -> ""
+          "contact.contactName"          -> "contact-name",
+          "contact.contactEmail"         -> "valid@email.com",
+          "contact.contactPhone"         -> ""
         )
       )
       val result: Future[Result] =
