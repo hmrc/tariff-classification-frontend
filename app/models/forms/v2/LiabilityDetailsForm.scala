@@ -43,6 +43,7 @@ object LiabilityDetailsForm extends Constraints {
         Option[String],
         Option[String],
         Option[String],
+        Option[String],
         Boolean,
         Option[Instant],
         Option[String],
@@ -72,6 +73,7 @@ object LiabilityDetailsForm extends Constraints {
         "traderCounty"            -> optional(text),
         "traderPostcode"          -> optional(text),
         "boardsFileNumber"        -> optional(text),
+        "agentName"              -> optional(text),
         //TODO ^^
         "btiReference"   -> optional(text.verifying(emptyOr(btiReferenceIsCorrectFormat()): _*)),
         "repaymentClaim" -> boolean,
@@ -124,6 +126,7 @@ object LiabilityDetailsForm extends Constraints {
     Option[String],
     Option[String],
     Option[String],
+    Option[String],
     Boolean,
     Option[Instant],
     Option[String],
@@ -146,6 +149,7 @@ object LiabilityDetailsForm extends Constraints {
         traderCounty,
         traderPostcode,
         boardsFileNumber,
+        agentName,
         btiReference,
         isRepaymentClaim,
         dateOfReceipt,
@@ -177,6 +181,7 @@ object LiabilityDetailsForm extends Constraints {
               )
             )
           ),
+          agentName = agentName,
           btiReference = btiReference,
           repaymentClaim =
             if (isRepaymentClaim) Some(RepaymentClaim(dvrNumber = dvrNumber, dateForRepayment = dateForRepayment))
@@ -196,6 +201,7 @@ object LiabilityDetailsForm extends Constraints {
     (
       Option[Instant],
       String,
+      Option[String],
       Option[String],
       Option[String],
       Option[String],
@@ -240,6 +246,7 @@ object LiabilityDetailsForm extends Constraints {
         county(),
         postCode(),
         existingCase.caseBoardsFileNumber,
+        existingLiability.agentName,
         existingLiability.btiReference,
         existingLiability.repaymentClaim.isDefined,
         existingLiability.dateOfReceipt,
@@ -263,6 +270,7 @@ object LiabilityDetailsForm extends Constraints {
         Case,
         Option[Instant],
         String,
+        Option[String],
         Option[String],
         Option[String],
         Option[String],
@@ -302,6 +310,7 @@ object LiabilityDetailsForm extends Constraints {
         "traderCounty"            -> optional(text),
         "traderPostcode"          -> optional(text),
         "boardsFileNumber"        -> optional(text),
+        "agentName"              -> optional(text),
         //TODO take a look ^^
         "btiReference"   -> optional(nonEmptyText),
         "repaymentClaim" -> boolean,
