@@ -26,8 +26,5 @@
 } else {
     <div>
         <span id="@{id}-file"><span class="pre-wrap">@name.getOrElse(file.fileName)</span></span>
-        @if(file.scanStatus.isEmpty) {
-            <span id="@{id}-file-status" class="phase-tag bg-blue ml-1">Processing</span>
-        }
     </div>
 }

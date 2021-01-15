@@ -15,6 +15,10 @@
   word-wrap: break-word;      /* IE */
   word-break: break-all;
 }
+
+.js-enabled .refresh-content {
+    display: none;
+}
 /* successful notification banner */
 .govuk-notification-banner--success {
     border-color: #00703c;
