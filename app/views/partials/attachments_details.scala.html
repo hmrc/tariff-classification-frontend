@@ -31,7 +31,7 @@
 
     <h3 class="heading-medium mt-30 mb-30">@messages("page.title.case.attachments")</h3>
 
-    @attachments_state_message(attachments = attachments.allAttachments, displayStateMessage = false)
+    @attachments_state_message(attachments = attachments.allAttachments, autoRefresh = true, displayStateMessage = false)
 
     @attachments_list_atar("classification-team", attachments, startAtTabIndex = Some(startAtTabIndex+31))
 

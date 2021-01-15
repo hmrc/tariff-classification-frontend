@@ -48,6 +48,7 @@
                         <tr id="@{id}-row-@{index}">
                             <td id="@{id}-row-@{index}-title" >
                                 @attachment(s"$id-row-$index", file)
+                                <span class="refresh-content">@messages("case.attachment.refresh.content")</span>
                             </td>
 
                             @if(showUploadedBy) {

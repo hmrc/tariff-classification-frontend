@@ -26,6 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.Notification._
 
 import java.time.Instant
 import javax.inject.{Inject, Singleton}
@@ -90,12 +91,14 @@ class CaseController @Inject() (
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.ACTIVITY_TAB.name))
+            .flashing(request2flash)
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.ACTIVITY_TAB.name))
+            .flashing(request2flash)
         case ApplicationType.CORRESPONDENCE =>
           Redirect(
             v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.ACTIVITY_TAB.name)
-          )
+          ).flashing(request2flash)
         case ApplicationType.MISCELLANEOUS =>
           Redirect(
             v2.routes.MiscellaneousController.displayMiscellaneous(reference).withFragment(Tab.ACTIVITY_TAB.name)
@@ -150,7 +153,10 @@ class CaseController @Inject() (
         def onSuccess: ActivityFormData => Future[Result] = validForm => {
           eventsService
             .addNote(request.`case`, validForm.note, request.operator)
-            .map(_ => Redirect(routes.CaseController.activityDetails(reference)))
+            .map(_ =>
+              Redirect(routes.CaseController.activityDetails(reference))
+                .flashing(success("case.activity.note.success.text"))
+            )
         }
 
         ActivityForm.form.bindFromRequest.fold(onError, onSuccess)
