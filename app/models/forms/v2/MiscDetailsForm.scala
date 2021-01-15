@@ -29,13 +29,13 @@ object MiscDetailsForm extends Constraints {
       mapping[
         Case,
         String,
-        Option[String],
+        String,
         Option[String],
         String,
         Option[String]
       ](
-        "summary"             -> textNonEmpty("Enter a summary"),
-        "contactName"         -> optional(text),
+        "summary"             -> textNonEmpty("Enter a short case description"),
+        "contactName"         -> textNonEmpty("Enter a case contact name"),
         "detailedDescription" -> optional(text),
         "caseType"            -> oneOf("error.empty.miscCaseType", MiscCaseType),
         "boardsFileNumber"    -> optional(text)
@@ -44,7 +44,7 @@ object MiscDetailsForm extends Constraints {
 
   private def form2Misc(existingCase: Case): (
     String,
-    Option[String],
+    String,
     Option[String],
     String,
     Option[String]
@@ -60,7 +60,7 @@ object MiscDetailsForm extends Constraints {
         caseBoardsFileNumber = boardsFileNumber,
         application = existingCase.application.asMisc.copy(
           name                = summary,
-          contactName         = contactName,
+          contactName         = Some(contactName),
           detailedDescription = detailedDescription,
           caseType            = MiscCaseType.withName(caseType)
         )
@@ -70,7 +70,7 @@ object MiscDetailsForm extends Constraints {
   private def misc2Form(existingCase: Case): Option[
     (
       String,
-      Option[String],
+      String,
       Option[String],
       String,
       Option[String]
@@ -81,7 +81,7 @@ object MiscDetailsForm extends Constraints {
     Some(
       (
         existingMisc.name,
-        existingMisc.contactName,
+        existingMisc.contactName.getOrElse(""),
         existingMisc.detailedDescription,
         existingMisc.caseType.toString,
         existingCase.caseBoardsFileNumber
