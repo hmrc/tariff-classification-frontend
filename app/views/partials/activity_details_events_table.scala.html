@@ -37,13 +37,7 @@
     @for((event: Event, index: Int) <- activity.events.results.zipWithIndex) {
         <tr id="activity-events-row-@{index}">
             <td id="activity-events-row-@{index}-operator" class="activity-cell">
-                @if(event.operator.id.isEmpty){
                 @event.operator.name.getOrElse("Unknown")
-                }else{
-                @event.operator.id
-                }
-
-
             </td>
 
             <td id="activity-events-row-@{index}-content" class="activity-cell-desc">

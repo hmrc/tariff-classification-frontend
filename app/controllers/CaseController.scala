@@ -102,7 +102,7 @@ class CaseController @Inject() (
         case ApplicationType.MISCELLANEOUS =>
           Redirect(
             v2.routes.MiscellaneousController.displayMiscellaneous(reference).withFragment(Tab.ACTIVITY_TAB.name)
-          )
+          ).flashing(request2flash)
       }
     }
 

@@ -102,7 +102,7 @@ class MiscellaneousDetailsViewSpec extends ViewSpec {
       val doc = view(miscellaneous_case_details(caseDetailsTab))
 
       val summary = doc.getElementById("case-type")
-      summary.text() shouldBe "Harmonised systems"
+      summary.text() shouldBe "Harmonised System"
     }
 
   }

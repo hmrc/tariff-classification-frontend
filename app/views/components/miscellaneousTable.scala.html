@@ -61,7 +61,7 @@
       @if(assignmentType == "applicationTab.referredByMe") {
       <td id="@{miscellaneousTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
       }
-      <td id="@{miscellaneousTab.tabMessageKey}-type-@index">@{miscellaneous.caseType.toString}</td>
+      <td id="@{miscellaneousTab.tabMessageKey}-type-@index">@{MiscCaseType.format(miscellaneous.caseType)}</td>
       @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway" || assignmentType == "applicationTab.assignedToMe") {
       <td id="@{miscellaneousTab.tabMessageKey}-status-@index">
        @case_status_tab(result, s"${miscellaneousTab.tabMessageKey}-status-label-$index")
