@@ -24,7 +24,7 @@ import models.forms.FormConstraints._
 import models.forms.FormDate
 import models.forms.mappings.Constraints
 import models.forms.mappings.FormMappings._
-import play.api.data.Form
+import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 
 object LiabilityDetailsForm extends Constraints {
@@ -50,8 +50,7 @@ object LiabilityDetailsForm extends Constraints {
         Option[String],
         Option[String],
         Option[String],
-        String,
-        Option[String],
+        Contact,
         Option[String],
         Option[String],
         Option[Instant]
@@ -94,9 +93,8 @@ object LiabilityDetailsForm extends Constraints {
         ),
         "traderCommodityCode"  -> optional(text),
         "officerCommodityCode" -> optional(text),
-        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
-        "contactEmail"         -> optional(text.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)),
-        "contactPhone"         -> optional(text),
+        "contact"               -> contactMapping,
+        "port" -> optional(text),
         "dvrNumber" -> optional(
           text.verifying(emptyOr(dvrNumberIsNumberOnly()): _*)
         ),
@@ -114,6 +112,14 @@ object LiabilityDetailsForm extends Constraints {
         )
       )(form2Liability(existingLiability))(liability2Form)
     ).fillAndValidate(existingLiability)
+
+  private def contactMapping: Mapping[Contact] =
+     mapping(
+       "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
+       "contactEmail"         -> text.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*),
+       "contactPhone"         -> optional(text)
+
+    )(Contact.apply)(Contact.unapply)
 
   private def form2Liability(existingCase: Case): (
     Option[Instant],
@@ -133,8 +139,7 @@ object LiabilityDetailsForm extends Constraints {
     Option[String],
     Option[String],
     Option[String],
-    String,
-    Option[String],
+    Contact,
     Option[String],
     Option[String],
     Option[Instant]
@@ -157,9 +162,8 @@ object LiabilityDetailsForm extends Constraints {
         entryNumber,
         traderCommodityCode,
         officerCommodityCode,
-        contactName,
-        contactEmail,
-        contactPhone,
+        contact,
+        port,
         dvrNumber,
         dateForRepayment
         ) =>
@@ -192,7 +196,8 @@ object LiabilityDetailsForm extends Constraints {
           entryNumber          = entryNumber,
           traderCommodityCode  = traderCommodityCode,
           officerCommodityCode = officerCommodityCode,
-          contact              = Contact(contactName, contactEmail.getOrElse(""), contactPhone)
+          contact              = contact,
+          port                 = port
         )
       )
   }
@@ -216,8 +221,7 @@ object LiabilityDetailsForm extends Constraints {
       Option[String],
       Option[String],
       Option[String],
-      String,
-      Option[String],
+      Contact,
       Option[String],
       Option[String],
       Option[Instant]
@@ -254,9 +258,8 @@ object LiabilityDetailsForm extends Constraints {
         existingLiability.entryNumber,
         existingLiability.traderCommodityCode,
         existingLiability.officerCommodityCode,
-        existingLiability.contact.name,
-        Some(existingLiability.contact.email),
-        existingLiability.contact.phone,
+        existingLiability.contact,
+        existingLiability.port,
         existingLiability.repaymentClaim.flatMap(_.dvrNumber),
         existingLiability.repaymentClaim.flatMap(_.dateForRepayment)
       )
@@ -285,8 +288,7 @@ object LiabilityDetailsForm extends Constraints {
         Option[String],
         Option[String],
         Option[String],
-        String,
-        Option[String],
+        Contact,
         Option[String],
         Option[String],
         Option[Instant]
@@ -329,13 +331,8 @@ object LiabilityDetailsForm extends Constraints {
         "entryNumber"          -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
         "traderCommodityCode"  -> optional(nonEmptyText).verifying("Enter the commodity code from the trader", _.isDefined),
         "officerCommodityCode" -> optional(nonEmptyText).verifying("Enter the code suggested by the officer", _.isDefined),
-        "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
-        //TODO not emptyOr but it is required need to change as part of other ticket
-        "contactEmail" -> optional(
-          text.verifying(customNonEmpty("Enter a contact email"))
-            .verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*)
-        ),
-        "contactPhone" -> optional(text).verifying("Enter a contact telephone", _.isDefined),
+        "contact"              -> contactMapping,
+        "port"                 -> optional(text),
         "dvrNumber" -> optional(
           text.verifying(dvrNumberIsNumberOnly())
         ),

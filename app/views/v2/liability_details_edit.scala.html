@@ -186,22 +186,29 @@
                 <h3 class="heading-medium mb-1">@messages("case.liability.edit.contact.information")</h3>
 
                 @input_text(
-                    field = form("contactName"),
+                    field = form("contact.contactName"),
                     label = messages("case.liability.edit.contact.name"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
-                    field = form("contactEmail"),
+                    field = form("contact.contactEmail"),
                     label = messages("case.liability.edit.contact.email"),
                     inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_number(
-                    field = form("contactPhone"),
+                    field = form("contact.contactPhone"),
                     label = messages("case.liability.edit.contact.phone"),
+                    inputClass = Some("width-one-half"),
+                    labelClass= Some("un-bold")
+                )
+
+                @input_text(
+                    field = form("port"),
+                    label = messages("case.v2.liability.c592.port"),
                     inputClass = Some("width-one-half"),
                     labelClass= Some("un-bold")
                 )
