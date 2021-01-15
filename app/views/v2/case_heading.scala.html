@@ -29,10 +29,14 @@
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
     <div id="case-reference" class="case-reference">
-        @caseHeader.businessName.map { businessName =>
-            @messages("case.heading.secondary", caseHeader.caseType.prettyName, caseHeader.referenceNumber, businessName)
-        }.getOrElse {
-            @messages("case.heading.secondary.nosuffix", caseHeader.caseType.prettyName, caseHeader.referenceNumber)
+        @if(caseHeader.isMigrated){
+            Hello
+        } else {
+            @caseHeader.businessName.map { businessName =>
+                @messages("case.heading.secondary", caseHeader.caseType.prettyName, caseHeader.referenceNumber, businessName)
+            }.getOrElse {
+                @messages("case.heading.secondary.nosuffix", caseHeader.caseType.prettyName, caseHeader.referenceNumber)
+            }
         }
     </div>
 
