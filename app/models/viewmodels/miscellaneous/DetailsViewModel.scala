@@ -24,8 +24,8 @@ case class DetailsViewModel(
   caseName: String,
   caseContactName: Option[String],
   caseType: String,
-  caseCreatedDate: String,
   detailedDescription: Option[String],
+  caseCreatedDate: String,
   caseBoardsFileNumber: Option[String]
 )
 
@@ -38,8 +38,8 @@ object DetailsViewModel {
       caseName             = miscellaneousApplication.name,
       caseContactName      = miscellaneousApplication.contactName,
       caseType             = miscellaneousApplication.caseType.toString,
-      caseCreatedDate      = Dates.format(cse.createdDate),
       detailedDescription  = miscellaneousApplication.detailedDescription,
+      caseCreatedDate      = Dates.format(cse.createdDate),
       caseBoardsFileNumber = cse.caseBoardsFileNumber
     )
   }
