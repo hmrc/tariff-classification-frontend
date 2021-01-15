@@ -1094,6 +1094,8 @@ atar.editRuling.expiryDate.emptyDate.month = Enter a month
 atar.editRuling.expiryDate.emptyDate.year = Enter a year
 atar.editRuling.expiryDate.invalidFormat = Expiry date must be a real date
 
+site.notification.success = Success
+case.activity.note.success.text = Case note has been added to the Activity log
 case.ownership.assign_case.assigned=This case is already assigned to {0}
 case.ownership.assign_case.unassigned=This case is unassigned. Do you want to take ownership?
 case.ownership.assign_case.description=This will add the case to your ''My cases'' list
