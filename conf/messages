@@ -179,6 +179,7 @@ case.attachment.upload.status-published=PUBLISHED
 case.attachment.upload.status-confidential=CONFIDENTIAL
 case.attachment.upload.status-failed=UPLOAD FAILED
 case.attachment.upload.status-processing=PROCESSING
+case.attachment.refresh.content=Refresh page to confirm file upload
 case.sample.sample-status-header=Sample status
 case.sample.change-sample-status=Change sample status
 case.sample.status.change-status-header=Change sample status

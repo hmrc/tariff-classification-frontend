@@ -38,7 +38,7 @@
 
 @tab_heading("attachments", messages("case.menu.attachments"), Some(messages("case.attachment.hint.text.header")))
 
-@attachments_state_message(attachments = attachmentsTabViewModel.attachments)
+@attachments_state_message(attachments = attachmentsTabViewModel.attachments, autoRefresh = true)
 
 @attachments_list(
     "all",
