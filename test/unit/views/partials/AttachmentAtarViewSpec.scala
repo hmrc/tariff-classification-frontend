@@ -33,10 +33,8 @@ class AttachmentAtarViewSpec extends ViewSpec {
       val doc = view(attachment_atar("MODULE", stored))
 
       // Then
-      doc                                      should containElementWithID("MODULE-file")
-      doc                                      should containElementWithID("MODULE-file-status")
-      doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
-      doc.getElementById("MODULE-file-status") should containText("Processing")
+      doc                               should containElementWithID("MODULE-file")
+      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
     }
 
     "Render Quarantined attachment" in {
@@ -46,8 +44,8 @@ class AttachmentAtarViewSpec extends ViewSpec {
       val doc = view(attachment_atar("MODULE", stored))
 
       // Then
-      doc                                      should containElementWithID("MODULE-file")
-      doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
+      doc                               should containElementWithID("MODULE-file")
+      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
     }
 
     "Render Safe attachment without URL" in {
@@ -58,8 +56,8 @@ class AttachmentAtarViewSpec extends ViewSpec {
       val doc = view(attachment_atar("MODULE", stored))
 
       // Then
-      doc                                      should containElementWithID("MODULE-file")
-      doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
+      doc                               should containElementWithID("MODULE-file")
+      doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
     }
 
     "Render Safe attachment" in {
