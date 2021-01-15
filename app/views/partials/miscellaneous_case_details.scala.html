@@ -39,10 +39,19 @@
 
     <div id="case-details-name" class="grid-row">
         <dt class="cya-question">
-        @messages("case.v2.miscellaneous.case-details.case-name")
+        @messages("case.v2.miscellaneous.case-details.case-short-desc")
         </dt>
         <dd class="cya-answer" id="case-name">
            <span class="pre-wrap">@caseDetails.caseName</span>
+        </dd>
+    </div>
+
+    <div id="case-details-case-contact-name" class="grid-row">
+        <dt class="cya-question">
+            @messages("case.v2.miscellaneous.case-details.case-contact-name")
+        </dt>
+        <dd class="cya-answer" id="case-contact-name">
+            <span class="pre-wrap">@caseDetails.caseContactName</span>
         </dd>
     </div>
 
@@ -55,14 +64,6 @@
         </dd>
     </div>
 
-    <div id="case-details-date-created" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.miscellaneous.case-details.date_created")
-        </dt>
-        <dd class="cya-answer" id="date-created">
-            <span class="pre-wrap">@caseDetails.caseCreatedDate</span>
-        </dd>
-    </div>
 
     <div id="case-details-detailed-description" class="grid-row">
         <dt class="cya-question">
@@ -73,7 +74,16 @@
         </dd>
     </div>
 
+    <div id="case-details-date-created" class="grid-row">
+        <dt class="cya-question">
+            @messages("case.v2.miscellaneous.case-details.date_created")
+        </dt>
+        <dd class="cya-answer" id="date-created">
+            <span class="pre-wrap">@caseDetails.caseCreatedDate</span>
+        </dd>
+    </div>
 
+    @if(caseDetails.caseBoardsFileNumber.isDefined){
     <div id="case-details-boards-file-number" class="grid-row">
         <dt class="cya-question" id="boards-file-number-label">
         @messages("case.v2.miscellaneous.case-details.boards_file_number")
@@ -82,6 +92,6 @@
             <span class="pre-wrap">@caseDetails.caseBoardsFileNumber</span>
         </dd>
     </div>
-
+    }
 </dl>
 

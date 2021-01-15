@@ -18,6 +18,7 @@ package controllers.v2
 
 import config.AppConfig
 import controllers.RequestActions
+import javax.inject.{Inject, Singleton}
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
@@ -31,7 +32,6 @@ import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

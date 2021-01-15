@@ -27,7 +27,7 @@ object MiscellaneousForm {
   private val form2Misc: (String, String, String) => MiscApplication = {
     case (shortDescription, contactName, caseType) =>
       MiscApplication(
-        contact = Contact(contactName, "", None),
+        contact = Contact("", "", None),
         name = shortDescription,
         contactName = Some(contactName),
         caseType = MiscCaseType.withName(caseType),
