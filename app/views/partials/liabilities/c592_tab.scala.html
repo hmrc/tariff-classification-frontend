@@ -29,6 +29,8 @@
     @if(request.hasPermission(Permission.EDIT_LIABILITY)) {
         <div class="grid-row  mb-2">
             <span class="column-one-third">
+
+
                 <a id="edit-liability-details" href="@controllers.v2.routes.LiabilityController.editLiabilityDetails(c592ViewModel.caseReference)">
                 @messages("case.v2.liability.c592.edit_details_title")
                 </a>
@@ -59,6 +61,15 @@
 
     <div class="grid-row">
         <dt class="cya-question">
+            @messages("case.v2.liability.c592.receipt_date")
+        </dt>
+        <dd class="cya-answer" id="liability-receipt-date">
+            @c592ViewModel.receiptDate
+        </dd>
+    </div>
+
+    <div class="grid-row">
+        <dt class="cya-question">
         @messages("case.v2.liability.c592.entry_date")
         </dt>
         <dd class="cya-answer" id="liability-entry-date">
@@ -81,15 +92,6 @@
         </dt>
         <dd class="cya-answer" id="liability-repayment-claim">
         @c592ViewModel.repaymentClaim
-        </dd>
-    </div>
-
-    <div class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.liability.c592.receipt_date")
-        </dt>
-        <dd class="cya-answer" id="liability-receipt-date">
-        @c592ViewModel.receiptDate
         </dd>
     </div>
 </dl>
@@ -192,15 +194,6 @@
 
     <div class="grid-row">
         <dt class="cya-question">
-        @messages("case.v2.liability.c592.port")
-        </dt>
-        <dd class="cya-answer" id="port">
-        @c592ViewModel.port
-        </dd>
-    </div>
-
-    <div class="grid-row">
-        <dt class="cya-question">
         @messages("case.v2.liability.c592.email_of_port_or_compliance_officer")
         </dt>
         <dd class="cya-answer" id="officer_email">
@@ -217,8 +210,18 @@
         </dd>
     </div>
 
-    @if(c592ViewModel.isRepaymentClaim){
+    <div class="grid-row">
+        <dt class="cya-question">
+            @messages("case.v2.liability.c592.port")
+        </dt>
+        <dd class="cya-answer" id="port">
+            @c592ViewModel.port
+        </dd>
+    </div>
+
 </dl>
+
+@if(c592ViewModel.isRepaymentClaim){
 
 <h3 class="heading-medium mt-30">@messages("case.v2.liability.c592.repayment_claim")</h3>
 

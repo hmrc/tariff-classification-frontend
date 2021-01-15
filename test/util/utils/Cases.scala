@@ -310,7 +310,11 @@ object Cases {
     PortOrComplianceOfficerContact("name", "email", "phone"),
     "",
     "",
-    None
+    None,
+    false,
+    Some("agentName"),
+    Some("location name"),
+    false
   )
 
   val rulingViewModel: Option[RulingViewModel] = Some(
