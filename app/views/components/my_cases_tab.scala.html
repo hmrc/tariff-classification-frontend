@@ -17,6 +17,7 @@
 @import views.html.components.atarsTable
 @import views.html.components.liabilitiesTable
 @import views.html.components.correspondenceTable
+@import views.html.components.miscellaneousTable
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.ApplicationTabViewModel
@@ -43,7 +44,7 @@
                 case (ApplicationType.ATAR, _) => atarsTable(caseTab, applicationTabViewModel.headingMessageKey)
                 case (ApplicationType.LIABILITY, _) => liabilitiesTable(caseTab, applicationTabViewModel.headingMessageKey)
                 case (ApplicationType.CORRESPONDENCE, _) => correspondenceTable(caseTab, applicationTabViewModel.headingMessageKey)
-                case _ => ""
+                case (ApplicationType.MISCELLANEOUS, _) => miscellaneousTable(caseTab, applicationTabViewModel.headingMessageKey)
             }
     }
         </div>
