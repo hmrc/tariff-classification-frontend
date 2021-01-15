@@ -15,3 +15,7 @@
   word-wrap: break-word;      /* IE */
   word-break: break-all;
 }
+
+.js-enabled .refresh-content {
+    display: none;
+}
