@@ -1077,6 +1077,8 @@ misc.create_misc.radio.type-nomenclature=Nomenclature
 misc.create_misc.radio.type-other-gov-dep=Other government department
 misc.create_misc.radio.type-other=Other
 misc.create_misc.confirm-button=Create case
+case.v2.misc.case-details-edit-title=Edit case details
+misc.edit_misc.boards.file.heading=Boards file number
 
 choose.team.misc=Choose a team for {0} case
 choose_team_misc_case.released_dynamic_message = Miscellaneous case created for {1} team
