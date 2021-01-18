@@ -16,8 +16,8 @@
 
 package views.v2
 
-import models.{ApplicationType, Paged, Queues}
 import models.viewmodels.CasesTabViewModel
+import models.{ApplicationType, Queues}
 import utils.Cases
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec
@@ -26,8 +26,6 @@ import views.html.v2.open_cases_view
 class OpenCasesViewSpec extends ViewSpec {
 
   def commonCasesView: open_cases_view = injector.instanceOf[open_cases_view]
-
-  val iwantaseqofcase = Paged(Seq(Cases.btiCaseExample, Cases.btiCaseExample))
 
   "OpenCasesViewSpec" should {
 
@@ -192,7 +190,11 @@ class OpenCasesViewSpec extends ViewSpec {
   "contains appropriate queue tabs for Miscellaneous" in {
     val doc = view(
       commonCasesView(
-        CasesTabViewModel.forApplicationType(ApplicationType.MISCELLANEOUS, Queues.allCorresMiscQueues, Seq.empty)
+        CasesTabViewModel.forApplicationType(
+          ApplicationType.MISCELLANEOUS,
+          Queues.allCorresMiscQueues,
+          Seq(Cases.miscellaneousCaseExample, Cases.miscellaneousCaseExample)
+        )
       )
     )
 
@@ -207,7 +209,11 @@ class OpenCasesViewSpec extends ViewSpec {
   "contain a heading for Miscellaneous" in {
     val doc = view(
       commonCasesView(
-        CasesTabViewModel.forApplicationType(ApplicationType.MISCELLANEOUS, Queues.allCorresMiscQueues, Seq.empty)
+        CasesTabViewModel.forApplicationType(
+          ApplicationType.MISCELLANEOUS,
+          Queues.allCorresMiscQueues,
+          Seq(Cases.miscellaneousCaseExample, Cases.miscellaneousCaseExample)
+        )
       )
     )
 
@@ -217,7 +223,11 @@ class OpenCasesViewSpec extends ViewSpec {
   "contain open-cases-sub-nav in Miscellaneous tab" in {
     val doc = view(
       commonCasesView(
-        CasesTabViewModel.forApplicationType(ApplicationType.MISCELLANEOUS, Queues.allCorresMiscQueues, Seq.empty)
+        CasesTabViewModel.forApplicationType(
+          ApplicationType.MISCELLANEOUS,
+          Queues.allCorresMiscQueues,
+          Seq(Cases.miscellaneousCaseExample, Cases.miscellaneousCaseExample)
+        )
       )
     )
 

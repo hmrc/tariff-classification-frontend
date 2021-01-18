@@ -29,70 +29,138 @@ import views.html.partials
 
 class MessagesLoggedViewSpec extends ViewSpec {
 
-  private val date   = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
+  private val date = ZonedDateTime.of(
+    2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
 
-  private val exampleMessages = List(Message("name", date, "message"),
-    Message("name2", date, "message2"))
+  private val exampleMessages = List(Message("name", date, "message"), Message("name2", date, "message2"))
 
   private val messagesTab: MessagesTabViewModel = MessagesTabViewModel("reference", exampleMessages)
+  val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
 
-  "Messages Details" should {
+  "case is Correspondence" when {
+    "Messages Details" should {
 
-    val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
+      "Render message without operator name" in {
+        // Given
+        val c = aCorrespondenceCase()
 
-    "Render event without operator name" in {
-      // Given
-      val c = aCorrespondenceCase()
+        val messagesTab = MessagesTabViewModel.fromCase(c)
 
-      val messagesTab = MessagesTabViewModel.fromCase(c)
+        // When
+        val doc = view(partials.messages_logged(messagesTab, MessageForm.form))
 
-      // When
-      val doc = view(partials.messages_logged(messagesTab, MessageForm.form))
+        // Then
+        doc shouldNot containElementWithID("activity-events-row-0-operator")
+      }
 
-      // Then
-      doc shouldNot  containElementWithID("activity-events-row-0-operator")
+      "Render 'Add Message' when user has permission" in {
+        // Given
+        val c = aCorrespondenceCase()
+
+        val messagesTab = MessagesTabViewModel.fromCase(c)
+
+        // When
+
+        val doc =
+          view(
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
+          )
+
+        // Then
+        doc should containElementWithID("add-note-submit")
+      }
+
+      "Render 'Message'" in {
+        // Given
+
+        val c = aCorrespondenceCase().copy(application = correspondenceExample.copy(messagesLogged = exampleMessages))
+
+        val messagesTab = MessagesTabViewModel.fromCase(c)
+
+        // When
+
+        val doc =
+          view(
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
+          )
+
+        // Then
+        doc                                                 should containElementWithID("messages-events-row-0-name")
+        doc.getElementById("messages-events-row-0-name")    should containText("name")
+        doc                                                 should containElementWithID("messages-events-row-0-message")
+        doc.getElementById("messages-events-row-0-message") should containText("message")
+        doc                                                 should containElementWithID("messages-events-row-0-date")
+        doc.getElementById("messages-events-row-0-date")    should containText("01 Jan 2019")
+      }
     }
+  }
 
-    "Render 'Add Message' when user has permission" in {
-      // Given
-      val c = aCorrespondenceCase()
+  "case is Miscellaneous" when {
+    "Messages Details" should {
 
-      val messagesTab = MessagesTabViewModel.fromCase(c)
+      "Render message without operator name" in {
+        val c = aMiscellaneousCase()
 
-      // When
+        val messagesTab = MessagesTabViewModel.fromCase(c)
 
-      val doc = view(partials.messages_logged(messagesTab, MessageForm.form)
-        (requestWithAddNotePermission, messages, appConfig)
-      )
+        val doc = view(partials.messages_logged(messagesTab, MessageForm.form))
 
-      // Then
-      doc should containElementWithID("add-note-submit")
+        doc shouldNot containElementWithID("activity-events-row-0-operator")
+      }
+
+      "Render message without operator name when case is" in {
+        val c = aMiscellaneousCase()
+
+        val messagesTab = MessagesTabViewModel.fromCase(c)
+
+        val doc = view(partials.messages_logged(messagesTab, MessageForm.form))
+
+        doc shouldNot containElementWithID("activity-events-row-0-operator")
+      }
+
+      "Render 'Add Message' when user has permission" in {
+        val c = aMiscellaneousCase()
+
+        val messagesTab = MessagesTabViewModel.fromCase(c)
+
+        val doc =
+          view(
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
+          )
+
+        doc should containElementWithID("add-note-submit")
+      }
+
+      "not Render 'Add Message' when user does not have permission" in {
+        val c = aMiscellaneousCase()
+
+        val messagesTab = MessagesTabViewModel.fromCase(c)
+
+        val doc =
+          view(
+            partials.messages_logged(messagesTab, MessageForm.form)(authenticatedFakeRequest, messages, appConfig)
+          )
+
+        doc shouldNot containElementWithID("add-note-submit")
+      }
+
+      "Render 'Message'" in {
+        val c = aMiscellaneousCase().copy(application = miscExample.copy(messagesLogged = exampleMessages))
+
+        val messagesTab = MessagesTabViewModel.fromCase(c)
+
+        val doc =
+          view(
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
+          )
+
+        doc                                                 should containElementWithID("messages-events-row-0-name")
+        doc.getElementById("messages-events-row-0-name")    should containText("name")
+        doc                                                 should containElementWithID("messages-events-row-0-message")
+        doc.getElementById("messages-events-row-0-message") should containText("message")
+        doc                                                 should containElementWithID("messages-events-row-0-date")
+        doc.getElementById("messages-events-row-0-date")    should containText("01 Jan 2019")
+      }
     }
-
-
-    "Render 'Message'" in {
-      // Given
-
-      val c = aCorrespondenceCase().copy(
-        application = correspondenceExample.copy(messagesLogged = exampleMessages))
-
-
-      val messagesTab = MessagesTabViewModel.fromCase(c)
-
-      // When
-
-      val doc = view(partials.messages_logged(messagesTab, MessageForm.form)
-          (requestWithAddNotePermission, messages, appConfig)
-      )
-
-      // Then
-      doc                                                  should containElementWithID("messages-events-row-0-name")
-      doc.getElementById("messages-events-row-0-name") should containText("name")
-      doc                                                  should containElementWithID("messages-events-row-0-message")
-      doc.getElementById("messages-events-row-0-message")  should containText("message")
-      doc                                                  should containElementWithID("messages-events-row-0-date")
-      doc.getElementById("messages-events-row-0-date")     should containText("01 Jan 2019")
-    }
-
   }
 }

@@ -18,6 +18,7 @@
 @import views.html.components.atarCaseTable
 @import views.html.components.liabilityCaseTable
 @import views.html.components.correspondenceCaseTable
+@import views.html.components.miscellaneousCaseTable
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.CasesTabViewModel
@@ -69,7 +70,7 @@
                 case (ApplicationType.ATAR, _) => atarCaseTable(caseTab)
                 case (ApplicationType.LIABILITY, _) => liabilityCaseTable(caseTab)
                 case (ApplicationType.CORRESPONDENCE, _) => correspondenceCaseTable(caseTab)
-                case _ => ""
+                case (ApplicationType.MISCELLANEOUS, _) => miscellaneousCaseTable(caseTab)
             }
     }
         </div>

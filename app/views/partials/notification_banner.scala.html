@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.viewmodels
+@import utils.NotificationType
 
-import models.{ApplicationType, Case, Message}
+@()(implicit flash: Flash, messages: Messages)
 
-case class MessagesTabViewModel(
-  caseReference: String,
-  messages: List[Message]
-)
-
-object MessagesTabViewModel {
-  def fromCase(cse: Case): MessagesTabViewModel = cse.application.`type` match {
-    case ApplicationType.CORRESPONDENCE =>
-      MessagesTabViewModel(cse.reference, cse.application.asCorrespondence.messagesLogged)
-    case ApplicationType.MISCELLANEOUS =>
-      MessagesTabViewModel(cse.reference, cse.application.asMisc.messagesLogged)
-  }
+@renderSuccess(message: String) = {
+    @notification_banner_success(
+        heading = messages("site.notification.success"),
+        message = message
+    )
 }
+
+@flash.get(NotificationType.Success.key).map(renderSuccess(_))

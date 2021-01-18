@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package models.viewmodels
+package utils
 
-import models.{ApplicationType, Case, Message}
+import play.api.i18n.Messages
 
-case class MessagesTabViewModel(
-  caseReference: String,
-  messages: List[Message]
-)
+import scala.language.implicitConversions
 
-object MessagesTabViewModel {
-  def fromCase(cse: Case): MessagesTabViewModel = cse.application.`type` match {
-    case ApplicationType.CORRESPONDENCE =>
-      MessagesTabViewModel(cse.reference, cse.application.asCorrespondence.messagesLogged)
-    case ApplicationType.MISCELLANEOUS =>
-      MessagesTabViewModel(cse.reference, cse.application.asMisc.messagesLogged)
-  }
+sealed abstract class NotificationType(val key: String)
+
+object NotificationType extends Enumeration {
+  object Success extends NotificationType("success")
+}
+
+object Notification {
+  def success(key: String, args: Any*)(implicit messages: Messages): (NotificationType, String) =
+    NotificationType.Success -> messages(key, args: _*)
+
+  implicit def toFlash(value: (NotificationType, String)): (String, String) = (value._1.key, value._2)
+
 }

@@ -1074,7 +1074,7 @@ misc.create_misc.contact.name.heading=Case contact name
 misc.create_misc.type.heading=Choose a case type
 misc.create_misc.radio.type-harmonised=Harmonised System
 misc.create_misc.radio.type-ib=IB
-misc.create_misc.radio.type-nomenclature=NC
+misc.create_misc.radio.type-nomenclature=Nomenclature
 misc.create_misc.radio.type-other-gov-dep=Other government department
 misc.create_misc.radio.type-other=Other
 misc.create_misc.confirm-button=Create case
@@ -1095,6 +1095,26 @@ atar.editRuling.expiryDate.emptyDate.month = Enter a month
 atar.editRuling.expiryDate.emptyDate.year = Enter a year
 atar.editRuling.expiryDate.invalidFormat = Expiry date must be a real date
 
+case.v2.miscellaneous.page_title=Miscellaneous case details
+
+case.v2.miscellaneous.case-details.tab_title=Details
+
+case.v2.miscellaneous.case-details.heading= Case details
+case.v2.miscellaneous.case-details.case-short-desc=Short case description
+case.v2.miscellaneous.case-details.date_created=Date created
+case.v2.miscellaneous.case-details.case-type=Case type
+case.v2.miscellaneous.case-details.detailed_description=Detailed description
+case.v2.miscellaneous.case-details.case-contact-name=Case contact name
+case.v2.miscellaneous.case-details.boards_file_number=Boards file number
+case.v2.miscellaneous.case-details_title=Edit details
+
+case.v2.miscellaneous.activity.tab_title=Activity
+case.v2.miscellaneous.attachments.tab_title=Attachments
+case.v2.miscellaneous.samples.tab_title=Samples
+case.v2.miscellaneous.messages.tab_title=Messages
+
+site.notification.success = Success
+case.activity.note.success.text = Case note has been added to the Activity log
 case.ownership.assign_case.assigned=This case is already assigned to {0}
 case.ownership.assign_case.unassigned=This case is unassigned. Do you want to take ownership?
 case.ownership.assign_case.description=This will add the case to your ''My cases'' list

@@ -175,7 +175,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
             Some("trader-business-name"),
             "good-name",
             "1",
-            None,
+            Some("trader-business-name"),
             Contact("name", "email", Some("phone")),
             CaseStatusViewModel(
               None,
