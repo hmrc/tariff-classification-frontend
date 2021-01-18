@@ -36,6 +36,46 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
     val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
 
+    "Render event without operator id or name" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id            = "EVENT_ID",
+        details       = Note("comment"),
+        operator      = Operator("", None),
+        caseReference = "ref"
+      )
+
+      val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
+
+      // When
+      val doc = view(activity_details(activityTab, ActivityForm.form))
+
+      // Then
+      doc                                                  should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
+    }
+
+    "Render event with operator id and name" in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id            = "EVENT_ID",
+        details       = Note("comment"),
+        operator      = Operator("id", Some("name")),
+        caseReference = "ref"
+      )
+
+      val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
+
+      // When
+      val doc = view(activity_details(activityTab, ActivityForm.form))
+
+      // Then
+      doc                                                  should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
+    }
+
     "Render event without operator name" in {
       // Given
       val c = aCase()
@@ -54,6 +94,26 @@ class ActivityDetailsViewSpec extends ViewSpec {
       // Then
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
+    }
+
+    "Render event without operator id " in {
+      // Given
+      val c = aCase()
+      val e = Event(
+        id            = "EVENT_ID",
+        details       = Note("comment"),
+        operator      = Operator("", Some("name")),
+        caseReference = "ref"
+      )
+
+      val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
+
+      // When
+      val doc = view(activity_details(activityTab, ActivityForm.form))
+
+      // Then
+      doc                                                  should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("name")
     }
 
     "Render 'Add Note' when user has permission" in {

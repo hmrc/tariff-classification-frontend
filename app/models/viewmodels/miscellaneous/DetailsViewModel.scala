@@ -37,10 +37,12 @@ object DetailsViewModel {
       cse.reference,
       caseName             = miscellaneousApplication.name,
       caseContactName      = miscellaneousApplication.contactName,
-      caseType             = miscellaneousApplication.caseType.toString,
+      caseType             = MiscCaseType.format(miscellaneousApplication.caseType),
       detailedDescription  = miscellaneousApplication.detailedDescription,
       caseCreatedDate      = Dates.format(cse.createdDate),
       caseBoardsFileNumber = cse.caseBoardsFileNumber
     )
   }
 }
+
+

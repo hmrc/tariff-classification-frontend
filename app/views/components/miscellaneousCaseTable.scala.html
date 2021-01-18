@@ -56,7 +56,7 @@
       <td id="@{caseTab.tabMessageKey}-subject-@index" class="pre-wrap">@{misc.name}</td>
       <td id="@{caseTab.tabMessageKey}-contact-@index" class="pre-wrap">@{misc.contactName}</td>
       <td id="@{caseTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
-      <td id="@{caseTab.tabMessageKey}-type-@index">@{misc.caseType.toString}</td>
+      <td id="@{caseTab.tabMessageKey}-type-@index">@{MiscCaseType.format(misc.caseType)}</td>
     </tr>
     }
    }
