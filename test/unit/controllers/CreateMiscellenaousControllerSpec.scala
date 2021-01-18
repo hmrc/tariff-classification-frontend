@@ -44,7 +44,8 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
   private val misc_details_edit          = injector.instanceOf[views.html.v2.misc_details_edit]
 
-  private val caseWithStatusOPEN = Cases.miscellaneousCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val caseWithStatusOPEN =
+    Cases.miscellaneousCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
 
   private def controller(c: Case) =
     new CreateMiscellaneousController(
@@ -191,7 +192,8 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           Map(
             "summary"             -> "A short summary",
             "detailedDescription" -> "A detailed desc",
-            "caseType"            -> "Appeals"
+            "caseType"            -> "Appeals",
+            "contactName"         -> "Name"
           )
         )
 

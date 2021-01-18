@@ -21,13 +21,15 @@ import utils.Cases
 
 class MiscDetailsFormSpec extends ModelsBaseSpec {
 
-  private val miscCase        = Cases.miscCaseExample
-  private val sampleEmptyCase = Cases.miscCaseExample.copy(application = Cases.miscExampleWithMissingName)
+  private val miscCase        = Cases.miscellaneousCaseExample
+  private val sampleEmptyCase = Cases.miscellaneousCaseExample.copy(application = Cases.miscExampleWithMissingName)
 
   private val params = Map(
-    "summary"             -> Seq("name"),
-    "detailedDescription" -> Seq("dummy"),
-    "caseType"            -> Seq("Other")
+    "detailedDescription" -> Seq("A detailed description"),
+    "contactName"         -> Seq(""),
+    "caseType"            -> Seq("Harmonised systems"),
+    "boardsFileNumber"    -> Seq("SOC/554/2015/JN"),
+    "summary"             -> Seq("name")
   )
 
   "MiscDetailsForm" should {

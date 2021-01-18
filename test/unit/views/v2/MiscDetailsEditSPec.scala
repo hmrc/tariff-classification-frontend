@@ -26,7 +26,7 @@ class MiscDetailsEditSPec extends ViewSpec {
 
   def mistDetailsEdit: misc_details_edit = injector.instanceOf[misc_details_edit]
 
-  private val sampleCase = Cases.miscCaseExample
+  private val sampleCase = Cases.miscellaneousCaseExample
 
   "Misc Details Edit View" should {
 
