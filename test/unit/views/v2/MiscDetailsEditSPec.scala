@@ -17,6 +17,7 @@
 package views.v2
 
 import models.forms.v2.MiscDetailsForm
+import models.viewmodels.CaseViewModel
 import utils.Cases
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec
@@ -27,26 +28,45 @@ class MiscDetailsEditSPec extends ViewSpec {
   def mistDetailsEdit: misc_details_edit = injector.instanceOf[misc_details_edit]
 
   private val sampleCase = Cases.miscellaneousCaseExample
+  private val operator   = Cases.operatorWithoutPermissions
 
   "Misc Details Edit View" should {
 
     "render h2 heading" in {
       val doc =
-        view(mistDetailsEdit(sampleCase, MiscDetailsForm.miscDetailsForm(sampleCase)))
+        view(
+          mistDetailsEdit(
+            sampleCase,
+            MiscDetailsForm.miscDetailsForm(sampleCase),
+            CaseViewModel.fromCase(sampleCase, operator)
+          )
+        )
 
       doc.getElementById("misc-details-edit").text shouldBe "Edit case details"
     }
 
     "render the misc fields correctly" in {
       val doc =
-        view(mistDetailsEdit(sampleCase, MiscDetailsForm.miscDetailsForm(sampleCase)))
+        view(
+          mistDetailsEdit(
+            sampleCase,
+            MiscDetailsForm.miscDetailsForm(sampleCase),
+            CaseViewModel.fromCase(sampleCase, operator)
+          )
+        )
 
       doc should containElementWithID("misc-details-edit-form")
     }
 
     "render the misc view with all the fields" in {
       val doc =
-        view(mistDetailsEdit(sampleCase, MiscDetailsForm.miscDetailsForm(sampleCase)))
+        view(
+          mistDetailsEdit(
+            sampleCase,
+            MiscDetailsForm.miscDetailsForm(sampleCase),
+            CaseViewModel.fromCase(sampleCase, operator)
+          )
+        )
 
       doc should containElementWithID("misc-details-edit-form")
       doc should containElementWithID("summary")

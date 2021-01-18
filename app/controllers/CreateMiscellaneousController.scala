@@ -22,6 +22,7 @@ import models.forms.mappings.FormMappings.fieldNonEmpty
 import models.{Case, MiscApplication, Permission}
 import models.forms.v2.{MiscDetailsForm, MiscellaneousForm}
 import models.request.AuthenticatedRequest
+import models.viewmodels.CaseViewModel
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.I18nSupport
@@ -110,7 +111,8 @@ class CreateMiscellaneousController @Inject() (
         Ok(
           misc_details_edit(
             request.`case`,
-            MiscDetailsForm.miscDetailsForm(request.`case`)
+            MiscDetailsForm.miscDetailsForm(request.`case`),
+            CaseViewModel.fromCase(request.`case`, request.operator)
           )
         )
       )
@@ -124,7 +126,10 @@ class CreateMiscellaneousController @Inject() (
         .discardingErrors
         .bindFromRequest
         .fold(
-          errorForm => successful(Ok(misc_details_edit(request.`case`, errorForm))),
+          errorForm =>
+            successful(
+              Ok(misc_details_edit(request.`case`, errorForm, CaseViewModel.fromCase(request.`case`, request.operator)))
+            ),
           updatedCase =>
             casesService
               .updateCase(updatedCase)

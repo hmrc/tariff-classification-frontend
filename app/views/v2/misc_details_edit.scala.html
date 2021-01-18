@@ -25,17 +25,17 @@
 @import models.LiabilityStatus
 @import views.html.partials.error_summary
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseHeaderViewModel}
+@import models.viewmodels.{CaseViewModel}
 
-@this(correspondence_case_heading: views.html.v2.correspondence_case_heading)
+@this( case_heading: views.html.v2.case_heading)
 
-@(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form : Form[Case], caseViewModel: CaseViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("case.v2.misc.case-details-edit-title"))) {
 
 @error_summary(form.errors)
 
-@correspondence_case_heading(CaseHeaderViewModel.fromCase(c))
+@case_heading(caseViewModel.caseHeader)
 
 <h2 id="misc-details-edit" class="heading-large">@messages("case.v2.misc.case-details-edit-title")</h2>
 
