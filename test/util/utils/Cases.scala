@@ -774,6 +774,16 @@ object Cases {
     sampleToBeReturned = false
   )
 
+  val miscExampleWithMissingName: MiscApplication = MiscApplication(
+    Contact("name", "email"),
+    "",
+    None,
+    MiscCaseType.HARMONISED,
+    None,
+    sampleToBeProvided = false,
+    sampleToBeReturned = false
+  )
+
   val corrApplicationExample: CorrespondenceApplication = CorrespondenceApplication(
     Some("Starter"),
     Some("Agent 007"),
