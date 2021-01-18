@@ -25,6 +25,33 @@ class CaseCardsViewSpec extends ViewSpec {
 
   "Case cards" should {
 
+    "display the name of the operator if present" in {
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0)(operatorRequestWithName, messages, appConfig))
+
+      doc.getElementsByClass("heading-xlarge").text() should include(
+        "operator name officer"
+      )
+    }
+
+    "display the correct title if the operator is a classification-officer" in {
+
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0)(operatorRequestWithName, messages, appConfig))
+
+      doc.getElementsByClass("caption-xl").text() should include(
+        "Classification officer"
+      )
+    }
+
+    "display the correct title if the operator is a classification-manager" in {
+
+      val doc =
+        view(cases_cards(countCases = Map("my-cases" -> 2), 0)(authenticatedManagerFakeRequest, messages, appConfig))
+
+      doc.getElementsByClass("caption-xl").text() should include(
+        "Classification manager"
+      )
+    }
+
     "display the number of cases on My Cases tile when plural" in {
 
       val countCases = Map("my-cases" -> 2)

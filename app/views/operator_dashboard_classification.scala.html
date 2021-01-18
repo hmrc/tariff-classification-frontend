@@ -22,7 +22,7 @@
 @this()
 @(countCases: Map[String, Int], referredCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.title")), customPrimaryNavTab = HomeTab) {
+@main(bodyClasses = None, customTitle = Some(request.operator.role.toString), customPrimaryNavTab = HomeTab) {
 
 @components.cases_cards(countCases, referredCasesByAssignee)
 
