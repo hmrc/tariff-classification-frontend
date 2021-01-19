@@ -18,12 +18,13 @@
 
 @import models.viewmodels.SubNavigationTab
 
-@(completeMessage: String, emailMessage: Option[String], viewCasesMessage: String, viewCasesTab: SubNavigationTab)(implicit messages: Messages)
+@(completeMessage: String, emailMessage: Option[String], daysElapsed: Option[Html], viewCasesMessage: String, viewCasesTab: SubNavigationTab)(implicit messages: Messages)
 
-<div id="confirm_complete_id" class="column-three-quarters">
+<div id="confirm_complete_id" class="column-two-thirds">
     <div class="govuk-panel govuk-panel--confirmation">
-        <h2 class="heading-large mt-0">@completeMessage</h2>
-        <h3 class="heading-medium">@emailMessage</h3>
+        <h2 class="heading-xlarge mt-0">@completeMessage</h2>
+        <h3 class="heading-large">@emailMessage</h3>
+        <h3 class="heading-large">@daysElapsed</h3>
     </div>
     @confirmation_next_steps(viewCasesMessage, controllers.v2.routes.AllOpenCasesController.displayAllOpenCases(viewCasesTab))
 </div>
