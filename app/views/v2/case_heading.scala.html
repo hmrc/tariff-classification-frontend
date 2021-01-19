@@ -17,13 +17,13 @@
 @import models.viewmodels.CaseHeaderViewModel
 
 @this(
-    caseStatus: views.html.v2.case_status
+        caseStatus: views.html.v2.case_status
 )
 
 @(
-    caseHeader: CaseHeaderViewModel,
-    headingText: Option[String] = None,
-    headingPrefix: Option[String] = None
+        caseHeader: CaseHeaderViewModel,
+        headingText: Option[String] = None,
+        headingPrefix: Option[String] = None
 )(implicit messages: Messages)
 
 <div id="case-heading" class="case-heading mt-5 mb-4">
@@ -37,23 +37,12 @@
     </div>
 
     <h1 class="heading-xlarge case-title">
-        @headingText.map(HtmlFormat.escape(_)).getOrElse {
-            @headingPrefix.fold(HtmlFormat.escape(caseHeader.goodsName)) { prefix =>
-                @messages("case.title", prefix, caseHeader.goodsName)
-            }
+    @headingText.map(HtmlFormat.escape(_)).getOrElse {
+        @headingPrefix.fold(HtmlFormat.escape(caseHeader.goodsName)) { prefix =>
+            @messages("case.title", prefix, caseHeader.goodsName)
         }
-    </h1>
-
-    @if(caseHeader.caseType == ApplicationType.CORRESPONDENCE) {
-        <div id="contact-section" class="mb-1">
-            <div class="bold">
-                @caseHeader.caseSource.getOrElse("")
-            </div>
-            <div class="bold">
-                @caseHeader.contact.email
-            </div>
-        </div>
     }
+    </h1>
 
     @caseStatus(caseHeader.caseStatus)
 </div>
