@@ -16,12 +16,8 @@
 
 package models
 
-import models.PseudoApplicationType.PseudoApplicationType
-import models.PseudoCaseStatus.PseudoCaseStatus
-
-case class ReportsFilter(
-  status: Option[Set[PseudoCaseStatus]]        = None,
-  caseType: Option[Set[PseudoApplicationType]] = None,
-  caseQueue: Option[Set[String]]               = None,
-  officer: Option[Set[String]]                 = None
-)
+object PseudoReportColumns extends Enumeration {
+  type PseudoReportColumns = Value
+  val REFERENCE, CASE_STATUS, CASE_TYPE, REFERRAL_REASON, REJECTED_REASON, GOODS_NAME, TRADER_NAME, ASSIGNED_USER,
+    ASSIGNED_TEAM, DATE_CREATED, DATE_COMPLETED, ELAPSED_DAYS, TOTAL_DAYS = Value
+}

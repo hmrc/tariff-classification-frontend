@@ -16,12 +16,15 @@
 
 package models
 
-import models.PseudoApplicationType.PseudoApplicationType
-import models.PseudoCaseStatus.PseudoCaseStatus
+import java.time.Instant
 
-case class ReportsFilter(
-  status: Option[Set[PseudoCaseStatus]]        = None,
-  caseType: Option[Set[PseudoApplicationType]] = None,
-  caseQueue: Option[Set[String]]               = None,
-  officer: Option[Set[String]]                 = None
+import models.PseudoGroupingType.PseudoGroupingType
+import models.PseudoReportColumns.PseudoReportColumns
+
+case class ReportSettings(
+  dates: Option[ReportDates]                = None,
+  grouping: PseudoGroupingType              = PseudoGroupingType.NONE,
+  columns: Option[Set[PseudoReportColumns]] = None
 )
+
+case class ReportDates(from: Instant, to: Instant)

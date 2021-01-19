@@ -16,12 +16,7 @@
 
 package models
 
-import models.PseudoApplicationType.PseudoApplicationType
-import models.PseudoCaseStatus.PseudoCaseStatus
-
-case class ReportsFilter(
-  status: Option[Set[PseudoCaseStatus]]        = None,
-  caseType: Option[Set[PseudoApplicationType]] = None,
-  caseQueue: Option[Set[String]]               = None,
-  officer: Option[Set[String]]                 = None
-)
+object PseudoApplicationType extends Enumeration {
+  type PseudoApplicationType = Value
+  val ATaR, CORRESPONDENCE, MISC, LIVE_LIABILITY, LIABILITY = Value
+}
