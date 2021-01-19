@@ -1,0 +1,69 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.ManagerToolsUsersTab
+@import models.viewmodels.ManagerToolsTeamsTab
+@import models.viewmodels.ManagerToolsKeywordsTab
+@import models.viewmodels.ManagerToolsReportsTab
+@import controllers.v2.routes
+@import uk.gov.hmrc.play.views.html._
+
+@(selectedTab : SubNavigationTab = ManagerToolsUsersTab)(implicit messages: Messages)
+
+            <nav id="open-cases-sub-nav"  class="moj-sub-navigation" aria-label="Sub navigation">
+                <ul class="moj-sub-navigation__list">
+                    <li class="moj-sub-navigation__item">
+                        @if(selectedTab == ManagerToolsUsersTab) {
+                            <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link" aria-current="page"
+                                href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsUsersTab)">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
+                        } else {
+                        <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link"
+                           href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsUsersTab)">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
+                        }
+                    </li>
+                    <li class="moj-sub-navigation__item">
+                        @if(selectedTab == ManagerToolsTeamsTab) {
+                        <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link" aria-current="page"
+                                href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsTeamsTab)">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>
+                        } else {
+                        <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link"
+                            href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsTeamsTab)">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>
+                        }
+                    </li>
+                    <li class="moj-sub-navigation__item">
+                        @if(selectedTab == ManagerToolsKeywordsTab) {
+                        <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link" aria-current="page"
+                            href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsKeywordsTab)">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
+                        } else {
+                        <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link"
+                            href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsKeywordsTab)">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
+                        }
+                    </li>
+                    <li class="moj-sub-navigation__item">
+                        @if(selectedTab == ManagerToolsReportsTab) {
+                        <a id ="sub_nav_manager_tools_reports_tab" class="moj-sub-navigation__link" aria-current="page"
+                            href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsReportsTab)">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
+                        } else {
+                        <a id ="sub_nav_manager_tools_reports_tab" class="moj-sub-navigation__link"
+                           href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsReportsTab)">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
+                        }
+                    </li>
+                </ul>
+            </nav>
+
+
+
