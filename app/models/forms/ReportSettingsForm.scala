@@ -16,18 +16,20 @@
 
 package models.forms
 
+import java.time.Instant
+
 import models.PseudoReportColumns.PseudoReportColumns
 import models._
 import models.forms.FormUtils._
 import models.forms.mappings.FormMappings.oneOf
-import play.api.data.{Form, FormError, Forms, Mapping}
+import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 
 object ReportSettingsForm {
 
   val form: Form[ReportSettings] = Form(
     mapping(
-      "selectedDateRange" -> optional(reportDatesMapping),
+      "selectedDateRange" -> reportDatesMapping,
       "grouping"          -> oneOf("error", PseudoGroupingType),
       "columns" -> optional[Set[PseudoReportColumns]](
         set(textTransformingTo(PseudoReportColumns.withName, _.toString))
@@ -35,7 +37,7 @@ object ReportSettingsForm {
     )(form2Settings)(settings2Form)
   )
 
-  private val form2Settings: (Option[ReportDates], String, Option[Set[PseudoReportColumns]]) => ReportSettings = {
+  private val form2Settings: (ReportDates, String, Option[Set[PseudoReportColumns]]) => ReportSettings = {
     case (selectedDateRange, grouping, columns) =>
       ReportSettings(
         selectedDateRange = selectedDateRange,
@@ -44,12 +46,12 @@ object ReportSettingsForm {
       )
   }
 
-  private val settings2Form: ReportSettings => Option[(Option[ReportDates], String, Option[Set[PseudoReportColumns]])] =
+  private val settings2Form: ReportSettings => Option[(ReportDates, String, Option[Set[PseudoReportColumns]])] =
     reportSettings => Some((reportSettings.selectedDateRange, reportSettings.grouping.toString, reportSettings.columns))
 
   private def reportDatesMapping: Mapping[ReportDates] =
     mapping(
-      "chosenDateRange" -> text,
+      "chosenDateRange" -> oneOf("error", PseudoDateRange),
       "from" -> optional(
         FormDate
           .date("case.liability.error.date-of-repayment")
@@ -58,6 +60,18 @@ object ReportSettingsForm {
         FormDate
           .date("case.liability.error.date-of-repayment")
       )
-    )(ReportDates.apply)(ReportDates.unapply)
+    )(form2Dates)(dates2Form)
+
+  private val form2Dates: (String, Option[Instant], Option[Instant]) => ReportDates = {
+    case (chosenDateRange, from, to) =>
+      ReportDates(
+        chosenDateRange = PseudoDateRange.withName(chosenDateRange),
+        from            = from,
+        to              = to
+      )
+  }
+
+  private val dates2Form: ReportDates => Option[(String, Option[Instant], Option[Instant])] =
+    reportDates => Some((reportDates.chosenDateRange.toString, reportDates.from, reportDates.to))
 
 }
