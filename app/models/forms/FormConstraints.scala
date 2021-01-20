@@ -18,7 +18,6 @@ package models.forms
 
 import java.time.{Clock, Instant, LocalDateTime, ZoneId}
 
-import models.forms.v2.LiabilityDetailsForm.regexp
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import scala.util.matching.Regex
@@ -66,5 +65,13 @@ object FormConstraints {
     case option: Option[T] if option.isDefined => Valid
     case _                                     => Invalid(key)
   }
+
+  def regexp(regex: Regex, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if regex.pattern.matcher(str).matches() =>
+        Valid
+      case _ =>
+        Invalid(errorKey, regex.pattern.pattern())
+    }
 
 }
