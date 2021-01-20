@@ -29,8 +29,8 @@
 
 <div id="dashboard-view" class="centered-content">
 
-    <span class="caption-xl">@request.operator.role</span>
-    <h1 class="heading-xlarge mt-40 mb-0">@request.operator.name.getOrElse("")</h1>
+    <span class="caption-xl">@Role.format(request.operator.role)</span>
+    <h1 class="heading-xlarge">@request.operator.name.getOrElse("")</h1>
 
     @if(request.operator.manager) {
         <h2 class="heading-medium">@messages("cases.menu.manager_tools")</h2>
@@ -59,7 +59,7 @@
                     </p>
                 </div>
             </a>
-            <a id="manager-tools-id" class="link-text" href="#">
+            <a id="manager-tools-reports-id" class="link-text" href="#">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.reports")</h3>
                     <p class="card-body card-action">
