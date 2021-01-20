@@ -29,7 +29,7 @@ object ReportsFilterForm {
     mapping(
       "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
       "caseType" -> optional[Set[PseudoApplicationType]](
-        set(textTransformingTo(ApplicationType.withName, _.toString))
+        set(textTransformingTo(PseudoApplicationType.withName, _.toString))
       ),
       "caseQueue" -> optional[Set[String]](set(text)),
       "officer"   -> optional[Set[String]](set(text.verifying(emptyOr(validCommodityCodeSearch): _*)))

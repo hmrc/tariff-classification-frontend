@@ -22,9 +22,15 @@ import models.PseudoGroupingType.PseudoGroupingType
 import models.PseudoReportColumns.PseudoReportColumns
 
 case class ReportSettings(
-  dates: Option[ReportDates]                = None,
+  selectedDateRange: Option[ReportDates]    = None,
   grouping: PseudoGroupingType              = PseudoGroupingType.NONE,
   columns: Option[Set[PseudoReportColumns]] = None
 )
 
-case class ReportDates(from: Instant, to: Instant)
+case class ReportDates(chosenDateRange: String, from: Option[Instant], to: Option[Instant])
+
+object PseudoDateRange extends Enumeration {
+  type PseudoDateRange = Value
+  val ALL_TIME, TODAY, YESTERDAY, LAST_SEVEN_DAYS, LAST_THIRTY_DAYS, LAST_CUSTOM_DAYS, THIS_MONTH, LAST_MONTH,
+    CUSTOM_DATE, CUSTOM_DATE_RANGE = Value
+}
