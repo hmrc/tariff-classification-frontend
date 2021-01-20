@@ -20,6 +20,8 @@ package controllers.v2
 import com.google.inject.Provider
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
 import javax.inject.Inject
+import models.forms.CommodityCodeConstraints
+import models.forms.v2.LiabilityDetailsForm
 import models.{Case, _}
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{times, _}
@@ -90,6 +92,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private lazy val queues: List[Queue]      = List(Queue("", "", ""))
   private lazy val eventService             = mock[EventsService]
   private lazy val queueService             = mock[QueuesService]
+  private lazy val commodityCodeService     = mock[CommodityCodeService]
   private lazy val event                    = mock[Event]
   private lazy val liability_view           = mock[liability_view]
   private lazy val liability_details_edit   = injector.instanceOf[liability_details_edit]
@@ -171,6 +174,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       fileStoreService,
       keywordsService,
       mcc,
+      new LiabilityDetailsForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig), realAppConfig),
       liability_view,
       liability_details_edit,
       realAppConfig

@@ -19,17 +19,21 @@ package models.forms.v2
 import java.time.Instant
 
 import config.AppConfig
+import javax.inject.Inject
 import models._
 import models.forms.FormConstraints._
-import models.forms.FormDate
+import models.forms.{CommodityCodeConstraints, FormDate}
 import models.forms.mappings.Constraints
 import models.forms.mappings.FormMappings._
 import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 
-object LiabilityDetailsForm extends Constraints {
+class LiabilityDetailsForm @Inject()(
+  commodityCodeConstraints: CommodityCodeConstraints,
+  appConfig: AppConfig
+) extends Constraints {
 
-  def liabilityDetailsForm(existingLiability: Case, appConfig: AppConfig): Form[Case] =
+  def liabilityDetailsForm(existingLiability: Case): Form[Case] =
     Form[Case](
       mapping[
         Case,
@@ -72,7 +76,7 @@ object LiabilityDetailsForm extends Constraints {
         "traderCounty"            -> optional(text),
         "traderPostcode"          -> optional(text),
         "boardsFileNumber"        -> optional(text),
-        "agentName"              -> optional(text),
+        "agentName"               -> optional(text),
         //TODO ^^
         "btiReference"   -> optional(text.verifying(emptyOr(btiReferenceIsCorrectFormat()): _*)),
         "repaymentClaim" -> boolean,
@@ -91,10 +95,18 @@ object LiabilityDetailsForm extends Constraints {
         "entryNumber" -> optional(
           text.verifying(emptyOr(entryNumberIsNumbersAndLettersOnly()): _*)
         ),
-        "traderCommodityCode"  -> optional(text),
-        "officerCommodityCode" -> optional(text),
-        "contact"               -> contactMapping,
-        "port" -> optional(text),
+        "traderCommodityCode"  -> optional(text.verifying(
+          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
+        )),
+        "officerCommodityCode" -> optional(text.verifying(
+          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
+        )),
+        "contact"              -> contactMapping,
+        "port"                 -> optional(text),
         "dvrNumber" -> optional(
           text.verifying(emptyOr(dvrNumberIsNumberOnly()): _*)
         ),
@@ -114,11 +126,10 @@ object LiabilityDetailsForm extends Constraints {
     ).fillAndValidate(existingLiability)
 
   private def contactMapping: Mapping[Contact] =
-     mapping(
-       "contactName"          -> textNonEmpty("case.liability.error.compliance_officer.name"),
-       "contactEmail"         -> text.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*),
-       "contactPhone"         -> optional(text)
-
+    mapping(
+      "contactName"  -> textNonEmpty("case.liability.error.compliance_officer.name"),
+      "contactEmail" -> text.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*),
+      "contactPhone" -> optional(text)
     )(Contact.apply)(Contact.unapply)
 
   private def form2Liability(existingCase: Case): (
@@ -185,7 +196,7 @@ object LiabilityDetailsForm extends Constraints {
               )
             )
           ),
-          agentName = agentName,
+          agentName    = agentName,
           btiReference = btiReference,
           repaymentClaim =
             if (isRepaymentClaim) Some(RepaymentClaim(dvrNumber = dvrNumber, dateForRepayment = dateForRepayment))
@@ -267,7 +278,7 @@ object LiabilityDetailsForm extends Constraints {
   }
 
   //TODO: As part of the follow-up ticket regarding complete form validation, add tests
-  def liabilityDetailsCompleteForm(existingLiability: Case, appConfig: AppConfig): Form[Case] =
+  def liabilityDetailsCompleteForm(existingLiability: Case): Form[Case] =
     Form[Case](
       mapping[
         Case,
@@ -304,15 +315,17 @@ object LiabilityDetailsForm extends Constraints {
         "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
         //TODO find what need to validate
         //TODO not emptyOr but it is required need to change as part of other ticket
-        "traderEmail"             -> optional(text.verifying(customNonEmpty("Enter a trader email"))
-          .verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
+        "traderEmail" -> optional(
+          text
+            .verifying(customNonEmpty("Enter a trader email"))
+            .verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
         "traderPhone"             -> optional(text),
         "traderBuildingAndStreet" -> optional(text),
         "traderTownOrCity"        -> optional(text),
         "traderCounty"            -> optional(text),
         "traderPostcode"          -> optional(text),
         "boardsFileNumber"        -> optional(text),
-        "agentName"              -> optional(text),
+        "agentName"               -> optional(text),
         //TODO take a look ^^
         "btiReference"   -> optional(nonEmptyText),
         "repaymentClaim" -> boolean,
@@ -327,12 +340,14 @@ object LiabilityDetailsForm extends Constraints {
               )
             )
         ),
-        "goodName"             -> optional(nonEmptyText).verifying("Enter the goods name", _.isDefined),
-        "entryNumber"          -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
-        "traderCommodityCode"  -> optional(nonEmptyText).verifying("Enter the commodity code from the trader", _.isDefined),
-        "officerCommodityCode" -> optional(nonEmptyText).verifying("Enter the code suggested by the officer", _.isDefined),
-        "contact"              -> contactMapping,
-        "port"                 -> optional(text),
+        "goodName"    -> optional(nonEmptyText).verifying("Enter the goods name", _.isDefined),
+        "entryNumber" -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
+        "traderCommodityCode" -> optional(nonEmptyText)
+          .verifying("Enter the commodity code from the trader", _.isDefined),
+        "officerCommodityCode" -> optional(nonEmptyText)
+          .verifying("Enter the code suggested by the officer", _.isDefined),
+        "contact" -> contactMapping,
+        "port"    -> optional(text),
         "dvrNumber" -> optional(
           text.verifying(dvrNumberIsNumberOnly())
         ),
@@ -349,10 +364,9 @@ object LiabilityDetailsForm extends Constraints {
         ).verifying(
           "Enter a real date, for example 11/12/2020",
           f => {
-            if(existingLiability.application.asLiabilityOrder.repaymentClaim.isDefined) f.isDefined
+            if (existingLiability.application.asLiabilityOrder.repaymentClaim.isDefined) f.isDefined
             else true
           }
-
         )
       )(form2Liability(existingLiability))(liability2Form)
     ).fillAndValidate(existingLiability)
