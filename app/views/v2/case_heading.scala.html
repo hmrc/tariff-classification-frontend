@@ -17,13 +17,13 @@
 @import models.viewmodels.CaseHeaderViewModel
 
 @this(
-    caseStatus: views.html.v2.case_status
+        caseStatus: views.html.v2.case_status
 )
 
 @(
-    caseHeader: CaseHeaderViewModel,
-    headingText: Option[String] = None,
-    headingPrefix: Option[String] = None
+        caseHeader: CaseHeaderViewModel,
+        headingText: Option[String] = None,
+        headingPrefix: Option[String] = None
 )(implicit messages: Messages)
 
 <div id="case-heading" class="case-heading mt-5 mb-4">
