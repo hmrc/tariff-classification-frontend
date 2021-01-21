@@ -23,15 +23,12 @@ import models.Permission
 import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
 class ManagerToolsController @Inject() (
   verify: RequestActions,
-  casesService: CasesService,
-  queueService: QueuesService,
   mcc: MessagesControllerComponents,
   val managerToolsView: views.html.v2.manager_tools_view,
   implicit val appConfig: AppConfig
@@ -39,8 +36,7 @@ class ManagerToolsController @Inject() (
     with I18nSupport {
 
   def displayManagerTools(activeSubNav: SubNavigationTab = ManagerToolsReportsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       Future.successful(Ok(managerToolsView(activeSubNav)))
 
     }

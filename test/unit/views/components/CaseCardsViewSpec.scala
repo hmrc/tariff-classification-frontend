@@ -49,7 +49,7 @@ class CaseCardsViewSpec extends ViewSpec {
         view(cases_cards(countCases = Map("my-cases" -> 2), 0)(authenticatedManagerFakeRequest, messages, appConfig))
 
       doc.getElementsByClass("caption-xl").text() should include(
-        "Classification manager"
+        "Manager"
       )
     }
 
@@ -76,19 +76,20 @@ class CaseCardsViewSpec extends ViewSpec {
     }
 
     "display the manager tools, my cases and open cases and not contain gateway" in {
-      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0)(authenticatedManagerFakeRequest, messages, appConfig))
+      val doc =
+        view(cases_cards(countCases = Map("my-cases" -> 2), 0)(authenticatedManagerFakeRequest, messages, appConfig))
 
-      doc  should containElementWithID("my-referred-cases-id")
+      doc should containElementWithID("my-referred-cases-id")
 
-      doc  should containElementWithID("my-cases-id")
-      doc  should containElementWithID("bti-cases-id")
+      doc should containElementWithID("my-cases-id")
+      doc should containElementWithID("bti-cases-id")
 
-      doc  should containElementWithID("manager-tools-users-id")
-      doc  should containElementWithID("manager-tools-tools-id")
-      doc  should containElementWithID("manager-tools-keywords-id")
-      doc  should containElementWithID("manager-tools-reports-id")
+      doc should containElementWithID("manager-tools-users-id")
+      doc should containElementWithID("manager-tools-tools-id")
+      doc should containElementWithID("manager-tools-keywords-id")
+      doc should containElementWithID("manager-tools-reports-id")
 
-      doc  shouldNot containElementWithID("gateway-cases-id")
-      }
+      doc shouldNot containElementWithID("gateway-cases-id")
+    }
   }
 }
