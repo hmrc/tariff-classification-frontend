@@ -61,7 +61,8 @@ object Permission {
     MOVE_CASE_BACK_TO_QUEUE,
     EDIT_SAMPLE,
     EDIT_ATTACHMENT_DETAIL,
-    EDIT_CORRESPONDENCE
+    EDIT_CORRESPONDENCE,
+    EDIT_MISCELLANEOUS
   )
 
   def from(string: String): Option[Permission] = values.find(_.name == string)
@@ -283,6 +284,12 @@ object Permission {
   }
 
   case object EDIT_CORRESPONDENCE extends CasePermission {
+    override def name: String = nameOf(this)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      managersOrAssignedTeamMembersOnly(`case`, operator)
+  }
+
+  case object EDIT_MISCELLANEOUS extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
       managersOrAssignedTeamMembersOnly(`case`, operator)

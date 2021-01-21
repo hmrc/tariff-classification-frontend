@@ -29,7 +29,7 @@ headingPrefix: Option[String] = None
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
     <div id="case-reference" class="case-reference">
-        @messages("case.heading.secondary.nosuffix", "Correspondence", caseHeader.referenceNumber)
+        @messages("case.heading.secondary.nosuffix", caseHeader.caseType.prettyName, caseHeader.referenceNumber)
     </div>
 
     <h1 class="heading-xlarge case-title">

@@ -40,42 +40,45 @@ import scala.concurrent.Future.successful
 
 class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  lazy val casesService: CasesService               = mock[CasesService]
-  lazy val fileService: FileStoreService            = mock[FileStoreService]
-  lazy val operator                                 = Operator(id = "id")
-  lazy val liabilityController: LiabilityController = mock[LiabilityController]
-  lazy val atarController: AtarController = mock[AtarController]
-  lazy val correspondenceController : CorrespondenceController = mock[CorrespondenceController]
-  lazy val attachments_details: attachments_details = mock[attachments_details]
-  lazy val remove_attachment: remove_attachment     = mock[remove_attachment]
-  private lazy val invalidFileTypes: Seq[String]    = Seq("test", "javascript/none", "so/so")
+  lazy val casesService: CasesService                         = mock[CasesService]
+  lazy val fileService: FileStoreService                      = mock[FileStoreService]
+  lazy val operator                                           = Operator(id = "id")
+  lazy val liabilityController: LiabilityController           = mock[LiabilityController]
+  lazy val atarController: AtarController                     = mock[AtarController]
+  lazy val correspondenceController: CorrespondenceController = mock[CorrespondenceController]
+  lazy val miscellaneousController: MiscellaneousController   = mock[MiscellaneousController]
+  lazy val attachments_details: attachments_details           = mock[attachments_details]
+  lazy val remove_attachment: remove_attachment               = mock[remove_attachment]
+  private lazy val invalidFileTypes: Seq[String]              = Seq("test", "javascript/none", "so/so")
 
   def controller: AttachmentsController =
     new AttachmentsController(
-      verify              = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
-      casesService        = casesService,
-      fileService         = fileService,
-      mcc                 = mcc,
-      liabilityController = liabilityController,
-      atarController      = atarController,
+      verify                   = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
+      casesService             = casesService,
+      fileService              = fileService,
+      mcc                      = mcc,
+      liabilityController      = liabilityController,
+      atarController           = atarController,
       correspondenceController = correspondenceController,
-      remove_attachment   = remove_attachment,
-      appConfig           = realAppConfig,
-      mat                 = mat
+      miscellaneousController  = miscellaneousController,
+      remove_attachment        = remove_attachment,
+      appConfig                = realAppConfig,
+      mat                      = mat
     )
 
   def controller(requestCase: Case, permission: Set[Permission]): AttachmentsController =
     new AttachmentsController(
-      verify              = new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
-      casesService        = casesService,
-      fileService         = fileService,
-      mcc                 = mcc,
-      liabilityController = liabilityController,
-      atarController = atarController,
+      verify                   = new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+      casesService             = casesService,
+      fileService              = fileService,
+      mcc                      = mcc,
+      liabilityController      = liabilityController,
+      atarController           = atarController,
       correspondenceController = correspondenceController,
-      remove_attachment   = remove_attachment,
-      appConfig           = realAppConfig,
-      mat                 = mat
+      miscellaneousController  = miscellaneousController,
+      remove_attachment        = remove_attachment,
+      appConfig                = realAppConfig,
+      mat                      = mat
     )
 
   override protected def beforeEach(): Unit =

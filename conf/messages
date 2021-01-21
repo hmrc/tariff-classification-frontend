@@ -36,6 +36,7 @@ case.menu.appeal=Appeals
 case.menu.liability=Liability
 case.menu.atar=ATaR
 case.title={0} for {1}
+case.title.migrated.cases=Case {0}
 case.heading.secondary={0} case {1} for {2}
 case.heading.secondary.nosuffix={0} case {1}
 case.status=Status
@@ -80,8 +81,10 @@ case.application.has-attachments=Supporting documents
 case.completed.atar=This ATaR decision is complete
 case.completed.liability=This liability decision is complete
 case.completed.correspondence=Correspondence case is complete
-case.completed.misc=Miscellaneous case is completed
+case.completed.misc=Miscellaneous case is complete
 case.completed.email=Email the applicant with a copy of this decision
+case.referred.confirm_referred=Case referred
+case.referred.elapsed_day_count=The days elapsed count has been paused at
 change_case_status.complete=Complete
 change_case_status.refer=Refer
 change_case_status.reject=Reject
@@ -177,6 +180,7 @@ case.attachment.upload.status-published=PUBLISHED
 case.attachment.upload.status-confidential=CONFIDENTIAL
 case.attachment.upload.status-failed=UPLOAD FAILED
 case.attachment.upload.status-processing=PROCESSING
+case.attachment.refresh.content=Refresh page to confirm file upload
 case.sample.sample-status-header=Sample status
 case.sample.change-sample-status=Change sample status
 case.sample.status.change-status-header=Change sample status
@@ -1075,20 +1079,19 @@ misc.create_misc.contact.name.heading=Case contact name
 misc.create_misc.type.heading=Choose a case type
 misc.create_misc.radio.type-harmonised=Harmonised System
 misc.create_misc.radio.type-ib=IB
-misc.create_misc.radio.type-nomenclature=NC
+misc.create_misc.radio.type-nomenclature=Nomenclature
 misc.create_misc.radio.type-other-gov-dep=Other government department
 misc.create_misc.radio.type-other=Other
 misc.create_misc.confirm-button=Create case
+case.v2.misc.case-details-edit-title=Edit case details
+misc.edit_misc.boards.file.heading=Boards file number
 
 choose.team.misc=Choose a team for {0} case
 choose_team_misc_case.released_dynamic_message = Miscellaneous case created for {1} team
 
-
-
 error.empty.miscCaseType= Select a case type
 error.empty.misc.contactName=Enter a case contact name
 error.empty.misc.shortDesc=Enter a short case description
-
 
 atar.editRuling.expiryDate.emptyDate = Enter an expiry date
 atar.editRuling.expiryDate.emptyDate.day = Enter a day
@@ -1096,15 +1099,37 @@ atar.editRuling.expiryDate.emptyDate.month = Enter a month
 atar.editRuling.expiryDate.emptyDate.year = Enter a year
 atar.editRuling.expiryDate.invalidFormat = Expiry date must be a real date
 
+case.v2.miscellaneous.page_title=Miscellaneous case details
+
+case.v2.miscellaneous.case-details.tab_title=Details
+
+case.v2.miscellaneous.case-details.heading= Case details
+case.v2.miscellaneous.case-details.case-short-desc=Short case description
+case.v2.miscellaneous.case-details.date_created=Date created
+case.v2.miscellaneous.case-details.case-type=Case type
+case.v2.miscellaneous.case-details.detailed_description=Detailed description
+case.v2.miscellaneous.case-details.case-contact-name=Case contact name
+case.v2.miscellaneous.case-details.boards_file_number=Boards file number
+case.v2.miscellaneous.case-details_title=Edit details
+
+case.v2.miscellaneous.activity.tab_title=Activity
+case.v2.miscellaneous.attachments.tab_title=Attachments
+case.v2.miscellaneous.samples.tab_title=Samples
+case.v2.miscellaneous.messages.tab_title=Messages
+
+site.notification.success = Success
+case.activity.note.success.text = Case note has been added to the Activity log
 case.ownership.assign_case.assigned=This case is already assigned to {0}
 case.ownership.assign_case.unassigned=This case is unassigned. Do you want to take ownership?
-case.ownership.assign_case.description=This will add the case to your ''My cases'' list
+case.ownership.assign_case.description=This will add the case to your ''My cases'' list.
 case.ownership.assign_case.submit=Yes, take ownership
 case.ownership.assign_case.view_only=No, view only
 case.ownership.assign_case.view_case=View the case
 case.ownership.assign_case.back=Back to my cases
 
 case.change_status.move_back_to_team.heading=Move this case back to a team
-case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team
+case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team.
+
+
 
 

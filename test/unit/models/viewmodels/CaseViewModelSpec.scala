@@ -43,7 +43,8 @@ class CaseViewModelSpec extends ModelsBaseSpec {
       "1",
       Some("case-source"),
       Contact("name", "email@email.com"),
-      CaseStatusViewModel(None, Some(StatusTagViewModel("CANCELLED", "red")), None)
+      CaseStatusViewModel(None, Some(StatusTagViewModel("CANCELLED", "red")), None),
+      false
     )
 
   def buildLiabilityModel(
@@ -174,13 +175,14 @@ class CaseViewModelSpec extends ModelsBaseSpec {
             Some("trader-business-name"),
             "good-name",
             "1",
-            None,
+            Some("trader-business-name"),
             Contact("name", "email", Some("phone")),
             CaseStatusViewModel(
               None,
               Some(StatusTagViewModel("CANCELLED", "red")),
               None
-            )
+            ),
+            false
           ),
           hasPermissions       = false,
           showChangeCaseStatus = false,

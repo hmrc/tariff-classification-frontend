@@ -25,7 +25,8 @@ case class CaseHeaderViewModel(
   referenceNumber: String,
   caseSource: Option[String],
   contact: Contact,
-  caseStatus: CaseStatusViewModel
+  caseStatus: CaseStatusViewModel,
+  isMigrated : Boolean
 )
 
 object CaseHeaderViewModel {
@@ -37,7 +38,8 @@ object CaseHeaderViewModel {
       c.reference,
       c.application.caseSource,
       c.application.contact,
-      CaseStatusViewModel.fromCase(c)
+      CaseStatusViewModel.fromCase(c),
+      c.dateOfExtract.isDefined
     )
   }
 }

@@ -17,10 +17,11 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         get(
           urlEqualTo(
             buildQueryUrl(
-              types = ApplicationType.values.toSeq,
+              types        = ApplicationType.values.toSeq,
               withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
-              assigneeId = "123",
-              pag = NoPagination())
+              assigneeId   = "123",
+              pag          = NoPagination()
+            )
           )
         ).willReturn(
           aResponse()
@@ -72,7 +73,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         get(
           urlEqualTo(
             buildQueryUrl(
-              types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
+              types = Seq(
+                ApplicationType.ATAR,
+                ApplicationType.LIABILITY,
+                ApplicationType.CORRESPONDENCE,
+                ApplicationType.MISCELLANEOUS
+              ),
               withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
               queueId      = "none",
               assigneeId   = "none",
@@ -128,7 +134,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         get(
           urlEqualTo(
             buildQueryUrl(
-              types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
+              types = Seq(
+                ApplicationType.ATAR,
+                ApplicationType.LIABILITY,
+                ApplicationType.CORRESPONDENCE,
+                ApplicationType.MISCELLANEOUS
+              ),
               withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
               queueId      = "2",
               assigneeId   = "none",
@@ -184,7 +195,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         get(
           urlEqualTo(
             buildQueryUrl(
-              types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
+              types = Seq(
+                ApplicationType.ATAR,
+                ApplicationType.LIABILITY,
+                ApplicationType.CORRESPONDENCE,
+                ApplicationType.MISCELLANEOUS
+              ),
               withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
               queueId      = "3",
               assigneeId   = "none",
@@ -240,7 +256,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         get(
           urlEqualTo(
             buildQueryUrl(
-              types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
+              types = Seq(
+                ApplicationType.ATAR,
+                ApplicationType.LIABILITY,
+                ApplicationType.CORRESPONDENCE,
+                ApplicationType.MISCELLANEOUS
+              ),
               withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
               queueId      = "4",
               assigneeId   = "none",
@@ -296,7 +317,12 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         get(
           urlEqualTo(
             buildQueryUrl(
-              types = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
+              types = Seq(
+                ApplicationType.ATAR,
+                ApplicationType.LIABILITY,
+                ApplicationType.CORRESPONDENCE,
+                ApplicationType.MISCELLANEOUS
+              ),
               withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
               queueId      = "5",
               assigneeId   = "none",

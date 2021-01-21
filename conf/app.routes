@@ -134,6 +134,8 @@ POST        /cases/v2/:reference/attachments/remove             controllers.v2.A
 GET         /cases/v2/:reference/correspondence                 controllers.v2.CorrespondenceController.displayCorrespondence(reference: String)
 POST        /cases/v2/:reference/correspondence                 controllers.CaseController.addMessage(reference: String)
 
+GET         /cases/v2/:reference/miscellaneous                  controllers.v2.MiscellaneousController.displayMiscellaneous(reference: String)
+
 GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: ApplicationType)
 POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: ApplicationType)
 
@@ -152,5 +154,7 @@ GET         /team-miscellaneous-choice                      controllers.CreateMi
 
 GET         /new-miscellaneous-confirm                         controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
 
+GET         /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.editMiscDetails(reference: String)
+POST        /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.postMiscDetails(reference: String)
 
 

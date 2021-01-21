@@ -35,12 +35,12 @@ trait CaseQueueBuilder {
   }
 
   def buildQueryUrlAllQueues(
-                             types: Seq[ApplicationType] = Seq(ApplicationType.ATAR, ApplicationType.LIABILITY, ApplicationType.CORRESPONDENCE),
-                             statuses: String,
-                             queueIds: Seq[String],
-                             assigneeId: String,
-                             pagination: Pagination
-                           ): String = {
+    types: Seq[ApplicationType] = ApplicationType.values.toSeq,
+    statuses: String,
+    queueIds: Seq[String],
+    assigneeId: String,
+    pagination: Pagination
+  ): String = {
     val sortBy = "application.type,application.status,days-elapsed"
     val queryString =
       s"/cases?application_type=${types.map(_.name).mkString(",")}&queue_id=${queueIds.mkString(",")}" +

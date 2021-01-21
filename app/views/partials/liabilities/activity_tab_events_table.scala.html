@@ -29,7 +29,7 @@
 <table id="activity-events">
     <thead>
         <tr>
-            <th scope="col">Name</th>
+            <th scope="col">Identifier</th>
             <th scope="col">Description</th>
             <th scope="col">Date</th>
 
@@ -38,7 +38,9 @@
     <tbody>
         @for((event: Event, index: Int) <- activityViewModel.events.results.zipWithIndex) {
             <tr id="activity-events-row-@{index}">
-                <td id="activity-events-row-@{index}-operator" class="activity-cell">@event.operator.id</td>
+                <td id="activity-events-row-@{index}-operator" class="activity-cell">
+                    @event.operator.id
+                </td>
 
                 <td id="activity-events-row-@{index}-content" class="activity-cell-desc">
                 @{

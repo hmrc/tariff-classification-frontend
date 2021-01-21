@@ -25,4 +25,15 @@ object MiscCaseType extends Enumeration {
   val NOMENCLATURE   = Value("Nomenclature")
   val OTHER_GOVT_DEP = Value("Other government dept")
   val OTHER          = Value("Other")
+
+  def format(caseType: MiscCaseType): String =
+    caseType match {
+      case APPEALS => "Appeals"
+      case HARMONISED => "Harmonised System"
+      case IB => "IB"
+      case NOMENCLATURE => "Nomenclature"
+      case OTHER_GOVT_DEP => "Other government department"
+      case OTHER => "Other"
+    }
 }
+

@@ -32,9 +32,9 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
     "Bind a blank form" in {
       val form = MiscellaneousForm.newMiscForm.bindFromRequest(
         Map(
-          "name" -> Seq(""),
-          "contactName"      -> Seq(""),
-          "caseType"        -> Seq("")
+          "name"        -> Seq(""),
+          "contactName" -> Seq(""),
+          "caseType"    -> Seq("")
         )
       )
 
@@ -43,53 +43,52 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
     }
 
     "Bind a valid form" in {
-      val form =  MiscellaneousForm.newMiscForm.bindFromRequest(
+      val form = MiscellaneousForm.newMiscForm.bindFromRequest(
         Map(
-          "name" -> Seq("example"),
-          "contactName"      -> Seq("example"),
-          "caseType"        -> Seq("Other government dept")
+          "name"        -> Seq("example"),
+          "contactName" -> Seq("example"),
+          "caseType"    -> Seq("Other government dept")
         )
       )
 
       form.hasErrors shouldBe false
       form.get shouldBe MiscApplication(
-        contact = Contact("example", "", None),
-        name = "example",
-        contactName = Some("example"),
-        caseType = MiscCaseType.withName("Other government dept"),
+        contact             = Contact("", "", None),
+        name                = "example",
+        contactName         = Some("example"),
+        caseType            = MiscCaseType.withName("Other government dept"),
         detailedDescription = None,
-        sampleToBeProvided = false,
-        sampleToBeReturned = false,
-        messagesLogged = List.empty
-
+        sampleToBeProvided  = false,
+        sampleToBeReturned  = false,
+        messagesLogged      = List.empty
       )
     }
 
     "Bind empty description" in {
       val form = MiscellaneousForm.newMiscForm.bindFromRequest(
         Map(
-          "name" -> Seq(""),
-          "contactName"      -> Seq("example"),
-          "caseType"        -> Seq("Other government dept")
+          "name"        -> Seq(""),
+          "contactName" -> Seq("example"),
+          "caseType"    -> Seq("Other government dept")
         )
       )
 
-      form.hasErrors shouldBe true
-      form.errors    should have(size(1))
+      form.hasErrors           shouldBe true
+      form.errors              should have(size(1))
       form.errors.head.message shouldBe "error.empty.misc.shortDesc"
     }
 
     "Bind empty contact name" in {
       val form = MiscellaneousForm.newMiscForm.bindFromRequest(
         Map(
-          "name" -> Seq("example"),
-          "contactName"      -> Seq(""),
-          "caseType"        -> Seq("Other government dept")
+          "name"        -> Seq("example"),
+          "contactName" -> Seq(""),
+          "caseType"    -> Seq("Other government dept")
         )
       )
 
-      form.hasErrors shouldBe true
-      form.errors    should have(size(1))
+      form.hasErrors           shouldBe true
+      form.errors              should have(size(1))
       form.errors.head.message shouldBe "error.empty.misc.contactName"
     }
   }
@@ -97,24 +96,24 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
   "Fill" should {
 
     "populate a correct form" in {
-      val form =MiscellaneousForm.newMiscForm.fill(
+      val form = MiscellaneousForm.newMiscForm.fill(
         MiscApplication(
-          contact = Contact("example", "", None),
-          name = "example",
-          contactName = Some("example"),
-          caseType = MiscCaseType.withName("Other government dept"),
+          contact             = Contact("example", "", None),
+          name                = "example",
+          contactName         = Some("example"),
+          caseType            = MiscCaseType.withName("Other government dept"),
           detailedDescription = None,
-          sampleToBeProvided = false,
-          sampleToBeReturned = false,
-          messagesLogged = List.empty
+          sampleToBeProvided  = false,
+          sampleToBeReturned  = false,
+          messagesLogged      = List.empty
         )
       )
 
       form.hasErrors shouldBe false
       form.data shouldBe Map(
-          "name"            -> "example",
-          "contactName"     -> "example",
-          "caseType"        -> "Other government dept"
+        "name"        -> "example",
+        "contactName" -> "example",
+        "caseType"    -> "Other government dept"
       )
     }
   }
