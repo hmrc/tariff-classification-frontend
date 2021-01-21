@@ -59,19 +59,26 @@ object ReportSettingsForm {
       "to" -> optional(
         FormDate
           .date("case.liability.error.date-of-repayment")
-      )
+      ),
+      "numberOfDays" -> optional(text)
     )(form2Dates)(dates2Form)
 
-  private val form2Dates: (String, Option[Instant], Option[Instant]) => ReportDates = {
-    case (chosenDateRange, from, to) =>
-      ReportDates(
-        chosenDateRange = PseudoDateRange.withName(chosenDateRange),
-        from            = from,
-        to              = to
-      )
+  private val form2Dates: (String, Option[Instant], Option[Instant], Option[String]) => ReportDates = {
+    case (chosenDateRange, from, to, numberOfDays) =>
+      PseudoDateRange.withName(chosenDateRange) match {
+        case PseudoDateRange.LAST_CUSTOM_DAYS  => CustomRelativeDateRange(numberOfDays.getOrElse("0").toInt)
+        case PseudoDateRange.CUSTOM_DATE_RANGE => CustomDateRange(from.get, to.get)
+        case PseudoDateRange.CUSTOM_DATE       => CustomDate(from.get)
+        case _                                 => RelativeDateRange(PseudoDateRange.withName(chosenDateRange))
+      }
   }
 
-  private val dates2Form: ReportDates => Option[(String, Option[Instant], Option[Instant])] =
-    reportDates => Some((reportDates.chosenDateRange.toString, reportDates.from, reportDates.to))
+  private val dates2Form: ReportDates => Option[(String, Option[Instant], Option[Instant], Option[String])] =
+    reportDates =>
+      {
+        reportDates. match {
+          case CustomDate =>
+        }
+      } Some ((reportDates.chosenDateRange.toString, reportDates.from, reportDates.to))
 
 }

@@ -17,23 +17,19 @@
 package models.forms
 
 import models.PseudoApplicationType.PseudoApplicationType
-import play.api.data.Form
-import play.api.data.Forms._
-import models.forms.FormConstraints._
-import models.forms.FormUtils._
 import models.PseudoCaseStatus.PseudoCaseStatus
 import models._
+import models.forms.FormConstraints._
+import models.forms.FormUtils._
+import play.api.data.Form
+import play.api.data.Forms._
 object ReportsFilterForm {
-
   val form: Form[ReportsFilter] = Form(
     mapping(
-      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
-      "caseType" -> optional[Set[PseudoApplicationType]](
-        set(textTransformingTo(PseudoApplicationType.withName, _.toString))
-      ),
-      "caseQueue" -> optional[Set[String]](set(text)),
-      "officer"   -> optional[Set[String]](set(text.verifying(emptyOr(validCommodityCodeSearch): _*)))
+      "status"    -> set(textTransformingTo(PseudoCaseStatus.withName, (x: PseudoCaseStatus) => x.toString)),
+      "caseType"  -> set(textTransformingTo(PseudoApplicationType.withName, (x: PseudoApplicationType) => x.toString)),
+      "caseQueue" -> set(text),
+      "officer"   -> set(text.verifying(emptyOr(validCommodityCodeSearch): _*))
     )(ReportsFilter.apply)(ReportsFilter.unapply)
   )
-
 }

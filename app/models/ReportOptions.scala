@@ -16,22 +16,14 @@
 
 package models
 
-import java.time.Instant
-
-import models.PseudoDateRange.PseudoDateRange
 import models.PseudoGroupingType.PseudoGroupingType
 import models.PseudoReportColumns.PseudoReportColumns
 
-case class ReportSettings(
-  selectedDateRange: ReportDates            = ReportDates(PseudoDateRange.ALL_TIME, None, None),
-  grouping: PseudoGroupingType              = PseudoGroupingType.NONE,
-  columns: Option[Set[PseudoReportColumns]] = None
-)
-
-case class ReportDates(chosenDateRange: PseudoDateRange, from: Option[Instant], to: Option[Instant])
-
-object PseudoDateRange extends Enumeration {
-  type PseudoDateRange = Value
-  val ALL_TIME, TODAY, YESTERDAY, LAST_SEVEN_DAYS, LAST_THIRTY_DAYS, LAST_CUSTOM_DAYS, THIS_MONTH, LAST_MONTH,
-    CUSTOM_DATE, CUSTOM_DATE_RANGE = Value
+sealed trait ReportOptions {
+  val selectedDateRange: RelativeDateRange
 }
+
+case class ReportGroupingOptions(selectedDateRange: RelativeDateRange, grouping: PseudoGroupingType)
+    extends ReportOptions
+case class ReportColumnsOptions(selectedDateRange: RelativeDateRange, columns: Option[Set[PseudoReportColumns]])
+    extends ReportOptions

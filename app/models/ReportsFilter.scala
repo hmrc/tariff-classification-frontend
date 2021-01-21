@@ -20,8 +20,8 @@ import models.PseudoApplicationType.PseudoApplicationType
 import models.PseudoCaseStatus.PseudoCaseStatus
 
 case class ReportsFilter(
-  status: Option[Set[PseudoCaseStatus]]        = None,
-  caseType: Option[Set[PseudoApplicationType]] = None,
-  caseQueue: Option[Set[String]]               = None,
-  officer: Option[Set[String]]                 = None
+  status: Set[PseudoCaseStatus],
+  caseType: Set[PseudoApplicationType],
+  caseQueue: Set[String],
+  officer: Set[String]
 )
