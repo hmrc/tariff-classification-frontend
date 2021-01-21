@@ -62,7 +62,8 @@ lazy val microservice = (project in file("."))
     "models.ApplicationType",
     "models.viewmodels.AssignedToMeTab",
     "models.viewmodels.ATaRTab",
-    "models.viewmodels.SubNavigationTab"
+    "models.viewmodels.SubNavigationTab",
+    "models.viewmodels.ManagerToolsReportsTab"
   ))
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(ScalafmtPlugin.scalafmtConfigSettings))

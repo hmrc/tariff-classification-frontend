@@ -22,44 +22,44 @@
 @import controllers.v2.routes
 @import uk.gov.hmrc.play.views.html._
 
-@(selectedTab : SubNavigationTab = ManagerToolsUsersTab)(implicit messages: Messages)
+@(selectedTab : SubNavigationTab = ManagerToolsReportsTab)(implicit messages: Messages)
 
             <nav id="manager-tools-cases-sub-nav"  class="moj-sub-navigation" aria-label="Sub navigation">
                 <ul class="moj-sub-navigation__list">
-                    <li class="moj-sub-navigation__item">
-                        @if(selectedTab == ManagerToolsUsersTab) {
-                            <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link" aria-current="page"
-                                href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsUsersTab)">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
-                        } else {
-                        <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link"
-                           href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsUsersTab)">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
-                        }
-                    </li>
-                    <li class="moj-sub-navigation__item">
-                        @if(selectedTab == ManagerToolsTeamsTab) {
-                        <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link" aria-current="page"
-                                href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsTeamsTab)">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>
-                        } else {
-                        <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link"
-                            href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsTeamsTab)">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>
-                        }
-                    </li>
-                    <li class="moj-sub-navigation__item">
-                        @if(selectedTab == ManagerToolsKeywordsTab) {
-                        <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link" aria-current="page"
-                            href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsKeywordsTab)">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
-                        } else {
-                        <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link"
-                            href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsKeywordsTab)">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
-                        }
-                    </li>
+<!--                    <li class="moj-sub-navigation__item">-->
+<!--                        @if(selectedTab == ManagerToolsUsersTab) {-->
+<!--                            <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link" aria-current="page"-->
+<!--                                href="#">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>-->
+<!--                        } else {-->
+<!--                        <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link"-->
+<!--                           href="#">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>-->
+<!--                        }-->
+<!--                    </li>-->
+<!--                    <li class="moj-sub-navigation__item">-->
+<!--                        @if(selectedTab == ManagerToolsTeamsTab) {-->
+<!--                        <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link" aria-current="page"-->
+<!--                                href="#">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>-->
+<!--                        } else {-->
+<!--                        <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link"-->
+<!--                            href="#">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>-->
+<!--                        }-->
+<!--                    </li>-->
+<!--                    <li class="moj-sub-navigation__item">-->
+<!--                        @if(selectedTab == ManagerToolsKeywordsTab) {-->
+<!--                        <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link" aria-current="page"-->
+<!--                            href="#">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>-->
+<!--                        } else {-->
+<!--                        <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link"-->
+<!--                            href="#">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>-->
+<!--                        }-->
+<!--                    </li>-->
                     <li class="moj-sub-navigation__item">
                         @if(selectedTab == ManagerToolsReportsTab) {
                         <a id ="sub_nav_manager_tools_reports_tab" class="moj-sub-navigation__link" aria-current="page"
-                            href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsReportsTab)">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
+                            href="#">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
                         } else {
                         <a id ="sub_nav_manager_tools_reports_tab" class="moj-sub-navigation__link"
-                           href="@routes.AllOpenCasesController.displayAllOpenCases(ManagerToolsReportsTab)">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
+                           href="#">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
                         }
                     </li>
                 </ul>

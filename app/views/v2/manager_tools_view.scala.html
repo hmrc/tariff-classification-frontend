@@ -20,16 +20,15 @@
 @import views.html.components.{cases_tab, manager_tools_secondary_navigation, primary_navigation}
 @import views.html.includes.main
 @import models.viewmodels.SubNavigationTab
-@import models.viewmodels.ManagerToolsUsersTab
+@import models.viewmodels.ManagerToolsReportsTab
 
 
 @this()
 
-@(cases : CasesTabViewModel, activeSubNav : SubNavigationTab = ManagerToolsUsersTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("common.cases.manager_tools_cases-title")), customPrimaryNavTab = ManagerToolsTab) {
 
     @manager_tools_secondary_navigation(activeSubNav)
-    @cases_tab(cases)
 
 }
