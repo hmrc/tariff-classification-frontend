@@ -29,8 +29,8 @@
 
 <div id="dashboard-view" class="centered-content">
 
-    <span class="caption-xl">@Role.format(request.operator.role)</span>
-    <h1 class="heading-xlarge">@request.operator.name.getOrElse("")</h1>
+    <span class="caption-xl mt-40">@Role.format(request.operator.role)</span>
+    <h1 class="heading-xlarge mt-0 mb-0">@request.operator.name.getOrElse("")</h1>
 
     @if(request.operator.manager) {
         <h2 class="heading-medium">@messages("cases.menu.manager_tools")</h2>
@@ -47,7 +47,7 @@
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.tools")</h3>
                     <p class="card-body card-action">
-                        @messages("operator.dashboard.classification.manager-tools.users.p")
+                        @messages("operator.dashboard.classification.manager-tools.teams.p")
                     </p>
                 </div>
             </a>
@@ -129,21 +129,6 @@
                 </p>
             </div>
         </a>
-        <a id="my-completed-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">
-            <div class="card">
-                <h3 class="card-heading govuk-heading-s">
-                    @messages("operator.dashboard.classification.my-cases.completedByMe")</h3>
-                <p class="card-body">
-                    @if(referredCasesAssignedToMe == 1) {
-                        @messages("operator.dashboard.classification.my-cases.onCompletedProgress.singular",
-                            referredCasesAssignedToMe)
-                    } else {
-                    @messages("operator.dashboard.classification.my-cases.onCompletedProgress.plural",
-                        referredCasesAssignedToMe)
-                    }
-                </p>
-            </div>
-        </a>
     </div>
     } else {
         <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
@@ -172,21 +157,6 @@
                         @messages("operator.dashboard.classification.my-cases.onReferralProgress.plural",
                             referredCasesAssignedToMe)
                     }
-                    </p>
-                </div>
-            </a>
-            <a id="my-completed-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">
-                <div class="card">
-                    <h3 class="card-heading govuk-heading-s">
-                        @messages("operator.dashboard.classification.my-cases.completedByMe")</h3>
-                    <p class="card-body">
-                        @if(referredCasesAssignedToMe == 1) {
-                            @messages("operator.dashboard.classification.my-cases.onCompletedProgress.singular",
-                            referredCasesAssignedToMe)
-                        } else {
-                            @messages("operator.dashboard.classification.my-cases.onCompletedProgress.plural",
-                            referredCasesAssignedToMe)
-                        }
                     </p>
                 </div>
             </a>
