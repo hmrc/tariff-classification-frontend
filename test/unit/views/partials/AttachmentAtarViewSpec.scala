@@ -73,7 +73,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
 
       val anchor = doc.getElementById("MODULE-file")
       anchor should haveChild("a").containingText("name")
-      anchor should haveChild("a").withAttribute("href", "url")
+      anchor should haveChild("a").withAttribute("href", "/manage-tariff-classifications/attachment/FILE_ID")
     }
 
   }
