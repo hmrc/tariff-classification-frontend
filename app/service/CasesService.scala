@@ -251,7 +251,16 @@ class CasesService @Inject() (
           .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
           .copy(effectiveStartDate = Some(startDate.toInstant), effectiveEndDate = endDate)
 
-        original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
+        if (original.application.`type`
+              .equals(ApplicationType.LIABILITY) & original.application.asLiabilityOrder.repaymentClaim.isDefined) {
+          val repaymentClaim =
+            original.application.asLiabilityOrder.repaymentClaim.get.copy(dateForRepayment = Some(startDate.toInstant))
+          val updatedApplication = original.application.asLiabilityOrder.copy(repaymentClaim = Some(repaymentClaim))
+          original
+            .copy(application = updatedApplication, status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
+        } else {
+          original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
+        }
 
       case _ =>
         original.copy(status = CaseStatus.COMPLETED)
@@ -469,7 +478,21 @@ class CasesService @Inject() (
     comment: Option[String],
     email: Option[String]
   )(implicit hc: HeaderCarrier): Future[Unit] = {
+    if (updated.application.`type`.equals(ApplicationType.LIABILITY) & updated.application.asLiabilityOrder.repaymentClaim.isDefined) {
+      addReturnedToNDRCEvent(original, updated, operator, "Date returned to NDRC")
+    }
     val details = CompletedCaseStatusChange(from = original.status, comment = comment, email = email)
+    addEvent(original, updated, details, operator)
+
+  }
+
+  private def addReturnedToNDRCEvent(
+    original: Case,
+    updated: Case,
+    operator: Operator,
+    comment: String
+  )(implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = Note(comment = comment)
     addEvent(original, updated, details, operator)
   }
 

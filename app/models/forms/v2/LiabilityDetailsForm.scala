@@ -28,7 +28,7 @@ import models.forms.mappings.FormMappings._
 import play.api.data.{Form, Mapping}
 import play.api.data.Forms._
 
-class LiabilityDetailsForm @Inject()(
+class LiabilityDetailsForm @Inject() (
   commodityCodeConstraints: CommodityCodeConstraints,
   appConfig: AppConfig
 ) extends Constraints {
@@ -56,8 +56,7 @@ class LiabilityDetailsForm @Inject()(
         Option[String],
         Contact,
         Option[String],
-        Option[String],
-        Option[Instant]
+        Option[String]
       ](
         "entryDate" -> optional(
           FormDate
@@ -95,32 +94,28 @@ class LiabilityDetailsForm @Inject()(
         "entryNumber" -> optional(
           text.verifying(emptyOr(entryNumberIsNumbersAndLettersOnly()): _*)
         ),
-        "traderCommodityCode"  -> optional(text.verifying(
-          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
-            commodityCodeConstraints.commodityCodeNumbersValid,
-            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
-        )),
-        "officerCommodityCode" -> optional(text.verifying(
-          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
-            commodityCodeConstraints.commodityCodeNumbersValid,
-            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
-        )),
-        "contact"              -> contactMapping,
-        "port"                 -> optional(text),
-        "dvrNumber" -> optional(
-          text.verifying(emptyOr(dvrNumberIsNumberOnly()): _*)
+        "traderCommodityCode" -> optional(
+          text.verifying(
+            emptyOr(
+              commodityCodeConstraints.commodityCodeLengthValid,
+              commodityCodeConstraints.commodityCodeNumbersValid,
+              commodityCodeConstraints.commodityCodeEvenDigitsValid
+            ): _*
+          )
         ),
-        //TODO revisit .verifying logic
-        "dateForRepayment" -> optional(
-          FormDate
-            .date("case.liability.error.date-of-repayment")
-            .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future"))
-            .verifying(
-              dateLowerBound(
-                "case.liability.error.date-for-repayment.year.lower.bound",
-                appConfig.dateForRepaymentYearLowerBound
-              )
-            )
+        "officerCommodityCode" -> optional(
+          text.verifying(
+            emptyOr(
+              commodityCodeConstraints.commodityCodeLengthValid,
+              commodityCodeConstraints.commodityCodeNumbersValid,
+              commodityCodeConstraints.commodityCodeEvenDigitsValid
+            ): _*
+          )
+        ),
+        "contact" -> contactMapping,
+        "port"    -> optional(text),
+        "dvrNumber" -> optional(
+          text.verifying(emptyOr(dvrNumberIsNumberAndLettersOnly()): _*)
         )
       )(form2Liability(existingLiability))(liability2Form)
     ).fillAndValidate(existingLiability)
@@ -152,8 +147,7 @@ class LiabilityDetailsForm @Inject()(
     Option[String],
     Contact,
     Option[String],
-    Option[String],
-    Option[Instant]
+    Option[String]
   ) => Case = {
     case (
         entryDate,
@@ -175,8 +169,7 @@ class LiabilityDetailsForm @Inject()(
         officerCommodityCode,
         contact,
         port,
-        dvrNumber,
-        dateForRepayment
+        dvrNumber
         ) =>
       existingCase.copy(
         caseBoardsFileNumber = boardsFileNumber,
@@ -199,7 +192,7 @@ class LiabilityDetailsForm @Inject()(
           agentName    = agentName,
           btiReference = btiReference,
           repaymentClaim =
-            if (isRepaymentClaim) Some(RepaymentClaim(dvrNumber = dvrNumber, dateForRepayment = dateForRepayment))
+            if (isRepaymentClaim) Some(RepaymentClaim(dvrNumber = dvrNumber, dateForRepayment = None))
             else None,
           dateOfReceipt        = dateOfReceipt,
           goodName             = goodName,
@@ -234,8 +227,7 @@ class LiabilityDetailsForm @Inject()(
       Option[String],
       Contact,
       Option[String],
-      Option[String],
-      Option[Instant]
+      Option[String]
     )
   ] = {
     val existingLiability = existingCase.application.asLiabilityOrder
@@ -271,8 +263,7 @@ class LiabilityDetailsForm @Inject()(
         existingLiability.officerCommodityCode,
         existingLiability.contact,
         existingLiability.port,
-        existingLiability.repaymentClaim.flatMap(_.dvrNumber),
-        existingLiability.repaymentClaim.flatMap(_.dateForRepayment)
+        existingLiability.repaymentClaim.flatMap(_.dvrNumber)
       )
     )
   }
@@ -301,8 +292,7 @@ class LiabilityDetailsForm @Inject()(
         Option[String],
         Contact,
         Option[String],
-        Option[String],
-        Option[Instant]
+        Option[String]
       ](
         "entryDate" -> optional(
           FormDate
@@ -318,7 +308,8 @@ class LiabilityDetailsForm @Inject()(
         "traderEmail" -> optional(
           text
             .verifying(customNonEmpty("Enter a trader email"))
-            .verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
+            .verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)
+        ),
         "traderPhone"             -> optional(text),
         "traderBuildingAndStreet" -> optional(text),
         "traderTownOrCity"        -> optional(text),
@@ -349,24 +340,12 @@ class LiabilityDetailsForm @Inject()(
         "contact" -> contactMapping,
         "port"    -> optional(text),
         "dvrNumber" -> optional(
-          text.verifying(dvrNumberIsNumberOnly())
-        ),
-        "dateForRepayment" -> optional(
-          FormDate
-            .date("case.liability.error.date-of-repayment")
-            .verifying(dateMustBeInThePast("case.liability.error.date-of-repayment.future"))
-            .verifying(
-              dateLowerBound(
-                "case.liability.error.date-for-repayment.year.lower.bound",
-                appConfig.dateForRepaymentYearLowerBound
-              )
-            )
+          text.verifying(dvrNumberIsNumberAndLettersOnly())
         ).verifying(
-          "Enter a real date, for example 11/12/2020",
-          f => {
+          "Enter a DVR number",
+          f =>
             if (existingLiability.application.asLiabilityOrder.repaymentClaim.isDefined) f.isDefined
             else true
-          }
         )
       )(form2Liability(existingLiability))(liability2Form)
     ).fillAndValidate(existingLiability)
