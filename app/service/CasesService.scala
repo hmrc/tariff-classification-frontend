@@ -428,7 +428,9 @@ class CasesService @Inject() (
             report.value.size
           )
         )
-        .toMap + ("my-cases" -> countMyCases.size)
+        .toMap + ("my-cases" -> countMyCases.size) + ("assigned-to-me" -> countMyCases.results.count(c =>
+        c.status == CaseStatus.OPEN
+      ))
     } yield casesByQueueAndMyCases
 
   def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
