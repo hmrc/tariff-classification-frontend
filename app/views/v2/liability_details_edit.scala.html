@@ -34,9 +34,9 @@
 
     @error_summary(form.errors)
 
-    @case_heading(CaseHeaderViewModel.fromCase(c))
-
-    <h2 id="liability-details-edit" class="heading-large">@messages("case.v2.liability.c592.edit_details_title")</h2>
+    @case_heading(
+        caseHeader = CaseHeaderViewModel.fromCase(c),
+        headingPrefix = Some(messages("case.v2.liability.c592.edit_details_title")))
 
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="form-group">
@@ -90,7 +90,7 @@
                     disableAutoComplete = true
                 )
 
-            @repayment_input_checkbox(formData = form )
+                @repayment_input_checkbox(formData = form )
 
                 <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
 
