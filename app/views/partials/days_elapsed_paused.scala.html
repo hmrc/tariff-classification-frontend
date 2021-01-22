@@ -20,6 +20,6 @@
 @import models.Case
 @import views.html.partials.days_elapsed
 
-@(c: Case)(implicit appConfig: AppConfig)
+@(c: Case)(implicit appConfig: AppConfig, messages: Messages)
 
-<p>The days elapsed count has paused at @days_elapsed(c.daysElapsed). </p>
+<p>@messages("case.referred.elapsed_day_count") @days_elapsed(c.daysElapsed) </p>
