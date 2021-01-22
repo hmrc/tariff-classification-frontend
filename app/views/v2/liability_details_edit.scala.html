@@ -90,10 +90,7 @@
                     disableAutoComplete = true
                 )
 
-                @input_checkbox(
-                    field = form("repaymentClaim"),
-                    label = messages("case.v2.liability.c592.details_edit.repayment_claim")
-                )
+            @repayment_input_checkbox(formData = form )
 
                 <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
 
@@ -211,25 +208,6 @@
                     label = messages("case.v2.liability.c592.port"),
                     inputClass = Some("width-one-half"),
                     labelClass= Some("un-bold")
-                )
-
-                <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.details_edit.repayment_claim_h3")</h3>
-
-                @input_text(
-                    field = form("dvrNumber"),
-                    label = messages("case.v2.liability.c592.details_edit.dvr_number"),
-                    inputClass = Some("width-one-half"),
-                    disableAutoComplete = true
-                )
-
-                @input_date(
-                    dayField = form("dateForRepayment.day"),
-                    monthField = form("dateForRepayment.month"),
-                    yearField = form("dateForRepayment.year"),
-                    dateField = form("dateForRepayment"),
-                    fieldsetId = Some("dateForRepayment"),
-                    legend = messages("case.v2.liability.c592.details_edit.date_of_repayment"),
-                    formControlUnBold = true
                 )
 
                 @confirm_or_cancel_buttons(
