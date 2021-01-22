@@ -94,6 +94,17 @@
         @c592ViewModel.repaymentClaim
         </dd>
     </div>
+
+    @if(c592ViewModel.isRepaymentClaim){
+        <div class="grid-row">
+            <dt class="cya-question">
+                @messages("case.v2.liability.c592.dvr_number")
+            </dt>
+            <dd class="cya-answer" id="dvr_number">
+                @c592ViewModel.dvrNumber
+            </dd>
+        </div>
+        }
 </dl>
 
 <h3 class="heading-medium mt-30">@messages("case.v2.liability.c592.trader_information")</h3>
@@ -219,29 +230,4 @@
         </dd>
     </div>
 
-</dl>
-
-@if(c592ViewModel.isRepaymentClaim){
-
-<h3 class="heading-medium mt-30">@messages("case.v2.liability.c592.repayment_claim")</h3>
-
-<dl class="govuk-check-your-answers cya-questions-long">
-    <div class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.liability.c592.dvr_number")
-        </dt>
-        <dd class="cya-answer" id="dvr_number">
-        @c592ViewModel.dvrNumber
-        </dd>
-    </div>
-
-    <div class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.liability.c592.date_for_repayment")
-        </dt>
-        <dd class="cya-answer" id="date_for_repayment">
-        @c592ViewModel.dateForRepayment
-        </dd>
-    </div>
-    }
 </dl>
