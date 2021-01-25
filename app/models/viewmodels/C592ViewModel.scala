@@ -34,7 +34,10 @@ case class C592ViewModel(
   dvrNumber: String,
   dateForRepayment: String,
   caseBoardsFileNumber: Option[String],
-  isRepaymentClaim: Boolean = false
+  isRepaymentClaim: Boolean = false,
+  agentName: Option[String] = None,
+  port: Option[String] = None,
+  isMigratedCase: Boolean
 )
 
 object C592ViewModel {
@@ -61,7 +64,10 @@ object C592ViewModel {
       dvrNumber            = liabilityOrder.repaymentClaim.flatMap(_.dvrNumber).getOrElse(""),
       dateForRepayment     = liabilityOrder.repaymentClaim.flatMap(_.dateForRepayment).map(Dates.format).getOrElse(""),
       caseBoardsFileNumber = c.caseBoardsFileNumber,
-      isRepaymentClaim     = liabilityOrder.repaymentClaim.isDefined
+      isRepaymentClaim     = liabilityOrder.repaymentClaim.isDefined,
+      agentName            = liabilityOrder.agentName,
+      port                 = liabilityOrder.port,
+      isMigratedCase       = c.dateOfExtract.isDefined
     )
   }
 
