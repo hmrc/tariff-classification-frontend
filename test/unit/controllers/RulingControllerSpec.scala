@@ -16,6 +16,7 @@
 
 package controllers
 
+import models.forms.v2.LiabilityDetailsForm
 import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import models.{Case, CaseStatus, Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -42,6 +43,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val operator                 = Operator(id = "id")
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm             = new DecisionForm(commodityCodeConstraints)
+  private val liabilityDetailsForm     = new LiabilityDetailsForm(commodityCodeConstraints, realAppConfig)
+
   private lazy val editLiabilityView   = injector.instanceOf[edit_liability_ruling]
   private val liability_details_edit   = injector.instanceOf[views.html.v2.liability_details_edit]
 
@@ -62,6 +65,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     fileService,
     mapper,
     decisionForm,
+    liabilityDetailsForm,
     mcc,
     editLiabilityView,
     liability_details_edit,
@@ -74,6 +78,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     fileService,
     mapper,
     decisionForm,
+    liabilityDetailsForm,
     mcc,
     editLiabilityView,
     liability_details_edit,

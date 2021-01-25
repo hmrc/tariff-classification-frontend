@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import models.forms.DecisionForm
+import models.forms.{DecisionForm}
 import javax.inject.{Inject, Singleton}
 import models._
 import models.forms.v2.LiabilityDetailsForm
@@ -34,6 +34,7 @@ class CompleteCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   decisionForm: DecisionForm,
+  liabilityDetailsForm: LiabilityDetailsForm,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
@@ -81,7 +82,7 @@ class CompleteCaseController @Inject() (
     case ApplicationType.ATAR =>
       decisionForm.bindFrom(c.decision).map(_.errors).exists(_.isEmpty)
     case ApplicationType.LIABILITY =>
-      LiabilityDetailsForm.liabilityDetailsCompleteForm(c, appConfig).errors.isEmpty && decisionForm
+      liabilityDetailsForm.liabilityDetailsCompleteForm(c).errors.isEmpty && decisionForm
         .liabilityCompleteForm(c.decision.getOrElse(Decision()))
         .errors
         .isEmpty

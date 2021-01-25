@@ -18,16 +18,15 @@ package models.forms
 
 import java.time.{Clock, Instant, LocalDateTime, ZoneId}
 
-import models.forms.v2.LiabilityDetailsForm.regexp
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import scala.util.matching.Regex
 
 object FormConstraints {
 
-  val numbersOnlyRegex: Regex = """^\d+$""".r
+  val numbersOnlyRegex: Regex       = """^\d+$""".r
   val numbersAndLettersRegex: Regex = """[A-Za-z0-9]+""".r
-  val btiRefRegex: Regex      = """[0-9]{6,22}""".r
+  val btiRefRegex: Regex            = """[0-9]{6,22}""".r
 
   val validCommodityCodeSearch: Constraint[String] = Constraint("constraints.commoditycode")({
     case s: String if s.matches("[0-9]{2,22}") => Valid
@@ -52,8 +51,8 @@ object FormConstraints {
   def entryNumberIsNumbersAndLettersOnly(): Constraint[String] =
     regexp(numbersAndLettersRegex, "case.liability.error.entry-number")
 
-  def dvrNumberIsNumberOnly(): Constraint[String] =
-    regexp(numbersOnlyRegex, "case.liability.error.dvr-number")
+  def dvrNumberIsNumberAndLettersOnly(): Constraint[String] =
+    regexp(numbersAndLettersRegex, "case.liability.error.dvr-number")
 
   def emptyOr(c: Constraint[String]*): Seq[Constraint[String]] = c.map { c =>
     Constraint[String]("constraints.empty")({
@@ -66,5 +65,13 @@ object FormConstraints {
     case option: Option[T] if option.isDefined => Valid
     case _                                     => Invalid(key)
   }
+
+  def regexp(regex: Regex, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if regex.pattern.matcher(str).matches() =>
+        Valid
+      case _ =>
+        Invalid(errorKey, regex.pattern.pattern())
+    }
 
 }

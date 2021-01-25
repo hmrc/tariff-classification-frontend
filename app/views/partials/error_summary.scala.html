@@ -22,7 +22,7 @@
         </h2>
         <ul role="list" class="error-summary-list">
             @for((error: FormError, index: Int) <- errors.zipWithIndex) {
-                <li><a href="#@{error.key}" tabindex="@startAtTabIndex.map(x => x+2+index)">@messages(error.message, error.args:_*)</a></li>
+                <li><a href="#@error.key.replaceAll("""[\.\[\]]""", "_")" tabindex="@startAtTabIndex.map(x => x+2+index)">@messages(error.message, error.args:_*)</a></li>
             }
         </ul>
     </div>
