@@ -19,7 +19,7 @@ package models.forms
 import java.time.Instant
 
 import models.PseudoReportColumns.PseudoReportColumns
-import models._
+import models.{ReportOptions, _}
 import models.forms.FormUtils._
 import models.forms.mappings.FormMappings.oneOf
 import play.api.data.{Form, Mapping}
@@ -27,7 +27,7 @@ import play.api.data.Forms._
 
 object ReportSettingsForm {
 
-  val form: Form[ReportSettings] = Form(
+  val form: Form[ReportOptions] = Form(
     mapping(
       "selectedDateRange" -> reportDatesMapping,
       "grouping"          -> oneOf("error", PseudoGroupingType),
@@ -37,18 +37,36 @@ object ReportSettingsForm {
     )(form2Settings)(settings2Form)
   )
 
-  private val form2Settings: (ReportDates, String, Option[Set[PseudoReportColumns]]) => ReportSettings = {
+  private val form2Settings: (ReportDates, String, Option[Set[PseudoReportColumns]]) => ReportOptions = {
     case (selectedDateRange, grouping, columns) =>
-      ReportSettings(
-        selectedDateRange = selectedDateRange,
-        grouping          = PseudoGroupingType.withName(grouping),
-        columns           = columns
-      )
+      PseudoGroupingType.withName(grouping) match {
+        case PseudoGroupingType.NONE => ReportColumnsOptions(selectedDateRange, columns)
+        case _                       => ReportGroupingOptions(selectedDateRange, PseudoGroupingType.withName(grouping))
+      }
+
   }
 
-  private val settings2Form: ReportSettings => Option[(ReportDates, String, Option[Set[PseudoReportColumns]])] =
-    reportSettings => Some((reportSettings.selectedDateRange, reportSettings.grouping.toString, reportSettings.columns))
-
+  private val settings2Form: ReportOptions => Option[(ReportDates, String, Option[Set[PseudoReportColumns]])] =
+    reportSettings => {
+      reportSettings.`type` match {
+        case ReportOptionsType.GROUPING_OPTIONS =>
+          Some(
+            (
+              reportSettings.selectedDateRange,
+              reportSettings.asInstanceOf[ReportGroupingOptions].grouping.toString,
+              None
+            )
+          )
+        case ReportOptionsType.COLUMNS_OPTIONS =>
+          Some(
+            (
+              reportSettings.selectedDateRange,
+              PseudoGroupingType.NONE.toString,
+              reportSettings.asInstanceOf[ReportColumnsOptions].columns
+            )
+          )
+      }
+    }
   private def reportDatesMapping: Mapping[ReportDates] =
     mapping(
       "chosenDateRange" -> oneOf("error", PseudoDateRange),
@@ -74,11 +92,30 @@ object ReportSettingsForm {
   }
 
   private val dates2Form: ReportDates => Option[(String, Option[Instant], Option[Instant], Option[String])] =
-    reportDates =>
-      {
-        reportDates. match {
-          case CustomDate =>
-        }
-      } Some ((reportDates.chosenDateRange.toString, reportDates.from, reportDates.to))
+    reportDates => {
+      reportDates.`type` match {
+        case ReportDatesType.CUSTOM_DATE => Some(("", Some(reportDates.asInstanceOf[CustomDate].from), None, None))
+        case ReportDatesType.CUSTOM_DATE_RANGE =>
+          Some(
+            (
+              "",
+              Some(reportDates.asInstanceOf[CustomDateRange].from),
+              Some(reportDates.asInstanceOf[CustomDateRange].to),
+              None
+            )
+          )
+        case ReportDatesType.RELATIVE_DATE_RANGE =>
+          Some((reportDates.asInstanceOf[RelativeDateRange].relativeDateRange.toString, None, None, None))
+        case ReportDatesType.CUSTOM_RELATIVE_DATE_RANGE =>
+          Some(
+            (
+              PseudoDateRange.LAST_CUSTOM_DAYS.toString,
+              None,
+              None,
+              Some(reportDates.asInstanceOf[CustomRelativeDateRange].numberOfDays.toString)
+            )
+          )
+      }
+    }
 
 }

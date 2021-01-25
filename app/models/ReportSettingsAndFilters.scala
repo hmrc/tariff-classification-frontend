@@ -17,6 +17,6 @@
 package models
 
 case class ReportSettingsAndFilters(
-  settings: Option[ReportSettings] = None,
-  filters: Option[ReportsFilter]   = None
+  settings: Option[ReportOptions] = None,
+  filters: Option[ReportsFilter]  = None
 )
