@@ -19,7 +19,7 @@
 @helper.form(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
     <label for="search_box-input" class="form-label" aria-hidden="true">@{messages(label)}</label>
     <div class="search_box @containerClass">
-        <input tabindex="100" id="search_box-input" class="form-control" name="reference" value="" type="text">
-        <button tabindex="101" aria-label="search for case reference" id="search_box-button" type="submit"></button>
+        <input id="search_box-input" class="form-control" name="reference" value="" type="text">
+        <button aria-label="search for case reference" id="search_box-button" type="submit"></button>
     </div>
 }
