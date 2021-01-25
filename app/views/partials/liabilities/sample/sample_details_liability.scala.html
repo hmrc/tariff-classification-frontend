@@ -42,7 +42,10 @@ sample_status_events_table: views.html.partials.liabilities.sample.sample_status
         </dd>
         <dd class="column-one-third">
             @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
-                <a id="change-sending_sample-status" tabindex="@startAtTabIndex" href="@{routes.SampleController.updateStatus(s.caseReference, Some("liability"))}" >@messages("case.sample.request.change")</a>
+                <a id="change-sending_sample-status" tabindex="@startAtTabIndex" href="@{routes.SampleController.updateStatus(s.caseReference, Some("liability"))}" >
+                    @messages("case.sample.request.change")
+                    <span class="visuallyhidden">@messages("case.liability.provide-samples.hidden")</span>
+                </a>
             }
         </dd>
     </div>
@@ -59,7 +62,10 @@ sample_status_events_table: views.html.partials.liabilities.sample.sample_status
 
             <dd class="column-one-third">
                 @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
-                <a id="sample-requested-who-change" tabindex="@startAtTabIndex" href="#">@messages("case.sample.request.change")</a>
+                <a id="sample-requested-who-change" tabindex="@startAtTabIndex" href="#">
+                    @messages("case.sample.request.change")
+                    <span class="visuallyhidden">@messages("case.v2.liability.sample_status_tab.who_is_sending_sample_p.hidden")</span>
+                </a>
                 }
             </dd>
         </div>
@@ -73,7 +79,10 @@ sample_status_events_table: views.html.partials.liabilities.sample.sample_status
             </dd>
             <dd class="column-one-third">
                 @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
-                  <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="@routes.SampleReturnController.updateStatus(s.caseReference)">@messages("case.sample.request.change")</a>
+                  <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="@routes.SampleReturnController.updateStatus(s.caseReference)">
+                      @messages("case.sample.request.change")
+                      <span class="visuallyhidden">@messages("case.v2.liability.sample_status_tab.should_sample_return.hidden")</span>
+                  </a>
                 }
             </dd>
         </div>
