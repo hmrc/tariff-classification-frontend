@@ -252,12 +252,17 @@ class CasesService @Inject() (
           .copy(effectiveStartDate = Some(startDate.toInstant), effectiveEndDate = endDate)
 
         if (original.application.`type`
-              .equals(ApplicationType.LIABILITY) & original.application.asLiabilityOrder.repaymentClaim.isDefined) {
-          val repaymentClaim =
-            original.application.asLiabilityOrder.repaymentClaim.get.copy(dateForRepayment = Some(startDate.toInstant))
-          val updatedApplication = original.application.asLiabilityOrder.copy(repaymentClaim = Some(repaymentClaim))
-          original
-            .copy(application = updatedApplication, status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
+              .equals(ApplicationType.LIABILITY)) {
+          if (original.application.asLiabilityOrder.repaymentClaim.isDefined) {
+            val repaymentClaim =
+              original.application.asLiabilityOrder.repaymentClaim.get
+                .copy(dateForRepayment = Some(startDate.toInstant))
+            val updatedApplication = original.application.asLiabilityOrder.copy(repaymentClaim = Some(repaymentClaim))
+            original
+              .copy(application = updatedApplication, status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
+          } else {
+            original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
+          }
         } else {
           original.copy(status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
         }
@@ -478,8 +483,10 @@ class CasesService @Inject() (
     comment: Option[String],
     email: Option[String]
   )(implicit hc: HeaderCarrier): Future[Unit] = {
-    if (updated.application.`type`.equals(ApplicationType.LIABILITY) & updated.application.asLiabilityOrder.repaymentClaim.isDefined) {
-      addReturnedToNDRCEvent(original, updated, operator, "Date returned to NDRC")
+    if (updated.application.`type`.equals(ApplicationType.LIABILITY)) {
+      if (updated.application.asLiabilityOrder.repaymentClaim.isDefined) {
+        addReturnedToNDRCEvent(original, updated, operator, "Date returned to NDRC")
+      }
     }
     val details = CompletedCaseStatusChange(from = original.status, comment = comment, email = email)
     addEvent(original, updated, details, operator)

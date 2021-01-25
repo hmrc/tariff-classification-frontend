@@ -139,33 +139,39 @@ class FormConstraintsTest extends ModelsBaseSpec {
       }
     }
 
-    "entryNumberIsNumberOnly" should {
+    "entryNumberIsNumbersAndLettersOnly" should {
 
-      "return valid when entry number does not contain characters" in {
+      "return valid when entry number does not contain special characters" in {
         val result = FormConstraints.entryNumberIsNumbersAndLettersOnly().apply("123456eadJFG")
 
         result shouldBe Valid
       }
 
-      "return invalid when entry number contains characters" in {
+      "return invalid when entry number contains special characters" in {
         val result = FormConstraints.entryNumberIsNumbersAndLettersOnly().apply("1assed&f23456")
 
-        result shouldBe Invalid("case.liability.error.entry-number", FormConstraints.numbersAndLettersRegex.pattern.pattern())
+        result shouldBe Invalid(
+          "case.liability.error.entry-number",
+          FormConstraints.numbersAndLettersRegex.pattern.pattern()
+        )
       }
     }
 
-    "dvrNumberIsNumberOnly" should {
+    "dvrNumberIsNumbersAndLettersOnly" should {
 
-      "return valid when dvr number does not contain characters" in {
-        val result = FormConstraints.dvrNumberIsNumberOnly().apply("12233456")
+      "return valid when dvr number does not contain special characters" in {
+        val result = FormConstraints.dvrNumberIsNumberAndLettersOnly().apply("1223345d6")
 
         result shouldBe Valid
       }
 
-      "return invalid when dvr number contains characters" in {
-        val result = FormConstraints.dvrNumberIsNumberOnly().apply("34fadf234")
+      "return invalid when dvr number contains special characters" in {
+        val result = FormConstraints.dvrNumberIsNumberAndLettersOnly().apply("34fadf2&34")
 
-        result shouldBe Invalid("case.liability.error.dvr-number", FormConstraints.numbersOnlyRegex.pattern.pattern())
+        result shouldBe Invalid(
+          "case.liability.error.dvr-number",
+          FormConstraints.numbersAndLettersRegex.pattern.pattern()
+        )
       }
     }
   }
