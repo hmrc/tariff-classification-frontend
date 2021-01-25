@@ -215,7 +215,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
         .willReturn(successful(Some(Cases.correspondenceCaseExample)))
       val result = await(
-        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
           .displayQuestion("reference")(newFakePOSTRequestWithCSRF(app))
       )
 
