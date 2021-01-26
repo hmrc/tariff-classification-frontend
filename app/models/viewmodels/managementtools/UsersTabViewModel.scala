@@ -49,7 +49,7 @@ object UsersTabViewModel {
     }
 
     UsersTabViewModel(
-      "Manage users",
+      "management.manage-users.heading",
       teamUsers,
       assignedUsers,
       unassignedUsers,

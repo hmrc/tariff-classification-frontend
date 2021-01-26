@@ -24,7 +24,7 @@
 @(users : UsersTabViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 <!--todo add messages-->
-@heading(users.headingMessageKey)
+@heading(messages(users.headingMessageKey))
 
 <div id="open-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
     <ul class="govuk-tabs__list">
@@ -56,6 +56,7 @@
     <!--ACT tab component-->
    @for(usersByQueueTab <- users.usersByQueueTabs) {
         <div class="govuk-tabs__panel" id="@usersByQueueTab.elementId">
+            <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", usersByQueueTab.tabMessageKey)</h2>
             @{usersByQueueTab.searchResult.results.size match {
                 case 0 => "No users in this team"
                 case _ => usersByTeamTable(usersByQueueTab)
@@ -64,6 +65,7 @@
         </div>
     }
     <div class="govuk-tabs__panel" id="@users.assignedUsersTab.elementId">
+        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.assignedUsersTab.tabMessageKey)</h2>
         @{users.assignedUsersTab.searchResult.results.size match {
         case 0 => "No users in this team"
         case _ => assignedUsersTable(users.assignedUsersTab)
@@ -72,6 +74,7 @@
     </div>
 
     <div class="govuk-tabs__panel" id="@users.unassignedUsersTab.elementId">
+        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.unassignedUsersTab.tabMessageKey)</h2>
         @{users.unassignedUsersTab.searchResult.results.size match {
         case 0 => "No users in this team"
         case _ => noTeamUsersTable(users.unassignedUsersTab)
@@ -79,6 +82,7 @@
         }
     </div>
     <div class="govuk-tabs__panel" id="@users.readOnlyTab.elementId">
+        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.readOnlyTab.tabMessageKey)</h2>
         @{users.readOnlyTab.searchResult.results.size match {
         case 0 => "No users in this team"
         case _ => noTeamUsersTable(users.readOnlyTab)
