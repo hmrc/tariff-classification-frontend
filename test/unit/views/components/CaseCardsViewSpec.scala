@@ -27,7 +27,7 @@ class CaseCardsViewSpec extends ViewSpec {
 
     "display the number of cases on My Cases tile when plural" in {
 
-      val countCases = Map("my-cases" -> 2)
+      val countCases = Map("assigned-to-me" -> 2)
 
       val doc = view(casesCards(countCases))
 
@@ -38,7 +38,7 @@ class CaseCardsViewSpec extends ViewSpec {
     }
 
     "display the number of cases on My Cases tile when singular" in {
-      val countCases = Map("my-cases" -> 1)
+      val countCases = Map("assigned-to-me" -> 1)
 
       val doc = view(casesCards(countCases))
 
