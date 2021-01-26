@@ -18,7 +18,7 @@ package controllers
 
 import config.AppConfig
 import controllers.Tab
-import models.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
+import models.forms.{DecisionForm, DecisionFormData, DecisionFormMapper, LiabilityDetailsForm}
 import javax.inject.{Inject, Singleton}
 import models._
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
@@ -43,6 +43,7 @@ class RulingController @Inject() (
   fileStoreService: FileStoreService,
   mapper: DecisionFormMapper,
   decisionForm: DecisionForm,
+  liabilityDetailsForm: LiabilityDetailsForm,
   mcc: MessagesControllerComponents,
   val editRulingView: views.html.v2.edit_liability_ruling,
   val liability_details_edit: views.html.v2.liability_details_edit,
@@ -86,8 +87,8 @@ class RulingController @Inject() (
               if(liabilityDecisionForm.errors.nonEmpty) {
                 editLiabilityRulingView(liabilityDecisionForm, c)
               } else {
-                val liabilityDetailsForm = LiabilityDetailsForm.liabilityDetailsCompleteForm(c, appConfig)
-                Future.successful(Ok(liability_details_edit(c, liabilityDetailsForm)))
+                val liabilityForm = liabilityDetailsForm.liabilityDetailsCompleteForm(c)
+                Future.successful(Ok(liability_details_edit(c, liabilityForm)))
               }
           }
         )

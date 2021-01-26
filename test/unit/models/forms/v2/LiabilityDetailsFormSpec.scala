@@ -20,12 +20,17 @@ import java.time.Instant
 
 import config.AppConfig
 import models._
+import models.forms.CommodityCodeConstraints
 import org.joda.time.{DateTime, DateTimeZone}
+import service.CommodityCodeService
 import utils.Cases
 
 class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 
-  private val appConfig = mock[AppConfig]
+  private val appConfig            = mock[AppConfig]
+  private val commodityCodeService = mock[CommodityCodeService]
+  private val liabilityDetailsForm =
+    new LiabilityDetailsForm(new CommodityCodeConstraints(commodityCodeService, appConfig), appConfig)
 
   private val emptyLiabilityOrder = LiabilityOrder(
     Contact(name = "", email = "", Some("")),
@@ -58,7 +63,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
     traderCommodityCode  = Some("0200000000"),
     officerCommodityCode = Some("0100000000"),
     btiReference         = Some("12345678"),
-    repaymentClaim       = Some(RepaymentClaim(dvrNumber = Some("123456"), dateForRepayment = Some(Instant.EPOCH))),
+    repaymentClaim       = Some(RepaymentClaim(dvrNumber = Some("123456"), dateForRepayment = None)),
     dateOfReceipt        = Some(Instant.EPOCH),
     traderContactDetails = Some(
       TraderContactDetails(
@@ -86,9 +91,9 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
   private val year  = new DateTime(Instant.EPOCH.getEpochSecond, DateTimeZone.forID("Etc/UTC")).year.getAsText
 
   private val params = Map(
-    "contactName"             -> Seq("contact-name"),
-    "contactEmail"            -> Seq("contact@email.com"),
-    "contactPhone"            -> Seq("contact-phone"),
+    "contact.contactName"     -> Seq("contact-name"),
+    "contact.contactEmail"    -> Seq("contact@email.com"),
+    "contact.contactPhone"    -> Seq("contact-phone"),
     "traderName"              -> Seq("trader-name"),
     "traderEmail"             -> Seq("trader@email.com"),
     "traderPhone"             -> Seq("0123456764"),
@@ -109,10 +114,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
     "dateOfReceipt.day"       -> Seq(day),
     "dateOfReceipt.month"     -> Seq(month),
     "dateOfReceipt.year"      -> Seq(year),
-    "dvrNumber"               -> Seq("123456"),
-    "dateForRepayment.day"    -> Seq(day),
-    "dateForRepayment.month"  -> Seq(month),
-    "dateForRepayment.year"   -> Seq(year)
+    "dvrNumber"               -> Seq("123456")
   )
 
   private val booleanValues = Seq("repaymentClaim")
@@ -121,17 +123,17 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
   "Bind from request" should {
     "Bind blank" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
+        val form = liabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(emptyParams)
 
         form.hasErrors         shouldBe true
         form.errors            should have(size(3))
-        form.errors.map(_.key) shouldBe Seq("traderName", "goodName", "contactName")
+        form.errors.map(_.key) shouldBe Seq("traderName", "goodName", "contact.contactName")
       }
     }
 
     "Bind valid form" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase, appConfig).bindFromRequest(params)
+        val form = liabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(params)
         form.hasErrors shouldBe false
         form.get       shouldBe sampleCase
       }
@@ -140,7 +142,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
     "fail to bind with correct error messages" when {
 
       "trader name is empty" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
+        val form = liabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(emptyParams)
 
         form.fold(
           errors => errors.error("traderName").map(_.message shouldBe "case.liability.error.empty.trader-name"),
@@ -149,7 +151,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
       }
 
       "item name is empty" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase, appConfig).bindFromRequest(emptyParams)
+        val form = liabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(emptyParams)
 
         form.fold(
           errors => errors.error("goodName").map(_.message shouldBe "case.liability.error.empty.good-name"),
@@ -162,14 +164,14 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
   "Fill" should {
     "populate by default" when {
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase, appConfig)
+        val form = liabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors shouldBe false
         form.data      shouldBe params.mapValues(v => v.head)
       }
 
       "using edit form is repayments claim set to true" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase, appConfig)
+        val form = liabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors                                       shouldBe false
         form.get.application.asLiabilityOrder.repaymentClaim shouldBe sampleCase.application.asLiabilityOrder.repaymentClaim

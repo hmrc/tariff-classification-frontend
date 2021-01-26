@@ -44,6 +44,7 @@ class LiabilityController @Inject() (
   fileService: FileStoreService,
   keywordsService: KeywordsService,
   mcc: MessagesControllerComponents,
+  liabilityDetailsForm: LiabilityDetailsForm,
   val liability_view: views.html.v2.liability_view,
   val liability_details_edit: views.html.v2.liability_details_edit,
   implicit val appConfig: AppConfig
@@ -120,15 +121,15 @@ class LiabilityController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
       successful(
-        Ok(liability_details_edit(request.`case`, LiabilityDetailsForm.liabilityDetailsForm(request.`case`, appConfig)))
+        Ok(liability_details_edit(request.`case`, liabilityDetailsForm.liabilityDetailsForm(request.`case`)))
       )
     }
 
   def postLiabilityDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
-      LiabilityDetailsForm
-        .liabilityDetailsForm(request.`case`, appConfig)
+      liabilityDetailsForm
+        .liabilityDetailsForm(request.`case`)
         .discardingErrors
         .bindFromRequest
         .fold(
