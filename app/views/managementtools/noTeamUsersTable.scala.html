@@ -40,7 +40,7 @@
                     </td>
                     <td id="@{usersTab.tabMessageKey}-role-@index">@{result.role}</td>
 <!--                    todo cutom status component-->
-                    <td id="@{usersTab.tabMessageKey}-status-@index">@{result.status}</td>
+                    <td id="@{usersTab.tabMessageKey}-status-@index">@user_status_tag(result.status, "@{usersTab.tabMessageKey}--@index" )</td>
                 </tr>
 
         }

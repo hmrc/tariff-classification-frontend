@@ -17,6 +17,7 @@
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.managementtools._
+@import views.html.managementtools.user_status_tag
 @import controllers.routes.{AssignCaseController, CaseController}
 
 @import play.twirl.api.TemplateMagic.defining
@@ -44,7 +45,7 @@
                     <td id="@{usersTab.tabMessageKey}-team-@index">@{result.teams.map(t => t.slug.toUpperCase).mkString(",")}</td>
                     <td id="@{usersTab.tabMessageKey}-case-@index">@{result.numberOfCases}</td>
 <!--                    todo cutom status component-->
-                    <td id="@{usersTab.tabMessageKey}-status-@index">@{result.status}</td>
+                    <td id="@{usersTab.tabMessageKey}-status-@index">@user_status_tag(result.status, "@{usersTab.tabMessageKey}--@index" )</td>
                 </tr>
 
         }
