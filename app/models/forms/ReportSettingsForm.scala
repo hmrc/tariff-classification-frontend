@@ -94,11 +94,12 @@ object ReportSettingsForm {
   private val dates2Form: ReportDates => Option[(String, Option[Instant], Option[Instant], Option[String])] =
     reportDates => {
       reportDates.`type` match {
-        case ReportDatesType.CUSTOM_DATE => Some(("", Some(reportDates.asInstanceOf[CustomDate].from), None, None))
+        case ReportDatesType.CUSTOM_DATE =>
+          Some((PseudoDateRange.CUSTOM_DATE.toString, Some(reportDates.asInstanceOf[CustomDate].from), None, None))
         case ReportDatesType.CUSTOM_DATE_RANGE =>
           Some(
             (
-              "",
+              PseudoDateRange.CUSTOM_DATE_RANGE.toString,
               Some(reportDates.asInstanceOf[CustomDateRange].from),
               Some(reportDates.asInstanceOf[CustomDateRange].to),
               None

@@ -29,7 +29,7 @@ object ReportsFilterForm {
       "status"    -> set(textTransformingTo(PseudoCaseStatus.withName, (x: PseudoCaseStatus) => x.toString)),
       "caseType"  -> set(textTransformingTo(PseudoApplicationType.withName, (x: PseudoApplicationType) => x.toString)),
       "caseQueue" -> set(text),
-      "officer"   -> set(text.verifying(emptyOr(validCommodityCodeSearch): _*))
+      "officer"   -> set(text)
     )(ReportsFilter.apply)(ReportsFilter.unapply)
   )
 }
