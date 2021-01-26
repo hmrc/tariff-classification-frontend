@@ -23,6 +23,7 @@ import controllers.RequestActions
 import models.request.AuthenticatedRequest
 import models.viewmodels._
 import models._
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService}
@@ -41,24 +42,41 @@ class MyCasesController @Inject() (
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
 ) extends FrontendController(mcc)
-    with I18nSupport {
+    with I18nSupport with Logging {
 
   private def getReferralEvents(
     cases: Paged[Case]
-  )(implicit hc: HeaderCarrier): Future[Map[String, ReferralCaseStatusChange]] =
+  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
     cases.results.toList
       .traverse { aCase =>
         eventsService.getFilteredEvents(aCase.reference, NoPagination(), Some(Set(EventType.CASE_REFERRAL))).map {
           events =>
             val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
             val latestReferralEvent = eventsLatestFirst.collectFirst {
-              case Event(_, details: ReferralCaseStatusChange, _, caseReference, _) => Map(caseReference -> details)
+              case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
               case _                                                                => Map.empty
             }
             latestReferralEvent.getOrElse(Map.empty)
         }
       }
-      .map(_.foldLeft(Map.empty[String, ReferralCaseStatusChange])(_ ++ _))
+      .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
+
+  private def getCompletedEvents(
+    cases: Paged[Case]
+  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
+    cases.results.toList
+      .traverse { aCase =>
+        eventsService.getFilteredEvents(aCase.reference, NoPagination(), Some(Set(EventType.CASE_COMPLETED))).map {
+          events =>
+            val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
+            val latestCompletedEvent = eventsLatestFirst.collectFirst {
+              case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
+              case _                                                                 => Map.empty
+            }
+            latestCompletedEvent.getOrElse(Map.empty)
+        }
+      }
+      .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
 
   def displayMyCases(activeSubNav: SubNavigationTab = AssignedToMeTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
@@ -66,10 +84,12 @@ class MyCasesController @Inject() (
         for {
           cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
           referralEventsByCase <- getReferralEvents(cases)
+          completeEventsByCase <- getCompletedEvents(cases)
+          _ = logger.info(completeEventsByCase.toString())
           myCaseStatuses = activeSubNav match {
             case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
             case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
-            case CompletedByMeTab => ApplicationsTab.completedByMe
+            case CompletedByMeTab => ApplicationsTab.completedByMe(cases.results, completeEventsByCase)
           }
         } yield Ok(myCasesView(myCaseStatuses, activeSubNav))
     }
