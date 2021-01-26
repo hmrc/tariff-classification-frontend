@@ -157,4 +157,5 @@ GET         /new-miscellaneous-confirm                         controllers.Creat
 GET         /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.editMiscDetails(reference: String)
 POST        /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.postMiscDetails(reference: String)
 
+GET        /users/manage-users                                      controllers.v2.ManageUsersController.displayAllOpenCases()
 
