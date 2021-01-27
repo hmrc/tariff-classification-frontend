@@ -16,14 +16,19 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.{CasesTabViewModel, ManagerToolsTab}
+@import views.html.components.{cases_tab, manager_tools_secondary_navigation, primary_navigation}
 @import views.html.includes.main
-@import models.viewmodels.HomeTab
+@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.ManagerToolsReportsTab
+
 
 @this()
-@(countCases: Map[String, Int], referredCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(request.operator.role.toString), customPrimaryNavTab = HomeTab) {
+@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@components.cases_cards(countCases, referredCasesByAssignee)
+@main(bodyClasses = None, customTitle = Some(messages("common.cases.manager_tools_cases-title")), customPrimaryNavTab = ManagerToolsTab) {
+
+    @manager_tools_secondary_navigation(activeSubNav)
 
 }
