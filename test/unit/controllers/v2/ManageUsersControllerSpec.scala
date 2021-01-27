@@ -45,7 +45,7 @@ class ManageUsersControllerSpec extends ControllerBaseSpec {
   "Manage users" should {
 
     "return 200 OK and HTML content type" in {
-      val result = await(controller(Set(Permission.VIEW_CASES)).displayManageUsers()(fakeRequest))
+      val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageUsers()(fakeRequest))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")

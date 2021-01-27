@@ -20,7 +20,7 @@
 @import controllers.v2.routes
 @import models.viewmodels.ReferredByMeTab
 @import models.viewmodels.CompletedByMeTab
-@import controllers.v2.routes.AllOpenCasesController
+@import controllers.v2.routes.{AllOpenCasesController, ManageUsersController}
 @import models.viewmodels.{ATaRTab, LiabilitiesTab}
 
 @import models.viewmodels.CorrespondenceTab
@@ -35,7 +35,7 @@
     @if(request.operator.manager) {
         <h2 class="heading-medium">@messages("cases.menu.manager_tools")</h2>
         <div class="flex-container govuk-grid-row">
-            <a id="manager-tools-users-id" class="link-text" href="#">
+            <a id="manager-tools-users-id" class="link-text" href="@ManageUsersController.displayManageUsers">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.users")</h3>
                     <p class="card-body card-action">

@@ -19,12 +19,18 @@
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.managementtools._
 @import views.html.includes.main
+@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
+@import models.viewmodels.{ManagerToolsTab}
+@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.ManagerToolsReportsTab
+
 
 @this()
 
-@(users : UsersTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, users : UsersTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title"))) {
-<!--todo add management tools secondary navigation component-->
+@main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title")), customPrimaryNavTab = ManagerToolsTab) {
+    @manager_tools_secondary_navigation(activeSubNav)
+
     @users_tab(users)
 }

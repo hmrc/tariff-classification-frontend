@@ -37,13 +37,16 @@ class ManageUsersController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  //todo add main and secondary navigation tabs
-  def displayManageUsers(): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES))( //todo verify permission for manager
-      implicit request =>
-        Ok(manageUsersView(UsersTabViewModel.forManagedTeams(
-          Queues.allQueues
-          //Seq(Queues.act, Queues.cap ).toList //todo replace dummy stub with a query
-        )))
+  def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
+      Ok(
+        manageUsersView(
+          activeSubNav,
+          UsersTabViewModel.forManagedTeams(
+            Queues.allQueues
+            //Seq(Queues.act, Queues.cap ).toList //todo replace dummy stub with a query
+          )
+        )
+      )
     )
 }

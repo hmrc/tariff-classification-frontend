@@ -17,7 +17,8 @@
 package views.managementtools
 
 import models.viewmodels.managementtools.UsersTabViewModel
-import models.{Queues}
+import models.Queues
+import models.viewmodels.ManagerToolsUsersTab
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.managementtools.manage_users_view
@@ -31,6 +32,7 @@ class ManageUsersViewSpec extends ViewSpec {
     "render successfully with the default tab" in {
       val doc = view(
         manageUsersView(
+          ManagerToolsUsersTab,
           UsersTabViewModel.forManagedTeams(Seq(Queues.cap).toList)
         )
       )
@@ -42,6 +44,7 @@ class ManageUsersViewSpec extends ViewSpec {
     val queues = Queues.allQueues
     val doc = view(
       manageUsersView(
+        ManagerToolsUsersTab,
         UsersTabViewModel.forManagedTeams(queues)
       )
     )
@@ -52,6 +55,7 @@ class ManageUsersViewSpec extends ViewSpec {
   "contain a heading" in {
     val doc = view(
       manageUsersView(
+        ManagerToolsUsersTab,
         UsersTabViewModel.forManagedTeams(Seq(Queues.cap).toList)
       )
     )
