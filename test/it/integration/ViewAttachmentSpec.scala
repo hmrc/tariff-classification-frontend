@@ -1,5 +1,6 @@
 package integration
 
+import akka.util.ByteString
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
@@ -10,7 +11,7 @@ import utils.JsonFormatters.fileMetaDataFormat
 
 class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
-  private val fileMetadata = Json.toJson(FileMetadata("id", "filename", "mimeType")).toString()
+  private val fileMetadata = Json.toJson(FileMetadata("id", "file.txt", "text/plain", Some(s"$wireMockUrl/file.txt"))).toString()
 
   "View Attachment" should {
 
@@ -54,12 +55,21 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
+      stubFor(
+        get(urlEqualTo("/file.txt"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody("FILE_CONTENTS")
+          )
+      )
+
       // When
       val response: WSResponse = await(ws.url(s"$baseUrl/attachment/id").get())
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Attachment is unavailable")
+      response.bodyAsBytes shouldBe ByteString("FILE_CONTENTS")
     }
   }
 
