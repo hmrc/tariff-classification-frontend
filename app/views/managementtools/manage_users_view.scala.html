@@ -24,7 +24,7 @@
 
 @(users : UsersTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("common.cases.open_cases-title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title"))) {
 <!--todo add management tools secondary navigation component-->
     @users_tab(users)
 }

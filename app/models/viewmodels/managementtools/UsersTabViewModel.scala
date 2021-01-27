@@ -31,7 +31,6 @@ case class UsersTabViewModel(
 object UsersTabViewModel {
   def forManagedTeams(managedTeams: List[Queue]) = {
     //todo replace stubs with queries
-    //create messages
     //create constants for roles
     val assignedUsers = UsersTab("Assigned", "assigned-tab", Paged(Users.allUsers.filter(u => u.isAssigned)))
     val unassignedUsers = UsersTab(

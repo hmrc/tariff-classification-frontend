@@ -42,7 +42,7 @@ class ManageUsersController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES))( //todo verify permission for manager
       implicit request =>
         Ok(manageUsersView(UsersTabViewModel.forManagedTeams(
-          Seq(Queues.act, Queues.cap ).toList
+          Seq(Queues.act, Queues.cap ).toList //todo replace dummy stub with a query
         )))
     )
 }
