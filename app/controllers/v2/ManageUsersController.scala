@@ -38,11 +38,12 @@ class ManageUsersController @Inject() (
     with I18nSupport {
 
   //todo add main and secondary navigation tabs
-  def displayAllOpenCases(): Action[AnyContent] =
+  def displayManageUsers(): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES))( //todo verify permission for manager
       implicit request =>
         Ok(manageUsersView(UsersTabViewModel.forManagedTeams(
-          Seq(Queues.act, Queues.cap ).toList //todo replace dummy stub with a query
+          Queues.allQueues
+          //Seq(Queues.act, Queues.cap ).toList //todo replace dummy stub with a query
         )))
     )
 }
