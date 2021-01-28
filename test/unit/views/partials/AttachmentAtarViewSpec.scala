@@ -24,13 +24,15 @@ import views.html.partials.attachment_atar
 
 class AttachmentAtarViewSpec extends ViewSpec {
 
+  val reference = "123456"
+
   "Attachment" should {
 
     "Render Pending attachment" in {
       val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = None)
 
       // When
-      val doc = view(attachment_atar("MODULE", stored))
+      val doc = view(attachment_atar(reference, "MODULE", stored))
 
       // Then
       doc                               should containElementWithID("MODULE-file")
@@ -41,7 +43,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
       val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.FAILED))
 
       // When
-      val doc = view(attachment_atar("MODULE", stored))
+      val doc = view(attachment_atar(reference, "MODULE", stored))
 
       // Then
       doc                               should containElementWithID("MODULE-file")
@@ -53,7 +55,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
         Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = None)
 
       // When
-      val doc = view(attachment_atar("MODULE", stored))
+      val doc = view(attachment_atar(reference, "MODULE", stored))
 
       // Then
       doc                               should containElementWithID("MODULE-file")
@@ -65,15 +67,16 @@ class AttachmentAtarViewSpec extends ViewSpec {
         .copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = Some("url"))
 
       // When
-      val doc = view(attachment_atar("MODULE", stored))
+      val doc = view(attachment_atar(reference, "MODULE", stored))
 
       // Then
       doc should containElementWithID("MODULE-file")
       doc shouldNot containElementWithID("MODULE-file-status")
 
       val anchor = doc.getElementById("MODULE-file")
+
       anchor should haveChild("a").containingText("name")
-      anchor should haveChild("a").withAttribute("href", "/manage-tariff-classifications/attachment/FILE_ID")
+      anchor should haveChild("a").withAttribute("href", s"/manage-tariff-classifications/attachment/${reference}/FILE_ID")
     }
 
   }

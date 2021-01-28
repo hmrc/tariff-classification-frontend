@@ -39,8 +39,8 @@ class ViewAttachmentController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  def get(id: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+  def get(reference: String, id: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       fileService.getFileMetadata(id).flatMap {
         case meta @ Some(fileSubmitted: FileMetadata) =>
           val fileStoreResponse = for {

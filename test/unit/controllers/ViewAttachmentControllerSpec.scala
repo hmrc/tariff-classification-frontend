@@ -29,6 +29,7 @@ import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, _}
 import service.FileStoreService
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,6 +38,8 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
   private val fileService = mock[FileStoreService]
   private val operator    = Operator(id = "id")
+
+  private val reference = Cases.btiNewCase.reference
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -75,7 +78,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       givenFileMetadata(Some(fileReady))
       givenFileContent(fileReady.url.get, "CONTENT".getBytes())
 
-      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF(app)))
 
       status(result)     shouldBe Status.OK
       contentAsBytes(result) shouldBe ByteString("CONTENT".getBytes)
@@ -84,7 +87,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 404 for file processing" in {
       givenFileMetadata(Some(fileProcessing))
 
-      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF(app)))
 
       status(result)      shouldBe Status.NOT_FOUND
       contentType(result) shouldBe Some("text/html")
@@ -95,7 +98,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 404 for un-safe file found" in {
       givenFileMetadata(Some(fileFailed))
 
-      val result = await(controller().get("id")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF(app)))
 
       status(result)      shouldBe Status.NOT_FOUND
       contentType(result) shouldBe Some("text/html")
@@ -108,7 +111,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       val result: Result = await(
         controller(Set(Permission.VIEW_CASES))
-          .get("id")(newFakeGETRequestWithCSRF(app))
+          .get(reference, "id")(newFakeGETRequestWithCSRF(app))
       )
 
       status(result)      shouldBe Status.NOT_FOUND
@@ -120,7 +123,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
         controller(Set.empty)
-          .get("id")(newFakeGETRequestWithCSRF(app))
+          .get(reference, "id")(newFakeGETRequestWithCSRF(app))
       )
 
       status(result)               shouldBe Status.SEE_OTHER
