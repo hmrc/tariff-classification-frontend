@@ -16,7 +16,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
       stubFor(
         get(
           urlEqualTo(
-            buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())
+            buildQueryUrl(withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED", assigneeId = "123", pag = NoPagination())
           )
         ).willReturn(
           aResponse()

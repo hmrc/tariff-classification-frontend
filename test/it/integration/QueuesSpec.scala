@@ -1,12 +1,17 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.CaseStatus.{COMPLETED, NEW, OPEN, REFERRED, SUSPENDED}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import models.{ApplicationType, NoPagination}
 import utils.{CasePayloads, CaseQueueBuilder}
 
 class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
+
+  private val statuses: String = Set(NEW, OPEN, REFERRED, SUSPENDED, COMPLETED)
+    .map(_.toString)
+    .mkString(",")
 
   "My Cases" should {
 
@@ -18,7 +23,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
           urlEqualTo(
             buildQueryUrl(
               types        = ApplicationType.values.toSeq,
-              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              withStatuses = statuses,
               assigneeId   = "123",
               pag          = NoPagination()
             )
@@ -79,7 +84,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
                 ApplicationType.CORRESPONDENCE,
                 ApplicationType.MISCELLANEOUS
               ),
-              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              withStatuses = statuses,
               queueId      = "none",
               assigneeId   = "none",
               pag          = NoPagination()
@@ -140,7 +145,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
                 ApplicationType.CORRESPONDENCE,
                 ApplicationType.MISCELLANEOUS
               ),
-              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              withStatuses = statuses,
               queueId      = "2",
               assigneeId   = "none",
               pag          = NoPagination()
@@ -201,7 +206,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
                 ApplicationType.CORRESPONDENCE,
                 ApplicationType.MISCELLANEOUS
               ),
-              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              withStatuses = statuses,
               queueId      = "3",
               assigneeId   = "none",
               pag          = NoPagination()
@@ -262,7 +267,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
                 ApplicationType.CORRESPONDENCE,
                 ApplicationType.MISCELLANEOUS
               ),
-              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              withStatuses = statuses,
               queueId      = "4",
               assigneeId   = "none",
               pag          = NoPagination()
@@ -323,7 +328,7 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
                 ApplicationType.CORRESPONDENCE,
                 ApplicationType.MISCELLANEOUS
               ),
-              withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+              withStatuses = statuses,
               queueId      = "5",
               assigneeId   = "none",
               pag          = NoPagination()
