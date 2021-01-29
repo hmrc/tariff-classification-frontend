@@ -158,7 +158,7 @@
 
                 <div class="form-group">
                     <fieldset>
-                        <legend class="w-100">
+                        <legend class="w-100 remove-overflow">
                         <h2 class="heading-medium">@messages("case.decision.attachments")</h2>
                         @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { attachments: Seq[StoredAttachment] =>
                             @if(attachments.isEmpty) {
