@@ -66,12 +66,12 @@ class MyCasesController @Inject() (
   )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
     cases.results.toList
       .traverse { aCase =>
-        eventsService.getFilteredEvents(aCase.reference, NoPagination(), Some(Set(EventType.CASE_COMPLETED))).map {
+        eventsService.findCompletionEvents(Set(aCase.reference), NoPagination()).map {
           events =>
             val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
             val latestCompletedEvent = eventsLatestFirst.collectFirst {
               case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-              case _                                                                 => Map.empty
+              case _ => Map.empty
             }
             latestCompletedEvent.getOrElse(Map.empty)
         }
@@ -85,7 +85,6 @@ class MyCasesController @Inject() (
           cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
           referralEventsByCase <- getReferralEvents(cases)
           completeEventsByCase <- getCompletedEvents(cases)
-          _ = logger.info(completeEventsByCase.toString())
           myCaseStatuses = activeSubNav match {
             case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
             case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
