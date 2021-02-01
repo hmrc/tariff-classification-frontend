@@ -58,6 +58,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Events.pagedReferredEvents)
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
+
       val result = await(controller(Set(Permission.VIEW_MY_CASES))).displayMyCases()(fakeRequest)
 
       contentType(result) shouldBe Some("text/html")
@@ -81,6 +84,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Events.pagedReferredEvents)
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
+
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(AssignedToMeTab)(fakeRequest))
 
       contentType(result) shouldBe Some("text/html")
@@ -94,6 +100,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Events.pagedReferredEvents)
+
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
@@ -109,6 +118,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Future.successful(Paged.empty[Event]))
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
+
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
       contentType(result) shouldBe Some("text/html")
@@ -123,6 +135,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Events.pagedReferredEvents)
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
+
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
 
       contentType(result) shouldBe Some("text/html")
@@ -136,6 +151,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Future.successful(Paged.empty[Event]))
+
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
 
