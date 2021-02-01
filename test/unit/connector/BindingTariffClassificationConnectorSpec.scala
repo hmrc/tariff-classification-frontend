@@ -39,7 +39,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get empty cases in 'gateway' queue" in {
       val url = buildQueryUrl(
         types        = ApplicationType.values.toSeq,
-        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED,COMPLETED",
         queueId      = "none",
         assigneeId   = "none",
         pag          = TestPagination()
@@ -65,7 +65,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get cases in 'gateway' queue" in {
       val url = buildQueryUrl(
         types        = ApplicationType.values.toSeq,
-        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED,COMPLETED",
         queueId      = "none",
         assigneeId   = "none",
         pag          = TestPagination()
@@ -91,7 +91,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get empty cases in 'act' queue" in {
       val url = buildQueryUrl(
         types        = ApplicationType.values.toSeq,
-        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED,COMPLETED",
         queueId      = "2",
         assigneeId   = "none",
         pag          = TestPagination()
@@ -117,7 +117,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get cases in 'act' queue" in {
       val url = buildQueryUrl(
         types        = ApplicationType.values.toSeq,
-        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED,COMPLETED",
         queueId      = "2",
         assigneeId   = "none",
         pag          = TestPagination()
@@ -143,7 +143,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get cases for liability version of 'act' queue" in {
       val url = buildQueryUrl(
         types        = Seq(ApplicationType.LIABILITY),
-        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED",
+        withStatuses = "NEW,OPEN,REFERRED,SUSPENDED,COMPLETED",
         queueId      = "2",
         assigneeId   = "none",
         pag          = TestPagination()
@@ -174,7 +174,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
         types      = ApplicationType.values.toSeq,
-        statuses   = "NEW,OPEN,REFERRED,SUSPENDED",
+        statuses   = "NEW,OPEN,REFERRED,SUSPENDED,COMPLETED",
         assigneeId = "none",
         queueIds   = Queues.allQueues.map(_.id),
         pagination = pagination
@@ -241,7 +241,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases" in {
       val url =
-        buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "assignee", pag = TestPagination())
+        buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED,COMPLETED", assigneeId = "assignee", pag = TestPagination())
 
       stubFor(
         get(urlEqualTo(url))
@@ -262,7 +262,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases" in {
       val url =
-        buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "assignee", pag = TestPagination())
+        buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED,COMPLETED", assigneeId = "assignee", pag = TestPagination())
 
       stubFor(
         get(urlEqualTo(url))

@@ -35,6 +35,11 @@ class EventsService @Inject() (connector: BindingTariffClassificationConnector, 
   def getEvents(reference: String, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Event]] =
     getFilteredEvents(reference, pagination, None)
 
+  def findCompletionEvents(references: Set[String], pagination: Pagination)(
+    implicit hc: HeaderCarrier
+  ): Future[Paged[Event]] =
+    connector.findCompletionEvents(references, pagination)
+
   def getFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Option[Set[EventType]])(
     implicit hc: HeaderCarrier
   ): Future[Paged[Event]] =

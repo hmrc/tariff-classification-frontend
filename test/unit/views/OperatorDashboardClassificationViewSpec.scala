@@ -47,14 +47,12 @@ class OperatorDashboardClassificationViewSpec extends ViewSpec {
   "OperatorDashboardClassificationView view" must {
 
     "contain a link to my cases" in {
-
       val doc = asDocument(view())
       assertLinkContainsHref(doc, "my-cases-id", "my-cases")
     }
 
     "contain operator name" in {
       val doc = asDocument(view())
-
       doc.getElementsByClass("heading-xlarge").text() shouldBe "operator-name"
     }
   }
