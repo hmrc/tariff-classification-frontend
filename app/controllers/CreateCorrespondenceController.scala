@@ -74,9 +74,8 @@ class CreateCorrespondenceController @Inject() (
   }
 
   def displayQuestion(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      getCaseAndRenderChoiceView(reference)
-    }
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.RELEASE_CASE))
+      .async(implicit request => getCaseAndRenderChoiceView(reference))
 
   private def getCaseAndRenderChoiceView(
     reference: String,

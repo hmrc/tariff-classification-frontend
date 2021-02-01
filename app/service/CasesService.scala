@@ -236,19 +236,22 @@ class CasesService @Inject() (
           .now(appConfig.clock)
           .atStartOfDay(appConfig.clock.getZone)
 
+        val decision: Decision = original.decision
+            .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
+
         val endDate =
-          if (!original.application.isBTI)
-            None
-          else
-            Some(
+          (original.application.isBTI, decision.effectiveEndDate.isDefined) match {
+            case (false, _) => None
+            case (_,  true) => decision.effectiveEndDate
+            case  _         => Some(
               startDate
                 .plusYears(appConfig.decisionLifetimeYears)
                 .minusDays(appConfig.decisionLifetimeDays)
                 .toInstant
             )
+        }
 
-        val decisionWithDates: Decision = original.decision
-          .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
+        val decisionWithDates: Decision = decision
           .copy(effectiveStartDate = Some(startDate.toInstant), effectiveEndDate = endDate)
 
         if (original.application.`type`

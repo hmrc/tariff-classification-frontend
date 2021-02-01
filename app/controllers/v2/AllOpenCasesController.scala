@@ -40,7 +40,7 @@ class AllOpenCasesController @Inject() (
     with I18nSupport {
 
   def displayAllOpenCases(activeSubNav: SubNavigationTab = ATaRTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
       val applicationType = activeSubNav match {
         case ATaRTab           => ApplicationType.ATAR
         case LiabilitiesTab    => ApplicationType.LIABILITY
