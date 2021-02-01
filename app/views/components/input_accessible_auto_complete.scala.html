@@ -57,7 +57,7 @@
       accessibleAutocomplete({
         element: element,
         id: @Html(Json.toJson(field.id).toString),
-        name: @Html(Json.toJson(field.id).toString),
+        name: @Html(Json.toJson(field.name).toString),
         minLength: 2,
         source: @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString)
       })
