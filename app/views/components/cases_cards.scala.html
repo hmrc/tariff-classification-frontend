@@ -19,6 +19,7 @@
 @import views.html.includes.main
 @import controllers.v2.routes
 @import models.viewmodels.ReferredByMeTab
+@import models.viewmodels.CompletedByMeTab
 @import controllers.v2.routes.AllOpenCasesController
 @import models.viewmodels.{ATaRTab, LiabilitiesTab}
 
@@ -28,39 +29,45 @@
 
 <div id="dashboard-view" class="centered-content">
 
-        <h1 class="heading-xlarge mt-40 mb-0">@request.operator.name.getOrElse("")</h1>
-        <span class="caption-xl">@messages("operator.dashboard.classification.title")</span>
-        <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
+    <span class="caption-xl mt-40">@Role.format(request.operator.role)</span>
+    <h1 class="heading-xlarge mt-0 mb-0">@request.operator.name.getOrElse("")</h1>
+
+    @if(request.operator.manager) {
+        <h2 class="heading-medium">@messages("cases.menu.manager_tools")</h2>
         <div class="flex-container govuk-grid-row">
-            <a id="my-cases-id" class="link-text" href="my-cases">
+            <a id="manager-tools-users-id" class="link-text" href="#">
                 <div class="card">
-                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
-                    <p class="card-body">
-                        @if(countCases.getOrElse("assigned-to-me", "0") == 1){
-                        @messages("operator.dashboard.classification.my-cases.progress.singular", countCases.getOrElse("assigned-to-me", "0"))
-                        } else {
-                        @messages("operator.dashboard.classification.my-cases.progress.plural", countCases.getOrElse("assigned-to-me", "0"))
-                        }
+                    <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.users")</h3>
+                    <p class="card-body card-action">
+                        @messages("operator.dashboard.classification.manager-tools.users.p")
                     </p>
                 </div>
             </a>
-            <a id="my-referred-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">
+            <a id="manager-tools-tools-id" class="link-text" href="#">
                 <div class="card">
-                    <h3 class="card-heading govuk-heading-s">
-                    @messages("operator.dashboard.classification.my-cases.referredByMe")</h3>
-                    <p class="card-body">
-                    @if(referredCasesAssignedToMe == 1) {
-                        @messages("operator.dashboard.classification.my-cases.onReferralProgress.singular",
-                            referredCasesAssignedToMe)
-                    } else {
-                        @messages("operator.dashboard.classification.my-cases.onReferralProgress.plural",
-                            referredCasesAssignedToMe)
-                    }
+                    <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.tools")</h3>
+                    <p class="card-body card-action">
+                        @messages("operator.dashboard.classification.manager-tools.teams.p")
+                    </p>
+                </div>
+            </a>
+            <a id="manager-tools-keywords-id" class="link-text" href="#">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.keywords")</h3>
+                    <p class="card-body card-action">
+                        @messages("operator.dashboard.classification.manager-tools.keywords.p")
+                    </p>
+                </div>
+            </a>
+            <a id="manager-tools-reports-id" class="link-text" href="#">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.reports")</h3>
+                    <p class="card-body card-action">
+                        @messages("operator.dashboard.classification.manager-tools.reports.p")
                     </p>
                 </div>
             </a>
         </div>
-
     <h2 class="heading-medium mt-0">@messages("operator.dashboard.classification.all-open-cases")</h2>
     <div class="flex-container govuk-grid-row">
         <a id="bti-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(ATaRTab)">
@@ -93,20 +100,121 @@
             </div>
         </a>
     </div>
+    <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
+    <div class="flex-container govuk-grid-row">
+        <a id="my-cases-id" class="link-text" href="my-cases">
+            <div class="card">
+                <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
+                <p class="card-body">
+                    @if(countCases.getOrElse("assigned-to-me", "0") == 1) {
+                        @messages("operator.dashboard.classification.my-cases.progress.singular")
+                    } else {
+                        @messages("operator.dashboard.classification.my-cases.progress.plural", countCases.getOrElse("assigned-to-me", "0"))
+                    }
+                </p>
+            </div>
+        </a>
+        <a id="my-referred-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">
+            <div class="card">
+                <h3 class="card-heading govuk-heading-s">
+                    @messages("operator.dashboard.classification.my-cases.referredByMe")</h3>
+                <p class="card-body">
+                    @if(referredCasesAssignedToMe == 1) {
+                        @messages("operator.dashboard.classification.my-cases.onReferralProgress.singular",
+                            referredCasesAssignedToMe)
+                    } else {
+                        @messages("operator.dashboard.classification.my-cases.onReferralProgress.plural",
+                            referredCasesAssignedToMe)
+                    }
+                </p>
+            </div>
+        </a>
+    </div>
+    } else {
+        <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
+        <div class="flex-container govuk-grid-row">
+            <a id="my-cases-id" class="link-text" href="my-cases">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
+                    <p class="card-body">
+                    @if(countCases.getOrElse("assigned-to-me", "0") == 1) {
+                        @messages("operator.dashboard.classification.my-cases.progress.singular")
+                    } else {
+                        @messages("operator.dashboard.classification.my-cases.progress.plural", countCases.getOrElse("assigned-to-me", "0"))
+                    }
+                    </p>
+                </div>
+            </a>
+            <a id="my-referred-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">
+                    @messages("operator.dashboard.classification.my-cases.referredByMe")</h3>
+                    <p class="card-body">
+                    @if(referredCasesAssignedToMe == 1) {
+                        @messages("operator.dashboard.classification.my-cases.onReferralProgress.singular",
+                            referredCasesAssignedToMe)
+                    } else {
+                        @messages("operator.dashboard.classification.my-cases.onReferralProgress.plural",
+                            referredCasesAssignedToMe)
+                    }
+                    </p>
+                </div>
+            </a>
+        </div>
 
+        <h2 class="heading-medium mt-0">@messages("operator.dashboard.classification.all-open-cases")</h2>
+        <div class="flex-container govuk-grid-row">
+            <a id="bti-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(ATaRTab)">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">
+                    @messages("operator.dashboard.classification.all-open-cases.atar")</h3>
+                    <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.list-all")</p>
+                </div>
+            </a>
+            <a id="liability-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">@messages("case.menu.liability")</h3>
+                    <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.liability")</p>
+                </div>
+            </a>
+            <a id="corres-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">
+                    @messages("operator.dashboard.classification.all-open-cases.correspondence")</h3>
+                    <p class="card-body">
+                    @messages("operator.dashboard.classification.all-open-cases.correspondence.list")</p>
+                </div>
+            </a>
+            <a id="misc-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)">
+                <div class="card">
+                    <h3 class="card-heading govuk-heading-s">
+                    @messages("operator.dashboard.classification.all-open-cases.Miscellaneous")</h3>
+                    <p class="card-body">
+                    @messages("operator.dashboard.classification.all-open-cases.miscellaneous.list")</p>
+                </div>
+            </a>
+        </div>
         <h2 class="heading-medium mt-0">@messages("cases.menu.gateway-cases")</h2>
         <div class="flex-container govuk-grid-row">
             <a id="gateway-cases-id" class="link-text" href="gateway-cases">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("page.title.case.queues.gateway")</h3>
-                        <p class="card-body card-action">
-                            @if(countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0)+countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0) == 1){
-                                @messages("operator.dashboard.classification.gateway-cases-total.singular", countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0)+countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0))
-                            } else {
-                                @messages("operator.dashboard.classification.gateway-cases-total.plural", countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0)+countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0))
-                            }
-                        </p>
+                    <p class="card-body card-action">
+                        @if(countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0) + countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0) == 1) {
+                            @messages("operator.dashboard.classification.gateway-cases-total.singular", countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0) +
+                            countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0) +
+                            countCases.getOrElse(s"-${ApplicationType.CORRESPONDENCE.name}", 0) +
+                            countCases.getOrElse(s"-${ApplicationType.MISCELLANEOUS.name}", 0))
+                        )
+                        } else {
+                        @messages("operator.dashboard.classification.gateway-cases-total.plural", countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0) +
+                            countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0) +
+                            countCases.getOrElse(s"-${ApplicationType.CORRESPONDENCE.name}", 0) +
+                            countCases.getOrElse(s"-${ApplicationType.MISCELLANEOUS.name}", 0))
+                        }
+                    </p>
                 </div>
             </a>
         </div>
-    </div>
+    }
+</div>
