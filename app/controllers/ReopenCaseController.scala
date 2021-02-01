@@ -16,14 +16,14 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import config.AppConfig
+import models.Permission
 import models.request.AuthenticatedCaseRequest
-import models.{ApplicationType, Permission}
+import play.api.mvc._
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton

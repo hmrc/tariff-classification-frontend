@@ -16,9 +16,9 @@
 
 package service
 
-import javax.inject.Singleton
 import models.{ApplicationType, Queue, Queues}
-import models.Queues._
+
+import javax.inject.Singleton
 import scala.concurrent.Future
 
 @Singleton

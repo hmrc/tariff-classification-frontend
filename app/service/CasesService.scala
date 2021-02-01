@@ -16,17 +16,12 @@
 
 package service
 
-import java.time.{Instant, LocalDate}
-import java.util.UUID
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
-
-import java.nio.file.{Files, StandardOpenOption}
-import javax.inject.{Inject, Singleton}
-import models.ApplicationType._
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
+import models.ApplicationType._
 import models.CancelReason.CancelReason
 import models.ReferralReason.ReferralReason
 import models.SampleReturn.SampleReturn
@@ -39,6 +34,10 @@ import play.api.libs.Files.SingletonTemporaryFileCreator
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.templates.{decision_template, ruling_template}
 
+import java.nio.file.{Files, StandardOpenOption}
+import java.time.LocalDate
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

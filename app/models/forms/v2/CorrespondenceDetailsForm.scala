@@ -17,7 +17,6 @@
 package models.forms.v2
 
 import models._
-import models.forms.FormConstraints.{emptyOr, entryNumberIsNumbersAndLettersOnly}
 import models.forms.mappings.Constraints
 import models.forms.mappings.FormMappings._
 import play.api.data.Form
@@ -27,13 +26,7 @@ object CorrespondenceDetailsForm extends Constraints {
 
   def correspondenceDetailsForm(existingCorrespondence: Case): Form[Case] =
     Form[Case](
-      mapping[
-        Case,
-        String,
-        String,
-        Option[String],
-        Option[String]
-      ](
+      mapping[Case, String, String, Option[String], Option[String]](
         "summary"             -> textNonEmpty("Enter a summary"),
         "detailedDescription" -> text,
         "boardsFileNumber"    -> optional(text),
@@ -45,7 +38,7 @@ object CorrespondenceDetailsForm extends Constraints {
     String,
     String,
     Option[String],
-      Option[String]
+    Option[String]
   ) => Case = {
     case (
         summary,
@@ -63,8 +56,7 @@ object CorrespondenceDetailsForm extends Constraints {
       )
   }
 
-  private def correspondence2Form(existingCase: Case): Option[
-    (
+  private def correspondence2Form(existingCase: Case): Option[(
       String,
       String,
       Option[String],

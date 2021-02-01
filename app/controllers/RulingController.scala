@@ -17,10 +17,9 @@
 package controllers
 
 import config.AppConfig
-import controllers.Tab
-import models.forms.{DecisionForm, DecisionFormData, DecisionFormMapper, LiabilityDetailsForm}
-import javax.inject.{Inject, Singleton}
 import models._
+import models.forms.v2.LiabilityDetailsForm
+import models.forms.{DecisionForm, DecisionFormData, DecisionFormMapper}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels.CaseHeaderViewModel
 import play.api.data.Form
@@ -29,12 +28,9 @@ import play.api.mvc._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import controllers.Tab._
-import models.forms.v2.LiabilityDetailsForm
-
-import scala.concurrent.Future.successful
 
 @Singleton
 class RulingController @Inject() (
@@ -81,10 +77,9 @@ class RulingController @Inject() (
               val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
               editBTIRulingView(decisionFormWithErrors, c)
             case ApplicationType.LIABILITY =>
+              val liabilityDecisionForm = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
 
-              val liabilityDecisionForm  = decisionForm.liabilityCompleteForm(c.decision.getOrElse(Decision()))
-
-              if(liabilityDecisionForm.errors.nonEmpty) {
+              if (liabilityDecisionForm.errors.nonEmpty) {
                 editLiabilityRulingView(liabilityDecisionForm, c)
               } else {
                 val liabilityForm = liabilityDetailsForm.liabilityDetailsCompleteForm(c)
@@ -148,7 +143,6 @@ class RulingController @Inject() (
 
     Future.successful(Ok(editRulingView(caseHeaderViewModel, f, traderCommodityCode, officerCommodityCode)))
   }
-
 
   private def getCaseAndThen(
     toResult: Case => Future[Result]
