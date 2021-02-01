@@ -107,7 +107,7 @@
                 <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
                 <p class="card-body">
                     @if(countCases.getOrElse("assigned-to-me", "0") == 1) {
-                        @messages("operator.dashboard.classification.my-cases.progress.singular", countCases.getOrElse("assigned-to-me", "0"))
+                        @messages("operator.dashboard.classification.my-cases.progress.singular")
                     } else {
                         @messages("operator.dashboard.classification.my-cases.progress.plural", countCases.getOrElse("assigned-to-me", "0"))
                     }
@@ -138,7 +138,7 @@
                     <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
                     <p class="card-body">
                     @if(countCases.getOrElse("assigned-to-me", "0") == 1) {
-                        @messages("operator.dashboard.classification.my-cases.progress.singular", countCases.getOrElse("assigned-to-me", "0"))
+                        @messages("operator.dashboard.classification.my-cases.progress.singular")
                     } else {
                         @messages("operator.dashboard.classification.my-cases.progress.plural", countCases.getOrElse("assigned-to-me", "0"))
                     }
