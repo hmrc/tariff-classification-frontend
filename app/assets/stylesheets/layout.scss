@@ -527,4 +527,9 @@ table tbody tr th {
     padding-left: 33px;
     border-left: 4px solid #b1b4b6;
 }
-
+/* Add horizontal scrollbar to cases_list-table */
+#cases_list-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
