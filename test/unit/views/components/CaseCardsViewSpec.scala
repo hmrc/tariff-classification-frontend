@@ -16,6 +16,7 @@
 
 package views.components
 
+import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.components.cases_cards
 
@@ -24,6 +25,33 @@ class CaseCardsViewSpec extends ViewSpec {
   def casesCards(countCases: Map[String, Int]) = cases_cards(countCases, 0)
 
   "Case cards" should {
+
+    "display the name of the operator if present" in {
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0)(operatorRequestWithName, messages, appConfig))
+
+      doc.getElementsByClass("heading-xlarge").text() should include(
+        "operator name officer"
+      )
+    }
+
+    "display the correct title if the operator is a classification-officer" in {
+
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0)(operatorRequestWithName, messages, appConfig))
+
+      doc.getElementsByClass("caption-xl").text() should include(
+        "Classification officer"
+      )
+    }
+
+    "display the correct title if the operator is a classification-manager" in {
+
+      val doc =
+        view(cases_cards(countCases = Map("my-cases" -> 2), 0)(authenticatedManagerFakeRequest, messages, appConfig))
+
+      doc.getElementsByClass("caption-xl").text() should include(
+        "Manager"
+      )
+    }
 
     "display the number of cases on My Cases tile when plural" in {
 
@@ -45,6 +73,23 @@ class CaseCardsViewSpec extends ViewSpec {
       doc.getElementById("my-cases-id").text() should include(
         messages("operator.dashboard.classification.my-cases.progress.singular", 1)
       )
+    }
+
+    "display the manager tools, my cases and open cases and not contain gateway" in {
+      val doc =
+        view(cases_cards(countCases = Map("my-cases" -> 2), 0)(authenticatedManagerFakeRequest, messages, appConfig))
+
+      doc should containElementWithID("my-referred-cases-id")
+
+      doc should containElementWithID("my-cases-id")
+      doc should containElementWithID("bti-cases-id")
+
+      doc should containElementWithID("manager-tools-users-id")
+      doc should containElementWithID("manager-tools-tools-id")
+      doc should containElementWithID("manager-tools-keywords-id")
+      doc should containElementWithID("manager-tools-reports-id")
+
+      doc shouldNot containElementWithID("gateway-cases-id")
     }
   }
 }

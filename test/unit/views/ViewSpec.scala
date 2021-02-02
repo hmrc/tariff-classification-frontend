@@ -32,7 +32,8 @@ abstract class ViewSpec extends SpecBase {
   implicit val appConfig: AppConfig = realAppConfig
   protected val errorPrefix         = messages("error.browser.title.prefix")
 
-  protected val authenticatedOperator: Operator = Operator("operator-id")
+  protected val authenticatedOperator: Operator         = Operator("operator-id")
+  protected val authenticatedOperatorWithName: Operator = Operator("operator-id", Some("operator name officer"))
   protected val authenticatedManager: Operator = Operator(
     id          = "operator-id",
     name        = Some("operator-name"),
@@ -45,6 +46,7 @@ abstract class ViewSpec extends SpecBase {
       .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
   val operatorRequest                 = new AuthenticatedRequest(authenticatedOperator, request)
+  val operatorRequestWithName         = new AuthenticatedRequest(authenticatedOperatorWithName, request)
   val authenticatedManagerFakeRequest = new AuthenticatedRequest(authenticatedManager, request)
 
   def requestWithPermissions(permissions: Permission*): AuthenticatedRequest[AnyContentAsEmpty.type] = {

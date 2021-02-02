@@ -136,6 +136,33 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
           Some("- Subject: subject\n- Body: plain")
         )
       }
+
+      "set the effective end date of an ATaR if an explict end date is defined by the user" in {
+
+        val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+        val atarCase = aBTI.copy(
+              status   = CaseStatus.OPEN,
+              decision = Some(Decision("code", None, Some(date("2022-01-01")), "justification", "goods"))
+            )
+
+        val emailTemplate         = EmailTemplate("plain", "html", "from", "subject", "service")
+        val updatedEndDateInstant = Some(date("2022-01-01"))
+
+        given(connector.updateCase(any[Case])(any[HeaderCarrier]))
+          .willReturn(successful(atarCase))
+        given(connector.createEvent(refEq(atarCase), any[NewEventRequest])(any[HeaderCarrier]))
+          .willReturn(successful(mock[Event]))
+        given(emailService.sendCaseCompleteEmail(refEq(atarCase), refEq(operator))(any[HeaderCarrier]))
+          .willReturn(Future.successful(emailTemplate))
+        given(rulingConnector.notify(refEq(atarCase.reference))(any[HeaderCarrier]))
+          .willReturn(Future.successful(()))
+
+        await(service.completeCase(atarCase, operator))
+
+        val caseUpdating = theCaseUpdating(connector)
+        caseUpdating.status                        shouldBe CaseStatus.COMPLETED
+        caseUpdating.decision.get.effectiveEndDate shouldBe updatedEndDateInstant
+      }
     }
 
     "reject case without a decision" in {

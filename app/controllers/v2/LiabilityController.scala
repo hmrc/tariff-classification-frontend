@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{RequestActions, Tab, v2}
+import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
 import models.forms.v2.LiabilityDetailsForm

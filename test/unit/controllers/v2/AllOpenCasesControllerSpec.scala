@@ -65,7 +65,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
           )
         )
       )
-      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(ATaRTab)(fakeRequest))
+      val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).displayAllOpenCases(ATaRTab)(fakeRequest))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -87,7 +87,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
           )
         )
       )
-      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(ATaRTab)(fakeRequest))
+      val result = await(controller(Set(Permission.VIEW_QUEUE_CASES)).displayAllOpenCases(ATaRTab)(fakeRequest))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -117,7 +117,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       val result = await(
-        controller(Set(Permission.VIEW_CASES, Permission.CREATE_CASES)).displayAllOpenCases(LiabilitiesTab)(fakeRequest)
+        controller(Set(Permission.VIEW_CASES, Permission.VIEW_QUEUE_CASES, Permission.CREATE_CASES)).displayAllOpenCases(LiabilitiesTab)(fakeRequest)
       )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -144,7 +144,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
       )
 
       val result = await(
-        controller(Set(Permission.VIEW_CASES, Permission.CREATE_CASES))
+        controller(Set(Permission.VIEW_CASES, Permission.VIEW_QUEUE_CASES, Permission.CREATE_CASES))
           .displayAllOpenCases(CorrespondenceTab)(fakeRequest)
       )
       status(result)      shouldBe Status.OK
@@ -169,7 +169,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
           )
         )
       )
-      val result = await(controller(Set(Permission.VIEW_CASES)).displayAllOpenCases(MiscellaneousTab)(fakeRequest))
+      val result = await(controller(Set(Permission.VIEW_CASES, Permission.VIEW_QUEUE_CASES)).displayAllOpenCases(MiscellaneousTab)(fakeRequest))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
