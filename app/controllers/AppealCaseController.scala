@@ -42,7 +42,7 @@ class AppealCaseController @Inject() (
 
   private val typeForm: Form[AppealType]     = AppealForm.appealTypeForm
   private val statusForm: Form[AppealStatus] = AppealForm.appealStatusForm
-  
+
   def appealDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       request.`case`.application.`type` match {

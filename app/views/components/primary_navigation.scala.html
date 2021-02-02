@@ -22,7 +22,9 @@
 @import models.viewmodels.GatewayCasesTab
 @import uk.gov.hmrc.play.views.html._
 
-@(selectedTab: PrimaryNavigationTab = HomeTab)(implicit request: Request[_], messages: Messages)
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.ManagerToolsTab
+@(selectedTab: PrimaryNavigationTab = HomeTab)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <div class="moj-primary-navigation">
     <div class="moj-primary-navigation__container">
@@ -36,27 +38,62 @@
                         <a id ="primary_nav_home_tab" class="moj-primary-navigation__link"  href="@controllers.routes.OperatorDashboardController.onPageLoad">Home</a>
                         }
                     </li>
-                    <li class="moj-primary-navigation__item">
-                        @if(selectedTab == MyCasesTab) {
-                        <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases()">My cases</a>
-                        } else {
-                        <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" href="@routes.MyCasesController.displayMyCases()">My cases</a>
-                        }
-                    </li>
-                    <li class="moj-primary-navigation__item">
-                        @if(selectedTab == OpenCasesTab) {
-                        <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases()">Open cases</a>
-                        } else {
-                        <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases()">Open cases</a>
-                        }
-                    </li>
-                    <li class="moj-primary-navigation__item">
-                        @if(selectedTab == GatewayCasesTab) {
-                        <a id = "primary_nav_gateway_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.GatewayCasesController.displayGatewayCases()">Gateway cases</a>
-                        } else {
-                        <a id = "primary_nav_gateway_cases_tab" class="moj-primary-navigation__link" href="@routes.GatewayCasesController.displayGatewayCases()">Gateway cases</a>
-                        }
-                    </li>
+                  @if(request.operator.manager){
+                      <li class="moj-primary-navigation__item">
+                      @if(selectedTab == ManagerToolsTab) {
+                          <a id="primary_nav_manager_tools_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.ManagerToolsController.displayManagerTools()">
+                              @messages("operator.dashboard.classification.manager-tools")</a>
+                      } else {
+                          <a id="primary_nav_manager_tools_tab" class="moj-primary-navigation__link" href="@routes.ManagerToolsController.displayManagerTools()">
+                              @messages("operator.dashboard.classification.manager-tools")</a>
+                      }
+                      </li>
+                      <li class="moj-primary-navigation__item">
+                      @if(selectedTab == OpenCasesTab) {
+                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases()">Open cases</a>
+                      } else {
+                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases()">Open cases</a>
+                      }
+                      </li>
+                      <li class="moj-primary-navigation__item">
+                      @if(selectedTab == MyCasesTab) {
+                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases()">
+                              My cases</a>
+                      } else {
+                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" href="@routes.MyCasesController.displayMyCases()">
+                              My cases</a>
+                      }
+                      </li>
+                  } else {
+                      <li class="moj-primary-navigation__item">
+                      @if(selectedTab == MyCasesTab) {
+                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases()">
+                              My cases</a>
+                      } else {
+                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" href="@routes.MyCasesController.displayMyCases()">
+                              My cases</a>
+                      }
+                      </li>
+
+                      <li class="moj-primary-navigation__item">
+                      @if(selectedTab == OpenCasesTab) {
+                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases()">
+                              Open cases</a>
+                      } else {
+                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases()">
+                              Open cases</a>
+                      }
+                      </li>
+                      <li class="moj-primary-navigation__item">
+                      @if(selectedTab == GatewayCasesTab) {
+                          <a id = "primary_nav_gateway_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.GatewayCasesController.displayGatewayCases()">
+                              Gateway cases</a>
+                      } else {
+                          <a id = "primary_nav_gateway_cases_tab" class="moj-primary-navigation__link" href="@routes.GatewayCasesController.displayGatewayCases()">
+                              Gateway cases</a>
+                      }
+                      </li>
+                  }
                 </ul>
             </nav>
         </div>

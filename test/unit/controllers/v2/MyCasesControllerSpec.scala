@@ -18,7 +18,7 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
-import models.{CaseStatus, Event, NoPagination, Operator, Paged, Pagination, Permission, ReferralCaseStatusChange, ReferralReason}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
@@ -31,7 +31,6 @@ import views.html.v2.my_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

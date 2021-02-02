@@ -21,30 +21,36 @@
 @import controllers.v2.routes
 
 @this()
-@(selectedTab : SubNavigationTab = AssignedToMeTab)(implicit messages: Messages)
+@(selectedTab: SubNavigationTab = AssignedToMeTab)(implicit messages: Messages)
 
-<nav id="my-cases-sub-nav"  class="moj-sub-navigation" aria-label="Sub navigation">
+<nav id="my-cases-sub-nav" class="moj-sub-navigation" aria-label="Sub navigation">
     <ul class="moj-sub-navigation__list">
         <li class="moj-sub-navigation__item">
             @if(selectedTab == AssignedToMeTab) {
-            <a id = "sub_nav_assigned_to_me_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases(AssignedToMeTab)">@messages("common.cases.secondaryNav.assigned")</a>
+                <a id = "sub_nav_assigned_to_me_tab" class="moj-sub-navigation__link" aria-current="page"
+                href="@routes.MyCasesController.displayMyCases(AssignedToMeTab)">@messages("common.cases.secondaryNav.assigned")</a>
             } else {
-            <a id = "sub_nav_assigned_to_me_tab" class="moj-sub-navigation__link" href="@routes.MyCasesController.displayMyCases(AssignedToMeTab)">@messages("common.cases.secondaryNav.assigned")</a>
+                <a id = "sub_nav_assigned_to_me_tab" class="moj-sub-navigation__link"
+                href="@routes.MyCasesController.displayMyCases(AssignedToMeTab)">@messages("common.cases.secondaryNav.assigned")</a>
             }
         </li>
         <li class="moj-sub-navigation__item">
-            @if(selectedTab == ReferredByMeTab) {
-            <a id ="sub_nav_referred_by_me_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">@messages("common.cases.secondaryNav.referred")</a>
-            } else {
-            <a id ="sub_nav_referred_by_me_tab" class="moj-sub-navigation__link" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">@messages("common.cases.secondaryNav.referred")</a>
-            }
+        @if(selectedTab == ReferredByMeTab) {
+            <a id ="sub_nav_referred_by_me_tab" class="moj-sub-navigation__link" aria-current="page"
+            href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">@messages("common.cases.secondaryNav.referred")</a>
+        } else {
+            <a id ="sub_nav_referred_by_me_tab" class="moj-sub-navigation__link"
+            href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">@messages("common.cases.secondaryNav.referred")</a>
+        }
         </li>
         <li class="moj-sub-navigation__item">
-            @if(selectedTab == CompletedByMeTab) {
-            <a id ="sub_nav_completed_by_me_tab" class="moj-sub-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">@messages("common.cases.secondaryNav.completed")</a>
-            } else {
-            <a id ="sub_nav_completed_by_me_tab" class="moj-sub-navigation__link" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">@messages("common.cases.secondaryNav.completed")</a>
-            }
+        @if(selectedTab == CompletedByMeTab) {
+            <a id ="sub_nav_completed_by_me_tab" class="moj-sub-navigation__link" aria-current="page"
+            href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">@messages("common.cases.secondaryNav.completed")</a>
+        } else {
+            <a id ="sub_nav_completed_by_me_tab" class="moj-sub-navigation__link"
+            href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">@messages("common.cases.secondaryNav.completed")</a>
+        }
         </li>
     </ul>
 </nav>

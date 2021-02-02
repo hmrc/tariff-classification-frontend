@@ -24,8 +24,8 @@ import views.html.operator_dashboard_classification
 
 class OperatorDashboardClassificationViewSpec extends ViewSpec {
 
-  val casesCounted: Map[String, Int] = Map("BTI" -> 2, "Liability" -> 3)
-  val casesReferredByMe = 3
+  val casesCounted: Map[String, Int]    = Map("BTI" -> 2, "Liability" -> 3)
+  val casesReferredByMe                 = 3
   val operator_dashboard_classification = new operator_dashboard_classification()
 
   val messageKeyPrefix                 = "accessibility"
@@ -36,10 +36,15 @@ class OperatorDashboardClassificationViewSpec extends ViewSpec {
     assert(doc.getElementById(id).attr("href").contains(href))
   }
 
-  def view: () => HtmlFormat.Appendable = () =>
-    operator_dashboard_classification(Map("BTI" -> 2, "Liability" -> 3), casesReferredByMe)(authenticatedManagerFakeRequest, messages, appConfig)
+  def view: () => HtmlFormat.Appendable =
+    () =>
+      operator_dashboard_classification(Map("BTI" -> 2, "Liability" -> 3), casesReferredByMe)(
+        authenticatedManagerFakeRequest,
+        messages,
+        appConfig
+      )
 
-  "OperatorDashboardClassifcationView view" must {
+  "OperatorDashboardClassificationView view" must {
 
     "contain a link to my cases" in {
 
@@ -50,7 +55,7 @@ class OperatorDashboardClassificationViewSpec extends ViewSpec {
     "contain operator name" in {
       val doc = asDocument(view())
 
-      doc.getElementsByClass("heading-xlarge mt-40 mb-0").text() shouldBe "operator-name"
+      doc.getElementsByClass("heading-xlarge").text() shouldBe "operator-name"
     }
   }
 
