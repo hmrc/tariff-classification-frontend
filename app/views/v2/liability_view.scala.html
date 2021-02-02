@@ -23,6 +23,7 @@
 @import models.Permission
 @import views.html.partials.liabilities.advanced_search_cases
 @import views.html.helper.CSRF
+@import views.html.partials.notification_banner
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -61,6 +62,8 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("case.v2.liability.page_title")),
     customPrimaryNavTab = MyCasesTab) {
+
+    @notification_banner()(request.flash, messages)
 
     @case_heading(caseViewModel.caseHeader)
 

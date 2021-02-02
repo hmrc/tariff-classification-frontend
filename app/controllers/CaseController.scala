@@ -51,12 +51,13 @@ class CaseController @Inject() (
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
     implicit request =>
       request.`case`.application.`type` match {
-        case ApplicationType.ATAR      => Redirect(v2.routes.AtarController.displayAtar(reference))
-        case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
+        case ApplicationType.ATAR => Redirect(v2.routes.AtarController.displayAtar(reference)).flashing(request2flash)
+        case ApplicationType.LIABILITY =>
+          Redirect(v2.routes.LiabilityController.displayLiability(reference)).flashing(request2flash)
         case ApplicationType.CORRESPONDENCE =>
-          Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference))
+          Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)).flashing(request2flash)
         case ApplicationType.MISCELLANEOUS =>
-          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference))
+          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference)).flashing(request2flash)
       }
   }
 

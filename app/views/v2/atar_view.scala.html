@@ -25,6 +25,7 @@
 @import views.html.partials.appeal.appeal_details
 @import views.html.partials.sample.{sample_details, sample_status_events_table}
 @import views.html.partials.ruling.ruling_details
+@import views.html.partials.notification_banner
 
 @this(
     case_heading: views.html.v2.case_heading,
@@ -62,6 +63,8 @@
     customTitle = Some(messages("case.v2.atar.page_title")),
     customPrimaryNavTab = MyCasesTab
 ) {
+
+    @notification_banner()(request.flash, messages)
 
     @case_heading(caseViewModel.caseHeader)
 
