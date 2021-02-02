@@ -15,7 +15,7 @@
  */
 
 package controllers
-import controllers.Tab.CONTACT_TAB
+
 
 sealed abstract class Tab(val name: String) extends Product with Serializable
 

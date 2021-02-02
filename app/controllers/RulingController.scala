@@ -17,7 +17,6 @@
 package controllers
 
 import config.AppConfig
-import controllers.Tab
 import models.forms.{DecisionForm, DecisionFormData, DecisionFormMapper, LiabilityDetailsForm}
 import javax.inject.{Inject, Singleton}
 import models._
@@ -31,10 +30,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import controllers.Tab._
 import models.forms.v2.LiabilityDetailsForm
 
-import scala.concurrent.Future.successful
 
 @Singleton
 class RulingController @Inject() (
