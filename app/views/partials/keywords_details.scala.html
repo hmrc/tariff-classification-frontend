@@ -25,10 +25,14 @@
 @import views.html.components.input_auto_complete
 @import views.html.partials.tab_heading
 @import views.html.partials.error_summary
+@import views.html.partials.notification_banner
+
 
 @(keywords: KeywordsTabViewModel, keywordForm : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @error_summary(keywordForm.errors, Some(startAtTabIndex))
+
+    @notification_banner()(request.flash, messages)
 
     @tab_heading("keywords", messages("case.menu.keywords"))
 

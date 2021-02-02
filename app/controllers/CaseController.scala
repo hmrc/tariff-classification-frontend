@@ -111,8 +111,10 @@ class CaseController @Inject() (
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.KEYWORDS_TAB.name))
+            .flashing(request2flash)
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.KEYWORDS_TAB.name))
+            .flashing(request2flash)
       }
     }
 
@@ -202,7 +204,10 @@ class CaseController @Inject() (
         def onSuccess: String => Future[Result] = validForm => {
           keywordsService
             .addKeyword(request.`case`, validForm, request.operator)
-            .map(_ => Redirect(routes.CaseController.keywordsDetails(reference)))
+            .map(_ =>
+              Redirect(routes.CaseController.keywordsDetails(reference))
+                .flashing(success("notification.success.keywords.add"))
+            )
         }
 
         KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
@@ -213,6 +218,7 @@ class CaseController @Inject() (
       .async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
         keywordsService.removeKeyword(request.`case`, keyword, request.operator) map { _ =>
           Redirect(routes.CaseController.keywordsDetails(reference))
+            .flashing(success("notification.success.keywords.remove"))
         }
       }
 }
