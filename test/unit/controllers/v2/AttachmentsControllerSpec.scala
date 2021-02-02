@@ -55,7 +55,6 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     new AttachmentsController(
       verify                   = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
       casesService             = casesService,
-      fileService              = fileService,
       mcc                      = mcc,
       liabilityController      = liabilityController,
       atarController           = atarController,
@@ -70,7 +69,6 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     new AttachmentsController(
       verify                   = new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
       casesService             = casesService,
-      fileService              = fileService,
       mcc                      = mcc,
       liabilityController      = liabilityController,
       atarController           = atarController,
