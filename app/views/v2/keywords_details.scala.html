@@ -22,7 +22,7 @@
 @import models.request.AuthenticatedRequest
 @import models.Permission
 @import models.viewmodels.KeywordsTabViewModel
-@import views.html.components.input_auto_complete
+@import views.html.components.input_accessible_auto_complete
 @import views.html.partials.tab_heading
 @import views.html.partials.notification_banner
 @import views.html.partials.error_summary
@@ -73,7 +73,7 @@
                 @form(action = routes.CaseController.addKeyword(ktvm.caseReference), 'class -> "form mt-3") {
 
                     @CSRF.formField
-                    @input_auto_complete(
+                    @input_accessible_auto_complete(
                         field = keywordForm("keyword"),
                         label = Some(messages("case.v2.liability.keywords.label")),
                         hint = Some(messages("case.v2.liability.keywords.hint")),

@@ -22,7 +22,7 @@
 @import models.request.AuthenticatedRequest
 @import models.{Case, Permission}
 @import models.viewmodels.KeywordsTabViewModel
-@import views.html.components.input_auto_complete
+@import views.html.components.input_accessible_auto_complete
 @import views.html.partials.tab_heading
 @import views.html.partials.error_summary
 @import views.html.partials.notification_banner
@@ -40,12 +40,11 @@
         <div class="column-full">
 
             @if(request.hasPermission(Permission.KEYWORDS)) {
-
             @if(request.hasPermission(Permission.KEYWORDS)) {
             @form(action = routes.CaseController.addKeyword(keywords.caseReference).withFragment(Tab.KEYWORDS_TAB.name), 'class -> "form mt-3") {
-<!--TODO add placeholder as per prototype when the new accessible component is merged-->
+
             @CSRF.formField
-            @input_auto_complete(
+            @input_accessible_auto_complete(
             field = keywordForm("keyword"),
             label = Some("Find or add a keyword"),
             hint = Some("Keywords not found in the approved list can be added for approval by team managers."),
