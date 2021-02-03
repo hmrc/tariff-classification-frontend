@@ -33,8 +33,9 @@
 
     @error_summary(keywordForm.errors, Some(startAtTabIndex))
 
-    @notification_banner()(request.flash, messages)
-
+    @if(request.flash.get("success").getOrElse("").contains("keyword")){
+        @notification_banner()(request.flash, messages)
+    }
     @tab_heading("keywords", messages("case.menu.keywords"))
 
     <div class="grid-row">

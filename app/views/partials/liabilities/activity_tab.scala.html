@@ -35,7 +35,9 @@
 
 @error_summary(activityForm.errors)
 
-@notification_banner()(request.flash, messages)
+ @if(request.flash.get("success").getOrElse("").contains("note")){
+  @notification_banner()(request.flash, messages)
+ }
 
 @tab_heading("activity", messages("case.v2.liability.activity_tab.tab_title"))
 
