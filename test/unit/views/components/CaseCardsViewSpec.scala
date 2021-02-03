@@ -22,12 +22,12 @@ import views.html.components.cases_cards
 
 class CaseCardsViewSpec extends ViewSpec {
 
-  def casesCards(countCases: Map[String, Int]) = cases_cards(countCases, 0)
+  def casesCards(countCases: Map[String, Int]) = cases_cards(countCases, 0, 0)
 
   "Case cards" should {
 
     "display the name of the operator if present" in {
-      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0)(operatorRequestWithName, messages, appConfig))
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0, 0)(operatorRequestWithName, messages, appConfig))
 
       doc.getElementsByClass("heading-xlarge").text() should include(
         "operator name officer"
@@ -36,7 +36,7 @@ class CaseCardsViewSpec extends ViewSpec {
 
     "display the correct title if the operator is a classification-officer" in {
 
-      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0)(operatorRequestWithName, messages, appConfig))
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 2), 0, 0)(operatorRequestWithName, messages, appConfig))
 
       doc.getElementsByClass("caption-xl").text() should include(
         "Classification officer"
@@ -46,7 +46,7 @@ class CaseCardsViewSpec extends ViewSpec {
     "display the correct title if the operator is a classification-manager" in {
 
       val doc =
-        view(cases_cards(countCases = Map("my-cases" -> 2), 0)(authenticatedManagerFakeRequest, messages, appConfig))
+        view(cases_cards(countCases = Map("my-cases" -> 2), 0, 0)(authenticatedManagerFakeRequest, messages, appConfig))
 
       doc.getElementsByClass("caption-xl").text() should include(
         "Manager"
@@ -77,7 +77,7 @@ class CaseCardsViewSpec extends ViewSpec {
 
     "display the manager tools, my cases and open cases and not contain gateway" in {
       val doc =
-        view(cases_cards(countCases = Map("my-cases" -> 2), 0)(authenticatedManagerFakeRequest, messages, appConfig))
+        view(cases_cards(countCases = Map("my-cases" -> 2), 0, 0)(authenticatedManagerFakeRequest, messages, appConfig))
 
       doc should containElementWithID("my-referred-cases-id")
 
