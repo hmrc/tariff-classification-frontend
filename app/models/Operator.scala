@@ -41,4 +41,13 @@ object Role extends Enumeration {
   val CLASSIFICATION_OFFICER = Value("Classification officer")
   val CLASSIFICATION_MANAGER = Value("Classification manager")
   val READ_ONLY              = Value("Unknown")
+
+  def format(roleType: Role): String =
+    roleType match {
+      case CLASSIFICATION_OFFICER => "Classification officer"
+      case CLASSIFICATION_MANAGER => "Manager"
+      case READ_ONLY => "Unknown"
+
+    }
+
 }

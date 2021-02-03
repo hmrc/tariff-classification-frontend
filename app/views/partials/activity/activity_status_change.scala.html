@@ -28,7 +28,7 @@
   </p>
  }
  @if(body.attachmentId.isDefined) {
-  <a id="activity-events-row-@index-email_link" target="_blank" href="@controllers.routes.ViewAttachmentController.get(body.attachmentId.get)">
+  <a id="activity-events-row-@index-email_link" target="_blank" href="@controllers.routes.ViewAttachmentController.get(event.caseReference, body.attachmentId.get)">
    View attached email
   </a>
  }

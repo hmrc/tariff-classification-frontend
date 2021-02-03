@@ -117,7 +117,7 @@ GET         /cases/:reference/keywords/:keyword                 controllers.Case
 GET         /pdf/ruling/:reference                              controllers.PdfDownloadController.getRulingPdf(reference: String)
 GET         /pdf/application/:reference                         controllers.PdfDownloadController.applicationPdf(reference: String)
 
-GET         /attachment/:id                                     controllers.ViewAttachmentController.get(id: String)
+GET         /attachment/:reference/:id                          controllers.ViewAttachmentController.get(reference: String, id: String)
 
 # v2
 GET         /cases/v2/:reference/atar                           controllers.v2.AtarController.displayAtar(reference: String)
@@ -148,13 +148,15 @@ GET        /gateway-cases                                       controllers.v2.G
 GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
 
 GET         /create-new-miscellaneous                           controllers.CreateMiscellaneousController.get()
-POST        /create-new-miscellaneous                          controllers.CreateMiscellaneousController.post()
+POST        /create-new-miscellaneous                           controllers.CreateMiscellaneousController.post()
 
-GET         /team-miscellaneous-choice                      controllers.CreateMiscellaneousController.displayQuestion(reference: String)
+GET         /team-miscellaneous-choice                          controllers.CreateMiscellaneousController.displayQuestion(reference: String)
 
-GET         /new-miscellaneous-confirm                         controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
+GET         /new-miscellaneous-confirm                           controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
 
 GET         /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.editMiscDetails(reference: String)
 POST        /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.postMiscDetails(reference: String)
+
+GET         /manager-tools                                       controllers.v2.ManagerToolsController.displayManagerTools(activeSubNav: SubNavigationTab ?= ManagerToolsReportsTab)
 
 
