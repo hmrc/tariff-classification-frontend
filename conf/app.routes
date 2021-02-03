@@ -117,7 +117,7 @@ GET         /cases/:reference/keywords/:keyword                 controllers.Case
 GET         /pdf/ruling/:reference                              controllers.PdfDownloadController.getRulingPdf(reference: String)
 GET         /pdf/application/:reference                         controllers.PdfDownloadController.applicationPdf(reference: String)
 
-GET         /attachment/:id                                     controllers.ViewAttachmentController.get(id: String)
+GET         /attachment/:reference/:id                          controllers.ViewAttachmentController.get(reference: String, id: String)
 
 # v2
 GET         /cases/v2/:reference/atar                           controllers.v2.AtarController.displayAtar(reference: String)

@@ -19,7 +19,7 @@ package controllers
 import config.AppConfig
 import models.forms.CorrespondenceForm
 import javax.inject.{Inject, Singleton}
-import models.{Case, CorrespondenceApplication, Permission, Queues}
+import models.{Case, CorrespondenceApplication, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._

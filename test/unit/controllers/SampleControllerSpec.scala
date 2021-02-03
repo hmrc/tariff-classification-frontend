@@ -35,13 +35,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService  = mock[CasesService]
-  private val eventsService = mock[EventsService]
   private val operator      = Operator(id = "id")
 
   private def controller(requestCase: Case) = new SampleController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
-    eventsService,
     mcc,
     realAppConfig
   )
@@ -49,7 +47,6 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
-    eventsService,
     mcc,
     realAppConfig
   )
