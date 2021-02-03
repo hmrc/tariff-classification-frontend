@@ -199,7 +199,7 @@
             <a id="gateway-cases-id" class="link-text" href="gateway-cases">
                 <div class="card">
                     <h3 class="card-heading govuk-heading-s">@messages("page.title.case.queues.gateway")</h3>
-                    <p class="card-body card-action">
+                    <p class="card-body">
                         @if(countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0) + countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0) == 1) {
                             @messages("operator.dashboard.classification.gateway-cases-total.singular", countCases.getOrElse(s"-${ApplicationType.ATAR.name}", 0) +
                             countCases.getOrElse(s"-${ApplicationType.LIABILITY.name}", 0) +
