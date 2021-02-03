@@ -16,11 +16,11 @@
 
 @import models.StoredAttachment
 @import models.response.ScanStatus
-@(id: String, file: StoredAttachment, name: Option[String] = None, useTabIndex : Option[Int] = None)(implicit messages: Messages)
+@(reference: String, id: String, file: StoredAttachment, name: Option[String] = None, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 
 @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
-            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@file.url" target="_blank">
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@routes.ViewAttachmentController.get(reference, file.id)" target="_blank">
                    <span class="pre-wrap">@name.getOrElse(file.fileName)</span>
             </a>
 } else {

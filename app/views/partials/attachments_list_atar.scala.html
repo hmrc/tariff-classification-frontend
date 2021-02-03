@@ -41,7 +41,7 @@
                 <tr id="@{id}-row-@{index}" class="govuk-table__row">
                     <span class="pre-wrap"></span>
                         <td id="@{id}-row-@{index}-title" class="govuk-table__cell">
-                            @attachment_atar(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                            @attachment_atar(attachments.caseReference, s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
                         </td>
                     </span>
 

@@ -19,7 +19,7 @@ package controllers
 import config.AppConfig
 import models.forms.CorrespondenceForm
 import javax.inject.{Inject, Singleton}
-import models.{Case, CorrespondenceApplication, Permission, Queues}
+import models.{Case, CorrespondenceApplication, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -74,9 +74,8 @@ class CreateCorrespondenceController @Inject() (
   }
 
   def displayQuestion(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      getCaseAndRenderChoiceView(reference)
-    }
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.RELEASE_CASE))
+      .async(implicit request => getCaseAndRenderChoiceView(reference))
 
   private def getCaseAndRenderChoiceView(
     reference: String,

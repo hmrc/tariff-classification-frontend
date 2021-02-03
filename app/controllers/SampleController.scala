@@ -24,7 +24,7 @@ import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc._
 import play.twirl.api.Html
-import service.{CasesService, EventsService}
+import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -36,7 +36,6 @@ import scala.concurrent.Future.successful
 class SampleController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
-  eventsService: EventsService,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)

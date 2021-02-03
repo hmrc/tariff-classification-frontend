@@ -16,7 +16,9 @@
 
 package controllers
 
+import cats.data.OptionT
 import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import models.Permission
 import models.response.FileMetadata
@@ -26,6 +28,7 @@ import service.FileStoreService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class ViewAttachmentController @Inject() (
@@ -36,13 +39,22 @@ class ViewAttachmentController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  def get(id: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      fileService.getFileMetadata(id) map {
-        case Some(fileSubmitted: FileMetadata) if fileSubmitted.url.isDefined =>
-          Redirect(Call(method = "GET", url = fileSubmitted.url.get))
-        case fileSubmitted: Option[FileMetadata] =>
-          Ok(views.html.view_attachment_unavailable(fileSubmitted))
+  def get(reference: String, id: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
+      fileService.getFileMetadata(id).flatMap {
+        case meta @ Some(fileSubmitted: FileMetadata) =>
+          val fileStoreResponse = for {
+            url     <- OptionT.fromOption[Future](fileSubmitted.url)
+            content <- OptionT(fileService.downloadFile(url))
+          } yield Ok
+            .streamed(content, None, Some(fileSubmitted.mimeType))
+            .withHeaders(
+              "Content-Disposition" -> s"filename=${fileSubmitted.fileName}"
+            )
+          fileStoreResponse.getOrElse(NotFound(views.html.view_attachment_unavailable(meta)))
+
+        case None =>
+          Future.successful(NotFound(views.html.view_attachment_unavailable(None)))
       }
     }
 }
