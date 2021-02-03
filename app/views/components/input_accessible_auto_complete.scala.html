@@ -26,7 +26,8 @@
         autoCompleteOptions: Seq[String],
         autofocus : Boolean = false,
         useTabIndex : Option[Int] = None,
-        customErrorMessage : Option[String] = None
+        customErrorMessage : Option[String] = None,
+        placeholder:Option[String] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}">
@@ -59,7 +60,8 @@
         id: @Html(Json.toJson(field.id).toString),
         name: @Html(Json.toJson(field.name).toString),
         minLength: 2,
-        source: @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString)
+        source: @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString),
+        placeholder: @Html(Json.toJson(placeholder.getOrElse("")).toString)
       })
     </script>
 

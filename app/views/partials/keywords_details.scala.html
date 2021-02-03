@@ -40,21 +40,21 @@
         <div class="column-full">
 
             @if(request.hasPermission(Permission.KEYWORDS)) {
-            @if(request.hasPermission(Permission.KEYWORDS)) {
             @form(action = routes.CaseController.addKeyword(keywords.caseReference).withFragment(Tab.KEYWORDS_TAB.name), 'class -> "form mt-3") {
 
             @CSRF.formField
             @input_accessible_auto_complete(
             field = keywordForm("keyword"),
-            label = Some("Find or add a keyword"),
-            hint = Some("Keywords not found in the approved list can be added for approval by team managers."),
+            label = Some(messages("case.v2.liability.keywords.label")),
+            hint = Some(messages("case.v2.liability.keywords.hint")),
             autoCompleteOptions = keywords.globalKeywords,
             formControlClass = Some("w-100"),
-            useTabIndex = Some(startAtTabIndex+50)
+            useTabIndex = Some(startAtTabIndex+50),
+            placeholder = Some("Start typing to find approved keywords")
             )
 
             <div class="form-group">
-                <button tabindex="@{startAtTabIndex+51}" id="keyword_details-add_keyword" class="button" type="submit">Add to case keyword list</button>
+                <button id="keyword_details-add_keyword" class="button" type="submit">Add to case keyword list</button>
             </div>
             }
 
@@ -78,7 +78,7 @@
 
             }
 
-            }
+
 
             <div id="keywords-table">
                 @for((keyword: String, index: Int) <- keywords.caseKeywords.toSeq.sorted.zipWithIndex) {
@@ -93,7 +93,7 @@
                         </div>
                         @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
-                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(keywords.caseReference, keyword)">Remove</a>
+                                <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(keywords.caseReference, keyword)">Remove</a>
                             </div>
                         }
                     </div>
