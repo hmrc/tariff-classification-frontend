@@ -23,12 +23,12 @@
 @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
     @if(file.isImage){
         <div>
-            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@file.url" target="_blank">
+            <a id="@{id}-file" href="@file.url" target="_blank">
                 <img class="attachment-img" id="@{id}-file-img" src="@file.url" alt="@file.fileName" title="@file.fileName"/>
             </a>
         </div>
     } else {
-        <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@file.url" target="_blank">
+        <a id="@{id}-file" href="@file.url" target="_blank">
             @name.getOrElse(file.fileName)
         </a>
     }

@@ -23,13 +23,13 @@
 
 @if(request.hasPermission(Permission.CREATE_CASES)) {
  @if(caseType==ApplicationType.LIABILITY.prettyName.toLowerCase()){
- <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
+ <a role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
     href="@CreateLiabilityController.get()">
   }else if(caseType==ApplicationType.CORRESPONDENCE.prettyName.toLowerCase()){
-  <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
+  <a role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
      href="@CreateCorrespondenceController.get()">
   }else{
-   <a tabindex="300" role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
+   <a role="button" class="button button-gray @clazz" id="create_@{caseType}-button"
       href="@CreateMiscellaneousController.get()">
     }
   Create new @{caseType} case
