@@ -30,10 +30,7 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
       val doc = view(advanced_search_keywords(SearchForm.form, Seq.empty))
 
       // Then
-      doc                             should containElementWithID("keyword_0")
-      doc.getElementById("keyword_0") should haveTag("input")
-      doc.getElementById("keyword_0") should haveAttribute("value", "")
-      doc.getElementById("keyword_0") should haveAttribute("name", "keyword[0]")
+      doc should containElementWithID("keyword-search-wrapper")
     }
 
     "Not render table if empty" in {
@@ -55,12 +52,6 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
       // When
       val doc = view(advanced_search_keywords(form, Seq.empty))
 
-      // Then the input box should be blank
-      doc                             should containElementWithID("keyword_0")
-      doc.getElementById("keyword_0") should haveTag("input")
-      doc.getElementById("keyword_0") should haveAttribute("value", "")
-      doc.getElementById("keyword_0") should haveAttribute("name", "keyword[0]")
-
       // Then the table should not render
       doc shouldNot containElementWithID("advanced_search_keywords-table")
     }
@@ -75,12 +66,6 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
 
       // When
       val doc = view(advanced_search_keywords(form, Seq.empty))
-
-      // Then the input box should be blank
-      doc                             should containElementWithID("keyword_0")
-      doc.getElementById("keyword_0") should haveTag("input")
-      doc.getElementById("keyword_0") should haveAttribute("value", "")
-      doc.getElementById("keyword_0") should haveAttribute("name", "keyword[0]")
 
       // Then the table should contain the keyword
       doc                                                              should containElementWithID("advanced_search_keywords-table")

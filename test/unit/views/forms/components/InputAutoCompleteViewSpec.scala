@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import views.ViewMatchers._
 import views.ViewSpec
-import views.html.components.input_auto_complete
+import views.html.components.input_accessible_auto_complete
 
 class InputAutoCompleteViewSpec extends ViewSpec {
 
@@ -35,21 +35,16 @@ class InputAutoCompleteViewSpec extends ViewSpec {
     "Render" in {
       // When
       val doc = view(
-        input_auto_complete(
+        input_accessible_auto_complete(
           field               = form("field"),
           label               = Some("Label"),
-          autoCompleteOptions = Seq.empty,
+          autoCompleteOptions = Seq("A", "B"),
           useTabIndex         = Some(100)
         )
       )
 
       // Then
-      doc                         should containElementWithTag("input")
-      doc                         should containElementWithID("field")
-      doc.getElementById("field") should haveAttribute("type", "text")
-      doc.getElementById("field") should haveAttribute("name", "field")
-      doc.getElementById("field") should haveAttribute("value", "v")
-      doc.getElementById("field") should haveAttribute("tabindex", "100")
+      doc should containElementWithID("keyword-search-wrapper")
     }
   }
 
