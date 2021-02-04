@@ -74,7 +74,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
             buildingAndStreet = "1 Street",
             townOrCity        = "Town",
             county            = Some("County"),
-            postCode          = Some("postcode")
+            postCode          = Some("NE10 0HG")
           )
         )
       )
@@ -100,7 +100,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
     "traderBuildingAndStreet" -> Seq("1 Street"),
     "traderTownOrCity"        -> Seq("Town"),
     "traderCounty"            -> Seq("County"),
-    "traderPostcode"          -> Seq("postcode"),
+    "traderPostcode"          -> Seq("NE10 0HG"),
     "boardsFileNumber"        -> Seq("SCR/ARD/123"),
     "goodName"                -> Seq("good-name"),
     "entryDate.day"           -> Seq(day),
@@ -126,8 +126,8 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
         val form = liabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(emptyParams)
 
         form.hasErrors         shouldBe true
-        form.errors            should have(size(3))
-        form.errors.map(_.key) shouldBe Seq("traderName", "goodName", "contact.contactName")
+        form.errors            should have(size(4))
+        form.errors.map(_.key) shouldBe Seq("traderPostcode", "traderName", "goodName", "contact.contactName")
       }
     }
 
