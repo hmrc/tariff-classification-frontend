@@ -16,7 +16,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
       stubFor(
         get(
           urlEqualTo(
-            buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())
+            buildQueryUrl(withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED", assigneeId = "123", pag = NoPagination())
           )
         ).willReturn(
           aResponse()
@@ -43,8 +43,8 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
       // Then
       response.status shouldBe OK
       response.body   should include("My cases")
-      response.body   should include("All open cases")
-      response.body   should include("Gateway cases")
+      response.body   should include("Open cases")
+      response.body   shouldNot  include("Gateway cases")
     }
 
     "redirect on auth failure" in {

@@ -23,7 +23,8 @@ case class ApplicationsTab(
   applicationType: ApplicationType,
   elementId: String,
   searchResult: Paged[Case],
-  referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+  referralEvent: Option[Map[String, Event]] = None,
+  completedEvent: Option[Map[String, Event]] = None
 )
 
 case class ApplicationTabViewModel(headingMessageKey: String, applicationTabs: List[ApplicationsTab])
@@ -32,24 +33,29 @@ object ApplicationsTab {
 
   def atar(
     searchResult: Paged[Case]                                    = Paged.empty,
-    referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+    referralEvent: Option[Map[String, Event]] = None,
+    completedEvent: Option[Map[String, Event]] = None
   ) =
-    ApplicationsTab("applicationTab.atar", ApplicationType.ATAR, "atar_tab", searchResult, referralEvent)
+    ApplicationsTab("applicationTab.atar", ApplicationType.ATAR, "atar_tab", searchResult, referralEvent, completedEvent)
 
   def liability(
     searchResult: Paged[Case]                                    = Paged.empty,
-    referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+    referralEvent: Option[Map[String, Event]] = None,
+    completedEvent: Option[Map[String, Event]] = None
   ) =
-    ApplicationsTab("applicationTab.liability", ApplicationType.LIABILITY, "liability_tab", searchResult, referralEvent)
+    ApplicationsTab("applicationTab.liability", ApplicationType.LIABILITY, "liability_tab", searchResult, referralEvent, completedEvent)
 
   def correspondence(searchResult: Paged[Case] = Paged.empty,
-    referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None
+    referralEvent: Option[Map[String, Event]] = None,
+    completedEvent: Option[Map[String, Event]] = None
   ) =
-    ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult, referralEvent)
+    ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult, referralEvent, completedEvent)
 
   def miscellaneous(searchResult: Paged[Case] = Paged.empty,
-      referralEvent: Option[Map[String, ReferralCaseStatusChange]] = None) =
-    ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult, referralEvent)
+      referralEvent: Option[Map[String, Event]] = None,
+      completedEvent: Option[Map[String, Event]] = None
+  ) =
+    ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult, referralEvent, completedEvent)
 
   def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
 
@@ -75,7 +81,7 @@ object ApplicationsTab {
     )
   }
 
-  def referredByMe(cases: Seq[Case], referralEvent: Map[String, ReferralCaseStatusChange]): ApplicationTabViewModel = {
+  def referredByMe(cases: Seq[Case], referralEvent: Map[String, Event]): ApplicationTabViewModel = {
 
     val referredCases =
       cases.filter(aCase => aCase.status == CaseStatus.REFERRED || aCase.status == CaseStatus.SUSPENDED)
@@ -99,15 +105,29 @@ object ApplicationsTab {
     )
   }
 
-  def completedByMe = ApplicationTabViewModel(
-    "applicationTab.completedByMe",
-    List(
-      ApplicationsTab.atar(),
-      ApplicationsTab.liability(),
-      ApplicationsTab.correspondence(),
-      ApplicationsTab.miscellaneous()
+  def completedByMe(cases: Seq[Case], completedEvent: Map[String, Event]): ApplicationTabViewModel = {
+
+    val completeByMe =
+      cases.filter(aCase => aCase.status == CaseStatus.COMPLETED)
+
+    val atars: Seq[Case] = completeByMe.filter(_.application.isBTI)
+
+    val liabilities = completeByMe.filter(_.application.isLiabilityOrder)
+
+    val correspondence = completeByMe.filter(_.application.isCorrespondence)
+
+    val miscellaneous = completeByMe.filter(_.application.isMisc)
+
+    ApplicationTabViewModel(
+      "applicationTab.completedByMe",
+      List(
+        ApplicationsTab.atar(Paged(atars), None, Some(completedEvent)),
+        ApplicationsTab.liability(Paged(liabilities), None, Some(completedEvent)),
+        ApplicationsTab.correspondence(Paged(correspondence), None, Some(completedEvent)),
+        ApplicationsTab.miscellaneous(Paged(miscellaneous), None, Some(completedEvent))
+      )
     )
-  )
+  }
 
   def gateway(cases: Seq[Case]) = {
 

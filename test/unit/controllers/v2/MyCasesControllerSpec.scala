@@ -18,7 +18,7 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
-import models.{CaseStatus, Event, NoPagination, Operator, Paged, Pagination, Permission, ReferralCaseStatusChange, ReferralReason}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
@@ -31,7 +31,6 @@ import views.html.v2.my_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -59,6 +58,8 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Events.pagedReferredEvents)
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES))).displayMyCases()(fakeRequest)
 
@@ -83,6 +84,9 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Events.pagedReferredEvents)
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
+
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(AssignedToMeTab)(fakeRequest))
 
       contentType(result) shouldBe Some("text/html")
@@ -97,6 +101,8 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Events.pagedReferredEvents)
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
@@ -112,6 +118,8 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Future.successful(Paged.empty[Event]))
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
@@ -127,12 +135,33 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
         .willReturn(Events.pagedReferredEvents)
 
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
+
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
 
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
       status(result) shouldBe Status.OK
     }
+
+    "return 200 OK with the correct subNavigation tab for CompletedByMe without any details for the event" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+
+      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Paged.empty[Event]))
+
+      given(eventService.findCompletionEvents(any(), any())(any[HeaderCarrier]))
+        .willReturn(Events.pagedCompletedEvents)
+
+      val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
+
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      status(result) shouldBe Status.OK
+    }
+
   }
 
 }

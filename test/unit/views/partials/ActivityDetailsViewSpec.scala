@@ -214,7 +214,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc                                                  should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref", "att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
@@ -255,7 +255,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref","att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
@@ -301,7 +301,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref","att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")

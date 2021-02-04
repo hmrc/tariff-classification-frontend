@@ -17,6 +17,7 @@
 @(
         field: Field,
         label: String,
+        inputClass: Option[String] = None,
         accept: Option[String] = None,
         useTabIndex : Option[Int] = None
 )(implicit messages: Messages)
@@ -31,6 +32,7 @@
     <div class="form-control-wrapper">
         <input
         type="file"
+        class="@inputClass"
         id="@{field.id}"
         name="@{field.name}"
         @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
