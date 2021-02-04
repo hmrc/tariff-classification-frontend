@@ -75,6 +75,38 @@ class CaseCardsViewSpec extends ViewSpec {
       )
     }
 
+    "display the number of cases on My Referred Cases tile when plural" in {
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 0), 2, 0)(operatorRequestWithName, messages, appConfig))
+
+      doc.getElementById("my-referred-cases-id").text() should include(
+        messages("operator.dashboard.classification.my-cases.onReferralProgress.plural", 2)
+      )
+    }
+
+    "display the number of cases on My Referred Cases tile when singular" in {
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 0), 1, 0)(operatorRequestWithName, messages, appConfig))
+
+      doc.getElementById("my-referred-cases-id").text() should include(
+        messages("operator.dashboard.classification.my-cases.onReferralProgress.singular", 1)
+      )
+    }
+
+    "display the number of cases on My Completed Cases tile when plural" in {
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 0), 0, 2)(operatorRequestWithName, messages, appConfig))
+
+      doc.getElementById("my-completed-cases-id").text() should include(
+        messages("operator.dashboard.classification.my-cases.onCompletedProgress.plural", 2)
+      )
+    }
+
+    "display the number of cases on My Complete Cases tile when singular" in {
+      val doc = view(cases_cards(countCases = Map("my-cases" -> 0), 0, 1)(operatorRequestWithName, messages, appConfig))
+
+      doc.getElementById("my-completed-cases-id").text() should include(
+        messages("operator.dashboard.classification.my-cases.onCompletedProgress.singular", 1)
+      )
+    }
+
     "display the manager tools, my cases and open cases and not contain gateway" in {
       val doc =
         view(cases_cards(countCases = Map("my-cases" -> 2), 0, 0)(authenticatedManagerFakeRequest, messages, appConfig))
