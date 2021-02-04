@@ -533,6 +533,11 @@ table tbody tr th {
     overflow-x: auto;
     white-space: nowrap;
 }
+#referred_list-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
 
 .remove-overflow {
     overflow: unset;
@@ -542,5 +547,21 @@ table tbody tr th {
     .file-name-column-width {
         width: 75%;
         word-break: break-all;
+    }
+    .secondary-button {
+        margin-top: 1em;
+        padding-left: 0px;
+    }
+    #atar_tabs .grid-row {
+        margin: 0px;
+    }
+    #atar_tabs .column-one-third, #atar_tabs .column-two-thirds, #atar_tabs .column-full {
+        padding: 0px;
+    }
+    #c592_tab .grid-row {
+        margin: 0px;
+    }
+    .column-three-quarters.mt-4.float-right {
+        float: unset;
     }
 }
