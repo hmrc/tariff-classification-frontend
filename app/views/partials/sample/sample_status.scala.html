@@ -30,9 +30,7 @@
 
     @if(request.hasPermission(Permission.EDIT_SAMPLE)) {
         <dd class="column-one-third" id="change-sample-status">
-        <a tabindex="@{
-            startAtTabIndex + 10
-        }" href="@routes.SampleController.chooseStatus(sample.caseReference, None)">@messages("case.sample.change-sample-status")</a>
+        <a href="@routes.SampleController.chooseStatus(sample.caseReference, None)">@messages("case.sample.change-sample-status")</a>
         </dd>
     }
 </div>

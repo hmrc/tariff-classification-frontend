@@ -20,10 +20,10 @@
 @import models.viewmodels.HomeTab
 
 @this()
-@(countCases: Map[String, Int], referredCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(countCases: Map[String, Int], referredCasesByAssignee: Int, completedCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(request.operator.role.toString), customPrimaryNavTab = HomeTab) {
 
-@components.cases_cards(countCases, referredCasesByAssignee)
+@components.cases_cards(countCases, referredCasesByAssignee, completedCasesByAssignee)
 
 }

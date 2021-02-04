@@ -40,7 +40,7 @@ class BindingTariffClassificationConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends HasMetrics {
 
-  private lazy val statuses: String = Set(NEW, OPEN, REFERRED, SUSPENDED)
+  private lazy val statuses: String = Set(NEW, OPEN, REFERRED, SUSPENDED, COMPLETED)
     .map(_.toString)
     .mkString(",")
 
@@ -138,6 +138,16 @@ class BindingTariffClassificationConnector @Inject() (
   ): Future[Paged[Event]] =
     withMetricsTimerAsync("get-events-for-case") { _ =>
       val searchParam = s"case_reference=$reference" + onlyEventTypes.map(o => s"&type=$o").mkString("")
+      val url =
+        s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
+      client.GET[Paged[Event]](url)
+    }
+
+  def findCompletionEvents(references: Set[String], pagination: Pagination)(
+    implicit hc: HeaderCarrier
+  ): Future[Paged[Event]] =
+    withMetricsTimerAsync("get-completion-events") { _ =>
+      val searchParam = s"case_reference=${references.mkString(",")}&type=${EventType.CASE_COMPLETED}"
       val url =
         s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
       client.GET[Paged[Event]](url)

@@ -20,5 +20,5 @@
 @(caseReference: String, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 <div id="submitted-application" class="mb-3">
-   <a  @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(caseReference)"> @messages("case.decision.ruling.review.appeal.link") </a>
+   <a  id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(caseReference)"> @messages("case.decision.ruling.review.appeal.link") </a>
 </div>

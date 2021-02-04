@@ -20,6 +20,7 @@
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
+@import utils.Dates
 
 @(miscellaneousTab: ApplicationsTab, assignmentType: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -32,17 +33,22 @@
      <th id="@{miscellaneousTab.tabMessageKey}-subject" class="bold w-0">
       Subject
      </th>
+     <th id="@{miscellaneousTab.tabMessageKey}-type" class="bold w-0">
+      Type
+     </th>
      <th id="@{miscellaneousTab.tabMessageKey}-elapsed-days" class="bold w-0">
       Elapsed days
      </th>
+     @if(assignmentType == "applicationTab.completedByMe") {
+     <th id="@{miscellaneousTab.tabMessageKey}-completed-date" class="bold w-0">
+      Completed date
+     </th>
+     }
      @if(assignmentType == "applicationTab.referredByMe") {
      <th id="@{miscellaneousTab.tabMessageKey}-refer-days" class="bold w-0">
       Refer days
      </th>
      }
-     <th id="@{miscellaneousTab.tabMessageKey}-type" class="bold w-0">
-      Type
-     </th>
      @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway" || assignmentType == "applicationTab.assignedToMe") {
      <th id="@{miscellaneousTab.tabMessageKey}-status" class="bold w-0">
       Status
@@ -57,16 +63,25 @@
      <tr id="@{miscellaneousTab.tabMessageKey}-details-@index">
       <td id="@{miscellaneousTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
       <td id="@{miscellaneousTab.tabMessageKey}-subject-@index" class="pre-wrap">@{miscellaneous.name}</td>
+      <td id="@{miscellaneousTab.tabMessageKey}-type-@index">@{MiscCaseType.format(miscellaneous.caseType)}</td>
       <td id="@{miscellaneousTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
       @if(assignmentType == "applicationTab.referredByMe") {
-      <td id="@{miscellaneousTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
+       <td id="@{miscellaneousTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
       }
-      <td id="@{miscellaneousTab.tabMessageKey}-type-@index">@{MiscCaseType.format(miscellaneous.caseType)}</td>
+      @if(assignmentType == "applicationTab.completedByMe") {
+      <td id="@{miscellaneousTab.tabMessageKey}-completed-date-@index">
+        @for(completedEvent <- miscellaneousTab.completedEvent.flatMap(_.get(result.reference))) {
+          @Dates.format(completedEvent.timestamp)
+        }
+      </td>
+      }
       @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway" || assignmentType == "applicationTab.assignedToMe") {
       <td id="@{miscellaneousTab.tabMessageKey}-status-@index">
        @case_status_tab(result, s"${miscellaneousTab.tabMessageKey}-status-label-$index")
        @for(referralEvent <- miscellaneousTab.referralEvent.flatMap(_.get(result.reference))) {
-       <span id="@{miscellaneousTab.tabMessageKey}-status-refer-to-@index"><p>@{referralEvent.referredTo}</p></span>
+       <span id="@{miscellaneousTab.tabMessageKey}-status-refer-to-@index">
+        <p>@{referralEvent.details.asInstanceOf[ReferralCaseStatusChange].referredTo}</p>
+       </span>
         }
       </td>
       }

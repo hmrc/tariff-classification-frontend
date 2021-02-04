@@ -39,7 +39,7 @@
                 </td>
                 <td class="w-30">
                     @if(request.hasPermission(Permission.APPEAL_CASE)) {
-                        <a tabindex="@{startTabIndex+1+index}" id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTab.caseReference, appeal.id)">Change</a>
+                        <a id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTab.caseReference, appeal.id)">Change</a>
                     }
                 </td>
             </tr>

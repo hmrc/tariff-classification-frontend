@@ -17,6 +17,7 @@
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.ApplicationsTab
+@import utils.Dates
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
@@ -43,6 +44,11 @@
      <th id="@{correspondenceTab.tabMessageKey}-elapsed-days" class="bold w-0">
       Elapsed days
      </th>
+     @if(assignmentType == "applicationTab.completedByMe") {
+     <th id="@{correspondenceTab.tabMessageKey}-completed-date" class="bold w-0">
+      Completed date
+     </th>
+     }
      @if(assignmentType == "applicationTab.referredByMe") {
      <th id="@{correspondenceTab.tabMessageKey}-refer-days" class="bold w-0">
       Refer days
@@ -67,6 +73,13 @@
       <td id="@{correspondenceTab.tabMessageKey}-contact-email-@index" class="pre-wrap">@{correspondence.contact.email}</td>
       }
       <td id="@{correspondenceTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
+      @if(assignmentType == "applicationTab.completedByMe") {
+      <td id="@{correspondenceTab.tabMessageKey}-completed-date-@index">
+        @for(completedEvent <- correspondenceTab.completedEvent.flatMap(_.get(result.reference))) {
+          @Dates.format(completedEvent.timestamp)
+        }
+      </td>
+      }
       @if(assignmentType == "applicationTab.referredByMe") {
       <td id="@{correspondenceTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
       }
@@ -74,7 +87,9 @@
       <td id="@{correspondenceTab.tabMessageKey}-status-@index">
        @case_status_tab(result, s"${correspondenceTab.tabMessageKey}-status-label-$index")
        @for(referralEvent <- correspondenceTab.referralEvent.flatMap(_.get(result.reference))) {
-       <span id="@{correspondenceTab.tabMessageKey}-status-refer-to-@index"><p>@{referralEvent.referredTo}</p></span>
+       <span id="@{correspondenceTab.tabMessageKey}-status-refer-to-@index">
+        <p>@{referralEvent.details.asInstanceOf[ReferralCaseStatusChange].referredTo}</p>
+       </span>
         }
       </td>
       }
