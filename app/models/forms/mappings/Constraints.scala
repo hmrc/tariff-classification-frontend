@@ -17,10 +17,13 @@
 package models.forms.mappings
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import utils.PostcodeValidator
 
 import scala.util.matching.Regex
 
 trait Constraints {
+
+  private val postCodeMaxLength = 8
 
   private val emailRegex =
     """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$""".r
@@ -88,4 +91,26 @@ trait Constraints {
       case _ =>
         Invalid(errorKey)
     }
+
+  protected def optionalPostCodeMaxLength(errorKey: String): Constraint[Option[String]] = {
+    optionalMaxLength(postCodeMaxLength, errorKey)
+  }
+
+  protected def optionalMaxLength(maximum: Int, errorKey: String): Constraint[Option[String]] = {
+    Constraint {
+      case None => Valid
+      case Some(str: String) if str.length <= maximum => Valid
+      case _ => Invalid(errorKey, maximum)
+    }
+  }
+
+  protected def validPostcode(
+                               notValidPostcodeErrorKey: String
+                             ): Constraint[Option[String]] = {
+    Constraint {
+      case None => Valid
+      case Some(postCode) if PostcodeValidator.validate(postCode) => Valid
+      case _ => Invalid(notValidPostcodeErrorKey)
+    }
+  }
 }

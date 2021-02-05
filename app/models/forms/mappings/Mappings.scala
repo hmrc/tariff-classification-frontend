@@ -42,4 +42,5 @@ trait Mappings extends Formatters with Constraints {
     implicit ev: Enumerable[A]
   ): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
+
 }
