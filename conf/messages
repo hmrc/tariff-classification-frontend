@@ -1151,6 +1151,9 @@ case.ownership.assign_case.back=Back to my cases
 case.change_status.move_back_to_team.heading=Move this case back to a team
 case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team.
 
-
+user.title={0} for {1}
+user.fullname.heading={0}
+user.status.edit.title=Change status
+user.edit.submit=Save changes
 
 

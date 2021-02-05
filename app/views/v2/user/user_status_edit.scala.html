@@ -1,0 +1,53 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.Tab
+@import helper._
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.{UserViewModel, ManagerToolsTab}
+@import views.html.components.{primary_navigation, manager_tools_secondary_navigation, confirm_or_cancel_buttons}
+@import views.html.includes.main
+@import views.html.forms.components._
+@import views.html.partials.user.{user_heading, back_link, user_status_choice, user_status_submit}
+
+@this(user_heading: views.html.v2.user_heading)
+
+@(user: User, form : Form[UserStatus])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customPrimaryNavTab = ManagerToolsTab) {
+
+    @manager_tools_secondary_navigation(activeSubNav)
+
+    @back_link()
+
+    @user_heading(
+        userHeader = UserViewModel.fromUser(user),
+        headingPrefix = Some(messages("user.status.edit.title"))
+    )
+
+    <p>An inactive user will still appear on their completed cases, but they cannot be assigned new cases.</p>
+
+    @helper.form(action = routes.ManageUsersController.updateUserStatus(user.PID), 'novalidate -> "novalidate") {
+        @helper.CSRF.formField
+
+        @user_status_choice(user, form)
+
+        @user_status_submit(user)
+    }
+
+}
+
