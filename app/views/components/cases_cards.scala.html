@@ -129,6 +129,26 @@
                 </p>
             </div>
         </a>
+        <a id="my-completed-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">
+            <div class="card">
+                <h3 class="card-heading govuk-heading-s">
+                    @messages("operator.dashboard.classification.my-cases.completedByMe")</h3>
+                <p class="card-body">
+                    @if(completedCasesAssignedToMe == 1) {
+                    @messages(
+                    "operator.dashboard.classification.my-cases.onCompletedProgress.singular",
+                    completedCasesAssignedToMe
+                    )
+                    } else {
+                    @messages(
+                    "operator.dashboard.classification.my-cases.onCompletedProgress.plural",
+                    completedCasesAssignedToMe
+                    )
+                    }
+                </p>
+            </div>
+        </a>
+
     </div>
     } else {
         <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
