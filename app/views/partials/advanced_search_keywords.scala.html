@@ -15,7 +15,7 @@
  *@
 
 @import models.Search
-@import views.html.components.input_auto_complete
+@import views.html.components.input_accessible_auto_complete
 @import models.ReusableTabIndexer
 @(f: Form[Search], keywords: Seq[String], tabIndexer: ReusableTabIndexer = ReusableTabIndexer())(implicit messages: Messages)
 
@@ -48,7 +48,7 @@
                 <span class="form-hint">Add keywords to narrow your search, remove keywords to broaden results</span>
             </div>
             <div class="w-75 left display-inline">
-                @input_auto_complete(
+                @input_accessible_auto_complete(
                     field = form("keyword[0]"),
                     formControlClass = Some("w-100"),
                     autoCompleteOptions = keywords.diff(keywordsAdded(form))

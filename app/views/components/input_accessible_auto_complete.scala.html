@@ -44,23 +44,24 @@
         <span class="error-message" id="@{field.id}-error"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
     }
 
-    <div class="form-control-wrapper autocomplete @formControlClass">
-        <input
-        autocomplete="off"
-        class="form-control @inputClass"
-        type="text"
-        id="@{field.id}"
-        name="@{field.name}"
-        value="@{field.value}"
-        @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
-        @if(field.hasErrors || hint.isDefined){ aria-describedby="@if(hint.isDefined){@{field.id}-hint}@if(field.hasErrors && hint.isDefined){ }@if(field.hasErrors){@{field.id}-error}"}
-        @if(autofocus){ autofocus }
-        />
-    </div>
+    <div id="keyword-search-wrapper" class="autocomplete-wrapper"></div>
+
+
 </div>
 
-<script src="@routes.Assets.at("javascripts/auto-complete.js")" type="text/javascript"></script>
-<script>
-        autoComplete(document.getElementById("@{field.id}"), @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString))
-</script>
+<script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
+
+<script type="text/javascript">
+      element = document.querySelector('#keyword-search-wrapper')
+      id = 'autocomplete-minLength'
+      accessibleAutocomplete({
+        element: element,
+        id: @Html(Json.toJson(field.id).toString),
+        name: @Html(Json.toJson(field.name).toString),
+        minLength: 2,
+        source: @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString)
+      })
+    </script>
+
+
 

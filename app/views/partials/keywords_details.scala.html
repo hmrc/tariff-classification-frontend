@@ -22,7 +22,7 @@
 @import models.request.AuthenticatedRequest
 @import models.{Case, Permission}
 @import models.viewmodels.KeywordsTabViewModel
-@import views.html.components.input_auto_complete
+@import views.html.components.input_accessible_auto_complete
 @import views.html.partials.tab_heading
 @import views.html.partials.error_summary
 
@@ -68,19 +68,18 @@
                 @form(action = routes.CaseController.addKeyword(keywords.caseReference).withFragment(Tab.KEYWORDS_TAB.name), 'class -> "form mt-3") {
 
                     @CSRF.formField
-                    @input_auto_complete(
+                    @input_accessible_auto_complete(
                         field = keywordForm("keyword"),
                         label = Some("Search for or enter a keyword"),
                         hint = Some("Start typing and select a keyword if it appears in the list. To add a keyword that is not in the list, type it in full."),
                         autoCompleteOptions = keywords.globalKeywords,
-                        formControlClass = Some("w-100"),
-                        useTabIndex = Some(startAtTabIndex+50)
+                        formControlClass = Some("w-100")
                     )
 
                     <p>To suggest a new keyword contact the classification team manager.</p>
 
                     <div class="form-group">
-                        <button tabindex="@{startAtTabIndex+51}" id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
+                        <button id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
                     </div>
                 }
 

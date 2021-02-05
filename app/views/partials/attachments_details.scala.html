@@ -71,8 +71,8 @@
                     @input_file(
                         field = form("file-input"),
                         label = messages("cases.attachment.upload.label"),
-                        accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt"),
-                        useTabIndex = Some(startAtTabIndex+101)
+                        inputClass = Some("govuk-file-upload"),
+                        accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt")
                     )
                 </div>
             </div>

@@ -29,43 +29,46 @@
 
 @if(attachments.nonEmpty){
 
-<div id="@{id}-div">
-    <div class="border-bottom display-flex row-alignment" >
-        <div class="bold-small w-75 pl-0">File</div>
-       <div class="bold-small w-25 p-0" id="header-select" >Publish</div>
-        <div class="bold-small w-25 p-0 attachment-table-date">Date</div>
-    </div>
-    <div class="">
-        @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
-        <div id="@{id}-row-@{index}" class="border-bottom display-flex row-alignment">
-            <div id="@{id}-row-@{index}-title" class="w-75 pl-0">
+<table id="@{id}-div" aria-label="Files to attach to the ruling">
+    <tr class="border-bottom row-alignment">
+        <th scope="col" class="file-name-column-width bold-small w-75 pl-0">File</th>
+        <th scope="col" lass="bold-small w-25 p-0" id="header-select" >Publish</th>
+        <th scope="col" class="bold-small p-0 attachment-table-date">Date</th>
+    </tr>
+    @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
+    <tr id="@{id}-row-@{index}" class="border-bottom row-alignment">
+        <td>
+            <div id="@{id}-row-@{index}-title" class="file-name-column-width w-75 pl-0">
                 @attachment(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
             </div>
-
+        </td>
+        <td>
             <div class="w-25 p-0">
                 @if(file.public) {
-                    <div class="form-group">
-                        <div class="multiple-choice">
-                            <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
-                                id="attachments[@{index}]"
-                                name="attachments[@{index}]"
-                                type="checkbox"
-                                value="@file.id"
-                                aria-label="publish @file.fileName on GOV.UK"
-                                @if(file.public && file.shouldPublishToRulings){ checked="checked" }/>
-                            <label for="attachments[@{index}]"><div class="hide-label">publish</div></label>
-                        </div>
+                <div class="form-group">
+                    <div class="multiple-choice">
+                        <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
+                               id="attachments[@{index}]"
+                               name="attachments[@{index}]"
+                               type="checkbox"
+                               value="@file.id"
+                               aria-label="publish @file.fileName on GOV.UK"
+                               @if(file.public && file.shouldPublishToRulings){ checked="checked" }/>
+                        <label for="attachments[@{index}]"><div class="hide-label">publish</div></label>
                     </div>
+                </div>
                 }
             </div>
-
-            <div id="@{id}-row-@{index}-date" class="w-25 p-0">
+        </td>
+        <td>
+            <div id="@{id}-row-@{index}-date" class="p-0">
                 @Dates.format(file.timestamp)
             </div>
-        </div>
-        }
-    </div>
-</div>
+        </td>
+    </tr>
+    }
+</table>
+
 
 }else {
 <p id="@{id}-empty-div"> @messages("case.attachment.div.empty") </p>

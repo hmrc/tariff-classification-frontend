@@ -343,7 +343,7 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
     font-weight: 400;
     font-size: 27px;
     line-height: 1.11111;
-    color: #6f777b;
+    color: #505a5f;
     margin-bottom: 5px;
 
     a, a:visited, a:active, a:hover {
@@ -528,3 +528,13 @@ table tbody tr th {
     border-left: 4px solid #b1b4b6;
 }
 
+.remove-overflow {
+    overflow: unset;
+}
+
+@media screen and (max-width: 767px) {
+    .file-name-column-width {
+        width: 75%;
+        word-break: break-all;
+    }
+}

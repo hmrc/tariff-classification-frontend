@@ -25,7 +25,6 @@ import play.api.data.Form
 import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.v2.confirmation_case_creation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

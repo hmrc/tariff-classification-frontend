@@ -17,8 +17,6 @@
 package controllers
 
 import config.AppConfig
-import controllers.routes
-import controllers.Tab
 import models.forms.AppealForm
 import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
@@ -28,12 +26,10 @@ import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.CaseDetailPage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
-import models.viewmodels.atar.AppealTabViewModel
 
 @Singleton
 class AppealCaseController @Inject() (
@@ -46,8 +42,6 @@ class AppealCaseController @Inject() (
 
   private val typeForm: Form[AppealType]     = AppealForm.appealTypeForm
   private val statusForm: Form[AppealStatus] = AppealForm.appealStatusForm
-
-  private val startTabIndexForAppeals = 8000
 
   def appealDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
