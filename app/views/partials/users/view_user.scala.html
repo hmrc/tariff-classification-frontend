@@ -37,6 +37,7 @@ advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
 
 @(
 detailsTab: UserViewModel,
+applicationTabViewModel: ApplicationTabViewModel,
 activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -61,29 +62,13 @@ customPrimaryNavTab = ManagerToolsTab
             </a>
         </li>
 
+        @for(caseTab <- applicationTabViewModel.applicationTabs) {
         <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#atar_tab">
-                @messages("users.user.atar.tab_title")
+            <a class="govuk-tabs__tab" href="#@caseTab.elementId">
+                @messages(caseTab.tabMessageKey) (@caseTab.searchResult.size)
             </a>
         </li>
-
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#liability_tab">
-                @messages("users.user.liability.tab_title")
-            </a>
-        </li>
-
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#correspondence_tab">
-                @messages("users.user.correspondence.tab_title")
-            </a>
-        </li>
-
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#misc_tab">
-                @messages("users.user.misc.tab_title")
-            </a>
-        </li>
+        }
 
         <li class="govuk-tabs__list-item">
             <a class="govuk-tabs__tab" href="#keywords_tab">
@@ -97,17 +82,19 @@ customPrimaryNavTab = ManagerToolsTab
         @user_details(detailsTab)
     </div>
 
-    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="atar_tab">
+    @for(caseTab <- applicationTabViewModel.applicationTabs) {
+    <div class="govuk-tabs__panel" id="@caseTab.elementId">
+        @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
+        case (_, 0) => messages("cases.table.empty")
+        case (ApplicationType.ATAR, _) => atar_table(caseTab, applicationTabViewModel.headingMessageKey)
+        case (_, _) => "implement me"
+<!--        case (ApplicationType.LIABILITY, _) => liabilitiesTable(caseTab, applicationTabViewModel.headingMessageKey)-->
+<!--        case (ApplicationType.CORRESPONDENCE, _) => correspondenceTable(caseTab, applicationTabViewModel.headingMessageKey)-->
+<!--        case (ApplicationType.MISCELLANEOUS, _) => miscellaneousTable(caseTab, applicationTabViewModel.headingMessageKey)-->
+        }
+        }
     </div>
-
-    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="liability_tab">
-    </div>
-
-    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="correspondence_tab">
-    </div>
-
-    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="misc_tab">
-    </div>
+    }
 
     <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="keywords_tab">
     </div>
