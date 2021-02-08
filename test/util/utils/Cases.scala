@@ -500,7 +500,7 @@ object Cases {
             buildingAndStreet = "STREET 1",
             townOrCity        = "Town",
             county            = Some("County"),
-            postCode          = Some("postcode")
+            postCode          = Some("NE10 0HW")
           )
         )
       )
