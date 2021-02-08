@@ -25,7 +25,9 @@
 @(corresTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.correspondence.heading")</h2>
-
+<div class="form-group">
+ <button id="move-cases" class="button" type="submit">Move selected cases</button>
+</div>
 <table id="@{corresTab.tabMessageKey}-table">
  <tbody>
  <tr id="@{corresTab.tabMessageKey}-details" class="grid-row mb-2">

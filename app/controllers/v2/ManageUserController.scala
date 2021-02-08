@@ -93,7 +93,7 @@ class ManageUserController @Inject() (
           "Active"
         )
         for {
-          cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
+          cases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           myCaseStatuses = ApplicationsTab.casesByTypes(cases.results)
         } yield Ok(viewUser(userTab, myCaseStatuses))
     }
