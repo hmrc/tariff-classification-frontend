@@ -80,8 +80,9 @@ class ManageUserController @Inject() (
       .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
 
   def displayUserDetals(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) {
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
+        //TODO replace dummy stub with a query
         val userTab = UserViewModel(
           Some("Alex Smith"),
           Some("email@mail.com"),
@@ -91,8 +92,10 @@ class ManageUserController @Inject() (
           Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
           "Active"
         )
-
-        Ok(viewUser(userTab))
+        for {
+          cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
+          myCaseStatuses = ApplicationsTab.casesByTypes(cases.results)
+        } yield Ok(viewUser(userTab, myCaseStatuses))
     }
 
 }

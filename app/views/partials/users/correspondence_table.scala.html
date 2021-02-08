@@ -22,39 +22,39 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
-@(miscTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(corresTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.correspondence.heading")</h2>
 
-<table id="@{miscTab.tabMessageKey}-table">
+<table id="@{corresTab.tabMessageKey}-table">
  <tbody>
- <tr id="@{miscTab.tabMessageKey}-details" class="grid-row mb-2">
-  <th id="@{miscTab.tabMessageKey}-select" class="bold w-0">
+ <tr id="@{corresTab.tabMessageKey}-details" class="grid-row mb-2">
+  <th id="@{corresTab.tabMessageKey}-select" class="bold w-0">
    Select
   </th>
-  <th id="@{miscTab.tabMessageKey}-reference" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-reference" class="bold w-0">
    Reference
   </th>
-  <th id="@{miscTab.tabMessageKey}-subject" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-subject" class="bold w-0">
    Subject
   </th>
-  <th id="@{miscTab.tabMessageKey}-trader" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-trader" class="bold w-0">
    Trader
   </th>
-  <th id="@{miscTab.tabMessageKey}-type" class="bold w-0">
-   type
+  <th id="@{corresTab.tabMessageKey}-contact" class="bold w-0">
+   Contact
   </th>
-  <th id="@{miscTab.tabMessageKey}-elapsed-days" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-elapsed-days" class="bold w-0">
    Elapsed days
   </th>
  </tr>
 
- @for((result, index) <- miscTab.searchResult.results.zipWithIndex) {
+ @for((result, index) <- corresTab.searchResult.results.zipWithIndex) {
 
- @defining(result.application.asMisc) { misc =>
+ @defining(result.application.asCorrespondence) { corres =>
 
- <tr id="@{miscTab.tabMessageKey}-details-@index">
-  <td id="@{miscTab.tabMessageKey}-select-@index">
+ <tr id="@{corresTab.tabMessageKey}-details-@index">
+  <td id="@{corresTab.tabMessageKey}-select-@index">
    <input
            class="form-control"
            type="checkbox"
@@ -63,11 +63,11 @@
            value="@{result.reference}"/>
 <!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
   </td>
-  <td id="@{miscTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
-  <td id="@{miscTab.tabMessageKey}-summary-@index">@{misc.name}</td>
-  <td id="@{miscTab.tabMessageKey}-trader-@index">@{misc.contactName}</td>
-  <td id="@{miscTab.tabMessageKey}-type-@index">@{MiscCaseType.format(misc.caseType)}</td>
-  <td id="@{miscTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{corresTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+  <td id="@{corresTab.tabMessageKey}-summary-@index">@{corres.summary}</td>
+  <td id="@{corresTab.tabMessageKey}-trader-@index">@{corres.correspondenceStarter}</td>
+  <td id="@{corresTab.tabMessageKey}-contact-@index">@{corres.contact.email}</td>
+  <td id="@{corresTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
 
  </tr>
  }

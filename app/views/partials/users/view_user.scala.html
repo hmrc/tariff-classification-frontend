@@ -26,7 +26,7 @@
 @import views.html.partials.sample.{sample_details, sample_status_events_table}
 @import views.html.partials.ruling.ruling_details
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
-@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, UserViewModel}
+@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, UserViewModel, ApplicationTabViewModel}
 
 @this(
 user_heading: views.html.v2.user_heading,
@@ -86,11 +86,10 @@ customPrimaryNavTab = ManagerToolsTab
     <div class="govuk-tabs__panel" id="@caseTab.elementId">
         @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
         case (_, 0) => messages("cases.table.empty")
-        case (ApplicationType.ATAR, _) => atar_table(caseTab, applicationTabViewModel.headingMessageKey)
-        case (_, _) => "implement me"
-<!--        case (ApplicationType.LIABILITY, _) => liabilitiesTable(caseTab, applicationTabViewModel.headingMessageKey)-->
-<!--        case (ApplicationType.CORRESPONDENCE, _) => correspondenceTable(caseTab, applicationTabViewModel.headingMessageKey)-->
-<!--        case (ApplicationType.MISCELLANEOUS, _) => miscellaneousTable(caseTab, applicationTabViewModel.headingMessageKey)-->
+        case (ApplicationType.ATAR, _) => atar_table(caseTab)
+        case (ApplicationType.LIABILITY, _) => liability_table(caseTab)
+        case (ApplicationType.CORRESPONDENCE, _) => correspondence_table(caseTab)
+        case (ApplicationType.MISCELLANEOUS, _) => misc_table(caseTab)
         }
         }
     </div>
