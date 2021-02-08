@@ -3,13 +3,13 @@
     margin-bottom: 20px
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .govuk-tabs {
         margin-top:5px
     }
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .govuk-tabs {
         margin-bottom:30px
     }
@@ -33,7 +33,7 @@
     }
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .govuk-tabs__title {
         font-size:19px;
         font-size: 1.9rem;
@@ -61,7 +61,7 @@
     margin-bottom: 20px
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .govuk-tabs__list {
         margin-bottom:30px
     }
@@ -84,7 +84,7 @@
     }
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .govuk-tabs__list-item {
         font-size: 19px;
         font-size: 1.9rem;
@@ -150,13 +150,13 @@
     margin-bottom: 30px
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .govuk-tabs__panel {
         margin-bottom:50px
     }
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .js-enabled .govuk-tabs__list {
         margin-bottom:0;
         border-bottom: 1px solid #b1b4b6
@@ -213,13 +213,13 @@
     }
 }
 
-@media print and (min-width: 40.0625em) {
+@media print and (min-width: 48.125em) {
     .js-enabled .govuk-tabs__tab:link,.js-enabled .govuk-tabs__tab:visited,.js-enabled .govuk-tabs__tab:hover,.js-enabled .govuk-tabs__tab:active,.js-enabled .govuk-tabs__tab:focus {
         color:#000
     }
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .js-enabled .govuk-tabs__tab::after {
         content:"";
         position: absolute;
@@ -237,13 +237,13 @@
     }
 }
 
-@media (min-width: 40.0625em) and (min-width: 40.0625em) {
+@media (min-width: 48.125em) and (min-width: 48.125em) {
     .js-enabled .govuk-tabs__panel {
         margin-bottom:0
     }
 }
 
-@media (min-width: 40.0625em) {
+@media (min-width: 48.125em) {
     .js-enabled .govuk-tabs__panel>:last-child {
         margin-bottom:0
     }
