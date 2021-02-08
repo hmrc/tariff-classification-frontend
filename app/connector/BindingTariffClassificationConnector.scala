@@ -177,6 +177,12 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[Case]](url)
     }
 
+  def updateUser(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("update-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users/${o.id}"
+      client.PUT[Operator, Operator](url = url, body = o)
+    }
+
   def generateReport(report: CaseReport)(implicit hc: HeaderCarrier): Future[Seq[ReportResult]] =
     withMetricsTimerAsync("generate-report") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/report?${CaseReport.bindable.unbind("", report)}"
