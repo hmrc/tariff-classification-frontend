@@ -1173,3 +1173,5 @@ users.user.details.team=Team
 users.user.details.status=Status
 
 users.user.details.role.hint=Manage {0} cases
+
+users.user.noCases=There are no {0} cases assigned to this user.

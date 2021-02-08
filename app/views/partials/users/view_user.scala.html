@@ -85,7 +85,7 @@ customPrimaryNavTab = ManagerToolsTab
     @for(caseTab <- applicationTabViewModel.applicationTabs) {
     <div class="govuk-tabs__panel" id="@caseTab.elementId">
         @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
-        case (_, 0) => messages("cases.table.empty")
+        case (_, 0) => messages("users.user.noCases", caseTab.applicationType.prettyName)
         case (ApplicationType.ATAR, _) => atar_table(caseTab)
         case (ApplicationType.LIABILITY, _) => liability_table(caseTab)
         case (ApplicationType.CORRESPONDENCE, _) => correspondence_table(caseTab)
