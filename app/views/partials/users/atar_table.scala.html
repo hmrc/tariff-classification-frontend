@@ -18,7 +18,6 @@
 @import config.AppConfig
 @import models.viewmodels.ApplicationsTab
 @import utils.Dates
-
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
@@ -72,7 +71,7 @@
   <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
   <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
   <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-  <td id="@{atarTab.tabMessageKey}-total-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{atarTab.tabMessageKey}-total-days-@index">@{Dates.daysCount(result.createdDate)}</td>
 
   <td id="@{atarTab.tabMessageKey}-status-@index">
    @case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")

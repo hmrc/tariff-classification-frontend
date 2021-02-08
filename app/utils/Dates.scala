@@ -17,7 +17,7 @@
 package utils
 
 import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+import java.time.{Duration, Instant, LocalDateTime, ZoneOffset}
 
 object Dates {
 
@@ -29,4 +29,5 @@ object Dates {
   def format(instant: Option[Instant]): String =
     instant.map(format).getOrElse("None")
 
+  def daysCount(instant: Instant) = Duration.between(instant, Instant.now()).toDays
 }
