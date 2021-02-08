@@ -1,0 +1,103 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import helper.CSRF
+@import models.forms.{ActivityFormData, DecisionFormData}
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel, MyCasesTab}
+@import models.viewmodels.atar._
+@import views.html.includes.main
+@import views.html.partials.{case_trader, application_details, activity_details, keywords_details, attachments_details}
+@import views.html.partials.appeal.appeal_details
+@import views.html.partials.sample.{sample_details, sample_status_events_table}
+@import views.html.partials.ruling.ruling_details
+@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
+@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, UserViewModel, ApplicationTabViewModel}
+
+@this(
+user_heading: views.html.v2.user_heading,
+user_details: views.html.partials.users.user_details,
+case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
+advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
+)
+
+@(
+detailsTab: UserViewModel,
+applicationTabViewModel: ApplicationTabViewModel,
+activeSubNav : SubNavigationTab = ManagerToolsUsersTab
+)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(
+bodyClasses = None,
+customTitle = Some(messages("Manage user")),
+customPrimaryNavTab = ManagerToolsTab
+) {
+@manager_tools_secondary_navigation(activeSubNav)
+
+@user_heading(Some("Alex smith"))
+
+<div class="form-groups">
+
+</div>
+
+<div id="atar_tabs" class="govuk-tabs" data-module="govuk-tabs">
+    <ul class="govuk-tabs__list">
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#user_details_tab">
+                @messages("users.user.details.tab_title")
+            </a>
+        </li>
+
+        @for(caseTab <- applicationTabViewModel.applicationTabs) {
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#@caseTab.elementId">
+                @messages(caseTab.tabMessageKey) (@caseTab.searchResult.size)
+            </a>
+        </li>
+        }
+
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#keywords_tab">
+                @messages("users.user.keywords.tab_title")
+            </a>
+        </li>
+
+    </ul>
+
+    <div class="govuk-tabs__panel" id="user_details_tab">
+        @user_details(detailsTab)
+    </div>
+
+    @for(caseTab <- applicationTabViewModel.applicationTabs) {
+    <div class="govuk-tabs__panel" id="@caseTab.elementId">
+        @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
+        case (_, 0) => messages("cases.table.empty")
+        case (ApplicationType.ATAR, _) => atar_table(caseTab)
+        case (ApplicationType.LIABILITY, _) => liability_table(caseTab)
+        case (ApplicationType.CORRESPONDENCE, _) => correspondence_table(caseTab)
+        case (ApplicationType.MISCELLANEOUS, _) => misc_table(caseTab)
+        }
+        }
+    </div>
+    }
+
+    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="keywords_tab">
+    </div>
+
+</div>
+}
+

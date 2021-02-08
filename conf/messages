@@ -1153,6 +1153,25 @@ case.ownership.assign_case.back=Back to my cases
 case.change_status.move_back_to_team.heading=Move this case back to a team
 case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team.
 
+users.user.details.tab_title=User details
+users.user.atar.tab_title=ATaR
+users.user.liability.tab_title=Liability
+users.user.correspondence.tab_title=Corres
+users.user.misc.tab_title=Misc
+users.user.keywords.tab_title=Keywords
 
+users.user.details.heading=User details
+users.user.atar.heading=ATaR cases
+users.user.liability.heading=Liability cases
+users.user.correspondence.heading=Correspondence cases
+users.user.misc.heading=Miscellaneous cases
+users.user.keywords.heading=Keywords for approval
 
+users.user.details.name=Full name
+users.user.details.email=Email
+users.user.details.pid=PID
+users.user.details.role=Role
+users.user.details.team=Team
+users.user.details.status=Status
 
+users.user.details.role.hint=Manage {0} cases
