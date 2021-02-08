@@ -160,3 +160,4 @@ POST        /cases/v2/:reference/miscellaneous/edit-case-details       controlle
 GET         /manager-tools                                       controllers.v2.ManagerToolsController.displayManagerTools(activeSubNav: SubNavigationTab ?= ManagerToolsReportsTab)
 
 
+POST        /users/user-edit-status/:name                              controllers.v2.ManageUsersController.updateUserStatus(id: String)
