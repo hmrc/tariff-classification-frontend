@@ -109,7 +109,7 @@ class ManageUserController @Inject() (
       user <- userService.getUser(pid)
     } yield UserViewModel(
       fullName  = user.name,
-      email     = None,
+      email     = user.email,
       pid       = user.id,
       role      = user.role.toString,
       teams     = user.memberOfTeams.map(x => Queue(x, "", "")),

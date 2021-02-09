@@ -148,17 +148,18 @@ GET        /gateway-cases                                       controllers.v2.G
 GET        /all-open-cases                                      controllers.v2.AllOpenCasesController.displayAllOpenCases(activeSubNav: SubNavigationTab ?= ATaRTab)
 
 GET         /create-new-miscellaneous                           controllers.CreateMiscellaneousController.get()
-POST        /create-new-miscellaneous                           controllers.CreateMiscellaneousController.post()
+POST        /create-new-miscellaneous                          controllers.CreateMiscellaneousController.post()
 
-GET         /team-miscellaneous-choice                          controllers.CreateMiscellaneousController.displayQuestion(reference: String)
+GET         /team-miscellaneous-choice                      controllers.CreateMiscellaneousController.displayQuestion(reference: String)
 
-GET         /new-miscellaneous-confirm                           controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
+GET         /new-miscellaneous-confirm                         controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
 
 GET         /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.editMiscDetails(reference: String)
 POST        /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.postMiscDetails(reference: String)
 
 GET         /manager-tools                                       controllers.v2.ManagerToolsController.displayManagerTools(activeSubNav: SubNavigationTab ?= ManagerToolsReportsTab)
 
+GET        /users/manage-users                                      controllers.v2.ManageUsersController.displayManageUsers()
 GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetals(pid: String)
 
 GET        /users/user/:pid/user-edit-team                       controllers.v2.ManageUserController.editUserTeamDetails(pid: String)
