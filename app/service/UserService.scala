@@ -32,7 +32,14 @@ class UserService @Inject() (
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
-  def updateUser(originalOperator: Operator, operatorMakingTheChange: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+  def getUser(pid: String)(implicit hc: HeaderCarrier): Future[Operator] =
+    for {
+      userDetails <- connector.getUserDetails(pid)
+    } yield userDetails
+
+  def updateUser(originalOperator: Operator, operatorMakingTheChange: Operator)(
+    implicit hc: HeaderCarrier
+  ): Future[Operator] =
     for {
       updated <- connector.updateUser(originalOperator)
       _ = auditService.auditUserUpdated(originalOperator, operatorMakingTheChange)

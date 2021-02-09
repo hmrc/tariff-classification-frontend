@@ -91,7 +91,7 @@
    @userDetails.teams.map(team => team.name).mkString(",")
   </dd>
   <dd class="govuk-summary-list__actions">
-   <a class="govuk-link" href="@ManageUserController.editUserTeamDetails(request.operator.id)">
+   <a class="govuk-link" href="@ManageUserController.editUserTeamDetails(userDetails.pid)">
     Change<span class="visually-hidden"> assigned team</span>
    </a>
   </dd>

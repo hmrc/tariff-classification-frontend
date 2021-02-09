@@ -21,18 +21,16 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
+import models.forms.v2.UserEditTeamForm
 import models.request.AuthenticatedRequest
-import models.viewmodels._
+import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
 import play.api.Logging
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
-import models.forms.v2.UserEditTeamForm
-import play.api.data.Form
-
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,16 +53,16 @@ class ManageUserController @Inject() (
   private val userEditTeamform: Form[List[String]] = UserEditTeamForm.newTeamForm
 
   private def getReferralEvents(
-                                 cases: Paged[Case]
-                               )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
+    cases: Paged[Case]
+  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
     cases.results.toList
       .traverse { aCase =>
         eventsService.getFilteredEvents(aCase.reference, NoPagination(), Some(Set(EventType.CASE_REFERRAL))).map {
           events =>
             val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
             val latestReferralEvent = eventsLatestFirst.collectFirst {
-              case event@Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-              case _ => Map.empty
+              case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
+              case _                                        => Map.empty
             }
             latestReferralEvent.getOrElse(Map.empty)
         }
@@ -72,15 +70,15 @@ class ManageUserController @Inject() (
       .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
 
   private def getCompletedEvents(
-                                  cases: Paged[Case]
-                                )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
+    cases: Paged[Case]
+  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
     cases.results.toList
       .traverse { aCase =>
         eventsService.findCompletionEvents(Set(aCase.reference), NoPagination()).map { events =>
           val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
           val latestCompletedEvent = eventsLatestFirst.collectFirst {
-            case event@Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-            case _ => Map.empty
+            case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
+            case _                                        => Map.empty
           }
           latestCompletedEvent.getOrElse(Map.empty)
         }
@@ -106,21 +104,33 @@ class ManageUserController @Inject() (
         } yield Ok(viewUser(userTab, myCaseStatuses))
     }
 
+  private def constructUserDetailsViewModel(pid: String)(implicit hc: HeaderCarrier): UserViewModel =
+    for {
+      user <- userService.getUser(pid)
+    } yield UserViewModel(
+      fullName  = user.name,
+      email     = None,
+      pid       = user.id,
+      role      = user.role.toString,
+      teams     = user.memberOfTeams.map(x => Queue(x, "", "")),
+      caseTypes = ???,
+      status    = ???
+    )
+
   def editUserTeamDetails(pid: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(pid)
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)
       andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
-      successful(
-        Ok(user_team_edit(pid, userEditTeamform)))
+      successful(Ok(user_team_edit(constructUserDetailsViewModel(pid), userEditTeamform)))
     }
 
-  def postEditUserTeams(pid: String): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async {
-    implicit request =>
+  def postEditUserTeams(pid: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       userEditTeamform.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(user_team_edit(pid, formWithErrors))),
+        formWithErrors => Future.successful(Ok(user_team_edit(constructUserDetailsViewModel(pid), formWithErrors))),
         userToBeUpdated =>
-          userService.updateUser(Operator(pid, memberOfTeams = userToBeUpdated), request.operator).map { userUpdated: Operator =>
-            Redirect(routes.ManageUserController.displayUserDetals(pid, activeSubNav = ManagerToolsUsersTab))
+          userService.updateUser(Operator(pid, memberOfTeams = userToBeUpdated), request.operator).map {
+            userUpdated: Operator => Redirect(routes.ManageUserController.displayUserDetals(pid))
           }
       )
-  }
+    }
 }

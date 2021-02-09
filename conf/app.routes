@@ -159,7 +159,7 @@ POST        /cases/v2/:reference/miscellaneous/edit-case-details       controlle
 
 GET         /manager-tools                                       controllers.v2.ManagerToolsController.displayManagerTools(activeSubNav: SubNavigationTab ?= ManagerToolsReportsTab)
 
-GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetals(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetals(pid: String)
 
 GET        /users/user/:pid/user-edit-team                       controllers.v2.ManageUserController.editUserTeamDetails(pid: String)
 POST       /users/user/:pid/user-edit-team                       controllers.v2.ManageUserController.postEditUserTeams(pid: String)
