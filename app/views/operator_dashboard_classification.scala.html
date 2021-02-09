@@ -18,11 +18,12 @@
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
 @import models.viewmodels.HomeTab
+@import models.Role.Role
 
 @this()
 @(countCases: Map[String, Int], referredCasesByAssignee: Int, completedCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(request.operator.role.toString), customPrimaryNavTab = HomeTab) {
+@main(bodyClasses = None, customTitle = Some(Role.format(request.operator.role)), customPrimaryNavTab = HomeTab) {
 
 @components.cases_cards(countCases, referredCasesByAssignee, completedCasesByAssignee)
 
