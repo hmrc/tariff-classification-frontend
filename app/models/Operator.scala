@@ -23,8 +23,8 @@ case class Operator(
   name: Option[String]         = None,
   email: Option[String]        = None,
   role: Role                   = Role.CLASSIFICATION_OFFICER,
-  memberOfTeams: List[String]  = List.empty,
-  managerOfTeams: List[String] = List.empty,
+  memberOfTeams: Seq[String]   = Seq.empty,
+  managerOfTeams: Seq[String]  = Seq.empty,
   permissions: Set[Permission] = Set.empty
 ) {
 
@@ -47,7 +47,7 @@ object Role extends Enumeration {
     roleType match {
       case CLASSIFICATION_OFFICER => "Classification officer"
       case CLASSIFICATION_MANAGER => "Manager"
-      case READ_ONLY => "Unknown"
+      case READ_ONLY              => "Unknown"
 
     }
 

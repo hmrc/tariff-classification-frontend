@@ -837,4 +837,29 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
   }
 
+  "create new user" in {
+    val operator = Operator("1")
+    val request  = Json.toJson(NewUserRequest(operator)).toString()
+    println("::::::::::::::")
+    println("::::::::::::::")
+    println("::::::::::::::")
+    println("::::::::::::::")
+    println(request)
+    stubFor(
+      post(urlEqualTo(s"/users"))
+        .withRequestBody(equalToJson(request))
+        .willReturn(
+          aResponse()
+            .withStatus(HttpStatus.SC_CREATED)
+        )
+    )
+
+    await(connector.createUser(operator)) shouldBe operator
+
+    verify(
+      postRequestedFor(urlEqualTo(s"/users"))
+        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+    )
+  }
+
 }

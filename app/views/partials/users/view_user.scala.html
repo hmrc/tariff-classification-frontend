@@ -18,6 +18,7 @@
 @import helper.CSRF
 @import models.forms.{ActivityFormData, DecisionFormData}
 @import models.request.AuthenticatedRequest
+@import models.Operator
 @import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel, MyCasesTab}
 @import models.viewmodels.atar._
 @import views.html.includes.main
@@ -26,7 +27,7 @@
 @import views.html.partials.sample.{sample_details, sample_status_events_table}
 @import views.html.partials.ruling.ruling_details
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
-@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, UserViewModel, ApplicationTabViewModel}
+@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
 
 @this(
 user_heading: views.html.v2.user_heading,
@@ -36,7 +37,7 @@ advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
 )
 
 @(
-detailsTab: UserViewModel,
+detailsTab: Operator,
 applicationTabViewModel: ApplicationTabViewModel,
 activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)

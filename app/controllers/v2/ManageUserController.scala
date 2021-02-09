@@ -84,20 +84,20 @@ class ManageUserController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         //TODO replace dummy stub with a query
-        val user = userService.getUser(pid)
-        val userTab = UserViewModel(
-          Some("Alex Smith"),
-          Some("email@mail.com"),
-          "1",
-          "Classification",
-          Seq(Queues.act, Queues.cap),
-          Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
-          "Active"
-        )
+//        val userTab = UserViewModel(
+//          Some("Alex Smith"),
+//          Some("email@mail.com"),
+//          "1",
+//          "Classification",
+//          Seq(Queues.act, Queues.cap),
+//          Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
+//          "Active"
+//        )
         for {
-          cases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
-          myCaseStatuses = ApplicationsTab.casesByTypes(cases.results)
-        } yield Ok(viewUser(userTab, myCaseStatuses))
+          userTab <- userService.getUser(pid)
+          cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
+          userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
+        } yield Ok(viewUser(userTab, userCaseTabs))
     }
 
 }

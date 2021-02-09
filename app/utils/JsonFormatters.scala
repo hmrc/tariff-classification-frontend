@@ -28,7 +28,7 @@ object JsonFormatters {
 
   case class Something(value: String)
 
-  implicit val role: Format[Role]                                 = EnumJson.format(Role)
+  implicit val role: Format[Role.Value]                           = EnumJson.format(Role)
   implicit val liabilityStatus: Format[LiabilityStatus]           = EnumJson.format(LiabilityStatus)
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
   implicit val miscCaseType: Format[MiscCaseType.Value]           = EnumJson.format(MiscCaseType)
@@ -62,6 +62,7 @@ object JsonFormatters {
   implicit val caseReportFilter: Format[CaseReportFilter]                = Json.format[CaseReportFilter]
   implicit val caseReport: Format[CaseReport]                            = Json.format[CaseReport]
   implicit val operator: Format[Operator]                                = Json.using[Json.WithDefaultValues].format[Operator]
+  implicit val formatNewUserRequest: OFormat[NewUserRequest]             = Json.using[Json.WithDefaultValues].format[NewUserRequest]
   implicit val scanStatusFormat: Format[ScanStatus.Value]                = EnumJson.format(ScanStatus)
   implicit val appealStatusFormat: Format[AppealStatus.Value]            = EnumJson.format(AppealStatus)
   implicit val sampleStatusFormat: Format[SampleStatus.Value]            = EnumJson.format(SampleStatus)
