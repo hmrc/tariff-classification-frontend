@@ -43,8 +43,8 @@ class ManageUsersController @Inject() (
         manageUsersView(
           activeSubNav,
           UsersTabViewModel.forManagedTeams(
-            Queues.allQueues
-            //Seq(Queues.act, Queues.cap ).toList //todo replace dummy stub with a query
+            //Queues.allQueues
+            Seq(Queues.act, Queues.cap, Queues.elm).toList //todo replace dummy stub with a query
           )
         )
       )

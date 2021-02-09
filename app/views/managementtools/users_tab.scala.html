@@ -44,11 +44,6 @@
                 @users.unassignedUsersTab.tabMessageKey (@users.unassignedUsersTab.searchResult.size)
             </a>
         </li>
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#@users.readOnlyTab.elementId">
-                @users.readOnlyTab.tabMessageKey (@users.readOnlyTab.searchResult.size)
-            </a>
-        </li>
     </ul>
 
     @* content*@
@@ -77,14 +72,6 @@
         @{users.unassignedUsersTab.searchResult.results.size match {
         case 0 => "No users in this team"
         case _ => noTeamUsersTable(users.unassignedUsersTab)
-        }
-        }
-    </div>
-    <div class="govuk-tabs__panel" id="@users.readOnlyTab.elementId">
-        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.readOnlyTab.tabMessageKey)</h2>
-        @{users.readOnlyTab.searchResult.results.size match {
-        case 0 => "No users in this team"
-        case _ => noTeamUsersTable(users.readOnlyTab)
         }
         }
     </div>

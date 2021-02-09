@@ -30,7 +30,6 @@
             <th id="@{usersTab.tabMessageKey}-user" class="bold w-0">User</th>
             <th id="@{usersTab.tabMessageKey}-role" class="bold w-0">Role</th>
             <th id="@{usersTab.tabMessageKey}-case" class="bold w-0">Case</th>
-            <th id="@{usersTab.tabMessageKey}-status" class="bold w-0">Status</th>
         </tr>
 
         @for((result, index) <- usersTab.searchResult.results.zipWithIndex) {
@@ -41,8 +40,6 @@
                     </td>
                     <td id="@{usersTab.tabMessageKey}-role-@index">@{result.role}</td>
                     <td id="@{usersTab.tabMessageKey}-case-@index">@{result.numberOfCases}</td>
-<!--                    todo cutom status component-->
-                    <td id="@{usersTab.tabMessageKey}-status-@index">@user_status_tag(result.status, "@{usersTab.tabMessageKey}--@index" )</td>
                 </tr>
 
         }

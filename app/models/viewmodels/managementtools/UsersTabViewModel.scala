@@ -24,8 +24,7 @@ case class UsersTabViewModel(
   headingMessageKey: String,
   usersByQueueTabs: List[UsersTab],
   assignedUsersTab: UsersTab,
-  unassignedUsersTab: UsersTab,
-  readOnlyTab: UsersTab
+  unassignedUsersTab: UsersTab
 )
 
 object UsersTabViewModel {
@@ -38,7 +37,6 @@ object UsersTabViewModel {
       "unassigned-tab",
       Paged(Users.allUsers.filter(u => !u.isAssigned && u.role != "Read only"))
     )
-    val readonlyUsers = UsersTab("Read only", "readonly-tab", Paged(Users.allUsers.filter(u => u.role == "Read only")))
     val teamUsers = managedTeams.map { managedTeam =>
       UsersTab(
         managedTeam.slug.toUpperCase,
@@ -51,8 +49,7 @@ object UsersTabViewModel {
       "management.manage-users.heading",
       teamUsers,
       assignedUsers,
-      unassignedUsers,
-      readonlyUsers
+      unassignedUsers
     )
 
   }
