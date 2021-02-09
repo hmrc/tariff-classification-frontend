@@ -241,7 +241,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases" in {
       val url =
-        buildQueryUrl(withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED", assigneeId = "assignee", pag = TestPagination())
+        buildQueryUrl(
+          withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+          assigneeId   = "assignee",
+          pag          = TestPagination()
+        )
 
       stubFor(
         get(urlEqualTo(url))
@@ -262,7 +266,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases" in {
       val url =
-        buildQueryUrl(withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED", assigneeId = "assignee", pag = TestPagination())
+        buildQueryUrl(
+          withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+          assigneeId   = "assignee",
+          pag          = TestPagination()
+        )
 
       stubFor(
         get(urlEqualTo(url))
@@ -777,6 +785,56 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
     }
 
+  }
+
+  "Connector 'Update User'" should {
+
+    "update valid user" in {
+      val ref           = "PID1"
+      val validOperator = Cases.operatorWithPermissions.copy(id = ref)
+      val json          = Json.toJson(validOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/users/$ref"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(json)
+          )
+      )
+
+      await(connector.updateUser(validOperator)) shouldBe validOperator
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/users/$ref"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "update user with an unknown id" in {
+      val unknownId       = "unknownId"
+      val unknownOperator = Cases.operatorWithPermissions.copy(id = unknownId)
+      val json            = Json.toJson(unknownOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/users/$unknownId"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_NOT_FOUND)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.updateUser(unknownOperator))
+      }
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/users/$unknownId"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
   }
 
 }
