@@ -188,4 +188,10 @@ class BindingTariffClassificationConnector @Inject() (
       val url = s"${appConfig.bindingTariffClassificationUrl}/users/${o.id}"
       client.PUT[Operator, Operator](url = url, body = o)
     }
+
+  def getUserDetails(id: String)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("update-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users/$id"
+      client.GET[Operator](url = url)
+    }
 }

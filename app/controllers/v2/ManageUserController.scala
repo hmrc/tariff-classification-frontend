@@ -26,7 +26,7 @@ import models.viewmodels._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, EventsService}
+import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
@@ -37,6 +37,7 @@ class ManageUserController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   eventsService: EventsService,
+  userService: UserService,
   mcc: MessagesControllerComponents,
   val viewUser: views.html.partials.users.view_user
 )(
@@ -83,6 +84,7 @@ class ManageUserController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         //TODO replace dummy stub with a query
+        val user = userService.getUser(pid)
         val userTab = UserViewModel(
           Some("Alex Smith"),
           Some("email@mail.com"),
