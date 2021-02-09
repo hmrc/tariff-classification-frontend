@@ -18,29 +18,36 @@
 @import controllers.Tab
 @import controllers.v2.routes.LiabilityController
 @import helper._
-@import models.{Case, LiabilityOrder}
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{CaseHeaderViewModel, MyCasesTab}
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.includes.main
 @import views.html.forms.components._
 @import views.html.partials.error_summary
+@import controllers.v2.routes.ManageUserController
+@import models.Queues._
+@import models.Queue._
 
 @this(case_heading: views.html.v2.case_heading)
 
-@(form : Form[List[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(pid: String, form : Form[List[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title"))) {
 
 @error_summary(form.errors)
 
 
 <h1 id="create_misc-heading" class="heading-xlarge">@messages("page.title.create_misc.h1")</h1>
 
-@helper.form(action = routes.CreateMiscellaneousController.post(), 'id -> "create_misc-form", 'novalidate -> "novalidate") {
+@helper.form(action = ManageUserController.postEditUserTeams(pid), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
-
-
-
+   @input_checkbox_group(
+       field = form(List[Queues]),
+       options = Queues.toSeq,
+       legend = Some("Apply filters"),
+       submitOnChange = true,
+       divClass = Some("advanced_search--filters-checkbox")
+     )
     }
 }
+
