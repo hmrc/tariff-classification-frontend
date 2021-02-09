@@ -30,7 +30,10 @@ import service.{CasesService, EventsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
+import models.forms.v2.UserEditTeamForm
+import play.api.data.Form
 
+import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 class ManageUserController @Inject() (
@@ -38,13 +41,16 @@ class ManageUserController @Inject() (
   casesService: CasesService,
   eventsService: EventsService,
   mcc: MessagesControllerComponents,
-  val viewUser: views.html.partials.users.view_user
+  val viewUser: views.html.partials.users.view_user,
+  val user_team_edit: views.html.partials.users.user_team_edit
 )(
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {
+
+  private val  userEditTeamform: Form[List[String]] = UserEditTeamForm.newTeamForm
 
   private def getReferralEvents(
     cases: Paged[Case]
@@ -96,6 +102,13 @@ class ManageUserController @Inject() (
           cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
           myCaseStatuses = ApplicationsTab.casesByTypes(cases.results)
         } yield Ok(viewUser(userTab, myCaseStatuses))
+    }
+
+  def editUserTeamDetails(pid: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(pid)
+      andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      successful(
+        Ok(user_team_edit(userEditTeamform)))
     }
 
 }

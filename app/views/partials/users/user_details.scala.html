@@ -18,6 +18,7 @@
 @import views.html.includes.main
 @import models.viewmodels.UserViewModel
 @import models.request.AuthenticatedRequest
+@import controllers.v2.routes.ManageUserController
 
 @this()
 
@@ -90,7 +91,7 @@
    @userDetails.teams.map(team => team.name).mkString(",")
   </dd>
   <dd class="govuk-summary-list__actions">
-   <a class="govuk-link" href="user-edit-team-alex">
+   <a class="govuk-link" href="@ManageUserController.editUserTeamDetails(request.operator.id)">
     Change<span class="visually-hidden"> assigned team</span>
    </a>
   </dd>
