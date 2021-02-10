@@ -29,10 +29,10 @@
         <li class="moj-sub-navigation__item">
             @if(selectedTab == ManagerToolsUsersTab) {
                 <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link" aria-current="page"
-                href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsUsersTab)">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
+                href="@routes.ManageUsersController.displayManageUsers()">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
             } else {
                 <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link"
-                href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsUsersTab)">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
+                href="@routes.ManageUsersController.displayManageUsers()">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
             }
         </li>
         <li class="moj-sub-navigation__item">
