@@ -27,6 +27,9 @@ window.onload = function () {
         hasErrors.focus();
     }
 
+    if(document.getElementById("govuk-notification-banner--success")) {
+         document.getElementById("govuk-notification-banner--success").focus()
+    }
 
 };
 
