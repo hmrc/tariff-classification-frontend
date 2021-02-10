@@ -27,7 +27,7 @@
 
 @this()
 
-@(userDetails: Operator, form: Form[List[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(userDetails: Operator, form: Form[Set[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @main(bodyClasses = None, customTitle = Some(messages("case.edit.user")), customPrimaryNavTab = NoTabSelected) {
 
@@ -44,10 +44,9 @@
           @userDetails.getMemberTeamNames
             @input_checkbox_group(
                 field = form("String"),
-                options = (userDetails.getMemberTeamNames).map(x => CheckOption(x, "", true),
-            )
-            )
-
+                options = Queues.allQueues.map(queue => CheckOption(queue.name, "", userDetails.getMemberTeamId.map(_.toBoolean))
+                    )
+                )
             <button class="button" id="cancel_edit_user_teams-button" type="submit">Save changes</button>
 
 

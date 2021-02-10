@@ -21,17 +21,9 @@ import play.api.data.Form
 
 object UserEditTeamForm {
 
-  private val form2Team: List[String] => List[String] = {
-    case (memberOfTeams) =>
-      memberOfTeams
-}
-
-  private val team2Form: List[String]  => Option[List[String]] = memberOfTeams =>
-    Some(memberOfTeams)
-
-  val newTeamForm: Form[List[String]] = Form(
+  val newTeamForm: Form[Set[String]] = Form(
     mapping(
-      "memberOfTeams"       -> list(text)
-    )(form2Team)(team2Form)
+      "memberOfTeams"       -> set(text)
+    )(identity(_))(teams => Some(teams))
   )
 }

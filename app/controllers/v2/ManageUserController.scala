@@ -50,7 +50,7 @@ class ManageUserController @Inject() (
     with I18nSupport
     with Logging {
 
-  private val userEditTeamform: Form[List[String]] = UserEditTeamForm.newTeamForm
+  private val userEditTeamform = UserEditTeamForm.newTeamForm
 
   private def getReferralEvents(
     cases: Paged[Case]
@@ -106,7 +106,7 @@ class ManageUserController @Inject() (
       userEditTeamform.bindFromRequest.fold(
         formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors))),
         userToBeUpdated =>
-          userService.updateUser(Operator(pid, memberOfTeams = userToBeUpdated), request.operator).map { _ =>
+          userService.updateUser(Operator(pid, memberOfTeams = userToBeUpdated.toSeq), request.operator).map { _ =>
             Redirect(routes.ManageUserController.displayUserDetails(pid))
           }
       )
