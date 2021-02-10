@@ -249,6 +249,8 @@ case.liability.error.empty.good-name=Enter the goods name
 case.liability.error.trader.email=Enter a trader email address in the correct format, like name@example.com
 case.liability.error.contact.email=Enter a contact email address in the correct format, like name@example.com
 case.liability.error.email=Enter an email address in the correct format, like name@example.com
+case.liability.error.postcode.length=Postcode must be {0} characters of fewer
+case.liability.error.postcode.valid=Enter a real postcode
 case.liability.error.compliance_officer.name=Enter a name
 case.liability.error.entry-date=Entry date must be a real date
 case.liability.error.entry-date.day=Enter a day
@@ -1154,3 +1156,9 @@ case.change_status.move_back_to_team.description=This case was previously assign
 notification.success.keywords.add = The keyword has been added to this case
 notification.success.keywords.remove = The keyword has been removed from this case
 notification.success.referral.off = This case has been taken off referral
+
+management.manage-users-title=Manage users - Advance Tariff Rulings Case Manager - GOV.UK
+management.manage-users.heading = Manage users
+management.manage-users.tabSubHeading = {0} users
+
+

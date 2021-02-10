@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
-@import views.html.includes.main
-@import models.viewmodels.HomeTab
-@import models.Role.Role
+package utils
 
-@this()
-@(countCases: Map[String, Int], referredCasesByAssignee: Int, completedCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+object PostcodeValidator {
+  val regexString =
+    "(GIR 0AA)|((([A-Z-[QVX]][0-9][0-9]?)|(([A-Z-[QVX]][A-Z-[IJZ]][0-9][0-9]?)|(([A-Z-[QVX]][0-9][A-HJKPSTUW])|([A-Z-[QVX]][A-Z-[IJZ]][0-9][ABEHMNPRVWXY])))) *[0-9][A-Z-[CIKMOV]]{2})"
+  private val postcodeRegex = regexString.r
 
-@main(bodyClasses = None, customTitle = Some(Role.format(request.operator.role)), customPrimaryNavTab = HomeTab) {
+  def validate(candidate: String): Boolean = {
+    val postcode = candidate.trim.toUpperCase
 
-@components.cases_cards(countCases, referredCasesByAssignee, completedCasesByAssignee)
+    val result = postcode match {
+      case postcodeRegex(_*) => true
+      case _                 => false
+    }
 
+    result
+  }
 }

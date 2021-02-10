@@ -32,6 +32,8 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("case.v2.correspondence.case-contact-edit-title")), customPrimaryNavTab = MyCasesTab) {
 
+    @error_summary(form.errors)
+
     @correspondence_case_heading(CaseHeaderViewModel.fromCase(c))
 
     <h2 id="correspondence-contact-edit" class="heading-large">@messages("case.v2.correspondence.case-contact-edit-heading1")</h2>

@@ -40,6 +40,7 @@ object Permission {
     VIEW_CASES,
     VIEW_CASE_ASSIGNEE,
     VIEW_REPORTS,
+    MANAGE_USERS,
     CREATE_CASES,
     ASSIGN_CASE,
     RELEASE_CASE,
@@ -141,6 +142,12 @@ object Permission {
   }
 
   case object VIEW_REPORTS extends GlobalPermission {
+    override def name: String = nameOf(this)
+    override def appliesTo(operator: Operator): Boolean =
+      managersOnly(operator)
+  }
+
+  case object MANAGE_USERS extends GlobalPermission {
     override def name: String = nameOf(this)
     override def appliesTo(operator: Operator): Boolean =
       managersOnly(operator)

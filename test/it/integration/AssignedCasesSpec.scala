@@ -16,7 +16,7 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar with CaseQueue
     "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
 
   private val testMyCasesServiceUrl =
-    buildQueryUrl(withStatuses = "NEW,OPEN,REFERRED,SUSPENDED", assigneeId = "123", pag = NoPagination())
+    buildQueryUrl(withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED", assigneeId = "123", pag = NoPagination())
 
   "Assigned Cases" should {
 
