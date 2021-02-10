@@ -92,6 +92,8 @@
             <input type="hidden" value="LIVE" name="status[1]"/>
             <input type="hidden" value="LIABILITY_ORDER" name="application_type[0]"/>
             <input type="hidden" value="BTI" name="application_type[1]"/>
+            <input type="hidden" value="CORRESPONDENCE" name="application_type[2]"/>
+            <input type="hidden" value="MISCELLANEOUS" name="application_type[3]"/>
         }
 
         @if(results.isDefined && !form.hasErrors) {
@@ -108,7 +110,9 @@
                                     field = form("application_type"),
                                     options = Seq(
                                         CheckOption("ATaR", ApplicationType.ATAR.name, checked = formHasApplicationType(ApplicationType.ATAR)),
-                                        CheckOption("Liability", ApplicationType.LIABILITY.name, checked = formHasApplicationType(ApplicationType.LIABILITY))
+                                        CheckOption("Liability", ApplicationType.LIABILITY.name, checked = formHasApplicationType(ApplicationType.LIABILITY)),
+                                        CheckOption("Correspondence", ApplicationType.CORRESPONDENCE.name, checked = formHasApplicationType(ApplicationType.CORRESPONDENCE)),
+                                        CheckOption("Miscellaneous", ApplicationType.MISCELLANEOUS.name, checked = formHasApplicationType(ApplicationType.MISCELLANEOUS))
                                     ),
                                     legend = Some("Apply filters"),
                                     submitOnChange = true,

@@ -58,6 +58,29 @@ class AdvancedSearchViewSpec extends ViewSpec {
         "status[1]"
       )
     }
+
+    "Always Render Input 'application_type'" in {
+      view(advanced_search(form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "application_type[0]")
+      view(advanced_search(form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "application_type[1]")
+      view(advanced_search(form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "application_type[2]")
+      view(advanced_search(form, None, Seq.empty, defaultTab)) should containElementWithAttribute("name", "application_type[3]")
+      view(advanced_search(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute(
+        "name",
+        "application_type[0]"
+      )
+      view(advanced_search(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute(
+        "name",
+        "application_type[1]"
+      )
+      view(advanced_search(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute(
+        "name",
+        "application_type[2]"
+      )
+      view(advanced_search(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute(
+        "name",
+        "application_type[3]"
+      )
+    }
   }
 
 }
