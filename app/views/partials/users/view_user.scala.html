@@ -45,7 +45,7 @@ customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)
 <!--todo add correct url to this link-->
-<a id="back-link" class="link-back" href="@request.session.get(SessionKeys.backToQueuesLinkUrl).getOrElse(routes.IndexController.get())">
+<a id="back-link" class="link-back" href="@ManageUsersController.displayManageUsers">
     Back to manage users
 </a>
 
