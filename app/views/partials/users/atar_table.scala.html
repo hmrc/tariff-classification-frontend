@@ -18,14 +18,15 @@
 @import config.AppConfig
 @import models.viewmodels.ApplicationsTab
 @import utils.Dates
-
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
 @(atarTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.atar.heading")</h2>
-
+<div class="form-group">
+ <button id="move-cases" class="button" type="submit">Move selected cases</button>
+</div>
 <table id="@{atarTab.tabMessageKey}-table">
  <tbody>
  <tr id="@{atarTab.tabMessageKey}-details" class="grid-row mb-2">
@@ -70,7 +71,7 @@
   <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
   <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
   <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-  <td id="@{atarTab.tabMessageKey}-total-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{atarTab.tabMessageKey}-total-days-@index">@{Dates.daysCount(result.createdDate)}</td>
 
   <td id="@{atarTab.tabMessageKey}-status-@index">
    @case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")

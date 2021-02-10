@@ -28,9 +28,12 @@ import models.CaseStatus._
 import models.EventType.EventType
 import models._
 import models.request.NewEventRequest
+import play.api.libs.json.Reads
+
 import scala.concurrent.{ExecutionContext, Future}
 import utils.JsonFormatters._
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import utils.JsonFormatters
 
 @Singleton
 class BindingTariffClassificationConnector @Inject() (
@@ -194,4 +197,11 @@ class BindingTariffClassificationConnector @Inject() (
       val url = s"${appConfig.bindingTariffClassificationUrl}/users/${o.id}"
       client.PUT[Operator, Operator](url = url, body = o)
     }
+
+  def createUser(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("create-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users"
+      client.POST[NewUserRequest, Operator](url, NewUserRequest(operator))
+    }
+
 }

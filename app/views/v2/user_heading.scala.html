@@ -21,7 +21,7 @@
 )
 
 @(
-        username: Option[String] = None
+        username: String
 )(implicit messages: Messages)
 
 <div id="case-heading" class="case-heading mt-5 mb-4">
@@ -31,6 +31,6 @@
     </div>
 
     <h1 class="heading-xlarge case-title">
-        @username.getOrElse("User")
+        @username
     </h1>
 </div>

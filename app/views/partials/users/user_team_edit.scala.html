@@ -1,18 +1,19 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
 @import config.AppConfig
 @import controllers.v2.routes.ManageUserController
 @import models.Queues
@@ -23,12 +24,11 @@
 @import views.html.includes.main
 @import views.html.partials.error_summary
 @import views.html.components.confirm_or_cancel_buttons
-@import models.viewmodels.UserViewModel
 @import views.html.partials.back_link
 
 @this()
 
-@(userDetails: UserViewModel, form: Form[List[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(userDetails: Operator, form: Form[List[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("case.edit.user")), customPrimaryNavTab = NoTabSelected) {
 
@@ -36,10 +36,9 @@
 
     @error_summary(form.errors)
 
-
     <h1 id="edit-user-team" class="heading-xlarge">@messages("heading")</h1>
 
-    @helper.form(action = ManageUserController.postEditUserTeams(userDetails.pid), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+    @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
         @helper.CSRF.formField
 
         @input_checkbox_group(
@@ -53,7 +52,7 @@
             id = "cancel_edit_user_teams",
             confirmText = "Confirm team change",
             cancelText = "Cancel and returse",
-            cancelHref = ManageUserController.displayUserDetals(userDetails.pid)
+            cancelHref = ManageUserController.displayUserDetails(userDetails.id)
         )
 
 

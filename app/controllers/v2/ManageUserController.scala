@@ -85,51 +85,42 @@ class ManageUserController @Inject() (
       }
       .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
 
-  def displayUserDetals(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async {
+  def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
-        //TODO replace dummy stub with a query
-        val userTab = UserViewModel(
-          Some("Alex Smith"),
-          Some("email@mail.com"),
-          "1",
-          "Classification",
-          Seq(Queues.act, Queues.cap),
-          Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
-          "Active"
-        )
         for {
-          cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
-          myCaseStatuses = ApplicationsTab.casesByTypes(cases.results)
-        } yield Ok(viewUser(userTab, myCaseStatuses))
+          userTab <- userService.getUser(pid)
+          cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
+          userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
+        } yield Ok(viewUser(userTab, userCaseTabs))
     }
 
-  private def constructUserDetailsViewModel(pid: String)(implicit hc: HeaderCarrier): UserViewModel =
-    for {
-      user <- userService.getUser(pid)
-    } yield UserViewModel(
-      fullName  = user.name,
-      email     = user.email,
-      pid       = user.id,
-      role      = user.role.toString,
-      teams     = user.memberOfTeams.map(x => Queue(x, "", "")),
-      caseTypes = ???,
-      status    = ???
-    )
+//  private def constructUserDetailsViewModel(pid: String)(implicit hc: HeaderCarrier): Operator =
+//    for {
+//      user <- userService.getUser(pid)
+//    } yield Operator(
+//      id             = ???,
+//      name           = ???,
+//      email          = ???,
+//      role           = ???,
+//      memberOfTeams  = ???,
+//      managerOfTeams = ???,
+//      permissions    = ???
+//    )
 
   def editUserTeamDetails(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)
       andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
-      successful(Ok(user_team_edit(constructUserDetailsViewModel(pid), userEditTeamform)))
+      successful(Ok(user_team_edit(Operator(pid), userEditTeamform)))
     }
 
   def postEditUserTeams(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       userEditTeamform.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(user_team_edit(constructUserDetailsViewModel(pid), formWithErrors))),
+        formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors))),
         userToBeUpdated =>
-          userService.updateUser(Operator(pid, memberOfTeams = userToBeUpdated), request.operator).map {
-            userUpdated: Operator => Redirect(routes.ManageUserController.displayUserDetals(pid))
+          userService.updateUser(Operator(pid, memberOfTeams = userToBeUpdated), request.operator).map { _ =>
+            Redirect(routes.ManageUserController.displayUserDetails(pid))
           }
       )
     }
