@@ -23,40 +23,35 @@
 @import views.html.forms.components._
 @import views.html.includes.main
 @import views.html.partials.error_summary
-@import views.html.components.confirm_or_cancel_buttons
 @import views.html.partials.back_link
 
 @this()
 
 @(userDetails: Operator, form: Form[List[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.edit.user")), customPrimaryNavTab = NoTabSelected) {
+    @main(bodyClasses = None, customTitle = Some(messages("case.edit.user")), customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
+        @back_link()
 
-    @error_summary(form.errors)
+        @error_summary(form.errors)
 
-    <h1 id="edit-user-team" class="heading-xlarge">@messages("heading")</h1>
+        <h1 id="edit-user-team" class="heading-xlarge">@messages("heading")</h1>
 
-    @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
-        @helper.CSRF.formField
+        @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id),
+            'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+            @helper.CSRF.formField
 
-        @input_checkbox_group(
-            field = form("String"),
-            options = Seq(Queues.allQueues).map(x => CheckOption(x.toString, "", true)),
-            legend = Some("Apply filters"),
-            divClass = Some("advanced_search--filters-checkbox")
-        )
+          @userDetails.getMemberTeamNames
+            @input_checkbox_group(
+                field = form("String"),
+                options = (userDetails.getMemberTeamNames).map(x => CheckOption(x, "", true),
+            )
+            )
 
-        @confirm_or_cancel_buttons(
-            id = "cancel_edit_user_teams",
-            confirmText = "Confirm team change",
-            cancelText = "Cancel and returse",
-            cancelHref = ManageUserController.displayUserDetails(userDetails.id)
-        )
+            <button class="button" id="cancel_edit_user_teams-button" type="submit">Save changes</button>
 
+
+        }
 
     }
-
-}
 

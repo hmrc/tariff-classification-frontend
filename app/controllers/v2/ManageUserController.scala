@@ -95,19 +95,6 @@ class ManageUserController @Inject() (
         } yield Ok(viewUser(userTab, userCaseTabs))
     }
 
-//  private def constructUserDetailsViewModel(pid: String)(implicit hc: HeaderCarrier): Operator =
-//    for {
-//      user <- userService.getUser(pid)
-//    } yield Operator(
-//      id             = ???,
-//      name           = ???,
-//      email          = ???,
-//      role           = ???,
-//      memberOfTeams  = ???,
-//      managerOfTeams = ???,
-//      permissions    = ???
-//    )
-
   def editUserTeamDetails(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)
       andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
