@@ -67,8 +67,8 @@ class AuthenticatedAction @Inject() (
       Some(request.session)
     )
 
-    authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
-      case Some(credentials) ~ name ~ roles =>
+    authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.email and Retrievals.allEnrolments) {
+      case Some(credentials) ~ name ~ email ~ roles =>
 
         val pid = credentials.providerId
 
@@ -78,7 +78,7 @@ class AuthenticatedAction @Inject() (
           case _                                 => Role.READ_ONLY
         }
 
-        val userFromAuth = Operator(pid, name.flatMap(_.name), role = role)
+        val userFromAuth = Operator(pid, name.flatMap(_.name), email, role)
 
         for {
           userWithTeams <- userConnector.getUserDetails(pid)
