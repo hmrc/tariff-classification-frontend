@@ -201,8 +201,6 @@ class BindingTariffClassificationConnector @Inject() (
   def createUser(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
     withMetricsTimerAsync("create-user") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/users"
-      implicit val rd
-        : Reads[Operator] = JsonFormatters.operator //this was required to get the code to compile, but don't think this should be here
       client.POST[NewUserRequest, Operator](url, NewUserRequest(operator))
     }
 

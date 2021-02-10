@@ -36,7 +36,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageUserController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
-  eventsService: EventsService,
   userService: UserService,
   mcc: MessagesControllerComponents,
   val viewUser: views.html.partials.users.view_user
@@ -47,52 +46,9 @@ class ManageUserController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def getReferralEvents(
-    cases: Paged[Case]
-  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
-    cases.results.toList
-      .traverse { aCase =>
-        eventsService.getFilteredEvents(aCase.reference, NoPagination(), Some(Set(EventType.CASE_REFERRAL))).map {
-          events =>
-            val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
-            val latestReferralEvent = eventsLatestFirst.collectFirst {
-              case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-              case _                                        => Map.empty
-            }
-            latestReferralEvent.getOrElse(Map.empty)
-        }
-      }
-      .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
-
-  private def getCompletedEvents(
-    cases: Paged[Case]
-  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
-    cases.results.toList
-      .traverse { aCase =>
-        eventsService.findCompletionEvents(Set(aCase.reference), NoPagination()).map { events =>
-          val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
-          val latestCompletedEvent = eventsLatestFirst.collectFirst {
-            case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-            case _                                        => Map.empty
-          }
-          latestCompletedEvent.getOrElse(Map.empty)
-        }
-      }
-      .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
-
   def displayUserDetals(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async {
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
-        //TODO replace dummy stub with a query
-//        val userTab = UserViewModel(
-//          Some("Alex Smith"),
-//          Some("email@mail.com"),
-//          "1",
-//          "Classification",
-//          Seq(Queues.act, Queues.cap),
-//          Seq(ApplicationType.ATAR, ApplicationType.LIABILITY),
-//          "Active"
-//        )
         for {
           userTab <- userService.getUser(pid)
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())

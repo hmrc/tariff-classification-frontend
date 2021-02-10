@@ -840,17 +840,15 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "create new user" in {
     val operator = Operator("1")
     val request  = Json.toJson(NewUserRequest(operator)).toString()
-    println("::::::::::::::")
-    println("::::::::::::::")
-    println("::::::::::::::")
-    println("::::::::::::::")
-    println(request)
+    val response = Json.toJson(operator).toString()
+
     stubFor(
       post(urlEqualTo(s"/users"))
         .withRequestBody(equalToJson(request))
         .willReturn(
           aResponse()
             .withStatus(HttpStatus.SC_CREATED)
+            .withBody(response)
         )
     )
 

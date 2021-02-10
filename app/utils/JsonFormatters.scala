@@ -61,7 +61,7 @@ object JsonFormatters {
   implicit val formatTraderContactDetails: OFormat[TraderContactDetails] = Json.format[TraderContactDetails]
   implicit val caseReportFilter: Format[CaseReportFilter]                = Json.format[CaseReportFilter]
   implicit val caseReport: Format[CaseReport]                            = Json.format[CaseReport]
-  implicit val operator: Format[Operator]                                = Json.using[Json.WithDefaultValues].format[Operator]
+  implicit val operatorFormat: Format[Operator]                          = Json.using[Json.WithDefaultValues].format[Operator]
   implicit val formatNewUserRequest: OFormat[NewUserRequest]             = Json.using[Json.WithDefaultValues].format[NewUserRequest]
   implicit val scanStatusFormat: Format[ScanStatus.Value]                = EnumJson.format(ScanStatus)
   implicit val appealStatusFormat: Format[AppealStatus.Value]            = EnumJson.format(AppealStatus)

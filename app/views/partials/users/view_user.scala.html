@@ -24,6 +24,7 @@
 @import views.html.includes.main
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
 @import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
+@import controllers.v2.routes
 
 @this(
 user_heading: views.html.v2.user_heading,
@@ -44,8 +45,7 @@ customTitle = Some(messages("Manage user")),
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)
-<!--todo add correct url to this link-->
-<a id="back-link" class="link-back" href="@ManageUsersController.displayManageUsers">
+<a id="back-link" class="link-back" href="@routes.ManageUsersController.displayManageUsers">
     Back to manage users
 </a>
 
