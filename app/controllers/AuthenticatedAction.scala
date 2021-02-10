@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import connector.StrideAuthConnector
+import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
 import javax.inject.{Inject, Singleton}
 import models.request.AuthenticatedRequest
 import models.{Operator, Permission, Role}
@@ -41,6 +41,7 @@ class AuthenticatedAction @Inject() (
   override val config: Configuration,
   override val env: Environment,
   override val authConnector: StrideAuthConnector,
+  userConnector: BindingTariffClassificationConnector,
   cc: ControllerComponents
 )(override implicit val executionContext: ExecutionContext)
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
@@ -69,17 +70,35 @@ class AuthenticatedAction @Inject() (
     authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.allEnrolments) {
       case Some(credentials) ~ name ~ roles =>
 
-        val id = credentials.providerId
+        val pid = credentials.providerId
+
         val role = roles.enrolments.map(_.key) match {
           case e if e.contains(managerEnrolment) => Role.CLASSIFICATION_MANAGER
           case e if e.contains(teamEnrolment)    => Role.CLASSIFICATION_OFFICER
           case _                                 => Role.READ_ONLY
         }
-        val operator = Operator(id, name.flatMap(_.name), role = role)
-        val permittedOperator = operator.copy(
-          permissions = Permission.applyingTo(operator)
-        )
-        block(AuthenticatedRequest(permittedOperator, request))
+
+        val userFromAuth = Operator(pid, name.flatMap(_.name), role = role)
+
+        for {
+          userWithTeams <- userConnector.getUserDetails(pid)
+
+          updatedUser <- userWithTeams match {
+            case None =>
+              userConnector.createUser(userFromAuth)
+            case Some(existingUser) =>
+              if (existingUser.withoutTeams != userFromAuth)
+                userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
+              else
+                Future.successful(existingUser)
+          }
+
+          permittedUser = updatedUser.copy(permissions = Permission.applyingTo(updatedUser))
+
+          result <- block(AuthenticatedRequest(permittedUser, request))
+
+        } yield result
+
 
       case _ =>
         throw InternalError("Unable to retrieve user credentials")

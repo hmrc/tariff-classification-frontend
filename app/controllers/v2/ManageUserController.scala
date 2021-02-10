@@ -53,7 +53,7 @@ class ManageUserController @Inject() (
           userTab <- userService.getUser(pid)
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
-        } yield Ok(viewUser(userTab, userCaseTabs))
+        } yield userTab.map(u => Ok(viewUser(u, userCaseTabs))).getOrElse(NotFound)
     }
 
 }

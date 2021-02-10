@@ -29,6 +29,7 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
+import connector.BindingTariffClassificationConnector
 
 class SuccessfulAuthenticatedAction(
   parse: PlayBodyParsers,
@@ -41,6 +42,7 @@ class SuccessfulAuthenticatedAction(
       env           = mock(classOf[Environment]),
       authConnector = mock(classOf[StrideAuthConnector]),
       parse         = parse,
+      userConnector = mock(classOf[BindingTariffClassificationConnector]),
       cc            = mock(classOf[ControllerComponents])
     ) {
 

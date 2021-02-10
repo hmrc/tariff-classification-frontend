@@ -37,6 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import connector.BindingTariffClassificationConnector
 
 class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -44,6 +45,7 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val config      = mock[Configuration]
   private val environment = mock[Environment]
   private val connector   = mock[StrideAuthConnector]
+  private val userConnector = mock[BindingTariffClassificationConnector]
   private val block: AuthenticatedRequest[AnyContent] => Future[Result] =
     mock[AuthenticatedRequest[AnyContent] => Future[Result]]
   private val result               = mock[Result]
@@ -170,7 +172,7 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
   }
 
   private def action: AuthenticatedAction =
-    new AuthenticatedAction(appConfig, playBodyParsers, config, environment, connector, controllerComponents)
+    new AuthenticatedAction(appConfig, playBodyParsers, config, environment, connector, userConnector, controllerComponents)
 
   private def theAuthenticatedRequest(): AuthenticatedRequest[AnyContent] = {
     val captor: ArgumentCaptor[AuthenticatedRequest[AnyContent]] =
