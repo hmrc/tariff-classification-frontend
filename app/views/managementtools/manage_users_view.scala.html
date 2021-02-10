@@ -14,17 +14,23 @@
  * limitations under the License.
  *@
 
+@import views.html.managementtools.{users_tab}
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.managementtools._
 @import views.html.includes.main
-@import models.viewmodels.HomeTab
-@import models.Role.Role
+@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
+@import models.viewmodels.{ManagerToolsTab}
+@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.ManagerToolsReportsTab
+
 
 @this()
-@(countCases: Map[String, Int], referredCasesByAssignee: Int, completedCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(Role.format(request.operator.role)), customPrimaryNavTab = HomeTab) {
+@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, users : UsersTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@components.cases_cards(countCases, referredCasesByAssignee, completedCasesByAssignee)
+@main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title")), customPrimaryNavTab = ManagerToolsTab) {
+    @manager_tools_secondary_navigation(activeSubNav)
 
+    @users_tab(users)
 }

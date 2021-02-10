@@ -21,7 +21,10 @@ import models.Role.Role
 case class Operator(
   id: String,
   name: Option[String]         = None,
+  email: Option[String]        = None,
   role: Role                   = Role.CLASSIFICATION_OFFICER,
+  memberOfTeams: List[String]  = List.empty,
+  managerOfTeams: List[String] = List.empty,
   permissions: Set[Permission] = Set.empty
 ) {
 
@@ -38,9 +41,7 @@ case class Operator(
 
 object Role extends Enumeration {
   type Role = Value
-  val CLASSIFICATION_OFFICER = Value("Classification officer")
-  val CLASSIFICATION_MANAGER = Value("Classification manager")
-  val READ_ONLY              = Value("Unknown")
+  val CLASSIFICATION_OFFICER, CLASSIFICATION_MANAGER, READ_ONLY = Value
 
   def format(roleType: Role): String =
     roleType match {
