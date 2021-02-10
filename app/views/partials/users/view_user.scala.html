@@ -22,10 +22,6 @@
 @import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel, MyCasesTab}
 @import models.viewmodels.atar._
 @import views.html.includes.main
-@import views.html.partials.{case_trader, application_details, activity_details, keywords_details, attachments_details}
-@import views.html.partials.appeal.appeal_details
-@import views.html.partials.sample.{sample_details, sample_status_events_table}
-@import views.html.partials.ruling.ruling_details
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
 @import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
 
@@ -48,8 +44,12 @@ customTitle = Some(messages("Manage user")),
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)
+<!--todo add correct url to this link-->
+<a id="back-link" class="link-back" href="@request.session.get(SessionKeys.backToQueuesLinkUrl).getOrElse(routes.IndexController.get())">
+    Back to manage users
+</a>
 
-@user_heading(Some("Alex smith"))
+@user_heading(detailsTab.name.getOrElse(detailsTab.id))
 
 <div class="form-group">
     <button id="move-cases" class="button button-red">Delete user</button>

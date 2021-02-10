@@ -1174,6 +1174,9 @@ users.user.details.role=Role
 users.user.details.team=Team
 users.user.details.status=Status
 
-users.user.details.role.hint=Manage {0} cases
+users.user.details.role.hint.classification=Manage ATaR, liability, correspondence and miscellaneous cases.
+users.user.details.role.hint.gateway=Assign ATaR cases. Create and assign Liability, Correspondence and Miscellaneous cases.
+users.user.details.role.hint.manager=Manage users, cases and keywords for assigned teams.
+users.user.details.role.hint.classificationAndGateway=Assign and manage ATaR cases. Create, assign and manage Liability, Correspondence and Miscellaneous cases.
 
 users.user.noCases=There are no {0} cases assigned to this user.

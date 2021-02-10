@@ -33,7 +33,7 @@
    @messages("users.user.details.name")
   </dt>
   <dd class="cya-answer" id="user-full-name">
-   @userDetails.name.getOrElse("")
+   @userDetails.name.getOrElse("Unknown")
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
@@ -44,7 +44,7 @@
    @messages("users.user.details.email")
   </dt>
   <dd class="cya-answer" id="user-email">
-   @userDetails.email.getOrElse("")
+   @userDetails.email.getOrElse("Unknown")
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
@@ -66,17 +66,19 @@
    @messages("users.user.details.role")
   </dt>
   <dd class="cya-answer" id="user-role">
-   @userDetails.role
+   @{(userDetails.role, userDetails.isGateway) match {
+   case (Role.CLASSIFICATION_OFFICER, true) => "Classification and Gateway"
+   case (Role.CLASSIFICATION_OFFICER, false) => "Classification"
+   case (Role.CLASSIFICATION_MANAGER, _) => "Manager"
+   case (_, true) => "Gateway"
+   }}
    <div id="role-detail-hint" class="form-hint">
-    Manage ATaR, liability, correspondence and miscellaneous cases.
-<!--    TODO make the allowed case types into a prettier string like on the prototype-->
-<!--    if(!userDetails.caseTypes.isEmpty){-->
-<!--     if(userDetails.caseTypes.size == 1){-->
-<!--      messages("users.user.details.role.hint", userDetails.caseTypes.map(_.prettyName) )-->
-<!--    }else{-->
-<!--     messages("users.user.details.role.hint", userDetails.caseTypes.map(_.prettyName).mkString(", "))-->
-<!--    }-->
-<!--    }-->
+    @{(userDetails.role, userDetails.isGateway) match {
+    case (Role.CLASSIFICATION_OFFICER, true) => messages("users.user.details.role.hint.classificationAndGateway")
+    case (Role.CLASSIFICATION_OFFICER, false) => messages("users.user.details.role.hint.classification")
+    case (Role.CLASSIFICATION_MANAGER, _) => messages("users.user.details.role.hint.manager")
+    case (_, true) => messages("users.user.details.role.hint.gateway")
+    }}
    </div>
   </dd>
   <dd class="govuk-summary-list__actions">
@@ -88,7 +90,10 @@
    @messages("users.user.details.team")
   </dt>
   <dd class="cya-answer" id="user-team">
-   @userDetails.memberOfTeams.mkString(",")
+   @if(userDetails.memberOfTeams.isEmpty){
+    None
+   }else{
+   @userDetails.getMemberTeamNames.mkString(", ")}
   </dd>
   <dd class="govuk-summary-list__actions">
    <a class="govuk-link" href="user-edit-team-alex">
