@@ -25,7 +25,8 @@ case class Operator(
   role: Role                   = Role.CLASSIFICATION_OFFICER,
   memberOfTeams: Seq[String]   = Seq.empty,
   managerOfTeams: Seq[String]  = Seq.empty, //being a member is the same as being the manager, don't use this
-  permissions: Set[Permission] = Set.empty
+  permissions: Set[Permission] = Set.empty,
+  deleted: Boolean             = false
 ) {
 
   def manager: Boolean = role == Role.CLASSIFICATION_MANAGER

@@ -43,5 +43,12 @@ class UserService @Inject() (
   def getUser(id: String)(implicit hc: HeaderCarrier): Future[Operator] =
     for {
       userDetails <- connector.getUserDetails(id)
-    } yield userDetails
+    } yield {
+      if (userDetails.deleted) {
+        throw new Exception("User with pid " + id + " is deleted")
+      } else {
+        userDetails
+      }
+    }
+
 }

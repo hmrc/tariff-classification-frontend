@@ -25,6 +25,8 @@
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
 @import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
 @import controllers.v2.routes
+@import views.html.partials.{error_summary, back_link}
+@import views.html.forms.components.input_yes_no
 
 @this(
 delete_user_heading: views.html.partials.users.delete_user_heading,
@@ -34,6 +36,7 @@ advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
 
 @(
 user: Operator,
+form: Form[Boolean],
 activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -46,7 +49,7 @@ customPrimaryNavTab = ManagerToolsTab
 <a id="back-link" class="link-back" href="@routes.ManageUsersController.displayManageUsers">
     Back to manage users
 </a>
-
+@error_summary(form.errors)
 @delete_user_heading(user.safeName, true)
 
 <p>@messages("users.user.delete.confirm.message")</p>
@@ -59,5 +62,16 @@ customPrimaryNavTab = ManagerToolsTab
   This action cannot be undone.
  </strong>
 </div>
+@helper.form(action = routes.ManageUserController.confirmRemoveUser(user.id), 'id -> "remove-user", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
+
+@input_yes_no(form("state"), "remove-user")
+
+<div>
+ <button class="button" id="remove-user-button" type="submit">Continue</button>
+</div>
+}
+
+
 }
 

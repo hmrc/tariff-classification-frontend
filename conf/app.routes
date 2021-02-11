@@ -162,4 +162,5 @@ GET         /manager-tools                                       controllers.v2.
 GET        /users/manage-users                                      controllers.v2.ManageUsersController.displayManageUsers()
 GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetals(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 GET        /users/user-delete/:pid                                      controllers.v2.ManageUserController.deleteUser(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST       /users/user-delete/:pid                                      controllers.v2.ManageUserController.confirmRemoveUser(pid: String)
 

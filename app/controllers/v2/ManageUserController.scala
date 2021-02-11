@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
+import models.forms.v2.RemoveUserForm
 import models.request.AuthenticatedRequest
 import models.viewmodels._
 import play.api.Logging
@@ -28,7 +29,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
+import play.api.data.Form
 
+import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 class ManageUserController @Inject() (
@@ -45,6 +48,8 @@ class ManageUserController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {
+
+  private lazy val removeUserForm: Form[Boolean] = RemoveUserForm.form
 
   def displayUserDetals(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
@@ -66,9 +71,37 @@ class ManageUserController @Inject() (
           if (userCases.results.nonEmpty) {
             Ok(cannotDeleteUser(user))
           } else {
-            Ok(confirmDeleteUser(user))
+            Ok(confirmDeleteUser(user, removeUserForm))
           }
         }
     }
+
+  def confirmRemoveUser(pid: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(
+      Permission.MANAGE_USERS
+    )).async(implicit request =>
+      removeUserForm
+        .bindFromRequest()
+        .fold(
+          errors =>
+            for {
+              user <- userService.getUser(pid)
+            } yield Ok(confirmDeleteUser(user, errors)), {
+            case true =>
+              for {
+                user <- userService.getUser(pid)
+              } yield {
+                val updatedUser = user.copy(deleted = true)
+                userService
+                  .updateUser(updatedUser, request.operator)
+                Redirect(controllers.v2.routes.ManageUsersController.displayManageUsers())
+              }
+            case _ =>
+              successful(
+                Redirect(controllers.v2.routes.ManageUserController.displayUserDetals(pid))
+              )
+          }
+        )
+    )
 
 }
