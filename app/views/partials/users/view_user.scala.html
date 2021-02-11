@@ -49,7 +49,7 @@ customPrimaryNavTab = ManagerToolsTab
     Back to manage users
 </a>
 
-@user_heading(detailsTab.name.getOrElse(detailsTab.id))
+@user_heading(detailsTab.safeName))
 
 <div class="form-group">
     <button id="move-cases" class="button button-red">Delete user</button>
