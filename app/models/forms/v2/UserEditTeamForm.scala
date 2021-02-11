@@ -21,9 +21,9 @@ import play.api.data.Form
 
 object UserEditTeamForm {
 
-  val newTeamForm: Form[Set[String]] = Form(
+  val editTeamsForm: Form[Set[String]] = Form(
     mapping(
-      "memberOfTeams"       -> set(text)
+      "memberOfTeams" -> set(text)
     )(identity)(teams => Some(teams))
   )
 }

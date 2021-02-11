@@ -31,7 +31,6 @@ import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 class ManageUserController @Inject() (
@@ -49,7 +48,7 @@ class ManageUserController @Inject() (
     with I18nSupport
     with Logging {
 
-  private val userEditTeamForm = UserEditTeamForm.newTeamForm
+  private val userEditTeamForm = UserEditTeamForm.editTeamsForm
 
   private def getReferralEvents(
     cases: Paged[Case]
@@ -97,7 +96,10 @@ class ManageUserController @Inject() (
   def editUserTeamDetails(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)
       andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-      successful(Ok(user_team_edit(Operator(pid), userEditTeamForm)))
+      userService
+        .getUser(pid)
+        .map(userDetails => Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet))))
+
     }
 
   def postEditUserTeams(pid: String): Action[AnyContent] =

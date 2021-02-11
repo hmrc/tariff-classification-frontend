@@ -52,4 +52,14 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       await(service.updateUser(oldUser, manager)) shouldBe updatedUser
     }
   }
+
+  "Get User" should {
+
+    "delegate to the connector" in {
+      given(connector.getUserDetails("PID")) willReturn successful(operator)
+
+      await(service.getUser("PID")) shouldBe operator
+
+    }
+  }
 }

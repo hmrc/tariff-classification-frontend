@@ -40,10 +40,9 @@
         @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id),'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
         @helper.CSRF.formField
 
-          @userDetails.getMemberTeamNames
             @input_checkbox_group(
                 field = form("memberOfTeams"),
-                options = Queues.allQueues.map(queue => CheckOption(queue.name, queue.id, userDetails.getMemberTeamId.map(_.toBoolean))
+                options = Queues.allQueues.map(queue => CheckOption(queue.name, queue.id, userDetails.memberOfTeams.contains(queue.id))
                     )
                 )
             <button class="button" id="cancel_edit_user_teams-button" type="submit">Save changes</button>

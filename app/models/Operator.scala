@@ -39,8 +39,6 @@ case class Operator(
 
   def getMemberTeamNames: Seq[String] = memberOfTeams.flatMap(teamId => Queues.queueById(teamId).map(_.name))
 
-  def getMemberTeamId: Seq[String] = memberOfTeams.flatMap(teamId => Queues.queueById(teamId).map(_.id))
-
   def isGateway: Boolean = memberOfTeams.contains("1")
 }
 
