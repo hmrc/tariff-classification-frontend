@@ -28,16 +28,14 @@
 @main(bodyClasses = None, customTitle = Some(messages("page.title.take.ownership")),
     customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
+<div>@back_link()</div>
 
+<div class="column-two-thirds pl-0">
     @case_heading(c)
 
     <h2 id="assign_case-heading" class="heading-large mt-0">
         @if(c.assignee.isDefined) {
             <span id="assign_case-assigned_heading">@messages("case.ownership.assign_case.assigned", assignee(c.assignee.get))</span>
-        }
-        @if(c.assignee.isEmpty) {
-            <span id="assign_case-unassigned_heading">@messages("case.ownership.assign_case.unassigned")</span>
         }
     </h2>
 
@@ -67,3 +65,4 @@
     }
 
 }
+</div>
