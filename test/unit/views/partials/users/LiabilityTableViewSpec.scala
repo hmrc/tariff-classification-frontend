@@ -58,7 +58,7 @@ class LiabilityTableViewSpec extends ViewSpec {
       doc should containElementWithID("applicationTab.liability-elapsed-days")
       doc should containElementWithID("applicationTab.liability-status")
       doc should containElementWithID("applicationTab.liability-type")
-      doc should containElementWithID("move-cases")
+      doc should containElementWithID("move-liab-cases")
 
     }
   }

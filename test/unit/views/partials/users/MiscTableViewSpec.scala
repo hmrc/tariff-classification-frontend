@@ -57,7 +57,7 @@ class MiscTableViewSpec extends ViewSpec {
       doc should containElementWithID("applicationTab.miscellaneous-trader")
       doc should containElementWithID("applicationTab.miscellaneous-elapsed-days")
       doc should containElementWithID("applicationTab.miscellaneous-type")
-      doc should containElementWithID("move-cases")
+      doc should containElementWithID("move-misc-cases")
 
     }
   }
