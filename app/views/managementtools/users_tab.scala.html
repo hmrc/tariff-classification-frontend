@@ -51,7 +51,7 @@
    @for(usersByQueueTab <- users.usersByQueueTabs) {
         <div class="govuk-tabs__panel" id="@usersByQueueTab.elementId">
             <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", usersByQueueTab.tabMessageKey)</h2>
-            @{usersByQueueTab.searchResult.results.size match {
+            @{usersByQueueTab.searchResult.size match {
                 case 0 => "No users in this team"
                 case _ => usersByTeamTable(usersByQueueTab)
             }
@@ -60,7 +60,7 @@
     }
     <div class="govuk-tabs__panel" id="@users.assignedUsersTab.elementId">
         <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.assignedUsersTab.tabMessageKey)</h2>
-        @{users.assignedUsersTab.searchResult.results.size match {
+        @{users.assignedUsersTab.searchResult.size match {
         case 0 => "No users in this team"
         case _ => assignedUsersTable(users.assignedUsersTab)
         }
@@ -69,7 +69,7 @@
 
     <div class="govuk-tabs__panel" id="@users.unassignedUsersTab.elementId">
         <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.unassignedUsersTab.tabMessageKey)</h2>
-        @{users.unassignedUsersTab.searchResult.results.size match {
+        @{users.unassignedUsersTab.searchResult.size match {
         case 0 => "No users in this team"
         case _ => noTeamUsersTable(users.unassignedUsersTab)
         }

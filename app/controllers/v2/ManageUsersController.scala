@@ -19,34 +19,32 @@ package controllers.v2
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
+import models._
 import models.viewmodels._
 import models.viewmodels.managementtools.UsersTabViewModel
-import models.{ApplicationType, NoPagination, Permission, Queues}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, QueuesService}
+import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ManageUsersController @Inject() (
+class ManageUsersController @Inject()(
   verify: RequestActions,
   mcc: MessagesControllerComponents,
+  userService: UserService,
+  casesService: CasesService,
   val manageUsersView: views.html.managementtools.manage_users_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
 
   def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
-      Ok(
-        manageUsersView(
-          activeSubNav,
-          UsersTabViewModel.forManagedTeams(
-            //Queues.allQueues
-            Seq(Queues.act, Queues.cap, Queues.elm).toList //todo replace dummy stub with a query
-          )
-        )
-      )
-    )
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      for {
+        manager  <- userService.getUser(request.operator.id)
+        allUsers <- userService.getAllUsers(Role.CLASSIFICATION_OFFICER, "", NoPagination())
+        usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
+      } yield Ok(manageUsersView(activeSubNav, usersTabViewModel))
+    }
 }

@@ -33,15 +33,14 @@
             <th id="@{usersTab.tabMessageKey}-case" class="bold w-0">Case</th>
         </tr>
 
-        @for((result, index) <- usersTab.searchResult.results.zipWithIndex) {
+        @for((result, index) <- usersTab.searchResult.zipWithIndex) {
 
                 <tr id="@{usersTab.tabMessageKey}-details-@index">
                     <td id="@{usersTab.tabMessageKey}-user-@index">
                         <a href="">@result.name</a>
                     </td>
                     <td id="@{usersTab.tabMessageKey}-role-@index">@{result.role}</td>
-                    <td id="@{usersTab.tabMessageKey}-team-@index">@{result.teams.map(t => t.slug.toUpperCase).mkString(",")}</td>
-                    <td id="@{usersTab.tabMessageKey}-case-@index">@{result.numberOfCases}</td>
+                    <td id="@{usersTab.tabMessageKey}-team-@index">@{result.memberOfTeams.map(t => t.toUpperCase).mkString(",")}</td>
                 </tr>
 
         }

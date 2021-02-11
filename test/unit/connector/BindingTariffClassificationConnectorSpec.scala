@@ -787,6 +787,59 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   }
 
+  "Connector 'getAllUsers'" should {
+
+    "get all users" in {
+      val ref           = "PID1"
+      val validOperator = Cases.operatorWithPermissions.copy(id = ref)
+      val json          = Json.toJson(validOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/users/$ref"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(json)
+          )
+      )
+
+      await(connector.updateUser(validOperator)) shouldBe validOperator
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/users/$ref"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "get cases in all queues" in {
+      val url = buildQueryUrlAllQueues(
+        types      = ApplicationType.values.toSeq,
+        statuses   = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+        assigneeId = "none",
+        queueIds   = Queues.allQueues.map(_.id),
+        pagination = pagination
+      )
+
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
+      )
+
+      await(connector.findCasesByAllQueues(Queues.allQueues, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+  }
+
   "Connector 'Update User'" should {
 
     "update valid user" in {

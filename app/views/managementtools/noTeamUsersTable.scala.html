@@ -31,7 +31,7 @@
             <th id="@{usersTab.tabMessageKey}-role" class="bold w-0">Role</th>
         </tr>
 
-        @for((result, index) <- usersTab.searchResult.results.zipWithIndex) {
+        @for((result, index) <- usersTab.searchResult.zipWithIndex) {
 
                 <tr id="@{usersTab.tabMessageKey}-details-@index">
                     <td id="@{usersTab.tabMessageKey}-user-@index">

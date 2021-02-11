@@ -18,7 +18,7 @@ package models.viewmodels.managementtools
 
 import models._
 
-case class UsersTab(tabMessageKey: String, elementId: String, searchResult: Paged[User])
+case class UsersTab(tabMessageKey: String, elementId: String, searchResult: List[Operator])
 
 case class UsersTabViewModel(
   headingMessageKey: String,
@@ -28,29 +28,27 @@ case class UsersTabViewModel(
 )
 
 object UsersTabViewModel {
-  def forManagedTeams(managedTeams: List[Queue]) = {
-    //todo replace stubs with queries
-    //create constants for roles
-    val assignedUsers = UsersTab("Assigned", "assigned-tab", Paged(Users.allUsers.filter(u => u.isAssigned)))
-    val unassignedUsers = UsersTab(
-      "Unassigned",
-      "unassigned-tab",
-      Paged(Users.allUsers.filter(u => !u.isAssigned && u.role != "Read only"))
-    )
-    val teamUsers = managedTeams.map { managedTeam =>
-      UsersTab(
-        managedTeam.slug.toUpperCase,
-        s"${managedTeam.slug.toUpperCase}-tab",
-        Paged(Users.allUsers.filter(u => u.teams.contains(managedTeam)))
-      )
-    }
+
+  def fromUsers(manager: Operator, users: Paged[Operator]): UsersTabViewModel = {
+
+    val managedTeamsTabs = manager.memberOfTeams.map { managedTeam =>
+
+      val userForTeams = users.results.filter(_.memberOfTeams.contains(managedTeam))
+      val messageKey   = Queues.queueById(managedTeam).map(_.slug).getOrElse("unknown")
+
+      UsersTab(tabMessageKey = messageKey, elementId = messageKey, searchResult = userForTeams.toList)
+    }.toList
+
+    val (assignedUsers, unassignedUser) = users.results.partition(_.memberOfTeams.nonEmpty)
+
+    val assignedUsersTab   = UsersTab("assigned", "assigned_tab", assignedUsers.toList)
+    val unassignedUsersTab = UsersTab("unassigned", "unassigned_tab", unassignedUser.toList)
 
     UsersTabViewModel(
-      "management.manage-users.heading",
-      teamUsers,
-      assignedUsers,
-      unassignedUsers
+      "Manage users",
+      managedTeamsTabs,
+      assignedUsersTab,
+      unassignedUsersTab
     )
-
   }
 }

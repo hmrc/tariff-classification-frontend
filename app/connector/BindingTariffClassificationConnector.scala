@@ -26,6 +26,7 @@ import metrics.HasMetrics
 import models.ApplicationType
 import models.CaseStatus._
 import models.EventType.EventType
+import models.Role.Role
 import models._
 import models.request.NewEventRequest
 import play.api.libs.json.Reads
@@ -184,6 +185,16 @@ class BindingTariffClassificationConnector @Inject() (
     withMetricsTimerAsync("generate-report") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/report?${CaseReport.bindable.unbind("", report)}"
       client.GET[Seq[ReportResult]](url)
+    }
+
+  def getAllUsers(roles: Role, team: String, pagination: Pagination)(
+    implicit hc: HeaderCarrier): Future[Paged[Operator]] =
+    withMetricsTimerAsync("get-all-users") { _ =>
+      val searchParam = s"role=$roles&member_of_teams=$team"
+      val url =
+        s"${appConfig.bindingTariffClassificationUrl}/users?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
+
+      client.GET[Paged[Operator]](url = url)
     }
 
   def updateUser(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
