@@ -28,9 +28,12 @@ import models.CaseStatus._
 import models.EventType.EventType
 import models._
 import models.request.NewEventRequest
+import play.api.libs.json.Reads
+
 import scala.concurrent.{ExecutionContext, Future}
 import utils.JsonFormatters._
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import utils.JsonFormatters
 
 @Singleton
 class BindingTariffClassificationConnector @Inject() (
@@ -181,6 +184,24 @@ class BindingTariffClassificationConnector @Inject() (
     withMetricsTimerAsync("generate-report") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/report?${CaseReport.bindable.unbind("", report)}"
       client.GET[Seq[ReportResult]](url)
+    }
+
+  def updateUser(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("update-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users/${o.id}"
+      client.PUT[Operator, Operator](url = url, body = o)
+    }
+
+  def getUserDetails(id: String)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("update-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users/$id"
+      client.GET[Operator](url = url)
+    }
+
+  def createUser(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("create-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users"
+      client.POST[NewUserRequest, Operator](url, NewUserRequest(operator))
     }
 
 }

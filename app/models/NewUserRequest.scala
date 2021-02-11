@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-import java.time.format.DateTimeFormatter
-import java.time.{Duration, Instant, LocalDateTime, ZoneOffset}
-
-object Dates {
-
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
-
-  def format(instant: Instant): String =
-    formatter.format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC))
-
-  def format(instant: Option[Instant]): String =
-    instant.map(format).getOrElse("None")
-
-  def daysCount(instant: Instant) = Duration.between(instant, Instant.now()).toDays
-}
+case class NewUserRequest(operator: Operator)

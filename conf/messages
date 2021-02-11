@@ -1156,5 +1156,30 @@ case.change_status.move_back_to_team.description=This case was previously assign
 management.manage-users-title=Manage users - Advance Tariff Rulings Case Manager - GOV.UK
 management.manage-users.heading = Manage users
 management.manage-users.tabSubHeading = {0} users
+users.user.details.tab_title=User details
+users.user.atar.tab_title=ATaR
+users.user.liability.tab_title=Liability
+users.user.correspondence.tab_title=Corres
+users.user.misc.tab_title=Misc
+users.user.keywords.tab_title=Keywords
 
+users.user.details.heading=User details
+users.user.atar.heading=ATaR cases
+users.user.liability.heading=Liability cases
+users.user.correspondence.heading=Correspondence cases
+users.user.misc.heading=Miscellaneous cases
+users.user.keywords.heading=Keywords for approval
 
+users.user.details.name=Full name
+users.user.details.email=Email
+users.user.details.pid=PID
+users.user.details.role=Role
+users.user.details.team=Team
+users.user.details.status=Status
+
+users.user.details.role.hint.classification=Manage ATaR, liability, correspondence and miscellaneous cases.
+users.user.details.role.hint.gateway=Assign ATaR cases. Create and assign Liability, Correspondence and Miscellaneous cases.
+users.user.details.role.hint.manager=Manage users, cases and keywords for assigned teams.
+users.user.details.role.hint.classificationAndGateway=Assign and manage ATaR cases. Create, assign and manage Liability, Correspondence and Miscellaneous cases.
+
+users.user.noCases=There are no {0} cases assigned to this user.

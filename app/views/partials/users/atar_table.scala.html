@@ -1,0 +1,85 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.ApplicationsTab
+@import utils.Dates
+@import play.twirl.api.TemplateMagic.defining
+@import views.html.v2.case_status_tab
+@import views.html.forms.components.input_checkbox
+@(atarTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+<h2 class="heading-large mt-0 mb-30">@messages("users.user.atar.heading")</h2>
+<div class="form-group">
+ <button id="move-cases" class="button" type="submit">Move selected cases</button>
+</div>
+<table id="@{atarTab.tabMessageKey}-table">
+ <tbody>
+ <tr id="@{atarTab.tabMessageKey}-details" class="grid-row mb-2">
+  <th id="@{atarTab.tabMessageKey}-select" class="bold w-0">
+   Select
+  </th>
+  <th id="@{atarTab.tabMessageKey}-reference" class="bold w-0">
+   Reference
+  </th>
+  <th id="@{atarTab.tabMessageKey}-goods" class="bold w-0">
+   Goods
+  </th>
+  <th id="@{atarTab.tabMessageKey}-trader" class="bold w-0">
+   Trader
+  </th>
+  <th id="@{atarTab.tabMessageKey}-elapsed-days" class="bold w-0">
+   Elapsed days
+  </th>
+  <th id="@{atarTab.tabMessageKey}-total-days" class="bold w-0">
+   Total days
+  </th>
+  <th id="@{atarTab.tabMessageKey}-status" class="bold w-0">
+   Status
+  </th>
+ </tr>
+
+ @for((result, index) <- atarTab.searchResult.results.zipWithIndex) {
+
+ @defining(result.application.asATAR) { atar =>
+
+ <tr id="@{atarTab.tabMessageKey}-details-@index">
+  <td id="@{atarTab.tabMessageKey}-select-@index">
+   <input
+           class="form-control"
+           type="checkbox"
+           id="@{result.reference}"
+           name="@{result.reference}"
+           value="@{result.reference}"/>
+<!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+  </td>
+  <td id="@{atarTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+  <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
+  <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
+  <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{atarTab.tabMessageKey}-total-days-@index">@{Dates.daysCount(result.createdDate)}</td>
+
+  <td id="@{atarTab.tabMessageKey}-status-@index">
+   @case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
+  </td>
+ </tr>
+ }
+
+ }
+ </tbody>
+</table>
+
