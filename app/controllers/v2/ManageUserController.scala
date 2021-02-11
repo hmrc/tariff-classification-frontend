@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-import cats.syntax.traverse._
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
@@ -27,7 +26,6 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService, UserService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
 
@@ -38,7 +36,9 @@ class ManageUserController @Inject() (
   casesService: CasesService,
   userService: UserService,
   mcc: MessagesControllerComponents,
-  val viewUser: views.html.partials.users.view_user
+  val viewUser: views.html.partials.users.view_user,
+  val confirmDeleteUser: views.html.partials.users.cannot_delete_user,
+  val cannotDeleteUser: views.html.partials.users.confirm_delete_user
 )(
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
@@ -54,6 +54,21 @@ class ManageUserController @Inject() (
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
         } yield Ok(viewUser(userTab, userCaseTabs))
+    }
+
+  def deleteUser(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
+      implicit request: AuthenticatedRequest[AnyContent] =>
+        for {
+          userCases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
+          user      <- userService.getUser(pid)
+        } yield {
+          if (userCases.nonEmpty) {
+            Ok(cannotDeleteUser(user))
+          } else {
+            Ok(confirmDeleteUser(user))
+          }
+        }
     }
 
 }

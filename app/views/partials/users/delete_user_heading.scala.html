@@ -18,16 +18,21 @@
 )
 
 @(
-        username: String
+        username: String,
+        canBeDeleted:Boolean
 )(implicit messages: Messages)
 
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
     <div id="case-reference" class="case-reference">
-            Manage user
+           @messages("users.user.delete.header", username)
     </div>
 
     <h1 class="heading-xlarge case-title">
-        @username
+        @if(canBeDeleted){
+            @messages("users.user.delete.confirm", username)
+        }else{
+            @messages("users.user.delete.casesMustBeMoved", username)
+        }
     </h1>
 </div>

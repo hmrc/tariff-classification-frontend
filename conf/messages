@@ -1183,3 +1183,8 @@ users.user.details.role.hint.manager=Manage users, cases and keywords for assign
 users.user.details.role.hint.classificationAndGateway=Assign and manage ATaR cases. Create, assign and manage Liability, Correspondence and Miscellaneous cases.
 
 users.user.noCases=There are no {0} cases assigned to this user.
+
+users.user.delete.header=Delete {0}
+users.user.delete.casesMustBeMoved=Cases must be moved before {0} can be deleted
+users.user.delete.casesMustBeMoved.message=This user's active cases must be moved to another user or team before they can be deleted.
+users.user.delete.confirm=Are you sure you want to delete {0}?
