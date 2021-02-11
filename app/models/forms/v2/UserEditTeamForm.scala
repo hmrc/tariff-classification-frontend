@@ -24,6 +24,6 @@ object UserEditTeamForm {
   val newTeamForm: Form[Set[String]] = Form(
     mapping(
       "memberOfTeams"       -> set(text)
-    )(identity(_))(teams => Some(teams))
+    )(identity)(teams => Some(teams))
   )
 }

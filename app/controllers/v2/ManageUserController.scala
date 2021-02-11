@@ -25,7 +25,6 @@ import models.forms.v2.UserEditTeamForm
 import models.request.AuthenticatedRequest
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
 import play.api.Logging
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService, UserService}
@@ -50,7 +49,7 @@ class ManageUserController @Inject() (
     with I18nSupport
     with Logging {
 
-  private val userEditTeamform = UserEditTeamForm.newTeamForm
+  private val userEditTeamForm = UserEditTeamForm.newTeamForm
 
   private def getReferralEvents(
     cases: Paged[Case]
@@ -96,14 +95,14 @@ class ManageUserController @Inject() (
     }
 
   def editUserTeamDetails(pid: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_CASES)
-      andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
-      successful(Ok(user_team_edit(Operator(pid), userEditTeamform)))
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)
+      andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      successful(Ok(user_team_edit(Operator(pid), userEditTeamForm)))
     }
 
   def postEditUserTeams(pid: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
-      userEditTeamform.bindFromRequest.fold(
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      userEditTeamForm.bindFromRequest.fold(
         formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors))),
         userToBeUpdated =>
           userService.updateUser(Operator(pid, memberOfTeams = userToBeUpdated.toSeq), request.operator).map { _ =>

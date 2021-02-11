@@ -37,20 +37,16 @@
 
         <h1 id="edit-user-team" class="heading-xlarge">@messages("heading")</h1>
 
-        @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id),
-            'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
-            @helper.CSRF.formField
+        @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id),'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+        @helper.CSRF.formField
 
           @userDetails.getMemberTeamNames
             @input_checkbox_group(
-                field = form("String"),
-                options = Queues.allQueues.map(queue => CheckOption(queue.name, "", userDetails.getMemberTeamId.map(_.toBoolean))
+                field = form("memberOfTeams"),
+                options = Queues.allQueues.map(queue => CheckOption(queue.name, queue.id, userDetails.getMemberTeamId.map(_.toBoolean))
                     )
                 )
             <button class="button" id="cancel_edit_user_teams-button" type="submit">Save changes</button>
-
-
         }
 
     }
-
