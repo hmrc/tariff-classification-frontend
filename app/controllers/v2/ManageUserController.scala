@@ -37,8 +37,8 @@ class ManageUserController @Inject() (
   userService: UserService,
   mcc: MessagesControllerComponents,
   val viewUser: views.html.partials.users.view_user,
-  val confirmDeleteUser: views.html.partials.users.cannot_delete_user,
-  val cannotDeleteUser: views.html.partials.users.confirm_delete_user
+  val cannotDeleteUser: views.html.partials.users.cannot_delete_user,
+  val confirmDeleteUser: views.html.partials.users.confirm_delete_user
 )(
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
@@ -63,7 +63,7 @@ class ManageUserController @Inject() (
           userCases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           user      <- userService.getUser(pid)
         } yield {
-          if (userCases.nonEmpty) {
+          if (userCases.results.nonEmpty) {
             Ok(cannotDeleteUser(user))
           } else {
             Ok(confirmDeleteUser(user))
