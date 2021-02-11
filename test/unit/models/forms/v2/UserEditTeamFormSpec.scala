@@ -33,6 +33,8 @@ class UserEditTeamFormSpec extends ModelsBaseSpec {
       form.errors should have(size(0))
     }
 
+  }
+
   "Fill" should {
     "populate a correct form" in {
       val form = UserEditTeamForm.editTeamsForm.fill(
