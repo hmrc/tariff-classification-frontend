@@ -1188,3 +1188,4 @@ users.user.delete.header=Delete {0}
 users.user.delete.casesMustBeMoved=Cases must be moved before {0} can be deleted
 users.user.delete.casesMustBeMoved.message=This user's active cases must be moved to another user or team before they can be deleted.
 users.user.delete.confirm=Are you sure you want to delete {0}?
+users.user.delete.confirm.message=This user will be deleted but all their previous activity will be maintained.
