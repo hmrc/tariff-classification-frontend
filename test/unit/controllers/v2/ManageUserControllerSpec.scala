@@ -26,15 +26,17 @@ import play.api.test.Helpers._
 import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.partials.users.view_user
+import views.html.partials.users._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ManageUserControllerSpec extends ControllerBaseSpec {
 
-  private lazy val view_user = injector.instanceOf[view_user]
-  private val casesService   = mock[CasesService]
-  private val userService    = mock[UserService]
+  private lazy val view_user           = injector.instanceOf[view_user]
+  private lazy val cannot_delete_user  = injector.instanceOf[cannot_delete_user]
+  private lazy val confirm_delete_user = injector.instanceOf[confirm_delete_user]
+  private val casesService             = mock[CasesService]
+  private val userService              = mock[UserService]
 
   private def controller(permission: Set[Permission]) =
     new ManageUserController(
@@ -42,7 +44,9 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       casesService,
       userService,
       mcc,
-      view_user
+      view_user,
+      cannot_delete_user,
+      confirm_delete_user
     )(realAppConfig, global)
 
   "Manage user" should {
