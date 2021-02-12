@@ -90,22 +90,22 @@ class ManageUserController @Inject() (
           userTab <- userService.getUser(pid)
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
-        } yield Ok(viewUser(userTab, userCaseTabs))
+        } yield Ok(viewUser(userTab, userCaseTabs, activeSubNav))
     }
 
-  def editUserTeamDetails(pid: String): Action[AnyContent] =
+  def editUserTeamDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)
       andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       userService
         .getUser(pid)
-        .map(userDetails => Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet))))
+        .map(userDetails => Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet), activeSubNav)))
 
     }
 
-  def postEditUserTeams(pid: String): Action[AnyContent] =
+  def postEditUserTeams(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       userEditTeamForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors))),
+        formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors, activeSubNav))),
         updatedMemberOfTeams =>
           userService
             .getUser(pid)
