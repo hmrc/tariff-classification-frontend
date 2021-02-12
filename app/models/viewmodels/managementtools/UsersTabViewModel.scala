@@ -34,15 +34,15 @@ object UsersTabViewModel {
     val managedTeamsTabs = manager.memberOfTeams.map { managedTeam =>
 
       val userForTeams = users.results.filter(_.memberOfTeams.contains(managedTeam))
-      val messageKey   = Queues.queueById(managedTeam).map(_.slug).getOrElse("unknown")
+      val messageKey   = Queues.queueById(managedTeam).map(_.name).getOrElse("unknown")
 
       UsersTab(tabMessageKey = messageKey, elementId = messageKey, searchResult = userForTeams.toList)
     }.toList
 
     val (assignedUsers, unassignedUser) = users.results.partition(_.memberOfTeams.nonEmpty)
 
-    val assignedUsersTab   = UsersTab("assigned", "assigned_tab", assignedUsers.toList)
-    val unassignedUsersTab = UsersTab("unassigned", "unassigned_tab", unassignedUser.toList)
+    val assignedUsersTab   = UsersTab("Assigned", "assigned_tab", assignedUsers.toList)
+    val unassignedUsersTab = UsersTab("Unassigned", "unassigned_tab", unassignedUser.toList)
 
     UsersTabViewModel(
       "Manage users",

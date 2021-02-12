@@ -16,29 +16,28 @@
 
 package controllers.v2
 
-import cats.syntax.traverse._
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
 import models.request.AuthenticatedRequest
-import models.viewmodels._
+import models.viewmodels.managementtools.UsersTabViewModel
+import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, EventsService, UserService}
-import uk.gov.hmrc.http.HeaderCarrier
+import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-class ManageUserController @Inject() (
+class ManageUserController @Inject()(
   verify: RequestActions,
   casesService: CasesService,
   userService: UserService,
   mcc: MessagesControllerComponents,
-  val viewUser: views.html.partials.users.view_user
+  val viewUser: views.html.partials.users.view_user,
+  val manageUsersView: views.html.managementtools.manage_users_view
 )(
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
@@ -46,7 +45,23 @@ class ManageUserController @Inject() (
     with I18nSupport
     with Logging {
 
-  def displayUserDetals(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  val Unassigned = "unassigned"
+
+  def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      for {
+        manager <- userService.getUser(request.operator.id)
+        managerQueues = manager.memberOfTeams.flatMap(id => Queues.queueById(id))
+        allUsers          <- userService.getAllUsers(Role.CLASSIFICATION_OFFICER, "", NoPagination())
+        managerTeamsCases <- casesService.getCasesByAllQueues2(managerQueues, NoPagination())
+        usersWithCount = managerTeamsCases.results.toList
+          .groupBy(singleCase => singleCase.assignee.map(_.id).getOrElse(Unassigned))
+          .filterKeys(_ != Unassigned)
+        usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
+      } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
+    }
+
+  def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {

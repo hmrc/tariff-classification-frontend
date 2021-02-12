@@ -18,6 +18,7 @@
 @import config.AppConfig
 @import models.viewmodels.managementtools._
 @import controllers.routes.{AssignCaseController, CaseController}
+@import models.Role.Role
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
@@ -35,9 +36,9 @@
 
                 <tr id="@{usersTab.tabMessageKey}-details-@index">
                     <td id="@{usersTab.tabMessageKey}-user-@index">
-                        <a href="">@result.name</a>
+                        <a href="">@result.name.getOrElse("unknown")</a>
                     </td>
-                    <td id="@{usersTab.tabMessageKey}-role-@index">@{result.role}</td>
+                    <td id="@{usersTab.tabMessageKey}-role-@index">@{Role.format(result.role)}</td>
                 </tr>
 
         }

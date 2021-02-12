@@ -62,7 +62,7 @@
         <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.assignedUsersTab.tabMessageKey)</h2>
         @{users.assignedUsersTab.searchResult.size match {
         case 0 => "No users in this team"
-        case _ => assignedUsersTable(users.assignedUsersTab)
+        case _ => assignedUsersTable(users.assignedUsersTab, usersCount)
         }
         }
     </div>
