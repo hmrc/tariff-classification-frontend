@@ -147,6 +147,19 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[Event]](url)
     }
 
+  private def latestEventByCase(events: Seq[Event]): Map[String, Event] = {
+    events
+      .groupBy(_.caseReference)
+      .flatMap {
+        case (_, eventsForCase) =>
+          eventsForCase
+            .sortBy(_.timestamp)(Event.latestFirst)
+            .headOption
+            .map(event => event.caseReference -> event)
+            .toMap
+      }
+  }
+
   def findReferralEvents(references: Set[String])(
     implicit hc: HeaderCarrier
   ): Future[Map[String, Event]] =
@@ -161,16 +174,9 @@ class BindingTariffClassificationConnector @Inject() (
           val url = s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
           client.GET[Paged[Event]](url)
         }
-        .map { events =>
-          events.results
-            .sortBy(_.timestamp)(Event.latestFirst)
-            .headOption
-            .map(event => event.caseReference -> event)
-            .toMap
-        }
         .runFold(Map.empty[String, Event]) {
-          case (eventsById, nextResult) =>
-            eventsById ++ nextResult
+          case (eventsById, nextBatch) =>
+            eventsById ++ latestEventByCase(nextBatch.results)
         }
     }
 
@@ -188,16 +194,9 @@ class BindingTariffClassificationConnector @Inject() (
           val url = s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
           client.GET[Paged[Event]](url)
         }
-        .map { events =>
-          events.results
-            .sortBy(_.timestamp)(Event.latestFirst)
-            .headOption
-            .map(event => event.caseReference -> event)
-            .toMap
-        }
         .runFold(Map.empty[String, Event]) {
-          case (eventsById, nextResult) =>
-            eventsById ++ nextResult
+          case (eventsById, nextBatch) =>
+            eventsById ++ latestEventByCase(nextBatch.results)
         }
     }
 
