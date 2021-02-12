@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
@@ -30,7 +29,7 @@ import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
 import play.api.data.Form
-
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,10 +40,10 @@ class ManageUserController @Inject() (
   mcc: MessagesControllerComponents,
   val viewUser: views.html.partials.users.view_user,
   val cannotDeleteUser: views.html.partials.users.cannot_delete_user,
-  val confirmDeleteUser: views.html.partials.users.confirm_delete_user
+  val confirmDeleteUser: views.html.partials.users.confirm_delete_user,
+  implicit val appConfig: AppConfig
 )(
-  implicit val appConfig: AppConfig,
-  ec: ExecutionContext
+  implicit val ec: ExecutionContext
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {

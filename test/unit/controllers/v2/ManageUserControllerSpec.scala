@@ -16,12 +16,14 @@
 
 package controllers.v2
 
+import controllers.routes.CaseController
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
 import models._
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,6 +31,7 @@ import utils.Cases
 import views.html.partials.users._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future.successful
 
 class ManageUserControllerSpec extends ControllerBaseSpec {
 
@@ -46,10 +49,11 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       mcc,
       view_user,
       cannot_delete_user,
-      confirm_delete_user
-    )(realAppConfig, global)
+      confirm_delete_user,
+      realAppConfig
+    )
 
-  "Manage user" should {
+  "displayUserDetals" should {
 
     "return 200 OK and HTML content type" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
@@ -78,4 +82,84 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
   }
 
+  "deleteUser" should {
+
+    "return 200 OK and HTML content type for a user with cases" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("1")(fakeRequest))
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
+    "return 200 OK and HTML content type for a user with no cases" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq.empty[Case]))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("1")(newFakeGETRequestWithCSRF(app)))
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
+    "return unauthorised with no permissions" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
+
+      val result = await(controller(Set()).deleteUser("1")(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+
+    }
+
+  }
+
+  "confirmRemoveUser" should {
+    "return 200 and load the delete user form with errors" in {
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .confirmRemoveUser("1")(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result) shouldBe OK
+    }
+
+  }
+
+  "redirect to manage users when user selects `yes`" in {
+    when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier]))
+      .thenReturn(successful(Operator("1", deleted = true)))
+
+    val result: Result = await(
+      controller(Set(Permission.MANAGE_USERS))
+        .confirmRemoveUser("1")(
+          newFakePOSTRequestWithCSRF(app)
+            .withFormUrlEncodedBody("state" -> "true")
+        )
+    )
+
+    redirectLocation(result) shouldBe Some(routes.ManageUsersController.displayManageUsers().path)
+  }
+
+  "redirect to manage user when user selects `no`" in {
+    val result: Result = await(
+      controller(Set(Permission.MANAGE_USERS))
+        .confirmRemoveUser("1")(
+          newFakePOSTRequestWithCSRF(app)
+            .withFormUrlEncodedBody("state" -> "false")
+        )
+    )
+
+    redirectLocation(result) shouldBe Some(routes.ManageUserController.displayUserDetals("1").path)
+  }
 }
