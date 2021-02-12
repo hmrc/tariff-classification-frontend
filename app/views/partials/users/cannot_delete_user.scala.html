@@ -43,7 +43,7 @@ customPrimaryNavTab = ManagerToolsTab
 
 @delete_user_heading(user.safeName, false)
 
-<p>@messages("users.user.delete.casesMustBeMoved.message")</p>
+<p id="cases-must-be-moved">@messages("users.user.delete.casesMustBeMoved.message")</p>
 
 <div class="form-group">
  <a href="@routes.ManageUserController.displayUserDetals(user.id)" id="move-cases" class="button">Go back and move cases</a>
