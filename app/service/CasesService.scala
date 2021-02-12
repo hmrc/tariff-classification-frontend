@@ -418,6 +418,13 @@ class CasesService @Inject() (
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes)
 
+  def getCasesByAllQueues2(
+    queue: Seq[Queue],
+    pagination: Pagination,
+    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq
+  )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
+    connector.findCasesByAllQueues2(queue, pagination, forTypes)
+
   def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] =
     for {
       countMyCases <- getCasesByAssignee(operator, NoPagination())

@@ -26,8 +26,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import cats.syntax.all._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ManageUsersController @Inject()(
   verify: RequestActions,
@@ -39,12 +41,19 @@ class ManageUsersController @Inject()(
 ) extends FrontendController(mcc)
     with I18nSupport {
 
+  val Unassigned = "unassigned"
+
   def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
-        manager  <- userService.getUser(request.operator.id)
-        allUsers <- userService.getAllUsers(Role.CLASSIFICATION_OFFICER, "", NoPagination())
+        manager <- userService.getUser(request.operator.id)
+        managerQueues = manager.memberOfTeams.flatMap(id => Queues.queueById(id))
+        allUsers          <- userService.getAllUsers(Role.CLASSIFICATION_OFFICER, "some", NoPagination())
+        managerTeamsCases <- casesService.getCasesByAllQueues2(managerQueues, NoPagination())
+        usersWithCount = managerTeamsCases.results.toList
+          .groupBy(singleCase => singleCase.assignee.map(_.id).getOrElse(Unassigned))
+          .filterKeys(_ != Unassigned)
         usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
-      } yield Ok(manageUsersView(activeSubNav, usersTabViewModel))
+      } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
     }
 }

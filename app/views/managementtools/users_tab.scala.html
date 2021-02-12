@@ -21,7 +21,7 @@
 @import config.AppConfig
 @import models.viewmodels.managementtools._
 
-@(users : UsersTabViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+@(users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 @heading(messages(users.headingMessageKey))
 
@@ -53,7 +53,7 @@
             <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", usersByQueueTab.tabMessageKey)</h2>
             @{usersByQueueTab.searchResult.size match {
                 case 0 => "No users in this team"
-                case _ => usersByTeamTable(usersByQueueTab)
+                case _ => usersByTeamTable(usersByQueueTab, usersCount)
             }
     }
         </div>

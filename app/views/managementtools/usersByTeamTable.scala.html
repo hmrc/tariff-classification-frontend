@@ -22,7 +22,7 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
 
-@(usersTab : UsersTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(usersTab : UsersTab, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="@{usersTab.tabMessageKey}-table">
     <tbody>
@@ -39,6 +39,7 @@
                         <a href="">@result.name</a>
                     </td>
                     <td id="@{usersTab.tabMessageKey}-role-@index">@{result.role}</td>
+                    <td id="@{usersTab.tabMessageKey}-case-@index">@{usersCount.get(result.id).getOrElse(List.empty).size}</td>
                 </tr>
 
         }
