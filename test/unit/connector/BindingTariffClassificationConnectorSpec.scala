@@ -721,7 +721,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "return a list of events for the given case references" in {
       stubFor(
-        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2"))
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
               .withStatus(HttpStatus.SC_OK)
@@ -729,17 +729,17 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCompletionEvents(Set(ref), pagination)) shouldBe Events.completionEventsById
+      await(connector.findCompletionEvents(Set(ref))) shouldBe Events.completionEventsById
 
       verify(
-        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2"))
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
 
     "return empty list when case ref not found" in {
       stubFor(
-        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2"))
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
               .withStatus(HttpStatus.SC_OK)
@@ -747,10 +747,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCompletionEvents(Set(ref), pagination)) shouldBe Map.empty[String, Event]
+      await(connector.findCompletionEvents(Set(ref))) shouldBe Map.empty[String, Event]
 
       verify(
-        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2"))
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
@@ -761,7 +761,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "return a list of events for the given case references" in {
       stubFor(
-        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2"))
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
               .withStatus(HttpStatus.SC_OK)
@@ -769,17 +769,17 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findReferralEvents(Set(ref), pagination)) shouldBe Events.referralEventsById
+      await(connector.findReferralEvents(Set(ref))) shouldBe Events.referralEventsById
 
       verify(
-        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2"))
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
 
     "return empty list when case ref not found" in {
       stubFor(
-        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2"))
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
               .withStatus(HttpStatus.SC_OK)
@@ -787,10 +787,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findReferralEvents(Set(ref), pagination)) shouldBe Map.empty[String, Event]
+      await(connector.findReferralEvents(Set(ref))) shouldBe Map.empty[String, Event]
 
       verify(
-        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2"))
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }

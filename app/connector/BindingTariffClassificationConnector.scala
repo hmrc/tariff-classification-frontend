@@ -147,10 +147,11 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[Event]](url)
     }
 
-  def findReferralEvents(references: Set[String], pagination: Pagination)(
+  def findReferralEvents(references: Set[String])(
     implicit hc: HeaderCarrier
   ): Future[Map[String, Event]] =
     withMetricsTimerAsync("get-referral-events") { _ =>
+      val pagination = NoPagination()
       // Conservative approximation as to how many case references we can fit into a single URL
       val batchSize = (appConfig.maxUriLength.intValue - appConfig.bindingTariffClassificationUrl.length - 250) / 10
       Source(references)
@@ -159,22 +160,25 @@ class BindingTariffClassificationConnector @Inject() (
           val searchParam = s"case_reference=${ids.mkString(",")}&type=${EventType.CASE_REFERRAL}"
           val url = s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
           client.GET[Paged[Event]](url)
-        }.map { events =>
-          events.results.sortBy(_.timestamp)(Event.latestFirst)
+        }
+        .map { events =>
+          events.results
+            .sortBy(_.timestamp)(Event.latestFirst)
             .headOption
-            .map { event =>
-              event.caseReference -> event
-            }.toMap
-        }.runFold(Map.empty[String, Event]) {
+            .map(event => event.caseReference -> event)
+            .toMap
+        }
+        .runFold(Map.empty[String, Event]) {
           case (eventsById, nextResult) =>
             eventsById ++ nextResult
         }
     }
 
-  def findCompletionEvents(references: Set[String], pagination: Pagination)(
+  def findCompletionEvents(references: Set[String])(
     implicit hc: HeaderCarrier
   ): Future[Map[String, Event]] =
     withMetricsTimerAsync("get-completion-events") { _ =>
+      val pagination = NoPagination()
       // Conservative approximation as to how many case references we can fit into a single URL
       val batchSize = (appConfig.maxUriLength.intValue - appConfig.bindingTariffClassificationUrl.length - 250) / 10
       Source(references)
@@ -183,13 +187,15 @@ class BindingTariffClassificationConnector @Inject() (
           val searchParam = s"case_reference=${ids.mkString(",")}&type=${EventType.CASE_COMPLETED}"
           val url = s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
           client.GET[Paged[Event]](url)
-        }.map { events =>
-          events.results.sortBy(_.timestamp)(Event.latestFirst)
+        }
+        .map { events =>
+          events.results
+            .sortBy(_.timestamp)(Event.latestFirst)
             .headOption
-            .map { event =>
-              event.caseReference -> event
-            }.toMap
-        }.runFold(Map.empty[String, Event]) {
+            .map(event => event.caseReference -> event)
+            .toMap
+        }
+        .runFold(Map.empty[String, Event]) {
           case (eventsById, nextResult) =>
             eventsById ++ nextResult
         }

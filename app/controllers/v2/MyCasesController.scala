@@ -55,8 +55,8 @@ class MyCasesController @Inject() (
         for {
           cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
           caseReferences = cases.results.map(_.reference).toSet
-          referralEventsByCase <- eventsService.findReferralEvents(caseReferences, NoPagination())
-          completeEventsByCase <- eventsService.findCompletionEvents(caseReferences, NoPagination())
+          referralEventsByCase <- eventsService.findReferralEvents(caseReferences)
+          completeEventsByCase <- eventsService.findCompletionEvents(caseReferences)
           myCaseStatuses = activeSubNav match {
             case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
             case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
