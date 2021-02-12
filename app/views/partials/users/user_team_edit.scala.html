@@ -42,10 +42,12 @@
 
     @error_summary(form.errors)
 
-    <span class="heading-secondary"><span class="visuallyhidden">
-        This section is </span>@userDetails.name.getOrElse(s"PID: [${userDetails.id}]")</span>
-    <h1 id="user-team-edit-heading" class="heading-xlarge">@messages("users.user.editUserTeams.heading",
-        userDetails.name.getOrElse(s"PID: [${userDetails.id}]"))</h1>
+    <div class="user-edit-team mt-40">
+        <span class="heading-secondary"><span class="visuallyhidden">
+            This section is </span>@userDetails.name.getOrElse(s"PID: [${userDetails.id}]")</span>
+        <h1 id="user-team-edit-heading" class="heading-xlarge mt-0 mb-0">@messages("users.user.editUserTeams.heading",
+            userDetails.name.getOrElse(s"PID: [${userDetails.id}]"))</h1>
+    </div>
 
     @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
         @helper.CSRF.formField
