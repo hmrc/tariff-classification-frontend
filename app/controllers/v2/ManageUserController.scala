@@ -106,10 +106,13 @@ class ManageUserController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       userEditTeamForm.bindFromRequest.fold(
         formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors))),
-        userToBeUpdated =>
-          userService.updateUser(Operator(pid, memberOfTeams = userToBeUpdated.toSeq), request.operator).map { _ =>
-            Redirect(routes.ManageUserController.displayUserDetails(pid))
-          }
+        updatedMemberOfTeams =>
+          userService
+            .getUser(pid)
+            .map(user =>
+              userService.updateUser(user.copy(memberOfTeams = updatedMemberOfTeams.toSeq), request.operator)
+            )
+            .map(_ => Redirect(routes.ManageUserController.displayUserDetails(pid)))
       )
     }
 }

@@ -21,6 +21,7 @@
 @import models.viewmodels.NoTabSelected
 @import views.forms.components.CheckOption
 @import views.html.forms.components._
+@import views.html.components.heading_users
 @import views.html.includes.main
 @import views.html.partials.error_summary
 @import views.html.partials.back_link
@@ -35,7 +36,7 @@
 
         @error_summary(form.errors)
 
-        <h1 id="edit-user-team" class="heading-xlarge">@messages("heading")</h1>
+        @heading_users(headingMsg = messages("users.user.editUserTeams.heading", userDetails.name.getOrElse("user")), captionMsg = Some(userDetails.name.getOrElse("user")))
 
         @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id),'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
         @helper.CSRF.formField
