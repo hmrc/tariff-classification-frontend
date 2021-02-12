@@ -716,6 +716,86 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
   }
 
+  "Connector 'Find Completion Events'" should {
+    val ref = "id"
+
+    "return a list of events for the given case references" in {
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.completionEvents)
+          )
+      )
+
+      await(connector.findCompletionEvents(Set(ref), pagination)) shouldBe Events.completionEventsById
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "return empty list when case ref not found" in {
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.pagedEmpty)
+          )
+      )
+
+      await(connector.findCompletionEvents(Set(ref), pagination)) shouldBe Map.empty[String, Event]
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "Connector 'Find Referral Events'" should {
+    val ref = "id"
+
+    "return a list of events for the given case references" in {
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.referralEvents)
+          )
+      )
+
+      await(connector.findReferralEvents(Set(ref), pagination)) shouldBe Events.referralEventsById
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "return empty list when case ref not found" in {
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.pagedEmpty)
+          )
+      )
+
+      await(connector.findReferralEvents(Set(ref), pagination)) shouldBe Map.empty[String, Event]
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
   "Connector 'Get Assigned Cases'" should {
 
     "get assigned cases " in {

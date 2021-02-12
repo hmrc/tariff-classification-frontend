@@ -31,6 +31,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import akka.stream.scaladsl.Source
+import akka.stream.Materializer
 
 class MyCasesController @Inject() (
   verify: RequestActions,
@@ -40,51 +42,21 @@ class MyCasesController @Inject() (
   val myCasesView: views.html.v2.my_cases_view
 )(
   implicit val appConfig: AppConfig,
-  ec: ExecutionContext
+  mat: Materializer
 ) extends FrontendController(mcc)
-    with I18nSupport with Logging {
+    with I18nSupport
+    with Logging {
 
-  private def getReferralEvents(
-    cases: Paged[Case]
-  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
-    cases.results.toList
-      .traverse { aCase =>
-        eventsService.getFilteredEvents(aCase.reference, NoPagination(), Some(Set(EventType.CASE_REFERRAL))).map {
-          events =>
-            val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
-            val latestReferralEvent = eventsLatestFirst.collectFirst {
-              case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-              case _                                                                => Map.empty
-            }
-            latestReferralEvent.getOrElse(Map.empty)
-        }
-      }
-      .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
-
-  private def getCompletedEvents(
-    cases: Paged[Case]
-  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
-    cases.results.toList
-      .traverse { aCase =>
-        eventsService.findCompletionEvents(Set(aCase.reference), NoPagination()).map {
-          events =>
-            val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
-            val latestCompletedEvent = eventsLatestFirst.collectFirst {
-              case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-              case _ => Map.empty
-            }
-            latestCompletedEvent.getOrElse(Map.empty)
-        }
-      }
-      .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
+  implicit val ec: ExecutionContext = mat.executionContext
 
   def displayMyCases(activeSubNav: SubNavigationTab = AssignedToMeTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {
           cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
-          referralEventsByCase <- getReferralEvents(cases)
-          completeEventsByCase <- getCompletedEvents(cases)
+          caseReferences = cases.results.map(_.reference).toSet
+          referralEventsByCase <- eventsService.findReferralEvents(caseReferences, NoPagination())
+          completeEventsByCase <- eventsService.findCompletionEvents(caseReferences, NoPagination())
           myCaseStatuses = activeSubNav match {
             case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
             case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
@@ -92,5 +64,4 @@ class MyCasesController @Inject() (
           }
         } yield Ok(myCasesView(myCaseStatuses, activeSubNav))
     }
-
 }
