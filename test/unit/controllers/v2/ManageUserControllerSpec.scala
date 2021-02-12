@@ -51,7 +51,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
 
-      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayUserDetals("1")(fakeRequest))
       status(result)      shouldBe Status.OK
@@ -64,7 +64,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
 
-      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
       val result = await(controller(Set()).displayUserDetals("1")(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
