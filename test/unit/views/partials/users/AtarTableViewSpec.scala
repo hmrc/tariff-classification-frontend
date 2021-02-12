@@ -54,8 +54,9 @@ class AtarTableViewSpec extends ViewSpec {
       doc should containElementWithID("applicationTab.atar-goods")
       doc should containElementWithID("applicationTab.atar-trader")
       doc should containElementWithID("applicationTab.atar-elapsed-days")
+      doc should containElementWithID("applicationTab.atar-total-days")
       doc should containElementWithID("applicationTab.atar-status")
-      doc should containElementWithID("move-cases")
+      doc should containElementWithID("move-atar-cases")
 
     }
   }

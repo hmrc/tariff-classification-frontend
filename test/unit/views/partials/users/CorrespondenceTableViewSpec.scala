@@ -57,7 +57,7 @@ class CorrespondenceTableViewSpec extends ViewSpec {
       doc should containElementWithID("applicationTab.correspondence-trader")
       doc should containElementWithID("applicationTab.correspondence-elapsed-days")
       doc should containElementWithID("applicationTab.correspondence-contact")
-      doc should containElementWithID("move-cases")
+      doc should containElementWithID("move-corr-cases")
 
     }
   }

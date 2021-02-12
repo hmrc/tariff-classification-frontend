@@ -46,9 +46,6 @@
   <th id="@{liabTab.tabMessageKey}-elapsed-days" class="bold w-0">
    Elapsed days
   </th>
-  <th id="@{liabTab.tabMessageKey}-total-days" class="bold w-0">
-   Total days
-  </th>
   <th id="@{liabTab.tabMessageKey}-type" class="bold w-0">
    Type
   </th>
@@ -75,7 +72,6 @@
   <td id="@{liabTab.tabMessageKey}-goods-@index">@{liab.goodName}</td>
   <td id="@{liabTab.tabMessageKey}-trader-@index">@{liab.traderName}</td>
   <td id="@{liabTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-  <td id="@{liabTab.tabMessageKey}-total-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
   <td id="@{liabTab.tabMessageKey}-type-@index"> @if(liab.isLiveLiabilityOrder) {
    <span class="govuk-tag govuk-tag--pink">@{liab.status}</span>
    }</td>
