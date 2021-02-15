@@ -21,6 +21,7 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
+import models.forms.v2.MoveCasesForm
 import models.request.AuthenticatedRequest
 import models.viewmodels._
 import play.api.Logging
@@ -46,6 +47,11 @@ class ManageUserController @Inject() (
     with I18nSupport
     with Logging {
 
+  private val moveATaRCasesForm           = MoveCasesForm.moveCasesForm
+  private val moveLiabilityCasesForm      = MoveCasesForm.moveCasesForm
+  private val moveMiscCasesForm           = MoveCasesForm.moveCasesForm
+  private val moveCorrespondenceCasesForm = MoveCasesForm.moveCasesForm
+
   def displayUserDetals(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
@@ -53,7 +59,10 @@ class ManageUserController @Inject() (
           userTab <- userService.getUser(pid)
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
-        } yield Ok(viewUser(userTab, userCaseTabs))
+        } yield Ok(viewUser(userTab, userCaseTabs, moveATaRCasesForm))
     }
+
+  def postMoveCases(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request => ???)
 
 }

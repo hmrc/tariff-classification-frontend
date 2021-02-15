@@ -21,9 +21,13 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
-@(atarTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import controllers.v2.routes.ManageUserController
+@(atarTab: ApplicationsTab, form: Form[Set[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.atar.heading")</h2>
+@helper.form(action = ManageUserController.postMoveCases(), 'id -> "move-atar-cases-form", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
+
 <div class="form-group">
  <button id="move-atar-cases" class="button" type="submit">Move selected cases</button>
 </div>
@@ -62,13 +66,21 @@
 
  <tr id="@{atarTab.tabMessageKey}-details-@index">
   <td id="@{atarTab.tabMessageKey}-select-@index">
+   <div class="form-group">
+   <div class="multiple-choice">
+    <fieldset>
    <input
            class="form-control"
            type="checkbox"
-           id="@{result.reference}"
-           name="@{result.reference}"
-           value="@{result.reference}"/>
-<!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+           id="@{s"atar-${form("casesToMove").id}-$index"}"
+           name="atar-@{form("casesToMove").name}[@index]"
+           value="@{result.reference}"
+           @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
+   />
+     <label for="@{s"atar-${form("casesToMove").id}-$index"}"><span class="visually-hidden">@result.reference</span></label>
+    </fieldset>
+   </div>
+  </div>
   </td>
   <td id="@{atarTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
   <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
@@ -88,4 +100,4 @@
  }
  </tbody>
 </table>
-
+}

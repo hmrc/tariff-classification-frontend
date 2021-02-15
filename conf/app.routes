@@ -162,3 +162,6 @@ GET         /manager-tools                                       controllers.v2.
 GET        /users/manage-users                                      controllers.v2.ManageUsersController.displayManageUsers()
 GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetals(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
+
+POST        /users/move/move-cases                                      controllers.v2.ManageUserController.postMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+

@@ -22,9 +22,13 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
-@(liabTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import controllers.v2.routes.ManageUserController
+
+@(liabTab: ApplicationsTab, form: Form[Set[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.liability.heading")</h2>
+@helper.form(action = ManageUserController.postMoveCases(), 'id -> "move-liability-cases-form", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
 <div class="form-group">
  <button id="move-liab-cases" class="button" type="submit">Move selected cases</button>
 </div>
@@ -63,13 +67,21 @@
 
  <tr id="@{liabTab.tabMessageKey}-details-@index">
   <td id="@{liabTab.tabMessageKey}-select-@index">
-   <input
-           class="form-control"
-           type="checkbox"
-           id="@{result.reference}"
-           name="@{result.reference}"
-           value="@{result.reference}"/>
-<!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+   <div class="form-group">
+    <div class="multiple-choice">
+     <fieldset>
+      <input
+              class="form-control"
+              type="checkbox"
+              id="@{s"liability-${form("casesToMove").id}-$index"}"
+      name="liability-@{form("casesToMove").name}[@index]"
+      value="@{result.reference}"
+      @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
+      />
+      <label for="@{s"liability-${form("casesToMove").id}-$index"}"><span class="visually-hidden">@result.reference</span></label>
+     </fieldset>
+    </div>
+   </div>
   </td>
   <td id="@{liabTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
   <td id="@{liabTab.tabMessageKey}-goods-@index">@{liab.goodName}</td>
@@ -91,4 +103,4 @@
  }
  </tbody>
 </table>
-
+}
