@@ -23,8 +23,8 @@ case class Operator(
   name: Option[String]         = None,
   email: Option[String]        = None,
   role: Role                   = Role.CLASSIFICATION_OFFICER,
-  memberOfTeams: List[String]  = List.empty,
-  managerOfTeams: List[String] = List.empty,
+  memberOfTeams: Seq[String]   = Seq.empty,
+  managerOfTeams: Seq[String]  = Seq.empty, //being a member is the same as being the manager, don't use this
   permissions: Set[Permission] = Set.empty
 ) {
 
@@ -37,6 +37,9 @@ case class Operator(
   def addPermissions(addedPermissions: Set[Permission]): Operator =
     this.copy(permissions = permissions ++ addedPermissions)
 
+  def getMemberTeamNames: Seq[String] = memberOfTeams.flatMap(teamId => Queues.queueById(teamId).map(_.name))
+
+  def isGateway: Boolean = memberOfTeams.contains(Queues.gateway.id)
 }
 
 object Role extends Enumeration {
@@ -47,8 +50,7 @@ object Role extends Enumeration {
     roleType match {
       case CLASSIFICATION_OFFICER => "Classification officer"
       case CLASSIFICATION_MANAGER => "Manager"
-      case READ_ONLY => "Unknown"
+      case READ_ONLY              => "Unknown"
 
     }
-
 }

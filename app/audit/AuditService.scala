@@ -16,13 +16,13 @@
 
 package audit
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import models.AppealStatus.AppealStatus
 import models.ApplicationType.{CORRESPONDENCE, MISCELLANEOUS}
 import models._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
@@ -183,6 +183,16 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       )
     )
   }
+
+  def auditUserUpdated(oldOperator: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = UserUpdated,
+      auditPayload = Map(
+        "operatorUpdating" -> operatorUpdating.id,
+        "operatorId"       -> oldOperator.id
+      )
+    )
+
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] =
     baseAuditPayload(updatedCase, operator) + (
       "newStatus"      -> updatedCase.status.toString,
@@ -238,5 +248,6 @@ object AuditPayloadType {
   val CaseMessage            = "caseMessage"
   val CaseSampleStatusChange = "caseSampleStatusChange"
   val CaseSampleReturnChange = "caseSampleReturnChange"
+  val UserUpdated            = "userUpdated"
 
 }
