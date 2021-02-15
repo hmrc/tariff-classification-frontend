@@ -23,7 +23,7 @@ case class ApplicationsTab(
   applicationType: ApplicationType,
   elementId: String,
   searchResult: Paged[Case],
-  referralEvent: Option[Map[String, Event]] = None,
+  referralEvent: Option[Map[String, Event]]  = None,
   completedEvent: Option[Map[String, Event]] = None
 )
 
@@ -32,30 +32,60 @@ case class ApplicationTabViewModel(headingMessageKey: String, applicationTabs: L
 object ApplicationsTab {
 
   def atar(
-    searchResult: Paged[Case]                                    = Paged.empty,
-    referralEvent: Option[Map[String, Event]] = None,
+    searchResult: Paged[Case]                  = Paged.empty,
+    referralEvent: Option[Map[String, Event]]  = None,
     completedEvent: Option[Map[String, Event]] = None
   ) =
-    ApplicationsTab("applicationTab.atar", ApplicationType.ATAR, "atar_tab", searchResult, referralEvent, completedEvent)
+    ApplicationsTab(
+      "applicationTab.atar",
+      ApplicationType.ATAR,
+      "atar_tab",
+      searchResult,
+      referralEvent,
+      completedEvent
+    )
 
   def liability(
-    searchResult: Paged[Case]                                    = Paged.empty,
-    referralEvent: Option[Map[String, Event]] = None,
+    searchResult: Paged[Case]                  = Paged.empty,
+    referralEvent: Option[Map[String, Event]]  = None,
     completedEvent: Option[Map[String, Event]] = None
   ) =
-    ApplicationsTab("applicationTab.liability", ApplicationType.LIABILITY, "liability_tab", searchResult, referralEvent, completedEvent)
+    ApplicationsTab(
+      "applicationTab.liability",
+      ApplicationType.LIABILITY,
+      "liability_tab",
+      searchResult,
+      referralEvent,
+      completedEvent
+    )
 
-  def correspondence(searchResult: Paged[Case] = Paged.empty,
-    referralEvent: Option[Map[String, Event]] = None,
+  def correspondence(
+    searchResult: Paged[Case]                  = Paged.empty,
+    referralEvent: Option[Map[String, Event]]  = None,
     completedEvent: Option[Map[String, Event]] = None
   ) =
-    ApplicationsTab("applicationTab.correspondence", ApplicationType.CORRESPONDENCE, "correspondence_tab", searchResult, referralEvent, completedEvent)
+    ApplicationsTab(
+      "applicationTab.correspondence",
+      ApplicationType.CORRESPONDENCE,
+      "correspondence_tab",
+      searchResult,
+      referralEvent,
+      completedEvent
+    )
 
-  def miscellaneous(searchResult: Paged[Case] = Paged.empty,
-      referralEvent: Option[Map[String, Event]] = None,
-      completedEvent: Option[Map[String, Event]] = None
+  def miscellaneous(
+    searchResult: Paged[Case]                  = Paged.empty,
+    referralEvent: Option[Map[String, Event]]  = None,
+    completedEvent: Option[Map[String, Event]] = None
   ) =
-    ApplicationsTab("applicationTab.miscellaneous", ApplicationType.MISCELLANEOUS, "miscellaneous_tab", searchResult, referralEvent, completedEvent)
+    ApplicationsTab(
+      "applicationTab.miscellaneous",
+      ApplicationType.MISCELLANEOUS,
+      "miscellaneous_tab",
+      searchResult,
+      referralEvent,
+      completedEvent
+    )
 
   def assignedToMeCases(cases: Seq[Case]): ApplicationTabViewModel = {
 
@@ -148,6 +178,27 @@ object ApplicationsTab {
         ApplicationsTab.atar(Paged(atars)),
         ApplicationsTab.liability(Paged(liabilities)),
         ApplicationsTab.correspondence(Paged(correspondenceCases)),
+        ApplicationsTab.miscellaneous(Paged(miscellaneous))
+      )
+    )
+  }
+
+  def casesByTypes(cases: Seq[Case]): ApplicationTabViewModel = {
+
+    val atars = cases.filter(_.application.isBTI)
+
+    val liabilities = cases.filter(_.application.isLiabilityOrder)
+
+    val correspondence = cases.filter(_.application.isCorrespondence)
+
+    val miscellaneous = cases.filter(_.application.isMisc)
+
+    ApplicationTabViewModel(
+      "applicationTab.userCases",
+      List(
+        ApplicationsTab.atar(Paged(atars)),
+        ApplicationsTab.liability(Paged(liabilities)),
+        ApplicationsTab.correspondence(Paged(correspondence)),
         ApplicationsTab.miscellaneous(Paged(miscellaneous))
       )
     )
