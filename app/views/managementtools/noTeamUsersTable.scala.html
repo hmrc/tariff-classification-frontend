@@ -36,7 +36,7 @@
 
                 <tr id="@{usersTab.tabMessageKey}-details-@index">
                     <td id="@{usersTab.tabMessageKey}-user-@index">
-                        <a href="">@result.name.getOrElse("unknown")</a>
+                        <a href="@controllers.v2.routes.ManageUserController.displayUserDetails(result.id)">@result.name.getOrElse("unknown")</a>
                     </td>
                     <td id="@{usersTab.tabMessageKey}-role-@index">@{Role.format(result.role)}</td>
                 </tr>

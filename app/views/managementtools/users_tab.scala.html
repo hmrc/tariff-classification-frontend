@@ -57,7 +57,7 @@
         </div>
     }
     <div class="govuk-tabs__panel" id="@users.assignedUsersTab.elementId">
-        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.assignedUsersTab.tabMessageKey)</h2>
+        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading.assigned.h2")</h2>
         @{users.assignedUsersTab.searchResult.size match {
         case 0 => "No users in this team"
         case _ => assignedUsersTable(users.assignedUsersTab, usersCount)
@@ -66,7 +66,7 @@
     </div>
 
     <div class="govuk-tabs__panel" id="@users.unassignedUsersTab.elementId">
-        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", users.unassignedUsersTab.tabMessageKey)</h2>
+        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading.unassigned.h2")</h2>
         @{users.unassignedUsersTab.searchResult.size match {
         case 0 => "No users in this team"
         case _ => noTeamUsersTable(users.unassignedUsersTab)

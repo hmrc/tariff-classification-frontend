@@ -86,23 +86,23 @@ class UsersTabViewSpec extends ViewSpec {
         messages("management.manage-users.tabSubHeading", usersByQueue.tabMessageKey))
     }
 
-    "include assigned users table with correct columns" in {
+    "include assigned users table with correct columns and h2" in {
 
       val doc = view(usersTabView())
 
       doc should containElementWithID("assigned_tab")
       doc.getElementById("assigned_tab") should containText(
-        messages("management.manage-users.tabSubHeading", assignedUsers.tabMessageKey))
+        messages("management.manage-users.tabSubHeading.assigned.h2"))
 
     }
 
-    "include unassigned users table with correct columns" in {
+    "include unassigned users table with correct columns and h2" in {
 
       val doc = view(usersTabView())
 
       doc should containElementWithID("unassigned_tab")
       doc.getElementById("unassigned_tab") should containText(
-        messages("management.manage-users.tabSubHeading", unassignedUsers.tabMessageKey))
+        messages("management.manage-users.tabSubHeading.unassigned.h2"))
 
     }
 
