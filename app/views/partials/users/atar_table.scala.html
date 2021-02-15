@@ -62,14 +62,22 @@
 
  <tr id="@{atarTab.tabMessageKey}-details-@index">
   <td id="@{atarTab.tabMessageKey}-select-@index">
-   <input
-           class="form-control"
-           type="checkbox"
-           id="@{result.reference}"
-           name="@{result.reference}"
-           value="@{result.reference}"/>
-<!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
-  </td>
+   <div class="form-group">
+    <div class="multiple-choice">
+     <fieldset>
+      <input
+              class="form-control"
+              type="checkbox"
+              id="@{result.reference}"
+              name="@{result.reference}"
+              value="@{result.reference}"/>
+      <!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+
+      <label></label>
+     </fieldset>
+    </div>
+   </div>
+     </td>
   <td id="@{atarTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
   <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
   <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
