@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-import cats.syntax.traverse._
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
@@ -28,7 +27,6 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService, UserService}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,39 +48,6 @@ class ManageUserController @Inject() (
 
   private val userEditTeamForm = UserEditTeamForm.editTeamsForm
 
-  private def getReferralEvents(
-    cases: Paged[Case]
-  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
-    cases.results.toList
-      .traverse { aCase =>
-        eventsService.getFilteredEvents(aCase.reference, NoPagination(), Some(Set(EventType.CASE_REFERRAL))).map {
-          events =>
-            val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
-            val latestReferralEvent = eventsLatestFirst.collectFirst {
-              case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-              case _                                        => Map.empty
-            }
-            latestReferralEvent.getOrElse(Map.empty)
-        }
-      }
-      .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
-
-  private def getCompletedEvents(
-    cases: Paged[Case]
-  )(implicit hc: HeaderCarrier): Future[Map[String, Event]] =
-    cases.results.toList
-      .traverse { aCase =>
-        eventsService.findCompletionEvents(Set(aCase.reference), NoPagination()).map { events =>
-          val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
-          val latestCompletedEvent = eventsLatestFirst.collectFirst {
-            case event @ Event(_, _, _, caseReference, _) => Map(caseReference -> event)
-            case _                                        => Map.empty
-          }
-          latestCompletedEvent.getOrElse(Map.empty)
-        }
-      }
-      .map(_.foldLeft(Map.empty[String, Event])(_ ++ _))
-
   def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
@@ -98,7 +63,9 @@ class ManageUserController @Inject() (
       andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       userService
         .getUser(pid)
-        .map(userDetails => Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet), activeSubNav)))
+        .map(userDetails =>
+          Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet), activeSubNav))
+        )
 
     }
 
