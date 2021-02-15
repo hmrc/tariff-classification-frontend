@@ -129,20 +129,5 @@ class UsersTabViewSpec extends ViewSpec {
       doc should containElementWithID("unassigned_tab")
       doc.getElementById("unassigned_tab") should containText("No users in this team")
     }
-    /*
-    for ((user, index) <- usersTab.searchResult.zipWithIndex) {
-      s"populate assigned users table with user id: ${user.id}" in {
-
-        val doc = view(usersTabView())
-
-        doc                                         should containElementWithID(s"assigned-details-$index")
-        doc.getElementById(s"assigned-user-$index") should containText(user.name.getOrElse("unknown"))
-        doc.getElementById(s"assigned-role-$index") should containText(Role.format(user.role))
-        doc.getElementById(s"assigned-team-$index") should containText(user.getMemberTeamNames.mkString(", "))
-        doc.getElementById(s"assigned-case-$index") should containText(
-          count.get(user.id).getOrElse(List.empty).size.toString)
-      }
-    }
-   */
   }
 }

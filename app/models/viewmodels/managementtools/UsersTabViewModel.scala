@@ -41,8 +41,8 @@ object UsersTabViewModel {
 
     val (assignedUsers, unassignedUser) = users.results.partition(_.memberOfTeams.nonEmpty)
 
-    val assignedUsersTab   = UsersTab("Assigned", "assigned_tab", assignedUsers.toList)
-    val unassignedUsersTab = UsersTab("Unassigned", "unassigned_tab", unassignedUser.toList)
+    val assignedUsersTab   = UsersTab("assigned", "assigned_tab", assignedUsers.toList)
+    val unassignedUsersTab = UsersTab("unassigned", "unassigned_tab", unassignedUser.toList)
 
     UsersTabViewModel(
       "Manage users",

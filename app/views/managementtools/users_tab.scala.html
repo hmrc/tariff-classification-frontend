@@ -36,17 +36,15 @@
         }
         <li class="govuk-tabs__list-item">
             <a class="govuk-tabs__tab" href="#@users.assignedUsersTab.elementId">
-                @users.assignedUsersTab.tabMessageKey (@users.assignedUsersTab.searchResult.size)
+                @messages("management.manage-users.tabSubHeading.assigned", users.assignedUsersTab.searchResult.size)
             </a>
         </li>
         <li class="govuk-tabs__list-item">
             <a class="govuk-tabs__tab" href="#@users.unassignedUsersTab.elementId">
-                @users.unassignedUsersTab.tabMessageKey (@users.unassignedUsersTab.searchResult.size)
+                @messages("management.manage-users.tabSubHeading.unassigned", users.unassignedUsersTab.searchResult.size)
             </a>
         </li>
     </ul>
-
-    @* content*@
 
    @for(usersByQueueTab <- users.usersByQueueTabs) {
         <div class="govuk-tabs__panel" id="@usersByQueueTab.elementId">
