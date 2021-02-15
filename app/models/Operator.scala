@@ -39,7 +39,7 @@ case class Operator(
 
   def getMemberTeamNames: Seq[String] = memberOfTeams.flatMap(teamId => Queues.queueById(teamId).map(_.name))
 
-  def isGateway: Boolean = memberOfTeams.contains("1")
+  def isGateway: Boolean = memberOfTeams.contains(Queues.gateway.id)
 }
 
 object Role extends Enumeration {
