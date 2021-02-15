@@ -49,6 +49,9 @@
   <th id="@{miscTab.tabMessageKey}-elapsed-days" class="bold w-0">
    Elapsed days
   </th>
+  <th id="@{miscTab.tabMessageKey}-team" class="bold w-0">
+   Team
+  </th>
  </tr>
 
  @for((result, index) <- miscTab.searchResult.results.zipWithIndex) {
@@ -70,7 +73,9 @@
   <td id="@{miscTab.tabMessageKey}-trader-@index">@{misc.contactName}</td>
   <td id="@{miscTab.tabMessageKey}-type-@index">@{MiscCaseType.format(misc.caseType)}</td>
   <td id="@{miscTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-
+  <td id="@{miscTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+  </td>
  </tr>
  }
 

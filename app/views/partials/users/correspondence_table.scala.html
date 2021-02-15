@@ -49,6 +49,9 @@
   <th id="@{corresTab.tabMessageKey}-elapsed-days" class="bold w-0">
    Elapsed days
   </th>
+  <th id="@{corresTab.tabMessageKey}-team" class="bold w-0">
+   Team
+  </th>
  </tr>
 
  @for((result, index) <- corresTab.searchResult.results.zipWithIndex) {
@@ -70,7 +73,9 @@
   <td id="@{corresTab.tabMessageKey}-trader-@index">@{corres.correspondenceStarter}</td>
   <td id="@{corresTab.tabMessageKey}-contact-@index">@{corres.contact.email}</td>
   <td id="@{corresTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-
+  <td id="@{corresTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+  </td>
  </tr>
  }
 

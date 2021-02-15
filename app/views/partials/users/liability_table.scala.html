@@ -52,6 +52,9 @@
   <th id="@{liabTab.tabMessageKey}-status" class="bold w-0">
    Status
   </th>
+  <th id="@{liabTab.tabMessageKey}-team" class="bold w-0">
+   Team
+  </th>
  </tr>
 
  @for((result, index) <- liabTab.searchResult.results.zipWithIndex) {
@@ -78,6 +81,9 @@
 
   <td id="@{liabTab.tabMessageKey}-status-@index">
    @case_status_tab(result, s"${liabTab.tabMessageKey}-status-label-$index")
+  </td>
+  <td id="@{liabTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
   </td>
  </tr>
  }
