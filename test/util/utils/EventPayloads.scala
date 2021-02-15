@@ -17,9 +17,9 @@
 package utils
 
 import play.api.libs.json.Json
-import models.request.NewEventRequest
 import models.{Event, NoPagination, Paged}
 import utils.JsonFormatters.{eventFormat, newEventRequestFormat}
+import play.api.libs.json.Writes
 
 object EventPayloads {
 
@@ -30,17 +30,11 @@ object EventPayloads {
   val pagedEvents: String  = jsonOf(Paged(Events.events, NoPagination(), 1))
   val pagedSampleEvents    = jsonOf(Paged(Events.sampleEvents, NoPagination(), 1))
   val pagedEmpty: String   = jsonOf(Paged.empty[Event])
+  val completionEvents     = jsonOf(Events.pagedCompletedEvents)
+  val referralEvents       = jsonOf(Events.pagedReferredEvents)
 
-  def jsonOf(obj: Event): String =
+  def emptyMap[A: Writes] = jsonOf(Map.empty[String, A])
+
+  def jsonOf[A: Writes](obj: A): String =
     Json.toJson(obj).toString()
-
-  def jsonOf(obj: NewEventRequest): String =
-    Json.toJson(obj).toString()
-
-  def jsonOf(obj: Seq[Event]): String =
-    Json.toJson(obj).toString()
-
-  def jsonOf(obj: Paged[Event]): String =
-    Json.toJson(obj).toString()
-
 }
