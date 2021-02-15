@@ -51,6 +51,9 @@
   <th id="@{atarTab.tabMessageKey}-status" class="bold w-0">
    Status
   </th>
+  <th id="@{atarTab.tabMessageKey}-team" class="bold w-0">
+   Team
+  </th>
  </tr>
 
  @for((result, index) <- atarTab.searchResult.results.zipWithIndex) {
@@ -75,6 +78,9 @@
 
   <td id="@{atarTab.tabMessageKey}-status-@index">
    @case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
+  </td>
+  <td id="@{atarTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
   </td>
  </tr>
  }
