@@ -97,30 +97,15 @@ class BindingTariffClassificationConnector @Inject() (
   def findCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq
+    types: Seq[ApplicationType] = ApplicationType.values.toSeq,
+    assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val url = buildQueryUrl(
         types      = types,
         statuses   = statuses,
         queueIds   = queue.map(_.id),
-        assigneeId = "none",
-        pagination = pagination
-      )
-      client.GET[Paged[Case]](url)
-    }
-
-  def findCasesByAllQueues2(
-    queue: Seq[Queue],
-    pagination: Pagination,
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq
-  )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    withMetricsTimerAsync("get-cases-by-queue2") { _ =>
-      val url = buildQueryUrl(
-        types      = types,
-        statuses   = statuses,
-        queueIds   = queue.map(_.id),
-        assigneeId = "some",
+        assigneeId = assignee,
         pagination = pagination
       )
       client.GET[Paged[Case]](url)

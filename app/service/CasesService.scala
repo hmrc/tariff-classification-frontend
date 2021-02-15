@@ -414,16 +414,10 @@ class CasesService @Inject() (
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq
+    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq,
+    assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    connector.findCasesByAllQueues(queue, pagination, forTypes)
-
-  def getCasesByAllQueues2(
-    queue: Seq[Queue],
-    pagination: Pagination,
-    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq
-  )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    connector.findCasesByAllQueues2(queue, pagination, forTypes)
+    connector.findCasesByAllQueues(queue, pagination, forTypes, assignee)
 
   def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] =
     for {

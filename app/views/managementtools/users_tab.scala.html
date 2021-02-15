@@ -47,7 +47,7 @@
     </ul>
 
     @* content*@
-    <!--ACT tab component-->
+
    @for(usersByQueueTab <- users.usersByQueueTabs) {
         <div class="govuk-tabs__panel" id="@usersByQueueTab.elementId">
             <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", usersByQueueTab.tabMessageKey)</h2>

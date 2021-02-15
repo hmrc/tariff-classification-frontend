@@ -189,7 +189,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByAllQueues(Queues.allQueues, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(connector.findCasesByAllQueues(Queues.allQueues, pagination, assignee = "none")) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -830,7 +830,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByAllQueues(Queues.allQueues, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(connector.findCasesByAllQueues(Queues.allQueues, pagination, assignee = "none")) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))

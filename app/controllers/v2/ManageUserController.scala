@@ -46,15 +46,17 @@ class ManageUserController @Inject()(
     with Logging {
 
   val Unassigned = "unassigned"
+  val assignedCases = "some"
 
   def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+
       for {
-        manager <- userService.getUser(request.operator.id)
-        managerQueues = manager.memberOfTeams.flatMap(id => Queues.queueById(id))
+        manager           <- userService.getUser(request.operator.id)
+        managerQueues     =  manager.memberOfTeams.flatMap(id => Queues.queueById(id))
         allUsers          <- userService.getAllUsers(Role.CLASSIFICATION_OFFICER, "", NoPagination())
-        managerTeamsCases <- casesService.getCasesByAllQueues2(managerQueues, NoPagination())
-        usersWithCount = managerTeamsCases.results.toList
+        managerTeamsCases <- casesService.getCasesByAllQueues(managerQueues, NoPagination(), assignee = assignedCases)
+        usersWithCount    =  managerTeamsCases.results.toList
           .groupBy(singleCase => singleCase.assignee.map(_.id).getOrElse(Unassigned))
           .filterKeys(_ != Unassigned)
         usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)

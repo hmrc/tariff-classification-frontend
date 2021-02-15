@@ -82,7 +82,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
       given(
-        casesService.getCasesByAllQueues2(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(
+        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
           any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
@@ -100,7 +100,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
       given(
-        casesService.getCasesByAllQueues2(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(
+        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
           any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
