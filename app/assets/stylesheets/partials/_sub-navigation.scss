@@ -108,3 +108,8 @@
     }
   }
 }
+@media screen and (max-width: 767px) {
+    .moj-sub-navigation__link[aria-current] {
+        padding-left: 10px;
+    }
+}
