@@ -238,7 +238,7 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   def markDeleted(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
-    withMetricsTimerAsync("update-user") { _ =>
+    withMetricsTimerAsync("delete-user") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/mark-deleted/users/${o.id}"
       client.PUT[Operator, Operator](url = url, body = o)
     }
