@@ -35,35 +35,40 @@
         activeSubNav: SubNavigationTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @main(bodyClasses = None, customTitle = Some(messages("users.user.edit_user.title")), customPrimaryNavTab = ManagerToolsTab) {
-        @manager_tools_secondary_navigation(activeSubNav)
 
-        @back_link()
-
-        @error_summary(form.errors)
-
-        <div class="user-edit-team mt-40">
-            <span class="heading-secondary"><span class="visuallyhidden">
-                This section is </span>@if(userDetails.name.get.trim.nonEmpty) {
-                @userDetails.name.get
-            } else @{s"PID: [${userDetails.id}]"}</span>
-
-            <h1 id="user-team-edit-heading" class="heading-xlarge mt-0 mb-0">@messages("users.user.editUserTeams.heading",
-                if(userDetails.name.get.trim.nonEmpty) userDetails.name.get else {
-                    s"PID: [${userDetails.id}]"
-                })</h1>
-        </div>
-
-        @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
-            @helper.CSRF.formField
-
-            @input_checkbox_group(
-                field = form("memberOfTeams"),
-                options = Queues.allQueues.map(
-                    queue => CheckOption(queue.name, queue.id, userDetails.memberOfTeams.contains(queue.id))
-                )
-            )
-            <button class="button" id="cancel_edit_user_teams-button" type="submit">Save changes</button>
-        }
-
+@getUserName = @{
+    userDetails.name match {
+        case Some(name) if name.trim.isEmpty => s"PID: [${userDetails.id}]"
+        case Some(name) => name
+        case None => s"PID: [${userDetails.id}]"
     }
+}
+@main(bodyClasses = None, customTitle = Some(messages("users.user.edit_user.title")), customPrimaryNavTab = ManagerToolsTab) {
+    @manager_tools_secondary_navigation(activeSubNav)
+
+    @back_link()
+
+    @error_summary(form.errors)
+
+    <div class="user-edit-team mt-40">
+        <span class="heading-secondary"><span class="visuallyhidden">
+            This section is </span>
+        </span>@getUserName
+        <h1 id="user-team-edit-heading" class="heading-xlarge mt-0 mb-0">@messages("users.user.editUserTeams.heading",
+            getUserName
+        )</h1>
+    </div>
+
+    @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+        @helper.CSRF.formField
+
+        @input_checkbox_group(
+            field = form("memberOfTeams"),
+            options = Queues.allQueues.map(
+                queue => CheckOption(queue.name, queue.id, userDetails.memberOfTeams.contains(queue.id))
+            )
+        )
+        <button class="button" id="cancel_edit_user_teams-button" type="submit">Save changes</button>
+    }
+
+}
