@@ -16,33 +16,38 @@
 
 package controllers.v2
 
-import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
+import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.partials.users.view_user
+import views.html.partials.users.{user_team_edit, view_user}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ManageUserControllerSpec extends ControllerBaseSpec {
 
-  private lazy val view_user = injector.instanceOf[view_user]
-  private val casesService   = mock[CasesService]
-  private val userService    = mock[UserService]
+  private lazy val view_user      = injector.instanceOf[view_user]
+  private lazy val user_team_edit = injector.instanceOf[user_team_edit]
+  private val casesService        = mock[CasesService]
+  private val userService         = mock[UserService]
+  private val eventService        = mock[EventsService]
 
   private def controller(permission: Set[Permission]) =
     new ManageUserController(
       new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
       casesService,
+      eventService,
       userService,
       mcc,
-      view_user
+      view_user,
+      user_team_edit
     )(realAppConfig, global)
 
   "Manage user" should {
@@ -85,6 +90,75 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
     }
 
+    "Edit User Team Details" should {
+
+      "return 200 and load the editUserTeamDetails form" in {
+        val result = await(
+          controller(Set(Permission.MANAGE_USERS))
+            .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
+        )
+        status(result) shouldBe OK
+      }
+
+      "return unauthorised if the user is not a manager (does not have the right permissions)" in {
+
+        val result = await(
+          controller(Set(Permission.VIEW_ASSIGNED_CASES))
+            .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
+        )
+        status(result)               shouldBe SEE_OTHER
+        redirectLocation(result).get should include("unauthorized")
+      }
+    }
+
+    "Post Edit User Teams" should {
+
+      "redirect to displayUser after user presses 'save changes' button" in {
+
+        when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+          Cases.operatorWithPermissions
+        )
+
+        val fakeReq = newFakePOSTRequestWithCSRF(
+          app,
+          Map(
+            "memberOfTeams" -> ("2")
+          )
+        )
+
+        val result = await(
+          controller(Set(Permission.MANAGE_USERS))
+            .postEditUserTeams("refPID")(fakeReq)
+        )
+
+        status(result) shouldBe SEE_OTHER
+
+        locationOf(result) shouldBe Some(
+          "/manage-tariff-classifications/users/user/refPID"
+        )
+      }
+
+      "return to the view if form fails to validate" in {
+        when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+          Cases.operatorWithPermissions
+        )
+
+        val fakeReq = newFakePOSTRequestWithCSRF(
+          app,
+          Map(
+            "" -> ""
+          )
+        )
+
+        val result = await(
+          controller(Set(Permission.MANAGE_USERS))
+            .postEditUserTeams("refPID")(fakeReq)
+        )
+
+        status(result)           shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some("/manage-tariff-classifications/users/user/refPID")
+      }
+    }
   }
 
 }

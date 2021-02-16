@@ -15,9 +15,9 @@
  *@
 
 @import config.AppConfig
-@import views.html.includes.main
 @import models.Operator
 @import models.request.AuthenticatedRequest
+@import controllers.v2.routes.ManageUserController
 
 @this()
 
@@ -96,7 +96,7 @@
    @userDetails.getMemberTeamNames.mkString(", ")}
   </dd>
   <dd class="govuk-summary-list__actions">
-   <a class="govuk-link" href="user-edit-team-alex">
+   <a class="govuk-link" href="@ManageUserController.editUserTeamDetails(userDetails.id)">
     Change<span class="visually-hidden"> assigned team</span>
    </a>
   </dd>
