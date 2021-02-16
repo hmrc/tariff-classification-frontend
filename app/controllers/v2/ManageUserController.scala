@@ -16,6 +16,8 @@
 
 package controllers.v2
 
+import cats.syntax.traverse._
+import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
@@ -26,12 +28,16 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService, UserService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
 import play.api.data.Form
+
+import scala.concurrent.{ExecutionContext, Future}
+import models.forms.v2.RemoveUserForm
+import play.api.data.Form
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
-import scala.concurrent.{ExecutionContext, Future}
 
 class ManageUserController @Inject() (
   verify: RequestActions,
@@ -50,14 +56,16 @@ class ManageUserController @Inject() (
 
   private lazy val removeUserForm: Form[Boolean] = RemoveUserForm.form
 
-  def displayUserDetals(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {
           userTab <- userService.getUser(pid)
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
-        } yield Ok(viewUser(userTab, userCaseTabs))
+        } yield userTab
+          .map(user => Ok(viewUser(user, userCaseTabs)))
+          .getOrElse(NotFound(views.html.user_not_found(pid)))
     }
 
   def deleteUser(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =

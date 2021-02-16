@@ -286,6 +286,8 @@ errors.document-not-found.title=Document not found
 errors.document-not-found.message=We could not find {0} document for case reference: {1}
 errors.document-not-found.application=an application
 errors.document-not-found.ruling-certificate=a ruling certificate
+errors.user-not-found.title=User not found
+errors.user-not-found.message=We could not find the user with PID {0}.
 errors.resource-not-found.title={0} not found.
 errors.summary.title=Error
 error.empty.default=This field is required
@@ -484,6 +486,7 @@ page.title.create_correspondence.h1=Create correspondence case
 page.title.edit_liability_decision=Edit liability decision
 page.title.create_misc.h1=Create miscellaneous case
 page.title.document.not.found=Document not found
+page.title.user.not.found=User not found
 view.attachment.unavailable.title=Attachment unavailable
 view.attachment.unavailable.heading=Attachment is unavailable
 view.attachment.unavailable.content.failedToProcess=File failed to process. This could be because a virus was found.
@@ -1153,7 +1156,7 @@ case.ownership.assign_case.back=Back to my cases
 case.change_status.move_back_to_team.heading=Move this case back to a team
 case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team.
 
-management.manage-users-title=Manage users - Advance Tariff Rulings Case Manager - GOV.UK
+management.manage-users-title=Manage users
 management.manage-users.heading = Manage users
 management.manage-users.tabSubHeading = {0} users
 users.user.details.tab_title=User details
