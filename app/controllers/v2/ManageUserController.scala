@@ -102,16 +102,12 @@ class ManageUserController @Inject() (
               for {
                 user <- userService.getUser(pid)
               } yield {
-                user.isDefined match {
-                  case true => {
-                    val updatedUser = user.get.copy(deleted = true)
-                    userService
-                      .updateUser(updatedUser, request.operator)
-                    Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(updatedUser.safeName))
+                user
+                  .map { u =>
+                    userService.markDeleted(u, request.operator)
+                    Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(u.safeName))
                   }
-                  case _ => NotFound(views.html.user_not_found(pid))
-                }
-
+                  .getOrElse(NotFound(views.html.user_not_found(pid)))
               }
             case _ =>
               successful(

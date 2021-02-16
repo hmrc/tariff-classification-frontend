@@ -42,12 +42,14 @@ class UserService @Inject() (
 
   def getUser(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =
     for {
-      userDetails <- connector.getUserDetails(id)
-    } yield {
-      if (userDetails.exists(_.deleted)) {
-        Option.empty
-      } else {
-        userDetails
-      }
-    }
+      userDetails <- connector.getUserDetails(id).map(_.filterNot(_.deleted))
+    } yield userDetails
+
+  def markDeleted(user: Operator, operatorMakingTheChange: Operator)(
+    implicit hc: HeaderCarrier
+  ): Future[Operator] =
+    for {
+      deleted <- connector.markDeleted(user)
+      _ = auditService.auditUserUpdated(user, operatorMakingTheChange)
+    } yield deleted
 }
