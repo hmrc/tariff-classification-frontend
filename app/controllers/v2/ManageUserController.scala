@@ -16,27 +16,22 @@
 
 package controllers.v2
 
-import cats.syntax.traverse._
-import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
-import models.forms.v2.RemoveUserForm
 import models.request.AuthenticatedRequest
 import models.viewmodels._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, EventsService, UserService}
-import uk.gov.hmrc.http.HeaderCarrier
+import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
-import play.api.data.Form
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext}
 import models.forms.v2.RemoveUserForm
 import play.api.data.Form
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject}
 import scala.concurrent.Future.successful
 
 class ManageUserController @Inject() (
@@ -47,6 +42,7 @@ class ManageUserController @Inject() (
   val viewUser: views.html.partials.users.view_user,
   val cannotDeleteUser: views.html.partials.users.cannot_delete_user,
   val confirmDeleteUser: views.html.partials.users.confirm_delete_user,
+  val doneDeleteUserPage: views.html.partials.users.done_delete_user,
   implicit val appConfig: AppConfig
 )(
   implicit val ec: ExecutionContext
@@ -75,11 +71,17 @@ class ManageUserController @Inject() (
           userCases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           user      <- userService.getUser(pid)
         } yield {
-          if (userCases.results.nonEmpty) {
-            Ok(cannotDeleteUser(user))
-          } else {
-            Ok(confirmDeleteUser(user, removeUserForm))
+          user.isDefined match {
+            case true => {
+              if (userCases.results.nonEmpty) {
+                Ok(cannotDeleteUser(user.get))
+              } else {
+                Ok(confirmDeleteUser(user.get, removeUserForm))
+              }
+            }
+            case _ => NotFound(views.html.user_not_found(pid))
           }
+
         }
     }
 
@@ -93,22 +95,35 @@ class ManageUserController @Inject() (
           errors =>
             for {
               user <- userService.getUser(pid)
-            } yield Ok(confirmDeleteUser(user, errors)), {
+            } yield user
+              .map(u => Ok(confirmDeleteUser(u, errors)))
+              .getOrElse(NotFound(views.html.user_not_found(pid))), {
             case true =>
               for {
                 user <- userService.getUser(pid)
               } yield {
-                val updatedUser = user.copy(deleted = true)
-                userService
-                  .updateUser(updatedUser, request.operator)
-                Redirect(controllers.v2.routes.ManageUsersController.displayManageUsers())
+                user.isDefined match {
+                  case true => {
+                    val updatedUser = user.get.copy(deleted = true)
+                    userService
+                      .updateUser(updatedUser, request.operator)
+                    Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(updatedUser.safeName))
+                  }
+                  case _ => NotFound(views.html.user_not_found(pid))
+                }
+
               }
             case _ =>
               successful(
-                Redirect(controllers.v2.routes.ManageUserController.displayUserDetals(pid))
+                Redirect(controllers.v2.routes.ManageUserController.displayUserDetails(pid))
               )
           }
         )
     )
+
+  def doneDeleteUser(userName: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)) {
+      implicit request: AuthenticatedRequest[AnyContent] => Ok(doneDeleteUserPage(userName))
+    }
 
 }

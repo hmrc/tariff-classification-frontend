@@ -25,11 +25,10 @@
 @import views.html.partials.{back_link}
 
 @this(
-delete_user_heading: views.html.partials.users.delete_user_heading,
 )
 
 @(
-user: Operator,
+user: String,
 activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -39,15 +38,15 @@ customTitle = Some(messages("Manage user")),
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)
-@back_link()
 
-@delete_user_heading(user.safeName, false)
+<div id="confirm_complete_id" class="column-two-thirds mt-30">
+ <div class="govuk-panel govuk-panel--confirmation" data-gtm-vis-recent-on-screen-8267218_2337="228" data-gtm-vis-first-on-screen-8267218_2337="228" data-gtm-vis-total-visible-time-8267218_2337="100" data-gtm-vis-has-fired-8267218_2337="1">
+  <h2 class="heading-xlarge mt-0">Alex Smith deleted</h2>
+ </div>
 
-<p id="cases-must-be-moved">@messages("users.user.delete.casesMustBeMoved.message")</p>
+ <h3 class="heading-large mt-0 mb-2 pt-20">Next steps</h3>
+ <p class="govuk-body"><a id="back-manage-users-link" href="@routes.ManageUsersController.displayManageUsers">Go back to manage users</a></p>
 
-<div class="form-group">
- <a href="@routes.ManageUserController.displayUserDetails(user.id)" id="move-cases" class="button">Go back and move cases</a>
 </div>
-
 }
 

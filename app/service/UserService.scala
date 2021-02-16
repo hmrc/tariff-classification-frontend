@@ -40,12 +40,12 @@ class UserService @Inject() (
       _ = auditService.auditUserUpdated(originalOperator, operatorMakingTheChange)
     } yield updated
 
-  def getUser(id: String)(implicit hc: HeaderCarrier): Future[Operator] =
+  def getUser(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =
     for {
       userDetails <- connector.getUserDetails(id)
     } yield {
-      if (userDetails.deleted) {
-        throw new Exception("User with pid " + id + " is deleted")
+      if (userDetails.exists(_.deleted)) {
+        Option.empty
       } else {
         userDetails
       }
