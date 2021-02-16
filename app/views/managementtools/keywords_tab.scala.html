@@ -1,0 +1,51 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.partials.create_case_button
+@import views.html.managementtools.{keywords_for_approval_table, all_keywords}
+@import views.html.components.heading
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.managementtools._
+
+@(manageKeywordsViewModel: ManageKeywordsViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+
+@heading(messages("Manage keywords"))
+
+<div id="manage-users-tabs" class="govuk-tabs" data-module="govuk-tabs">
+    <ul class="govuk-tabs__list">
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
+                @messages("Approve keywords")
+            </a>
+        </li>
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.allKeywordsTab.elementId">
+                @messages("All keywords")
+            </a>
+        </li>
+    </ul>
+
+    <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
+        <h2 class="heading-large mt-0">@messages("Keywords for approval")</h2>
+        @keywords_for_approval_table()
+
+    </div>
+
+    <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.allKeywordsTab.elementId">
+        <h2 class="heading-large mt-0">@messages("All keywords")</h2>
+    </div>
+</div>

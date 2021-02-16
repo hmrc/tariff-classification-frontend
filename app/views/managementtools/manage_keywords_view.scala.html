@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.managementtools.{users_tab}
+@import views.html.managementtools.keywords_tab
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.managementtools._
@@ -22,15 +22,15 @@
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
 @import models.viewmodels.{ManagerToolsTab}
 @import models.viewmodels.SubNavigationTab
-@import models.viewmodels.ManagerToolsReportsTab
+@import models.viewmodels.ManagerToolsKeywordsTab
 
 
 @this()
 
-@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, users : UsersTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, manageKeywordsViewModel: ManageKeywordsViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("management.manage-keywords-title")), customPrimaryNavTab = ManagerToolsTab) {
+@main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title")), customPrimaryNavTab = ManagerToolsTab) {
     @manager_tools_secondary_navigation(activeSubNav)
 
-    @users_tab(users)
+    @keywords_tab(manageKeywordsViewModel)
 }
