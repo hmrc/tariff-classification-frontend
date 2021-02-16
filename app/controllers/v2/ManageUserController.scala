@@ -52,14 +52,16 @@ class ManageUserController @Inject() (
   private val moveMiscCasesForm           = MoveCasesForm.moveCasesForm
   private val moveCorrespondenceCasesForm = MoveCasesForm.moveCasesForm
 
-  def displayUserDetals(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {
           userTab <- userService.getUser(pid)
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
-        } yield Ok(viewUser(userTab, userCaseTabs, moveATaRCasesForm))
+        } yield userTab
+          .map(user => Ok(viewUser(user, userCaseTabs, moveATaRCasesForm)))
+          .getOrElse(NotFound(views.html.user_not_found(pid)))
     }
 
   def postMoveCases(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =

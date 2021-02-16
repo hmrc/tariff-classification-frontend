@@ -27,6 +27,10 @@ window.onload = function () {
         hasErrors.focus();
     }
 
+    var hasSuccess = document.querySelector("#govuk-notification-banner--success");
+    if(hasSuccess) {
+        hasSuccess.focus();
+    }
 
 };
 

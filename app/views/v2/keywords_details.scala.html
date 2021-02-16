@@ -24,6 +24,7 @@
 @import models.viewmodels.KeywordsTabViewModel
 @import views.html.components.input_accessible_auto_complete
 @import views.html.partials.tab_heading
+@import views.html.partials.notification_banner
 @import views.html.partials.error_summary
 
 @this()
@@ -32,19 +33,51 @@
 
     @error_summary(keywordForm.errors, Some(startAtTabIndex))
 
+    @if(request.flash.get("success").getOrElse("").contains("keyword")){
+        @notification_banner()(request.flash, messages)
+    }
     @tab_heading("keywords", messages("case.menu.keywords"))
 
     <div class="grid-row">
         <div class="column-full">
-
             @if(request.hasPermission(Permission.KEYWORDS)) {
-                <div>
-                    <p>
-                        Cases must have 3 or more keywords.
-                    </p>
-                </div>
+            @form(action = routes.CaseController.addKeyword(ktvm.caseReference), 'class -> "form mt-3") {
+
+            @CSRF.formField
+            @input_accessible_auto_complete(
+            field = keywordForm("keyword"),
+            label = Some(messages("case.v2.liability.keywords.label")),
+            hint = Some(messages("case.v2.liability.keywords.hint")),
+            autoCompleteOptions = ktvm.globalKeywords,
+            formControlClass = Some("w-100"),
+            useTabIndex = Some(startAtTabIndex+50),
+            placeholder = Some("Start typing to find approved keywords")
+            )
+
+            <p>@messages("case.v2.liability.keywords.paragraph")</p>
+
+            <div class="form-group">
+                <button id="keyword_details-add_keyword" class="button" type="submit">Add to case keyword list</button>
+            </div>
             }
 
+            }
+            <h3 class="heading-medium">Case keyword list</h3>
+            @if(ktvm.caseKeywords.size<3){
+            <div>
+                <p>
+                    @if(3 - ktvm.caseKeywords.size == 1){
+                    Add at least @(3-ktvm.caseKeywords.size) more keyword to this case.
+
+                    }else{
+                    Add at least @(3-ktvm.caseKeywords.size) more keywords to this case.
+
+                    }
+
+                </p>
+            </div>
+
+            }
             <div id="keywords-table">
                 @for((keyword: String, index: Int) <- ktvm.caseKeywords.toSeq.sorted.zipWithIndex) {
                     <div class="grid-row mt-1 mb-1">
@@ -58,7 +91,7 @@
                         </div>
                         @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
-                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@routes.CaseController.removeKeyword(ktvm.caseReference, keyword)">Remove</a>
+                                <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@routes.CaseController.removeKeyword(ktvm.caseReference, keyword)">Remove</a>
                             </div>
                         }
                     </div>
@@ -66,27 +99,7 @@
                 }
             </div>
 
-            @if(request.hasPermission(Permission.KEYWORDS)) {
-                @form(action = routes.CaseController.addKeyword(ktvm.caseReference), 'class -> "form mt-3") {
 
-                    @CSRF.formField
-                    @input_accessible_auto_complete(
-                        field = keywordForm("keyword"),
-                        label = Some(messages("case.v2.liability.keywords.label")),
-                        hint = Some(messages("case.v2.liability.keywords.hint")),
-                        autoCompleteOptions = ktvm.globalKeywords,
-                        formControlClass = Some("w-100"),
-                        useTabIndex = Some(startAtTabIndex+50)
-                    )
-
-                    <p>@messages("case.v2.liability.keywords.paragraph")</p>
-
-                    <div class="form-group">
-                        <button tabindex="@{startAtTabIndex+51}" id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
-                    </div>
-                }
-
-            }
         </div>
 
     </div>

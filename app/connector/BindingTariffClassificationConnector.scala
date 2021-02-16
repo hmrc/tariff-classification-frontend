@@ -16,24 +16,23 @@
 
 package connector
 
-import com.google.inject.Inject
-import com.kenshoo.play.metrics.Metrics
-import javax.inject.Singleton
-import play.api.mvc.QueryStringBindable
-import uk.gov.hmrc.http.HeaderCarrier
-import config.AppConfig
-import metrics.HasMetrics
-import models.ApplicationType
-import models.CaseStatus._
-import models.EventType.EventType
-import models._
-import models.request.NewEventRequest
-
-import scala.concurrent.{ExecutionContext, Future}
-import utils.JsonFormatters._
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import akka.stream.scaladsl.Source
 import akka.stream.Materializer
+import com.google.inject.Inject
+import com.kenshoo.play.metrics.Metrics
+import config.AppConfig
+import javax.inject.Singleton
+import metrics.HasMetrics
+import models._
+import models.CaseStatus._
+import models.EventType.EventType
+import models.request.NewEventRequest
+import play.api.mvc.QueryStringBindable
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.JsonFormatters._
+
+import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 @Singleton
 class BindingTariffClassificationConnector @Inject() (
@@ -238,10 +237,10 @@ class BindingTariffClassificationConnector @Inject() (
       client.PUT[Operator, Operator](url = url, body = o)
     }
 
-  def getUserDetails(id: String)(implicit hc: HeaderCarrier): Future[Operator] =
-    withMetricsTimerAsync("update-user") { _ =>
+  def getUserDetails(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =
+    withMetricsTimerAsync("get-user-details") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/users/$id"
-      client.GET[Operator](url = url)
+      client.GET[Option[Operator]](url = url)
     }
 
   def createUser(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
