@@ -56,9 +56,9 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Get User" should {
 
     "delegate to the connector" in {
-      given(connector.getUserDetails("PID")) willReturn successful(operator)
+      given(connector.getUserDetails("PID")) willReturn successful(Some(operator))
 
-      await(service.getUser("PID")) shouldBe operator
+      await(service.getUser("PID")) shouldBe Some(operator)
 
     }
   }

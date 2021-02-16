@@ -49,6 +49,9 @@
   <th id="@{miscTab.tabMessageKey}-elapsed-days" class="bold w-0">
    Elapsed days
   </th>
+  <th id="@{miscTab.tabMessageKey}-team" class="bold w-0">
+   Team
+  </th>
  </tr>
 
  @for((result, index) <- miscTab.searchResult.results.zipWithIndex) {
@@ -57,20 +60,30 @@
 
  <tr id="@{miscTab.tabMessageKey}-details-@index">
   <td id="@{miscTab.tabMessageKey}-select-@index">
-   <input
-           class="form-control"
-           type="checkbox"
-           id="@{result.reference}"
-           name="@{result.reference}"
-           value="@{result.reference}"/>
-<!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+   <div class="form-group">
+    <div class="multiple-choice">
+     <fieldset>
+      <input
+              class="form-control"
+              type="checkbox"
+              id="@{result.reference}"
+              name="@{result.reference}"
+              value="@{result.reference}"/>
+      <!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+
+      <label></label>
+     </fieldset>
+    </div>
+   </div>
   </td>
   <td id="@{miscTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
   <td id="@{miscTab.tabMessageKey}-summary-@index">@{misc.name}</td>
   <td id="@{miscTab.tabMessageKey}-trader-@index">@{misc.contactName}</td>
   <td id="@{miscTab.tabMessageKey}-type-@index">@{MiscCaseType.format(misc.caseType)}</td>
   <td id="@{miscTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-
+  <td id="@{miscTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+  </td>
  </tr>
  }
 

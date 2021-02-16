@@ -56,7 +56,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
 
-      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(fakeRequest))
       status(result)      shouldBe Status.OK
@@ -65,11 +65,24 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
     }
 
+    "return 404 NOT_FOUND and HTML content type when user does not exist" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(fakeRequest))
+      status(result)          shouldBe Status.NOT_FOUND
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
+    }
+
     "return unauthorised with no permissions" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
 
-      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Operator("1"))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
       val result = await(controller(Set()).displayUserDetails("1")(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER

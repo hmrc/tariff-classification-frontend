@@ -49,6 +49,9 @@
   <th id="@{corresTab.tabMessageKey}-elapsed-days" class="bold w-0">
    Elapsed days
   </th>
+  <th id="@{corresTab.tabMessageKey}-team" class="bold w-0">
+   Team
+  </th>
  </tr>
 
  @for((result, index) <- corresTab.searchResult.results.zipWithIndex) {
@@ -57,20 +60,30 @@
 
  <tr id="@{corresTab.tabMessageKey}-details-@index">
   <td id="@{corresTab.tabMessageKey}-select-@index">
-   <input
-           class="form-control"
-           type="checkbox"
-           id="@{result.reference}"
-           name="@{result.reference}"
-           value="@{result.reference}"/>
-<!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+   <div class="form-group">
+    <div class="multiple-choice">
+     <fieldset>
+      <input
+              class="form-control"
+              type="checkbox"
+              id="@{result.reference}"
+              name="@{result.reference}"
+              value="@{result.reference}"/>
+      <!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+
+      <label></label>
+     </fieldset>
+    </div>
+   </div>
   </td>
   <td id="@{corresTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
   <td id="@{corresTab.tabMessageKey}-summary-@index">@{corres.summary}</td>
   <td id="@{corresTab.tabMessageKey}-trader-@index">@{corres.correspondenceStarter}</td>
   <td id="@{corresTab.tabMessageKey}-contact-@index">@{corres.contact.email}</td>
   <td id="@{corresTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-
+  <td id="@{corresTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+  </td>
  </tr>
  }
 
