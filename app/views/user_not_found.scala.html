@@ -14,20 +14,19 @@
  * limitations under the License.
  *@
 
-@this(
-)
+@import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import controllers.routes.IndexController
+@import views.html.includes.main
 
-@(
-        username: String
-)(implicit messages: Messages)
+@(pid: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<div id="case-heading" class="case-heading mt-5 mb-4">
-
-    <div id="case-reference" class="case-reference">
-            Manage user
+@main(bodyClasses = None, customTitle = Some(messages("page.title.user.not.found"))) {
+    <div id="case-not-found-section">
+        <h2 class="heading-large">
+            @messages("errors.user-not-found.title")
+        </h2>
+        <p>@messages("errors.user-not-found.message", pid)</p>
+        <a href="@IndexController.get()">@messages("errors.all.back")</a>
     </div>
-
-    <h1 class="heading-xlarge case-title">
-        @username
-    </h1>
-</div>
+}

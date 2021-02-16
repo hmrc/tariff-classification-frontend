@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ManageUserController @Inject()(
   verify: RequestActions,
@@ -45,22 +45,27 @@ class ManageUserController @Inject()(
     with I18nSupport
     with Logging {
 
-  val Unassigned = "unassigned"
+  val Unassigned    = "unassigned"
   val assignedCases = "some"
 
   def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
 
-      for {
-        manager           <- userService.getUser(request.operator.id)
-        managerQueues     =  manager.memberOfTeams.flatMap(id => Queues.queueById(id))
-        allUsers          <- userService.getAllUsers(Role.CLASSIFICATION_OFFICER, "", NoPagination())
-        managerTeamsCases <- casesService.getCasesByAllQueues(managerQueues, NoPagination(), assignee = assignedCases)
-        usersWithCount    =  managerTeamsCases.results.toList
-          .groupBy(singleCase => singleCase.assignee.map(_.id).getOrElse(Unassigned))
-          .filterKeys(_ != Unassigned)
-        usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
-      } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
+      userService.getUser(request.operator.id).flatMap {
+        case Some(manager) => {
+          val managerQueues = manager.memberOfTeams.flatMap(id => Queues.queueById(id))
+
+          for {
+            allUsers          <- userService.getAllUsers(Role.CLASSIFICATION_OFFICER, "", NoPagination())
+            managerTeamsCases <- casesService.getCasesByAllQueues(managerQueues, NoPagination(), assignee = assignedCases)
+            usersWithCount    = managerTeamsCases.results.toList
+              .groupBy(singleCase => singleCase.assignee.map(_.id).getOrElse(Unassigned))
+              .filterKeys(_ != Unassigned)
+            usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
+          } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
+        }
+        case _ => Future(NotFound(views.html.user_not_found("")))
+      }
     }
 
   def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
@@ -70,7 +75,10 @@ class ManageUserController @Inject()(
           userTab <- userService.getUser(pid)
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
-        } yield Ok(viewUser(userTab, userCaseTabs))
+        } yield
+          userTab
+            .map(user => Ok(viewUser(user, userCaseTabs)))
+            .getOrElse(NotFound(views.html.user_not_found(pid)))
     }
 
 }

@@ -1,6 +1,6 @@
 package integration
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, stubFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.kenshoo.play.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
@@ -43,12 +43,46 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
       case _           => "auth-success-another-team-member.json"
     }
 
+    val userInfoResource = role match {
+      case "manager"   => "user-info-manager.json"
+      case "team"      => "user-info-team-member.json"
+      case "read-only" => "user-info-read-only.json"
+      case _           => "user-info-another-team-member.json"
+    }
+
     stubFor(
       post(urlEqualTo("/auth/authorise"))
         .willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(fromResource(resource))
+        )
+    )
+
+    stubFor(
+      post(urlEqualTo("/users"))
+        .willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(fromResource(userInfoResource))
+        )
+    )
+
+    stubFor(
+      get(urlMatching("/users/\\d+"))
+        .willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(fromResource(userInfoResource))
+        )
+    )
+
+    stubFor(
+      put(urlMatching("/users/\\d+"))
+        .willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(fromResource(userInfoResource))
         )
     )
   }

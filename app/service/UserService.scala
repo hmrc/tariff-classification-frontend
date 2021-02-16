@@ -45,8 +45,6 @@ class UserService @Inject()(
       _ = auditService.auditUserUpdated(originalOperator, operatorMakingTheChange)
     } yield updated
 
-  def getUser(id: String)(implicit hc: HeaderCarrier): Future[Operator] =
-    for {
-      userDetails <- connector.getUserDetails(id)
-    } yield userDetails
+  def getUser(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =
+    connector.getUserDetails(id)
 }

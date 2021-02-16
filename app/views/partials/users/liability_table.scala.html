@@ -52,6 +52,9 @@
   <th id="@{liabTab.tabMessageKey}-status" class="bold w-0">
    Status
   </th>
+  <th id="@{liabTab.tabMessageKey}-team" class="bold w-0">
+   Team
+  </th>
  </tr>
 
  @for((result, index) <- liabTab.searchResult.results.zipWithIndex) {
@@ -60,13 +63,21 @@
 
  <tr id="@{liabTab.tabMessageKey}-details-@index">
   <td id="@{liabTab.tabMessageKey}-select-@index">
-   <input
-           class="form-control"
-           type="checkbox"
-           id="@{result.reference}"
-           name="@{result.reference}"
-           value="@{result.reference}"/>
-<!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+   <div class="form-group">
+    <div class="multiple-choice">
+     <fieldset>
+      <input
+              class="form-control"
+              type="checkbox"
+              id="@{result.reference}"
+              name="@{result.reference}"
+              value="@{result.reference}"/>
+      <!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+
+      <label></label>
+     </fieldset>
+    </div>
+   </div>
   </td>
   <td id="@{liabTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
   <td id="@{liabTab.tabMessageKey}-goods-@index">@{liab.goodName}</td>
@@ -78,6 +89,9 @@
 
   <td id="@{liabTab.tabMessageKey}-status-@index">
    @case_status_tab(result, s"${liabTab.tabMessageKey}-status-label-$index")
+  </td>
+  <td id="@{liabTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
   </td>
  </tr>
  }
