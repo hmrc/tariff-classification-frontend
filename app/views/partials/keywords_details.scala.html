@@ -25,10 +25,16 @@
 @import views.html.components.input_accessible_auto_complete
 @import views.html.partials.tab_heading
 @import views.html.partials.error_summary
+@import views.html.partials.notification_banner
+
 
 @(keywords: KeywordsTabViewModel, keywordForm : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @error_summary(keywordForm.errors, Some(startAtTabIndex))
+
+    @if(request.flash.get("success").getOrElse("").contains("keyword")){
+        @notification_banner()(request.flash, messages)
+    }
 
     @tab_heading("keywords", messages("case.menu.keywords"))
 
@@ -36,12 +42,45 @@
         <div class="column-full">
 
             @if(request.hasPermission(Permission.KEYWORDS)) {
+            @form(action = routes.CaseController.addKeyword(keywords.caseReference).withFragment(Tab.KEYWORDS_TAB.name), 'class -> "form mt-3") {
+
+            @CSRF.formField
+            @input_accessible_auto_complete(
+            field = keywordForm("keyword"),
+            label = Some(messages("case.v2.liability.keywords.label")),
+            hint = Some(messages("case.v2.liability.keywords.hint")),
+            autoCompleteOptions = keywords.globalKeywords,
+            formControlClass = Some("w-100"),
+            useTabIndex = Some(startAtTabIndex+50),
+            placeholder = Some("Start typing to find approved keywords")
+            )
+
+            <div class="form-group">
+                <button id="keyword_details-add_keyword" class="button" type="submit">Add to case keyword list</button>
+            </div>
+            }
+
+            }
+
+            <h3 class="heading-medium">Case keyword list</h3>
+
+            @if(keywords.caseKeywords.size<3){
                 <div>
                     <p>
-                        Cases must have 3 or more keywords.
+                            @if(3 - keywords.caseKeywords.size == 1){
+                        Add at least @(3-keywords.caseKeywords.size) more keyword to this case.
+
+                        }else{
+                            Add at least @(3-keywords.caseKeywords.size) more keywords to this case.
+
+                            }
+
                     </p>
                 </div>
+
             }
+
+
 
             <div id="keywords-table">
                 @for((keyword: String, index: Int) <- keywords.caseKeywords.toSeq.sorted.zipWithIndex) {
@@ -56,7 +95,7 @@
                         </div>
                         @if(request.hasPermission(Permission.KEYWORDS)) {
                             <div id="keywords-row-@{index}-remove" class="column-one-third text-right">
-                                <a tabindex="@{startAtTabIndex+10+index}" id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(keywords.caseReference, keyword)">Remove</a>
+                                <a id="keywords-row-@{index}-remove-link" aria-label="remove @keyword" href="@CaseController.removeKeyword(keywords.caseReference, keyword)">Remove</a>
                             </div>
                         }
                     </div>
@@ -64,26 +103,6 @@
                 }
             </div>
 
-            @if(request.hasPermission(Permission.KEYWORDS)) {
-                @form(action = routes.CaseController.addKeyword(keywords.caseReference).withFragment(Tab.KEYWORDS_TAB.name), 'class -> "form mt-3") {
-
-                    @CSRF.formField
-                    @input_accessible_auto_complete(
-                        field = keywordForm("keyword"),
-                        label = Some("Search for or enter a keyword"),
-                        hint = Some("Start typing and select a keyword if it appears in the list. To add a keyword that is not in the list, type it in full."),
-                        autoCompleteOptions = keywords.globalKeywords,
-                        formControlClass = Some("w-100")
-                    )
-
-                    <p>To suggest a new keyword contact the classification team manager.</p>
-
-                    <div class="form-group">
-                        <button id="keyword_details-add_keyword" class="button" type="submit">Add keyword</button>
-                    </div>
-                }
-
-            }
         </div>
 
     </div>
