@@ -14,22 +14,33 @@
  * limitations under the License.
  *@
 
-@import views.html.partials.create_case_button
 @import views.html.managementtools.{keywords_for_approval_table, all_keywords}
 @import views.html.components.heading
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.managementtools._
+@import controllers.v2.routes._
 
-@(manageKeywordsViewModel: ManageKeywordsViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+@import views.html.components.change_case_status_button
+
+@(manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 @heading(messages("Manage keywords"))
+
+@change_case_status_button(
+    "create-new-keyword",
+    "Create new keyword",
+    KeywordsController.displayManageKeywords()
+)
 
 <div id="manage-users-tabs" class="govuk-tabs" data-module="govuk-tabs">
     <ul class="govuk-tabs__list">
         <li class="govuk-tabs__list-item">
             <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
-                @messages("Approve keywords")
+                @messages(
+                    "management.manage-keywords.approve-tab-title",
+                    manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size
+                )
             </a>
         </li>
         <li class="govuk-tabs__list-item">
@@ -41,11 +52,12 @@
 
     <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
         <h2 class="heading-large mt-0">@messages("Keywords for approval")</h2>
-        @keywords_for_approval_table()
+        @keywords_for_approval_table(manageKeywordsViewModel.keywordsForApprovalTab)
 
     </div>
 
     <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.allKeywordsTab.elementId">
         <h2 class="heading-large mt-0">@messages("All keywords")</h2>
+        @all_keywords(manageKeywordsViewModel.allKeywordsTab, keywordForm)
     </div>
 </div>

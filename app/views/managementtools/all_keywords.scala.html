@@ -18,10 +18,29 @@
 @import config.AppConfig
 @import models.viewmodels.managementtools._
 @import controllers.routes.{AssignCaseController, CaseController}
+@import controllers.v2.routes._
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
 
-@()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import views.html.components.input_accessible_auto_complete
 
+@import views.html.components.change_case_status_button
+@(keywordsTabViewModel: KeywordsTabViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+<div class="column-three-quarters">
+ @input_accessible_auto_complete(
+  field = keywordForm("keyword"),
+  label = Some(messages("management.manage-keywords.search-all-keywords.label")),
+  hint = None,
+  autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
+  formControlClass = Some("w-100"),
+  useTabIndex = None
+ )
+</div>
+
+ @change_case_status_button(
+  "edit-keyword",
+  "Edit keyword",
+  KeywordsController.displayManageKeywords()
+ )

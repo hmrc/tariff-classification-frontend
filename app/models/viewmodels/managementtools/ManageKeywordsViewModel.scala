@@ -18,19 +18,26 @@ package models.viewmodels.managementtools
 
 import models._
 
-case class ManageKeywordsTab(tabMessageKey: String, elementId: String, searchResult: Paged[String])
+case class ManageKeywordsTab(tabMessageKey: String, elementId: String, searchResult: Paged[Keyword])
 
 case class ManageKeywordsViewModel(
   headingMessageKey: String,
   keywordsForApprovalTab: ManageKeywordsTab,
-  allKeywordsTab: ManageKeywordsTab
+  allKeywordsTab: KeywordsTabViewModel
 )
 
 object ManageKeywordsViewModel {
   def forManagedTeams(): ManageKeywordsViewModel =
     ManageKeywordsViewModel(
       "Manage keywords",
-      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(Seq("approval"))),
-      ManageKeywordsTab("allKeywords", "approved_tab", Paged(Seq("approved")))
+      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(Keywords.allKeywords.filter(k => !k.isApproved))),
+      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Keywords.allKeywords.toSeq)
     )
 }
+
+case class KeywordsTabViewModel(
+  tabMessageKey: String,
+  elementId: String,
+  keyword: Set[String],
+  globalKeywords: Seq[Keyword]
+)

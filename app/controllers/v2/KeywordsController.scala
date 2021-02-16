@@ -20,8 +20,10 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models.Permission
+import models.forms.KeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -33,13 +35,15 @@ class KeywordsController @Inject() (
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
+  val keywordForm: Form[String] = KeywordForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         manageKeywordsView(
           activeSubNav,
-          ManageKeywordsViewModel.forManagedTeams()
+          ManageKeywordsViewModel.forManagedTeams(),
+          keywordForm
         )
       )
     )

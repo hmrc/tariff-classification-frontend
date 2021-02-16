@@ -1158,3 +1158,7 @@ management.manage-users.heading = Manage users
 management.manage-users.tabSubHeading = {0} users
 
 management.manage-keywords-title=Manage keywords - Advance Tariff Rulings Case Manager - GOV.UK
+management.manage-keywords.approve-tab-title=Approve keywords ({0})
+
+management.manage-keywords.search-all-keywords.label=Rename or delete a keyword from the approved list
+
