@@ -20,48 +20,42 @@ import cats.syntax.traverse._
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
+import models._
 import models.request.AuthenticatedRequest
 import models.viewmodels._
-import models._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, EventsService}
+import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
 
 import scala.concurrent.{ExecutionContext, Future}
-import akka.stream.scaladsl.Source
-import akka.stream.Materializer
 
-class MyCasesController @Inject() (
+class ManageUserController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
-  eventsService: EventsService,
+  userService: UserService,
   mcc: MessagesControllerComponents,
-  val myCasesView: views.html.v2.my_cases_view
+  val viewUser: views.html.partials.users.view_user
 )(
   implicit val appConfig: AppConfig,
-  mat: Materializer
+  ec: ExecutionContext
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {
 
-  implicit val ec: ExecutionContext = mat.executionContext
-
-  def displayMyCases(activeSubNav: SubNavigationTab = AssignedToMeTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
+  def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {
-          cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
-          caseReferences = cases.results.map(_.reference).toSet
-          referralEventsByCase <- eventsService.findReferralEvents(caseReferences)
-          completeEventsByCase <- eventsService.findCompletionEvents(caseReferences)
-          myCaseStatuses = activeSubNav match {
-            case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
-            case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
-            case CompletedByMeTab => ApplicationsTab.completedByMe(cases.results, completeEventsByCase)
-          }
-        } yield Ok(myCasesView(myCaseStatuses, activeSubNav))
+          userTab <- userService.getUser(pid)
+          cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
+          userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
+        } yield userTab
+          .map(user => Ok(viewUser(user, userCaseTabs)))
+          .getOrElse(NotFound(views.html.user_not_found(pid)))
     }
+
 }

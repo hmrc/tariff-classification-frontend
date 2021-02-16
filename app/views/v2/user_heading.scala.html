@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package utils
+@this(
+)
 
-import java.time.format.DateTimeFormatter
-import java.time.{Duration, Instant, LocalDateTime, ZoneOffset}
+@(
+        username: String
+)(implicit messages: Messages)
 
-object Dates {
+<div id="case-heading" class="case-heading mt-5 mb-4">
 
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+    <div id="case-reference" class="case-reference">
+            Manage user
+    </div>
 
-  def format(instant: Instant): String =
-    formatter.format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC))
-
-  def format(instant: Option[Instant]): String =
-    instant.map(format).getOrElse("None")
-
-  def daysCount(instant: Instant) = Duration.between(instant, Instant.now()).toDays
-}
+    <h1 class="heading-xlarge case-title">
+        @username
+    </h1>
+</div>

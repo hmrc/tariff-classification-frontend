@@ -241,7 +241,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases" in {
       val url =
-        buildQueryUrl(withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED", assigneeId = "assignee", pag = TestPagination())
+        buildQueryUrl(
+          withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+          assigneeId   = "assignee",
+          pag          = TestPagination()
+        )
 
       stubFor(
         get(urlEqualTo(url))
@@ -262,7 +266,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases" in {
       val url =
-        buildQueryUrl(withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED", assigneeId = "assignee", pag = TestPagination())
+        buildQueryUrl(
+          withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+          assigneeId   = "assignee",
+          pag          = TestPagination()
+        )
 
       stubFor(
         get(urlEqualTo(url))
@@ -716,6 +724,86 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
   }
 
+  "Connector 'Find Completion Events'" should {
+    val ref = "id"
+
+    "return a list of events for the given case references" in {
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.completionEvents)
+          )
+      )
+
+      await(connector.findCompletionEvents(Set(ref))) shouldBe Events.completionEventsById
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "return empty list when case ref not found" in {
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.pagedEmpty)
+          )
+      )
+
+      await(connector.findCompletionEvents(Set(ref))) shouldBe Map.empty[String, Event]
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "Connector 'Find Referral Events'" should {
+    val ref = "id"
+
+    "return a list of events for the given case references" in {
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.referralEvents)
+          )
+      )
+
+      await(connector.findReferralEvents(Set(ref))) shouldBe Events.referralEventsById
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "return empty list when case ref not found" in {
+      stubFor(
+        get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(EventPayloads.pagedEmpty)
+          )
+      )
+
+      await(connector.findReferralEvents(Set(ref))) shouldBe Map.empty[String, Event]
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
   "Connector 'Get Assigned Cases'" should {
 
     "get assigned cases " in {
@@ -777,6 +865,79 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
     }
 
+  }
+
+  "Connector 'Update User'" should {
+
+    "update valid user" in {
+      val ref           = "PID1"
+      val validOperator = Cases.operatorWithPermissions.copy(id = ref)
+      val json          = Json.toJson(validOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/users/$ref"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(json)
+          )
+      )
+
+      await(connector.updateUser(validOperator)) shouldBe validOperator
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/users/$ref"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "update user with an unknown id" in {
+      val unknownId       = "unknownId"
+      val unknownOperator = Cases.operatorWithPermissions.copy(id = unknownId)
+      val json            = Json.toJson(unknownOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/users/$unknownId"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_NOT_FOUND)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.updateUser(unknownOperator))
+      }
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/users/$unknownId"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "create new user" in {
+    val operator = Operator("1")
+    val request  = Json.toJson(NewUserRequest(operator)).toString()
+    val response = Json.toJson(operator).toString()
+
+    stubFor(
+      post(urlEqualTo(s"/users"))
+        .withRequestBody(equalToJson(request))
+        .willReturn(
+          aResponse()
+            .withStatus(HttpStatus.SC_CREATED)
+            .withBody(response)
+        )
+    )
+
+    await(connector.createUser(operator)) shouldBe operator
+
+    verify(
+      postRequestedFor(urlEqualTo(s"/users"))
+        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+    )
   }
 
 }
