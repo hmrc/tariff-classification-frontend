@@ -17,14 +17,19 @@
 package views.v2
 
 import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{AppealTabViewModel, KeywordsTabViewModel, CaseViewModel, SampleStatusTabViewModel}
+import models.viewmodels.{ActivityViewModel, AppealTabViewModel, CaseViewModel, KeywordsTabViewModel, SampleStatusTabViewModel}
 import models._
+import models.request.AuthenticatedRequest
 import play.api.data.Form
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.{FakeHeaders, FakeRequest}
 import utils.Cases
 import utils.Cases._
+import utils.Notification._
 import views.ViewMatchers.{containElementWithID, containText}
 import views.ViewSpec
 import views.html.v2.liability_view
+import play.api.test.CSRFTokenHelper._
 
 class LiabilityViewSpec extends ViewSpec {
 
@@ -324,6 +329,42 @@ class LiabilityViewSpec extends ViewSpec {
       )
 
       doc shouldNot containElementWithID("appeal_tab")
+    }
+
+    "render notification banner when note was added" in {
+
+      val requestWithFlashKeywordSuccess: FakeRequest[AnyContentAsEmpty.type] =
+        FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty)
+          .withFlash(success("case.activity.note.success.text"))
+          .withCSRFToken
+          .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(
+        liabilityView(
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          None,
+          None,
+          sampleStatusTabViewModel,
+          Cases.activityTabViewModel,
+          activityForm,
+          None,
+          uploadAttachmentForm,
+          emptyKeywordsTabViewModel,
+          keywordForm,
+          appealTabViewModel
+        )(
+          AuthenticatedRequest(
+            authenticatedOperator,
+            requestWithFlashKeywordSuccess
+          ),
+          messages,
+          appConfig
+        )
+      )
+
+      doc should containElementWithID("govuk-notification-banner-title")
+
     }
   }
 }

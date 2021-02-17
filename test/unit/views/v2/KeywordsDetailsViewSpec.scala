@@ -18,10 +18,15 @@ package views.v2
 
 import models.Permission
 import models.forms.KeywordForm
+import models.request.AuthenticatedRequest
 import models.viewmodels.KeywordsTabViewModel
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.{FakeHeaders, FakeRequest}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.v2.keywords_details
+import utils.Notification._
+import play.api.test.CSRFTokenHelper._
 
 class KeywordsDetailsViewSpec extends ViewSpec {
 
@@ -89,6 +94,29 @@ class KeywordsDetailsViewSpec extends ViewSpec {
       )
 
       doc should containElementWithTag("form")
+
+    }
+
+    "render notification banner when keyword was added" in {
+
+      val requestWithFlashKeywordSuccess: FakeRequest[AnyContentAsEmpty.type] =
+        FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty)
+          .withFlash(success("notification.success.keywords.add"))
+          .withCSRFToken
+          .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+      val doc = view(
+        keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), KeywordForm.form, 0)(
+          AuthenticatedRequest(
+            authenticatedOperator.copy(permissions = Set(Permission.KEYWORDS)),
+            requestWithFlashKeywordSuccess
+          ),
+          messages,
+          appConfig
+        )
+      )
+
+      doc should containElementWithID("govuk-notification-banner-title")
 
     }
   }

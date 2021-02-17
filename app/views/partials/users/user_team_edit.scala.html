@@ -1,0 +1,74 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.v2.routes.ManageUserController
+@import models.Queues
+@import models.request.AuthenticatedRequest
+@import views.forms.components.CheckOption
+@import views.html.forms.components._
+@import views.html.includes.main
+@import views.html.partials.error_summary
+@import views.html.partials.back_link
+@import models.viewmodels.SubNavigationTab
+@import views.html.components.manager_tools_secondary_navigation
+@import models.viewmodels.ManagerToolsTab
+
+@this()
+
+@(
+        userDetails: Operator,
+        form: Form[Set[String]],
+        activeSubNav: SubNavigationTab
+)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+
+@getUserName = @{
+    userDetails.name match {
+        case Some(name) if name.trim.isEmpty => s"PID: [${userDetails.id}]"
+        case Some(name) => name
+        case None => s"PID: [${userDetails.id}]"
+    }
+}
+@main(bodyClasses = None, customTitle = Some(messages("users.user.edit_user.title")), customPrimaryNavTab = ManagerToolsTab) {
+    @manager_tools_secondary_navigation(activeSubNav)
+
+    @back_link()
+
+    @error_summary(form.errors)
+
+    <div class="user-edit-team mt-40">
+        <span class="heading-secondary"><span class="visuallyhidden">
+            This section is </span>
+        </span>@getUserName
+        <h1 id="user-team-edit-heading" class="heading-xlarge mt-0 mb-0">@messages("users.user.editUserTeams.heading",
+            getUserName
+        )</h1>
+    </div>
+
+    @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+        @helper.CSRF.formField
+
+        @input_checkbox_group(
+            field = form("memberOfTeams"),
+            options = Queues.allQueues.map(
+                queue => CheckOption(queue.name, queue.id, userDetails.memberOfTeams.contains(queue.id))
+            )
+        )
+        <button class="button" id="cancel_edit_user_teams-button" type="submit">Save changes</button>
+    }
+
+}

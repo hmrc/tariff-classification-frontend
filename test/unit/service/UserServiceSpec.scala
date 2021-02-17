@@ -53,6 +53,16 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     }
   }
 
+  "Get User" should {
+
+    "delegate to the connector" in {
+      given(connector.getUserDetails("PID")) willReturn successful(Some(operator))
+
+      await(service.getUser("PID")) shouldBe Some(operator)
+
+    }
+  }
+
   "Delete User" should {
     val oldUser     = mock[Operator]
     val updatedUser = mock[Operator]
