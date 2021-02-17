@@ -41,6 +41,7 @@ customTitle = Some(messages("users.user.delete.confirm", user.safeName)),
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)
+<div class="column-two-thirds mt-5">
 @back_link()
 @error_summary(form.errors)
 @delete_user_heading(user.safeName, true)
@@ -65,6 +66,6 @@ customPrimaryNavTab = ManagerToolsTab
 </div>
 }
 
-
+</div>
 }
 

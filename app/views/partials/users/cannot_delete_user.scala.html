@@ -39,14 +39,17 @@ customTitle = Some(messages("users.user.delete.casesMustBeMoved", user.safeName)
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)
-@back_link()
+<div class="column-two-thirds mt-5">
 
-@delete_user_heading(user.safeName, false)
+ @back_link()
 
-<p id="cases-must-be-moved">@messages("users.user.delete.casesMustBeMoved.message")</p>
+ @delete_user_heading(user.safeName, false)
 
-<div class="form-group">
- <a href="@routes.ManageUserController.displayUserDetails(user.id)" id="move-cases" class="button">Go back and move cases</a>
+ <p id="cases-must-be-moved">@messages("users.user.delete.casesMustBeMoved.message")</p>
+
+ <div class="form-group">
+  <a href="@routes.ManageUserController.displayUserDetails(user.id)" id="move-cases" class="button">Go back and move cases</a>
+ </div>
 </div>
 
 }
