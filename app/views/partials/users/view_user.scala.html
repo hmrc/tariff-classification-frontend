@@ -47,10 +47,11 @@ customPrimaryNavTab = ManagerToolsTab
 
 @user_heading(detailsTab.safeName)
 
+@if(detailsTab.id != request.operator.id){
 <div class="form-group">
     <a href="@routes.ManageUserController.deleteUser(detailsTab.id)" id="delete-user" role="button" class="button button-red">Delete user</a>
 </div>
-
+}
 <div class="form-groups">
 
 </div>

@@ -34,14 +34,14 @@ activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 
 @main(
 bodyClasses = None,
-customTitle = Some(messages("Manage user")),
+customTitle = Some(messages("users.user.delete.done", user)),
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)
 
 <div id="confirm_complete_id" class="column-two-thirds mt-30">
  <div class="govuk-panel govuk-panel--confirmation" data-gtm-vis-recent-on-screen-8267218_2337="228" data-gtm-vis-first-on-screen-8267218_2337="228" data-gtm-vis-total-visible-time-8267218_2337="100" data-gtm-vis-has-fired-8267218_2337="1">
-  <h2 class="heading-xlarge mt-0">Alex Smith deleted</h2>
+  <h1 class="heading-xlarge mt-0">@messages("users.user.delete.done", user)</h1>
  </div>
 
  <h3 class="heading-large mt-0 mb-2 pt-20">Next steps</h3>

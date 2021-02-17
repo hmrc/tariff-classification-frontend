@@ -37,7 +37,7 @@ activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 
 @main(
 bodyClasses = None,
-customTitle = Some(messages("Manage user")),
+customTitle = Some(messages("users.user.delete.confirm", user.safeName)),
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)

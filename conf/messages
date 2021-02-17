@@ -1200,3 +1200,4 @@ users.user.delete.casesMustBeMoved.message=This user's active cases must be move
 users.user.delete.confirm=Are you sure you want to delete {0}?
 users.user.delete.confirm.message=This user will be deleted but all their previous activity will be maintained.
 remove_user.form.state.required = Select yes if you want to delete this user
+users.user.delete.done={0} deleted
