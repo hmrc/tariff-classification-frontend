@@ -36,13 +36,24 @@ object CaseStatusRadioInput extends Enumerable.Implicits {
   case object Release extends CaseStatusRadioInput("release", ApplicationType.values)
   case object Suppress extends CaseStatusRadioInput("suppress", ApplicationType.values)
 
+  case object ApplicationWithdrawn extends CaseStatusRadioInput("application_withdrawn", Set(ATAR, LIABILITY))
+  case object ATaRRulingExists extends CaseStatusRadioInput("atar_ruling_already_exists", Set(ATAR, LIABILITY))
+  case object DuplicateApplication extends CaseStatusRadioInput("duplicate_application", Set(ATAR, LIABILITY))
+  case object NoInfoFromTrader extends CaseStatusRadioInput("no_information_from_trader", Set(ATAR, LIABILITY))
+  case object Other extends CaseStatusRadioInput("other", Set(ATAR, LIABILITY))
+
   private val changeCaseStatusValues: Seq[CaseStatusRadioInput]  = Seq(Complete, Refer, Reject, Suspend, MoveBackToQueue)
+  private val rejectedReasonValues: Seq[CaseStatusRadioInput]    = Seq(ApplicationWithdrawn, ATaRRulingExists, DuplicateApplication, NoInfoFromTrader, Other)
   private val releaseOrSuppressValues: Seq[CaseStatusRadioInput] = Seq(Release, Suppress)
 
   def changeCaseStatusOptionsFor(applicationType: ApplicationType): Seq[InputRadio] =
     changeCaseStatusValues.filter(_.validFor(applicationType)).map { value =>
       InputRadio("change_case_status", value.toString)
     }
+
+  val rejectedReasonOptions: Seq[InputRadio] = rejectedReasonValues.map { value =>
+    InputRadio("change_case_status.rejected", value.toString)
+  }
 
   val releaseOrSuppressOptions: Seq[InputRadio] = releaseOrSuppressValues.map { value =>
     InputRadio("change_case_status", value.toString)
