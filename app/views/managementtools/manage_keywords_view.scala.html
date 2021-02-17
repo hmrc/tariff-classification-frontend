@@ -29,7 +29,7 @@
 
 @(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title")), customPrimaryNavTab = ManagerToolsTab) {
+@main(bodyClasses = None, customTitle = Some(messages("management.manage-keywords-title")), customPrimaryNavTab = ManagerToolsTab) {
     @manager_tools_secondary_navigation(activeSubNav)
 
     @keywords_tab(manageKeywordsViewModel, keywordForm)

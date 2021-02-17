@@ -161,5 +161,5 @@ GET         /manager-tools                                       controllers.v2.
 
 GET        /users/manage-users                                      controllers.v2.ManageUsersController.displayManageUsers()
 
-GET        /keywords/manage-keywords                                controllers.v2.KeywordsController.displayManageKeywords()
+GET        /keywords/manage-keywords                                controllers.v2.ManageKeywordsController.displayManageKeywords()
 

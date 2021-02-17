@@ -25,39 +25,47 @@
 
 @(manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
-@heading(messages("Manage keywords"))
+    @heading(messages("management.manage-keywords.heading"))
 
-@change_case_status_button(
-    "create-new-keyword",
-    "Create new keyword",
-    KeywordsController.displayManageKeywords()
-)
+    @change_case_status_button(
+        "create-new-keyword",
+        messages("management.manage-keywords.create-new-keyword-button"),
+        ManageKeywordsController.displayManageKeywords()
+    )
 
-<div id="manage-users-tabs" class="govuk-tabs" data-module="govuk-tabs">
-    <ul class="govuk-tabs__list">
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
+    <div id="manage-users-tabs" class="govuk-tabs" data-module="govuk-tabs">
+        <ul class="govuk-tabs__list">
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
                 @messages(
                     "management.manage-keywords.approve-tab-title",
                     manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size
                 )
-            </a>
-        </li>
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.allKeywordsTab.elementId">
-                @messages("All keywords")
-            </a>
-        </li>
-    </ul>
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.allKeywordsTab.elementId">
+                @messages(
+                    "management.manage-keywords.all-tab-title",
+                  //TODO Make sure globalKeywords.size is correct and brings back all keywords approved/unapproved
+                    manageKeywordsViewModel.allKeywordsTab.globalKeywords.size
+                )
+                </a>
+            </li>
+        </ul>
 
-    <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
-        <h2 class="heading-large mt-0">@messages("Keywords for approval")</h2>
-        @keywords_for_approval_table(manageKeywordsViewModel.keywordsForApprovalTab)
+        <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
+            <h2 class="heading-large mt-0">@messages("management.manage-keywords.approve-tab.heading")</h2>
+            @{
+                manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size match {
+                    case 0 => "There are no keywords waiting for approval."
+                    case _ => keywords_for_approval_table(manageKeywordsViewModel.keywordsForApprovalTab)
+                }
+            }
+        </div>
 
+        <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.allKeywordsTab.elementId">
+            <h2 class="heading-large mt-0">@messages("management.manage-keywords.search-all-keywords.heading")</h2>
+            @all_keywords(manageKeywordsViewModel.allKeywordsTab, keywordForm)
+        </div>
     </div>
-
-    <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.allKeywordsTab.elementId">
-        <h2 class="heading-large mt-0">@messages("All keywords")</h2>
-        @all_keywords(manageKeywordsViewModel.allKeywordsTab, keywordForm)
-    </div>
-</div>

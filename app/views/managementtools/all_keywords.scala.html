@@ -17,30 +17,48 @@
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.managementtools._
-@import controllers.routes.{AssignCaseController, CaseController}
 @import controllers.v2.routes._
-
-@import play.twirl.api.TemplateMagic.defining
-@import views.html.partials.statuses.case_status
 
 @import views.html.components.input_accessible_auto_complete
 
 @import views.html.components.change_case_status_button
 @(keywordsTabViewModel: KeywordsTabViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<div class="column-three-quarters">
- @input_accessible_auto_complete(
-  field = keywordForm("keyword"),
-  label = Some(messages("management.manage-keywords.search-all-keywords.label")),
-  hint = None,
-  autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
-  formControlClass = Some("w-100"),
-  useTabIndex = None
- )
+<div class="govuk-form-group">
+    <div class="column-two-thirds">
+        @input_accessible_auto_complete(
+            field = keywordForm("keyword"),
+            label = Some(messages("management.manage-keywords.search-all-keywords.label")),
+            hint = None,
+            autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
+            formControlClass = Some("w-100"),
+            useTabIndex = None
+        )
+    </div>
+
+        @change_case_status_button(
+            "edit-keyword",
+            messages("management.manage-keywords.search-all-keywords.edit-keyword-button"),
+            ManageKeywordsController.displayManageKeywords()
+        )
+
 </div>
 
- @change_case_status_button(
-  "edit-keyword",
-  "Edit keyword",
-  KeywordsController.displayManageKeywords()
- )
+@*<div id="advanced_search_keywords">*@
+@*    <div class="display-inline w-75">*@
+@*        <label class="form-label" for="keyword_0">*@
+@*            <span>Search keyword</span>*@
+@*        </label>*@
+@*        <span class="form-hint">Add keywords to narrow your search, remove keywords to broaden results</span>*@
+@*    </div>*@
+@*    <div class="w-75 left display-inline">*@
+@*    @input_accessible_auto_complete(*@
+@*        field = form("keyword[0]"),*@
+@*        formControlClass = Some("w-100"),*@
+@*        autoCompleteOptions = keywords.diff(keywordsAdded(form))*@
+@*    )*@
+@*    </div>*@
+@*    <button id="advanced_search-add_keyword" class="button left ml-1" type="submit" name="addToSearch" value="true">*@
+@*                Add to search*@
+@*    </button>*@
+@*</div>*@

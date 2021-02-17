@@ -28,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-class KeywordsController @Inject() (
+class ManageKeywordsController @Inject()(
   verify: RequestActions,
   mcc: MessagesControllerComponents,
   val manageKeywordsView: views.html.managementtools.manage_keywords_view,
@@ -37,7 +37,7 @@ class KeywordsController @Inject() (
     with I18nSupport {
   val keywordForm: Form[String] = KeywordForm.form
 
-  def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         manageKeywordsView(
