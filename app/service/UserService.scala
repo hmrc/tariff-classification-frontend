@@ -50,6 +50,6 @@ class UserService @Inject() (
   ): Future[Operator] =
     for {
       deleted <- connector.markDeleted(user)
-      _ = auditService.auditUserUpdated(deleted, operatorMakingTheChange)
+      _ = auditService.auditUserDeleted(deleted, operatorMakingTheChange)
     } yield deleted
 }
