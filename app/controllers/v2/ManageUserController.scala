@@ -34,6 +34,7 @@ import models.forms.v2.RemoveUserForm
 import play.api.data.Form
 import javax.inject.{Inject}
 import scala.concurrent.Future.successful
+import scala.concurrent.Future
 
 class ManageUserController @Inject() (
   verify: RequestActions,

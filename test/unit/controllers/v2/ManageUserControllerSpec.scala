@@ -20,8 +20,9 @@ import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.{when}
+import org.mockito.Mockito.when
 import play.api.http.Status
+import play.api.mvc.Result
 import play.api.test.Helpers._
 import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
