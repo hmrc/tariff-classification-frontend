@@ -74,7 +74,7 @@
               class="form-control"
               type="checkbox"
               id="@{s"liability-${form("casesToMove").id}-$index"}"
-      name="liability-@{form("casesToMove").name}[@index]"
+      name="@{form("casesToMove").name}[@index]"
       value="@{result.reference}"
       @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
       />

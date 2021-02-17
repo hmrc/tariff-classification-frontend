@@ -18,7 +18,9 @@ package controllers.v2
 
 import com.google.inject.Inject
 import config.AppConfig
+import connector.DataCacheConnector
 import controllers.RequestActions
+import controllers.routes.SecurityController
 import models._
 import models.forms.v2.{MoveCasesForm, UserEditTeamForm}
 import models.request.AuthenticatedRequest
@@ -30,11 +32,13 @@ import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.http.HeaderNames
 
 class MoveCasesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   userService: UserService,
+  dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents
 )(
   implicit val appConfig: AppConfig,
@@ -44,8 +48,30 @@ class MoveCasesController @Inject() (
     with Logging {
 
   private val moveATaRCasesForm = MoveCasesForm.moveCasesForm
+  private val MoveCasesCacheKey = "move_cases"
+  private val ChosenCases       = "chosen_cases"
+
+  def chooseUserOrTeam(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
+      MoveCasesCacheKey
+    )).async { implicit request =>
+      import play.api.libs.json.Json
+      Future.successful(Ok(Json.toJson(request.userAnswers.get[Set[String]](ChosenCases))))
+    }
 
   def postMoveCases(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request => ???)
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      val userAnswers = UserAnswers(MoveCasesCacheKey)
+      moveATaRCasesForm
+        .bindFromRequest()
+        .fold(
+          // There is no form validation so this should not be possible
+          errors => Future.successful(Redirect(request.headers(HeaderNames.REFERER))),
+          cases =>
+            for {
+              _ <- dataCacheConnector.save(userAnswers.set(ChosenCases, cases).cacheMap)
+            } yield Redirect(routes.MoveCasesController.chooseUserOrTeam())
+        )
+    }
 
 }

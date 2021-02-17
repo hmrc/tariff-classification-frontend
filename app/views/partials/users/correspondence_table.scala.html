@@ -71,7 +71,7 @@
               class="form-control"
               type="checkbox"
               id="@{s"corr-${form("casesToMove").id}-$index"}"
-              name="corr-@{form("casesToMove").name}[@index]"
+              name="@{form("casesToMove").name}[@index]"
               value="@{result.reference}"
               @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
       />
