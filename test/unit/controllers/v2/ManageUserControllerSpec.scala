@@ -24,7 +24,7 @@ import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import service.{CasesService, EventsService, UserService}
+import service.{CasesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.partials.users._
@@ -37,7 +37,6 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
   private val casesService             = mock[CasesService]
   private val userService              = mock[UserService]
-  private val eventService             = mock[EventsService]
   private lazy val user_team_edit      = injector.instanceOf[user_team_edit]
   private lazy val view_user           = injector.instanceOf[view_user]
   private lazy val cannot_delete_user  = injector.instanceOf[cannot_delete_user]
@@ -48,7 +47,6 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     new ManageUserController(
       new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
       casesService,
-      eventService,
       userService,
       mcc,
       user_team_edit,

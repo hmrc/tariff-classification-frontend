@@ -25,7 +25,7 @@ import models.viewmodels._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, EventsService, UserService}
+import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
 
@@ -39,7 +39,6 @@ import scala.concurrent.Future
 class ManageUserController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
-  eventsService: EventsService,
   userService: UserService,
   mcc: MessagesControllerComponents,
   val user_team_edit: views.html.partials.users.user_team_edit,
