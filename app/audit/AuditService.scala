@@ -184,13 +184,10 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditUserUpdated(oldOperator: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
+  def auditUserUpdated(operatorToUpdate: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = UserUpdated,
-      auditPayload = Map(
-        "operatorUpdating" -> operatorUpdating.id,
-        "operatorId"       -> oldOperator.id
-      )
+      auditPayload   = baseUserAuditPayload(operatorToUpdate, operatorUpdating)
     )
 
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] =
@@ -206,6 +203,12 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     Map(
       "caseReference" -> c.reference,
       "operatorId"    -> operator.id
+    )
+
+  private def baseUserAuditPayload(operatorToUpdate: Operator, operatorUpdating: Operator): Map[String, String] =
+    Map(
+      "operatorToUpdate" -> operatorToUpdate.id,
+      "operatorUpdating" -> operatorUpdating.id
     )
 
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])(

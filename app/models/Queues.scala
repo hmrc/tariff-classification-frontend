@@ -49,4 +49,5 @@ object Queues {
     queuesByType.get(applicationType).getOrElse(List.empty)
 
   def queueById(id: String): Option[Queue] = allQueues.find(queue => queue.id == id)
+
 }

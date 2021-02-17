@@ -21,14 +21,14 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
+import models.forms.v2.UserEditTeamForm
 import models.forms.v2.MoveCasesForm
 import models.request.AuthenticatedRequest
 import models.viewmodels._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, EventsService, UserService}
-import uk.gov.hmrc.http.HeaderCarrier
+import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
 
@@ -39,13 +39,16 @@ class ManageUserController @Inject() (
   casesService: CasesService,
   userService: UserService,
   mcc: MessagesControllerComponents,
-  val viewUser: views.html.partials.users.view_user
+  val viewUser: views.html.partials.users.view_user,
+  val user_team_edit: views.html.partials.users.user_team_edit
 )(
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {
+
+  private val userEditTeamForm = UserEditTeamForm.editTeamsForm
 
   private val moveATaRCasesForm           = MoveCasesForm.moveCasesForm
   private val moveLiabilityCasesForm      = MoveCasesForm.moveCasesForm
@@ -62,6 +65,32 @@ class ManageUserController @Inject() (
         } yield userTab
           .map(user => Ok(viewUser(user, userCaseTabs, moveATaRCasesForm)))
           .getOrElse(NotFound(views.html.user_not_found(pid)))
+    }
+
+  def editUserTeamDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
+      implicit request: AuthenticatedRequest[AnyContent] =>
+        userService
+          .getUser(pid)
+          .map {
+            case Some(userDetails) =>
+              Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet), activeSubNav))
+            case _ => NotFound(views.html.user_not_found(pid))
+          }
+    }
+
+  def postEditUserTeams(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      userEditTeamForm.bindFromRequest.fold(
+        formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors, activeSubNav))),
+        updatedMemberOfTeams =>
+          userService
+            .getUser(pid)
+            .map(user =>
+              userService.updateUser(user.get.copy(memberOfTeams = updatedMemberOfTeams.toSeq), request.operator)
+            )
+            .map(_ => Redirect(routes.ManageUserController.displayUserDetails(pid)))
+      )
     }
 
   def postMoveCases(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =

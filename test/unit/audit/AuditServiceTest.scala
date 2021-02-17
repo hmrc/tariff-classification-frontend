@@ -59,6 +59,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
         .sendExplicitAudit(refEq("caseCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
+
   "Service 'audit case assigned'" should {
 
     "Delegate to connector" in {
@@ -457,6 +458,19 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       verify(connector)
         .sendExplicitAudit(refEq("caseMessage"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
+  }
+
+  "Service 'audit User Updated'" in {
+    val operatorToUpdate = Operator("PID")
+
+    service.auditUserUpdated(operatorToUpdate, operator)
+
+    val payload = Map(
+      "operatorToUpdate" -> operatorToUpdate.id,
+      "operatorUpdating"       -> operator.id
+    )
+    verify(connector)
+      .sendExplicitAudit(refEq("userUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
   }
 
   private def caseCreatedAudit(caseReference: String, operatorId: String, comment: String): Map[String, String] =
