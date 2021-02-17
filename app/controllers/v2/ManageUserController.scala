@@ -77,15 +77,14 @@ class ManageUserController @Inject() (
           userCases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           user      <- userService.getUser(pid)
         } yield {
-          user.isDefined match {
-            case true => {
-              if (userCases.results.nonEmpty) {
-                Ok(cannotDeleteUser(user.get))
-              } else {
-                Ok(confirmDeleteUser(user.get, removeUserForm))
-              }
+          if (user.isDefined) {
+            (user.get.id, userCases.results.nonEmpty) match {
+              case (request.operator.id, _) => Redirect(controllers.routes.SecurityController.unauthorized())
+              case (_, true)                => Ok(cannotDeleteUser(user.get))
+              case (_, _)                   => Ok(confirmDeleteUser(user.get, removeUserForm))
             }
-            case _ => NotFound(views.html.user_not_found(pid))
+          } else {
+            NotFound(views.html.user_not_found(pid))
           }
 
         }
