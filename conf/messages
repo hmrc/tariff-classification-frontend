@@ -1194,4 +1194,8 @@ users.user.details.role.hint.gateway=Assign ATaR cases. Create and assign Liabil
 users.user.details.role.hint.manager=Manage users, cases and keywords for assigned teams.
 users.user.details.role.hint.classificationAndGateway=Assign and manage ATaR cases. Create, assign and manage Liability, Correspondence and Miscellaneous cases.
 
+users.user.edit_user.title=Edit team for user
 users.user.noCases=There are no {0} cases assigned to this user.
+users.user.editUserTeams.heading=Assign {0} to a team or teams
+
+

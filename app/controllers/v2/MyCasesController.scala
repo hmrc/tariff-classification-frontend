@@ -16,7 +16,7 @@
 
 package controllers.v2
 
-import cats.syntax.traverse._
+
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
@@ -27,11 +27,11 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService}
-import uk.gov.hmrc.http.HeaderCarrier
+
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
-import akka.stream.scaladsl.Source
+import scala.concurrent.ExecutionContext
+
 import akka.stream.Materializer
 
 class MyCasesController @Inject() (
