@@ -50,10 +50,7 @@ class ManageUserController @Inject() (
 
   private val userEditTeamForm = UserEditTeamForm.editTeamsForm
 
-  private val moveATaRCasesForm           = MoveCasesForm.moveCasesForm
-  private val moveLiabilityCasesForm      = MoveCasesForm.moveCasesForm
-  private val moveMiscCasesForm           = MoveCasesForm.moveCasesForm
-  private val moveCorrespondenceCasesForm = MoveCasesForm.moveCasesForm
+  private val moveATaRCasesForm = MoveCasesForm.moveCasesForm
 
   def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
@@ -92,8 +89,5 @@ class ManageUserController @Inject() (
             .map(_ => Redirect(routes.ManageUserController.displayUserDetails(pid)))
       )
     }
-
-  def postMoveCases(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request => ???)
 
 }
