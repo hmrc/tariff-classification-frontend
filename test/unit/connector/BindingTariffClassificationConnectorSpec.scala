@@ -963,4 +963,54 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     )
   }
 
+  "Connector 'delete User'" should {
+
+    "delete valid user" in {
+      val ref           = "PID1"
+      val validOperator = Cases.operatorWithPermissions.copy(id = ref)
+      val json          = Json.toJson(validOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/mark-deleted/users/$ref"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(json)
+          )
+      )
+
+      await(connector.markDeleted(validOperator)) shouldBe validOperator
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/mark-deleted/users/$ref"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "delete user with an unknown id" in {
+      val unknownId       = "unknownId"
+      val unknownOperator = Cases.operatorWithPermissions.copy(id = unknownId)
+      val json            = Json.toJson(unknownOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/mark-deleted/users/$unknownId"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_NOT_FOUND)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.markDeleted(unknownOperator))
+      }
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/mark-deleted/users/$unknownId"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
 }

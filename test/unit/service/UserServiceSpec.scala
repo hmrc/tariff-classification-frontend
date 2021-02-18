@@ -62,4 +62,16 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
     }
   }
+
+  "Delete User" should {
+    val oldUser     = mock[Operator]
+    val updatedUser = mock[Operator]
+    val manager     = mock[Operator]
+
+    "delegate to connector" in {
+      given(connector.markDeleted(refEq(oldUser))(any[HeaderCarrier])) willReturn successful(updatedUser)
+
+      await(service.markDeleted(oldUser, manager)) shouldBe updatedUser
+    }
+  }
 }

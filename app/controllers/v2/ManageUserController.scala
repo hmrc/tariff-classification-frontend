@@ -16,8 +16,6 @@
 
 package controllers.v2
 
-import cats.syntax.traverse._
-import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
@@ -32,18 +30,26 @@ import service.{CasesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext}
+import models.forms.v2.RemoveUserForm
+import play.api.data.Form
+import javax.inject.{Inject}
+import scala.concurrent.Future.successful
+import scala.concurrent.Future
 
 class ManageUserController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   userService: UserService,
   mcc: MessagesControllerComponents,
+  val user_team_edit: views.html.partials.users.user_team_edit,
   val viewUser: views.html.partials.users.view_user,
-  val user_team_edit: views.html.partials.users.user_team_edit
+  val cannotDeleteUser: views.html.partials.users.cannot_delete_user,
+  val confirmDeleteUser: views.html.partials.users.confirm_delete_user,
+  val doneDeleteUserPage: views.html.partials.users.done_delete_user,
+  implicit val appConfig: AppConfig
 )(
-  implicit val appConfig: AppConfig,
-  ec: ExecutionContext
+  implicit val ec: ExecutionContext
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {
@@ -51,6 +57,8 @@ class ManageUserController @Inject() (
   private val userEditTeamForm = UserEditTeamForm.editTeamsForm
 
   private val moveATaRCasesForm = MoveCasesForm.moveCasesForm
+
+  private lazy val removeUserForm: Form[Boolean] = RemoveUserForm.form
 
   def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
@@ -62,6 +70,63 @@ class ManageUserController @Inject() (
         } yield userTab
           .map(user => Ok(viewUser(user, userCaseTabs, moveATaRCasesForm)))
           .getOrElse(NotFound(views.html.user_not_found(pid)))
+    }
+
+  def deleteUser(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
+      implicit request: AuthenticatedRequest[AnyContent] =>
+        for {
+          userCases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
+          user      <- userService.getUser(pid)
+        } yield {
+          if (user.isDefined) {
+            (user.get.id, userCases.results.nonEmpty) match {
+              case (request.operator.id, _) => Redirect(controllers.routes.SecurityController.unauthorized())
+              case (_, true)                => Ok(cannotDeleteUser(user.get))
+              case (_, _)                   => Ok(confirmDeleteUser(user.get, removeUserForm))
+            }
+          } else {
+            NotFound(views.html.user_not_found(pid))
+          }
+
+        }
+    }
+
+  def confirmRemoveUser(pid: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(
+      Permission.MANAGE_USERS
+    )).async(implicit request =>
+      removeUserForm
+        .bindFromRequest()
+        .fold(
+          errors =>
+            for {
+              user <- userService.getUser(pid)
+            } yield user
+              .map(u => Ok(confirmDeleteUser(u, errors)))
+              .getOrElse(NotFound(views.html.user_not_found(pid))), {
+            case true =>
+              for {
+                user <- userService.getUser(pid)
+              } yield {
+                user
+                  .map { u =>
+                    userService.markDeleted(u, request.operator)
+                    Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(u.safeName))
+                  }
+                  .getOrElse(NotFound(views.html.user_not_found(pid)))
+              }
+            case _ =>
+              successful(
+                Redirect(controllers.v2.routes.ManageUserController.displayUserDetails(pid))
+              )
+          }
+        )
+    )
+
+  def doneDeleteUser(userName: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)) {
+      implicit request: AuthenticatedRequest[AnyContent] => Ok(doneDeleteUserPage(userName))
     }
 
   def editUserTeamDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =

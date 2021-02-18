@@ -54,12 +54,12 @@ a.button-gray, button.button-gray, .button-gray:visited {
 }
 
 a.button-red, button.button-red, .button-red:visited {
-  background-color: $red;
+  background-color: $red !important;
   color: white !important;
   box-shadow: 0 2px 0 $red-very-dark;
 
   &:hover, &:focus {
-    background-color: $red-dark;
+    background-color: $red-dark !important;
     color: $white;
   }
 }
