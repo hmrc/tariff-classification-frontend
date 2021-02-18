@@ -39,16 +39,11 @@ class AssignCaseViewSpec extends ViewSpec {
       val doc = view(assign_case(c, form))
 
       // Then
-      doc should containElementWithID("assign_case-unassigned_heading")
       doc shouldNot containElementWithID("assign_case-assigned_heading")
 
-      doc should containElementWithID("assign_case-assign_button")
+      doc                                  should containElementWithID("take-ownership")
+      doc.getElementById("take-ownership") should haveAttribute("action", routes.AssignCaseController.post("REF").url)
 
-      doc should containElementWithID("assign_case-continue_button")
-      doc.getElementById("assign_case-continue_button") should haveAttribute(
-        "href",
-        routes.CaseController.get("REF").url
-      )
       doc should containElementWithID("back-link")
     }
 
