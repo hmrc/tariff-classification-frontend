@@ -1196,5 +1196,5 @@ users.user.edit_user.title=Edit team for user
 users.user.noCases=There are no {0} cases assigned to this user.
 users.user.editUserTeams.heading=Assign {0} to a team or teams
 
-take-ownership.form.state.required=Select the option
+take-ownership.form.state.required=Select yes if you want to take ownership of this case
 

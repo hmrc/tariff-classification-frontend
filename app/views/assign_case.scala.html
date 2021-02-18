@@ -38,12 +38,11 @@
 <div class="column-two-thirds pl-0">
     @case_heading(c)
 
-    <h2 id="assign_case-heading" class="heading-large mt-0">
-        @if(c.assignee.isDefined) {
+    @if(c.assignee.isDefined) {
+        <h2 id="assign_case-heading" class="heading-large mt-0">
             <span id="assign_case-assigned_heading">@messages("case.ownership.assign_case.assigned", assignee(c.assignee.get))</span>
-        }
-    </h2>
-
+        </h2>
+    }
     @if(c.assignee.isEmpty) {
         <p>@messages("case.ownership.assign_case.description")</p>
 
@@ -51,11 +50,10 @@
             @helper.CSRF.formField
 
     @input_radiogroup(
-    field = form("state"),
-    options = Seq(RadioOption("true", messages("case.ownership.assign_case.submit")), RadioOption("false", messages("case.ownership.assign_case.view_only"))),
-    id = "take-ownership",
-    preSelect = false,
-    labelClass = Some ("heading-large")
+        field = form("state"),
+        options = Seq(RadioOption("true", messages("case.ownership.assign_case.submit")), RadioOption("false", messages("case.ownership.assign_case.view_only"))),
+        id = "take-ownership",
+        preSelect = false
     )
 
     <div>
