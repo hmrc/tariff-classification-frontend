@@ -33,7 +33,7 @@ class UserService @Inject()(
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
-  def getAllUsers(role: Role, team: String, pagination: Pagination)(
+  def getAllUsers(role: Seq[Role], team: String, pagination: Pagination)(
     implicit hc: HeaderCarrier): Future[Paged[Operator]] =
     connector.getAllUsers(role, team, pagination)
 

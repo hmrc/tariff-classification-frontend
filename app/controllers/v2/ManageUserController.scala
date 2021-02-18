@@ -62,7 +62,7 @@ class ManageUserController @Inject()(
           val managerQueues = manager.memberOfTeams.flatMap(id => Queues.queueById(id))
 
           for {
-            allUsers          <- userService.getAllUsers(Role.CLASSIFICATION_OFFICER, "", NoPagination())
+            allUsers          <- userService.getAllUsers(Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER), "", NoPagination())
             managerTeamsCases <- casesService.getCasesByAllQueues(managerQueues, NoPagination(), assignee = assignedCases)
             usersWithCount    = managerTeamsCases.results.toList
               .groupBy(singleCase => singleCase.assignee.map(_.id).getOrElse(Unassigned))

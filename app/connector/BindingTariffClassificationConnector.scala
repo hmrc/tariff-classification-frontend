@@ -234,10 +234,11 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Seq[ReportResult]](url)
     }
 
-  def getAllUsers(roles: Role, team: String, pagination: Pagination)(
+  def getAllUsers(roles: Seq[Role], team: String, pagination: Pagination)(
     implicit hc: HeaderCarrier): Future[Paged[Operator]] =
     withMetricsTimerAsync("get-all-users") { _ =>
-      val searchParam = s"role=$roles&member_of_teams=$team"
+
+      val searchParam = s"role=${roles.mkString(",")}&member_of_teams=$team"
       val url =
         s"${appConfig.bindingTariffClassificationUrl}/users?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
 
