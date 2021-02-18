@@ -53,18 +53,23 @@ lazy val microservice = (project in file("."))
     javaOptions in Test += "-Xmx1G",
     addTestReportOption(Test, "test-reports")
   )
-  .settings(TwirlKeys.templateImports ++= Seq(
-    "play.twirl.api.HtmlFormat"
-  ))
-  .settings(RoutesKeys.routesImport ++= Seq(
-    "models.Sort",
-    "models.Search",
-    "models.ApplicationType",
-    "models.viewmodels.AssignedToMeTab",
-    "models.viewmodels.ATaRTab",
-    "models.viewmodels.SubNavigationTab",
-    "models.viewmodels.ManagerToolsReportsTab"
-  ))
+  .settings(
+    TwirlKeys.templateImports ++= Seq(
+      "play.twirl.api.HtmlFormat"
+    )
+  )
+  .settings(
+    RoutesKeys.routesImport ++= Seq(
+      "models.Sort",
+      "models.Search",
+      "models.ApplicationType",
+      "models.viewmodels.AssignedToMeTab",
+      "models.viewmodels.ATaRTab",
+      "models.viewmodels.SubNavigationTab",
+      "models.viewmodels.ManagerToolsReportsTab",
+      "models.viewmodels.ManagerToolsUsersTab"
+    )
+  )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(ScalafmtPlugin.scalafmtConfigSettings))
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)

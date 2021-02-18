@@ -16,23 +16,23 @@
 
 package connector
 
-import com.google.inject.Inject
-import com.kenshoo.play.metrics.Metrics
-import javax.inject.Singleton
-import play.api.mvc.QueryStringBindable
-import uk.gov.hmrc.http.HeaderCarrier
-import config.AppConfig
-import metrics.HasMetrics
-import models.ApplicationType
-import models.CaseStatus._
-import models.EventType.EventType
-import models._
-import models.request.NewEventRequest
-import scala.concurrent.{ExecutionContext, Future}
-import utils.JsonFormatters._
-import uk.gov.hmrc.http.HttpReads.Implicits._
 import akka.stream.scaladsl.Source
 import akka.stream.Materializer
+import com.google.inject.Inject
+import com.kenshoo.play.metrics.Metrics
+import config.AppConfig
+import javax.inject.Singleton
+import metrics.HasMetrics
+import models._
+import models.CaseStatus._
+import models.EventType.EventType
+import models.request.NewEventRequest
+import play.api.mvc.QueryStringBindable
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.JsonFormatters._
+
+import scala.concurrent.{ExecutionContext, Future}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 @Singleton
 class BindingTariffClassificationConnector @Inject() (
@@ -147,7 +147,7 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[Event]](url)
     }
 
-  private def latestEventByCase(events: Seq[Event]): Map[String, Event] = {
+  private def latestEventByCase(events: Seq[Event]): Map[String, Event] =
     events
       .groupBy(_.caseReference)
       .flatMap {
@@ -158,7 +158,6 @@ class BindingTariffClassificationConnector @Inject() (
             .map(event => event.caseReference -> event)
             .toMap
       }
-  }
 
   def findReferralEvents(references: Set[String])(
     implicit hc: HeaderCarrier
@@ -171,7 +170,8 @@ class BindingTariffClassificationConnector @Inject() (
         .grouped(batchSize)
         .mapAsync(Runtime.getRuntime().availableProcessors()) { ids =>
           val searchParam = s"case_reference=${ids.mkString(",")}&type=${EventType.CASE_REFERRAL}"
-          val url = s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
+          val url =
+            s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
           client.GET[Paged[Event]](url)
         }
         .runFold(Map.empty[String, Event]) {
@@ -191,7 +191,8 @@ class BindingTariffClassificationConnector @Inject() (
         .grouped(batchSize)
         .mapAsync(Runtime.getRuntime().availableProcessors()) { ids =>
           val searchParam = s"case_reference=${ids.mkString(",")}&type=${EventType.CASE_COMPLETED}"
-          val url = s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
+          val url =
+            s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
           client.GET[Paged[Event]](url)
         }
         .runFold(Map.empty[String, Event]) {
@@ -228,6 +229,24 @@ class BindingTariffClassificationConnector @Inject() (
     withMetricsTimerAsync("generate-report") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/report?${CaseReport.bindable.unbind("", report)}"
       client.GET[Seq[ReportResult]](url)
+    }
+
+  def updateUser(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("update-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users/${o.id}"
+      client.PUT[Operator, Operator](url = url, body = o)
+    }
+
+  def getUserDetails(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =
+    withMetricsTimerAsync("get-user-details") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users/$id"
+      client.GET[Option[Operator]](url = url)
+    }
+
+  def createUser(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("create-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users"
+      client.POST[NewUserRequest, Operator](url, NewUserRequest(operator))
     }
 
 }

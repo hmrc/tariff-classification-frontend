@@ -161,3 +161,7 @@ GET         /manager-tools                                       controllers.v2.
 
 GET        /users/manage-users                                      controllers.v2.ManageUsersController.displayManageUsers()
 
+GET        /users/user/:pid/user-edit-team                       controllers.v2.ManageUserController.editUserTeamDetails(pid: String)
+POST       /users/user/:pid/user-edit-team                       controllers.v2.ManageUserController.postEditUserTeams(pid: String)
+GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetails(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
