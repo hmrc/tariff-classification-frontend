@@ -39,8 +39,8 @@
             @input_accessible_auto_complete(
             field = keywordForm("keyword"),
             formControlClass = Some("w-100"),
-            placeholder = Some("Start typing to search for a keyword"),
-            autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword)
+            autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
+            placeholder = Some("Start typing to search for a keyword")
             )
         </div>
         <button id="advanced_search-add_keyword" class="button left ml-1" type="submit" name="addToSearch" value="true">

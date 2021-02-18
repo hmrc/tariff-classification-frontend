@@ -6,6 +6,8 @@ $gray: #dee0e2;
 $gray-dark: #57585C;
 $gray-very-dark: #6F777B;
 $grey-text: #626a6e;
+$red-dark: #aa2a16;
+$red-very-dark: #55150b;
 
 
 .text-red {
@@ -48,5 +50,16 @@ a.button-gray, button.button-gray, .button-gray:visited {
   &:hover, &:focus {
     background-color: $gray-dark;
     color: $black;
+  }
+}
+
+a.button-red, button.button-red, .button-red:visited {
+  background-color: $red;
+  color: white !important;
+  box-shadow: 0 2px 0 $red-very-dark;
+
+  &:hover, &:focus {
+    background-color: $red-dark;
+    color: $white;
   }
 }

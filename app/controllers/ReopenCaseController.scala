@@ -23,6 +23,7 @@ import config.AppConfig
 import models.request.AuthenticatedCaseRequest
 import models.{ApplicationType, Permission}
 import service.CasesService
+import utils.Notification._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -46,6 +47,6 @@ class ReopenCaseController @Inject() (
         casesService
           .reopenCase(request.`case`, request.operator)
           .map(updatedCase => routes.CaseController.get(updatedCase.reference))
-      )
+      ).map(result => result.flashing(success("notification.success.referral.off")))
     }
 }
