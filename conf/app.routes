@@ -166,6 +166,7 @@ POST       /users/user/:pid/user-edit-team                       controllers.v2.
 GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetails(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
 
-POST        /users/move/move-cases                                      controllers.v2.MoveCasesController.postMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
-GET         /users/move/move-cases                                      controllers.v2.MoveCasesController.chooseUserOrTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-selected-cases                      controllers.v2.MoveCasesController.postMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET         /users/move/move-cases                               controllers.v2.MoveCasesController.chooseUserOrTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases                               controllers.v2.MoveCasesController.postTeamOrUserChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 

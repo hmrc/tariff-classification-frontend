@@ -22,7 +22,7 @@ import connector.DataCacheConnector
 import controllers.RequestActions
 import controllers.routes.SecurityController
 import models._
-import models.forms.v2.{MoveCasesForm, UserEditTeamForm}
+import models.forms.v2.{MoveCasesForm, TeamOrUserForm}
 import models.request.AuthenticatedRequest
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
 import play.api.Logging
@@ -39,7 +39,8 @@ class MoveCasesController @Inject() (
   casesService: CasesService,
   userService: UserService,
   dataCacheConnector: DataCacheConnector,
-  mcc: MessagesControllerComponents
+  mcc: MessagesControllerComponents,
+  val teamOrUserPage: views.html.partials.users.move_cases_team_or_user
 )(
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
@@ -50,13 +51,14 @@ class MoveCasesController @Inject() (
   private val moveATaRCasesForm = MoveCasesForm.moveCasesForm
   private val MoveCasesCacheKey = "move_cases"
   private val ChosenCases       = "chosen_cases"
+  private val teamOrUserForm    = TeamOrUserForm.form
 
   def chooseUserOrTeam(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
-    )).async { implicit request =>
-      import play.api.libs.json.Json
-      Future.successful(Ok(Json.toJson(request.userAnswers.get[Set[String]](ChosenCases))))
+    )) { implicit request =>
+      val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
+      Ok(teamOrUserPage(caseNumber, teamOrUserForm))
     }
 
   def postMoveCases(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
@@ -73,5 +75,8 @@ class MoveCasesController @Inject() (
             } yield Redirect(routes.MoveCasesController.chooseUserOrTeam())
         )
     }
+
+  def postTeamOrUserChoice(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request => ???)
 
 }
