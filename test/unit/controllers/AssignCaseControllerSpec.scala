@@ -71,7 +71,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("case-heading")
+      bodyOf(result)        should include("assign_case-heading")
     }
 
     "redirect to Case Index for cases assigned to self" in {
