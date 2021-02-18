@@ -22,7 +22,7 @@ import connector.DataCacheConnector
 import controllers.RequestActions
 import controllers.routes.SecurityController
 import models._
-import models.forms.v2.{MoveCasesForm, TeamOrUserForm}
+import models.forms.v2.{MoveCasesForm, TeamOrUser, TeamOrUserForm, TeamToMoveCaseForm}
 import models.request.AuthenticatedRequest
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
 import play.api.Logging
@@ -34,13 +34,16 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.http.HeaderNames
 
+import scala.concurrent.Future.successful
+
 class MoveCasesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   userService: UserService,
   dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
-  val teamOrUserPage: views.html.partials.users.move_cases_team_or_user
+  val teamOrUserPage: views.html.partials.users.move_cases_team_or_user,
+  val chooseTeamPage: views.html.partials.users.move_cases_choose_team
 )(
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
@@ -51,7 +54,9 @@ class MoveCasesController @Inject() (
   private val moveATaRCasesForm = MoveCasesForm.moveCasesForm
   private val MoveCasesCacheKey = "move_cases"
   private val ChosenCases       = "chosen_cases"
+  private val ChosenTeam        = "chosen_team"
   private val teamOrUserForm    = TeamOrUserForm.form
+  private val chooseTeamForm    = TeamToMoveCaseForm.form
 
   def chooseUserOrTeam(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
@@ -77,6 +82,62 @@ class MoveCasesController @Inject() (
     }
 
   def postTeamOrUserChoice(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request => ???)
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
+      MoveCasesCacheKey
+    )) { implicit request =>
+      val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
+      teamOrUserForm
+        .bindFromRequest()
+        .fold(
+          errors => Ok(teamOrUserPage(caseNumber, errors)),
+          choice =>
+            choice match {
+              case TeamOrUser.TEAM => Redirect(routes.MoveCasesController.chooseTeamToMoveCases())
+              case _               => ???
+            }
+        )
+
+    }
+
+  def chooseTeamToMoveCases(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
+      MoveCasesCacheKey
+    )) { implicit request =>
+      val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
+      Ok(chooseTeamPage(caseNumber, chooseTeamForm))
+    }
+
+  def postTeamChoice(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
+      MoveCasesCacheKey
+    )).async { implicit request =>
+      val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
+      val caseRefs   = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty)
+
+      chooseTeamForm
+        .bindFromRequest()
+        .fold(
+          errors => Future.successful(Ok(chooseTeamPage(caseNumber, errors))),
+          team => {
+            val updatedCases =
+              caseRefs.map(ref =>
+                for {
+                  updatedCase <- casesService.getOne(ref) flatMap {
+                                  case Some(c) => casesService.updateCase(c.copy(assignee = None, queueId = Some(team)))
+                                }
+                } yield updatedCase
+              )
+            successful(Redirect(routes.MoveCasesController.casesMovedToTeamDone()))
+          }
+        )
+    }
+
+  def casesMovedToTeamDone(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
+      MoveCasesCacheKey
+    )) { implicit request =>
+      val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
+      Ok(chooseTeamPage(caseNumber, chooseTeamForm))
+    }
 
 }

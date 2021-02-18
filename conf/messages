@@ -1195,5 +1195,6 @@ users.user.noCases=There are no {0} cases assigned to this user.
 users.user.editUserTeams.heading=Assign {0} to a team or teams
 
 users.move_cases.team_or_user.header=Where would you like to move these {0} cases?
+users.move_cases.choose_team.header=Which team would you like these {0} cases moved to?
 
 

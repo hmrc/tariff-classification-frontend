@@ -169,4 +169,7 @@ GET        /users/user/:pid                                      controllers.v2.
 POST        /users/move/move-selected-cases                      controllers.v2.MoveCasesController.postMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 GET         /users/move/move-cases                               controllers.v2.MoveCasesController.chooseUserOrTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 POST        /users/move/move-cases                               controllers.v2.MoveCasesController.postTeamOrUserChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET         /users/move/move-cases-team                          controllers.v2.MoveCasesController.chooseTeamToMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-team                          controllers.v2.MoveCasesController.postTeamChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET         /users/move/move-cases-done-team                     controllers.v2.MoveCasesController.casesMovedToTeamDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 

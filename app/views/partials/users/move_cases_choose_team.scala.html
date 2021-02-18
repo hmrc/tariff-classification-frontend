@@ -25,8 +25,6 @@
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
 @import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
-@import models.forms.v2.TeamOrUser
-@import models.forms.v2.TeamOrUser.TeamOrUser
 @import controllers.v2.routes
 
 @this(
@@ -36,7 +34,7 @@ user_details: views.html.partials.users.user_details
 
 @(
 numberOfCases:Integer,
-form: Form[TeamOrUser],
+form: Form[String],
 activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -50,16 +48,15 @@ customPrimaryNavTab = ManagerToolsTab
 <div class="column-two-thirds mt-5">
     @back_link()
 
-    @move_cases_heading(messages("users.move_cases.team_or_user.header", numberOfCases))
+    @move_cases_heading(messages("users.move_cases.choose_team.header", numberOfCases))
 
-    @helper.form(action = routes.MoveCasesController.postTeamOrUserChoice(), 'id -> "team-or-user", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.MoveCasesController.postTeamChoice(), 'id -> "move-to-team", 'novalidate -> "novalidate") {
     @helper.CSRF.formField
 
     @input_radiogroup(
-    field = form("choice"),
-    options = Seq(RadioOption(TeamOrUser.TEAM.toString, TeamOrUser.format(TeamOrUser.TEAM)),
-    RadioOption(TeamOrUser.USER.toString, TeamOrUser.format(TeamOrUser.USER))),
-    id = "team-or-user"
+    field = form("team"),
+    options = Queues.allQueues.map(q => RadioOption(q.id, q.slug.toUpperCase)).toSeq,
+    id = "move-to-team"
     )
     <div>
         <button class="button" id="move-cases-button" type="submit">Continue</button>

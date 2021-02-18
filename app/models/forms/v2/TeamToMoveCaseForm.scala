@@ -16,30 +16,16 @@
 
 package models.forms.v2
 
-import models.forms.mappings.FormMappings._
-import models.forms.v2.TeamOrUser.TeamOrUser
+import models.Queues
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import models.forms.mappings.FormMappings._
 
-object TeamOrUserForm {
+object TeamToMoveCaseForm {
 
-  val form: Form[TeamOrUser] = Form(
+  val form: Form[String] = Form(
     mapping(
-      "choice" -> oneOf("move_cases.error.empty.teamOrUser", TeamOrUser)
-    )(choiceString => TeamOrUser.withName(choiceString))(choiceString => Some(choiceString.toString))
+      "team" -> oneFromList("error.empty.moveCases.teamToMove", Queues.allQueues.map(_.id))
+    )(identity)(Some(_))
   )
-
-}
-
-object TeamOrUser extends Enumeration {
-  type TeamOrUser = Value
-
-  val USER = Value("USER")
-  val TEAM = Value("TEAM")
-
-  def format(choiceType: TeamOrUser): String =
-    choiceType match {
-      case USER => "User"
-      case TEAM => "Team"
-    }
 }
