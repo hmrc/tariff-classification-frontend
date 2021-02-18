@@ -41,7 +41,7 @@ class KeywordsForApprovalTableSpec extends ViewSpec {
       doc should containElementWithID("keyword_approval-table")
       doc should containElementWithID("keyword_approval-details")
       doc.getElementById("keyword_approval-keyword") should containText("Keyword")
-      doc.getElementById("keyword_approval-user-id") should containText("User")
+      doc.getElementById("keyword_approval-user-name") should containText("User")
       doc.getElementById("keyword_approval-goods-id") should containText("Goods")
       doc.getElementById("keyword_approval-type-id") should containText("Case type")
       doc.getElementById("keyword_approval-status-id") should containText("Case status")
@@ -50,9 +50,9 @@ class KeywordsForApprovalTableSpec extends ViewSpec {
       for ((result, index) <- manageKeywordsTab.searchResult.results.zipWithIndex) {
         s"populate keywords table with correct data: ${index}" in {
           val doc = view(manageKeywordsView())
-          doc should containElementWithID(s"akeyword_approval-details-$index")
+          doc should containElementWithID(s"keyword_approval-details-$index")
           doc.getElementById(s"keyword_approval-keyword-$index") should containText(result.keyword)
-          doc.getElementById(s"keyword_approval-user-id-$index") should containText(result.name)
+          doc.getElementById(s"keyword_approval-user-name-$index") should containText(result.name)
           doc.getElementById(s"keyword_approval-goods-id-$index") should containText(result.goods)
           doc.getElementById(s"keyword_approval-type-id-$index") should containText(result.caseType.prettyName)
           doc.getElementById(s"keyword_approval-status-id-$index") should containText(result.caseStatus.toString)

@@ -27,7 +27,7 @@ case class Keyword(
   caseStatus: CaseStatus,
   approved: Boolean
 ) {
-  def isApproved: Boolean = approved.equals(true)
+  def isApproved: Boolean = approved
 }
 
 //todo replace the dummy stub with queries

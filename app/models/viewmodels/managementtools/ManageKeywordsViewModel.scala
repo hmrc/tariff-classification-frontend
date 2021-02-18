@@ -31,7 +31,7 @@ object ManageKeywordsViewModel {
     ManageKeywordsViewModel(
       "Manage keywords",
       ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(Keywords.allKeywords.filter(k => !k.isApproved))),
-      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Keywords.allKeywords.toSeq)
+      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Keywords.allKeywords)
     )
 }
 

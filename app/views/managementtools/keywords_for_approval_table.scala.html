@@ -24,7 +24,7 @@
     <tbody>
         <tr id="@{manageKeywordsTab.tabMessageKey}-details" class="grid-row mb-2">
             <th id="@{manageKeywordsTab.tabMessageKey}-keyword" class="bold w-0">Keyword</th>
-            <th id="@{manageKeywordsTab.tabMessageKey}-user-id" class="bold w-0">User</th>
+            <th id="@{manageKeywordsTab.tabMessageKey}-user-name" class="bold w-0">User</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-goods-id" class="bold w-0">Goods</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-type-id" class="bold w-0">Case type</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-status-id" class="bold w-0">Case status</th>
@@ -35,10 +35,10 @@
             <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index">
                 <a href="#">@result.keyword</a>
             </td>
-            <td id="@{manageKeywordsTab.tabMessageKey}-user-id@index">@result.name</td>
+            <td id="@{manageKeywordsTab.tabMessageKey}-user-name-@index">@result.name</td>
             <td id="@{manageKeywordsTab.tabMessageKey}-goods-id-@index">@result.goods</td>
-            <td id="@{manageKeywordsTab.tabMessageKey}-type-id@index">@result.caseType.prettyName</td>
-            <td id="@{manageKeywordsTab.tabMessageKey}-status-id@index">@result.caseStatus</td>
+            <td id="@{manageKeywordsTab.tabMessageKey}-type-id-@index">@result.caseType.prettyName</td>
+            <td id="@{manageKeywordsTab.tabMessageKey}-status-id-@index">@result.caseStatus</td>
         </tr>
     }
 
