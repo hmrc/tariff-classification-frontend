@@ -61,7 +61,7 @@ class KeywordsTabSpec extends ViewSpec {
       val doc = view(
         manageKeywordsView()
       )
-      doc.getElementById("edit-keyword-button") should containText("Edit keyword")
+      doc.getElementById("keyword_search-edit-keyword-button") should containText("Edit keyword")
     }
 
     //TODO Test search box

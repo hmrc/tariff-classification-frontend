@@ -33,7 +33,7 @@
         ManageKeywordsController.displayManageKeywords()
     )
 
-    <div id="manage-users-tabs" class="govuk-tabs" data-module="govuk-tabs">
+    <div id="manage-keywords-tabs" class="govuk-tabs" data-module="govuk-tabs">
         <ul class="govuk-tabs__list">
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
@@ -47,7 +47,6 @@
                 <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.allKeywordsTab.elementId">
                 @messages(
                     "management.manage-keywords.all-tab-title",
-                  //TODO Make sure globalKeywords.size is correct and brings back all keywords approved/unapproved
                     manageKeywordsViewModel.allKeywordsTab.globalKeywords.size
                 )
                 </a>
