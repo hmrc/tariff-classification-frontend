@@ -16,8 +16,9 @@
 
 package controllers
 
-import java.io.File
+import models.RejectReason.RejectReason
 
+import java.io.File
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -135,12 +136,17 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to confirmation page when data filled in" in {
       when(
         casesService
-          .rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])
+          .rejectCase(refEq(caseWithStatusOPEN), any[RejectReason], any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])
       ).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(
         controller(caseWithStatusOPEN).postRejectCase("reference")(
-          newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))
+          newFakePOSTRequestWithCSRF(app)
+            .withBody(aMultipartFileWithParams(
+              "reason" -> Seq(RejectReason.DUPLICATE_APPLICATION.toString),
+              "note" -> Seq("some-note")
+            )
+          )
         )
       )
 

@@ -19,7 +19,7 @@
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials._
-@import controllers.routes.MyCasesController
+@import controllers.v2.routes.MyCasesController
 @import models.viewmodels.NoTabSelected
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -31,11 +31,9 @@
 
     @case_heading(c)
 
-    <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large mt-0">This case has been rejected</h2>
-            <h3 class="heading-medium mt-0">Next steps</h3>
-            <p>Go to <a id="my-cases-link" href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a
-        </div>
-    </div>
+    @confirmation_next_steps(
+        linkText = messages("back.my_cases"),
+        backHref = MyCasesController.displayMyCases()
+    )
+
 }
