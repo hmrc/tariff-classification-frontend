@@ -44,22 +44,6 @@ object UsersTabViewModel {
     val assignedUsersTab   = UsersTab("assigned", "assigned_tab", assignedUsers.toList)
     val unassignedUsersTab = UsersTab("unassigned", "unassigned_tab", unassignedUser.toList)
 
-
-    println("model :::::")
-    println("model :::::")
-    println("model :::::")
-    println("model :::::")
-    println("model :::::")
-    println("model :::::")
-    println("model :::::" + assignedUsers)
-    println("model :::::" + assignedUsersTab)
-    println("model :::::")
-    println("model :::::")
-    println("model :::::")
-    println("model :::::")
-    println("model :::::")
-    println("model :::::")
-
     UsersTabViewModel(
       "Manage users",
       managedTeamsTabs,
