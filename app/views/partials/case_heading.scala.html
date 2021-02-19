@@ -23,15 +23,17 @@
 
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
-    <div id="case-reference" class="case-reference">
+    <div>
+        <div id="case-reference" class="case-reference">
+        @messages("case.heading.secondary.nosuffix", c.application.`type`.prettyName, c.reference)
+        </div>
+        <h1 class="heading-xlarge case-title">
+            @messages("case.heading.ownership.sec1") @c.application.goodsName @messages("case.heading.ownership.sec2")
+        </h1>
         @c.application.businessName.map { businessName =>
-            @messages("case.heading.secondary", c.application.`type`.prettyName, c.reference, businessName)
-        }.getOrElse {
-            @messages("case.heading.secondary.nosuffix", c.application.`type`.prettyName, c.reference)
+        <h2 class="bold mb-1">@c.application.businessName</h2>
         }
     </div>
-
-    <h1 class="heading-xlarge case-title">@c.application.goodsName</h1>
 
     <div id="case-status-section">
         @case_status(c, "case-status")
