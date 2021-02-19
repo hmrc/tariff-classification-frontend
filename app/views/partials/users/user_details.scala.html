@@ -33,7 +33,7 @@
    @messages("users.user.details.name")
   </dt>
   <dd class="cya-answer" id="user-full-name">
-   @userDetails.name.getOrElse("Unknown")
+   @userDetails.getFullName
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
@@ -44,7 +44,7 @@
    @messages("users.user.details.email")
   </dt>
   <dd class="cya-answer" id="user-email">
-   @userDetails.email.getOrElse("Unknown")
+   @userDetails.getEmail
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
