@@ -69,7 +69,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
         .willReturn(successful(mock[Event]))
 
       // When Then
-      await(service.rejectCase(originalCase, fileUpload, "note", operator)) shouldBe caseUpdated
+      await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, fileUpload, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseRejected(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
@@ -84,7 +84,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id", Some("Billy Bobbins"))
-      eventCreated.details  shouldBe CaseStatusChange(CaseStatus.OPEN, CaseStatus.REJECTED, Some("note"), Some("id"))
+      eventCreated.details  shouldBe RejectCaseStatusChange(CaseStatus.OPEN, CaseStatus.REJECTED, Some("note"), Some("id"), RejectReason.NO_INFO_FROM_TRADER)
     }
 
     "generate an exception on attachment upload failure" in {
@@ -97,7 +97,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
       // When Then
       intercept[RuntimeException] {
-        await(service.rejectCase(originalCase, fileUpload, "note", operator))
+        await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, fileUpload, "note", operator))
       }
 
       verifyZeroInteractions(connector)
@@ -115,7 +115,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
-        await(service.rejectCase(originalCase, fileUpload, "note", operator))
+        await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, fileUpload, "note", operator))
       }
 
       verifyZeroInteractions(audit)
@@ -136,7 +136,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
         .willReturn(failed(new RuntimeException()))
 
       // When Then
-      await(service.rejectCase(originalCase, fileUpload, "note", operator)) shouldBe caseUpdated
+      await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, fileUpload, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseRejected(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 

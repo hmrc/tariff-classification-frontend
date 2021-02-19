@@ -31,6 +31,7 @@ object JsonFormatters {
   implicit val role: Format[Role.Value]                           = EnumJson.format(Role)
   implicit val liabilityStatus: Format[LiabilityStatus]           = EnumJson.format(LiabilityStatus)
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
+  implicit val rejectedReason: Format[RejectReason.Value]         = EnumJson.format(RejectReason)
   implicit val miscCaseType: Format[MiscCaseType.Value]           = EnumJson.format(MiscCaseType)
   implicit val reportField: Format[CaseReportField.Value]         = EnumJson.format(CaseReportField)
   implicit val reportGroup: Format[CaseReportGroup.Value]         = EnumJson.format(CaseReportGroup)
@@ -97,6 +98,7 @@ object JsonFormatters {
   implicit val formatCancellationCaseStatusChange: OFormat[CancellationCaseStatusChange] =
     Json.format[CancellationCaseStatusChange]
   implicit val formatReferralCaseStatusChange: OFormat[ReferralCaseStatusChange] = Json.format[ReferralCaseStatusChange]
+  implicit val formatRejectCaseStatusChange: OFormat[RejectCaseStatusChange] = Json.format[RejectCaseStatusChange]
   implicit val formatCompletedCaseStatusChange: OFormat[CompletedCaseStatusChange] =
     Json.format[CompletedCaseStatusChange]
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange]           = Json.format[AppealStatusChange]
@@ -115,6 +117,7 @@ object JsonFormatters {
     .and[CaseStatusChange](EventType.CASE_STATUS_CHANGE.toString)
     .and[CancellationCaseStatusChange](EventType.CASE_CANCELLATION.toString)
     .and[ReferralCaseStatusChange](EventType.CASE_REFERRAL.toString)
+    .and[RejectCaseStatusChange](EventType.CASE_REJECTED.toString)
     .and[CompletedCaseStatusChange](EventType.CASE_COMPLETED.toString)
     .and[AppealStatusChange](EventType.APPEAL_STATUS_CHANGE.toString)
     .and[SampleStatusChange](EventType.SAMPLE_STATUS_CHANGE.toString)

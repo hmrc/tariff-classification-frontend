@@ -19,7 +19,7 @@
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials._
-@import controllers.routes.MyCasesController
+@import controllers.v2.routes.MyCasesController
 @import models.viewmodels.NoTabSelected
 @import views.html.v2.{case_heading, confirmation_next_steps}
 
@@ -37,7 +37,7 @@
 
     @confirmation_next_steps(
         linkText = messages("back.my_cases"),
-        backHref = MyCasesController.myCases()
+        backHref = MyCasesController.displayMyCases()
     )
 }
 </div>

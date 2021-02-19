@@ -17,17 +17,18 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import controllers.routes
-@import models.{Case, CaseStatusRadioInput}
+@import models.{Case, RejectReason, CaseRejection}
 @import models.viewmodels.NoTabSelected
-@import views.html.components.{confirm_or_cancel_buttons, warning, input_radio}
-@import views.html.forms.components.input_textarea
+@import views.forms.components.RadioOption
+@import views.html.components.{confirm_or_cancel_buttons, warning}
+@import views.html.forms.components.{input_textarea, input_radiogroup}
 @import views.html.includes.main
 @import views.html.partials.case_heading
 @import views.html.partials.statuses.status_change_upload
 @import views.html.partials.{error_summary, back_link}
 
 
-@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[CaseRejection])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case")), customPrimaryNavTab = NoTabSelected) {
 
@@ -45,10 +46,16 @@
 
                 @helper.CSRF.formField
 
-                @input_radio(
-                    field = form("caseRejected"),
-                    legend = messages("change_case_status.rejected.title"),
-                    inputs = CaseStatusRadioInput.rejectedReasonOptions
+                @input_radiogroup(
+                    field = form("reason"),
+                    options = RejectReason.values.toSeq.sorted.map(
+                                reason => RadioOption(reason.toString, RejectReason.format(reason))
+                    ),
+                    label = Some(messages("change_case_status.rejected.title")),
+                    labelClass = Some("heading-medium"),
+                    id = "reason",
+                    customErrorMessage = Some(messages("error.empty.reject.reason")),
+                    customGroupId = Some("reason")
                 )
 
                 @input_textarea(
