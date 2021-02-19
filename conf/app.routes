@@ -163,4 +163,7 @@ GET        /users/user/:pid/user-edit-team                       controllers.v2.
 POST       /users/user/:pid/user-edit-team                       controllers.v2.ManageUserController.postEditUserTeams(pid: String)
 GET        /users/manage-users                                   controllers.v2.ManageUserController.displayManageUsers()
 GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetails(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET        /users/user-delete/:pid                                      controllers.v2.ManageUserController.deleteUser(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST       /users/user-delete/:pid                                      controllers.v2.ManageUserController.confirmRemoveUser(pid: String)
+GET        /users/user-delete-done                                      controllers.v2.ManageUserController.doneDeleteUser(userName: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
