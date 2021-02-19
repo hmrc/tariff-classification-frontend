@@ -36,7 +36,7 @@
 
 
 <div class="column-two-thirds pl-0">
-    @case_heading(c)
+    @case_heading(c, messageKey = Some("case.heading.ownership"))
 
     <div id="assign_case-heading">
     @if(c.assignee.isDefined) {
@@ -53,6 +53,8 @@
 
     @input_radiogroup(
         field = form("state"),
+        label = Some(messages("case.heading.ownership",c.application.goodsName)),
+        labelClass= Some("visually-hidden"),
         options = Seq(RadioOption("true", messages("case.ownership.assign_case.submit")), RadioOption("false", messages("case.ownership.assign_case.view_only"))),
         id = "take-ownership",
         preSelect = false
