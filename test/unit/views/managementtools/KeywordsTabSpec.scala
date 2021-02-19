@@ -46,8 +46,8 @@ class KeywordsTabSpec extends ViewSpec {
       )
       doc.getElementById("common-cases-heading") should containText("Manage keywords")
       doc.getElementById("create-new-keyword-button") should containText("Create new keyword")
-      doc.getElementById("manage-users-tabs") should containText(messages("management.manage-keywords.approve-tab-title", 1))
-      doc.getElementById("manage-users-tabs") should containText("All keywords")
+      doc.getElementById("manage-keywords-tabs") should containText(messages("management.manage-keywords.approve-tab-title", 1))
+      doc.getElementById("manage-keywords-tabs") should containText("All keywords")
     }
 
     "show correct message when there are no keywords for approval" in {
