@@ -24,9 +24,9 @@
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.includes.main
 @import views.html.forms.components._
-@import views.html.partials.error_summary
+@import views.html.partials.{error_summary, case_heading}
 
-@this(case_heading: views.html.v2.case_heading)
+@this()
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -35,8 +35,8 @@
     @error_summary(form.errors)
 
     @case_heading(
-        caseHeader = CaseHeaderViewModel.fromCase(c),
-        headingPrefix = Some(messages("case.v2.liability.c592.edit_details_title")))
+        c,
+        messageKey = Some("case.v2.liability.c592.edit_details.heading"))
 
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="form-group">
