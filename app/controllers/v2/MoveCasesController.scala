@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.AppConfig
 import connector.DataCacheConnector
 import controllers.RequestActions
-import controllers.routes.SecurityController
 import models._
 import models.forms.v2.{MoveCasesForm, TeamOrUser, TeamOrUserForm, TeamToMoveCaseForm}
 import models.request.AuthenticatedRequest
@@ -28,7 +27,7 @@ import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, UserService}
+import service.{CasesService, QueuesService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,10 +39,12 @@ class MoveCasesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   userService: UserService,
+  queueService: QueuesService,
   dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
   val teamOrUserPage: views.html.partials.users.move_cases_team_or_user,
-  val chooseTeamPage: views.html.partials.users.move_cases_choose_team
+  val chooseTeamPage: views.html.partials.users.move_cases_choose_team,
+  val doneMoveCasesPage: views.html.partials.users.done_move_cases
 )(
   implicit val appConfig: AppConfig,
   ec: ExecutionContext
@@ -111,8 +112,9 @@ class MoveCasesController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async { implicit request =>
-      val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
-      val caseRefs   = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty)
+      val caseNumber  = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
+      val caseRefs    = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty)
+      val userAnswers = UserAnswers(MoveCasesCacheKey)
 
       chooseTeamForm
         .bindFromRequest()
@@ -125,9 +127,12 @@ class MoveCasesController @Inject() (
                   updatedCase <- casesService.getOne(ref) flatMap {
                                   case Some(c) => casesService.updateCase(c.copy(assignee = None, queueId = Some(team)))
                                 }
+
                 } yield updatedCase
               )
-            successful(Redirect(routes.MoveCasesController.casesMovedToTeamDone()))
+            for {
+              _ <- dataCacheConnector.save(userAnswers.set(ChosenTeam, team).cacheMap)
+            } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())
           }
         )
     }
@@ -135,9 +140,16 @@ class MoveCasesController @Inject() (
   def casesMovedToTeamDone(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
-    )) { implicit request =>
-      val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
-      Ok(chooseTeamPage(caseNumber, chooseTeamForm))
+    )).async { implicit request =>
+      request.userAnswers
+        .get[String](ChosenTeam)
+        .map(teamId =>
+          queueService.getOneById(teamId) flatMap {
+            case Some(team) => successful(Ok(doneMoveCasesPage(team.slug.toUpperCase)))
+            case None       => successful(Ok(views.html.resource_not_found(s"Case Queue")))
+          }
+        )
+        .getOrElse(successful(Ok(views.html.resource_not_found(s"Case Queue"))))
     }
 
 }
