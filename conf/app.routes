@@ -169,4 +169,5 @@ POST       /users/user-delete/:pid                                      controll
 GET        /users/user-delete-done                                      controllers.v2.ManageUserController.doneDeleteUser(userName: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
 GET        /keywords/manage-keywords                                controllers.v2.ManageKeywordsController.displayManageKeywords()
+GET        /keywords/keyword-create                                 controllers.v2.ManageKeywordsController.newKeyword()
 

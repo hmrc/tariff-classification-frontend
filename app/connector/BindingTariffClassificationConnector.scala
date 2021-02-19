@@ -255,4 +255,10 @@ class BindingTariffClassificationConnector @Inject() (
       client.POST[NewUserRequest, Operator](url, NewUserRequest(operator))
     }
 
+  def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
+    withMetricsTimerAsync("create-keyword") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/keyword"
+      client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(keyword))
+    }
+
 }

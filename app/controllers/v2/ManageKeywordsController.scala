@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.managementtools.new_keyword_view
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
@@ -43,6 +44,16 @@ class ManageKeywordsController @Inject()(
         manageKeywordsView(
           activeSubNav,
           ManageKeywordsViewModel.forManagedTeams(),
+          keywordForm
+        )
+      )
+    )
+
+  def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
+      Ok(
+        new_keyword_view(
+          ManageKeywordsViewModel.forManagedTeams().allKeywordsTab,
           keywordForm
         )
       )

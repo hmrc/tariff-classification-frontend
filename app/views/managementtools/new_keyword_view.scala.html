@@ -1,0 +1,62 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.managementtools._
+@import views.html.components.input_accessible_auto_complete
+
+@import views.html.components.heading
+@import views.html.includes.main
+
+@import views.html.partials.back_link
+
+@(keywordsTabViewModel: KeywordsTabViewModel, newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("management.create-keyword-title"))) {
+
+    @back_link()
+
+    <span class="caption-xl mt-40">@messages("management.create-keyword.caption")</span>
+
+    @heading(messages("management.create-keyword.heading"))
+
+    <table id="new_keyword-table">
+
+        <div class="govuk-form-group">
+            <div id="new_keywords">
+                <div class="display-inline w-75">
+                    <label class="form-label" for="keyword_0">
+                        <span>@messages("management.create-keyword.label")</span>
+                    </label>
+                    <span class="form-hint"></span>
+                </div>
+                <div class="w-75 left display-inline">
+                @input_accessible_auto_complete(
+                    field = newKeywordForm("keyword"),
+                    formControlClass = Some("w-100"),
+                    hint = Some(messages("management.create-keyword.hint")),
+                    autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
+                    placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
+                )
+                </div>
+                <button id="save_new_keyword-button" class="button left ml-1" type="submit" name="saveKeyword" value="true">
+                    Save keyword
+                </button>
+            </div>
+        </div>
+    </table>
+}

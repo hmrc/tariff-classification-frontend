@@ -1013,4 +1013,29 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
   }
 
+  "Connector 'create Keyword'" should {
+
+    "create new keyword" in {
+      val keyword = Keyword("AKeyword", true)
+      val request = Json.toJson(NewKeywordRequest(keyword)).toString()
+      val response = Json.toJson(keyword).toString()
+
+      stubFor(
+        post(urlEqualTo(s"/keyword"))
+          .withRequestBody(equalToJson(request))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_CREATED)
+              .withBody(response)
+          )
+      )
+
+      await(connector.createKeyword(keyword)) shouldBe keyword
+
+      verify(
+        postRequestedFor(urlEqualTo(s"/keyword"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
 }

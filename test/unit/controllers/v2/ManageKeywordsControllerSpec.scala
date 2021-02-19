@@ -35,7 +35,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
     realAppConfig
   )
 
-  "Manage users" should {
+  "Manage keywords" should {
 
     "return 200 OK and HTML content type" in {
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(fakeRequest))

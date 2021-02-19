@@ -1213,3 +1213,15 @@ management.manage-keywords.search-all-keywords.label=Rename or delete a keyword 
 management.manage-keywords.search-all-keywords.placeholder=Start typing to search for a keyword
 management.manage-keywords.search-all-keywords.edit-keyword-button=Edit keyword
 
+management.create-keyword-title=Create new keyword - Advance Tariff Rulings Case Manager - GOV.UK
+management.create-keyword.heading=Create new keyword
+management.create-keyword.caption=Manage keywords
+management.create-keyword.label=Enter a new keyword to add to the approved keyword list
+management.create-keyword.hint=Keywords will be saved in uppercase.
+management.create-keyword.placeholder=Start typing to search for a keyword
+management.create-keyword.new-keyword-done=New keyword created
+management.create-keyword.new-keyword-done.caption=has been added to the approved keyword list
+management.create-keyword.new-keyword-done.link=Go back to manage all keywords
+
+
+

@@ -27,7 +27,7 @@ import views.html.managementtools.keywords_tab
 class KeywordsTabSpec extends ViewSpec {
 
   val keyword =
-    Keyword("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatus.REFERRED, true)
+    KeywordViewModel("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatus.REFERRED, true)
 
   val emptyMangageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq.empty))
   val manageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq(keyword)))
@@ -63,8 +63,6 @@ class KeywordsTabSpec extends ViewSpec {
       )
       doc.getElementById("keyword_search-edit-keyword-button") should containText("Edit keyword")
     }
-
-    //TODO Test search box
   }
 
 }
