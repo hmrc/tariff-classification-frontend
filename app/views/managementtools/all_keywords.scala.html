@@ -19,7 +19,7 @@
 @import models.viewmodels.managementtools._
 @import views.html.components.input_accessible_auto_complete
 
-@(keywordsTabViewModel: KeywordsTabViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(keywordsTabViewModel: KeywordsTabViewModel, keywordForm: Form[Keyword])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="keyword_search_edit-table">
 
