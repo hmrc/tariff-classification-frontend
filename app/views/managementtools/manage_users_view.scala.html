@@ -27,10 +27,10 @@
 
 @this()
 
-@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, users : UsersTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title")), customPrimaryNavTab = ManagerToolsTab) {
     @manager_tools_secondary_navigation(activeSubNav)
 
-    @users_tab(users)
+    @users_tab(users, usersCount)
 }
