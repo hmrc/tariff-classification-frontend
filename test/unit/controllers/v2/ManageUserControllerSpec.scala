@@ -17,6 +17,7 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
+import models.Role.Role
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
@@ -24,17 +25,19 @@ import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import service.{CasesService, UserService}
+import service.{CasesService, EventsService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.partials.users._
+import views.html.managementtools.manage_users_view
+import views.html.partials.users.{user_team_edit, view_user, _}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future.successful
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class ManageUserControllerSpec extends ControllerBaseSpec {
 
+  private val eventService             = mock[EventsService]
   private val casesService             = mock[CasesService]
   private val userService              = mock[UserService]
   private lazy val user_team_edit      = injector.instanceOf[user_team_edit]
@@ -42,6 +45,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
   private lazy val cannot_delete_user  = injector.instanceOf[cannot_delete_user]
   private lazy val confirm_delete_user = injector.instanceOf[confirm_delete_user]
   private lazy val done_delete_user    = injector.instanceOf[done_delete_user]
+  private lazy val manage_users_view   = injector.instanceOf[manage_users_view]
 
   private def controller(permission: Set[Permission]) =
     new ManageUserController(
@@ -49,13 +53,13 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       casesService,
       userService,
       mcc,
-      user_team_edit,
       view_user,
+      user_team_edit,
+      manage_users_view,
       cannot_delete_user,
       confirm_delete_user,
-      done_delete_user,
-      realAppConfig
-    )
+      done_delete_user
+    )(realAppConfig, global)
 
   "displayUserDetals" should {
 
@@ -268,4 +272,41 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     }
   }
 
+  "displayManageUsers" should {
+
+    "return 200 OK and HTML content type" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+      given(
+        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
+          any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
+      given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Operator("2"), Operator("3"))))
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageUsers()(fakeRequest))
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
+    "return unauthorised with no permissions" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+      given(
+        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
+          any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
+      given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Operator("2"), Operator("3"))))
+
+      val result = await(controller(Set()).displayManageUsers()(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+
+    }
+  }
 }
