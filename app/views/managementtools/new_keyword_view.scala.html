@@ -28,6 +28,9 @@
 @import models.viewmodels.SubNavigationTab
 
 @import views.html.components.manager_tools_secondary_navigation
+
+@this()
+
 @(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.create-keyword-title"))) {

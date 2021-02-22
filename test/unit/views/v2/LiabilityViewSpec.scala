@@ -16,8 +16,8 @@
 
 package views.v2
 
-import models.forms.{ActivityForm, ActivityFormData, ManageKeywordForm, UploadAttachmentForm}
-import models.viewmodels.{ActivityViewModel, AppealTabViewModel, CaseViewModel, KeywordsTabViewModel, SampleStatusTabViewModel}
+import models.forms._
+import models.viewmodels._
 import models._
 import models.request.AuthenticatedRequest
 import play.api.data.Form
@@ -48,7 +48,7 @@ class LiabilityViewSpec extends ViewSpec {
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
-  def keywordForm: Form[String] = ManageKeywordForm.form
+  def keywordForm: Form[String] = KeywordForm.form
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
 

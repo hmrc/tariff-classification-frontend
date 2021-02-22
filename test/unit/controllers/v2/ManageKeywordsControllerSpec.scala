@@ -20,18 +20,25 @@ import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import play.api.http.Status
 import play.api.test.Helpers._
-import views.html.managementtools.manage_keywords_view
+import service.ManageKeywordsService
+import views.html.managementtools.{confirm_keyword_created, manage_keywords_view, new_keyword_view}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
   private lazy val manage_keywords_view = injector.instanceOf[manage_keywords_view]
+  private lazy val confirm_keyword_view = injector.instanceOf[confirm_keyword_created]
+  private lazy val new_keyword_view = injector.instanceOf[new_keyword_view]
+  private lazy val keywordService = injector.instanceOf[ManageKeywordsService]
 
   private def controller(permission: Set[Permission]) = new ManageKeywordsController(
     new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
     mcc,
+    keywordService,
     manage_keywords_view,
+    confirm_keyword_view,
+    new_keyword_view,
     realAppConfig
   )
 

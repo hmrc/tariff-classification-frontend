@@ -27,4 +27,10 @@ object KeywordForm {
     )(identity)(Some(_))
   )
 
+  def formWithAuto(allKeywords: Seq[String]): Form[String] = Form(
+    mapping(
+      "keyword" -> FormMappings.textNonEmpty("error.empty.keyword").verifying("Keyword exists you fool!",  keyword => !allKeywords.contains(keyword))
+    )(identity)(Some(_))
+  )
+
 }

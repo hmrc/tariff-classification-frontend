@@ -28,10 +28,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.ManageKeywordsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.managementtools.new_keyword_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
@@ -39,6 +37,7 @@ class ManageKeywordsController @Inject()(
   keywordService: ManageKeywordsService,
   val manageKeywordsView: views.html.managementtools.manage_keywords_view,
   val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
+  val newKeywordView: views.html.managementtools.new_keyword_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -56,45 +55,49 @@ class ManageKeywordsController @Inject()(
       ))
 
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
-      implicit request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
         keywords <- keywordService.findAll()
-      } yield Ok(
-          new_keyword_view(
+      } yield
+        Ok(
+          newKeywordView(
             activeSubNav,
             keywords.results,
-            keywordForm
+            KeywordForm.formWithAuto(keywords.results.map(_.name))
           )
         )
     }
 
   def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-      keywordForm.bindFromRequest.fold(
-        formWithErrors =>
-          for {
-            keywords <- keywordService.findAll()
-          } yield Ok(
-            new_keyword_view(
-              activeSubNav,
-              keywords.results,
-              formWithErrors
-            )
-          ),
-        keyword =>
-          keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
-            Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
-        }
-      )
+
+      keywordService.findAll.map(keywords => KeywordForm.formWithAuto(keywords.results.map(_.name))).flatMap {
+        _.bindFromRequest.fold(
+          formWithErrors =>
+            for {
+              keywords <- keywordService.findAll
+            } yield
+              Ok(
+                newKeywordView(
+                  activeSubNav,
+                  keywords.results,
+                  formWithErrors
+                )
+            ),
+          keyword =>
+            keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
+              Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
+          }
+        )
+      }
     }
 
-  def displayConfirmKeyword(saveKeyword: String, activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def displayConfirmKeyword(
+    saveKeyword: String,
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
       implicit request =>
         Ok(
-          keywordCreatedConfirm(
-            activeSubNav,
-            saveKeyword)
+          keywordCreatedConfirm(activeSubNav, saveKeyword)
       ))
 }
