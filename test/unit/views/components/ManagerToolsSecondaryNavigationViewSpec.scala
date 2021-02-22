@@ -33,7 +33,7 @@ class ManagerToolsSecondaryNavigationViewSpec extends ViewSpec {
 
       doc should containElementWithID("sub_nav_manager_tools_users_tab")
 
-      val call = controllers.v2.routes.ManageUsersController.displayManageUsers()
+      val call = controllers.v2.routes.ManageUserController.displayManageUsers()
       doc.getElementById("sub_nav_manager_tools_users_tab") should haveAttribute("href", call.url)
 
     }

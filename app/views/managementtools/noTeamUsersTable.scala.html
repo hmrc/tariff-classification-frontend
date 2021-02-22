@@ -18,6 +18,7 @@
 @import config.AppConfig
 @import models.viewmodels.managementtools._
 @import controllers.routes.{AssignCaseController, CaseController}
+@import models.Role.Role
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
@@ -31,13 +32,16 @@
             <th id="@{usersTab.tabMessageKey}-role" class="bold w-0">Role</th>
         </tr>
 
-        @for((result, index) <- usersTab.searchResult.results.zipWithIndex) {
+        @for((result, index) <- usersTab.searchResult.zipWithIndex) {
 
                 <tr id="@{usersTab.tabMessageKey}-details-@index">
                     <td id="@{usersTab.tabMessageKey}-user-@index">
-                        <a href="">@result.name</a>
+                        <a href="@controllers.v2.routes.ManageUserController.displayUserDetails(result.id)">@{result.name match {
+                            case Some(userName) if(!userName.trim.isEmpty) => userName
+                            case _ => result.id
+                            }}</a>
                     </td>
-                    <td id="@{usersTab.tabMessageKey}-role-@index">@{result.role}</td>
+                    <td id="@{usersTab.tabMessageKey}-role-@index">@{Role.format(result.role)}</td>
                 </tr>
 
         }
