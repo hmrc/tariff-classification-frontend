@@ -31,8 +31,8 @@
         options = Seq(RadioOption(SampleStatus.AWAITING.toString, "Yes"), RadioOption("", "No")),
         id = "sample_status_form",
         preSelect = false,
-        label = Some(messages("case.liability.sending.sample.change-return-header")),
-        labelClass = Some ("heading-large")
+        label = Some(messages("case.provide-samples.header", c.application.goodsName)),
+        labelClass = Some ("visually-hidden")
     )
     @confirm_or_cancel_buttons(
         id = "sending_sample_form-submit",
