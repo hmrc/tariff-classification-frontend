@@ -40,7 +40,7 @@
 
             @input_radio(field = form("caseStatus"),
                     legend = messages("action_this_case.header",c.application.goodsName),
-        legendClass= Some("visually-hidden"),
+                    legendClass= Some("visually-hidden"),
                     inputs = CaseStatusRadioInput.releaseOrSuppressOptions)
 
             @confirm_or_cancel_buttons(

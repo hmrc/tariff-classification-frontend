@@ -47,7 +47,7 @@ class CaseHeadingViewSpec extends ViewSpec {
 
       doc should containElementWithID("case-reference")
 
-      doc.getElementById("case-reference") should containText("Liability case 1 for trader-business-name")
+      doc.getElementById("case-reference") should containText("Liability case 1")
 
     }
 
@@ -60,7 +60,7 @@ class CaseHeadingViewSpec extends ViewSpec {
 
       doc should containElementWithID("case-reference")
 
-      doc.getElementById("case-reference") should containText("Liability case 1 for trader-business-name")
+      doc.getElementById("case-reference") should containText("Liability case 1")
 
     }
 
