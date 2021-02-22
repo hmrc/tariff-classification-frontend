@@ -63,8 +63,6 @@ class KeywordsTabSpec extends ViewSpec {
       )
       doc.getElementById("keyword_search-edit-keyword-button") should containText("Edit keyword")
     }
-
-    //TODO Test search box
   }
 
 }
