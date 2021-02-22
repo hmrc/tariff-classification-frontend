@@ -27,7 +27,7 @@
 
 @(c: Case, form: Form[Boolean])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.take.ownership")),
+@main(bodyClasses = None, customTitle = Some(messages("case.heading.ownership.title")),
     customPrimaryNavTab = NoTabSelected) {
 
 <div class="mt-15">@back_link()</div>
