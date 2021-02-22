@@ -56,32 +56,45 @@ class ManageKeywordsController @Inject()(
       ))
 
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request =>
-        Ok(
+      for {
+        keywords <- keywordService.findAll()
+      } yield Ok(
           new_keyword_view(
-            ManageKeywordsViewModel.forManagedTeams().allKeywordsTab,
+            activeSubNav,
+            keywords.results,
             keywordForm
           )
-      ))
+        )
+    }
 
-  def createKeyword(): Action[AnyContent] =
+  def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       keywordForm.bindFromRequest.fold(
         formWithErrors =>
-          Future.successful(
-            Ok(new_keyword_view(ManageKeywordsViewModel.forManagedTeams().allKeywordsTab, formWithErrors))),
+          for {
+            keywords <- keywordService.findAll()
+          } yield Ok(
+            new_keyword_view(
+              activeSubNav,
+              keywords.results,
+              formWithErrors
+            )
+          ),
         keyword =>
           keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
-            Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword())
+            Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
         }
       )
     }
 
-  def displayConfirmKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def displayConfirmKeyword(saveKeyword: String, activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
       implicit request =>
         Ok(
-          keywordCreatedConfirm("HIIII")
+          keywordCreatedConfirm(
+            activeSubNav,
+            saveKeyword)
       ))
 }

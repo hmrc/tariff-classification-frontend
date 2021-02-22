@@ -17,21 +17,30 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
+@import models.viewmodels.ManagerToolsKeywordsTab
+@import models.viewmodels.SubNavigationTab
+@import views.html.components.manager_tools_secondary_navigation
 
 @this()
 
-@(keyword: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, keyword: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.create-keyword.new-keyword-done"))) {
+    @manager_tools_secondary_navigation(activeSubNav)
 
     <div class="grid-row">
         <div id="confirm_keyword_done_id" class="column-two-thirds">
             <div class="govuk-panel govuk-panel--confirmation">
                 <h2 class="heading-xlarge mt-0">@messages("management.create-keyword.new-keyword-done")</h2>
-                <h3 class="heading-large">@messages("management.create-keyword.new-keyword-done.caption")</h3>
+                <p class="heading-xlarge mt-0">@keyword.toUpperCase</p>
+                <h3 class="heading-large un-bold">@messages("management.create-keyword.new-keyword-done.caption")</h3>
             </div>
             <h3 class="heading-medium mt-0">Next steps</h3>
-            <p><a id="manage-all-keywords-link" href="#">@messages("management.create-keyword.new-keyword-done.link")</a></p>
+            <p>
+                <a id="manage-all-keywords-link" href="@controllers.v2.routes.ManageKeywordsController.displayManageKeywords()">
+                @messages("management.create-keyword.new-keyword-done.link")
+                </a>
+            </p>
 
         </div>
 

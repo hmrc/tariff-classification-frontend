@@ -24,13 +24,19 @@
 
 @import views.html.partials.back_link
 
-@(keywordsTabViewModel: KeywordsTabViewModel, newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import models.viewmodels.ManagerToolsKeywordsTab
+@import models.viewmodels.SubNavigationTab
+
+@import views.html.components.manager_tools_secondary_navigation
+@(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.create-keyword-title"))) {
 
+    @manager_tools_secondary_navigation(activeSubNav)
+
     @back_link()
 
-    <span class="caption-xl mt-40">@messages("management.create-keyword.caption")</span>
+    <p class="caption-xl mt-40">@messages("management.create-keyword.caption")</p>
 
     @heading(messages("management.create-keyword.heading"))
 
@@ -39,11 +45,12 @@
 
 @helper.CSRF.formField
 
+  <p>@messages("management.create-keyword.label")</p>
     @input_accessible_auto_complete(
         field = newKeywordForm("keyword"),
         formControlClass = Some("w-100"),
         hint = Some(messages("management.create-keyword.hint")),
-        autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
+        autoCompleteOptions = allKeywords.map(_.name),
         placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
     )
 

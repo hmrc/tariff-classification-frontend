@@ -29,4 +29,6 @@ class ManageKeywordsService @Inject()(connector: BindingTariffClassificationConn
   def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
       connector.createKeyword(keyword)
 
+  def findAll()(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
+      connector.findAllKeywords()
 }
