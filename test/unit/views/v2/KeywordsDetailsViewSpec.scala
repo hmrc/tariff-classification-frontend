@@ -17,7 +17,7 @@
 package views.v2
 
 import models.Permission
-import models.forms.KeywordForm
+import models.forms.ManageKeywordForm
 import models.request.AuthenticatedRequest
 import models.viewmodels.KeywordsTabViewModel
 import play.api.mvc.AnyContentAsEmpty
@@ -39,7 +39,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
 
     "render successfully" in {
 
-      val doc = view(keywordDetails(keywordsTabViewModel, KeywordForm.form, 0))
+      val doc = view(keywordDetails(keywordsTabViewModel, ManageKeywordForm.form, 0))
       doc should containElementWithID("keywords-table")
 
     }
@@ -47,7 +47,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
     "output 'Keyword is not from the list' when it is not in global keywords" in {
 
       val doc =
-        view(keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keywordX")), KeywordForm.form, 0))
+        view(keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keywordX")), ManageKeywordForm.form, 0))
       doc.getElementById("keywords-row-0-message") should containText("Keyword is not from the list")
 
     }
@@ -55,7 +55,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
     "not output 'Keyword is not from the list' when it is in global keywords" in {
 
       val doc =
-        view(keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), KeywordForm.form, 0))
+        view(keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), ManageKeywordForm.form, 0))
       doc.getElementById("keywords-row-0-message") shouldNot containText("Keyword is not from the list")
 
     }
@@ -63,7 +63,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
     "not show remove keyword when incorrect permissions" in {
 
       val doc =
-        view(keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), KeywordForm.form, 0))
+        view(keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), ManageKeywordForm.form, 0))
 
       doc shouldNot containElementWithID("keywords-row-0-remove")
 
@@ -72,7 +72,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
     "show remove keyword when has correct permissions" in {
 
       val doc = view(
-        keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), KeywordForm.form, 0)(
+        keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), ManageKeywordForm.form, 0)(
           requestWithPermissions(Permission.KEYWORDS),
           messages,
           appConfig
@@ -86,7 +86,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
     "render add keyword form when has correct permissions" in {
 
       val doc = view(
-        keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), KeywordForm.form, 0)(
+        keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), ManageKeywordForm.form, 0)(
           requestWithPermissions(Permission.KEYWORDS),
           messages,
           appConfig
@@ -106,7 +106,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
           .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
       val doc = view(
-        keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), KeywordForm.form, 0)(
+        keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), ManageKeywordForm.form, 0)(
           AuthenticatedRequest(
             authenticatedOperator.copy(permissions = Set(Permission.KEYWORDS)),
             requestWithFlashKeywordSuccess

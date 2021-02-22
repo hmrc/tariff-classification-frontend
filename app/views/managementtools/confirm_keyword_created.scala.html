@@ -18,7 +18,9 @@
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
 
-@()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@this()
+
+@(keyword: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.create-keyword.new-keyword-done"))) {
 

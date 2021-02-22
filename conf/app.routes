@@ -171,4 +171,5 @@ GET        /users/user-delete-done                                      controll
 GET        /keywords/manage-keywords                                controllers.v2.ManageKeywordsController.displayManageKeywords()
 GET        /keywords/keyword-create                                 controllers.v2.ManageKeywordsController.newKeyword()
 POST       /keywords/keyword-create                                 controllers.v2.ManageKeywordsController.createKeyword()
+GET        /keywords/keyword-create-done                            controllers.v2.ManageKeywordsController.displayConfirmKeyword()
 

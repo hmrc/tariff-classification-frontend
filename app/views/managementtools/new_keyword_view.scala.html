@@ -24,7 +24,7 @@
 
 @import views.html.partials.back_link
 
-@(keywordsTabViewModel: KeywordsTabViewModel, newKeywordForm: Form[Keyword])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(keywordsTabViewModel: KeywordsTabViewModel, newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.create-keyword-title"))) {
 
@@ -34,32 +34,21 @@
 
     @heading(messages("management.create-keyword.heading"))
 
-    @helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), 'id -> "create_keyword-form", 'novalidate -> "novalidate") {
 
-        <table id="new_keyword-table">
+@helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), 'id -> "create_correspondence-form", 'novalidate -> "novalidate") {
 
-            <div class="govuk-form-group">
-                <div id="new_keywords">
-                    <div class="display-inline w-75">
-                        <label class="form-label" for="keyword_0">
-                            <span>@messages("management.create-keyword.label")</span>
-                        </label>
-                        <span class="form-hint"></span>
-                    </div>
-                    <div class="w-75 left display-inline">
-                    @input_accessible_auto_complete(
-                        field = newKeywordForm("keyword"),
-                        formControlClass = Some("w-100"),
-                        hint = Some(messages("management.create-keyword.hint")),
-                        autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
-                        placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
-                    )
-                    </div>
-                    <button id="save_new_keyword-button" class="button left ml-1" type="submit" name="saveKeyword" value="true">
-                        Save keyword
-                    </button>
-                </div>
-            </div>
-        </table>
+@helper.CSRF.formField
+
+    @input_accessible_auto_complete(
+        field = newKeywordForm("keyword"),
+        formControlClass = Some("w-100"),
+        hint = Some(messages("management.create-keyword.hint")),
+        autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
+        placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
+    )
+
+    <button id="save_new_keyword-button" class="button left ml-1" type="submit" name="saveKeyword" value="true">
+        Save keyword
+    </button>
     }
 }

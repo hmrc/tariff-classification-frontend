@@ -16,15 +16,17 @@
 
 package models.forms
 
+import models.Keyword
+import models.forms.mappings.FormMappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.forms.mappings.FormMappings
 
-object KeywordForm {
-  val form: Form[String] = Form(
+object ManageKeywordForm {
+  val form: Form[Keyword] = Form(
     mapping(
-      "keyword" -> FormMappings.textNonEmpty("error.empty.keyword")
-    )(identity)(Some(_))
+      "keyword" -> FormMappings.textNonEmpty("error.empty.keyword"),
+      "approved" -> boolean
+    )(Keyword.apply)(Keyword.unapply)
   )
 
 }

@@ -78,7 +78,7 @@ class MiscellaneousViewSpec extends ViewSpec {
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
-  def keywordForm: Form[String] = KeywordForm.form
+  def keywordForm: Form[String] = ManageKeywordForm.form
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
 

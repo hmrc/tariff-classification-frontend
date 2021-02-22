@@ -16,7 +16,7 @@
 
 package views.v2
 
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
+import models.forms.{ActivityForm, ActivityFormData, ManageKeywordForm, UploadAttachmentForm}
 import models.viewmodels.{ActivityViewModel, AppealTabViewModel, CaseViewModel, KeywordsTabViewModel, SampleStatusTabViewModel}
 import models._
 import models.request.AuthenticatedRequest
@@ -48,7 +48,7 @@ class LiabilityViewSpec extends ViewSpec {
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
-  def keywordForm: Form[String] = KeywordForm.form
+  def keywordForm: Form[String] = ManageKeywordForm.form
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
 

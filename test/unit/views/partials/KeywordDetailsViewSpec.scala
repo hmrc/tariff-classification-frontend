@@ -17,7 +17,7 @@
 package views.partials
 
 import models.Permission
-import models.forms.KeywordForm
+import models.forms.ManageKeywordForm
 import models.request.AuthenticatedRequest
 import utils.Cases._
 import views.ViewMatchers._
@@ -39,7 +39,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
       val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
-      val doc = view(keywords_details(keywordsTab, KeywordForm.form))
+      val doc = view(keywords_details(keywordsTab, ManageKeywordForm.form))
 
       // Then
       doc should containElementWithID("keywords-heading")
@@ -52,7 +52,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
       val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
-      val doc = view(keywords_details(keywordsTab, KeywordForm.form))
+      val doc = view(keywords_details(keywordsTab, ManageKeywordForm.form))
 
       // Then
       doc                                          should containElementWithID("keywords-heading")
@@ -68,7 +68,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
 
       // When
       val doc = view(
-        keywords_details(keywordsTab, KeywordForm.form)(
+        keywords_details(keywordsTab, ManageKeywordForm.form)(
           requestWithPermissions(Permission.KEYWORDS),
           messages,
           appConfig
@@ -91,7 +91,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
       val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
-      val doc = view(keywords_details(keywordsTab, KeywordForm.form)(operatorRequest, messages, appConfig))
+      val doc = view(keywords_details(keywordsTab, ManageKeywordForm.form)(operatorRequest, messages, appConfig))
 
       // Then
       doc shouldNot containElementWithID("keywords-row-0-remove")
@@ -107,7 +107,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
           .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
       val doc = view(
-        keywords_details(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), KeywordForm.form, 0)(
+        keywords_details(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), ManageKeywordForm.form, 0)(
           AuthenticatedRequest(
             authenticatedOperator.copy(permissions = Set(Permission.KEYWORDS)),
             requestWithFlashKeywordSuccess

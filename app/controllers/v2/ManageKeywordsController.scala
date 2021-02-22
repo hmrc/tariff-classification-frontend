@@ -18,11 +18,11 @@ package controllers.v2
 
 import com.google.inject.Inject
 import config.AppConfig
-import controllers.{RequestActions, routes}
-import models.{Case, Keyword, Permission}
+import controllers.RequestActions
 import models.forms.KeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
+import models.{Keyword, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -30,62 +30,58 @@ import service.ManageKeywordsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools.new_keyword_view
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
   mcc: MessagesControllerComponents,
-  val manageKeywordsView: views.html.managementtools.manage_keywords_view,
   keywordService: ManageKeywordsService,
+  val manageKeywordsView: views.html.managementtools.manage_keywords_view,
+  val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
-  val keywordForm: Form[Keyword] = KeywordForm.form
+  val keywordForm: Form[String] = KeywordForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
-      Ok(
-        manageKeywordsView(
-          activeSubNav,
-          ManageKeywordsViewModel.forManagedTeams(),
-          keywordForm
-        )
-      )
-    )
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+      implicit request =>
+        Ok(
+          manageKeywordsView(
+            activeSubNav,
+            ManageKeywordsViewModel.forManagedTeams(),
+            keywordForm
+          )
+      ))
 
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
-      Ok(
-        new_keyword_view(
-          ManageKeywordsViewModel.forManagedTeams().allKeywordsTab,
-          keywordForm
-        )
-      )
-    )
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+      implicit request =>
+        Ok(
+          new_keyword_view(
+            ManageKeywordsViewModel.forManagedTeams().allKeywordsTab,
+            keywordForm
+          )
+      ))
 
-  def createKeyword(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
-    implicit request =>
+  def createKeyword(): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       keywordForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(new_keyword_view(
-          ManageKeywordsViewModel.forManagedTeams().allKeywordsTab, formWithErrors))),
-          keyword => keywordService.createKeyword(keyword).map {
-            saveKeyword: Keyword =>
-            Redirect(controllers.v2.routes.ManageKeywordsController.displayManageKeywords())
-          }
+        formWithErrors =>
+          Future.successful(
+            Ok(new_keyword_view(ManageKeywordsViewModel.forManagedTeams().allKeywordsTab, formWithErrors))),
+        keyword =>
+          keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
+            Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword())
+        }
       )
-  }
+    }
 
-
-//  def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-//    implicit request =>
-//      form.bindFromRequest.fold(
-//        formWithErrors => Future.successful(Ok(views.html.v2.create_correspondence(formWithErrors))),
-//        correspondenceApp =>
-//          casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
-//            Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
-//          }
-//      )
-//
-//  }
+  def displayConfirmKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+      implicit request =>
+        Ok(
+          keywordCreatedConfirm("HIIII")
+      ))
 }

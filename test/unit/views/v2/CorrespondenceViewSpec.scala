@@ -18,7 +18,7 @@ package views.v2
 
 import java.time.Instant
 import models._
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, MessageForm, MessageFormData, UploadAttachmentForm}
+import models.forms.{ActivityForm, ActivityFormData, ManageKeywordForm, MessageForm, MessageFormData, UploadAttachmentForm}
 import models.viewmodels.atar.AttachmentsTabViewModel
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
 import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
@@ -76,7 +76,7 @@ class CorrespondenceViewSpec extends ViewSpec {
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
-  def keywordForm: Form[String] = KeywordForm.form
+  def keywordForm: Form[String] = ManageKeywordForm.form
 
   val contactDetails: ContactDetailsTabViewModel =
     ContactDetailsTabViewModel("123465", "Case source", contact, Some("943534543"), address, Some("agent Name"))
