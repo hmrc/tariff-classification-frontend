@@ -38,7 +38,10 @@
 
                 <tr id="@{usersTab.tabMessageKey}-details-@index">
                     <td id="@{usersTab.tabMessageKey}-user-@index">
-                        <a href="@controllers.v2.routes.ManageUserController.displayUserDetails(result.id)">@result.name.getOrElse(result.id)</a>
+                        <a href="@controllers.v2.routes.ManageUserController.displayUserDetails(result.id)">@{result.name match {
+                            case Some(userName) if(!userName.trim.isEmpty) => userName
+                            case _ => result.id
+                            }}</a>
                     </td>
                     <td id="@{usersTab.tabMessageKey}-role-@index">@{Role.format(result.role)}</td>
                     <td id="@{usersTab.tabMessageKey}-team-@index">@{result.getMemberTeamNames.mkString(", ")}</td>
