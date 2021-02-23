@@ -1210,9 +1210,9 @@ users.move_cases.team_or_user.header=Where would you like to move these {0} case
 users.move_cases.choose_team.header=Which team would you like these {0} cases moved to?
 users.move_cases.choose_user.header=Which user would you like these {0} cases moved to?
 users.move_cases.choose_user.user_from_another_team.label=Choose a user from another team
-users.move_cases.done.header=Cases moved
-users.move_cases.done.subHeader=Cases moved to the
-users.move_cases.done.subHeader.teamName={0} team
+users.move_cases.done.header=Cases moved from {0}
+users.move_cases.team.done.subHeader=<strong>Cases moved to the </strong><br>{0} team
+users.move_cases.user.done.subHeader= <strong>Cases moved to </strong><br>{0} <strong>on the</strong> </br>{1} team
 
 
 management.manage-keywords-title=Manage keywords - Advance Tariff Rulings Case Manager - GOV.UK

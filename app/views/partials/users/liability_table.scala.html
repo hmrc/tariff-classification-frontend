@@ -24,10 +24,10 @@
 @import views.html.forms.components.input_checkbox
 @import controllers.v2.routes.MoveCasesController
 
-@(liabTab: ApplicationsTab, form: Form[Set[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(liabTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.liability.heading")</h2>
-@helper.form(action = MoveCasesController.postMoveCases(), 'id -> "move-liability-cases-form", 'novalidate -> "novalidate") {
+@helper.form(action = MoveCasesController.postMoveCases(userID), 'id -> "move-liability-cases-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
 <div class="form-group">
  <button id="move-liab-cases" class="button" type="submit">Move selected cases</button>

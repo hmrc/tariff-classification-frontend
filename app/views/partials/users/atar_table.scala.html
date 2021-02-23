@@ -22,10 +22,10 @@
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
 @import controllers.v2.routes.MoveCasesController
-@(atarTab: ApplicationsTab, form: Form[Set[String]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.atar.heading")</h2>
-@helper.form(action = MoveCasesController.postMoveCases(), 'id -> "move-atar-cases-form", 'novalidate -> "novalidate") {
+@helper.form(action = MoveCasesController.postMoveCases(userID), 'id -> "move-atar-cases-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
 
 <div class="form-group">
