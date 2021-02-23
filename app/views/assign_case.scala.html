@@ -56,12 +56,12 @@
         label = Some(messages("case.heading.ownership",c.application.goodsName)),
         labelClass= Some("visually-hidden"),
         options = Seq(RadioOption("true", messages("case.ownership.assign_case.submit")), RadioOption("false", messages("case.ownership.assign_case.view_only"))),
-        id = "take-ownership",
+        id = "assign-case-ownership",
         preSelect = false
     )
 
     <div>
-        <button class="button" id="take-ownership" type="submit">Continue</button>
+        <button class="button" id="assign_case-continue" type="submit">Continue</button>
     </div>
 
         }
