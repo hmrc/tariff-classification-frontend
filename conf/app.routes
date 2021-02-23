@@ -171,12 +171,17 @@ GET        /keywords/manage-keywords                                controllers.
 
 
 POST        /users/user/:pid                                     controllers.v2.MoveCasesController.postMoveCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
 GET         /users/move/move-cases                               controllers.v2.MoveCasesController.chooseUserOrTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 POST        /users/move/move-cases                               controllers.v2.MoveCasesController.postTeamOrUserChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
 GET         /users/move/move-cases-team                          controllers.v2.MoveCasesController.chooseTeamToMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 POST        /users/move/move-cases-team                          controllers.v2.MoveCasesController.postTeamChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 GET         /users/move/move-cases-done-team                     controllers.v2.MoveCasesController.casesMovedToTeamDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
-GET         /users/move/move-cases-user                          controllers.v2.MoveCasesController.chooseUserToMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
-POST        /users/move/move-cases-user                          controllers.v2.MoveCasesController.postUserChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
+GET         /users/move/move-cases-user                          controllers.v2.MoveCasesController.chooseUserToMoveCases(teamId:Option[String] ?= None, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user                          controllers.v2.MoveCasesController.postUserChoice(teamId:Option[String] ?= None, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 GET         /users/move/move-cases-done-user                     controllers.v2.MoveCasesController.casesMovedToUserDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-user-choose-team              controllers.v2.MoveCasesController.chooseUserFromAnotherTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user-choose-team              controllers.v2.MoveCasesController.postChooseUserFromAnotherTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
