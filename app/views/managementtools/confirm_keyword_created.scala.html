@@ -32,10 +32,10 @@
         <div id="confirm_keyword_done_id" class="column-two-thirds">
             <div class="govuk-panel govuk-panel--confirmation">
                 <h2 class="heading-xlarge mt-0">@messages("management.create-keyword.new-keyword-done")</h2>
-                <p class="heading-xlarge mt-0">@keyword.toUpperCase</p>
-                <h3 class="heading-large un-bold">@messages("management.create-keyword.new-keyword-done.caption")</h3>
+                <h3 class="heading-large mt-0">@keyword.toUpperCase</h3>
+                <h3 class="heading-large mt-0 un-bold">@messages("management.create-keyword.new-keyword-done.caption")</h3>
             </div>
-            <h3 class="heading-medium mt-0">Next steps</h3>
+            <h3 class="heading-medium mt-0">@messages("management.create-keyword.new-keyword-done.next")</h3>
             <p>
                 <a id="manage-all-keywords-link" href="@controllers.v2.routes.ManageKeywordsController.displayManageKeywords()">
                 @messages("management.create-keyword.new-keyword-done.link")

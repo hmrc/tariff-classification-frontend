@@ -16,7 +16,7 @@
 
 package views.managementtools
 
-import models.forms.{KeywordForm, ManageKeywordForm}
+import models.forms.KeywordForm
 import models.viewmodels.managementtools._
 import models.{ApplicationType, CaseStatus, Keyword, Paged}
 import play.twirl.api.HtmlFormat

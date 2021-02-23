@@ -30,6 +30,7 @@ import service.ManageKeywordsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
@@ -71,24 +72,23 @@ class ManageKeywordsController @Inject()(
   def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
 
-      keywordService.findAll.map(keywords => KeywordForm.formWithAuto(keywords.results.map(_.name))).flatMap {
-        _.bindFromRequest.fold(
-          formWithErrors =>
-            for {
-              keywords <- keywordService.findAll
-            } yield
-              Ok(
+      keywordService.findAll.flatMap {
+        keywords =>
+          val keywordNames = keywords.results.map(_.name)
+          KeywordForm.formWithAuto(keywordNames).bindFromRequest.fold(
+            formWithErrors =>
+              Future.successful(BadRequest(
                 newKeywordView(
                   activeSubNav,
                   keywords.results,
                   formWithErrors
                 )
-            ),
-          keyword =>
-            keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
-              Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
-          }
-        )
+              )),
+            keyword =>
+              keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
+                Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
+              }
+          )
       }
     }
 

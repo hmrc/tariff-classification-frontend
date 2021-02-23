@@ -16,22 +16,14 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.managementtools._
-@import views.html.components.input_accessible_auto_complete
-
-@import views.html.components.heading
+@import models.viewmodels.{ManagerToolsKeywordsTab, SubNavigationTab}
+@import views.html.components.{heading, input_accessible_auto_complete, manager_tools_secondary_navigation}
 @import views.html.includes.main
-
-@import views.html.partials.back_link
-
-@import models.viewmodels.ManagerToolsKeywordsTab
-@import models.viewmodels.SubNavigationTab
-
-@import views.html.components.manager_tools_secondary_navigation
+@import views.html.partials.{back_link, error_summary}
 
 @this()
 
-@(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab, allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.create-keyword-title"))) {
 
@@ -39,26 +31,29 @@
 
     @back_link()
 
-    <p class="caption-xl mt-40">@messages("management.create-keyword.caption")</p>
+    @error_summary(newKeywordForm.errors)
 
-    @heading(messages("management.create-keyword.heading"))
+    <div>
+        <div class="caption-xl mt-40">@messages("management.create-keyword.caption")</div>
+        @heading(messages("management.create-keyword.heading"), "heading-xlarge mt-0")
+    </div>
 
+    @helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), 'id -> "create_correspondence-form", 'novalidate -> "novalidate") {
 
-@helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), 'id -> "create_correspondence-form", 'novalidate -> "novalidate") {
+        @helper.CSRF.formField
 
-@helper.CSRF.formField
+        @input_accessible_auto_complete(
+            field = newKeywordForm("keyword"),
+            label = Some(messages("management.create-keyword.label")),
+            formControlClass = Some("w-100"),
+            hint = Some(messages("management.create-keyword.hint")),
+            labelClass = Some("un-bold"),
+            autoCompleteOptions = allKeywords.map(_.name),
+            placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
+        )
 
-  <p>@messages("management.create-keyword.label")</p>
-    @input_accessible_auto_complete(
-        field = newKeywordForm("keyword"),
-        formControlClass = Some("w-100"),
-        hint = Some(messages("management.create-keyword.hint")),
-        autoCompleteOptions = allKeywords.map(_.name),
-        placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
-    )
-
-    <button id="save_new_keyword-button" class="button left ml-1" type="submit" name="saveKeyword" value="true">
-        Save keyword
-    </button>
+        <button id="save_new_keyword-button" class="button left" type="submit" name="saveKeyword" value="true">
+            @messages("management.create-keyword.save-button")
+        </button>
     }
 }
