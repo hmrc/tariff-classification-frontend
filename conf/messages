@@ -1214,3 +1214,15 @@ users.move_cases.done.header=Cases moved
 users.move_cases.done.subHeader=Cases moved to the
 users.move_cases.done.subHeader.teamName={0} team
 
+
+management.manage-keywords-title=Manage keywords - Advance Tariff Rulings Case Manager - GOV.UK
+management.manage-keywords.heading=Manage keywords
+management.manage-keywords.approve-tab.heading=Keywords for approval
+management.manage-keywords.approve-tab-title=Approve keywords ({0})
+management.manage-keywords.all-tab-title=All keywords ({0})
+management.manage-keywords.create-new-keyword-button=Create new keyword
+management.manage-keywords.search-all-keywords.heading=All keywords
+management.manage-keywords.search-all-keywords.label=Rename or delete a keyword from the approved list
+management.manage-keywords.search-all-keywords.placeholder=Start typing to search for a keyword
+management.manage-keywords.search-all-keywords.edit-keyword-button=Edit keyword
+

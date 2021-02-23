@@ -167,6 +167,8 @@ GET        /users/user-delete/:pid                                      controll
 POST       /users/user-delete/:pid                                      controllers.v2.ManageUserController.confirmRemoveUser(pid: String)
 GET        /users/user-delete-done                                      controllers.v2.ManageUserController.doneDeleteUser(userName: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
+GET        /keywords/manage-keywords                                controllers.v2.ManageKeywordsController.displayManageKeywords()
+
 
 POST        /users/move/move-selected-cases                      controllers.v2.MoveCasesController.postMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 GET         /users/move/move-cases                               controllers.v2.MoveCasesController.chooseUserOrTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
