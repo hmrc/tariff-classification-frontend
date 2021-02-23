@@ -66,7 +66,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
-      contentAsString(result) should include("change_sample_status-heading")
+      bodyOf(result) should include("change_sample_status-heading")
     }
 
     "return OK when user has right permissions" in {
