@@ -64,7 +64,12 @@ class LiabilityController @Inject() (
     val liabilityViewModel  = CaseViewModel.fromCase(liabilityCase, request.operator)
     val rulingViewModel     = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
     val appealTabViewModel  = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
-
+    val ownCase             = liabilityCase.assignee.exists(_.id == request.operator.id)
+    val activeNavTab = (liabilityCase.status, ownCase) match {
+      case (CaseStatus.NEW, _) => GatewayCasesTab
+      case (_, true)           => MyCasesTab
+      case (_, _)              => OpenCasesTab
+    }
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
       attachmentsTab           <- getAttachmentTab(liabilityCase)
@@ -87,7 +92,8 @@ class LiabilityController @Inject() (
           uploadAttachmentForm,
           keywordsTab,
           keywordForm,
-          appealTabViewModel
+          appealTabViewModel,
+          activeNavTab
         )
       )
     }
@@ -140,6 +146,5 @@ class LiabilityController @Inject() (
               .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
         )
     }
-
 
 }
