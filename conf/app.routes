@@ -174,4 +174,7 @@ POST        /users/move/move-cases                               controllers.v2.
 GET         /users/move/move-cases-team                          controllers.v2.MoveCasesController.chooseTeamToMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 POST        /users/move/move-cases-team                          controllers.v2.MoveCasesController.postTeamChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 GET         /users/move/move-cases-done-team                     controllers.v2.MoveCasesController.casesMovedToTeamDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET         /users/move/move-cases-user                          controllers.v2.MoveCasesController.chooseUserToMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST         /users/move/move-cases-user                          controllers.v2.MoveCasesController.postUserChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
+GET         /users/move/move-cases-done-user                     controllers.v2.MoveCasesController.casesMovedToUserDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)

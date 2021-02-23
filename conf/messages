@@ -1208,6 +1208,8 @@ users.user.delete.done={0} deleted
 
 users.move_cases.team_or_user.header=Where would you like to move these {0} cases?
 users.move_cases.choose_team.header=Which team would you like these {0} cases moved to?
+users.move_cases.choose_user.header=Which user would you like these {0} cases moved to?
+users.move_cases.choose_user.user_from_another_team.label=Choose a user from another team
 users.move_cases.done.header=Cases moved
 users.move_cases.done.subHeader=Cases moved to the
 users.move_cases.done.subHeader.teamName={0} team
