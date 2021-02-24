@@ -24,7 +24,7 @@
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.includes.main
 @import views.html.forms.components._
-@import views.html.partials.{error_summary, case_heading}
+@import views.html.partials.{error_summary, case_heading, back_link}
 
 @this()
 
@@ -32,12 +32,14 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
 
+    <div class="mt-15">@back_link()</div>
     @error_summary(form.errors)
 
+    <div class="column-two-thirds operation-dashboard-header">
     @case_heading(
         c,
         messageKey = Some("case.v2.liability.c592.edit_details.heading"))
-
+    </div>
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="form-group">
 
