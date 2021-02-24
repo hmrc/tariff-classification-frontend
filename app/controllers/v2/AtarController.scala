@@ -21,7 +21,7 @@ import controllers.RequestActions
 import javax.inject.{Inject, Singleton}
 import models.{Case, CaseStatus, EventType, NoPagination}
 import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, KeywordsTabViewModel, MyCasesTab, OpenCasesTab}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, KeywordsTabViewModel, MyCasesTab, OpenCasesTab, PrimaryNavigationViewModel}
 import models.viewmodels.atar._
 import models.request._
 import play.api.data.Form
@@ -71,12 +71,10 @@ class AtarController @Inject() (
     val activityTabViewModel    = getActivityTab(atarCase)
     val keywordsTabViewModel    = getKeywordsTab(atarCase)
     val storedAttachments       = fileService.getAttachments(atarCase)
-    val ownCase                 = atarCase.assignee.exists(_.id == request.operator.id)
-    val activeNavTab = (atarCase.status, ownCase) match {
-      case (CaseStatus.NEW, _) => GatewayCasesTab
-      case (_, true)           => MyCasesTab
-      case (_, _)              => OpenCasesTab
-    }
+    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+      atarCase.status,
+      atarCase.assignee.exists(_.id == request.operator.id)
+    )
     for {
       sampleTab      <- sampleTabViewModel
       attachmentsTab <- attachmentsTabViewModel

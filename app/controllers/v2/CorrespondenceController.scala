@@ -22,7 +22,7 @@ import models.forms._
 import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, MessagesTabViewModel, MyCasesTab, OpenCasesTab, SampleStatusTabViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, MessagesTabViewModel, MyCasesTab, OpenCasesTab, PrimaryNavigationViewModel, SampleStatusTabViewModel}
 import models.{Case, CaseStatus, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -64,12 +64,10 @@ class CorrespondenceController @Inject() (
     val activityTabViewModel             = getActivityTab(correspondenceCase)
     val storedAttachments                = fileService.getAttachments(correspondenceCase)
     val correspondenceSampleTabViewModel = getSampleTab(correspondenceCase)
-    val ownCase                          = correspondenceCase.assignee.exists(_.id == request.operator.id)
-    val activeNavTab = (correspondenceCase.status, ownCase) match {
-      case (CaseStatus.NEW, _) => GatewayCasesTab
-      case (_, true)           => MyCasesTab
-      case (_, _)              => OpenCasesTab
-    }
+    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+      correspondenceCase.status,
+      correspondenceCase.assignee.exists(_.id == request.operator.id)
+    )
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel

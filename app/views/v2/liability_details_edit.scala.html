@@ -20,7 +20,7 @@
 @import helper._
 @import models.{Case, LiabilityOrder}
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseHeaderViewModel, MyCasesTab}
+@import models.viewmodels._
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.includes.main
 @import views.html.forms.components._
@@ -28,9 +28,9 @@
 
 @this()
 
-@(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form : Form[Case], primaryNavTab : PrimaryNavigationTab = MyCasesTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = MyCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = primaryNavTab) {
 
     <div class="mt-15">@back_link()</div>
     @error_summary(form.errors)
