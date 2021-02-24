@@ -19,7 +19,8 @@
 @import models.Case
 @import views.html.partials.back_link
 @import views.html.partials.statuses.{appeal_status, case_status}
-@(c: Case, displayBackLink: Boolean = true, messageKey: Option[String] = None)(implicit messages: Messages, request: Request[_])
+
+@(c: Case, displayBackLink: Boolean = true, messageKey: Option[String] = None, customPrefix: Option[String] = None)(implicit messages: Messages, request: Request[_])
 
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
@@ -39,6 +40,17 @@
         }
     </div>
 
+<<<<<<< HEAD
+=======
+    <h1 class="heading-xlarge case-title">
+        @customPrefix.map { customPrefix =>
+            @messages(customPrefix, c.application.goodsName)
+        }.getOrElse {
+            @c.application.goodsName
+        }
+    </h1>
+
+>>>>>>> e3d1034e... DIT-1929: Remaned attribute for custom prefix title
     <div id="case-status-section">
         @case_status(c, "case-status")
         @appeal_status(c, "appeal-status")
