@@ -293,7 +293,6 @@ errors.summary.title=Error
 error.empty.default=This field is required
 error.empty.note=Enter a case note
 error.empty.keyword=Enter a keyword
-error.duplicate.keyword=Keyword already exists
 error.empty.sample.status=Select yes if a sample is being sent
 error.empty.sample.return=Select yes if the applicant wants the sample returned
 error.empty.queue=Select a team
@@ -1225,6 +1224,9 @@ management.create-keyword.new-keyword-done=New keyword created
 management.create-keyword.new-keyword-done.caption=has been added to the approved keyword list
 management.create-keyword.new-keyword-done.next=Next steps
 management.create-keyword.new-keyword-done.link=Go back to manage all keywords
+management.create-keyword.error.empty.keyword=Enter a new keyword
+management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list
+
 
 
 

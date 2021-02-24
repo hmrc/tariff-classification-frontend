@@ -22,7 +22,7 @@ import controllers.RequestActions
 import models.forms.KeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
-import models.{Keyword, Permission}
+import models.{Keyword, NoPagination, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -58,7 +58,7 @@ class ManageKeywordsController @Inject()(
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
-        keywords <- keywordService.findAll()
+        keywords <- keywordService.findAll(NoPagination())
       } yield
         Ok(
           newKeywordView(
@@ -72,7 +72,7 @@ class ManageKeywordsController @Inject()(
   def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
 
-      keywordService.findAll.flatMap {
+      keywordService.findAll(NoPagination()).flatMap {
         keywords =>
           val keywordNames = keywords.results.map(_.name)
           KeywordForm.formWithAuto(keywordNames).bindFromRequest.fold(

@@ -124,7 +124,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
-      contentAsString(result) should include(messages("error.empty.keyword"))
+      contentAsString(result) should include(messages("management.create-keyword.error.empty.keyword"))
 
     }
 
@@ -138,7 +138,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
-      contentAsString(result) should include(messages("error.duplicate.keyword"))
+      contentAsString(result) should include(messages("management.create-keyword.error.duplicate.keyword"))
     }
 
   }
