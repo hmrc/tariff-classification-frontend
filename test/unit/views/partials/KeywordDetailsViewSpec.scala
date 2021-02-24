@@ -18,11 +18,16 @@ package views.partials
 
 import models.Permission
 import models.forms.KeywordForm
+import models.request.AuthenticatedRequest
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.keywords_details
 import models.viewmodels.KeywordsTabViewModel
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.{FakeHeaders, FakeRequest}
+import utils.Notification._
+import play.api.test.CSRFTokenHelper._
 
 class KeywordDetailsViewSpec extends ViewSpec {
 
@@ -30,7 +35,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
 
     "Render a case with no keywords" in {
       // Given
-      val c = aCase()
+      val c           = aCase()
       val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
@@ -43,7 +48,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
 
     "Render a case with keywords" in {
       // Given
-      val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+      val c           = aCase().copy(keywords = Set("APPLES", "CARS"))
       val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
@@ -58,7 +63,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
 
     "Render a case with keywords with KEYWORDS permissions" in {
       // Given
-      val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+      val c           = aCase().copy(keywords = Set("APPLES", "CARS"))
       val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
@@ -82,7 +87,7 @@ class KeywordDetailsViewSpec extends ViewSpec {
 
     "Render a case with keywords without KEYWORDS permissions" in {
       // Given
-      val c = aCase().copy(keywords = Set("APPLES", "CARS"))
+      val c           = aCase().copy(keywords = Set("APPLES", "CARS"))
       val keywordsTab = KeywordsTabViewModel.fromCase(c, Seq("APPLES", "TOYS"))
 
       // When
@@ -91,6 +96,29 @@ class KeywordDetailsViewSpec extends ViewSpec {
       // Then
       doc shouldNot containElementWithID("keywords-row-0-remove")
       doc shouldNot containElementWithID("keyword_details-add_keyword")
+    }
+
+    "render notification banner when keyword was added" in {
+
+      val requestWithFlashKeywordSuccess: FakeRequest[AnyContentAsEmpty.type] =
+        FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty)
+          .withFlash(success("notification.success.keywords.add"))
+          .withCSRFToken
+          .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+      val doc = view(
+        keywords_details(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), KeywordForm.form, 0)(
+          AuthenticatedRequest(
+            authenticatedOperator.copy(permissions = Set(Permission.KEYWORDS)),
+            requestWithFlashKeywordSuccess
+          ),
+          messages,
+          appConfig
+        )
+      )
+
+      doc should containElementWithID("govuk-notification-banner-title")
+
     }
   }
 }

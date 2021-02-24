@@ -15,9 +15,9 @@
  *@
 
 @import config.AppConfig
-@import views.html.includes.main
 @import models.Operator
 @import models.request.AuthenticatedRequest
+@import controllers.v2.routes.ManageUserController
 
 @this()
 
@@ -33,7 +33,7 @@
    @messages("users.user.details.name")
   </dt>
   <dd class="cya-answer" id="user-full-name">
-   @userDetails.name.getOrElse("Unknown")
+   @userDetails.getFullName
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
@@ -44,7 +44,7 @@
    @messages("users.user.details.email")
   </dt>
   <dd class="cya-answer" id="user-email">
-   @userDetails.email.getOrElse("Unknown")
+   @userDetails.getEmail
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
@@ -96,7 +96,7 @@
    @userDetails.getMemberTeamNames.mkString(", ")}
   </dd>
   <dd class="govuk-summary-list__actions">
-   <a class="govuk-link" href="user-edit-team-alex">
+   <a class="govuk-link" href="@ManageUserController.editUserTeamDetails(userDetails.id)">
     Change<span class="visually-hidden"> assigned team</span>
    </a>
   </dd>

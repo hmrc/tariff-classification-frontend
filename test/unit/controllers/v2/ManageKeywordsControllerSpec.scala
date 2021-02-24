@@ -18,34 +18,27 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
-import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.`given`
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, QueuesService}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Cases
-import views.html.managementtools.manage_users_view
-import views.html.v2.open_cases_view
+import views.html.managementtools.manage_keywords_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ManageUsersControllerSpec extends ControllerBaseSpec {
+class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
-  private lazy val manage_users_view = injector.instanceOf[manage_users_view]
+  private lazy val manage_keywords_view = injector.instanceOf[manage_keywords_view]
 
-  private def controller(permission: Set[Permission]) = new ManageUsersController(
+  private def controller(permission: Set[Permission]) = new ManageKeywordsController(
     new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
     mcc,
-    manage_users_view,
+    manage_keywords_view,
     realAppConfig
   )
 
   "Manage users" should {
 
     "return 200 OK and HTML content type" in {
-      val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageUsers()(fakeRequest))
+      val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(fakeRequest))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -53,7 +46,7 @@ class ManageUsersControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      val result = await(controller(Set()).displayManageUsers()(fakeRequest))
+      val result = await(controller(Set()).displayManageKeywords()(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
 

@@ -189,7 +189,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByAllQueues(Queues.allQueues, pagination)) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(connector.findCasesByAllQueues(Queues.allQueues, pagination, assignee = "none")) shouldBe Paged(Seq(Cases.btiCaseExample))
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -867,6 +867,59 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   }
 
+  "Connector 'getAllUsers'" should {
+
+    "get all users" in {
+      val ref           = "PID1"
+      val validOperator = Cases.operatorWithPermissions.copy(id = ref)
+      val json          = Json.toJson(validOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/users/$ref"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(json)
+          )
+      )
+
+      await(connector.updateUser(validOperator)) shouldBe validOperator
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/users/$ref"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "get cases in all queues" in {
+      val url = buildQueryUrlAllQueues(
+        types      = ApplicationType.values.toSeq,
+        statuses   = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+        assigneeId = "none",
+        queueIds   = Queues.allQueues.map(_.id),
+        pagination = pagination
+      )
+
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(CasePayloads.pagedGatewayCases)
+          )
+      )
+
+      await(connector.findCasesByAllQueues(Queues.allQueues, pagination, assignee = "none")) shouldBe Paged(Seq(Cases.btiCaseExample))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+  }
+
   "Connector 'Update User'" should {
 
     "update valid user" in {
@@ -938,6 +991,79 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       postRequestedFor(urlEqualTo(s"/users"))
         .withHeader("X-Api-Token", equalTo(fakeAuthToken))
     )
+  }
+
+  "update user" in {
+    val operator = Operator("1")
+    val request  = Json.toJson(NewUserRequest(operator)).toString()
+    val response = Json.toJson(operator).toString()
+
+    stubFor(
+      post(urlEqualTo(s"/users/user:1"))
+        .withRequestBody(equalToJson(request))
+        .willReturn(
+          aResponse()
+            .withStatus(HttpStatus.SC_CREATED)
+            .withBody(response)
+        )
+    )
+
+    await(connector.createUser(operator)) shouldBe operator
+
+    verify(
+      postRequestedFor(urlEqualTo(s"/users"))
+        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+    )
+  }
+
+  "Connector 'delete User'" should {
+
+    "delete valid user" in {
+      val ref           = "PID1"
+      val validOperator = Cases.operatorWithPermissions.copy(id = ref)
+      val json          = Json.toJson(validOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/mark-deleted/users/$ref"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(json)
+          )
+      )
+
+      await(connector.markDeleted(validOperator)) shouldBe validOperator
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/mark-deleted/users/$ref"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "delete user with an unknown id" in {
+      val unknownId       = "unknownId"
+      val unknownOperator = Cases.operatorWithPermissions.copy(id = unknownId)
+      val json            = Json.toJson(unknownOperator).toString()
+
+      stubFor(
+        put(urlEqualTo(s"/mark-deleted/users/$unknownId"))
+          .withRequestBody(equalToJson(json))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_NOT_FOUND)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.markDeleted(unknownOperator))
+      }
+
+      verify(
+        putRequestedFor(urlEqualTo(s"/mark-deleted/users/$unknownId"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
   }
 
 }

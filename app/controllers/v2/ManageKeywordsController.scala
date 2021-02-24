@@ -19,33 +19,31 @@ package controllers.v2
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
+import models.Permission
+import models.forms.KeywordForm
 import models.viewmodels._
-import models.viewmodels.managementtools.UsersTabViewModel
-import models.{ApplicationType, NoPagination, Permission, Queues}
+import models.viewmodels.managementtools.ManageKeywordsViewModel
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class ManageUsersController @Inject() (
+class ManageKeywordsController @Inject()(
   verify: RequestActions,
   mcc: MessagesControllerComponents,
-  val manageUsersView: views.html.managementtools.manage_users_view,
+  val manageKeywordsView: views.html.managementtools.manage_keywords_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
+  val keywordForm: Form[String] = KeywordForm.form
 
-  def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
-        manageUsersView(
+        manageKeywordsView(
           activeSubNav,
-          UsersTabViewModel.forManagedTeams(
-            //Queues.allQueues
-            Seq(Queues.act, Queues.cap, Queues.elm).toList //todo replace dummy stub with a query
-          )
+          ManageKeywordsViewModel.forManagedTeams(),
+          keywordForm
         )
       )
     )

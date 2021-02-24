@@ -19,18 +19,23 @@ package service
 import audit.AuditService
 import config.AppConfig
 import connector.BindingTariffClassificationConnector
-import models.Operator
+import models.{Operator, Paged, Pagination}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
-
 import javax.inject.Inject
+import models.Role.Role
+
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserService @Inject() (
+class UserService @Inject()(
   auditService: AuditService,
   connector: BindingTariffClassificationConnector
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
+
+  def getAllUsers(role: Seq[Role], team: String, pagination: Pagination)(
+    implicit hc: HeaderCarrier): Future[Paged[Operator]] =
+    connector.getAllUsers(role, team, pagination)
 
   def updateUser(originalOperator: Operator, operatorMakingTheChange: Operator)(
     implicit hc: HeaderCarrier
@@ -41,5 +46,15 @@ class UserService @Inject() (
     } yield updated
 
   def getUser(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =
-    connector.getUserDetails(id)
+    for {
+      userDetails <- connector.getUserDetails(id).map(_.filterNot(_.deleted))
+    } yield userDetails
+
+  def markDeleted(user: Operator, operatorMakingTheChange: Operator)(
+    implicit hc: HeaderCarrier
+  ): Future[Operator] =
+    for {
+      deleted <- connector.markDeleted(user)
+      _ = auditService.auditUserDeleted(deleted, operatorMakingTheChange)
+    } yield deleted
 }

@@ -26,6 +26,8 @@ import metrics.HasMetrics
 import models._
 import models.CaseStatus._
 import models.EventType.EventType
+import models.Role.Role
+import models._
 import models.request.NewEventRequest
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
@@ -97,14 +99,15 @@ class BindingTariffClassificationConnector @Inject() (
   def findCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq
+    types: Seq[ApplicationType] = ApplicationType.values.toSeq,
+    assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val url = buildQueryUrl(
         types      = types,
         statuses   = statuses,
         queueIds   = queue.map(_.id),
-        assigneeId = "none",
+        assigneeId = assignee,
         pagination = pagination
       )
       client.GET[Paged[Case]](url)
@@ -231,9 +234,26 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Seq[ReportResult]](url)
     }
 
+  def getAllUsers(roles: Seq[Role], team: String, pagination: Pagination)(
+    implicit hc: HeaderCarrier): Future[Paged[Operator]] =
+    withMetricsTimerAsync("get-all-users") { _ =>
+
+      val searchParam = s"role=${roles.mkString(",")}&member_of_teams=$team"
+      val url =
+        s"${appConfig.bindingTariffClassificationUrl}/users?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
+
+      client.GET[Paged[Operator]](url = url)
+    }
+
   def updateUser(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
     withMetricsTimerAsync("update-user") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/users/${o.id}"
+      client.PUT[Operator, Operator](url = url, body = o)
+    }
+
+  def markDeleted(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("delete-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/mark-deleted/users/${o.id}"
       client.PUT[Operator, Operator](url = url, body = o)
     }
 

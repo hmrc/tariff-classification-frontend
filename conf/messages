@@ -46,6 +46,7 @@ case.heading.secondary={0} case {1} for {2}
 case.heading.secondary.nosuffix={0} case {1}
 case.heading.reject=Reject case for {0}
 case.heading.rejected.for=Case rejected for {0}
+case.heading.ownership=Do you want to take ownership of the {0} case?
 case.status=Status
 case.status.error=Select a case status
 case.created-date=Date received
@@ -287,7 +288,7 @@ date.must.be.in.past=The date must be in the past
 events.table.empty=There are no events for this case
 errors.case-not-found.title=Case not found
 errors.case-not-found.message=We could not find a Case with reference: {0}
-errors.all.back=Back Home
+errors.all.back=Back
 errors.ruling-not-found.title=Ruling not found
 errors.ruling-not-found.message=We could not find a ruling with case reference: {0}
 errors.document-not-found.title=Document not found
@@ -470,7 +471,7 @@ page.title.case.rejected=Case rejected
 page.title.release.case=Release this case for classification
 page.title.case.released=Case released
 page.title.create.case=Create this case for a team
-page.title.take.ownership=This case is unassigned. Do you want to take ownership?
+page.title.take.ownership=Do you want to take ownership of this case?
 page.title.move.case=Move this case back to a team
 page.title.case.moved=Cased moved
 page.title.suppress.case=Change case status to: Suppressed
@@ -891,7 +892,7 @@ case.v2.liability.sample_status_tab.who_is_sending_sample_p.hidden=Who is sendin
 case.v2.liability.keywords.case_only_keyword=Keyword is not from the list
 case.v2.liability.keywords.tab_title=Keywords
 case.v2.liability.keywords.label=Find or add a keyword
-case.v2.liability.keywords.hint=Start typing and select a keyword if it appears on the list. To add a keyword not on the list, type it in full.
+case.v2.liability.keywords.hint=Keywords not found in the approved list can be added for approval by team managers.
 case.v2.liability.keywords.paragraph=Classification team managers approve new keywords.
 
 case.v2.liability.appeals.tab_title=Appeals
@@ -1158,7 +1159,7 @@ site.notification.success = Success
 case.activity.note.success.text = Case note has been added to the Activity log
 case.ownership.assign_case.assigned=This case is already assigned to {0}
 case.ownership.assign_case.unassigned=This case is unassigned. Do you want to take ownership?
-case.ownership.assign_case.description=This will add the case to your ''My cases'' list.
+case.ownership.assign_case.description=This case is unassigned. Taking ownership will add the case to ''My cases''.
 case.ownership.assign_case.submit=Yes, take ownership
 case.ownership.assign_case.view_only=No, view only
 case.ownership.assign_case.view_case=View the case
@@ -1167,9 +1168,18 @@ case.ownership.assign_case.back=Back to my cases
 case.change_status.move_back_to_team.heading=Move this case back to a team
 case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team.
 
+notification.success.keywords.add = The keyword has been added to this case
+notification.success.keywords.remove = The keyword has been removed from this case
+notification.success.referral.off = This case has been taken off referral
+
+management.manage-users-title=Manage users - Advance Tariff Rulings Case Manager - GOV.UK
 management.manage-users-title=Manage users
 management.manage-users.heading = Manage users
 management.manage-users.tabSubHeading = {0} users
+management.manage-users.tabSubHeading.unassigned = Unassigned ({0})
+management.manage-users.tabSubHeading.assigned = Assigned ({0})
+management.manage-users.tabSubHeading.assigned.h2 = Assigned users
+management.manage-users.tabSubHeading.unassigned.h2 = Unassigned users
 users.user.details.tab_title=User details
 users.user.atar.tab_title=ATaR
 users.user.liability.tab_title=Liability
@@ -1196,4 +1206,28 @@ users.user.details.role.hint.gateway=Assign ATaR cases. Create and assign Liabil
 users.user.details.role.hint.manager=Manage users, cases and keywords for assigned teams.
 users.user.details.role.hint.classificationAndGateway=Assign and manage ATaR cases. Create, assign and manage Liability, Correspondence and Miscellaneous cases.
 
+users.user.edit_user.title=Edit team for user
 users.user.noCases=There are no {0} cases assigned to this user.
+users.user.editUserTeams.heading=Assign {0} to a team or teams
+
+take-ownership.form.state.required=Select yes if you want to take ownership of this case
+
+users.user.delete.header=Delete {0}
+users.user.delete.casesMustBeMoved=Cases must be moved before {0} can be deleted
+users.user.delete.casesMustBeMoved.message=This user's active cases must be moved to another user or team before they can be deleted.
+users.user.delete.confirm=Are you sure you want to delete {0}?
+users.user.delete.confirm.message=This user will be deleted but all their previous activity will be maintained.
+remove_user.form.state.required = Select yes if you want to delete this user
+users.user.delete.done={0} deleted
+
+management.manage-keywords-title=Manage keywords - Advance Tariff Rulings Case Manager - GOV.UK
+management.manage-keywords.heading=Manage keywords
+management.manage-keywords.approve-tab.heading=Keywords for approval
+management.manage-keywords.approve-tab-title=Approve keywords ({0})
+management.manage-keywords.all-tab-title=All keywords ({0})
+management.manage-keywords.create-new-keyword-button=Create new keyword
+management.manage-keywords.search-all-keywords.heading=All keywords
+management.manage-keywords.search-all-keywords.label=Rename or delete a keyword from the approved list
+management.manage-keywords.search-all-keywords.placeholder=Start typing to search for a keyword
+management.manage-keywords.search-all-keywords.edit-keyword-button=Edit keyword
+
