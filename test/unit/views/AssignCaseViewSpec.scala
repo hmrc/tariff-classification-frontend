@@ -18,11 +18,14 @@ package views
 
 import controllers.routes
 import models.Operator
+import models.forms.TakeOwnerShipForm
 import utils.Cases._
 import views.ViewMatchers._
 import views.html.assign_case
 
 class AssignCaseViewSpec extends ViewSpec {
+
+  val form = TakeOwnerShipForm.form
 
   "Assign Case" should {
 
@@ -32,21 +35,15 @@ class AssignCaseViewSpec extends ViewSpec {
         withReference("REF"),
         withoutAssignee()
       )
-
       // When
-      val doc = view(assign_case(c))
+      val doc = view(assign_case(c, form))
 
       // Then
-      doc should containElementWithID("assign_case-unassigned_heading")
       doc shouldNot containElementWithID("assign_case-assigned_heading")
 
-      doc should containElementWithID("assign_case-assign_button")
+      doc                                  should containElementWithID("take-ownership")
+      doc.getElementById("take-ownership") should haveAttribute("action", routes.AssignCaseController.post("REF").url)
 
-      doc should containElementWithID("assign_case-continue_button")
-      doc.getElementById("assign_case-continue_button") should haveAttribute(
-        "href",
-        routes.CaseController.get("REF").url
-      )
       doc should containElementWithID("back-link")
     }
 
@@ -58,7 +55,7 @@ class AssignCaseViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(assign_case(c))
+      val doc = view(assign_case(c, form))
 
       // Then
       doc should containElementWithID("assign_case-assigned_heading")
