@@ -19,7 +19,7 @@ package controllers.v2
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.forms.KeywordForm
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import play.api.http.Status
 import play.api.test.CSRFTokenHelper._
@@ -74,7 +74,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type" in {
 
-      given(keywordService.findAll()(any[HeaderCarrier]))
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).newKeyword()(newFakeGETRequestWithCSRF))
@@ -94,7 +94,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
     "return 303 SEE_OTHER when new keyword successfully added" in {
 
-      given(keywordService.findAll()(any[HeaderCarrier]))
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
       given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
@@ -115,7 +115,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
     "render error if keyword empty" in {
 
-      given(keywordService.findAll()(any[HeaderCarrier]))
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> ""))))
@@ -129,7 +129,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
     }
 
     "render error if duplicate keyword entered" in {
-      given(keywordService.findAll()(any[HeaderCarrier]))
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name))))

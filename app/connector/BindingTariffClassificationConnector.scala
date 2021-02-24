@@ -263,7 +263,7 @@ class BindingTariffClassificationConnector @Inject() (
 
   def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
     withMetricsTimerAsync("find-all-keywords") { _ =>
-      val url = s"${appConfig.bindingTariffClassificationUrl}/keywords&page=${pagination.page}&page_size=${pagination.pageSize}"
+      val url = s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
       client.GET[Paged[Keyword]](url)
     }
 
