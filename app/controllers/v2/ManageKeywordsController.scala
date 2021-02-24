@@ -44,15 +44,20 @@ class ManageKeywordsController @Inject()(
   val keywordForm: Form[String] = KeywordForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async{
       implicit request =>
-        Ok(
+      for {
+      caseKeywords <- keywordService.fetchCaseKeywords()
+      allKeywords  <- keywordService.findAll()
+      x = ManageKeywordsViewModel.forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
+      } yield Ok(
           manageKeywordsView(
             activeSubNav,
-            ManageKeywordsViewModel.forManagedTeams(),
+            x,
             keywordForm
           )
-      ))
+      )
+    }
 
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>

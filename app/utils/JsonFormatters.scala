@@ -22,7 +22,7 @@ import models.LiabilityStatus.LiabilityStatus
 import models.Role.Role
 import models.request.NewEventRequest
 import models.response.{FileMetadata, ScanStatus}
-import models.{CaseStatus, LiabilityStatus, _}
+import models.{AppType, CaseStatus, LiabilityStatus, _}
 
 object JsonFormatters {
 
@@ -70,6 +70,7 @@ object JsonFormatters {
   implicit val appealTypeFormat: Format[AppealType.Value]                = EnumJson.format(AppealType)
   implicit val cancelReasonFormat: Format[CancelReason.Value]            = EnumJson.format(CancelReason)
   implicit val caseStatusFormat: Format[CaseStatus.Value]                = EnumJson.format(CaseStatus)
+  implicit val appTypeFormat: Format[AppType.Value]                      = EnumJson.format(AppType)
   implicit val attachmentFormat: OFormat[Attachment]                     = Json.using[Json.WithDefaultValues].format[Attachment]
   implicit val appealFormat: OFormat[Appeal]                             = Json.format[Appeal]
   implicit val cancellationFormat: OFormat[Cancellation]                 = Json.using[Json.WithDefaultValues].format[Cancellation]
@@ -134,6 +135,8 @@ object JsonFormatters {
   implicit val newEventRequestFormat: OFormat[NewEventRequest] =
     Json.using[Json.WithDefaultValues].format[NewEventRequest]
 
+  implicit val formatCaseHeader: OFormat[CaseHeader]              = Json.format[CaseHeader]
+  implicit val formatCaseKeyword: OFormat[CaseKeyword]            = Json.format[CaseKeyword]
   implicit val emailCompleteParamsFormat: OFormat[CaseCompletedEmailParameters] =
     Json.format[CaseCompletedEmailParameters]
   implicit val emailCompleteFormat: OFormat[CaseCompletedEmail] = Json.format[CaseCompletedEmail]

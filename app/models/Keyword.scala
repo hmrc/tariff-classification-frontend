@@ -20,3 +20,20 @@ case class Keyword(
   name: String,
   approved: Boolean = false
 )
+
+case class CaseHeader(
+                       reference: String,
+                       assignee: Option[Operator],
+                       team: Option[String],
+                       goodsName: Option[String],
+                       caseType: AppType.Value,
+                       status: CaseStatus.Value
+                     )
+
+case class CaseKeyword(keyword: Keyword,
+                       cases: List[CaseHeader])
+
+object AppType extends Enumeration {
+  type ApplicationType = Value
+  val BTI, LIABILITY_ORDER, CORRESPONDENCE, MISCELLANEOUS = Value
+}

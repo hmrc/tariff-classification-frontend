@@ -31,4 +31,7 @@ class ManageKeywordsService @Inject()(connector: BindingTariffClassificationConn
 
   def findAll()(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
       connector.findAllKeywords()
+
+  def fetchCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
+      connector.getCaseKeywords()
 }
