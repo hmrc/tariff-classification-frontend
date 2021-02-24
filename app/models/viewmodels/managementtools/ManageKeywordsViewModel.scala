@@ -31,6 +31,9 @@ object ManageKeywordsViewModel {
 
     val x = caseKeywords.flatMap(caseKeyword =>
       caseKeyword.cases.map { caseHeader =>
+
+      val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, false)
+
         KeywordViewModel(
           caseKeyword.keyword.name,
           caseHeader.assignee
@@ -43,7 +46,7 @@ object ManageKeywordsViewModel {
             .getOrElse(""),
           caseHeader.goodsName.getOrElse(""),
           ApplicationType.withName(caseHeader.caseType.toString),
-          caseHeader.status,
+          caseStatus,
           caseKeyword.keyword.approved
         )
     })
@@ -51,7 +54,7 @@ object ManageKeywordsViewModel {
     ManageKeywordsViewModel(
       "Manage keywords",
       ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(x.filter(k => !k.isApproved))),
-      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Keywords.allKeywords)
+      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), allKeywords)
     )
   }
 
@@ -61,5 +64,5 @@ case class KeywordsTabViewModel(
   tabMessageKey: String,
   elementId: String,
   keyword: Set[String],
-  globalKeywords: Seq[KeywordViewModel]
+  globalKeywords: Seq[String]
 )

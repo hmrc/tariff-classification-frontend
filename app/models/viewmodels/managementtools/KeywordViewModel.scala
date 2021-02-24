@@ -24,13 +24,18 @@ case class KeywordViewModel(
   name: String,
   goods: String,
   caseType: ApplicationType,
-  caseStatus: CaseStatus,
+  caseStatus: CaseStatusKeywordViewModel,
   approved: Boolean
 ) {
   def isApproved: Boolean = approved
 }
 
-//todo replace the dummy stub with queries
+case class CaseStatusKeywordViewModel(
+  caseStatus: CaseStatus,
+  overdue:   Boolean
+                                     )
+
+/*//todo replace the dummy stub with queries
 object Keywords {
   val keyword1 =
     KeywordViewModel("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatus.REFERRED, true)
@@ -45,4 +50,4 @@ object Keywords {
 
   def allKeywords: List[KeywordViewModel] = List(keyword1, keyword2, keyword3, keyword4, keyword5, keyword6, keyword7, keyword8)
 
-}
+}*/

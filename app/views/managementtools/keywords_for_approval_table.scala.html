@@ -17,6 +17,8 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.managementtools._
+@import views.html.v2.case_status_keywords_view
+
 
 @(manageKeywordsTab: ManageKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -33,12 +35,12 @@
     @for((result, index) <- manageKeywordsTab.searchResult.results.zipWithIndex) {
         <tr id="@{manageKeywordsTab.tabMessageKey}-details-@index">
             <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index">
-                <a href="#">@result.keyword</a>
+                <a href="#">@{result.keyword.trim.toUpperCase}</a>
             </td>
             <td id="@{manageKeywordsTab.tabMessageKey}-user-name-@index">@result.name</td>
             <td id="@{manageKeywordsTab.tabMessageKey}-goods-id-@index">@result.goods</td>
             <td id="@{manageKeywordsTab.tabMessageKey}-type-id-@index">@result.caseType.prettyName</td>
-            <td id="@{manageKeywordsTab.tabMessageKey}-status-id-@index">@result.caseStatus</td>
+            <td id="@{manageKeywordsTab.tabMessageKey}-status-id-@index">@case_status_keywords_view(result.caseStatus, "ids")</td>
         </tr>
     }
 

@@ -44,19 +44,21 @@ class ManageKeywordsController @Inject()(
   val keywordForm: Form[String] = KeywordForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async{
-      implicit request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+
       for {
-      caseKeywords <- keywordService.fetchCaseKeywords()
-      allKeywords  <- keywordService.findAll()
-      x = ManageKeywordsViewModel.forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
-      } yield Ok(
+        caseKeywords <- keywordService.fetchCaseKeywords()
+        allKeywords  <- keywordService.findAll()
+        manageKeywordsViewModel = ManageKeywordsViewModel
+          .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
+      } yield
+        Ok(
           manageKeywordsView(
             activeSubNav,
-            x,
+            manageKeywordsViewModel,
             keywordForm
           )
-      )
+        )
     }
 
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
@@ -75,7 +77,6 @@ class ManageKeywordsController @Inject()(
 
   def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-
       keywordService.findAll.map(keywords => KeywordForm.formWithAuto(keywords.results.map(_.name))).flatMap {
         _.bindFromRequest.fold(
           formWithErrors =>
