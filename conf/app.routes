@@ -187,3 +187,4 @@ GET         /users/move/move-cases-user-choose-team              controllers.v2.
 POST        /users/move/move-cases-user-choose-team              controllers.v2.MoveCasesController.postChooseUserFromAnotherTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
 GET         /users/move/move-cases-user-team                     controllers.v2.MoveCasesController.chooseOneOfUsersTeams(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user-team                     controllers.v2.MoveCasesController.postChooseOneOfUsersTeams(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)

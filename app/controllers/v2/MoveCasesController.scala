@@ -47,6 +47,7 @@ class MoveCasesController @Inject() (
   val chooseTeamPage: views.html.partials.users.move_cases_choose_team,
   val chooseTeamToChooseUsersFromPage: views.html.partials.users.move_cases_choose_user_team,
   val chooseUserPage: views.html.partials.users.move_cases_choose_user,
+  val chooseUserTeamPage: views.html.partials.users.move_cases_choose_one_from_user_teams,
   val doneMoveCasesPage: views.html.partials.users.done_move_cases
 )(
   implicit val appConfig: AppConfig,
@@ -60,6 +61,7 @@ class MoveCasesController @Inject() (
   private val ChosenCases       = "chosen_cases"
   private val ChosenTeam        = "chosen_team"
   private val ChosenUser        = "chosen_user"
+  private val ChosenUserPID     = "chosen_user_pid"
   private val OriginalUser      = "original_user"
   private val teamOrUserForm    = TeamOrUserForm.form
   private val chooseTeamForm    = TeamToMoveCaseForm.form
@@ -127,15 +129,17 @@ class MoveCasesController @Inject() (
     )).async { implicit request =>
       val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
       val teams      = teamId.map(Seq(_)).getOrElse(request.operator.memberOfTeams)
-      val usersOfManagedTeams = teams.map(team =>
-        for {
-          usersOfManagedTeam <- userService.getAllUsers(
-                                 Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER),
-                                 team,
-                                 NoPagination()
-                               )
-        } yield usersOfManagedTeam.results
-      )
+      val usersOfManagedTeams = teams
+        .filterNot(_ == Queues.gateway.id)
+        .map(team =>
+          for {
+            usersOfManagedTeam <- userService.getAllUsers(
+                                   Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER),
+                                   team,
+                                   NoPagination()
+                                 )
+          } yield usersOfManagedTeam.results
+        )
       Future
         .sequence(usersOfManagedTeams)
         .map(_.flatten)
@@ -152,16 +156,18 @@ class MoveCasesController @Inject() (
     )).async { implicit request =>
       val caseRefs = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty)
       val teams    = teamId.map(Seq(_)).getOrElse(request.operator.memberOfTeams)
-      val usersOfManagedTeams = teams.map(team =>
-        for {
-          usersOfManagedTeam <- userService
-                                 .getAllUsers(
-                                   Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER),
-                                   team,
-                                   NoPagination()
-                                 )
-        } yield usersOfManagedTeam.results
-      )
+      val usersOfManagedTeams = teams
+        .filterNot(_ == Queues.gateway.id)
+        .map(team =>
+          for {
+            usersOfManagedTeam <- userService
+                                   .getAllUsers(
+                                     Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER),
+                                     team,
+                                     NoPagination()
+                                   )
+          } yield usersOfManagedTeam.results
+        )
 
       def moveToUser(pid: String, caseRefs: Set[String]) =
         for {
@@ -170,16 +176,22 @@ class MoveCasesController @Inject() (
           user
             .map { u =>
               val userAnswersWithNewUser = request.userAnswers.set(ChosenUser, u.safeName)
-              for {
-                _ <- dataCacheConnector.save(userAnswersWithNewUser.set(ChosenTeam, u.memberOfTeams.head).cacheMap)
-              } yield {
-                if (u.memberOfTeams.size == 1) {
-                  val updatedCases = updateCases(caseRefs, Some(u), u.memberOfTeams.head)
-                  Redirect(routes.MoveCasesController.casesMovedToUserDone())
-                } else {
-                  Redirect(routes.MoveCasesController.chooseOneOfUsersTeams())
-                }
+
+              if (u.memberOfTeams.filterNot(_ == Queues.gateway.id).size == 1) {
+                val updatedCases = updateCases(caseRefs, Some(u), u.memberOfTeams.head)
+                for {
+                  _ <- dataCacheConnector.save(
+                        userAnswersWithNewUser
+                          .set(ChosenTeam, u.memberOfTeams.filterNot(_ == Queues.gateway.id).head)
+                          .cacheMap
+                      )
+                } yield Redirect(routes.MoveCasesController.casesMovedToUserDone())
+              } else {
+                for {
+                  _ <- dataCacheConnector.save(userAnswersWithNewUser.set(ChosenUserPID, u.id).cacheMap)
+                } yield Redirect(routes.MoveCasesController.chooseOneOfUsersTeams())
               }
+
             }
             .getOrElse(successful(NotFound(views.html.user_not_found(pid))))
         }
@@ -203,7 +215,62 @@ class MoveCasesController @Inject() (
   def chooseOneOfUsersTeams(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
-    )).async(implicit request => ??? //todo fetch chosen users teams and display page + add post endpoint
+    )).async(implicit request =>
+      request.userAnswers
+        .get[String](ChosenUserPID)
+        .map(pid =>
+          for {
+            user <- userService.getUser(pid)
+            teams <- user
+                      .map(u => queueService.getQueuesById(u.memberOfTeams.filterNot(_ == Queues.gateway.id)))
+                      .getOrElse(Future.successful(Seq()))
+          } yield {
+            user
+              .map(u => Ok(chooseUserTeamPage(u.safeName, u.memberOfTeams.size, chooseTeamForm, teams.flatten)))
+              .getOrElse(NotFound(views.html.user_not_found("")))
+          }
+        )
+        .getOrElse(successful(NotFound(views.html.user_not_found(""))))
+    )
+
+  def postChooseOneOfUsersTeams(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
+      MoveCasesCacheKey
+    )).async(implicit request =>
+      chooseTeamForm
+        .bindFromRequest()
+        .fold(
+          errors =>
+            request.userAnswers
+              .get[String](ChosenUserPID)
+              .map(pid =>
+                for {
+                  user <- userService.getUser(pid)
+                  teams <- user
+                            .map(u => queueService.getQueuesById(u.memberOfTeams.filterNot(_ == Queues.gateway.id)))
+                            .getOrElse(Future.successful(Seq()))
+                } yield {
+                  user
+                    .map(u => Ok(chooseUserTeamPage(u.safeName, u.memberOfTeams.size, errors, teams.flatten)))
+                    .getOrElse(NotFound(views.html.user_not_found("")))
+                }
+              )
+              .getOrElse(successful(NotFound(views.html.user_not_found("")))),
+          team => {
+            request.userAnswers
+              .get[String](ChosenUserPID)
+              .map(pid =>
+                updateCases(
+                  request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty),
+                  Some(Operator(pid)),
+                  team
+                )
+              )
+            for {
+              _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
+            } yield Redirect(routes.MoveCasesController.casesMovedToUserDone())
+          }
+        )
     )
 
   def chooseUserFromAnotherTeam(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =

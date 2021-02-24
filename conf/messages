@@ -1214,7 +1214,7 @@ users.move_cases.choose_user.user_from_another_team.label=Choose a user from ano
 users.move_cases.done.header=Cases moved from {0}
 users.move_cases.team.done.subHeader=<strong>Cases moved to the </strong><br>{0} team
 users.move_cases.user.done.subHeader= <strong>Cases moved to </strong><br>{0} <strong>on the</strong> </br>{1} team
-
+users.move_cases.choose_user.choose_team={0} is a member of {1} teams. Which team should these cases be moved to?
 
 management.manage-keywords-title=Manage keywords - Advance Tariff Rulings Case Manager - GOV.UK
 management.manage-keywords.heading=Manage keywords
