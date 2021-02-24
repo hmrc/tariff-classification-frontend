@@ -1,0 +1,70 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.managementtools.{keywords_for_approval_table, all_keywords}
+@import views.html.components.heading
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.managementtools._
+@import controllers.v2.routes._
+
+@import views.html.components.change_case_status_button
+
+@(manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+
+    @heading(messages("management.manage-keywords.heading"))
+
+    @change_case_status_button(
+        "create-new-keyword",
+        messages("management.manage-keywords.create-new-keyword-button"),
+        ManageKeywordsController.displayManageKeywords()
+    )
+
+    <div id="manage-keywords-tabs" class="govuk-tabs" data-module="govuk-tabs">
+        <ul class="govuk-tabs__list">
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
+                @messages(
+                    "management.manage-keywords.approve-tab-title",
+                    manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size
+                )
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@manageKeywordsViewModel.allKeywordsTab.elementId">
+                @messages(
+                    "management.manage-keywords.all-tab-title",
+                    manageKeywordsViewModel.allKeywordsTab.globalKeywords.size
+                )
+                </a>
+            </li>
+        </ul>
+
+        <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
+            <h2 class="heading-large mt-0">@messages("management.manage-keywords.approve-tab.heading")</h2>
+            @{
+                manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size match {
+                    case 0 => "There are no keywords waiting for approval."
+                    case _ => keywords_for_approval_table(manageKeywordsViewModel.keywordsForApprovalTab)
+                }
+            }
+        </div>
+
+        <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.allKeywordsTab.elementId">
+            <h2 class="heading-large mt-0">@messages("management.manage-keywords.search-all-keywords.heading")</h2>
+            @all_keywords(manageKeywordsViewModel.allKeywordsTab, keywordForm)
+        </div>
+    </div>

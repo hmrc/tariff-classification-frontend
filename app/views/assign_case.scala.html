@@ -53,6 +53,8 @@
 
     @input_radiogroup(
         field = form("state"),
+        label = Some(messages("case.heading.ownership",c.application.goodsName)),
+        labelClass= Some("visually-hidden"),
         options = Seq(RadioOption("true", messages("case.ownership.assign_case.submit")), RadioOption("false", messages("case.ownership.assign_case.view_only"))),
         id = "assign-case-ownership",
         preSelect = false
