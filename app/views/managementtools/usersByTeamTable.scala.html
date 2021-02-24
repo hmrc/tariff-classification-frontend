@@ -18,11 +18,12 @@
 @import config.AppConfig
 @import models.viewmodels.managementtools._
 @import controllers.routes.{AssignCaseController, CaseController}
+@import models.Role.Role
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
 
-@(usersTab : UsersTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(usersTab : UsersTab, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="@{usersTab.tabMessageKey}-table">
     <tbody>
@@ -32,14 +33,18 @@
             <th id="@{usersTab.tabMessageKey}-case" class="bold w-0">Case</th>
         </tr>
 
-        @for((result, index) <- usersTab.searchResult.results.zipWithIndex) {
+        @for((result, index) <- usersTab.searchResult.zipWithIndex) {
 
                 <tr id="@{usersTab.tabMessageKey}-details-@index">
                     <td id="@{usersTab.tabMessageKey}-user-@index">
-                        <a href="">@result.name</a>
+                        <a href="@controllers.v2.routes.ManageUserController.displayUserDetails(result.id)">
+                            @{result.name match {
+                            case Some(userName) if(!userName.trim.isEmpty) => userName
+                            case _ => result.id
+                            }}</a>
                     </td>
-                    <td id="@{usersTab.tabMessageKey}-role-@index">@{result.role}</td>
-                    <td id="@{usersTab.tabMessageKey}-case-@index">@{result.numberOfCases}</td>
+                    <td id="@{usersTab.tabMessageKey}-role-@index">@{Role.format(result.role)}</td>
+                    <td id="@{usersTab.tabMessageKey}-case-@index">@{usersCount.get(result.id).getOrElse(List.empty).size}</td>
                 </tr>
 
         }
