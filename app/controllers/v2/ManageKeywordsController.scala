@@ -48,8 +48,8 @@ class ManageKeywordsController @Inject()(
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
 
       for {
-        caseKeywords <- keywordService.fetchCaseKeywords()
-        allKeywords  <- keywordService.findAll(NoPagination())
+        caseKeywords           <- keywordService.fetchCaseKeywords()
+        allKeywords            <- keywordService.findAll(NoPagination())
         manageKeywordsViewModel = ManageKeywordsViewModel
           .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
       } yield

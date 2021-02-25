@@ -22,7 +22,6 @@ import models.forms.KeywordForm
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import play.api.http.Status
-import play.api.test.CSRFTokenHelper._
 import play.api.test.Helpers._
 import service.ManageKeywordsService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,12 +34,14 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
   val keywords    = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
   val keywordForm = KeywordForm.formWithAuto(keywords.map(_.name))
-  val caseKeyword = CaseKeyword(Keyword("BOOK", false), List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)))
+  val caseKeyword = CaseKeyword(
+    Keyword("BOOK", false),
+    List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)))
 
   private lazy val manage_keywords_view = injector.instanceOf[manage_keywords_view]
   private lazy val confirm_keyword_view = injector.instanceOf[confirm_keyword_created]
-  private lazy val new_keyword_view = injector.instanceOf[new_keyword_view]
-  private lazy val keywordService = mock[ManageKeywordsService]
+  private lazy val new_keyword_view     = injector.instanceOf[new_keyword_view]
+  private lazy val keywordService       = mock[ManageKeywordsService]
 
   private def controller(permission: Set[Permission]) = new ManageKeywordsController(
     new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
@@ -61,15 +62,15 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
         .willReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(fakeRequest))
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
 
     }
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).displayManageKeywords()(fakeRequest))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
 
     }
@@ -84,14 +85,14 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
         .willReturn(Future(Paged(keywords)))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).newKeyword()(newFakeGETRequestWithCSRF))
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
     }
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).newKeyword()(fakeRequest))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
   }
@@ -106,16 +107,19 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
       given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
         .willReturn(Future(Keyword("newkeyword", true)))
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "newkeyword"))))
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "newkeyword"))))
 
-      status(result)      shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword("newkeyword").path())
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword("newkeyword").path())
 
     }
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "newkeyword"))))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
 
@@ -124,11 +128,12 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> ""))))
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> ""))))
 
-      status(result)      shouldBe Status.BAD_REQUEST
-      contentType(result) shouldBe Some("text/html")
-      charset(result)     shouldBe Some("utf-8")
+      status(result)          shouldBe Status.BAD_REQUEST
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include(messages("management.create-keyword.error.empty.keyword"))
 
@@ -138,11 +143,13 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name))))
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name))))
 
-      status(result)      shouldBe Status.BAD_REQUEST
-      contentType(result) shouldBe Some("text/html")
-      charset(result)     shouldBe Some("utf-8")
+      status(result)          shouldBe Status.BAD_REQUEST
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include(messages("management.create-keyword.error.duplicate.keyword"))
     }
