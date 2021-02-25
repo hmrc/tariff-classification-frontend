@@ -22,7 +22,7 @@ import models.LiabilityStatus.LiabilityStatus
 import models.Role.Role
 import models.request.NewEventRequest
 import models.response.{FileMetadata, ScanStatus}
-import models.{AppType, CaseStatus, LiabilityStatus, _}
+import models.{CaseStatus, LiabilityStatus, _}
 
 object JsonFormatters {
 
@@ -70,7 +70,6 @@ object JsonFormatters {
   implicit val appealTypeFormat: Format[AppealType.Value]                = EnumJson.format(AppealType)
   implicit val cancelReasonFormat: Format[CancelReason.Value]            = EnumJson.format(CancelReason)
   implicit val caseStatusFormat: Format[CaseStatus.Value]                = EnumJson.format(CaseStatus)
-  implicit val appTypeFormat: Format[AppType.Value]                      = EnumJson.format(AppType)
   implicit val attachmentFormat: OFormat[Attachment]                     = Json.using[Json.WithDefaultValues].format[Attachment]
   implicit val appealFormat: OFormat[Appeal]                             = Json.format[Appeal]
   implicit val cancellationFormat: OFormat[Cancellation]                 = Json.using[Json.WithDefaultValues].format[Cancellation]

@@ -27,7 +27,7 @@ case class CaseHeader(
                        assignee: Option[Operator],
                        team: Option[String],
                        goodsName: Option[String],
-                       caseType: AppType.Value,
+                       caseType: ApplicationType,
                        status: CaseStatus.Value,
                        daysElapsed: Long,
                        liabilityStatus: Option[LiabilityStatus]

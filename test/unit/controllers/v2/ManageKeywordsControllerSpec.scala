@@ -35,7 +35,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
   val keywords    = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
   val keywordForm = KeywordForm.formWithAuto(keywords.map(_.name))
-  val caseKeyword = CaseKeyword(Keyword("BOOK", false), List(CaseHeader("ref", None, None, Some("NOTEBOOK"), AppType.BTI, CaseStatus.REFERRED)))
+  val caseKeyword = CaseKeyword(Keyword("BOOK", false), List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)))
 
   private lazy val manage_keywords_view = injector.instanceOf[manage_keywords_view]
   private lazy val confirm_keyword_view = injector.instanceOf[confirm_keyword_created]
