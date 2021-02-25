@@ -28,10 +28,10 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.move.case")), customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
+<div class="mt-15">@back_link()</div>
 
     @error_summary(form.errors)
-
+<div class="column-two-thirds pl-0">
     @case_heading(c)
 
     <div class="grid-row">
@@ -42,6 +42,8 @@
             @select_queue_form(
                 form("queue"),
                 queues,
+                legend = messages(c.application.goodsName),
+                legendClass= Some("visually-hidden"),
                 "reassign-case",
                 ReassignCaseController.reassignCase(c.reference, originUrl),
                 originUrl
@@ -49,4 +51,5 @@
 
         </div>
     </div>
+</div>
 }

@@ -28,14 +28,15 @@
 @main(bodyClasses = None, customTitle = Some(messages("page.title.change.sample.status")),
     customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
+    <div class="mt-15">@back_link()</div>
 
     @error_summary(form.errors)
 
-    @case_heading(c)
+<div class="column-two-thirds pl-0 pr-0">
+    @case_heading(c, messageKey = Some("case.miscellaneous.header"))
 
-    <h2 id="change_sample_status-heading" class="heading-large">@messages("case.sample.status.change-status-header")</h2>
+    <!--<h2 id="change_sample_status-heading" class="heading-large">@messages("case.sample.status.change-status-header")</h2>-->
 
     @sample_status_form(c, form("status"))
-
+</div>
 }

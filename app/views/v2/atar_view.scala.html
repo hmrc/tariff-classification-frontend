@@ -60,14 +60,14 @@
 
 @main(
     bodyClasses = None,
-    customTitle = Some(caseViewModel.caseHeader.goodsName),
+    customTitle = Some(messages("case.details.title")),
     customPrimaryNavTab = MyCasesTab
 ) {
 
     @if(request.flash.get("success").getOrElse("").contains("referral")){
         @notification_banner()(request.flash, messages)
     }
-    @case_heading(caseViewModel.caseHeader)
+    @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
 
     <div class="form-groups">
         @case_action_buttons_partial(caseViewModel)
