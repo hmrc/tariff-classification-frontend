@@ -26,8 +26,23 @@
 
     <div>
         <div id="case-reference" class="case-reference">
-        @messages("case.heading.secondary.nosuffix", c.application.`type`.prettyName, c.reference)
+            @c.application.businessName.map { businessName =>
+                @messages("case.heading.secondary", c.application.`type`.prettyName, c.reference, businessName)
+            }.getOrElse {
+                @messages("case.heading.secondary.nosuffix", c.application.`type`.prettyName, c.reference)
+            }
         </div>
+    </div>
+
+    @if(customPrefix.isDefined){
+        <h1 class="heading-xlarge case-title">
+            @customPrefix.map { customPrefix =>
+                @messages(customPrefix, c.application.goodsName)
+            }.getOrElse {
+                @c.application.goodsName
+            }
+        </h1>
+    } else {
         <h1 class="heading-xlarge case-title">
             @if(messageKey.isDefined){
                 @messages(messageKey.get, c.application.goodsName)
@@ -36,17 +51,9 @@
             }
         </h1>
         @c.application.businessName.map { businessName =>
-        <h2 class="bold mb-1">@c.application.businessName</h2>
+            <h2 class="bold mb-1">@c.application.businessName</h2>
         }
-    </div>
-
-    <h1 class="heading-xlarge case-title">
-        @customPrefix.map { customPrefix =>
-            @messages(customPrefix, c.application.goodsName)
-        }.getOrElse {
-            @c.application.goodsName
-        }
-    </h1>
+    }
 
     <div id="case-status-section">
         @case_status(c, "case-status")

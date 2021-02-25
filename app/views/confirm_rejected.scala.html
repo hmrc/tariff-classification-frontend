@@ -17,17 +17,19 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.Case
+@import models.viewmodels.NoTabSelected
+@import views.html.v2.confirmation_next_steps
 @import views.html.includes.main
 @import views.html.partials._
 @import controllers.v2.routes.MyCasesController
-@import models.viewmodels.NoTabSelected
+
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.rejected")),
     customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
+    @case_heading(c, true, None, Some("case.heading.case_rejected_for"))
 
     @case_heading(c)
 
