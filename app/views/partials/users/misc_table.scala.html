@@ -64,6 +64,7 @@
 
  <tr id="@{miscTab.tabMessageKey}-details-@index">
   <td id="@{miscTab.tabMessageKey}-select-@index">
+   @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
    <div class="form-group">
     <div class="multiple-choice">
      <fieldset>
@@ -79,6 +80,7 @@
      </fieldset>
     </div>
    </div>
+   }
   </td>
   <td id="@{miscTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
   <td id="@{miscTab.tabMessageKey}-summary-@index">@{misc.name}</td>

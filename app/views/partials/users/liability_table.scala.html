@@ -67,6 +67,7 @@
 
  <tr id="@{liabTab.tabMessageKey}-details-@index">
   <td id="@{liabTab.tabMessageKey}-select-@index">
+   @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
    <div class="form-group">
     <div class="multiple-choice">
      <fieldset>
@@ -82,6 +83,7 @@
      </fieldset>
     </div>
    </div>
+   }
   </td>
   <td id="@{liabTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
   <td id="@{liabTab.tabMessageKey}-goods-@index">@{liab.goodName}</td>
