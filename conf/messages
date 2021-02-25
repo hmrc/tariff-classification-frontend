@@ -1229,3 +1229,4 @@ management.manage-keywords.search-all-keywords.edit-keyword-button=Edit keyword
 move_cases.error.empty.teamOrUser=Select if you are moving the case or cases to a team or user
 error.empty.moveCases.teamToMove=Select a team to move the case or cases to
 error.empty.moveCases.userToMove=Select a user to move the case or cases to
+error.moveCases.empty=Select the case or cases you want to move

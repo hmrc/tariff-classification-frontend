@@ -23,7 +23,7 @@ object MoveCasesForm {
 
   val moveCasesForm: Form[Set[String]] = Form(
     mapping(
-      "casesToMove" -> set(text)
+      "casesToMove" -> set(text).verifying("error.moveCases.empty", cases => cases.nonEmpty)
     )(identity)(cases => Some(cases))
   )
 }

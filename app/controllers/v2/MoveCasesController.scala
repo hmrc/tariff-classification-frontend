@@ -48,7 +48,8 @@ class MoveCasesController @Inject() (
   val chooseTeamToChooseUsersFromPage: views.html.partials.users.move_cases_choose_user_team,
   val chooseUserPage: views.html.partials.users.move_cases_choose_user,
   val chooseUserTeamPage: views.html.partials.users.move_cases_choose_one_from_user_teams,
-  val doneMoveCasesPage: views.html.partials.users.done_move_cases
+  val doneMoveCasesPage: views.html.partials.users.done_move_cases,
+  val viewUser: views.html.partials.users.view_user
 )(
   implicit val appConfig: AppConfig,
   implicit val ec: ExecutionContext
@@ -86,7 +87,14 @@ class MoveCasesController @Inject() (
         .bindFromRequest()
         .fold(
           // Add form validation
-          errors => Future.successful(Redirect(request.headers(HeaderNames.REFERER))),
+          errors =>
+            for {
+              userTab <- userService.getUser(pid)
+              cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
+              userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
+            } yield userTab
+              .map(user => Ok(viewUser(user, userCaseTabs, errors)))
+              .getOrElse(NotFound(views.html.user_not_found(pid))),
           casesIds => {
             val userName = for {
               originalUser <- userService.getUser(pid)

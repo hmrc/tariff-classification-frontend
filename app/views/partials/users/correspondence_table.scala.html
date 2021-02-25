@@ -32,8 +32,17 @@
 <div class="form-group">
  <button id="move-corr-cases" class="button" type="submit">Move selected cases</button>
 </div>
+@form("casesToMove").errors.map { error =>
+<div class="form-group mb-0">
+<fieldset>
+<legend class="advanced_search--filters_heading">
+ <span class="error-message" id="error-message-@{form("casesToMove").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+</legend>
+</fieldset>
+</div>
+}
 <table id="@{corresTab.tabMessageKey}-table">
- <tbody>
+ <thead>
  <tr id="@{corresTab.tabMessageKey}-details" class="grid-row mb-2">
   <th id="@{corresTab.tabMessageKey}-select" class="bold w-0">
    Select
@@ -56,16 +65,16 @@
   <th id="@{corresTab.tabMessageKey}-team" class="bold w-0">
    Team
   </th>
- </tr>
-
+ </tr></thead>
+ <tbody>
  @for((result, index) <- corresTab.searchResult.results.zipWithIndex) {
 
  @defining(result.application.asCorrespondence) { corres =>
 
  <tr id="@{corresTab.tabMessageKey}-details-@index">
-  <td id="@{corresTab.tabMessageKey}-select-@index">
+  <td id="@{corresTab.tabMessageKey}-select-@index" @if(form("casesToMove").hasErrors){class="form-group-error"}>
    @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
-   <div class="form-group">
+   <div class="form-group ">
     <div class="multiple-choice">
      <fieldset>
       <input
@@ -74,6 +83,9 @@
               id="@{s"corr-${form("casesToMove").id}-$index"}"
               name="@{form("casesToMove").name}[@index]"
               value="@{result.reference}"
+      @if(form("casesToMove").hasErrors){
+      aria-describedby="error-message-@{form("casesToMove").id}-input"
+      }
               @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
       />
       <label for="@{s"corr-${form("casesToMove").id}-$index"}"><span class="visually-hidden">@result.reference</span></label>

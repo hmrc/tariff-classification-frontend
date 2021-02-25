@@ -32,8 +32,17 @@
 <div class="form-group">
  <button id="move-misc-cases" class="button" type="submit">Move selected cases</button>
 </div>
+@form("casesToMove").errors.map { error =>
+<div class="form-group mb-0">
+ <fieldset>
+  <legend class="advanced_search--filters_heading">
+   <span class="error-message" id="error-message-@{form("casesToMove").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+  </legend>
+ </fieldset>
+</div>
+}
 <table id="@{miscTab.tabMessageKey}-table">
- <tbody>
+ <thead>
  <tr id="@{miscTab.tabMessageKey}-details" class="grid-row mb-2">
   <th id="@{miscTab.tabMessageKey}-select" class="bold w-0">
    Select
@@ -57,13 +66,13 @@
    Team
   </th>
  </tr>
-
+</thead><tbody>
  @for((result, index) <- miscTab.searchResult.results.zipWithIndex) {
 
  @defining(result.application.asMisc) { misc =>
 
  <tr id="@{miscTab.tabMessageKey}-details-@index">
-  <td id="@{miscTab.tabMessageKey}-select-@index">
+  <td id="@{miscTab.tabMessageKey}-select-@index" @if(form("casesToMove").hasErrors){class="form-group-error"}>
    @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
    <div class="form-group">
     <div class="multiple-choice">
@@ -74,6 +83,9 @@
               id="@{s"misc-${form("casesToMove").id}-$index"}"
       name="@{form("casesToMove").name}[@index]"
       value="@{result.reference}"
+      @if(form("casesToMove").hasErrors){
+      aria-describedby="error-message-@{form("casesToMove").id}-input"
+      }
       @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
       />
       <label for="@{s"misc-${form("casesToMove").id}-$index"}"><span class="visually-hidden">@result.reference</span></label>
