@@ -30,13 +30,14 @@
 
 @(c: Case, form: Form[CaseRejection])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case")), customPrimaryNavTab = NoTabSelected) {
+@main(bodyClasses = None, customTitle = Some(messages("case.heading.reject_case_for", c.application.goodsName)),
+customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
     @error_summary(form.errors)
 
-    @case_heading(c, true, None, Some("case.heading.reject"))
+    @case_heading(c, true, None, Some("case.heading.reject_case_for"))
 
     <div class="grid-row">
         <div class="column-full">
@@ -76,8 +77,8 @@
                 @confirm_or_cancel_buttons(
                     id = "reject_case",
                     confirmText = "Confirm status change",
-                    cancelText = "Cancel and return to case",
-                    cancelHref = routes.CaseController.get(c.reference)
+                    cancelText = "Cancel",
+                    cancelHref = routes.ChangeCaseStatusController.onPageLoad(c.reference)
                 )
             }
         </div>
