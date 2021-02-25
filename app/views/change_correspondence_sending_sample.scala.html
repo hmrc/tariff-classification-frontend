@@ -32,7 +32,7 @@
 
     @error_summary(form.errors)
 
-    @case_heading(c)
+    @case_heading(c, messageKey=Some("case.provide-samples.header"))
 
     @correspondence_sending_sample_form(c, form("status"))
 

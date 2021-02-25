@@ -32,7 +32,7 @@
 
     @error_summary(form.errors)
 
-    @case_heading(c)
+    @case_heading(c, messageKey = Some("case.application.returning-samples.header"))
 
     @sample_return_form(c, form("return"))
 
