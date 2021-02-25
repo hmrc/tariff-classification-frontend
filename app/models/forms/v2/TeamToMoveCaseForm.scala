@@ -25,7 +25,7 @@ object TeamToMoveCaseForm {
 
   val form: Form[String] = Form(
     mapping(
-      "team" -> oneFromList("error.empty.moveCases.teamToMove", Queues.allQueues.map(_.id))
+      "team" -> oneFromList("error.empty.moveCases.teamToMove", Queues.allDynamicQueues.map(_.id))
     )(identity)(Some(_))
   )
 }

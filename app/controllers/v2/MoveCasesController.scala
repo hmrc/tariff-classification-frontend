@@ -97,8 +97,7 @@ class MoveCasesController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )) { implicit request =>
-      val caseNumber       = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
-      val originalUserName = request.userAnswers.get[String](OriginalUser).getOrElse("unknown")
+      val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
       Ok(teamOrUserPage(caseNumber, teamOrUserForm))
     }
 
@@ -117,7 +116,6 @@ class MoveCasesController @Inject() (
               case _               => Redirect(routes.MoveCasesController.chooseUserToMoveCases())
             }
         )
-
     }
 
   def chooseUserToMoveCases(
@@ -128,9 +126,8 @@ class MoveCasesController @Inject() (
       MoveCasesCacheKey
     )).async { implicit request =>
       val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
-      val teams      = teamId.map(Seq(_)).getOrElse(request.operator.memberOfTeams)
+      val teams      = teamId.map(Seq(_)).getOrElse(request.operator.memberOfTeams.filterNot(_ == Queues.gateway.id))
       val usersOfManagedTeams = teams
-        .filterNot(_ == Queues.gateway.id)
         .map(team =>
           for {
             usersOfManagedTeam <- userService.getAllUsers(
@@ -155,9 +152,8 @@ class MoveCasesController @Inject() (
       MoveCasesCacheKey
     )).async { implicit request =>
       val caseRefs = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty)
-      val teams    = teamId.map(Seq(_)).getOrElse(request.operator.memberOfTeams)
+      val teams    = teamId.map(Seq(_)).getOrElse(request.operator.memberOfTeams.filterNot(_ == Queues.gateway.id))
       val usersOfManagedTeams = teams
-        .filterNot(_ == Queues.gateway.id)
         .map(team =>
           for {
             usersOfManagedTeam <- userService
@@ -191,7 +187,6 @@ class MoveCasesController @Inject() (
                   _ <- dataCacheConnector.save(userAnswersWithNewUser.set(ChosenUserPID, u.id).cacheMap)
                 } yield Redirect(routes.MoveCasesController.chooseOneOfUsersTeams())
               }
-
             }
             .getOrElse(successful(NotFound(views.html.user_not_found(pid))))
         }
@@ -303,7 +298,7 @@ class MoveCasesController @Inject() (
     )).async { implicit request =>
       val caseNumber = request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty).size
       for {
-        queues <- queueService.getAll
+        queues <- queueService.getNonGateway
       } yield Ok(chooseTeamPage(caseNumber, chooseTeamForm, queues))
     }
 
@@ -319,7 +314,7 @@ class MoveCasesController @Inject() (
         .fold(
           errors =>
             for {
-              queues <- queueService.getAll
+              queues <- queueService.getNonGateway
             } yield Ok(chooseTeamPage(caseNumber, errors, queues)),
           team => {
             //todo handle moving to gateway
