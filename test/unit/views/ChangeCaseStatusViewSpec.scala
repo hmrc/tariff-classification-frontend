@@ -59,7 +59,7 @@ class ChangeCaseStatusViewSpec extends ViewSpec {
       val c   = aCase(withReference("reference"), withBTIApplication)
       val doc = view(change_case_status(c, form))
 
-      doc should containText(messages("change_case_status_legend"))
+      doc should containText(messages("change_case_status_legend", "Laptop"))
     }
 
     "contain correct cancel link" in {

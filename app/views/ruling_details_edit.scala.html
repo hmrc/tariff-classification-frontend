@@ -33,11 +33,13 @@
 @main(bodyClasses = None, customTitle = Some(messages("page.title.edit.ruling")), customPrimaryNavTab = NoTabSelected) {
     @defining(c.application.asATAR) { btiApp: BTIApplication =>
 
-        @back_link()
+        <div class="mt-15">@back_link()</div>
 
         @error_summary(decisionForm.errors)
 
-        @case_heading(c)
+        <div class="column-two-thirds operation-dashboard-header">
+            @case_heading( c, messageKey = Some("case.decision.edit-ruling-details.heading"))
+        </div>
 
         <div class="form-group">
 
@@ -176,12 +178,12 @@
                 </div>
 
                 <div class="form-group">
-                    <button id="submit" class="button" type="submit">Save and continue</button>
+                    <button id="submit" class="button" type="submit">@messages("case.sample.status.change-status-confirm")</button>
                 </div>
 
                 <div class="form-group">
                     <a href="@controllers.routes.CaseController.rulingDetails(c.reference)" class="secondary-button pl-0-important" id="cancel-button">
-                        Cancel changes</a>
+                        @messages("case.v2.liability.c592.details_edit.cancel_button")</a>
                 </div>
 
             }
