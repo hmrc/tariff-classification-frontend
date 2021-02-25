@@ -244,7 +244,17 @@ class MoveCasesController @Inject() (
                       .getOrElse(Future.successful(Seq()))
           } yield {
             user
-              .map(u => Ok(chooseUserTeamPage(u.safeName, u.memberOfTeams.size, chooseTeamForm, teams.flatten)))
+              .map(u =>
+                Ok(
+                  chooseUserTeamPage(
+                    u.safeName,
+                    u.memberOfTeams.size,
+                    request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set()).size,
+                    chooseTeamForm,
+                    teams.flatten
+                  )
+                )
+              )
               .getOrElse(NotFound(views.html.user_not_found("")))
           }
         )
@@ -269,7 +279,17 @@ class MoveCasesController @Inject() (
                             .getOrElse(Future.successful(Seq()))
                 } yield {
                   user
-                    .map(u => Ok(chooseUserTeamPage(u.safeName, u.memberOfTeams.size, errors, teams.flatten)))
+                    .map(u =>
+                      Ok(
+                        chooseUserTeamPage(
+                          u.safeName,
+                          u.memberOfTeams.size,
+                          request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set()).size,
+                          errors,
+                          teams.flatten
+                        )
+                      )
+                    )
                     .getOrElse(NotFound(views.html.user_not_found("")))
                 }
               )

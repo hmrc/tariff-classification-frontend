@@ -50,8 +50,11 @@ customPrimaryNavTab = ManagerToolsTab
 <div class="column-two-thirds mt-5">
     @back_link()
     @error_summary(form.errors)
+    @if(numberOfCases == 1){
+    @move_cases_heading(messages("users.move_cases.team_or_user.header.single"))
+    }else{
     @move_cases_heading(messages("users.move_cases.team_or_user.header", numberOfCases))
-
+}
     @helper.form(action = routes.MoveCasesController.postTeamOrUserChoice(), 'id -> "team-or-user", 'novalidate -> "novalidate") {
     @helper.CSRF.formField
 
