@@ -70,22 +70,37 @@ class MoveCasesController @Inject() (
   def postMoveCases(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       val userAnswers = UserAnswers(MoveCasesCacheKey)
+
+      def redirectBasedOnCaseStatus(chosenCases: Set[Case]) =
+        if (chosenCases.exists(c =>
+              c.status != CaseStatus.OPEN && c.status != CaseStatus.REFERRED && c.status != CaseStatus.SUSPENDED
+            )) {
+          Redirect(controllers.routes.SecurityController.unauthorized())
+        } else if (chosenCases.exists(c => c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED)) {
+          Redirect(routes.MoveCasesController.chooseUserToMoveCases())
+        } else {
+          Redirect(routes.MoveCasesController.chooseUserOrTeam())
+        }
+
       moveATaRCasesForm
         .bindFromRequest()
         .fold(
           // Add form validation
           errors => Future.successful(Redirect(request.headers(HeaderNames.REFERER))),
-          cases => {
+          casesIds => {
             val userName = for {
               originalUser <- userService.getUser(pid)
             } yield originalUser.map(_.safeName)
-            userName.flatMap(uN =>
-              uN.map { u =>
+
+            userName.flatMap(user =>
+              user
+                .map { u =>
                   val userAnswersWithUserName = userAnswers.set(OriginalUser, u)
-                  val userAnswersWithCases    = userAnswersWithUserName.set(ChosenCases, cases)
+                  val userAnswersWithCases    = userAnswersWithUserName.set(ChosenCases, casesIds)
                   for {
-                    _ <- dataCacheConnector.save(userAnswersWithCases.cacheMap)
-                  } yield Redirect(routes.MoveCasesController.chooseUserOrTeam())
+                    _     <- dataCacheConnector.save(userAnswersWithCases.cacheMap)
+                    cases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
+                  } yield redirectBasedOnCaseStatus(findChosenCasesInAssignedCases(cases.results, casesIds))
                 }
                 .getOrElse(successful(NotFound(views.html.user_not_found(""))))
             )
@@ -371,4 +386,7 @@ class MoveCasesController @Inject() (
       )
     updatedCases
   }
+
+  private def findChosenCasesInAssignedCases(assignedCases: Seq[Case], chosenCaseRefs: Set[String]) =
+    chosenCaseRefs.map(ref => assignedCases.find(c => c.reference == ref)).flatten
 }
