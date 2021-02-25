@@ -16,17 +16,11 @@
 
 package models.forms
 
-import models.Keyword
-import models.forms.mappings.FormMappings
+import models.forms.MandatoryBooleanForm
 import play.api.data.Form
-import play.api.data.Forms._
 
-object ManageKeywordForm {
-  val form: Form[Keyword] = Form(
-    mapping(
-      "keyword" -> FormMappings.textNonEmpty("error.empty.keyword"),
-      "approved" -> boolean
-    )(Keyword.apply)(Keyword.unapply)
-  )
+object  TakeOwnerShipForm {
 
+  val form: Form[Boolean] = MandatoryBooleanForm.form("take-ownership")
+  
 }

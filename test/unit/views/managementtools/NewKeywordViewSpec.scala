@@ -43,28 +43,45 @@ class NewKeywordViewSpec extends ViewSpec {
       doc                                        should containElementWithID("common-cases-heading")
       doc.getElementById("common-cases-heading") should containText(messages("management.create-keyword.heading"))
     }
-  }
 
-  /* "contains appropriate queue tabs for teams managed by the manager" in {
-    val queues = Queues.allQueues
-    val doc = view(
-      manageUsersView(
-        ManagerToolsUsersTab,
-        UsersTabViewModel.forManagedTeams(queues)
+    "contain a label and hint text" in {
+
+      val doc = view(
+        newKeywordView(
+          allKeywords    = keywords,
+          newKeywordForm = keywordForm
+        )
       )
-    )
+      doc                                should containText(messages("management.create-keyword.label"))
+      doc.getElementById("keyword-hint") should containText(messages("management.create-keyword.hint"))
+    }
 
-    queues.foreach(q => doc should containElementWithID(q.slug.toUpperCase + "-tab"))
-  }
+    "render successfully with create new keyword input component" in {
 
-  "contain a heading" in {
-    val doc = view(
-      manageUsersView(
-        ManagerToolsUsersTab,
-        UsersTabViewModel.forManagedTeams(Seq(Queues.cap).toList)
+      val doc = view(
+        newKeywordView(
+          allKeywords    = keywords,
+          newKeywordForm = keywordForm
+        )
       )
-    )
-    doc should containElementWithID("common-cases-heading")
-  }*/
+      doc should containElementWithID("keyword-search-wrapper")
+    }
+
+    "render successfully with save keyword button" in {
+
+      val doc = view(
+        newKeywordView(
+          allKeywords    = keywords,
+          newKeywordForm = keywordForm
+        )
+      )
+      doc should containElementWithID("save_new_keyword-button")
+      doc.getElementById("save_new_keyword-button") should containText(
+        messages("management.create-keyword.save-button")
+      )
+
+    }
+
+  }
 
 }

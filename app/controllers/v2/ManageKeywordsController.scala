@@ -22,7 +22,7 @@ import controllers.RequestActions
 import models.forms.KeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
-import models.{Keyword, Permission}
+import models.{Keyword, NoPagination, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -30,6 +30,7 @@ import service.ManageKeywordsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
@@ -48,7 +49,7 @@ class ManageKeywordsController @Inject()(
 
       for {
         caseKeywords <- keywordService.fetchCaseKeywords()
-        allKeywords  <- keywordService.findAll()
+        allKeywords  <- keywordService.findAll(NoPagination())
         manageKeywordsViewModel = ManageKeywordsViewModel
           .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
       } yield
@@ -64,7 +65,7 @@ class ManageKeywordsController @Inject()(
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
-        keywords <- keywordService.findAll()
+        keywords <- keywordService.findAll(NoPagination())
       } yield
         Ok(
           newKeywordView(
@@ -77,24 +78,24 @@ class ManageKeywordsController @Inject()(
 
   def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-      keywordService.findAll.map(keywords => KeywordForm.formWithAuto(keywords.results.map(_.name))).flatMap {
-        _.bindFromRequest.fold(
-          formWithErrors =>
-            for {
-              keywords <- keywordService.findAll
-            } yield
-              Ok(
+
+      keywordService.findAll(NoPagination()).flatMap {
+        keywords =>
+          val keywordNames = keywords.results.map(_.name)
+          KeywordForm.formWithAuto(keywordNames).bindFromRequest.fold(
+            formWithErrors =>
+              Future.successful(BadRequest(
                 newKeywordView(
                   activeSubNav,
                   keywords.results,
                   formWithErrors
                 )
-            ),
-          keyword =>
-            keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
-              Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
-          }
-        )
+              )),
+            keyword =>
+              keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
+                Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
+              }
+          )
       }
     }
 

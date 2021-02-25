@@ -38,7 +38,7 @@ class CaseHeadingViewSpec extends ViewSpec {
 
       // Then
       doc                                  should containElementWithID("case-reference")
-      doc.getElementById("case-reference") should containText("ATaR case ref for trader-business-name")
+      doc.getElementById("case-reference") should containText("ATaR case ref")
       doc                                  should containElementWithID("case-status")
       doc.getElementById("case-status")    should containText("OPEN")
     }

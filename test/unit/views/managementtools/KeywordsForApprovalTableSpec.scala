@@ -16,7 +16,7 @@
 
 package views.managementtools
 
-import models.viewmodels.managementtools.{KeywordViewModel, ManageKeywordsTab}
+import models.viewmodels.managementtools.{CaseStatusKeywordViewModel, KeywordViewModel, ManageKeywordsTab}
 import models.{ApplicationType, CaseStatus, Paged}
 import play.twirl.api.HtmlFormat
 import views.ViewMatchers.{containElementWithID, containText}
@@ -26,7 +26,7 @@ import views.html.managementtools.keywords_for_approval_table
 class KeywordsForApprovalTableSpec extends ViewSpec {
 
   val keyword =
-    KeywordViewModel("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatus.REFERRED, true)
+    KeywordViewModel("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatusKeywordViewModel(CaseStatus.REFERRED, false), true)
 
   val manageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword", Paged(Seq(keyword)))
 
@@ -55,7 +55,7 @@ class KeywordsForApprovalTableSpec extends ViewSpec {
           doc.getElementById(s"keyword_approval-user-name-$index") should containText(result.name)
           doc.getElementById(s"keyword_approval-goods-id-$index") should containText(result.goods)
           doc.getElementById(s"keyword_approval-type-id-$index") should containText(result.caseType.prettyName)
-          doc.getElementById(s"keyword_approval-status-id-$index") should containText(result.caseStatus.toString)
+          doc.getElementById(s"keyword_approval-status-id-$index") should containText(result.caseStatus.caseStatus.toString)
         }
       }
   }
