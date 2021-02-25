@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(
-   id: String,
-   confirmText: String = "Confirm",
-   cancelText: String = "Cancel",
-   cancelHref: Call
-)
+package models.forms
 
-<div id="@id-buttons" class="confirm-cancel-alignment">
-    <button class="button" id="@id-button" type="submit">@confirmText</button>
-    <a class="mt-15" id="@id-cancel_button" href="@cancelHref">@cancelText</a>
-</div>
+import models.forms.MandatoryBooleanForm
+import play.api.data.Form
+
+object  TakeOwnerShipForm {
+
+  val form: Form[Boolean] = MandatoryBooleanForm.form("take-ownership")
+  
+}
