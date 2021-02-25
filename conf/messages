@@ -1035,6 +1035,7 @@ accessibility.howWeTested.p3 = This page was prepared on 1 September 2020.
 accessibility.howWeTested.p4 = It was last updated on 1 September 2020.
 
 operator.dashboard.classification.title = Classification officer
+operator.dashboard.classification.header = Case dashboard
 operator.dashboard.classification.my-cases = Assigned to me
 operator.dashboard.classification.my-cases.progress.plural = {0} cases currently in progress
 operator.dashboard.classification.my-cases.progress.singular = 1 case currently in progress
