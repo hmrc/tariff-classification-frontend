@@ -20,7 +20,7 @@
 @import models.Operator
 @import models.viewmodels.atar._
 @import views.html.includes.main
-@import views.html.partials.back_link
+@import views.html.partials.{back_link, error_summary}
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
@@ -48,7 +48,7 @@ customPrimaryNavTab = ManagerToolsTab
 
 <div class="column-two-thirds mt-5">
     @back_link()
-
+    @error_summary(form.errors)
     @move_cases_heading(messages("users.move_cases.choose_team.header", numberOfCases))
 
     @helper.form(action = routes.MoveCasesController.postTeamChoice(), 'id -> "move-to-team", 'novalidate -> "novalidate") {
