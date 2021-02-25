@@ -31,8 +31,18 @@ object ManageKeywordsViewModel {
 
     val x = caseKeywords.flatMap(caseKeyword =>
       caseKeyword.cases.map { caseHeader =>
+        /*val liveLiability = caseHeader.caseType == AppType.LIABILITY_ORDER && caseHeader.liabilityStatus.getOrElse(
+          LiabilityStatus.NON_LIVE) == LiabilityStatus.LIVE
 
-      val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, false)
+        val overdue = if (liveLiability) caseHeader.daysElapsed >= 5 else caseHeader.daysElapsed >= 30
+         */
+        val overdue = (caseHeader.caseType, caseHeader.liabilityStatus) match {
+          case (AppType.LIABILITY_ORDER, Some(LiabilityStatus.LIVE)) if caseHeader.daysElapsed >= 5 => true
+          case (_, _) if caseHeader.daysElapsed >= 30                                               => true
+          case _                                                                                    => false
+        }
+
+        val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, overdue)
 
         KeywordViewModel(
           caseKeyword.keyword.name,

@@ -15,6 +15,7 @@
  */
 
 package models
+import models.LiabilityStatus.LiabilityStatus
 
 case class Keyword(
   name: String,
@@ -27,7 +28,9 @@ case class CaseHeader(
                        team: Option[String],
                        goodsName: Option[String],
                        caseType: AppType.Value,
-                       status: CaseStatus.Value
+                       status: CaseStatus.Value,
+                       daysElapsed: Long,
+                       liabilityStatus: Option[LiabilityStatus]
                      )
 
 case class CaseKeyword(keyword: Keyword,
