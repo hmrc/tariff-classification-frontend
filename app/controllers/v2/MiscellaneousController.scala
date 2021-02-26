@@ -23,8 +23,8 @@ import models.forms._
 import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.miscellaneous.DetailsViewModel
-import models.viewmodels.{ActivityViewModel, CaseViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
-import models.{Case, EventType, NoPagination}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, MessagesTabViewModel, MyCasesTab, OpenCasesTab, PrimaryNavigationViewModel, SampleStatusTabViewModel}
+import models.{Case, CaseStatus, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -63,7 +63,10 @@ class MiscellaneousController @Inject() (
     val activityTabViewModel            = getActivityTab(miscellaneousCase)
     val storedAttachments               = fileService.getAttachments(miscellaneousCase)
     val miscellaneousSampleTabViewModel = getSampleTab(miscellaneousCase)
-
+    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+      miscellaneousCase.status,
+      miscellaneousCase.assignee.exists(_.id == request.operator.id)
+    )
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
@@ -81,7 +84,8 @@ class MiscellaneousController @Inject() (
         uploadForm,
         activityTab,
         activityForm,
-        attachments
+        attachments,
+        activeNavTab
       )
     )
   }

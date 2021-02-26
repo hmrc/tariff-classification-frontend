@@ -30,7 +30,7 @@ object StatusTagViewModel {
     case CaseStatus.REFERRED | CaseStatus.SUPPRESSED => StatusTagViewModel(c.status.toString, "yellow")
     case CaseStatus.REJECTED                         => StatusTagViewModel(c.status.toString, "red")
     case CaseStatus.CANCELLED                        => StatusTagViewModel(CaseStatus.formatCancellation(c), "red")
-    case _                                           => StatusTagViewModel(c.status.toString, "blue")
+    case _                                           => StatusTagViewModel(c.status.toString, "green")
   }
 
   def liabilityType(application: Application): Option[StatusTagViewModel] =
