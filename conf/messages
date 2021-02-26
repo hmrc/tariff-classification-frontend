@@ -128,6 +128,7 @@ change_case_status.rejected.atar_ruling_already_exists=ATaR ruling already exist
 change_case_status.rejected.duplicate_application=Duplicate application
 change_case_status.rejected.no_information_from_trader=No information from trader
 change_case_status.rejected.other=Other
+change_case_status.rejected.note.description=Give additional details about why you are rejecting this case. Keep the note clear and concise.
 case.goods.about=About the goods
 case.goods.name=Goods name
 case.goods.goods_details=Goods details
