@@ -35,8 +35,3 @@ case class CaseHeader(
 
 case class CaseKeyword(keyword: Keyword,
                        cases: List[CaseHeader])
-
-object AppType extends Enumeration {
-  type ApplicationType = Value
-  val BTI, LIABILITY_ORDER, CORRESPONDENCE, MISCELLANEOUS = Value
-}
