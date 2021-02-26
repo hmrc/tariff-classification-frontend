@@ -22,16 +22,16 @@ import models.forms._
 import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
-import models.{Case, EventType, NoPagination}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, MessagesTabViewModel, MyCasesTab, OpenCasesTab, PrimaryNavigationViewModel, SampleStatusTabViewModel}
+import models.{Case, CaseStatus, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -64,7 +64,10 @@ class CorrespondenceController @Inject() (
     val activityTabViewModel             = getActivityTab(correspondenceCase)
     val storedAttachments                = fileService.getAttachments(correspondenceCase)
     val correspondenceSampleTabViewModel = getSampleTab(correspondenceCase)
-
+    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+      correspondenceCase.status,
+      correspondenceCase.assignee.exists(_.id == request.operator.id)
+    )
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
@@ -83,7 +86,8 @@ class CorrespondenceController @Inject() (
         uploadForm,
         activityTab,
         activityForm,
-        attachments
+        attachments,
+        activeNavTab
       )
     )
   }

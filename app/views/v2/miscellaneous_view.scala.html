@@ -18,7 +18,7 @@
 @import helper.CSRF
 @import models.forms.{ActivityFormData, MessageFormData}
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseViewModel, ActivityViewModel, MyCasesTab, MessagesTabViewModel}
+@import models.viewmodels._
 @import models.viewmodels.atar.AttachmentsTabViewModel
 @import views.html.includes.main
 @import views.html.partials.{activity_details, messages_logged, attachments_details}
@@ -46,18 +46,21 @@
         activityTab: ActivityViewModel,
         activityForm: Form[ActivityFormData],
 
-        attachments: Seq[StoredAttachment]
+        attachments: Seq[StoredAttachment],
+        primaryNavTab: PrimaryNavigationTab = MyCasesTab
+
 
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
     bodyClasses = None,
     customTitle = Some(messages("case.v2.miscellaneous.page_title")),
-    customPrimaryNavTab = MyCasesTab
+    customPrimaryNavTab = primaryNavTab
 ) {
-    @case_heading(caseViewModel.caseHeader)
+@case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
 
-    <div class="form-groups">
+
+<div class="form-groups">
         @case_action_buttons_partial(caseViewModel)
         @advanced_search_cases(caseViewModel)
     </div>
