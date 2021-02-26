@@ -23,7 +23,6 @@
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
 @import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
 @import controllers.v2.routes
-@import views.html.partials.{error_summary}
 
 @this(
 user_heading: views.html.v2.user_heading,
@@ -34,6 +33,9 @@ user_details: views.html.partials.users.user_details
 detailsTab: Operator,
 applicationTabViewModel: ApplicationTabViewModel,
 atarForm: Form[Set[String]],
+liabForm: Form[Set[String]],
+corrForm: Form[Set[String]],
+miscForm: Form[Set[String]],
 activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -46,7 +48,6 @@ customPrimaryNavTab = ManagerToolsTab
 <a id="back-link" class="link-back" href="@routes.ManageUserController.displayManageUsers">
     Back to manage users
 </a>
-@error_summary(atarForm.errors)
 @user_heading(detailsTab.safeName)
 
 @if(detailsTab.id != request.operator.id){
@@ -91,9 +92,9 @@ customPrimaryNavTab = ManagerToolsTab
         @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
         case (_, 0) => messages("users.user.noCases", caseTab.applicationType.prettyName)
         case (ApplicationType.ATAR, _) => atar_table(caseTab, atarForm, detailsTab.id)
-        case (ApplicationType.LIABILITY, _) => liability_table(caseTab, atarForm, detailsTab.id)
-        case (ApplicationType.CORRESPONDENCE, _) => correspondence_table(caseTab, atarForm, detailsTab.id)
-        case (ApplicationType.MISCELLANEOUS, _) => misc_table(caseTab, atarForm, detailsTab.id)
+        case (ApplicationType.LIABILITY, _) => liability_table(caseTab, liabForm, detailsTab.id)
+        case (ApplicationType.CORRESPONDENCE, _) => correspondence_table(caseTab, corrForm, detailsTab.id)
+        case (ApplicationType.MISCELLANEOUS, _) => misc_table(caseTab, miscForm, detailsTab.id)
         }
         }
     </div>

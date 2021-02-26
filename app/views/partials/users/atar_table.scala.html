@@ -22,20 +22,22 @@
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
 @import controllers.v2.routes.MoveCasesController
-@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import views.html.partials.{error_summary}
 
+@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@error_summary(form.errors)
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.atar.heading")</h2>
-@helper.form(action = MoveCasesController.postMoveCases(userID), 'id -> "move-atar-cases-form", 'novalidate -> "novalidate") {
+@helper.form(action = MoveCasesController.postMoveATaRCases(userID), 'id -> "atarCases", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
 
 <div class="form-group">
  <button id="move-atar-cases" class="button" type="submit">Move selected cases</button>
 </div>
-@form("casesToMove").errors.map { error =>
+@form("atarCases").errors.map { error =>
 <div class="form-group mb-0">
  <fieldset>
   <legend class="advanced_search--filters_heading">
-   <span class="error-message" id="error-message-@{form("casesToMove").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+   <span class="error-message" id="error-message-@{form("atarCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
   </legend>
  </fieldset>
 </div>
@@ -74,24 +76,26 @@
  @defining(result.application.asATAR) { atar =>
 
  <tr id="@{atarTab.tabMessageKey}-details-@index">
-  <td id="@{atarTab.tabMessageKey}-select-@index" @if(form("casesToMove").hasErrors){class="form-group-error"}>
+  <td id="@{atarTab.tabMessageKey}-select-@index" @if(form("atarCases").hasErrors){class="form-group-error"}>
    @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
    <div class="form-group" >
    <div class="multiple-choice">
     <fieldset>
-   <input
+     @defining(s"${form("atarCases").id}-$index") { id: String =>
+
+     <input
            class="form-control"
            type="checkbox"
-           id="@{s"atar-${form("casesToMove").id}-$index"}"
-           name="@{form("casesToMove").name}[@index]"
+           id="@{id}"
+           name="@{form("atarCases").name}[@index]"
            value="@{result.reference}"
-     @if(form("casesToMove").hasErrors){
-     aria-describedby="error-message-@{form("casesToMove").id}-input"
+     @if(form("atarCases").hasErrors){
+     aria-describedby="error-message-@{id}-input"
      }
-           @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
+           @if(form("atarCases").value.contains(result.reference)){ checked="checked"}
    />
-     <label for="@{s"atar-${form("casesToMove").id}-$index"}"><span class="visually-hidden">@result.reference</span></label>
-    </fieldset>
+     <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+    }</fieldset>
    </div>
   </div>
    }

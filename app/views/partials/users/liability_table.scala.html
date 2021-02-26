@@ -23,20 +23,22 @@
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
 @import controllers.v2.routes.MoveCasesController
+@import views.html.partials.{error_summary}
 
 @(liabTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@error_summary(form.errors)
 
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.liability.heading")</h2>
-@helper.form(action = MoveCasesController.postMoveCases(userID), 'id -> "move-liability-cases-form", 'novalidate -> "novalidate") {
+@helper.form(action = MoveCasesController.postMoveLiabCases(userID), 'id -> "liabilityCases", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
 <div class="form-group">
  <button id="move-liab-cases" class="button" type="submit">Move selected cases</button>
 </div>
-@form("casesToMove").errors.map { error =>
+@form("liabilityCases").errors.map { error =>
 <div class="form-group mb-0">
  <fieldset>
   <legend class="advanced_search--filters_heading">
-   <span class="error-message" id="error-message-@{form("casesToMove").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+   <span class="error-message" id="error-message-@{form("liabilityCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
   </legend>
  </fieldset>
 </div>
@@ -75,24 +77,25 @@
  @defining(result.application.asLiabilityOrder) { liab =>
 
  <tr id="@{liabTab.tabMessageKey}-details-@index">
-  <td id="@{liabTab.tabMessageKey}-select-@index" @if(form("casesToMove").hasErrors){class="form-group-error"}>
+  <td id="@{liabTab.tabMessageKey}-select-@index" @if(form("liabilityCases").hasErrors){class="form-group-error"}>
    @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
    <div class="form-group">
     <div class="multiple-choice">
      <fieldset>
+      @defining(s"${form("liabilityCases").id}-$index") { id: String =>
       <input
               class="form-control"
               type="checkbox"
-              id="@{s"liability-${form("casesToMove").id}-$index"}"
-      name="@{form("casesToMove").name}[@index]"
+              id="@{id}"
+      name="@{form("liabilityCases").name}[@index]"
       value="@{result.reference}"
-      @if(form("casesToMove").hasErrors){
-      aria-describedby="error-message-@{form("casesToMove").id}-input"
+      @if(form("liabilityCases").hasErrors){
+      aria-describedby="error-message-@{id}-input"
       }
-      @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
+      @if(form("liabilityCases").value.contains(result.reference)){ checked="checked"}
       />
-      <label for="@{s"liability-${form("casesToMove").id}-$index"}"><span class="visually-hidden">@result.reference</span></label>
-     </fieldset>
+      <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+     }</fieldset>
     </div>
    </div>
    }

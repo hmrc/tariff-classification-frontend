@@ -170,7 +170,10 @@ GET        /users/user-delete-done                                      controll
 GET        /keywords/manage-keywords                                controllers.v2.ManageKeywordsController.displayManageKeywords()
 
 
-POST        /users/user/:pid                                     controllers.v2.MoveCasesController.postMoveCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/atar                                controllers.v2.MoveCasesController.postMoveATaRCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/liability                           controllers.v2.MoveCasesController.postMoveLiabCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/correspondence                      controllers.v2.MoveCasesController.postMoveCorrCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/miscellaneous                       controllers.v2.MoveCasesController.postMoveMiscCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
 GET         /users/move/move-cases                               controllers.v2.MoveCasesController.chooseUserOrTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 POST        /users/move/move-cases                               controllers.v2.MoveCasesController.postTeamOrUserChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)

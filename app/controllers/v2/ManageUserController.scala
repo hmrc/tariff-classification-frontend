@@ -56,7 +56,10 @@ class ManageUserController @Inject() (
 
   private val userEditTeamForm                   = UserEditTeamForm.editTeamsForm
   private lazy val removeUserForm: Form[Boolean] = RemoveUserForm.form
-  private val moveATaRCasesForm                  = MoveCasesForm.moveCasesForm
+  private val moveATaRCasesForm                  = MoveCasesForm.moveCasesForm("atarCases")
+  private val moveLiabCasesForm                  = MoveCasesForm.moveCasesForm("liabilityCases")
+  private val moveCorrCasesForm                  = MoveCasesForm.moveCasesForm("corrCases")
+  private val moveMiscCasesForm                  = MoveCasesForm.moveCasesForm("miscCases")
 
   val Unassigned    = "unassigned"
   val assignedCases = "some"
@@ -90,7 +93,9 @@ class ManageUserController @Inject() (
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
         } yield userTab
-          .map(user => Ok(viewUser(user, userCaseTabs, moveATaRCasesForm)))
+          .map(user =>
+            Ok(viewUser(user, userCaseTabs, moveATaRCasesForm, moveLiabCasesForm, moveCorrCasesForm, moveMiscCasesForm))
+          )
           .getOrElse(NotFound(views.html.user_not_found(pid)))
     }
 

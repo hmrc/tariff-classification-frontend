@@ -21,9 +21,9 @@ import play.api.data.Form
 
 object MoveCasesForm {
 
-  val moveCasesForm: Form[Set[String]] = Form(
+  def moveCasesForm(fieldName: String): Form[Set[String]] = Form(
     mapping(
-      "casesToMove" -> set(text).verifying("error.moveCases.empty", cases => cases.nonEmpty)
+      fieldName -> set(text).verifying("error.moveCases.empty", cases => cases.nonEmpty)
     )(identity)(cases => Some(cases))
   )
 }

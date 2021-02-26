@@ -23,20 +23,21 @@
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
 @import controllers.v2.routes.MoveCasesController
+@import views.html.partials.{error_summary}
 
 @(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
-
+@error_summary(form.errors)
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.correspondence.heading")</h2>
-@helper.form(action = MoveCasesController.postMoveCases(userID), 'id -> "move-corr-cases-form", 'novalidate -> "novalidate") {
+@helper.form(action = MoveCasesController.postMoveCorrCases(userID), 'id -> "corrCases", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
 <div class="form-group">
  <button id="move-corr-cases" class="button" type="submit">Move selected cases</button>
 </div>
-@form("casesToMove").errors.map { error =>
+@form("corrCases").errors.map { error =>
 <div class="form-group mb-0">
 <fieldset>
 <legend class="advanced_search--filters_heading">
- <span class="error-message" id="error-message-@{form("casesToMove").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+ <span class="error-message" id="error-message-@{form("corrCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
 </legend>
 </fieldset>
 </div>
@@ -72,24 +73,25 @@
  @defining(result.application.asCorrespondence) { corres =>
 
  <tr id="@{corresTab.tabMessageKey}-details-@index">
-  <td id="@{corresTab.tabMessageKey}-select-@index" @if(form("casesToMove").hasErrors){class="form-group-error"}>
+  <td id="@{corresTab.tabMessageKey}-select-@index" @if(form("corrCases").hasErrors){class="form-group-error"}>
    @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
    <div class="form-group ">
     <div class="multiple-choice">
      <fieldset>
+      @defining(s"${form("corrCases").id}-$index") { id: String =>
       <input
               class="form-control"
               type="checkbox"
-              id="@{s"corr-${form("casesToMove").id}-$index"}"
-              name="@{form("casesToMove").name}[@index]"
+              id="@{id}"
+              name="@{form("corrCases").name}[@index]"
               value="@{result.reference}"
-      @if(form("casesToMove").hasErrors){
-      aria-describedby="error-message-@{form("casesToMove").id}-input"
+      @if(form("corrCases").hasErrors){
+      aria-describedby="error-message-@{id}-input"
       }
-              @if(form("casesToMove").value.contains(result.reference)){ checked="checked"}
+              @if(form("corrCases").value.contains(result.reference)){ checked="checked"}
       />
-      <label for="@{s"corr-${form("casesToMove").id}-$index"}"><span class="visually-hidden">@result.reference</span></label>
-     </fieldset>
+      <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+     }</fieldset>
     </div>
    </div>
    }
