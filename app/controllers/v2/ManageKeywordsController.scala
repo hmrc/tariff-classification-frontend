@@ -59,8 +59,10 @@ class ManageKeywordsController @Inject() (
 
   def changeKeywordStatus(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
-      casesService.getOne(reference).flatMap{ aCase =>
-            successful(Ok(changeKeywordStatusView(aCase.get, changeKeywordStatusForm)))
+      casesService.getOne(reference).flatMap {
+        case Some(c: Case) =>
+          successful(Ok(changeKeywordStatusView(c, changeKeywordStatusForm)))
+        case _ => successful(Ok(views.html.case_not_found(reference)))
       }
     )
 

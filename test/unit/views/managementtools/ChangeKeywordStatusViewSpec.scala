@@ -16,11 +16,33 @@
 
 package views.managementtools
 
+import models.forms.KeywordForm
 import models.viewmodels.managementtools.Keyword
+import utils.Cases
+import views.ViewMatchers.{containElementWithID, containText}
 import views.ViewSpec
+import views.html.managementtools.change_keyword_status_view
 
 class ChangeKeywordStatusViewSpec extends ViewSpec {
 
   private val keyword = Keyword("potatoes", false)
+  val aCase           = Cases.btiCaseExample.copy(keywords = Set("potatoes"))
+
+  def changeKeywordStatusView: change_keyword_status_view = injector.instanceOf[change_keyword_status_view]
+
+  "ChangeKeywordStatus view" should {
+
+    "display the keyword in the header" in {
+      val doc = view(changeKeywordStatusView(aCase, KeywordForm.form))
+      doc should containElementWithID("keyword-edit-heading")
+      doc.getElementById("keyword-edit-heading") should containText("SPICES")
+
+    }
+
+    "display the case reference in the h2" in {
+      val doc = view(changeKeywordStatusView(aCase, KeywordForm.form))
+      doc should containElementWithID("keyword-case-details")
+    }
+  }
 
 }
