@@ -29,13 +29,13 @@ case class ManageKeywordsViewModel(
 object ManageKeywordsViewModel {
   def forManagedTeams(caseKeywords: Seq[CaseKeyword], allKeywords: Seq[String]): ManageKeywordsViewModel = {
 
-    val x = caseKeywords.flatMap(caseKeyword =>
+    val keywordViewModel = caseKeywords.flatMap(caseKeyword =>
       caseKeyword.cases.map { caseHeader =>
 
         val overdue = (caseHeader.caseType, caseHeader.liabilityStatus) match {
           case (ApplicationType.LIABILITY, Some(LiabilityStatus.LIVE)) if caseHeader.daysElapsed >= 5 => true
-          case (_, _) if caseHeader.daysElapsed >= 30                                               => true
-          case _                                                                                    => false
+          case (_, _) if caseHeader.daysElapsed >= 30                                                 => true
+          case _                                                                                      => false
         }
 
         val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, overdue)
@@ -59,7 +59,7 @@ object ManageKeywordsViewModel {
 
     ManageKeywordsViewModel(
       "Manage keywords",
-      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(x.filter(k => !k.isApproved))),
+      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(keywordViewModel.filter(k => !k.isApproved))),
       KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), allKeywords)
     )
   }

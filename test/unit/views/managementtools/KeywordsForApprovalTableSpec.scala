@@ -55,7 +55,7 @@ class KeywordsForApprovalTableSpec extends ViewSpec {
           doc.getElementById(s"keyword_approval-user-name-$index") should containText(result.name)
           doc.getElementById(s"keyword_approval-goods-id-$index") should containText(result.goods)
           doc.getElementById(s"keyword_approval-type-id-$index") should containText(result.caseType.prettyName)
-          doc.getElementById(s"keyword_approval-status-id-$index") should containText(result.caseStatus.caseStatus.toString)
+          doc.getElementById(s"keyword_approval-status-id-$index") should containText(result.status.caseStatus.toString)
         }
       }
   }
