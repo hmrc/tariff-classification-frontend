@@ -28,33 +28,31 @@
 @import views.html.partials.{error_summary, case_heading, back_link}
 @import views.html.components.confirm_or_cancel_buttons
 
-@this(case_heading: views.html.v2.case_heading)
+@this(caseHeading: views.html.v2.case_heading)
 
 @(c: Case, form: Form[String], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.release.case")), customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
+    <div class="mt-15">@back_link()</div>
 
+<div class="column-two-thirds pl-0">
     @error_summary(form.errors)
 
-    @if(c.application.isMisc) {
-        @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
-            @case_heading(caseHeader, headingText = Some(messages("choose.team.misc", caseHeader.goodsName)))}
-    } else {
-            @defining(CaseHeaderViewModel.fromCase(c)) { caseHeader =>
-                @case_heading(caseHeader, headingText = Some(messages("release_case.header", caseHeader.goodsName)))}
-    }
+    @case_heading(c, messageKey = Some("release_case.header"))
 
     <div class="grid-row">
         <div class="column-full">
             @select_queue_form(
                 form("queue"),
                 queues,
+                legend = messages("release_case.header",c.application.goodsName),
+                legendClass= Some("visually-hidden"),
                 if(c.application.isCorrespondence || c.application.isMisc) "release-case-queue" else "release-case",
                 routes.ReleaseCaseController.releaseCaseToQueue(c.reference),
                 routes.CaseController.get(c.reference).path
             )
         </div>
     </div>
+</div>
 }
