@@ -1220,3 +1220,14 @@ management.manage-keywords.search-all-keywords.label=Rename or delete a keyword 
 management.manage-keywords.search-all-keywords.placeholder=Start typing to search for a keyword
 management.manage-keywords.search-all-keywords.edit-keyword-button=Edit keyword
 
+management.manage-keywords.change-keyword-status.heading.radio=Choose keyword action
+management.manage-keywords.change-keyword-status.radio.approve=Approve
+management.manage-keywords.change-keyword-status.radio.reject=Reject
+management.manage-keywords.change-keyword-status.radio.rename=Rename
+
+management.manage-keywords.change-keyword-status.case.header=Case details
+management.manage-keywords.change-keyword-status.case.reference=Reference
+management.manage-keywords.change-keyword-status.case.goods=Goods
+management.manage-keywords.change-keyword-status.case.keywords=Keywords
+
+

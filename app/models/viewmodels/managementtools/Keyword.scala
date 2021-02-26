@@ -20,6 +20,12 @@ import models.CaseStatus.CaseStatus
 import models.{ApplicationType, CaseStatus}
 
 case class Keyword(
+  name: String,
+  approved: Boolean = false
+)
+
+//TODO - update the CaseHeader to match the model on the backend "DIT-2760"
+case class CaseHeader(
   keyword: String,
   name: String,
   goods: String,
@@ -30,19 +36,54 @@ case class Keyword(
   def isApproved: Boolean = approved
 }
 
-//todo replace the dummy stub with queries
-object Keywords {
-  val keyword1 =
-    Keyword("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatus.REFERRED, true)
-  val keyword2 = Keyword("FROZEN DOUGH", "Joy Fluter", "Frozen deepdish pizza", ApplicationType.ATAR, CaseStatus.OPEN, true)
-  val keyword3 = Keyword("HOMECOOK KITS", "Graham Dixon", "Make your own frozen fajitas", ApplicationType.ATAR, CaseStatus.REFERRED, false)
-  val keyword4 =
-    Keyword("PLASTIC STRAW", "Nora Northcott", "Customisable painted straw shapes", ApplicationType.ATAR, CaseStatus.OPEN, false)
-  val keyword5 = Keyword("POGS", "Alex Smith", "Cardboard and plastic boardgame", ApplicationType.ATAR, CaseStatus.OPEN, false)
-  val keyword6 = Keyword("SELFIE STICK", "Adam Jones", "Telescopic camera holder", ApplicationType.ATAR, CaseStatus.OPEN, true)
-  val keyword7 = Keyword("SPICES", "Alex Smith", "Basmati rice", ApplicationType.ATAR, CaseStatus.OPEN, false)
-  val keyword8 = Keyword("VINYL TOY", "Art Mbabasi", "Limited edition painted art toy", ApplicationType.ATAR, CaseStatus.OPEN, false)
+case class CaseKeyword(keyword: Keyword,
+                       cases: List[CaseHeader])
 
-  def allKeywords: List[Keyword] = List(keyword1, keyword2, keyword3, keyword4, keyword5, keyword6, keyword7, keyword8)
+//todo replace the dummy stub with queries
+object CaseHeaders {
+  val keyword1 =
+    CaseHeader(
+      "FIDGET SPINNER",
+      "Alex Smith",
+      "Space grade aluminium spinner",
+      ApplicationType.LIABILITY,
+      CaseStatus.REFERRED,
+      true
+    )
+  val keyword2 =
+    CaseHeader("FROZEN DOUGH", "Joy Fluter", "Frozen deepdish pizza", ApplicationType.ATAR, CaseStatus.OPEN, true)
+  val keyword3 = CaseHeader(
+    "HOMECOOK KITS",
+    "Graham Dixon",
+    "Make your own frozen fajitas",
+    ApplicationType.ATAR,
+    CaseStatus.REFERRED,
+    false
+  )
+  val keyword4 =
+    CaseHeader(
+      "PLASTIC STRAW",
+      "Nora Northcott",
+      "Customisable painted straw shapes",
+      ApplicationType.ATAR,
+      CaseStatus.OPEN,
+      false
+    )
+  val keyword5 =
+    CaseHeader("POGS", "Alex Smith", "Cardboard and plastic boardgame", ApplicationType.ATAR, CaseStatus.OPEN, false)
+  val keyword6 =
+    CaseHeader("SELFIE STICK", "Adam Jones", "Telescopic camera holder", ApplicationType.ATAR, CaseStatus.OPEN, true)
+  val keyword7 = CaseHeader("SPICES", "Alex Smith", "Basmati rice", ApplicationType.ATAR, CaseStatus.OPEN, false)
+  val keyword8 = CaseHeader(
+    "VINYL TOY",
+    "Art Mbabasi",
+    "Limited edition painted art toy",
+    ApplicationType.ATAR,
+    CaseStatus.OPEN,
+    false
+  )
+
+  def allCaseHeaders: List[CaseHeader] =
+    List(keyword1, keyword2, keyword3, keyword4, keyword5, keyword6, keyword7, keyword8)
 
 }

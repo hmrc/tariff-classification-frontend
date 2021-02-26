@@ -18,7 +18,7 @@ package models.viewmodels.managementtools
 
 import models._
 
-case class ManageKeywordsTab(tabMessageKey: String, elementId: String, searchResult: Paged[Keyword])
+case class ManageKeywordsTab(tabMessageKey: String, elementId: String, searchResult: Paged[CaseHeader])
 
 case class ManageKeywordsViewModel(
   headingMessageKey: String,
@@ -30,8 +30,8 @@ object ManageKeywordsViewModel {
   def forManagedTeams(): ManageKeywordsViewModel =
     ManageKeywordsViewModel(
       "Manage keywords",
-      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(Keywords.allKeywords.filter(k => !k.isApproved))),
-      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Keywords.allKeywords)
+      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(CaseHeaders.allCaseHeaders.filter(k => !k.isApproved))),
+      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), CaseHeaders.allCaseHeaders)
     )
 }
 
@@ -39,5 +39,5 @@ case class KeywordsTabViewModel(
   tabMessageKey: String,
   elementId: String,
   keyword: Set[String],
-  globalKeywords: Seq[Keyword]
+  globalKeywords: Seq[CaseHeader]
 )
