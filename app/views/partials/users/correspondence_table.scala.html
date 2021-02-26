@@ -24,11 +24,12 @@
 @import views.html.forms.components.input_checkbox
 @import controllers.v2.routes.MoveCasesController
 @import views.html.partials.{error_summary}
+@import controllers.Tab
 
 @(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @error_summary(form.errors)
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.correspondence.heading")</h2>
-@helper.form(action = MoveCasesController.postMoveCorrCases(userID), 'id -> "corrCases", 'novalidate -> "novalidate") {
+@helper.form(action = MoveCasesController.postMoveCorrCases(userID).withFragment(Tab.CORRESPONDENCE_TAB.name), 'id -> "corrCases", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
 <div class="form-group">
  <button id="move-corr-cases" class="button" type="submit">Move selected cases</button>
