@@ -66,7 +66,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
-      bodyOf(result) should include("Should this sample be returned?")
+      bodyOf(result) should include("Should the sample be returned?")
     }
 
     "return OK when user has right permissions" in {
