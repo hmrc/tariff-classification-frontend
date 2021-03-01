@@ -1,11 +1,11 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{CaseStatus, Operator, Role, Pagination}
+import models.{CaseStatus, Operator, Pagination, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import utils.{CasePayloads, EventPayloads}
+import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 import utils.Cases.{aCase, withDecision}
 import utils.JsonFormatters._
 
@@ -86,6 +86,17 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
               .withStatus(OK)
               .withBody(EventPayloads.pagedEvents)
           )
+      )
+      stubFor(
+        get(
+          urlEqualTo(
+            s"/keywords?page=1&page_size=${Pagination.unlimited}"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(KeywordsPayloads.pagedKeywords)
+        )
       )
 
       // When
