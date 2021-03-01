@@ -39,6 +39,7 @@ class ManageKeywordsController @Inject()(
   val manageKeywordsView: views.html.managementtools.manage_keywords_view,
   val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
   val newKeywordView: views.html.managementtools.new_keyword_view,
+  val editApprovedKeywordsView: views.html.managementtools.edit_approved_keywords,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -100,4 +101,13 @@ class ManageKeywordsController @Inject()(
         Ok(
           keywordCreatedConfirm(activeSubNav, saveKeyword)
       ))
+
+
+  def editApprovedKeywords(): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+      implicit request =>
+        Ok(
+          editApprovedKeywordsView(keywordForm)
+    )
+  )
 }
