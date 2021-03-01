@@ -44,6 +44,8 @@ import models.InstantRange
 import models.reporting.Report
 import models.reporting.CaseReport
 import models.reporting.QueueReport
+import models.viewmodels.managementtools.ReportingTabViewModel
+import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 
 @Singleton
 class ReportingController @Inject() (
@@ -53,6 +55,7 @@ class ReportingController @Inject() (
   usersService: UserService,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
+  val manageReportsView: views.html.managementtools.manage_reports_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -170,4 +173,14 @@ class ReportingController @Inject() (
         NotFound(views.html.report_not_found(reportName))
       }
     }
+
+  def displayManageReporting(activeSubNav: SubNavigationTab = ManagerToolsReportsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request =>
+      Ok(
+        manageReportsView(
+          activeSubNav,
+          ReportingTabViewModel.forManagedTeams()
+        )
+      )
+    )
 }
