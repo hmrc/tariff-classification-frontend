@@ -81,7 +81,7 @@ class ManageUserController @Inject() (
             usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
           } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
         }
-        case _ => Future(NotFound(views.html.user_not_found("")))
+        case _ => Future(NotFound(views.html.user_not_found(request.operator.id)))
       }
     }
 

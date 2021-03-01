@@ -18,10 +18,11 @@ package controllers
 
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, DataCacheConnector, FakeDataCacheConnector, StrideAuthConnector}
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
-import models.{Case, Operator, Permission}
+import models.request.{AuthenticatedCaseRequest, AuthenticatedDataRequest, AuthenticatedRequest, OperatorRequest}
+import models.{Case, Operator, Permission, UserAnswers}
 import org.mockito.Mockito.mock
 import play.api.i18n.MessagesApi
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import service.CasesService
@@ -96,6 +97,20 @@ class HaveRightPermissionsActionFactory extends MustHavePermissionActionFactory 
     }
 }
 
+class MustHaveDataActionFactory(userAnswers: UserAnswers)
+    extends RequireDataActionFactory(dataCacheConnector = FakeDataCacheConnector) {
+  override def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
+    new ActionRefiner[B, AuthenticatedDataRequest] {
+      override protected def refine[A](
+        request: B[A]
+      ): Future[Either[Result, AuthenticatedDataRequest[A]]] =
+        successful(Right(new AuthenticatedDataRequest(request.operator, request, userAnswers)))
+
+      override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
+    }
+
+}
+
 class SuccessfulRequestActions(
   parse: PlayBodyParsers,
   operator: Operator,
@@ -131,4 +146,28 @@ class RequestActionsWithPermissions(
       new ExistingCaseActionFactory(reference, c),
       new MustHavePermissionActionFactory,
       new RequireDataActionFactory(FakeDataCacheConnector)
+    ) {}
+
+class RequestActionsWithPermissionsAndData(
+  parse: PlayBodyParsers,
+  permissions: Set[Permission],
+  userAnswers: UserAnswers,
+  addViewCasePermission: Boolean = true,
+  reference: String              = "test-reference",
+  c: Case                        = Cases.btiCaseExample,
+  op: Operator                   = Operator("0", Some("name"))
+)(implicit ec: ExecutionContext)
+    extends RequestActions(
+      new SuccessfulCasePermissionsAction(
+        operator    = op,
+        permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
+      ),
+      new SuccessfulAuthenticatedAction(
+        parse,
+        operator    = op,
+        permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
+      ),
+      new ExistingCaseActionFactory(reference, c),
+      new MustHavePermissionActionFactory,
+      new MustHaveDataActionFactory(userAnswers)
     ) {}
