@@ -64,7 +64,8 @@ class LiabilityController @Inject() (
     val liabilityViewModel  = CaseViewModel.fromCase(liabilityCase, request.operator)
     val rulingViewModel     = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
     val appealTabViewModel  = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
-
+    val ownCase             = liabilityCase.assignee.exists(_.id == request.operator.id)
+    val activeNavTab        = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(liabilityCase.status, ownCase)
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
       attachmentsTab           <- getAttachmentTab(liabilityCase)
@@ -87,7 +88,8 @@ class LiabilityController @Inject() (
           uploadAttachmentForm,
           keywordsTab,
           keywordForm,
-          appealTabViewModel
+          appealTabViewModel,
+          activeNavTab
         )
       )
     }
@@ -120,8 +122,18 @@ class LiabilityController @Inject() (
   def editLiabilityDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+      val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+        request.`case`.status,
+        request.`case`.assignee.exists(_.id == request.operator.id)
+      )
       successful(
-        Ok(liability_details_edit(request.`case`, liabilityDetailsForm.liabilityDetailsForm(request.`case`)))
+        Ok(
+          liability_details_edit(
+            request.`case`,
+            liabilityDetailsForm.liabilityDetailsForm(request.`case`),
+            activeNavTab
+          )
+        )
       )
     }
 
@@ -140,6 +152,5 @@ class LiabilityController @Inject() (
               .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
         )
     }
-
 
 }
