@@ -92,6 +92,11 @@ object JsonFormatters {
     .and[MiscApplication](ApplicationType.MISCELLANEOUS.name)
     .format
 
+  implicit val formatApplicationType: Format[ApplicationType] = Format(
+    Reads.of[String].filter(ApplicationType.values.map(_.name).contains(_)).map(ApplicationType.withName),
+    Writes.of[String].contramap(_.name)
+  )
+
   implicit val caseFormat: OFormat[Case]                         = Json.using[Json.WithDefaultValues].format[Case]
   implicit val newCaseFormat: OFormat[NewCaseRequest]            = Json.format[NewCaseRequest]
   implicit val newKeywordFormat: OFormat[NewKeywordRequest]      = Json.format[NewKeywordRequest]
@@ -134,6 +139,8 @@ object JsonFormatters {
   implicit val newEventRequestFormat: OFormat[NewEventRequest] =
     Json.using[Json.WithDefaultValues].format[NewEventRequest]
 
+  implicit val formatCaseHeader: OFormat[CaseHeader]              = Json.format[CaseHeader]
+  implicit val formatCaseKeyword: OFormat[CaseKeyword]            = Json.format[CaseKeyword]
   implicit val emailCompleteParamsFormat: OFormat[CaseCompletedEmailParameters] =
     Json.format[CaseCompletedEmailParameters]
   implicit val emailCompleteFormat: OFormat[CaseCompletedEmail] = Json.format[CaseCompletedEmail]

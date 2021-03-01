@@ -24,25 +24,13 @@ case class KeywordViewModel(
   name: String,
   goods: String,
   caseType: ApplicationType,
-  caseStatus: CaseStatus,
+  status: CaseStatusKeywordViewModel,
   approved: Boolean
 ) {
   def isApproved: Boolean = approved
 }
 
-//todo replace the dummy stub with queries
-object Keywords {
-  val keyword1 =
-    KeywordViewModel("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatus.REFERRED, true)
-  val keyword2 = KeywordViewModel("FROZEN DOUGH", "Joy Fluter", "Frozen deepdish pizza", ApplicationType.ATAR, CaseStatus.OPEN, true)
-  val keyword3 = KeywordViewModel("HOMECOOK KITS", "Graham Dixon", "Make your own frozen fajitas", ApplicationType.ATAR, CaseStatus.REFERRED, false)
-  val keyword4 =
-    KeywordViewModel("PLASTIC STRAW", "Nora Northcott", "Customisable painted straw shapes", ApplicationType.ATAR, CaseStatus.OPEN, false)
-  val keyword5 = KeywordViewModel("POGS", "Alex Smith", "Cardboard and plastic boardgame", ApplicationType.ATAR, CaseStatus.OPEN, false)
-  val keyword6 = KeywordViewModel("SELFIE STICK", "Adam Jones", "Telescopic camera holder", ApplicationType.ATAR, CaseStatus.OPEN, true)
-  val keyword7 = KeywordViewModel("SPICES", "Alex Smith", "Basmati rice", ApplicationType.ATAR, CaseStatus.OPEN, false)
-  val keyword8 = KeywordViewModel("VINYL TOY", "Art Mbabasi", "Limited edition painted art toy", ApplicationType.ATAR, CaseStatus.OPEN, false)
-
-  def allKeywords: List[KeywordViewModel] = List(keyword1, keyword2, keyword3, keyword4, keyword5, keyword6, keyword7, keyword8)
-
-}
+case class CaseStatusKeywordViewModel(
+  caseStatus: CaseStatus,
+  overdue: Boolean
+)

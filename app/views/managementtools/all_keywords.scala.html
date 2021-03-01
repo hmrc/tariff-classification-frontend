@@ -35,7 +35,7 @@
                 @input_accessible_auto_complete(
                     field = keywordForm("keyword"),
                     formControlClass = Some("w-100"),
-                    autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
+                    autoCompleteOptions = keywordsTabViewModel.globalKeywords,
                     placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
                 )
             </div>

@@ -1091,4 +1091,58 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
     }
   }
+
+  "Connector 'findAllKeywords'" should {
+
+    "return all keywords" in {
+      val keyword = Keyword("AKeyword", true)
+      val response = Json.toJson(Paged(Seq(keyword))).toString()
+
+      val url = s"/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
+
+
+      stubFor(
+        get(urlEqualTo(url))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(response)
+          )
+      )
+
+      await(connector.findAllKeywords(pagination)) shouldBe Paged(Seq(keyword))
+
+      verify(
+        getRequestedFor(urlEqualTo(url))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "Connector 'getCaseKeywords'" should {
+
+    "return case keywords" in {
+      val keyword = Keyword("AKeyword", true)
+      val caseHeader = CaseHeader("ref", None, None, None, ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)
+      val caseKeyword = CaseKeyword(keyword, List(caseHeader))
+
+      val response = Json.toJson(Paged(Seq(caseKeyword))).toString()
+
+      stubFor(
+        get(urlEqualTo("/case-keywords"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(response)
+          )
+      )
+
+      await(connector.getCaseKeywords()) shouldBe Paged(Seq(caseKeyword))
+
+      verify(
+        getRequestedFor(urlEqualTo("/case-keywords"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
 }
