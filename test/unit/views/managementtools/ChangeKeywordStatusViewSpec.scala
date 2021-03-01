@@ -16,8 +16,8 @@
 
 package views.managementtools
 
+import models.Keyword
 import models.forms.KeywordForm
-import models.viewmodels.managementtools.Keyword
 import utils.Cases
 import views.ViewMatchers.{containElementWithID, containText}
 import views.ViewSpec

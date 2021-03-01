@@ -17,11 +17,12 @@
 package views.v2
 
 import java.time.Instant
+
 import models._
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, MessageForm, MessageFormData, UploadAttachmentForm}
+import models.forms._
 import models.viewmodels.atar.AttachmentsTabViewModel
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
+import models.viewmodels._
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._

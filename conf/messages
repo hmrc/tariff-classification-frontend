@@ -1225,7 +1225,7 @@ users.user.delete.confirm.message=This user will be deleted but all their previo
 remove_user.form.state.required = Select yes if you want to delete this user
 users.user.delete.done={0} deleted
 
-management.manage-keywords-title=Manage keywords - Advance Tariff Rulings Case Manager - GOV.UK
+management.manage-keywords-title=Manage keywords
 management.manage-keywords.heading=Manage keywords
 management.manage-keywords.approve-tab.heading=Keywords for approval
 management.manage-keywords.approve-tab-title=Approve keywords ({0})
@@ -1235,6 +1235,20 @@ management.manage-keywords.search-all-keywords.heading=All keywords
 management.manage-keywords.search-all-keywords.label=Rename or delete a keyword from the approved list
 management.manage-keywords.search-all-keywords.placeholder=Start typing to search for a keyword
 management.manage-keywords.search-all-keywords.edit-keyword-button=Edit keyword
+
+management.create-keyword-title=Create new keyword
+management.create-keyword.heading=Create new keyword
+management.create-keyword.caption=Manage keywords
+management.create-keyword.label=Enter a new keyword to add to the approved keyword list
+management.create-keyword.hint=Keywords will be saved in uppercase.
+management.create-keyword.placeholder=Start typing to search for a keyword
+management.create-keyword.save-button=Save keyword
+management.create-keyword.new-keyword-done=New keyword created
+management.create-keyword.new-keyword-done.caption=has been added to the approved keyword list
+management.create-keyword.new-keyword-done.next=Next steps
+management.create-keyword.new-keyword-done.link=Go back to manage all keywords
+management.create-keyword.error.empty.keyword=Enter a new keyword
+management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list
 
 management.manage-keywords.change-keyword-status.heading.radio=Choose keyword action
 management.manage-keywords.change-keyword-status.radio.approve=Approve

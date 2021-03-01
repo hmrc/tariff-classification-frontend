@@ -23,21 +23,25 @@ import models.forms.KeywordForm
 import models.forms.v2.ChangeKeywordStatusForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
-import models.{Case, Permission}
+import models.{Keyword, NoPagination, Permission, Case}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.CasesService
+import service.ManageKeywordsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.Future.successful
+import scala.concurrent.Future
 
-class ManageKeywordsController @Inject() (
+class ManageKeywordsController @Inject()(
   verify: RequestActions,
   casesService: CasesService,
+  keywordService: ManageKeywordsService,
   mcc: MessagesControllerComponents,
   val manageKeywordsView: views.html.managementtools.manage_keywords_view,
+  val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
+  val newKeywordView: views.html.managementtools.new_keyword_view,
   val changeKeywordStatusView: views.html.managementtools.change_keyword_status_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -47,23 +51,76 @@ class ManageKeywordsController @Inject() (
   val changeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
-      Ok(
-        manageKeywordsView(
-          activeSubNav,
-          ManageKeywordsViewModel.forManagedTeams(),
-          keywordForm
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+
+      for {
+        caseKeywords           <- keywordService.fetchCaseKeywords()
+        allKeywords            <- keywordService.findAll(NoPagination())
+        manageKeywordsViewModel = ManageKeywordsViewModel
+          .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
+      } yield
+        Ok(
+          manageKeywordsView(
+            activeSubNav,
+            manageKeywordsViewModel,
+            keywordForm
+          )
         )
+    }
+
+  def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      for {
+        keywords <- keywordService.findAll(NoPagination())
+      } yield
+        Ok(
+          newKeywordView(
+            activeSubNav,
+            keywords.results,
+            KeywordForm.formWithAuto(keywords.results.map(_.name))
+          )
+        )
+    }
+
+  def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+
+      keywordService.findAll(NoPagination()).flatMap {
+        keywords =>
+          val keywordNames = keywords.results.map(_.name)
+          KeywordForm.formWithAuto(keywordNames).bindFromRequest.fold(
+            formWithErrors =>
+              Future.successful(BadRequest(
+                newKeywordView(
+                  activeSubNav,
+                  keywords.results,
+                  formWithErrors
+                )
+              )),
+            keyword =>
+              keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
+                Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
+              }
+          )
+      }
+    }
+
+  def displayConfirmKeyword(
+    saveKeyword: String,
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+      implicit request =>
+        Ok(
+          keywordCreatedConfirm(activeSubNav, saveKeyword)
       )
     )
+
 
   def changeKeywordStatus(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       casesService.getOne(reference).flatMap {
-        case Some(c: Case) =>
-          successful(Ok(changeKeywordStatusView(c, changeKeywordStatusForm)))
-        case _ => successful(Ok(views.html.case_not_found(reference)))
+        case Some(c: Case) => Future.successful(Ok(changeKeywordStatusView(c, changeKeywordStatusForm)))
+        case _ => Future.successful(Ok(views.html.case_not_found(reference)))
       }
     )
-
 }
