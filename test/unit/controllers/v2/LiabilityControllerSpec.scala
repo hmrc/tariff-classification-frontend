@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-
 import com.google.inject.Provider
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
 
@@ -126,12 +125,13 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       any(),
       any(),
       any(),
+      any(),
       any()
     )(any(), any(), any())
 
   private def mockLiabilityController(
     pagedEvent: Paged[Event]                    = pagedEvent,
-    queues: List[Queue]                          = queues,
+    queues: List[Queue]                         = queues,
     attachments: Seq[StoredAttachment]          = Seq(Cases.storedAttachment),
     letterOfAuthority: Option[StoredAttachment] = Some(Cases.letterOfAuthority)
   ): Any = {
@@ -150,6 +150,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     when(
       liability_view.apply(
+        any(),
         any(),
         any(),
         any(),
@@ -238,9 +239,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           "goodName"             -> "item-name",
           "traderCommodityCode"  -> "",
           "officerCommodityCode" -> "",
-          "contact.contactName"          -> "contact-name",
-          "contact.contactEmail"         -> "valid@email.com",
-          "contact.contactPhone"         -> ""
+          "contact.contactName"  -> "contact-name",
+          "contact.contactEmail" -> "valid@email.com",
+          "contact.contactPhone" -> ""
         )
       )
       val result: Future[Result] =

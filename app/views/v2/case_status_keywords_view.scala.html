@@ -1,0 +1,48 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.viewmodels.managementtools.CaseStatusKeywordViewModel
+
+@(c: CaseStatusKeywordViewModel, id: String)
+
+
+@c.caseStatus match {
+    case CaseStatus.OPEN => {
+        <span class="visually-hidden">case status</span>
+        <span id="@id-status" class="govuk-tag govuk-tag--blue">@c.caseStatus</span>
+    }
+    case CaseStatus.NEW => {
+        <span class="visually-hidden">case status</span>
+        <span id="@id-status" class="govuk-tag govuk-tag--green">@c.caseStatus</span>
+    }
+    case CaseStatus.REFERRED | CaseStatus.SUSPENDED => {
+        <span class="visually-hidden">case status</span>
+        <span id="@id-status" class="govuk-tag govuk-tag--yellow">@{c.caseStatus}</span>
+    }
+
+    case status => {
+        <span class="visuallyhidden">case status</span>
+        <span id="@id-status" class="govuk-tag govuk-tag--green">@c.caseStatus</span>
+    }
+
+}
+@if(c.overdue) {
+    <span class="visually-hidden">case status</span>
+    <span id="@id-overdue" class="govuk-tag govuk-tag--red">OVERDUE</span>
+}
+
+
+

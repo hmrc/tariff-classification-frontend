@@ -27,17 +27,48 @@ case class ManageKeywordsViewModel(
 )
 
 object ManageKeywordsViewModel {
-  def forManagedTeams(): ManageKeywordsViewModel =
+  def forManagedTeams(caseKeywords: Seq[CaseKeyword], allKeywords: Seq[String]): ManageKeywordsViewModel = {
+
+    val keywordViewModel = caseKeywords.flatMap(caseKeyword =>
+      caseKeyword.cases.map { caseHeader =>
+
+        val overdue = (caseHeader.caseType, caseHeader.liabilityStatus) match {
+          case (ApplicationType.LIABILITY, Some(LiabilityStatus.LIVE)) if caseHeader.daysElapsed >= 5 => true
+          case (_, _) if caseHeader.daysElapsed >= 30                                                 => true
+          case _                                                                                      => false
+        }
+
+        val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, overdue)
+
+        KeywordViewModel(
+          caseKeyword.keyword.name,
+          caseHeader.assignee
+            .map { assignee =>
+              assignee.name match {
+                case Some(s) if !s.trim.isEmpty => s
+                case _                          => assignee.id
+              }
+            }
+            .getOrElse(""),
+          caseHeader.goodsName.getOrElse(""),
+          caseHeader.caseType,
+          caseStatus,
+          caseKeyword.keyword.approved
+        )
+    })
+
     ManageKeywordsViewModel(
       "Manage keywords",
-      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(Keywords.allKeywords.filter(k => !k.isApproved))),
-      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Keywords.allKeywords)
+      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(keywordViewModel.filter(k => !k.isApproved))),
+      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), allKeywords)
     )
+  }
+
 }
 
 case class KeywordsTabViewModel(
   tabMessageKey: String,
   elementId: String,
   keyword: Set[String],
-  globalKeywords: Seq[KeywordViewModel]
+  globalKeywords: Seq[String]
 )

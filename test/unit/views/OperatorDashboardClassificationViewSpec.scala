@@ -54,7 +54,7 @@ class OperatorDashboardClassificationViewSpec extends ViewSpec {
 
     "contain operator name" in {
       val doc = asDocument(view())
-      doc.getElementsByClass("heading-xlarge").text() shouldBe "operator-name"
+      doc.getElementsByClass("heading-xlarge").text() shouldBe "Case dashboard"
     }
   }
 
