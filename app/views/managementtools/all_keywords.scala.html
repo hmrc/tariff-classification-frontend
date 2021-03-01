@@ -31,7 +31,7 @@
                     label = Some(messages("management.manage-keywords.search-all-keywords.label")),
                     formControlClass = Some("w-100"),
                     labelClass = Some("un-bold"),
-                    autoCompleteOptions = keywordsTabViewModel.globalKeywords.map(_.keyword),
+                    autoCompleteOptions = keywordsTabViewModel.globalKeywords,
                     placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
                 )
             </div>
