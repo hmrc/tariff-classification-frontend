@@ -22,7 +22,7 @@ import controllers.RequestActions
 import models.forms.KeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
-import models.{Keyword, NoPagination, Permission}
+import models.{CaseHeader, CaseStatus, Keyword, NoPagination, Paged, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -111,8 +111,15 @@ class ManageKeywordsController @Inject()(
 
 
   def editApprovedKeywords(): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
-      implicit request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
+//        for {
+//          forCompleted <- keywordService.fetchCaseKeywords().filter(Paged(CaseHeader(status = CaseStatus.COMPLETED)))
+//
+//
+//        } yield x
+//
+
+
         Ok(
           editApprovedKeywordsView(keywordForm)
     )
