@@ -16,16 +16,22 @@
 
 package models.forms.v2
 
-import models.forms.mappings.FormMappings.fieldNonEmpty
-import play.api.data.Form
-import play.api.data.Forms.mapping
+import models.ModelsBaseSpec
 
-object ChangeKeywordStatusForm {
+class ChangeKeywordStatusFormSpec extends ModelsBaseSpec {
 
-  val form: Form[String] = Form(
-    mapping(
-      "action" -> fieldNonEmpty("error.empty.action")
-    )(identity)(Some(_))
-  )
+  "Bind from request" should {
 
+    "Bind a blank form" in {
+      val form = ChangeKeywordStatusForm.form.bindFromRequest(
+        Map(
+          "action" -> Seq()
+        )
+      )
+
+      form.hasErrors shouldBe false
+      form.errors should have(size(0))
+    }
+
+  }
 }

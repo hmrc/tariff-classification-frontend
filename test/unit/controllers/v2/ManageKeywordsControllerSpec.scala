@@ -88,6 +88,19 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     }
 
+    "return case not found when case is not found" in {
+      when(casesService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
+
+      val result =
+        await(controller(Set(Permission.MANAGE_USERS)).changeKeywordStatus("reference")(newFakeGETRequestWithCSRF(app)))
+
+      status(result)          shouldBe Status.OK
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+
+    }
+
     "return unauthorised with no permissions" in {
 
       when(casesService.getOne(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))

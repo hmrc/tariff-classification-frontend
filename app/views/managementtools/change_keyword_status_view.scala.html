@@ -33,7 +33,7 @@
 
 @(c: Case, form: Form[String], activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("management.create-keyword.new-keyword-done"))) {
+@main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.change-keyword-status.keyword-details.title"))) {
 @manager_tools_secondary_navigation(activeSubNav)
 
     @back_link()
