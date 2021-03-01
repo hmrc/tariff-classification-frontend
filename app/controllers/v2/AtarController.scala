@@ -19,9 +19,9 @@ package controllers.v2
 import config.AppConfig
 import controllers.RequestActions
 import javax.inject.{Inject, Singleton}
-import models.{Case, CaseStatus, EventType, NoPagination}
+import models.{Case, EventType, NoPagination}
 import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, KeywordsTabViewModel, MyCasesTab, OpenCasesTab, PrimaryNavigationViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
 import models.viewmodels.atar._
 import models.request._
 import play.api.data.Form
@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import service.{CountriesService, EventsService, FileStoreService, KeywordsService, QueuesService}
+import service._
 
 import scala.concurrent.{ExecutionContext, Future}
 

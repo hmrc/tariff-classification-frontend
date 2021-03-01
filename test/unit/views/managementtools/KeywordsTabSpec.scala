@@ -18,7 +18,7 @@ package views.managementtools
 
 import models.forms.KeywordForm
 import models.viewmodels.managementtools._
-import models.{ApplicationType, CaseStatus, Paged}
+import models.{ApplicationType, CaseStatus, Keyword, Paged}
 import play.twirl.api.HtmlFormat
 import views.ViewMatchers.containText
 import views.ViewSpec
@@ -27,14 +27,15 @@ import views.html.managementtools.keywords_tab
 class KeywordsTabSpec extends ViewSpec {
 
   val keyword =
-    Keyword("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatus.REFERRED, true)
+    KeywordViewModel("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatus.REFERRED, true)
 
   val emptyMangageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq.empty))
   val manageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq(keyword)))
   val keywordsTabViewModel = KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Keywords.allKeywords.toSeq)
 
   val manageKeywordsViewModel = ManageKeywordsViewModel("Manage keywords", manageKeywordsTab, keywordsTabViewModel)
-  val form = KeywordForm.form
+  val keywords    = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
+  val form = KeywordForm.formWithAuto(keywords.map(_.name))
 
   def manageKeywordsView(t: ManageKeywordsViewModel = manageKeywordsViewModel): HtmlFormat.Appendable = keywords_tab(t, form)
 

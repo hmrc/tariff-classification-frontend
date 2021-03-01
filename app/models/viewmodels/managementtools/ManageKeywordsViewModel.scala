@@ -18,7 +18,7 @@ package models.viewmodels.managementtools
 
 import models._
 
-case class ManageKeywordsTab(tabMessageKey: String, elementId: String, searchResult: Paged[Keyword])
+case class ManageKeywordsTab(tabMessageKey: String, elementId: String, searchResult: Paged[KeywordViewModel])
 
 case class ManageKeywordsViewModel(
   headingMessageKey: String,
@@ -39,5 +39,5 @@ case class KeywordsTabViewModel(
   tabMessageKey: String,
   elementId: String,
   keyword: Set[String],
-  globalKeywords: Seq[Keyword]
+  globalKeywords: Seq[KeywordViewModel]
 )

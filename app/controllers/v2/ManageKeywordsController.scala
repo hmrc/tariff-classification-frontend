@@ -19,32 +19,85 @@ package controllers.v2
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
-import models.Permission
 import models.forms.KeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
+import models.{Keyword, NoPagination, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import service.ManageKeywordsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
   mcc: MessagesControllerComponents,
+  keywordService: ManageKeywordsService,
   val manageKeywordsView: views.html.managementtools.manage_keywords_view,
+  val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
+  val newKeywordView: views.html.managementtools.new_keyword_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
   val keywordForm: Form[String] = KeywordForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
-      Ok(
-        manageKeywordsView(
-          activeSubNav,
-          ManageKeywordsViewModel.forManagedTeams(),
-          keywordForm
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+      implicit request =>
+        Ok(
+          manageKeywordsView(
+            activeSubNav,
+            ManageKeywordsViewModel.forManagedTeams(),
+            keywordForm
+          )
+      ))
+
+  def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      for {
+        keywords <- keywordService.findAll(NoPagination())
+      } yield
+        Ok(
+          newKeywordView(
+            activeSubNav,
+            keywords.results,
+            KeywordForm.formWithAuto(keywords.results.map(_.name))
+          )
         )
-      )
-    )
+    }
+
+  def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+
+      keywordService.findAll(NoPagination()).flatMap {
+        keywords =>
+          val keywordNames = keywords.results.map(_.name)
+          KeywordForm.formWithAuto(keywordNames).bindFromRequest.fold(
+            formWithErrors =>
+              Future.successful(BadRequest(
+                newKeywordView(
+                  activeSubNav,
+                  keywords.results,
+                  formWithErrors
+                )
+              )),
+            keyword =>
+              keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
+                Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
+              }
+          )
+      }
+    }
+
+  def displayConfirmKeyword(
+    saveKeyword: String,
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+      implicit request =>
+        Ok(
+          keywordCreatedConfirm(activeSubNav, saveKeyword)
+      ))
 }
