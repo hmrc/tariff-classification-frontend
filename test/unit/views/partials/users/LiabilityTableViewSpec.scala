@@ -17,6 +17,7 @@
 package views.partials.users
 
 import models.ApplicationType
+import models.forms.v2.MoveCasesForm
 import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
 import play.twirl.api.Html
 import utils.Cases
@@ -25,8 +26,9 @@ import views.ViewSpec
 import views.html.partials.users.liability_table
 
 class LiabilityTableViewSpec extends ViewSpec {
+  private val moveLiabCasesForm = MoveCasesForm.moveCasesForm("liabilityCases")
 
-  def liabTable(liabTab: ApplicationsTab): Html = liability_table(liabTab)
+  def liabTable(liabTab: ApplicationsTab): Html = liability_table(liabTab, moveLiabCasesForm, "1")
 
   val assignedToMeCasesTab =
     ApplicationTabViewModel(

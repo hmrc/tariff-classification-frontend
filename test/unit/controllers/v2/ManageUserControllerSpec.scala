@@ -61,7 +61,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       done_delete_user
     )(realAppConfig, global)
 
-  "displayUserDetals" should {
+  "displayUserDetails" should {
 
     "return 200 OK and HTML content type" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
@@ -69,7 +69,8 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(fakeRequest))
+      val result =
+        await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(newFakeGETRequestWithCSRF(app)))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -279,8 +280,9 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
       given(
         casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
-          any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+          any[HeaderCarrier]
+        )
+      ).willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("2"), Operator("3"))))
@@ -297,8 +299,9 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
       given(
         casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
-          any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+          any[HeaderCarrier]
+        )
+      ).willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("2"), Operator("3"))))

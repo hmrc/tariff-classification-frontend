@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import connector.StrideAuthConnector
+import connector.{BindingTariffClassificationConnector, DataCacheConnector, FakeDataCacheConnector, StrideAuthConnector}
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
 import models.{Case, Operator, Permission}
 import org.mockito.Mockito.mock
@@ -29,7 +29,6 @@ import utils.Cases
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
-import connector.BindingTariffClassificationConnector
 
 class SuccessfulAuthenticatedAction(
   parse: PlayBodyParsers,
@@ -107,7 +106,8 @@ class SuccessfulRequestActions(
       new SuccessfulCasePermissionsAction(operator),
       new SuccessfulAuthenticatedAction(parse, operator),
       new ExistingCaseActionFactory(reference, c),
-      new HaveRightPermissionsActionFactory
+      new HaveRightPermissionsActionFactory,
+      new RequireDataActionFactory(FakeDataCacheConnector)
     ) {}
 
 class RequestActionsWithPermissions(
@@ -129,5 +129,6 @@ class RequestActionsWithPermissions(
         permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
       ),
       new ExistingCaseActionFactory(reference, c),
-      new MustHavePermissionActionFactory
+      new MustHavePermissionActionFactory,
+      new RequireDataActionFactory(FakeDataCacheConnector)
     ) {}
