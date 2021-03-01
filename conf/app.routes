@@ -11,9 +11,15 @@ GET         /queues/assigned                                    controllers.Assi
 GET         /queues/assigned/:assigneeId/:tabIndex              controllers.AssignedCasesController.assignedCasesFor(assigneeId: String, tabIndex : Int)
 GET         /queues/:slug                                       controllers.QueuesController.queue(slug: String, caseType: Option[String] ?= None)
 
-GET         /reports                                            controllers.ReportingController.getReports
-GET         /reports/:name/:tabIndex                            controllers.ReportingController.getReportCriteria(name: String, tabIndex : Int)
-POST        /reports/:name                                      controllers.ReportingController.getReport(name: String)
+GET         /reports/cases                                      controllers.ReportingController.caseReport(caseReport: models.reporting.CaseReport, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/cases/download                             controllers.ReportingController.downloadCaseReport(summaryReport: models.reporting.CaseReport)
+GET         /reports/summary                                    controllers.ReportingController.summaryReport(summaryReport: models.reporting.SummaryReport, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/summary/download                           controllers.ReportingController.downloadSummaryReport(summaryReport: models.reporting.SummaryReport)
+GET         /reports/choose-date                                controllers.ReportingController.showChangeDateFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
+POST        /reports/choose-date                                controllers.ReportingController.postChangeDateFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/choose-teams                               controllers.ReportingController.showChangeTeamsFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
+POST        /reports/choose-teams                               controllers.ReportingController.postChangeTeamsFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/:name                                      controllers.ReportingController.getReportByName(name: String)
 
 GET         /cases                                              controllers.Default.redirect(to = controllers.routes.IndexController.get.url)
 GET         /cases/:reference                                   controllers.CaseController.get(reference: String)

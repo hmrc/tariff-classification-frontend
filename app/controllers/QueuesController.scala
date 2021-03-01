@@ -53,8 +53,7 @@ class QueuesController @Inject() (
           for {
             cases            <- casesService.getCasesByQueue(q, NoPagination(), types)
             queues           <- queuesService.getAll
-            caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-          } yield Ok(views.html.queue(queues, q, caseCountByQueue, cases, types.mkString(",")))
+          } yield Ok(views.html.queue(queues, q, Map.empty, cases, types.mkString(",")))
             .addingToSession(
               (backToQueuesLinkLabel, s"${q.name} cases"),
               (backToQueuesLinkUrl, QueuesController.queue(q.slug, caseType).url)

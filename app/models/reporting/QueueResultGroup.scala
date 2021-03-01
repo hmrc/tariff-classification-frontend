@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package views
+package models
+package reporting
 
-import play.twirl.api.Html
-import views.Report.Report
-
-case class SelectedReport(
-  report: Report,
-  criteria: Html
+case class QueueResultGroup(
+  count: Long,
+  team: Option[String],
+  caseType: ApplicationType
 )

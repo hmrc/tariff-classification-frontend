@@ -25,6 +25,7 @@ import views.html.operator_dashboard_classification
 class OperatorDashboardClassificationViewSpec extends ViewSpec {
 
   val casesCounted: Map[String, Int]    = Map("BTI" -> 2, "Liability" -> 3)
+  val totalCasesAssignedToMe            = 5
   val casesReferredByMe                 = 3
   val casesCompletedByMe                = 3
   val operator_dashboard_classification = new operator_dashboard_classification()
@@ -39,7 +40,7 @@ class OperatorDashboardClassificationViewSpec extends ViewSpec {
 
   def view: () => HtmlFormat.Appendable =
     () =>
-      operator_dashboard_classification(Map("BTI" -> 2, "Liability" -> 3), casesReferredByMe, casesCompletedByMe)(
+      operator_dashboard_classification(Map.empty, totalCasesAssignedToMe, casesReferredByMe, casesCompletedByMe)(
         authenticatedManagerFakeRequest,
         messages,
         appConfig

@@ -18,22 +18,23 @@ package utils
 
 import play.api.libs.json._
 import uk.gov.hmrc.play.json.Union
-import models.LiabilityStatus.LiabilityStatus
-import models.Role.Role
+import models._
+import models.reporting._
 import models.request.NewEventRequest
 import models.response.{FileMetadata, ScanStatus}
-import models.{CaseStatus, LiabilityStatus, _}
+import models.LiabilityStatus.LiabilityStatus
+import models.Role.Role
+import play.api.libs.functional.syntax._
 
 object JsonFormatters {
-
-  case class Something(value: String)
-
   implicit val role: Format[Role.Value]                           = EnumJson.format(Role)
   implicit val liabilityStatus: Format[LiabilityStatus]           = EnumJson.format(LiabilityStatus)
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
   implicit val miscCaseType: Format[MiscCaseType.Value]           = EnumJson.format(MiscCaseType)
-  implicit val reportField: Format[CaseReportField.Value]         = EnumJson.format(CaseReportField)
-  implicit val reportGroup: Format[CaseReportGroup.Value]         = EnumJson.format(CaseReportGroup)
+  implicit val formatApplicationType: Format[ApplicationType] = Format(
+    Reads.of[String].filter(ApplicationType.values.map(_.name).contains(_)).map(ApplicationType.withName),
+    Writes.of[String].contramap(_.name)
+  )
   implicit val formatPermission: Format[Permission] = Format[Permission](
     Reads(json =>
       json
@@ -48,19 +49,10 @@ object JsonFormatters {
     Writes[Permission](v => JsString(v.toString))
   )
 
-  implicit val formatReportResultMap: OFormat[Map[CaseReportGroup.Value, Option[String]]] = {
-    implicit val optrds: Reads[Option[String]] = Reads.optionNoError[String]
-    EnumJson.formatMap[CaseReportGroup.Value, Option[String]]
-  }
-
-  implicit val reportResult: Format[ReportResult] = Json.format[ReportResult]
-
   implicit val instantRange: Format[InstantRange]                        = Json.format[InstantRange]
   implicit val formatRepaymentClaim: OFormat[RepaymentClaim]             = Json.format[RepaymentClaim]
   implicit val formatAddress: OFormat[Address]                           = Json.format[Address]
   implicit val formatTraderContactDetails: OFormat[TraderContactDetails] = Json.format[TraderContactDetails]
-  implicit val caseReportFilter: Format[CaseReportFilter]                = Json.format[CaseReportFilter]
-  implicit val caseReport: Format[CaseReport]                            = Json.format[CaseReport]
   implicit val operatorFormat: Format[Operator]                          = Json.using[Json.WithDefaultValues].format[Operator]
   implicit val formatNewUserRequest: OFormat[NewUserRequest]             = Json.using[Json.WithDefaultValues].format[NewUserRequest]
   implicit val scanStatusFormat: Format[ScanStatus.Value]                = EnumJson.format(ScanStatus)
@@ -140,6 +132,60 @@ object JsonFormatters {
     .and[CaseCompletedEmail](EmailType.COMPLETE.toString)
     .format
   implicit val emailTemplateFormat: OFormat[EmailTemplate] = Json.format[EmailTemplate]
+
+  implicit val formatPseudoCaseStatus: Format[PseudoCaseStatus.Value] = EnumJson.format(PseudoCaseStatus)
+
+  implicit val formatNumberField: OFormat[NumberField]       = Json.format[NumberField]
+  implicit val formatStatusField: OFormat[StatusField]       = Json.format[StatusField]
+  implicit val formatCaseTypeField: OFormat[CaseTypeField]   = Json.format[CaseTypeField]
+  implicit val formatChapterField: OFormat[ChapterField]     = Json.format[ChapterField]
+  implicit val formatDateField: OFormat[DateField]           = Json.format[DateField]
+  implicit val formatStringField: OFormat[StringField]       = Json.format[StringField]
+  implicit val formatDaysSinceField: OFormat[DaysSinceField] = Json.format[DaysSinceField]
+
+  implicit val formatReportField: Format[ReportField[_]] = Union
+    .from[ReportField[_]]("type")
+    .and[NumberField](ReportFieldType.Number.name)
+    .and[StatusField](ReportFieldType.Status.name)
+    .and[CaseTypeField](ReportFieldType.CaseType.name)
+    .and[ChapterField](ReportFieldType.Chapter.name)
+    .and[DateField](ReportFieldType.Date.name)
+    .and[StringField](ReportFieldType.String.name)
+    .and[DaysSinceField](ReportFieldType.DaysSince.name)
+    .format
+
+  implicit val formatNumberResultField: OFormat[NumberResultField]     = Json.format[NumberResultField]
+  implicit val formatStatusResultField: OFormat[StatusResultField]     = Json.format[StatusResultField]
+  implicit val formatCaseTypeResultField: OFormat[CaseTypeResultField] = Json.format[CaseTypeResultField]
+  implicit val formatDateResultField: OFormat[DateResultField]         = Json.format[DateResultField]
+  implicit val formatStringResultField: OFormat[StringResultField]     = Json.format[StringResultField]
+
+  implicit val formatReportResultField: Format[ReportResultField[_]] = Union
+    .from[ReportResultField[_]]("type")
+    .and[NumberResultField](ReportFieldType.Number.name)
+    .and[StatusResultField](ReportFieldType.Status.name)
+    .and[CaseTypeResultField](ReportFieldType.CaseType.name)
+    .and[DateResultField](ReportFieldType.Date.name)
+    .and[StringResultField](ReportFieldType.String.name)
+    .format
+
+  implicit val formatSimpleResultGroup: OFormat[SimpleResultGroup] = Json.format[SimpleResultGroup]
+  implicit val formatCaseResultGroup: OFormat[CaseResultGroup]     = Json.format[CaseResultGroup]
+
+  implicit val readResultGroup: Reads[ResultGroup] =
+    (__ \ "cases").readNullable[List[Case]].flatMap {
+      case Some(_) => formatCaseResultGroup.widen[ResultGroup]
+      case None    => formatSimpleResultGroup.widen[ResultGroup]
+    }
+
+  implicit val writeResultGroup: OWrites[ResultGroup] = OWrites[ResultGroup] {
+    case caseResult: CaseResultGroup     => formatCaseResultGroup.writes(caseResult)
+    case simpleResult: SimpleResultGroup => formatSimpleResultGroup.writes(simpleResult)
+  }
+
+  implicit val formatResultGroup: OFormat[ResultGroup] = OFormat(readResultGroup, writeResultGroup)
+
+  implicit val formatQueueResultGroup: OFormat[QueueResultGroup] = Json.format[QueueResultGroup]
 }
 
 object EnumJson {

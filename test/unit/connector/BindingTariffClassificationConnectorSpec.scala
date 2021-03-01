@@ -828,45 +828,6 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   }
 
-  "Connector 'Generate Report'" should {
-    val report = CaseReport(
-      filter = CaseReportFilter(
-        decisionStartDate = Some(
-          InstantRange(
-            min = Instant.EPOCH,
-            max = Instant.EPOCH.plusSeconds(1)
-          )
-        )
-      ),
-      group = Set(CaseReportGroup.QUEUE),
-      field = CaseReportField.ACTIVE_DAYS_ELAPSED
-    )
-
-    val result = ReportResult(Map(CaseReportGroup.QUEUE -> Some("queue-id")), Seq(1))
-
-    "GET report " in {
-      val url =
-        "/report?min_decision_start=1970-01-01T00%3A00%3A00Z&max_decision_start=1970-01-01T00%3A00%3A01Z&report_group=queue-id&report_field=active-days-elapsed"
-
-      stubFor(
-        get(urlEqualTo(url))
-          .willReturn(
-            aResponse()
-              .withStatus(HttpStatus.SC_OK)
-              .withBody(Json.toJson(Seq(result)).toString)
-          )
-      )
-
-      await(connector.generateReport(report)) shouldBe Seq(result)
-
-      verify(
-        getRequestedFor(urlEqualTo(url))
-          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
-      )
-    }
-
-  }
-
   "Connector 'getAllUsers'" should {
 
     "get all users" in {

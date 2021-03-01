@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package views
+package models
+package reporting
 
-import models.{CaseReportGroup, Queue, ReportResult}
-
-class ReferralReport(results: Seq[ReportResult]) {
-
-  lazy val count: Int = results.map(_.size).sum
-
-  lazy val average: Int = Math.round(results.flatMap(_.value).sum.toDouble / count).toInt
-
-  def countFor(queue: Queue): Int =
-    results.find(_.group.get(CaseReportGroup.QUEUE).contains(Some(queue.id))).map(_.size).getOrElse(0)
-
-  def averageFor(queue: Queue): Int =
-    Math
-      .round(results.find(_.group.get(CaseReportGroup.QUEUE).contains(Some(queue.id))).map(_.average).getOrElse(0.0))
-      .toInt
+sealed abstract class ResultGroup {
+  def count: Long
+  def groupKey: ReportResultField[_]
+  def maxFields: List[NumberResultField]
 }
+
+case class SimpleResultGroup(
+  count: Long,
+  groupKey: ReportResultField[_],
+  maxFields: List[NumberResultField] = List.empty
+) extends ResultGroup
+
+case class CaseResultGroup(
+  count: Long,
+  groupKey: ReportResultField[_],
+  maxFields: List[NumberResultField] = List.empty,
+  cases: List[Case] = List.empty
+) extends ResultGroup

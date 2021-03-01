@@ -38,64 +38,6 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
   }
 
   "Reporting Service" should {
-    "Build & Request SLA Report" in {
-      val dateRange = mock[InstantRange]
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
-        Seq.empty[ReportResult]
-      )
-
-      await(service.getSLAReport(dateRange)) shouldBe Seq.empty[ReportResult]
-
-      theReport shouldBe CaseReport(
-        filter = CaseReportFilter(
-          decisionStartDate = Some(dateRange),
-          applicationType   = Some(Set("BTI"))
-        ),
-        group = Set(CaseReportGroup.QUEUE),
-        field = CaseReportField.ACTIVE_DAYS_ELAPSED
-      )
-    }
-
-    "Build & Request Queue Report" in {
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
-        Seq.empty[ReportResult]
-      )
-
-      await(service.getQueueReport(mock[HeaderCarrier])) shouldBe Seq.empty[ReportResult]
-
-      theReport shouldBe CaseReport(
-        filter = CaseReportFilter(
-          status     = Some(Set("NEW", "OPEN", "REFERRED", "SUSPENDED")),
-          assigneeId = Some("none")
-        ),
-        group = Set(CaseReportGroup.QUEUE, CaseReportGroup.APPLICATION_TYPE),
-        field = CaseReportField.ACTIVE_DAYS_ELAPSED
-      )
-    }
-
-    "Build & Request Referral Report" in {
-      val dateRange = mock[InstantRange]
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
-        Seq.empty[ReportResult]
-      )
-
-      await(service.getReferralReport(dateRange)) shouldBe Seq.empty[ReportResult]
-
-      theReport shouldBe CaseReport(
-        filter = CaseReportFilter(
-          referralDate    = Some(dateRange),
-          applicationType = Some(Set("BTI"))
-        ),
-        group = Set(CaseReportGroup.QUEUE),
-        field = CaseReportField.REFERRED_DAYS_ELAPSED
-      )
-    }
-
-    def theReport: CaseReport = {
-      val captor: ArgumentCaptor[CaseReport] = ArgumentCaptor.forClass(classOf[CaseReport])
-      verify(connector).generateReport(captor.capture())(any[HeaderCarrier])
-      captor.getValue
-    }
+    // TODO: Implement tests for new reports
   }
-
 }

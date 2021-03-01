@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package models.forms
 
-object CaseReportGroup extends Enumeration {
-  type CaseReportGroup = Value
-  val QUEUE            = Value("queue-id")
-  val APPLICATION_TYPE = Value("application-type")
+import play.api.data.Form
+import play.api.data.Forms._
+
+object ReportTeamForm {
+  val form = Form(single(
+    "allTeams" -> optional(boolean)
+      .verifying("reporting.choose_teams.required", _.nonEmpty).transform(_.get, Some[Boolean](_))
+  ))
 }

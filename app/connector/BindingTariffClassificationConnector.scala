@@ -27,7 +27,7 @@ import models._
 import models.CaseStatus._
 import models.EventType.EventType
 import models.Role.Role
-import models._
+import models.reporting._
 import models.request.NewEventRequest
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
@@ -228,12 +228,6 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[Case]](url)
     }
 
-  def generateReport(report: CaseReport)(implicit hc: HeaderCarrier): Future[Seq[ReportResult]] =
-    withMetricsTimerAsync("generate-report") { _ =>
-      val url = s"${appConfig.bindingTariffClassificationUrl}/report?${CaseReport.bindable.unbind("", report)}"
-      client.GET[Seq[ReportResult]](url)
-    }
-
   def getAllUsers(roles: Seq[Role], team: String, pagination: Pagination)(
     implicit hc: HeaderCarrier): Future[Paged[Operator]] =
     withMetricsTimerAsync("get-all-users") { _ =>
@@ -269,4 +263,39 @@ class BindingTariffClassificationConnector @Inject() (
       client.POST[NewUserRequest, Operator](url, NewUserRequest(operator))
     }
 
+  def caseReport(report: CaseReport, pagination: Pagination)(
+    implicit hc: HeaderCarrier,
+    reportBind: QueryStringBindable[CaseReport],
+    pageBind: QueryStringBindable[Pagination]
+  ): Future[Paged[Map[String, ReportResultField[_]]]] =
+    withMetricsTimerAsync("case-report") { _ =>
+      val reportQuery = reportBind.unbind("", report)
+      val pageQuery = pageBind.unbind("", pagination)
+      val url = s"${appConfig.bindingTariffClassificationUrl}/report/cases?$reportQuery&$pageQuery"
+      client.GET[Paged[Map[String, ReportResultField[_]]]](url)
+    }
+
+  def summaryReport(report: SummaryReport, pagination: Pagination)(
+    implicit hc: HeaderCarrier,
+    reportBind: QueryStringBindable[SummaryReport],
+    pageBind: QueryStringBindable[Pagination]
+  ): Future[Paged[ResultGroup]] =
+    withMetricsTimerAsync("summary-report") { _ =>
+      val reportQuery = reportBind.unbind("", report)
+      val pageQuery = pageBind.unbind("", pagination)
+      val url = s"${appConfig.bindingTariffClassificationUrl}/report/summary?$reportQuery&$pageQuery"
+      client.GET[Paged[ResultGroup]](url)
+    }
+
+  def queueReport(report: QueueReport, pagination: Pagination)(
+    implicit hc: HeaderCarrier,
+    reportBind: QueryStringBindable[QueueReport],
+    pageBind: QueryStringBindable[Pagination]
+  ): Future[Paged[QueueResultGroup]] =
+    withMetricsTimerAsync("queue-report") { _ =>
+      val reportQuery = reportBind.unbind("", report)
+      val pageQuery = pageBind.unbind("", pagination)
+      val url = s"${appConfig.bindingTariffClassificationUrl}/report/queues?$reportQuery&$pageQuery"
+      client.GET[Paged[QueueResultGroup]](url)
+    }
 }

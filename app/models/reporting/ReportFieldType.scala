@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package views
+package models
+package reporting
 
-object Report extends Enumeration {
-  type Report = Value
-  val SLA      = Value("SLA Report")
-  val REFERRAL = Value("Referral Report")
+sealed abstract class ReportFieldType(val name: String) extends Product with Serializable
+
+object ReportFieldType {
+  case object Number extends ReportFieldType("number")
+  case object Status extends ReportFieldType("status")
+  case object CaseType extends ReportFieldType("caseType")
+  case object Chapter extends ReportFieldType("chapter")
+  case object Date extends ReportFieldType("date")
+  case object String extends ReportFieldType("string")
+  case object DaysSince extends ReportFieldType("daysSince")
 }

@@ -18,12 +18,13 @@ package service
 
 import javax.inject.Singleton
 import models.{ApplicationType, Queue, Queues}
-import models.Queues._
 import scala.concurrent.Future
 
 @Singleton
 class QueuesService {
   def getAll: Future[List[Queue]] = Future.successful(Queues.allQueues)
+
+  def getAllById: Future[Map[String, Queue]] = Future.successful(Queues.allQueuesById)
 
   def getNonGateway: Future[List[Queue]] = Future.successful(Queues.allDynamicQueues)
 
