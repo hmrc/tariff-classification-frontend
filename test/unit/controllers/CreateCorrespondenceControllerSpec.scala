@@ -220,7 +220,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       )
 
       status(result)          shouldBe Status.OK
-      contentAsString(result) should include("Do you want to release this new case to a team now?")
+
     }
 
     "display Confirmation case page for creating a correspondence with no queue GET" in {

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
-@import views.html.includes.main
-@import models.viewmodels.HomeTab
-@import models.Role.Role
+package models.viewmodels.managementtools
 
-@this()
-@(countCases: Map[String, Int], referredCasesByAssignee: Int, completedCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+import models.CaseStatus.CaseStatus
+import models.{ApplicationType, CaseStatus}
 
-@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.header")), customPrimaryNavTab = HomeTab) {
-
-@components.cases_cards(countCases, referredCasesByAssignee, completedCasesByAssignee)
-
+case class KeywordViewModel(
+  keyword: String,
+  name: String,
+  goods: String,
+  caseType: ApplicationType,
+  status: CaseStatusKeywordViewModel,
+  approved: Boolean
+) {
+  def isApproved: Boolean = approved
 }
+
+case class CaseStatusKeywordViewModel(
+  caseStatus: CaseStatus,
+  overdue: Boolean
+)

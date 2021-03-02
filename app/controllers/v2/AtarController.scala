@@ -21,7 +21,7 @@ import controllers.RequestActions
 import javax.inject.{Inject, Singleton}
 import models.{Case, EventType, NoPagination}
 import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
 import models.viewmodels.atar._
 import models.request._
 import play.api.data.Form
@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import service.{CountriesService, EventsService, FileStoreService, KeywordsService, QueuesService}
+import service._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -71,7 +71,10 @@ class AtarController @Inject() (
     val activityTabViewModel    = getActivityTab(atarCase)
     val keywordsTabViewModel    = getKeywordsTab(atarCase)
     val storedAttachments       = fileService.getAttachments(atarCase)
-
+    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+      atarCase.status,
+      atarCase.assignee.exists(_.id == request.operator.id)
+    )
     for {
       sampleTab      <- sampleTabViewModel
       attachmentsTab <- attachmentsTabViewModel
@@ -93,7 +96,8 @@ class AtarController @Inject() (
         rulingTab,
         rulingForm,
         attachments,
-        appealTab
+        appealTab,
+        activeNavTab
       )
     )
   }

@@ -16,6 +16,9 @@
 
 package models.viewmodels
 
+import models.CaseStatus
+import models.CaseStatus.CaseStatus
+
 sealed abstract class PrimaryNavigationTab(val id: String)
 
 case object HomeTab extends PrimaryNavigationTab("primary_nav_home_tab")
@@ -31,3 +34,11 @@ case object ManagerToolsTab extends PrimaryNavigationTab("primary_nav_manager_to
 case object NoTabSelected extends PrimaryNavigationTab("primary_nav_no_tab_selected")
 
 case class PrimaryNavigationViewModel(selectedTab: PrimaryNavigationTab)
+case object PrimaryNavigationViewModel {
+  def getSelectedTabBasedOnAssigneeAndStatus(caseStatus: CaseStatus, ownCase: Boolean) =
+    (caseStatus, ownCase) match {
+      case (CaseStatus.NEW, _) => GatewayCasesTab
+      case (_, true)           => MyCasesTab
+      case (_, _)              => OpenCasesTab
+    }
+}

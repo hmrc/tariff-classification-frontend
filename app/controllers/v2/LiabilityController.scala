@@ -19,7 +19,7 @@ package controllers.v2
 import config.AppConfig
 import controllers.{RequestActions, v2}
 import javax.inject.{Inject, Singleton}
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
+import models.forms._
 import models.forms.v2.LiabilityDetailsForm
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import models.viewmodels._
@@ -27,7 +27,7 @@ import models.{Case, Permission, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, EventsService, FileStoreService, KeywordsService, QueuesService}
+import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -64,7 +64,8 @@ class LiabilityController @Inject() (
     val liabilityViewModel  = CaseViewModel.fromCase(liabilityCase, request.operator)
     val rulingViewModel     = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
     val appealTabViewModel  = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
-
+    val ownCase             = liabilityCase.assignee.exists(_.id == request.operator.id)
+    val activeNavTab        = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(liabilityCase.status, ownCase)
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
       attachmentsTab           <- getAttachmentTab(liabilityCase)
@@ -87,7 +88,8 @@ class LiabilityController @Inject() (
           uploadAttachmentForm,
           keywordsTab,
           keywordForm,
-          appealTabViewModel
+          appealTabViewModel,
+          activeNavTab
         )
       )
     }
@@ -120,8 +122,18 @@ class LiabilityController @Inject() (
   def editLiabilityDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+      val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+        request.`case`.status,
+        request.`case`.assignee.exists(_.id == request.operator.id)
+      )
       successful(
-        Ok(liability_details_edit(request.`case`, liabilityDetailsForm.liabilityDetailsForm(request.`case`)))
+        Ok(
+          liability_details_edit(
+            request.`case`,
+            liabilityDetailsForm.liabilityDetailsForm(request.`case`),
+            activeNavTab
+          )
+        )
       )
     }
 
@@ -140,6 +152,5 @@ class LiabilityController @Inject() (
               .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
         )
     }
-
 
 }
