@@ -85,10 +85,10 @@ object ReportingTabViewModel {
     ReportingTabViewModel(
       "Reporting dashboard",
       summaryReportTab        = ReportTab("summary", "summary_report_tab", summaryTabRows),
-      statusReportTab         = ReportTab("summary", "status_report_tab", statusTabRows),
-      atarReportTab           = ReportTab("summary", "atar_report_tab", atarTabRows),
-      liabilityReportTab      = ReportTab("summary", "liability_report_tab", liabilityTabRows),
-      correspondenceReportTab = ReportTab("summary", "correspondence_report_tab", correspondenceTabRows),
-      miscReportTab           = ReportTab("summary", "misc_report_tab", miscTabRows)
+      statusReportTab         = ReportTab("status", "status_report_tab", statusTabRows),
+      atarReportTab           = ReportTab("atar", "atar_report_tab", atarTabRows),
+      liabilityReportTab      = ReportTab("liability", "liability_report_tab", liabilityTabRows),
+      correspondenceReportTab = ReportTab("correspondence", "correspondence_report_tab", correspondenceTabRows),
+      miscReportTab           = ReportTab("miscellaneous", "misc_report_tab", miscTabRows)
     )
 }

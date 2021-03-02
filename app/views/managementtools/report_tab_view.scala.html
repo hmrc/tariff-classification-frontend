@@ -20,14 +20,14 @@
 
 @import models.viewmodels.managementtools._
 
-@(summaryReportTab: ReportTab, tabName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(summaryReportTab: ReportTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <dl class="govuk-check-your-answers cya-questions-short">
 
     @for((result, index) <- summaryReportTab.reports.zipWithIndex) {
     <div id="case-details-summary" class="grid-row">
         <dt class="cya-question">
-            @messages(s"reporting.$tabName.${result.nameMessageKey}")
+            @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")
         </dt>
         <dd class="cya-answer" id="summary">
             <a class="float-right" href="#">@messages("reporting.report_tab.run-report")</a>
