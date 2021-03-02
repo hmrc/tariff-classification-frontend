@@ -135,7 +135,7 @@ class ReportingController @Inject() (
   def caseReport(report: models.reporting.CaseReport, pagination: Pagination) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       val getReport = reportingService.caseReport(report, pagination)
-      val getUsers  = usersService.getAllUsers(Seq.empty, request.operator.memberOfTeams.head, NoPagination())
+      val getUsers  = usersService.getAllUsers(Seq.empty, "", NoPagination())
       val getTeams  = queuesService.getAllById
 
       for {
