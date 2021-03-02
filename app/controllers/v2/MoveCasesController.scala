@@ -227,10 +227,10 @@ class MoveCasesController @Inject() (
                   )
                 )
               )
-              .getOrElse(NotFound(views.html.user_not_found("")))
+              .getOrElse(NotFound(views.html.user_not_found(pid)))
           }
         )
-        .getOrElse(successful(NotFound(views.html.user_not_found(""))))
+        .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
     )
 
   def postChooseOneOfUsersTeams(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
@@ -357,7 +357,7 @@ class MoveCasesController @Inject() (
               } yield (user, team) match {
                 case (Some(u), Some(t)) => Ok(doneMoveCasesPage(u.safeName, t.slug.toUpperCase))
                 case (None, _)          => NotFound(views.html.user_not_found(originalPID))
-                case (_, None)          => Ok(views.html.resource_not_found(s"Case Queue" + teamID))
+                case (_, None)          => NotFound(views.html.resource_not_found(s"Queue " + teamID))
               }
             )
             .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
@@ -387,7 +387,7 @@ class MoveCasesController @Inject() (
                       Ok(doneMoveCasesPage(ou.safeName, t.slug.toUpperCase, Some(nu.safeName)))
                     case (None, _, _) => NotFound(views.html.user_not_found(originalPID))
                     case (_, None, _) => NotFound(views.html.user_not_found(chosenPID))
-                    case (_, _, None) => Ok(views.html.resource_not_found(s"Case Queue" + teamID))
+                    case (_, _, None) => NotFound(views.html.resource_not_found(s"Queue " + teamID))
                   }
                 )
                 .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
