@@ -20,26 +20,19 @@
 
 @import models.viewmodels.managementtools._
 
-@(statusReportTab: ReportTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(summaryReportTab: ReportTab, tabName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <dl class="govuk-check-your-answers cya-questions-short">
 
+    @for((result, index) <- summaryReportTab.reports.zipWithIndex) {
     <div id="case-details-summary" class="grid-row">
         <dt class="cya-question">
-        @messages("case.v2.correspondence.case-details.summary")
+            @messages(s"reporting.$tabName.${result.nameMessageKey}")
         </dt>
         <dd class="cya-answer" id="summary">
-            <span class="pre-wrap">HELLO 1</span>
+            <a class="float-right" href="#">@messages("reporting.report_tab.run-report")</a>
         </dd>
     </div>
-
-    <div id="case-details-detailed-description" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.case-details.detailed_description")
-        </dt>
-        <dd class="cya-answer" id="detailed-description">
-            <span class="pre-wrap">HELLO 2</span>
-        </dd>
-    </div>
+    }
 </dl>
 

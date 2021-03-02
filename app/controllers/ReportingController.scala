@@ -179,7 +179,7 @@ class ReportingController @Inject() (
       Ok(
         manageReportsView(
           activeSubNav,
-          ReportingTabViewModel.forManagedTeams()
+          ReportingTabViewModel.reportingTabs()
         )
       )
     )

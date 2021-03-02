@@ -29,7 +29,7 @@
 
 @(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, reportingViewModel: ReportingTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title")), customPrimaryNavTab = ManagerToolsTab) {
+@main(bodyClasses = None, customTitle = Some(messages("reporting.manage_reports.title")), customPrimaryNavTab = ManagerToolsTab) {
     @manager_tools_secondary_navigation(activeSubNav)
 
     @reports_tab(reportingViewModel)

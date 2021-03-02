@@ -31,23 +31,63 @@
         <ul class="govuk-tabs__list">
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#@reportingViewModel.summaryReportTab.elementId">
-                @messages("Summary")
+                @messages("reporting.summary.tab.heading")
                 </a>
             </li>
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#@reportingViewModel.statusReportTab.elementId">
-                @messages("Status")
+                @messages("reporting.status.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.atarReportTab.elementId">
+                @messages("reporting.atar.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.liabilityReportTab.elementId">
+                @messages("reporting.liability.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.correspondenceReportTab.elementId">
+                    @messages("reporting.correspondence.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.miscReportTab.elementId">
+                    @messages("reporting.miscellaneous.tab.heading")
                 </a>
             </li>
         </ul>
 
         <div class="govuk-tabs__panel" id="@reportingViewModel.summaryReportTab.elementId">
-            <h2 class="heading-large mt-0">@messages("Summary reports")</h2>
-            @summary_report_tab(reportingViewModel.summaryReportTab)
+            <h2 class="heading-large mt-0">@messages("reporting.summary.heading")</h2>
+            @report_tab_view(reportingViewModel.summaryReportTab, "summary")
         </div>
 
         <div class="govuk-tabs__panel" id="@reportingViewModel.statusReportTab.elementId">
-            <h2 class="heading-large mt-0">@messages("Status reports")</h2>
-            @status_report_tab(reportingViewModel.summaryReportTab)
+            <h2 class="heading-large mt-0">@messages("reporting.status.heading")</h2>
+            @report_tab_view(reportingViewModel.statusReportTab, "status")
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.atarReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.atar.heading")</h2>
+            @report_tab_view(reportingViewModel.atarReportTab, "atar")
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.liabilityReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.liability.heading")</h2>
+            @report_tab_view(reportingViewModel.liabilityReportTab, "liability")
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.correspondenceReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.correspondence.heading")</h2>
+            @report_tab_view(reportingViewModel.correspondenceReportTab, "correspondence")
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.miscReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.miscellaneous.heading")</h2>
+            @report_tab_view(reportingViewModel.miscReportTab, "miscellaneous")
         </div>
     </div>

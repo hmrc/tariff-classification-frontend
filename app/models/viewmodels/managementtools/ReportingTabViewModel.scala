@@ -66,24 +66,29 @@ object ReportingTabViewModel {
     ReportTabRow("atar-cases", "atar-cases")
   )
 
- /* def liabilityTabRows: List[ReportTabRow] = List(
-    ReportTabRow("new-atar-cases", "new-atar-cases"),
-    ReportTabRow("atar-summary", "atar-summary"),
-    ReportTabRow("calendar-days-atar-cases", "calendar-days-atar-cases"),
-    ReportTabRow("atar-cases", "atar-cases")
-  )*/
+  def liabilityTabRows: List[ReportTabRow] = List(
+    ReportTabRow("liabilities-cases", "liabilities-cases"),
+    ReportTabRow("new-liabilities-cases", "new-liabilities-cases-non-live"),
+    ReportTabRow("new-liabilities-cases", "new-liabilities-cases-live"),
+    ReportTabRow("new-liabilities", "new-liabilities")
+  )
 
-  def forManagedTeams(): ReportingTabViewModel =
+  def correspondenceTabRows: List[ReportTabRow] = List(
+    ReportTabRow("correspondence-cases", "correspondence-cases")
+  )
+
+  def miscTabRows: List[ReportTabRow] = List(
+    ReportTabRow("miscellaneous-cases", "miscellaneous-cases")
+  )
+
+  def reportingTabs(): ReportingTabViewModel =
     ReportingTabViewModel(
       "Reporting dashboard",
-      summaryReportTab = ReportTab("summary", "summary_report_tab", summaryTabRows),
-      statusReportTab  = ReportTab("summary", "status_report_tab", statusTabRows),
-      atarReportTab    = ReportTab("summary", "atar_report_tab", atarTabRows),
-      liabilityReportTab =
-        ReportTab("summary", "liability_report_tab", List(ReportTabRow("numberOfNewCases", "numberOfNewCases"))),
-      correspondenceReportTab =
-        ReportTab("summary", "correspondence_report_tab", List(ReportTabRow("numberOfNewCases", "numberOfNewCases"))),
-      miscReportTab =
-        ReportTab("summary", "misc_report_tab", List(ReportTabRow("numberOfNewCases", "numberOfNewCases")))
+      summaryReportTab        = ReportTab("summary", "summary_report_tab", summaryTabRows),
+      statusReportTab         = ReportTab("summary", "status_report_tab", statusTabRows),
+      atarReportTab           = ReportTab("summary", "atar_report_tab", atarTabRows),
+      liabilityReportTab      = ReportTab("summary", "liability_report_tab", liabilityTabRows),
+      correspondenceReportTab = ReportTab("summary", "correspondence_report_tab", correspondenceTabRows),
+      miscReportTab           = ReportTab("summary", "misc_report_tab", miscTabRows)
     )
 }
