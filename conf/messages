@@ -1123,6 +1123,7 @@ release_case.question.error=Select yes if you want to release this new case to a
 release_case.released_dynamic_message = {0} case released to {1} team
 back.home = Back to home
 back.gateway = Back to gateway cases
+back.my_cases = Back to my cases
 
 misc.create_misc.description.heading=Short case description
 misc.create_misc.contact.name.heading=Case contact name

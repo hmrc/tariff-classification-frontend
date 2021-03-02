@@ -26,11 +26,7 @@
 
     <div>
         <div id="case-reference" class="case-reference">
-            @c.application.businessName.map { businessName =>
-                @messages("case.heading.secondary", c.application.`type`.prettyName, c.reference, businessName)
-            }.getOrElse {
-                @messages("case.heading.secondary.nosuffix", c.application.`type`.prettyName, c.reference)
-            }
+            @messages("case.heading.secondary.nosuffix", c.application.`type`.prettyName, c.reference)
         </div>
     </div>
 
