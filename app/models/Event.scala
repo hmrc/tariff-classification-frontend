@@ -17,13 +17,13 @@
 package models
 
 import java.time.Instant
-
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models.CancelReason.CancelReason
 import models.CaseStatus.CaseStatus
 import models.EventType.EventType
 import models.ReferralReason.ReferralReason
+import models.RejectReason.RejectReason
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 
@@ -70,6 +70,17 @@ case class CaseStatusChange(
 ) extends FieldChange[CaseStatus]
     with OptionalAttachment {
   override val `type`: EventType.Value = EventType.CASE_STATUS_CHANGE
+}
+
+case class RejectCaseStatusChange(
+  override val from: CaseStatus,
+  override val to: CaseStatus,
+  override val comment: Option[String]      = None,
+  override val attachmentId: Option[String] = None,
+  reason: RejectReason
+) extends FieldChange[CaseStatus]
+  with OptionalAttachment {
+  override val `type`: EventType.Value = EventType.CASE_REJECTED
 }
 
 case class CancellationCaseStatusChange(
@@ -187,6 +198,7 @@ object EventType extends Enumeration {
   type EventType = Value
   val CASE_STATUS_CHANGE         = Value
   val CASE_REFERRAL              = Value
+  val CASE_REJECTED              = Value
   val CASE_CANCELLATION          = Value
   val CASE_COMPLETED             = Value
   val APPEAL_STATUS_CHANGE       = Value
