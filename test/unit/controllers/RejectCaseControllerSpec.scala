@@ -16,8 +16,9 @@
 
 package controllers
 
-import java.io.File
+import models.RejectReason.RejectReason
 
+import java.io.File
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
@@ -107,7 +108,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Change case status to: Rejected")
+      bodyOf(result)        should include("Reject case for")
     }
 
     "return OK when user has right permissions" in {
@@ -135,12 +136,17 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to confirmation page when data filled in" in {
       when(
         casesService
-          .rejectCase(refEq(caseWithStatusOPEN), any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])
+          .rejectCase(refEq(caseWithStatusOPEN), any[RejectReason], any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])
       ).thenReturn(successful(caseWithStatusREJECTED))
 
       val result: Result = await(
         controller(caseWithStatusOPEN).postRejectCase("reference")(
-          newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))
+          newFakePOSTRequestWithCSRF(app)
+            .withBody(aMultipartFileWithParams(
+              "reason" -> Seq(RejectReason.DUPLICATE_APPLICATION.toString),
+              "note" -> Seq("some-note")
+            )
+          )
         )
       )
 
@@ -155,7 +161,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Rejected")
+      bodyOf(result) should include("Reject case for")
     }
 
     "return to form on wrong type of file" in {
@@ -166,7 +172,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Rejected")
+      bodyOf(result) should include("Reject case for")
     }
 
     "return to form on file size too large" in {
@@ -176,7 +182,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Rejected")
+      bodyOf(result) should include("Reject case for")
     }
 
     "return to form on missing form field" in {
@@ -186,7 +192,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Rejected")
+      bodyOf(result) should include("Reject case for")
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -214,7 +220,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("This case has been rejected")
+      bodyOf(result)        should include("Case rejected for")
     }
   }
 

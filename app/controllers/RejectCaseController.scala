@@ -17,10 +17,11 @@
 package controllers
 
 import config.AppConfig
-import models.forms.AddNoteForm
+import models.forms.{AddNoteForm, RejectCaseForm}
+
 import javax.inject.{Inject, Singleton}
 import models.CaseStatus._
-import models.Permission
+import models.{RejectReason, CaseRejection, Permission}
 import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.libs.Files
@@ -44,13 +45,12 @@ class RejectCaseController @Inject() (
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
-  private val form: Form[String]                   = AddNoteForm.getForm("reject")
 
   def getRejectCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
-      validateAndRenderView(c => successful(views.html.reject_case(c, form)))
+      validateAndRenderView(c => successful(views.html.reject_case(c, RejectCaseForm.form)))
     }
 
   def confirmRejectCase(reference: String): Action[AnyContent] =
@@ -67,7 +67,7 @@ class RejectCaseController @Inject() (
       implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
         extractFile(key = "file-input")(
           onFileValid = validFile => {
-            form
+            RejectCaseForm.form
               .bindFromRequest()
               .fold(
                 formWithErrors =>
@@ -75,46 +75,46 @@ class RejectCaseController @Inject() (
                     reference,
                     c => successful(views.html.reject_case(c, formWithErrors))
                   ),
-                note =>
+                caseRejection =>
                   validateAndRedirect(
                     casesService
-                      .rejectCase(_, validFile, note, request.operator)
+                      .rejectCase(_, RejectReason.withName(caseRejection.reason), validFile, caseRejection.note, request.operator)
                       .map(c => routes.RejectCaseController.confirmRejectCase(c.reference))
                   )
               )
           },
           onFileTooLarge = () => {
             val error = request2Messages(implicitly)("status.change.upload.error.restrictionSize")
-            form
+            RejectCaseForm.form
               .bindFromRequest()
               .fold(
                 formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                note => getCaseAndRenderErrors(reference, form.fill(note), error)
+                caseRejection => getCaseAndRenderErrors(reference, RejectCaseForm.form.fill(caseRejection), error)
               )
           },
           onFileInvalidType = () => {
             val error = request2Messages(implicitly)("status.change.upload.error.fileType")
-            form
+            RejectCaseForm.form
               .bindFromRequest()
               .fold(
                 formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                note => getCaseAndRenderErrors(reference, form.fill(note), error)
+                note => getCaseAndRenderErrors(reference, RejectCaseForm.form.fill(note), error)
               )
           },
           onFileMissing = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.mustSelect")
-            form
+            val error = request2Messages(implicitly)("status.change.upload.case_reject.error.mustSelect")
+            RejectCaseForm.form
               .bindFromRequest()
               .fold(
                 formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                note => getCaseAndRenderErrors(reference, form.fill(note), error)
+                note => getCaseAndRenderErrors(reference, RejectCaseForm.form.fill(note), error)
               )
 
           }
         )
     }
 
-  private def getCaseAndRenderErrors(reference: String, form: Form[String], specificProblem: String)(
+  private def getCaseAndRenderErrors(reference: String, form: Form[CaseRejection], specificProblem: String)(
     implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]
   ): Future[Result] =
     getCaseAndRenderView(
