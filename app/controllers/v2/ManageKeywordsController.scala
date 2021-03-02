@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ManageKeywordsController @Inject()(
+class ManageKeywordsController @Inject() (
   verify: RequestActions,
   mcc: MessagesControllerComponents,
   keywordService: ManageKeywordsService,
@@ -47,51 +47,51 @@ class ManageKeywordsController @Inject()(
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-
       for {
-        caseKeywords           <- keywordService.fetchCaseKeywords()
-        allKeywords            <- keywordService.findAll(NoPagination())
+        caseKeywords <- keywordService.fetchCaseKeywords()
+        allKeywords  <- keywordService.findAll(NoPagination())
         manageKeywordsViewModel = ManageKeywordsViewModel
           .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
-      } yield
-        Ok(
-          manageKeywordsView(
-            activeSubNav,
-            manageKeywordsViewModel,
-            keywordForm
-          )
+      } yield Ok(
+        manageKeywordsView(
+          activeSubNav,
+          manageKeywordsViewModel,
+          keywordForm
         )
+      )
     }
 
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
         keywords <- keywordService.findAll(NoPagination())
-      } yield
-        Ok(
-          newKeywordView(
-            activeSubNav,
-            keywords.results,
-            KeywordForm.formWithAuto(keywords.results.map(_.name))
-          )
+      } yield Ok(
+        newKeywordView(
+          activeSubNav,
+          keywords.results,
+          KeywordForm.formWithAuto(keywords.results.map(_.name))
         )
+      )
     }
 
   def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-
-      keywordService.findAll(NoPagination()).flatMap {
-        keywords =>
-          val keywordNames = keywords.results.map(_.name)
-          KeywordForm.formWithAuto(keywordNames).bindFromRequest.fold(
+      keywordService.findAll(NoPagination()).flatMap { keywords =>
+        val keywordNames = keywords.results.map(_.name)
+        KeywordForm
+          .formWithAuto(keywordNames)
+          .bindFromRequest
+          .fold(
             formWithErrors =>
-              Future.successful(BadRequest(
-                newKeywordView(
-                  activeSubNav,
-                  keywords.results,
-                  formWithErrors
+              Future.successful(
+                BadRequest(
+                  newKeywordView(
+                    activeSubNav,
+                    keywords.results,
+                    formWithErrors
+                  )
                 )
-              )),
+              ),
             keyword =>
               keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
                 Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
@@ -102,26 +102,21 @@ class ManageKeywordsController @Inject()(
 
   def displayConfirmKeyword(
     saveKeyword: String,
-    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
-      implicit request =>
-        Ok(
-          keywordCreatedConfirm(activeSubNav, saveKeyword)
-      ))
-
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
+  ): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
+      Ok(
+        keywordCreatedConfirm(activeSubNav, saveKeyword)
+      )
+    )
 
   def editApprovedKeywords(): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
-//        for {
-//          forCompleted <- keywordService.fetchCaseKeywords().filter(Paged(CaseHeader(status = CaseStatus.COMPLETED)))
-//
-//
-//        } yield x
-//
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
+      for {
+        count <- keywordService.fetchCaseKeywords().map(_.results.count(keyword => keyword.keyword.approved))
 
-
-        Ok(
-          editApprovedKeywordsView(keywordForm)
+      } yield Ok(
+        editApprovedKeywordsView(count, keywordForm)
+      )
     )
-  )
 }

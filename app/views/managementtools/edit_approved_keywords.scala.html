@@ -28,7 +28,7 @@
 
 @this()
 
-@(form: Form[String], activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(count: Int, form: Form[String], activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.edit-approved-keywords.title"))) {
 
@@ -41,11 +41,10 @@
                 <span class="heading-secondary"><span class="visuallyhidden">
                     This section is </span>
                 </span>Manage keywords
-        <p id="keyword-edit-p">@messages("management.change-keywords.edit-approved-keywords.p1")</p>
+        <p id="keyword-edit-p">@messages("management.change-keywords.edit-approved-keywords.p1", count)</p>
     </div>
 
-@helper.form(action = ManageKeywordsController.editApprovedKeywords(), 'id -> "edit-approved-keywords-form", 'novalidate -> "novalidate") {
-@helper.CSRF.formField
+@*//@helper.form(action = ManageKeywordsController.editApprovedKeywords(), 'id -> "edit-approved-keywords-form", 'novalidate -> "novalidate") {*@
 
         @input_radiogroup(
             field = form("keyword-status"),
@@ -63,5 +62,5 @@
         <button class="button" id="keyword-continue" type="submit">Continue</button>
     </div>
 
-    }
+@*//    }*@
 }

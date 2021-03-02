@@ -1251,7 +1251,7 @@ management.create-keyword.error.duplicate.keyword=This keyword has already been 
 
 
 management.change-keywords.edit-approved-keywords.title=Edit approved keywords
-management.change-keywords.edit-approved-keywords.p1=This keyword is used in {0} COMPLETE rulings and 3 OPEN rulings.
+management.change-keywords.edit-approved-keywords.p1=This keyword is used in {0} rulings.
 management.change-keywords.edit-approved-keywords.radio=Choose keyword action
 management.change-keywords.edit-approved-keywords.radio.delete=Delete
 management.change-keywords.edit-approved-keywords.radio.rename=Rename

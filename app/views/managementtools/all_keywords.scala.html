@@ -31,17 +31,24 @@
                 </label>
                 <span class="form-hint"></span>
             </div>
-            <div class="w-75 left display-inline">
+
+            @helper.form(action = controllers.v2.routes.ManageKeywordsController.editApprovedKeywords(keywordsTabViewModel.),
+                'id -> "edit-approved-keywords-form", 'novalidate -> "novalidate") {
+                @helper.CSRF.formField
+
+                <div class="w-75 left display-inline">
                 @input_accessible_auto_complete(
                     field = keywordForm("keyword"),
                     formControlClass = Some("w-100"),
                     autoCompleteOptions = keywordsTabViewModel.globalKeywords,
                     placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
                 )
+                </div>
+                <button id="keyword_search-edit-keyword-button" class="button left ml-1" type="submit" name="editKeyword"
+                value="true">
+                    Edit keyword
+                </button>
             </div>
-            <button id="keyword_search-edit-keyword-button" class="button left ml-1" type="submit" name="editKeyword" value="true">
-                Edit keyword
-            </button>
-        </div>
+        }
     </div>
 </table>
