@@ -36,7 +36,7 @@
     @for((result, index) <- manageKeywordsTab.searchResult.results.zipWithIndex) {
         <tr id="@{manageKeywordsTab.tabMessageKey}-details-@index">
             <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index">
-                <a href="@ManageKeywordsController.changeKeywordStatus(result.reference)">@{result.keyword.trim.toUpperCase}</a>
+                <a href="@ManageKeywordsController.changeKeywordStatus(result.keyword, result.reference)">@{result.keyword.trim.toUpperCase}</a>
             </td>
             <td id="@{manageKeywordsTab.tabMessageKey}-user-name-@index">@result.name</td>
             <td id="@{manageKeywordsTab.tabMessageKey}-goods-id-@index">@result.goods</td>
