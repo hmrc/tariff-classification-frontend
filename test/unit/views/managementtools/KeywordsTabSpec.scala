@@ -27,17 +27,27 @@ import views.html.managementtools.keywords_tab
 class KeywordsTabSpec extends ViewSpec {
 
   val keyword =
-    KeywordViewModel("FIDGET SPINNER", "Alex Smith", "Space grade aluminium spinner", ApplicationType.LIABILITY, CaseStatusKeywordViewModel(CaseStatus.REFERRED, false), true)
+    KeywordViewModel(
+      "reference",
+      "FIDGET SPINNER",
+      "Alex Smith",
+      "Space grade aluminium spinner",
+      ApplicationType.LIABILITY,
+      CaseStatusKeywordViewModel(CaseStatus.REFERRED, false),
+      true
+    )
 
   val emptyMangageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq.empty))
-  val manageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq(keyword)))
-  val keywordsTabViewModel = KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Seq("KEYWORD1"))
+  val manageKeywordsTab       = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq(keyword)))
+  val keywordsTabViewModel =
+    KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Seq("KEYWORD1"))
 
   val manageKeywordsViewModel = ManageKeywordsViewModel("Manage keywords", manageKeywordsTab, keywordsTabViewModel)
-  val keywords    = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
-  val form = KeywordForm.formWithAuto(keywords.map(_.name))
+  val keywords                = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
+  val form                    = KeywordForm.formWithAuto(keywords.map(_.name))
 
-  def manageKeywordsView(t: ManageKeywordsViewModel = manageKeywordsViewModel): HtmlFormat.Appendable = keywords_tab(t, form)
+  def manageKeywordsView(t: ManageKeywordsViewModel = manageKeywordsViewModel): HtmlFormat.Appendable =
+    keywords_tab(t, form)
 
   "KeywordTab" should {
 
@@ -45,9 +55,11 @@ class KeywordsTabSpec extends ViewSpec {
       val doc = view(
         manageKeywordsView()
       )
-      doc.getElementById("common-cases-heading") should containText("Manage keywords")
+      doc.getElementById("common-cases-heading")      should containText("Manage keywords")
       doc.getElementById("create-new-keyword-button") should containText("Create new keyword")
-      doc.getElementById("manage-keywords-tabs") should containText(messages("management.manage-keywords.approve-tab-title", 1))
+      doc.getElementById("manage-keywords-tabs") should containText(
+        messages("management.manage-keywords.approve-tab-title", 1)
+      )
       doc.getElementById("manage-keywords-tabs") should containText("All keywords")
     }
 

@@ -31,7 +31,6 @@ object ManageKeywordsViewModel {
 
     val keywordViewModel = caseKeywords.flatMap(caseKeyword =>
       caseKeyword.cases.map { caseHeader =>
-
         val overdue = (caseHeader.caseType, caseHeader.liabilityStatus) match {
           case (ApplicationType.LIABILITY, Some(LiabilityStatus.LIVE)) if caseHeader.daysElapsed >= 5 => true
           case (_, _) if caseHeader.daysElapsed >= 30                                                 => true
@@ -41,6 +40,7 @@ object ManageKeywordsViewModel {
         val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, overdue)
 
         KeywordViewModel(
+          caseHeader.reference,
           caseKeyword.keyword.name,
           caseHeader.assignee
             .map { assignee =>
@@ -55,7 +55,8 @@ object ManageKeywordsViewModel {
           caseStatus,
           caseKeyword.keyword.approved
         )
-    })
+      }
+    )
 
     ManageKeywordsViewModel(
       "Manage keywords",
