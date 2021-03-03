@@ -26,7 +26,7 @@ import views.html.managementtools.summaryReportTable
 class SummaryReportTableViewSpec extends ViewSpec {
 
   "summaryReportTable view" should {
-    val report = SummaryReport("Case count by status", groupBy = ReportField.Status, sortBy = ReportField.Status, maxFields = Set(ReportField.ElapsedDays))
+    val report = SummaryReport("Case count by status", groupBy = ReportField.Status, sortBy = ReportField.Status, maxFields = Seq(ReportField.ElapsedDays))
 
     val reportResults: Paged[ResultGroup] = Paged(Seq(
       SimpleResultGroup(2, StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.COMPLETED)), List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(5)))),

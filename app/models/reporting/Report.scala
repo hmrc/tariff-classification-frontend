@@ -67,7 +67,7 @@ case class SummaryReport(
   statuses: Set[PseudoCaseStatus.Value] = Set.empty,
   teams: Set[String]                    = Set.empty,
   dateRange: InstantRange               = InstantRange.allTime,
-  maxFields: Set[ReportField[Long]]     = Set.empty,
+  maxFields: Seq[ReportField[Long]]     = Seq.empty,
   includeCases: Boolean                 = false
 ) extends Report
 
@@ -103,12 +103,12 @@ object SummaryReport {
       val statuses = params(statusesKey)(requestParams)
         .map(_.map(bindPseudoCaseStatus).collect { case Some(status) => status })
         .getOrElse(Set.empty)
-      val maxFields = params(maxFieldsKey)(requestParams)
+      val maxFields = orderedParams(maxFieldsKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get(_).collect[ReportField[Long]] {
           case days @ DaysSinceField(_) => days
           case num @ NumberField(_)     => num
         }))
-        .getOrElse(Set.empty)
+        .getOrElse(Seq.empty)
       (reportName, groupBy, sortBy).mapN {
         case (reportName, groupBy, sortBy) =>
           for {
