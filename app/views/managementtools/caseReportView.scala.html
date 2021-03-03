@@ -28,8 +28,7 @@
   pagination: Pagination,
   results: Paged[Map[String, ReportResultField[_]]],
   users: Map[String, Operator],
-  teams: Map[String, Queue],
-  id: String
+  teams: Map[String, Queue]
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 @main(bodyClasses = None, customTitle = Some(messages("reporting.view_report.title")), customPrimaryNavTab = ManagerToolsTab) {
@@ -40,8 +39,8 @@
 
   @reportFilters(report, pagination, teams)
 
-  @reportButtons(report)
+  @reportButtons(report, "case-report")
 
-  @caseReportTable(report, pagination, results, users, teams, id)
+  @caseReportTable(report, pagination, results, users, teams, "case-report")
 
 }

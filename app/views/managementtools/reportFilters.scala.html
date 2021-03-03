@@ -35,7 +35,7 @@
 
 <dl class="govuk-check-your-answers cya-questions-long mb-3">
   <div class="grid-row">
-    <dt class="cya-question">
+    <dt class="cya-question" id="report_chosen_dates">
         @if(report.dateRange == InstantRange.allTime) {
           @messages("reporting.view_report.date_range.all_time")
         } else {
@@ -54,7 +54,7 @@
   </div>
 
   <div class="grid-row">
-    <dt class="cya-question">
+    <dt class="cya-question" id="report_chosen_teams">
       @if(report.teams.isEmpty) {
         @messages("reporting.view_report.teams.all_teams")
       } else {
