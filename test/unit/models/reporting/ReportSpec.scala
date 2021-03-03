@@ -22,10 +22,85 @@ import java.time.Instant
 import models.ModelsBaseSpec
 
 class ReportSpec extends ModelsBaseSpec {
+  "Report" should {
+    "assume SummaryReport if group_by is provided" in {
+      val summaryReportParams = Map[String, Seq[String]](
+        "name"     -> Seq("Summary report"),
+        "group_by" -> Seq("assigned_user")
+      )
+
+      Report.reportQueryStringBindable.bind("", summaryReportParams) shouldBe Some(
+        Right(
+          SummaryReport(
+            name    = "Summary report",
+            groupBy = ReportField.User,
+            sortBy  = ReportField.User
+          )
+        )
+      )
+    }
+
+    "assume CaseReport otherwise" in {
+      val caseReportParams = Map[String, Seq[String]](
+        "name"   -> Seq("Case report"),
+        "fields" -> Seq("reference", "status", "elapsed_days", "total_days")
+      )
+
+      Report.reportQueryStringBindable.bind("", caseReportParams) shouldBe Some(
+        Right(
+          CaseReport(
+            name   = "Case report",
+            sortBy = ReportField.Reference,
+            fields = Seq(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
+          )
+        )
+      )
+    }
+
+    "unbind to query string" in {
+      val summaryReport = SummaryReport("Summary report", groupBy = ReportField.User, sortBy = ReportField.User)
+
+      URLDecoder.decode(Report.reportQueryStringBindable.unbind("", summaryReport), "UTF-8") shouldBe (
+        "name=Summary report" +
+          "&group_by=assigned_user" +
+          "&sort_by=assigned_user" +
+          "&sort_order=asc" +
+          "&case_type=" +
+          "&status=" +
+          "&team=" +
+          "&max_fields=" +
+          "&include_cases=false"
+      )
+
+      val caseReport = CaseReport(
+        "Case report",
+        fields = List(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
+      )
+      URLDecoder.decode(Report.reportQueryStringBindable.unbind("", caseReport), "UTF-8") shouldBe (
+        "name=Case report" +
+          "&sort_by=reference" +
+          "&sort_order=asc" +
+          "&case_type=" +
+          "&status=" +
+          "&team=" +
+          "&fields=reference,status,elapsed_days,total_days"
+      )
+
+      URLDecoder.decode(Report.reportQueryStringBindable.unbind("", QueueReport()), "UTF-8") shouldBe (
+        "name=Cases by queue" +
+          "&sort_by=assigned_team" +
+          "&sort_order=asc" +
+          "&case_type=" +
+          "&status=" +
+          "&team="
+      )
+    }
+  }
+
   "CaseReport" should {
     "bind from query string" in {
       val params1 = Map[String, Seq[String]](
-        "name" -> Seq("Case report"),
+        "name"       -> Seq("Case report"),
         "sort_by"    -> Seq("count"),
         "sort_order" -> Seq("desc"),
         "case_type"  -> Seq("BTI", "CORRESPONDENCE"),
@@ -39,7 +114,7 @@ class ReportSpec extends ModelsBaseSpec {
       CaseReport.caseReportQueryStringBindable.bind("", params1) shouldBe Some(
         Right(
           CaseReport(
-            name = "Case report",
+            name      = "Case report",
             sortBy    = ReportField.Count,
             sortOrder = SortDirection.DESCENDING,
             caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
@@ -55,7 +130,7 @@ class ReportSpec extends ModelsBaseSpec {
       )
 
       val params2 = Map[String, Seq[String]](
-        "name" -> Seq("Case report"),
+        "name"       -> Seq("Case report"),
         "sort_by"    -> Seq("date_created"),
         "sort_order" -> Seq("asc"),
         "case_type"  -> Seq("MISCELLANEOUS", "CORRESPONDENCE"),
@@ -67,7 +142,7 @@ class ReportSpec extends ModelsBaseSpec {
       CaseReport.caseReportQueryStringBindable.bind("", params2) shouldBe Some(
         Right(
           CaseReport(
-            name = "Case report",
+            name      = "Case report",
             sortBy    = ReportField.DateCreated,
             sortOrder = SortDirection.ASCENDING,
             caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
@@ -79,14 +154,14 @@ class ReportSpec extends ModelsBaseSpec {
       )
 
       val minParams = Map[String, Seq[String]](
-        "name" -> Seq("Case report"),
+        "name"   -> Seq("Case report"),
         "fields" -> Seq("reference", "status", "elapsed_days", "total_days")
       )
 
       CaseReport.caseReportQueryStringBindable.bind("", minParams) shouldBe Some(
         Right(
           CaseReport(
-            name = "Case report",
+            name   = "Case report",
             sortBy = ReportField.Reference,
             fields = Seq(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
           )
@@ -99,7 +174,7 @@ class ReportSpec extends ModelsBaseSpec {
         CaseReport.caseReportQueryStringBindable.unbind(
           "",
           CaseReport(
-            name = "Case report",
+            name      = "Case report",
             sortBy    = ReportField.Count,
             sortOrder = SortDirection.DESCENDING,
             caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
@@ -128,7 +203,7 @@ class ReportSpec extends ModelsBaseSpec {
         CaseReport.caseReportQueryStringBindable.unbind(
           "",
           CaseReport(
-            name = "Case report",
+            name      = "Case report",
             sortBy    = ReportField.DateCreated,
             sortOrder = SortDirection.ASCENDING,
             caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
@@ -153,7 +228,7 @@ class ReportSpec extends ModelsBaseSpec {
   "SummaryReport" should {
     "bind from query string" in {
       val params1 = Map[String, Seq[String]](
-        "name" -> Seq("Summary report"),
+        "name"       -> Seq("Summary report"),
         "group_by"   -> Seq("status"),
         "sort_by"    -> Seq("count"),
         "sort_order" -> Seq("desc"),
@@ -168,7 +243,7 @@ class ReportSpec extends ModelsBaseSpec {
       SummaryReport.summaryReportQueryStringBindable.bind("", params1) shouldBe Some(
         Right(
           SummaryReport(
-            name = "Summary report",
+            name      = "Summary report",
             groupBy   = ReportField.Status,
             sortBy    = ReportField.Count,
             sortOrder = SortDirection.DESCENDING,
@@ -185,7 +260,7 @@ class ReportSpec extends ModelsBaseSpec {
       )
 
       val params2 = Map[String, Seq[String]](
-        "name" -> Seq("Summary report"),
+        "name"       -> Seq("Summary report"),
         "group_by"   -> Seq("assigned_user"),
         "sort_by"    -> Seq("date_created"),
         "sort_order" -> Seq("asc"),
@@ -198,7 +273,7 @@ class ReportSpec extends ModelsBaseSpec {
       SummaryReport.summaryReportQueryStringBindable.bind("", params2) shouldBe Some(
         Right(
           SummaryReport(
-            name = "Summary report",
+            name      = "Summary report",
             groupBy   = ReportField.User,
             sortBy    = ReportField.DateCreated,
             sortOrder = SortDirection.ASCENDING,
@@ -211,14 +286,14 @@ class ReportSpec extends ModelsBaseSpec {
       )
 
       val minParams = Map[String, Seq[String]](
-        "name" -> Seq("Summary report"),
+        "name"     -> Seq("Summary report"),
         "group_by" -> Seq("assigned_user")
       )
 
       SummaryReport.summaryReportQueryStringBindable.bind("", minParams) shouldBe Some(
         Right(
           SummaryReport(
-            name = "Summary report",
+            name    = "Summary report",
             groupBy = ReportField.User,
             sortBy  = ReportField.User
           )
@@ -231,7 +306,7 @@ class ReportSpec extends ModelsBaseSpec {
         SummaryReport.summaryReportQueryStringBindable.unbind(
           "",
           SummaryReport(
-            name = "Summary report",
+            name      = "Summary report",
             groupBy   = ReportField.Status,
             sortBy    = ReportField.Count,
             sortOrder = SortDirection.DESCENDING,
@@ -264,7 +339,7 @@ class ReportSpec extends ModelsBaseSpec {
         SummaryReport.summaryReportQueryStringBindable.unbind(
           "",
           SummaryReport(
-            name = "Summary report",
+            name      = "Summary report",
             groupBy   = ReportField.User,
             sortBy    = ReportField.DateCreated,
             sortOrder = SortDirection.ASCENDING,
@@ -310,7 +385,7 @@ class ReportSpec extends ModelsBaseSpec {
             caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
             statuses  = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
             teams     = Set("1", "3"),
-            assignee = Some("1"),
+            assignee  = Some("1"),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
