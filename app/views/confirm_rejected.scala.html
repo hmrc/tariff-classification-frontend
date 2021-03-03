@@ -17,25 +17,26 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.Case
+@import models.viewmodels.NoTabSelected
+@import views.html.v2.confirmation_next_steps
 @import views.html.includes.main
 @import views.html.partials._
-@import controllers.routes.MyCasesController
-@import models.viewmodels.NoTabSelected
+@import controllers.v2.routes.MyCasesController
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.rejected")),
-    customPrimaryNavTab = NoTabSelected) {
+customPrimaryNavTab = NoTabSelected) {
+    <div class="column-two-thirds pl-0">
+        @case_heading(c, true, None, Some("case.heading.case_rejected_for"))
 
-    @back_link()
-
-    @case_heading(c)
-
-    <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large mt-0">This case has been rejected</h2>
-            <h3 class="heading-medium mt-0">Next steps</h3>
-            <p>Go to <a id="my-cases-link" href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="heading-xlarge mt-0">@messages("page.title.case.rejected")</h1>
         </div>
+
+        @confirmation_next_steps(
+            linkText = messages("back.my_cases"),
+            backHref = MyCasesController.displayMyCases()
+        )
     </div>
 }
