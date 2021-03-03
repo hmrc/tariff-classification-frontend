@@ -29,7 +29,7 @@ class CaseCardsViewSpec extends ViewSpec {
       val doc = view(cases_cards(Map.empty, 2, 0, 0)(operatorRequestWithName, messages, appConfig))
 
       doc.getElementsByClass("heading-xlarge").text() should include(
-        "operator name officer"
+        "Case dashboard"
       )
     }
 
@@ -37,8 +37,8 @@ class CaseCardsViewSpec extends ViewSpec {
 
       val doc = view(cases_cards(casesByTeam = Map.empty, 2, 0, 0)(operatorRequestWithName, messages, appConfig))
 
-      doc.getElementsByClass("caption-xl").text() should include(
-        "Classification officer"
+      doc.getElementsByClass("heading-xlarge").text() should include(
+        "Case dashboard"
       )
     }
 
@@ -47,8 +47,8 @@ class CaseCardsViewSpec extends ViewSpec {
       val doc =
         view(cases_cards(Map.empty, 2, 0, 0)(authenticatedManagerFakeRequest, messages, appConfig))
 
-      doc.getElementsByClass("caption-xl").text() should include(
-        "Manager"
+      doc.getElementsByClass("heading-xlarge").text() should include(
+        "Case dashboard"
       )
     }
 

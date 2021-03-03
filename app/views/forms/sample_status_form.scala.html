@@ -27,13 +27,15 @@
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,
+        label = Some(messages("case.miscellaneous.header", c.application.goodsName)),
+        labelClass = Some ("visually-hidden"),
         options = SampleStatus.values.toList.sorted.map(s => RadioOption(s.toString, SampleStatus.format(Some(s)))),
         id = "sample_status_form",
         preSelect = false
     )
-    <div>
+    <div class="confirm-cancel-alignment">
         <button id="sample_status_form-submit" class="button" type="submit">@messages("case.sample.status.change-status-confirm")</button>
-        <a id="sample_status_form-cancel" class="secondary-button" href="@routes.CaseController.sampleDetails(c.reference)">@messages("case.sample.status.change-status-cancel")</a>
+        <a id="sample_status_form-cancel" class="mt-15" href="@routes.CaseController.sampleDetails(c.reference)">@messages("case.sample.status.change-status-cancel")</a>
     </div>
 }
 

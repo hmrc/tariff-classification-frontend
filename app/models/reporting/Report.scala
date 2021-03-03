@@ -156,7 +156,7 @@ object SummaryReport {
 
 case class CaseReport(
   name: String,
-  sortBy: ReportField[_],
+  sortBy: ReportField[_]                = ReportField.Reference,
   sortOrder: SortDirection.Value        = SortDirection.ASCENDING,
   caseTypes: Set[ApplicationType]       = Set.empty,
   statuses: Set[PseudoCaseStatus.Value] = Set.empty,

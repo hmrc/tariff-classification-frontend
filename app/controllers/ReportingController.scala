@@ -16,36 +16,22 @@
 
 package controllers
 
+import akka.stream.scaladsl.Source
+import akka.stream.alpakka.csv.scaladsl.CsvFormatting
 import config.AppConfig
-import models.forms.InstantRangeForm
 import javax.inject.{Inject, Singleton}
-import models.Permission
-import models.request.AuthenticatedRequest
+import models._
+import models.forms._
+import models.reporting._
+import models.viewmodels.managementtools.ReportingTabViewModel
+import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, QueuesService, ReportingService}
+import service.{CasesService, QueuesService, ReportingService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools.{caseReportView, reportChooseDates, reportChooseTeams, summaryReportView}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import models.Pagination
-import models.reporting.SummaryReport
-import service.UserService
-import models.NoPagination
-import models.Paged
-import models.forms.ReportDateForm
-import models.forms.ReportTeamForm
-import akka.stream.scaladsl.Source
-import models.SearchPagination
-import akka.stream.alpakka.csv.scaladsl.CsvFormatting
-import models.forms.ReportDateFormData
-import models.InstantRange
-import models.reporting.Report
-import models.reporting.CaseReport
-import models.reporting.QueueReport
-import models.viewmodels.managementtools.ReportingTabViewModel
-import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 
 @Singleton
 class ReportingController @Inject() (
@@ -63,24 +49,20 @@ class ReportingController @Inject() (
   lazy val chooseDatesForm = ReportDateForm.form
   lazy val chooseTeamsForm = ReportTeamForm.form
 
-  def downloadCaseReport(report: models.reporting.CaseReport) =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
-      NotFound
-    }
+  def downloadCaseReport(report: CaseReport) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request => NotFound)
 
   def downloadSummaryReport(report: SummaryReport) =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
-      NotFound
-    }
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request => NotFound)
 
-  def showChangeDateFilter(report: models.reporting.Report, pagination: Pagination) =
+  def showChangeDateFilter(report: Report, pagination: Pagination) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       val specificDates = report.dateRange != InstantRange.allTime
-      val currentData = ReportDateFormData(specificDates, report.dateRange)
+      val currentData   = ReportDateFormData(specificDates, report.dateRange)
       Ok(reportChooseDates(chooseDatesForm.fill(currentData), report, pagination))
     }
 
-  def postChangeDateFilter(report: models.reporting.Report, pagination: Pagination) =
+  def postChangeDateFilter(report: Report, pagination: Pagination) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       chooseDatesForm
         .bindFromRequest()
@@ -88,7 +70,7 @@ class ReportingController @Inject() (
           formWithErrors => BadRequest(reportChooseDates(formWithErrors, report, pagination)),
           form =>
             report match {
-              case cses: models.reporting.CaseReport =>
+              case cses: CaseReport =>
                 Redirect(
                   controllers.routes.ReportingController
                     .caseReport(cses.copy(dateRange = form.dateRange), pagination)
@@ -103,12 +85,12 @@ class ReportingController @Inject() (
         )
     }
 
-  def showChangeTeamsFilter(report: models.reporting.Report, pagination: Pagination) =
+  def showChangeTeamsFilter(report: Report, pagination: Pagination) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       Ok(reportChooseTeams(chooseTeamsForm.fill(report.teams.isEmpty), report, pagination))
     }
 
-  def postChangeTeamsFilter(report: models.reporting.Report, pagination: Pagination) =
+  def postChangeTeamsFilter(report: Report, pagination: Pagination) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       chooseTeamsForm
         .bindFromRequest()
@@ -117,7 +99,7 @@ class ReportingController @Inject() (
           allTeams => {
             val teams = if (allTeams) Set.empty[String] else request.operator.memberOfTeams.toSet
             report match {
-              case cses: models.reporting.CaseReport =>
+              case cses: CaseReport =>
                 Redirect(
                   controllers.routes.ReportingController
                     .caseReport(cses.copy(teams = teams), pagination)
@@ -132,7 +114,7 @@ class ReportingController @Inject() (
         )
     }
 
-  def caseReport(report: models.reporting.CaseReport, pagination: Pagination) =
+  def caseReport(report: CaseReport, pagination: Pagination) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       val getReport = reportingService.caseReport(report, pagination)
       val getUsers  = usersService.getAllUsers(Seq.empty, "", NoPagination())
@@ -162,16 +144,19 @@ class ReportingController @Inject() (
 
   def getReportByName(reportName: String) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
-      Report.byId.get(reportName).map {
-        case summary: SummaryReport =>
-          Redirect(routes.ReportingController.summaryReport(summary, SearchPagination()))
-        case cses: CaseReport =>
-          Redirect(routes.ReportingController.caseReport(cses, SearchPagination()))
-        case _: QueueReport =>
+      Report.byId
+        .get(reportName)
+        .map {
+          case summary: SummaryReport =>
+            Redirect(routes.ReportingController.summaryReport(summary, SearchPagination()))
+          case cses: CaseReport =>
+            Redirect(routes.ReportingController.caseReport(cses, SearchPagination()))
+          case _: QueueReport =>
+            NotFound(views.html.report_not_found(reportName))
+        }
+        .getOrElse {
           NotFound(views.html.report_not_found(reportName))
-      }.getOrElse {
-        NotFound(views.html.report_not_found(reportName))
-      }
+        }
     }
 
   def displayManageReporting(activeSubNav: SubNavigationTab = ManagerToolsReportsTab): Action[AnyContent] =

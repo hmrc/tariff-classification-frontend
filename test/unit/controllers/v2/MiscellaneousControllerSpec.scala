@@ -72,9 +72,12 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
 
   "Miscellaneous Controller" should {
     "display miscellaneous case" in {
-      val c      = aCase(withReference("reference"), withMiscellaneousApplication)
+      val c = aCase(withReference("reference"), withMiscellaneousApplication)
       when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn (Future.successful(attachments))
-      when(eventService.getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])) thenReturn Future(pagedEvent)
+      when(
+        eventService
+          .getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])
+      ) thenReturn Future(pagedEvent)
       when(queueService.getAll) thenReturn Future(queues)
 
       when(
@@ -88,11 +91,13 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
           any(),
           any(),
           any(),
+          any(),
           any()
         )(any(), any(), any())
       ) thenReturn Html("body")
 
-      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE))).displayMiscellaneous("reference")(newFakeGETRequestWithCSRF(app))
+      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
+        .displayMiscellaneous("reference")(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.OK
     }
 

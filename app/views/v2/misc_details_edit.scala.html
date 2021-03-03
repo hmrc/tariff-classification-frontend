@@ -25,13 +25,13 @@
 @import models.LiabilityStatus
 @import views.html.partials.error_summary
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseViewModel}
+@import models.viewmodels.{CaseViewModel, MyCasesTab}
 
 @this( case_heading: views.html.v2.case_heading)
 
 @(c: Case, form : Form[Case], caseViewModel: CaseViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.v2.misc.case-details-edit-title"))) {
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.misc.case-details-edit-title")), customPrimaryNavTab = MyCasesTab) {
 
 @error_summary(form.errors)
 

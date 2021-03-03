@@ -35,6 +35,10 @@
   font-weight: bold;
 }
 
+.mt-15 {
+  margin-top: 15px;
+}
+
 .mt-0 {
   margin-top: 0;
 }
@@ -564,4 +568,22 @@ table tbody tr th {
     .column-three-quarters.mt-4.float-right {
         float: unset;
     }
+}
+
+.operation-dashboard-header {
+    float: unset;
+    padding: 0px;
+}
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+.operation-dashboard-header {
+    float: unset;
+    padding: 0px;
+}
+
+.word-break {
+    word-break: break-word;
 }
