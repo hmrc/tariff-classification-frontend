@@ -17,11 +17,11 @@
 package service
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
+
 import connector.BindingTariffClassificationConnector
-import models.CaseStatus.{NEW, OPEN, REFERRED, SUSPENDED}
 import models._
 import models.reporting._
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
