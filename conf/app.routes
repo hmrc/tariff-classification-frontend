@@ -173,5 +173,6 @@ POST       /keywords/keyword-create                              controllers.v2.
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
 
 GET        /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.editApprovedKeywords(keywordName: String)
+GET        /keywords/keyword-deleted                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab ?= ManagerToolsKeywordsTab)
 
 
