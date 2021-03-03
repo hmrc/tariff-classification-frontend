@@ -41,8 +41,25 @@ object Report {
     statuses  = Set(PseudoCaseStatus.OPEN)
   )
 
+  val completedCases = SummaryReport(
+    name      = "Completed cases",
+    groupBy   = ReportField.Team,
+    sortBy    = ReportField.Team,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.COMPLETED)
+  )
+
+  val numberOfCasesPerUser = SummaryReport(
+    name      = "Number of cases per user",
+    groupBy   = ReportField.User,
+    sortBy    = ReportField.User,
+    sortOrder = SortDirection.ASCENDING
+  )
+
   val byId = Map[String, Report](
-    "number-of-open-cases" -> numberOfOpenCases
+    "number-of-open-cases"     -> numberOfOpenCases,
+    "completed-cases"          -> completedCases,
+    "number-of-cases-per-user" -> numberOfCasesPerUser
   )
 
   private val groupByKey      = "group_by"
