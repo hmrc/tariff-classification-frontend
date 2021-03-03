@@ -57,11 +57,13 @@
         keywordForm: Form[String],
 
         //appeal
-        appealTabViewModel: Option[AppealTabViewModel]
+        appealTabViewModel: Option[AppealTabViewModel],
+        primaryNavTab: PrimaryNavigationTab = MyCasesTab
+
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("case.v2.liability.page_title")),
-    customPrimaryNavTab = MyCasesTab) {
+    customPrimaryNavTab = primaryNavTab) {
 
     @if(request.flash.get("success").getOrElse("").contains("referral")){
         @notification_banner()(request.flash, messages)

@@ -31,6 +31,7 @@ object JsonFormatters {
   implicit val role: Format[Role.Value]                           = EnumJson.format(Role)
   implicit val liabilityStatus: Format[LiabilityStatus]           = EnumJson.format(LiabilityStatus)
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
+  implicit val rejectedReason: Format[RejectReason.Value]         = EnumJson.format(RejectReason)
   implicit val miscCaseType: Format[MiscCaseType.Value]           = EnumJson.format(MiscCaseType)
   implicit val reportField: Format[CaseReportField.Value]         = EnumJson.format(CaseReportField)
   implicit val reportGroup: Format[CaseReportGroup.Value]         = EnumJson.format(CaseReportGroup)
@@ -79,6 +80,7 @@ object JsonFormatters {
   implicit val sampleFormat: OFormat[Sample]                             = Json.format[Sample]
   implicit val agentDetailsFormat: OFormat[AgentDetails]                 = Json.format[AgentDetails]
   implicit val messageLoggedFormat: OFormat[Message]                     = Json.format[Message]
+  implicit val keywordFormat: OFormat[Keyword]                           = Json.format[Keyword]
   implicit val liabilityOrderFormat: OFormat[LiabilityOrder]             = Json.format[LiabilityOrder]
   implicit val correspondenceFormat: OFormat[CorrespondenceApplication]  = Json.format[CorrespondenceApplication]
   implicit val miscFormat: OFormat[MiscApplication]                      = Json.format[MiscApplication]
@@ -91,12 +93,19 @@ object JsonFormatters {
     .and[MiscApplication](ApplicationType.MISCELLANEOUS.name)
     .format
 
+  implicit val formatApplicationType: Format[ApplicationType] = Format(
+    Reads.of[String].filter(ApplicationType.values.map(_.name).contains(_)).map(ApplicationType.withName),
+    Writes.of[String].contramap(_.name)
+  )
+
   implicit val caseFormat: OFormat[Case]                         = Json.using[Json.WithDefaultValues].format[Case]
   implicit val newCaseFormat: OFormat[NewCaseRequest]            = Json.format[NewCaseRequest]
+  implicit val newKeywordFormat: OFormat[NewKeywordRequest]      = Json.format[NewKeywordRequest]
   implicit val formatCaseStatusChange: OFormat[CaseStatusChange] = Json.format[CaseStatusChange]
   implicit val formatCancellationCaseStatusChange: OFormat[CancellationCaseStatusChange] =
     Json.format[CancellationCaseStatusChange]
   implicit val formatReferralCaseStatusChange: OFormat[ReferralCaseStatusChange] = Json.format[ReferralCaseStatusChange]
+  implicit val formatRejectCaseStatusChange: OFormat[RejectCaseStatusChange] = Json.format[RejectCaseStatusChange]
   implicit val formatCompletedCaseStatusChange: OFormat[CompletedCaseStatusChange] =
     Json.format[CompletedCaseStatusChange]
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange]           = Json.format[AppealStatusChange]
@@ -115,6 +124,7 @@ object JsonFormatters {
     .and[CaseStatusChange](EventType.CASE_STATUS_CHANGE.toString)
     .and[CancellationCaseStatusChange](EventType.CASE_CANCELLATION.toString)
     .and[ReferralCaseStatusChange](EventType.CASE_REFERRAL.toString)
+    .and[RejectCaseStatusChange](EventType.CASE_REJECTED.toString)
     .and[CompletedCaseStatusChange](EventType.CASE_COMPLETED.toString)
     .and[AppealStatusChange](EventType.APPEAL_STATUS_CHANGE.toString)
     .and[SampleStatusChange](EventType.SAMPLE_STATUS_CHANGE.toString)
@@ -132,6 +142,8 @@ object JsonFormatters {
   implicit val newEventRequestFormat: OFormat[NewEventRequest] =
     Json.using[Json.WithDefaultValues].format[NewEventRequest]
 
+  implicit val formatCaseHeader: OFormat[CaseHeader]              = Json.format[CaseHeader]
+  implicit val formatCaseKeyword: OFormat[CaseKeyword]            = Json.format[CaseKeyword]
   implicit val emailCompleteParamsFormat: OFormat[CaseCompletedEmailParameters] =
     Json.format[CaseCompletedEmailParameters]
   implicit val emailCompleteFormat: OFormat[CaseCompletedEmail] = Json.format[CaseCompletedEmail]

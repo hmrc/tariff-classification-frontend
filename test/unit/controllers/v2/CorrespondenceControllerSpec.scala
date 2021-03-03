@@ -73,9 +73,12 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
   "Correspondence Controller" should {
     "display Correspondence" in {
-      val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+      val c = aCase(withReference("reference"), withCorrespondenceApplication)
       when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn (Future.successful(attachments))
-      when(eventService.getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])) thenReturn Future(pagedEvent)
+      when(
+        eventService
+          .getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])
+      ) thenReturn Future(pagedEvent)
       when(queueService.getAll) thenReturn Future(queues)
 
       when(
@@ -90,11 +93,13 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           any(),
           any(),
           any(),
+          any(),
           any()
         )(any(), any(), any())
       ) thenReturn Html("body")
 
-      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE))).displayCorrespondence("reference")(newFakeGETRequestWithCSRF(app))
+      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
+        .displayCorrespondence("reference")(newFakeGETRequestWithCSRF(app))
       status(result) shouldBe Status.OK
     }
 
