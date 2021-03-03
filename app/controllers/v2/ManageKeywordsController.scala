@@ -112,13 +112,13 @@ class ManageKeywordsController @Inject() (
       )
     )
 
-  def editApprovedKeywords(keywordName : String): Action[AnyContent] =
+  def editApprovedKeywords(keywordName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       for {
-        count <- keywordService.fetchCaseKeywords().map(_.results.count(keyword => keyword.keyword.approved))
-
+        count       <- keywordService.fetchCaseKeywords().map(_.results.count(keyword => keyword.keyword.approved))
+        allKeywords <- keywordService.findAll(NoPagination())
       } yield Ok(
-        editApprovedKeywordsView(count, keywordName, editKeyword)
+        editApprovedKeywordsView(count, keywordName, allKeywords, editKeyword)
       )
     )
 }
