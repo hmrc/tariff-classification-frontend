@@ -18,13 +18,11 @@ package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models._
+import models.reporting._
 import org.apache.http.HttpStatus
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils._
-
-import java.time.Instant
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
@@ -189,7 +187,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByAllQueues(Queues.allQueues, pagination, assignee = "none")) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(connector.findCasesByAllQueues(Queues.allQueues, pagination, assignee = "none")) shouldBe Paged(
+        Seq(Cases.btiCaseExample)
+      )
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -871,7 +871,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByAllQueues(Queues.allQueues, pagination, assignee = "none")) shouldBe Paged(Seq(Cases.btiCaseExample))
+      await(connector.findCasesByAllQueues(Queues.allQueues, pagination, assignee = "none")) shouldBe Paged(
+        Seq(Cases.btiCaseExample)
+      )
 
       verify(
         getRequestedFor(urlEqualTo(url))
@@ -1027,4 +1029,117 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
   }
 
+  "Connector 'Summary Report'" should {
+    "fetch summary report" in {
+      val expectedResults = Paged(
+        Seq(
+          SimpleResultGroup(
+            count     = 1,
+            groupKey  = StringResultField(ReportField.Chapter.fieldName, Some("85")),
+            maxFields = List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(4)))
+          ),
+          SimpleResultGroup(
+            count     = 2,
+            groupKey  = StringResultField(ReportField.Chapter.fieldName, None),
+            maxFields = List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(7)))
+          ),
+          SimpleResultGroup(
+            count     = 3,
+            groupKey  = StringResultField(ReportField.Chapter.fieldName, Some("95")),
+            maxFields = List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(4)))
+          )
+        )
+      )
+      val resultsJson = Json.toJson(expectedResults)
+
+      stubFor(
+        get(urlPathEqualTo("/report/summary"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(resultsJson.toString())
+          )
+      )
+
+      val actualResults = await(
+        connector.summaryReport(
+          SummaryReport("Cases by commodity code chapter", groupBy = ReportField.Chapter, sortBy = ReportField.Count),
+          SearchPagination()
+        )
+      )
+
+      actualResults shouldBe expectedResults
+
+      verify(
+        getRequestedFor(urlPathEqualTo("/report/summary"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "Connector 'Case Report'" should {
+    "fetch cases report" in {
+      val expectedResults: Paged[Map[String, ReportResultField[_]]] = Paged(Seq(
+        Map(
+          ReportField.Reference.fieldName -> StringResultField(ReportField.Reference.fieldName, Some("1")),
+          ReportField.GoodsName.fieldName -> StringResultField(ReportField.GoodsName.fieldName, Some("Fireworks")),
+          ReportField.TraderName.fieldName -> StringResultField(ReportField.TraderName.fieldName, Some("Gandalf"))
+        )
+      ))
+      val resultsJson = Json.toJson(expectedResults)
+
+      stubFor(
+        get(urlPathEqualTo("/report/cases"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(resultsJson.toString())
+          )
+      )
+
+      val actualResults = await(
+        connector.caseReport(
+          CaseReport("ATaR Summary Report", fields = List(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)),
+          SearchPagination()
+        )
+      )
+
+      actualResults shouldBe expectedResults
+
+      verify(
+        getRequestedFor(urlPathEqualTo("/report/cases"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "Connector 'Queue Report'" should {
+    "fetch queue report" in {
+      val expectedResults = Paged(Seq(
+        QueueResultGroup(4, None, ApplicationType.ATAR),
+        QueueResultGroup(2, None, ApplicationType.LIABILITY),
+        QueueResultGroup(7, Some("2"), ApplicationType.ATAR),
+        QueueResultGroup(6, Some("3"), ApplicationType.LIABILITY),
+      ))
+      val resultsJson = Json.toJson(expectedResults)
+
+      stubFor(
+        get(urlPathEqualTo("/report/queues"))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+              .withBody(resultsJson.toString())
+          )
+      )
+
+      val actualResults = await(connector.queueReport(QueueReport(), SearchPagination()))
+
+      actualResults shouldBe expectedResults
+
+      verify(
+        getRequestedFor(urlPathEqualTo("/report/queues"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
 }
