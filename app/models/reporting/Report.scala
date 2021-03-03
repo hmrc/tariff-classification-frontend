@@ -89,13 +89,30 @@ object Report {
     )
   )
 
+  val liabilitiesCases = CaseReport(
+    name      = "Liabilities cases",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.LIABILITY),
+    fields = Seq(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
+
   val byId = Map[String, Report](
     "number-of-open-cases"             -> numberOfOpenCases,
     "completed-cases"                  -> completedCases,
     "number-of-cases-per-user"         -> numberOfCasesPerUser,
     "cancelled-cases-by-assigned-user" -> cancelledCasesPerUser,
     "cancelled-cases-by-chapter"       -> cancelledCasesByChapter,
-    "liabilities-summary"              -> liabilitiesSummary
+    "liabilities-summary"              -> liabilitiesSummary,
+    "liabilities-cases"                -> liabilitiesCases
   )
 
   private val groupByKey      = "group_by"
