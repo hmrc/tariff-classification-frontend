@@ -30,7 +30,7 @@ object BinderUtil {
   val Top = ""
 
   def bindApplicationType(value: String): Option[ApplicationType] =
-    ApplicationType.values.find(_.toString == value)
+    ApplicationType.values.find(_.name == value)
 
   def bindCaseStatus(value: String): Option[CaseStatus] =
     CaseStatus.values.find(_.toString == value)
