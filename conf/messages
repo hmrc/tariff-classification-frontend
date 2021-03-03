@@ -1260,6 +1260,7 @@ reporting.field.date_created=Date created
 reporting.field.date_completed=Date completed
 reporting.field.elapsed_days=Elapsed days
 reporting.field.total_days=Total days
+reporting.team.unknown=Unknown
 reporting.team.unassigned=Gateway
 reporting.result.unknown=Unknown
 reporting.user.unassigned=Unassigned
