@@ -89,6 +89,23 @@ object Report {
     )
   )
 
+  val atarSummary = CaseReport(
+    name      = "ATaR summary",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.ATAR),
+    fields = Seq(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Chapter,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
+
   val liabilitiesCases = CaseReport(
     name      = "Liabilities cases",
     sortBy    = ReportField.ElapsedDays,
@@ -112,6 +129,7 @@ object Report {
     "cancelled-cases-by-assigned-user" -> cancelledCasesPerUser,
     "cancelled-cases-by-chapter"       -> cancelledCasesByChapter,
     "liabilities-summary"              -> liabilitiesSummary,
+    "atar-summary"                     -> atarSummary,
     "liabilities-cases"                -> liabilitiesCases
   )
 
