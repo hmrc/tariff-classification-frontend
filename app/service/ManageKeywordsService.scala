@@ -21,17 +21,22 @@ import models._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ManageKeywordsService @Inject()(connector: BindingTariffClassificationConnector) {
+class ManageKeywordsService @Inject() (connector: BindingTariffClassificationConnector) {
 
   def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
-      connector.createKeyword(keyword)
+    connector.createKeyword(keyword)
 
   def findAll(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
-      connector.findAllKeywords(pagination)
+    connector.findAllKeywords(pagination)
 
   def fetchCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     connector.getCaseKeywords()
+
+  def renameKeyword(oldKeyword: Keyword, newKeyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
+    connector.deleteKeyword(oldKeyword).flatMap(_ => connector.createKeyword(newKeyword))
+
 }

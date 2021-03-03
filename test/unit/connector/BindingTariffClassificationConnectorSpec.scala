@@ -24,7 +24,6 @@ import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils._
 
 import java.time.Instant
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
@@ -1141,6 +1140,30 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       verify(
         getRequestedFor(urlEqualTo("/case-keywords"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "Connector 'delete Keyword'" should {
+
+    "delete the keyword given" in {
+      val keyword = Keyword("AKeyword", true)
+      val request = Json.toJson(keyword).toString()
+
+      stubFor(
+        delete(urlEqualTo(s"/keyword/${keyword.name}"))
+          .withRequestBody(equalToJson(request))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_OK)
+          )
+      )
+
+      await(connector.deleteKeyword(keyword)) shouldBe Unit
+
+      verify(
+        postRequestedFor(urlEqualTo(s"/keyword${keyword.name}"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }

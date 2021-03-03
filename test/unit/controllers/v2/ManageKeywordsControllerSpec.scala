@@ -19,29 +19,34 @@ package controllers.v2
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.forms.KeywordForm
+import models.forms.v2.EditApprovedKeywordForm
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import play.api.http.Status
 import play.api.test.Helpers._
 import service.ManageKeywordsService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.managementtools.{confirm_keyword_created, manage_keywords_view, new_keyword_view}
+import views.html.managementtools.{confirm_keyword_created, confirmation_keyword_deleted, edit_approved_keywords, manage_keywords_view, new_keyword_view}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
-  val keywords    = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
-  val keywordForm = KeywordForm.formWithAuto(keywords.map(_.name))
+  val keywords        = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
+  val keywordForm     = KeywordForm.formWithAuto(keywords.map(_.name))
+  val editKeywordForm = EditApprovedKeywordForm.form
   val caseKeyword = CaseKeyword(
     Keyword("BOOK", false),
-    List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)))
+    List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None))
+  )
 
-  private lazy val manage_keywords_view = injector.instanceOf[manage_keywords_view]
-  private lazy val confirm_keyword_view = injector.instanceOf[confirm_keyword_created]
-  private lazy val new_keyword_view     = injector.instanceOf[new_keyword_view]
-  private lazy val keywordService       = mock[ManageKeywordsService]
+  private lazy val manage_keywords_view              = injector.instanceOf[manage_keywords_view]
+  private lazy val confirm_keyword_view              = injector.instanceOf[confirm_keyword_created]
+  private lazy val new_keyword_view                  = injector.instanceOf[new_keyword_view]
+  private lazy val edit_approved_keyword_view        = injector.instanceOf[edit_approved_keywords]
+  private lazy val confirmation_keyword_deleted_view = injector.instanceOf[confirmation_keyword_deleted]
+  private lazy val keywordService                    = mock[ManageKeywordsService]
 
   private def controller(permission: Set[Permission]) = new ManageKeywordsController(
     new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
@@ -50,6 +55,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
     manage_keywords_view,
     confirm_keyword_view,
     new_keyword_view,
+    edit_approved_keyword_view,
+    confirmation_keyword_deleted_view,
     realAppConfig
   )
 
@@ -109,11 +116,13 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "newkeyword"))))
+          .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "newkeyword")))
+      )
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(
-        controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword("newkeyword").path())
+        controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword("newkeyword").path()
+      )
 
     }
 
@@ -129,7 +138,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
         .willReturn(Future(Paged(keywords)))
 
       val result = await(
-        controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> ""))))
+        controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "")))
+      )
 
       status(result)          shouldBe Status.BAD_REQUEST
       contentType(result)     shouldBe Some("text/html")
@@ -145,7 +155,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name))))
+          .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name)))
+      )
 
       status(result)          shouldBe Status.BAD_REQUEST
       contentType(result)     shouldBe Some("text/html")

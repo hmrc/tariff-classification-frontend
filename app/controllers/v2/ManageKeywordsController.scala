@@ -34,16 +34,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ManageKeywordsController @Inject() (
-                                           verify: RequestActions,
-                                           mcc: MessagesControllerComponents,
-                                           keywordService: ManageKeywordsService,
-                                           val manageKeywordsView: views.html.managementtools.manage_keywords_view,
-                                           val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
-                                           val newKeywordView: views.html.managementtools.new_keyword_view,
-                                           val editApprovedKeywordsView: views.html.managementtools.edit_approved_keywords,
-                                           implicit val appConfig: AppConfig
-                                         ) extends FrontendController(mcc)
-  with I18nSupport {
+  verify: RequestActions,
+  mcc: MessagesControllerComponents,
+  keywordService: ManageKeywordsService,
+  val manageKeywordsView: views.html.managementtools.manage_keywords_view,
+  val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
+  val newKeywordView: views.html.managementtools.new_keyword_view,
+  val editApprovedKeywordsView: views.html.managementtools.edit_approved_keywords,
+  val confirmKeywordDeletedView: views.html.managementtools.confirmation_keyword_deleted,
+  implicit val appConfig: AppConfig
+) extends FrontendController(mcc)
+    with I18nSupport {
   val keywordForm: Form[String] = KeywordForm.form
   val editKeyword: Form[String] = EditApprovedKeywordForm.form
 
@@ -103,9 +104,9 @@ class ManageKeywordsController @Inject() (
     }
 
   def displayConfirmKeyword(
-                             saveKeyword: String,
-                             activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
-                           ): Action[AnyContent] =
+    saveKeyword: String,
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
+  ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         keywordCreatedConfirm(activeSubNav, saveKeyword)
@@ -118,7 +119,14 @@ class ManageKeywordsController @Inject() (
         count       <- keywordService.fetchCaseKeywords().map(_.results.count(keyword => keyword.keyword.approved))
         allKeywords <- keywordService.findAll(NoPagination())
       } yield Ok(
-        editApprovedKeywordsView(count, keywordName, allKeywords, editKeyword)
+        editApprovedKeywordsView(count, keywordName, allKeywords, editKeyword, keywordForm)
+      )
+    )
+
+  def displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
+      Ok(
+        confirmKeywordDeletedView(activeSubNav)
       )
     )
 }

@@ -235,9 +235,9 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   def getAllUsers(roles: Seq[Role], team: String, pagination: Pagination)(
-    implicit hc: HeaderCarrier): Future[Paged[Operator]] =
+    implicit hc: HeaderCarrier
+  ): Future[Paged[Operator]] =
     withMetricsTimerAsync("get-all-users") { _ =>
-
       val searchParam = s"role=${roles.mkString(",")}&member_of_teams=$team"
       val url =
         s"${appConfig.bindingTariffClassificationUrl}/users?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
@@ -277,7 +277,8 @@ class BindingTariffClassificationConnector @Inject() (
 
   def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
     withMetricsTimerAsync("find-all-keywords") { _ =>
-      val url = s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
+      val url =
+        s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
       client.GET[Paged[Keyword]](url)
     }
 
@@ -287,4 +288,8 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[CaseKeyword]](url)
     }
 
+  def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
+    client.DELETE[Keyword](url = url).map(_ => ())
+  }
 }
