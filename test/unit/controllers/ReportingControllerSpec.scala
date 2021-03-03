@@ -38,7 +38,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val reportingService = mock[ReportingService]
   private val queueService     = injector.instanceOf[QueuesService]
   private val usersService     = mock[UserService]
-  private val casesService     = mock[CasesService]
   private val operator         = mock[Operator]
 
   override protected def afterEach(): Unit = {
@@ -46,7 +45,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     Mockito.reset(
       reportingService,
       usersService,
-      casesService,
       operator
     )
   }
@@ -57,7 +55,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       reportingService,
       queueService,
       usersService,
-      casesService,
       mcc,
       realAppConfig
     )
@@ -111,6 +108,28 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).summaryReport(report, SearchPagination())(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
+
+  "queueReport" should {
+    val report = QueueReport()
+
+    "return 200 OK and HTML content type" in {
+      given(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier])) willReturn Future
+        .successful(Paged.empty[QueueResultGroup])
+
+      val result =
+        await(controller(Set(Permission.VIEW_REPORTS)).queueReport(report, SearchPagination())(fakeRequest))
+
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).queueReport(report, SearchPagination())(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
@@ -171,6 +190,8 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       fields = List(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
+    val queueReport = QueueReport()
+
     "return 303 and redirect to appropriate page when all teams is selected" in {
       val operator = Operator("0", Some("name"), memberOfTeams = Seq("4", "5"))
 
@@ -192,9 +213,20 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
             .postChangeTeamsFilter(caseReport, SearchPagination())(request)
         )
 
-      status(caseResult)           shouldBe Status.SEE_OTHER
+      status(caseResult) shouldBe Status.SEE_OTHER
       redirectLocation(caseResult) shouldBe Some(
         routes.ReportingController.caseReport(caseReport.copy(teams = Set.empty)).path()
+      )
+
+      val queueResult =
+        await(
+          controller(Set(Permission.VIEW_REPORTS), operator)
+            .postChangeTeamsFilter(queueReport, SearchPagination())(request)
+        )
+
+      status(queueResult) shouldBe Status.SEE_OTHER
+      redirectLocation(queueResult) shouldBe Some(
+        routes.ReportingController.queueReport(queueReport.copy(teams = Set.empty)).path()
       )
     }
 
@@ -222,6 +254,17 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(caseResult) shouldBe Status.SEE_OTHER
       redirectLocation(caseResult) shouldBe Some(
         routes.ReportingController.caseReport(caseReport.copy(teams = Set("4", "5"))).path()
+      )
+
+      val queueResult =
+        await(
+          controller(Set(Permission.VIEW_REPORTS), operator)
+            .postChangeTeamsFilter(queueReport, SearchPagination())(request)
+        )
+
+      status(queueResult) shouldBe Status.SEE_OTHER
+      redirectLocation(queueResult) shouldBe Some(
+        routes.ReportingController.queueReport(queueReport.copy(teams = Set("4", "5"))).path()
       )
     }
 
@@ -296,6 +339,13 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       )
     )
 
+    val queueReport = QueueReport(
+      dateRange = InstantRange(
+        Instant.parse("2020-01-01T09:00:00.00Z"),
+        Instant.parse("2021-01-01T09:00:00.00Z")
+      )
+    )
+
     "return 303 and redirect to appropriate page when no specific date range is selected" in {
       val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody("specificDates" -> "false").withCSRFToken
 
@@ -314,6 +364,17 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(caseResult) shouldBe Status.SEE_OTHER
       redirectLocation(caseResult) shouldBe Some(
         routes.ReportingController.caseReport(caseReport.copy(dateRange = InstantRange.allTime)).path()
+      )
+
+      val queueResult =
+        await(
+          controller(Set(Permission.VIEW_REPORTS))
+            .postChangeDateFilter(queueReport, SearchPagination())(request)
+        )
+
+      status(queueResult) shouldBe Status.SEE_OTHER
+      redirectLocation(queueResult) shouldBe Some(
+        routes.ReportingController.queueReport(queueReport.copy(dateRange = InstantRange.allTime)).path()
       )
     }
 
@@ -361,6 +422,23 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           )
           .path()
       )
+
+      val queueResult =
+        await(
+          controller(Set(Permission.VIEW_REPORTS))
+            .postChangeDateFilter(queueReport, SearchPagination())(request)
+        )
+
+      status(queueResult) shouldBe Status.SEE_OTHER
+      redirectLocation(queueResult) shouldBe Some(
+        routes.ReportingController
+          .queueReport(
+            queueReport.copy(dateRange =
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
+            )
+          )
+          .path()
+      )
     }
 
     "return 400 and HTML content type when nothing is selected" in {
@@ -375,15 +453,18 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 400 and HTML content type when an invalid date is selected" in {
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody(
-        "specificDates"       -> "true",
-        "dateRange.min.year"  -> "2021",
-        "dateRange.min.month" -> "",
-        "dateRange.min.day"   -> "1",
-        "dateRange.max.year"  -> "2022",
-        "dateRange.max.month" -> "1",
-        "dateRange.max.day"   -> "1"
-      ).withCSRFToken
+      val request = fakeRequest
+        .withMethod("POST")
+        .withFormUrlEncodedBody(
+          "specificDates"       -> "true",
+          "dateRange.min.year"  -> "2021",
+          "dateRange.min.month" -> "",
+          "dateRange.min.day"   -> "1",
+          "dateRange.max.year"  -> "2022",
+          "dateRange.max.month" -> "1",
+          "dateRange.max.day"   -> "1"
+        )
+        .withCSRFToken
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 
@@ -394,15 +475,18 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 400 and HTML content type when end date is before start date" in {
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody(
-        "specificDates"       -> "true",
-        "dateRange.min.year"  -> "2022",
-        "dateRange.min.month" -> "1",
-        "dateRange.min.day"   -> "1",
-        "dateRange.max.year"  -> "2021",
-        "dateRange.max.month" -> "1",
-        "dateRange.max.day"   -> "1"
-      ).withCSRFToken
+      val request = fakeRequest
+        .withMethod("POST")
+        .withFormUrlEncodedBody(
+          "specificDates"       -> "true",
+          "dateRange.min.year"  -> "2022",
+          "dateRange.min.month" -> "1",
+          "dateRange.min.day"   -> "1",
+          "dateRange.max.year"  -> "2021",
+          "dateRange.max.month" -> "1",
+          "dateRange.max.day"   -> "1"
+        )
+        .withCSRFToken
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 

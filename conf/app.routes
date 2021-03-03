@@ -15,6 +15,8 @@ GET         /reports/cases                                      controllers.Repo
 GET         /reports/cases/download                             controllers.ReportingController.downloadCaseReport(summaryReport: models.reporting.CaseReport)
 GET         /reports/summary                                    controllers.ReportingController.summaryReport(summaryReport: models.reporting.SummaryReport, pagination: models.Pagination ?= models.SearchPagination())
 GET         /reports/summary/download                           controllers.ReportingController.downloadSummaryReport(summaryReport: models.reporting.SummaryReport)
+GET         /reports/queue                                      controllers.ReportingController.queueReport(queueReport: models.reporting.QueueReport, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/queue/download                             controllers.ReportingController.downloadQueueReport(queueReport: models.reporting.QueueReport)
 GET         /reports/choose-date                                controllers.ReportingController.showChangeDateFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
 POST        /reports/choose-date                                controllers.ReportingController.postChangeDateFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
 GET         /reports/choose-teams                               controllers.ReportingController.showChangeTeamsFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())

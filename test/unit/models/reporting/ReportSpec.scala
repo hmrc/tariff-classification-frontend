@@ -40,7 +40,7 @@ class ReportSpec extends ModelsBaseSpec {
       )
     }
 
-    "assume CaseReport otherwise" in {
+    "assume CaseReport if fields is provided" in {
       val caseReportParams = Map[String, Seq[String]](
         "name"   -> Seq("Case report"),
         "fields" -> Seq("reference", "status", "elapsed_days", "total_days")
@@ -55,6 +55,10 @@ class ReportSpec extends ModelsBaseSpec {
           )
         )
       )
+    }
+
+    "assume QueueReport otherwise" in {
+      Report.reportQueryStringBindable.bind("", Map.empty) shouldBe Some(Right(QueueReport()))
     }
 
     "unbind to query string" in {
@@ -87,7 +91,7 @@ class ReportSpec extends ModelsBaseSpec {
       )
 
       URLDecoder.decode(Report.reportQueryStringBindable.unbind("", QueueReport()), "UTF-8") shouldBe (
-        "name=Cases by queue" +
+        "name=Number of cases in queues" +
           "&sort_by=assigned_team" +
           "&sort_order=asc" +
           "&case_type=" +
@@ -435,7 +439,7 @@ class ReportSpec extends ModelsBaseSpec {
         ),
         "UTF-8"
       ) shouldBe (
-        "name=Cases by queue" +
+        "name=Number of cases in queues" +
           "&sort_by=count" +
           "&sort_order=desc" +
           "&case_type=BTI,CORRESPONDENCE" +
@@ -458,7 +462,7 @@ class ReportSpec extends ModelsBaseSpec {
         ),
         "UTF-8"
       ) shouldBe (
-        "name=Cases by queue" +
+        "name=Number of cases in queues" +
           "&sort_by=date_created" +
           "&sort_order=asc" +
           "&case_type=MISCELLANEOUS,CORRESPONDENCE" +

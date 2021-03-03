@@ -38,14 +38,17 @@ object Report {
   private val groupByKey      = "group_by"
   private val maxFieldsKey    = "max_fields"
   private val includeCasesKey = "include_cases"
+  private val fieldsKey       = "fields"
 
   implicit val reportQueryStringBindable: QueryStringBindable[Report] =
     new QueryStringBindable[Report] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Report]] =
         if (params.contains(groupByKey) || params.contains(maxFieldsKey) || params.contains(includeCasesKey))
           SummaryReport.summaryReportQueryStringBindable.bind(key, params)
-        else
+        else if (params.contains(fieldsKey))
           CaseReport.caseReportQueryStringBindable.bind(key, params)
+        else
+          QueueReport.queueReportQueryStringBindable.bind(key, params)
 
       override def unbind(key: String, value: Report): String = value match {
         case cse: CaseReport =>
@@ -228,7 +231,7 @@ case class QueueReport(
   assignee: Option[String]              = Option.empty,
   dateRange: InstantRange               = InstantRange.allTime
 ) extends Report {
-  override val name = "Cases by queue"
+  override val name = "Number of cases in queues"
 }
 
 object QueueReport {
