@@ -1264,6 +1264,8 @@ management.change-keywords.edit-approved-keywords.p1=This keyword is used in {0}
 management.change-keywords.edit-approved-keywords.radio=Choose keyword action
 management.change-keywords.edit-approved-keywords.radio.delete=Delete
 management.change-keywords.edit-approved-keywords.radio.rename=Rename
+management.manage-keywords.edit-approved-keywords.label=Enter a new keyword or choose from the approved list
+management.manage-keywords.edit-approved-keywords.hint=Keywords will be saved in uppercase.
 
 
 

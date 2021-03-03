@@ -28,57 +28,49 @@
 
 @this()
 
-@(count: Int, keywordName: String, globalKeywords: Paged[Keyword], form: Form[String], activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(count: Int, keywordName: String, globalKeywords: Paged[Keyword], keywordForm: Form[String], form: Form[String], activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @inputTextContent(labelText: String) = {
-    @input_text(
-        label = labelText,
-        field = form("rename-keyword"),
-        inputClass = Some("w-50"),
-        customGroupClasses = Some("pl-15"))
-    }
+@main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.edit-approved-keywords.title"))) {
 
-    @main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.edit-approved-keywords.title"))) {
+    @manager_tools_secondary_navigation(activeSubNav)
 
-        @manager_tools_secondary_navigation(activeSubNav)
-
-        @error_summary(form.errors)
+    @error_summary(form.errors)
 
 
-        <div class="edit-approved-keyword-title mt-40">
-            <span class="heading-secondary"><span class="visuallyhidden">
-                This section is </span>
-            </span>Manage keywords
-            <p id="keyword-edit-p">@messages("management.change-keywords.edit-approved-keywords.p1", count)</p>
+    <div class="edit-approved-keyword-title mt-40">
+        <span class="heading-secondary"><span class="visuallyhidden">
+            This section is </span>
+        </span>Manage keywords
+        <p id="keyword-edit-p">@messages("management.change-keywords.edit-approved-keywords.p1", count)</p>
+    </div>
+
+    @helper.form(action = controllers.v2.routes.ManageKeywordsController.editApprovedKeywords(keywordName), 'id -> "edit-keyword-form", 'novalidate -> "novalidate") {
+        @input_radiogroup(
+            field = form("keyword-name"),
+            label = Some(messages("management.change-keywords.edit-approved-keywords.radio")),
+            labelClass = Some("heading-large"),
+            options = Seq(
+                RadioOption("delete", messages("management.change-keywords.edit-approved-keywords.radio.delete")),
+                RadioOption("rename", "Rename", Some("rename-keyword"),
+                    Some(input_accessible_auto_complete(
+                        field = keywordForm("keywordName"),
+                        label = Some(messages("management.manage-keywords.edit-approved-keywords.label")),
+                        hint = Some(messages("management.manage-keywords.edit-approved-keywords.hint")),
+                        formControlClass = Some("w-100"),
+                        labelClass = Some("un-bold"),
+                        autoCompleteOptions = globalKeywords.results.map(_.name),
+                        placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
+                    )
+                    )
+                )
+            ),
+            id = "change-keyword-status",
+            customGroupId = Some("keyword-status")
+        )
+
+        <div>
+            <button class="button" id="keyword-continue" type="submit">Continue</button>
         </div>
 
-        @helper.form(action = controllers.v2.routes.ManageKeywordsController.editApprovedKeywords(keywordName), 'id -> "edit-keyword-form", 'novalidate -> "novalidate") {
-
-            @input_radiogroup(
-                field = form("keyword-status"),
-                label = Some(messages("management.change-keywords.edit-approved-keywords.radio")),
-                labelClass = Some("heading-large"),
-                options = Seq(
-                    RadioOption("delete", messages("management.change-keywords.edit-approved-keywords.radio.delete")),
-                    RadioOption("rename", "Rename", Some("rename-keyword"),
-                        Some(input_accessible_auto_complete(
-                            field = form("keyword"),
-                            label = Some(messages("management.manage-keywords.search-all-keywords.label")),
-                            formControlClass = Some("w-100"),
-                            labelClass = Some("un-bold"),
-                            autoCompleteOptions = globalKeywords.results.map(_.name),
-                            placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
-                        )
-                        )
-                    )
-                ),
-                id = "change-keyword-status",
-                customGroupId = Some("keyword-status")
-            )
-
-            <div>
-                <button class="button" id="keyword-continue" type="submit">Continue</button>
-            </div>
-
-        }
     }
+}

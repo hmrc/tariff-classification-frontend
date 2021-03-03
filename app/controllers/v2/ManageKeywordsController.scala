@@ -23,7 +23,7 @@ import models.forms.KeywordForm
 import models.forms.v2.EditApprovedKeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
-import models.{CaseHeader, CaseStatus, Keyword, NoPagination, Paged, Permission}
+import models.{Keyword, NoPagination, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -34,16 +34,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ManageKeywordsController @Inject() (
-  verify: RequestActions,
-  mcc: MessagesControllerComponents,
-  keywordService: ManageKeywordsService,
-  val manageKeywordsView: views.html.managementtools.manage_keywords_view,
-  val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
-  val newKeywordView: views.html.managementtools.new_keyword_view,
-  val editApprovedKeywordsView: views.html.managementtools.edit_approved_keywords,
-  implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
-    with I18nSupport {
+                                           verify: RequestActions,
+                                           mcc: MessagesControllerComponents,
+                                           keywordService: ManageKeywordsService,
+                                           val manageKeywordsView: views.html.managementtools.manage_keywords_view,
+                                           val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
+                                           val newKeywordView: views.html.managementtools.new_keyword_view,
+                                           val editApprovedKeywordsView: views.html.managementtools.edit_approved_keywords,
+                                           implicit val appConfig: AppConfig
+                                         ) extends FrontendController(mcc)
+  with I18nSupport {
   val keywordForm: Form[String] = KeywordForm.form
   val editKeyword: Form[String] = EditApprovedKeywordForm.form
 
@@ -103,9 +103,9 @@ class ManageKeywordsController @Inject() (
     }
 
   def displayConfirmKeyword(
-    saveKeyword: String,
-    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
-  ): Action[AnyContent] =
+                             saveKeyword: String,
+                             activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
+                           ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         keywordCreatedConfirm(activeSubNav, saveKeyword)
