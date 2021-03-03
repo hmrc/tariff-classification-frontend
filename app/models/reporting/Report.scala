@@ -122,6 +122,14 @@ object Report {
     )
   )
 
+  val numberOfNewAtarCases = SummaryReport(
+    name      = "New ATaR cases",
+    groupBy   = ReportField.CaseType,
+    sortBy    = ReportField.CaseType,
+    statuses  = Set(PseudoCaseStatus.NEW),
+    caseTypes = Set(ApplicationType.ATAR)
+  )
+
   val byId = Map[String, Report](
     "number-of-open-cases"             -> numberOfOpenCases,
     "completed-cases"                  -> completedCases,
@@ -130,6 +138,7 @@ object Report {
     "cancelled-cases-by-chapter"       -> cancelledCasesByChapter,
     "liabilities-summary"              -> liabilitiesSummary,
     "atar-summary"                     -> atarSummary,
+    "new-atar-cases"                   -> numberOfNewAtarCases,
     "liabilities-cases"                -> liabilitiesCases
   )
 
