@@ -17,9 +17,12 @@
 package controllers
 
 import config.AppConfig
+import models.forms.TakeOwnerShipForm
+
 import javax.inject.{Inject, Singleton}
 import models.request.AuthenticatedRequest
 import models.{Case, Permission}
+import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,13 +40,16 @@ class AssignCaseController @Inject() (
 ) extends FrontendController(mcc)
     with RenderCaseAction {
 
+  private lazy val takeOwnershipForm: Form[Boolean] = TakeOwnerShipForm.form
+
   def get(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
-      .async(implicit request => getCaseAndRenderView(reference, c => successful(views.html.assign_case(c))))
+      .async(implicit request => getCaseAndRenderView(reference, c => successful(views.html.assign_case(c, takeOwnershipForm))))
 
   def post(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
       .async { implicit request =>
+
         def respond: Case => Future[Result] = {
           case c: Case if c.assignee.isEmpty =>
             caseService.assignCase(c, request.operator).map(_ => Redirect(routes.CaseController.get(reference)))
@@ -51,7 +57,22 @@ class AssignCaseController @Inject() (
             successful(Redirect(routes.AssignCaseController.get(reference)))
         }
 
-        getCaseAndRespond(reference, respond)
+        takeOwnershipForm
+
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              getCaseAndRenderView(reference, c => successful(views.html.assign_case(c, formWithErrors))),
+             {
+              case true =>
+                getCaseAndRespond(reference, respond)
+              case _ =>
+                successful(
+                  Redirect(controllers.routes.CaseController.get(reference))
+                )
+            }
+          )
+
       }
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean =

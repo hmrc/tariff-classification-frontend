@@ -47,9 +47,27 @@ class ControllerBaseSpec extends SpecBase {
       .withCSRFToken
       .asInstanceOf[FakeRequest[AnyContentAsText]]
 
+  protected def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty).withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+  protected def newFakePOSTRequestWithCSRF(body: String): FakeRequest[AnyContentAsText] =
+    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsText)
+      .withTextBody(body)
+      .withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsText]]
+
   protected def newFakePOSTRequestWithCSRF(
     application: Application,
     encodedBody: Map[String, String] = Map.empty
+  ): FakeRequest[AnyContentAsFormUrlEncoded] =
+    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsFormUrlEncoded)
+      .withFormUrlEncodedBody(encodedBody.toSeq: _*)
+      .withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
+
+  protected def newFakePOSTRequestWithCSRF(
+    encodedBody: Map[String, String]
   ): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsFormUrlEncoded)
       .withFormUrlEncodedBody(encodedBody.toSeq: _*)

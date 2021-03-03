@@ -29,6 +29,6 @@
   completedCasesAssignedToMe: Int
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(Role.format(request.operator.role)), customPrimaryNavTab = HomeTab) {
+@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.header")), customPrimaryNavTab = HomeTab) {
   @components.cases_cards(casesByTeam, totalCasesAssignedToMe, referredCasesAssignedToMe, completedCasesAssignedToMe)
 }

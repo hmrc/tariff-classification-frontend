@@ -31,6 +31,7 @@ import models.CancelReason.CancelReason
 import models.ReferralReason.ReferralReason
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
+import models.RejectReason.RejectReason
 import models._
 import models.reporting._
 import models.request.NewEventRequest
@@ -197,14 +198,14 @@ class CasesService @Inject() (
       auditService.auditSampleStatusChange(original, updated, operator)
     }
 
-  def rejectCase(original: Case, f: FileUpload, note: String, operator: Operator)(
+  def rejectCase(original: Case, reason: RejectReason, f: FileUpload, note: String, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] =
     for {
       fileStored <- fileService.upload(fileUpload = f)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.REJECTED))
-      _       <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
+      _       <- addRejectCaseStatusChangeEvent(original, updated, operator, Some(note), Some(attachment), reason)
       _ = auditService.auditCaseRejected(original, updated, operator)
     } yield updated
 
@@ -523,6 +524,24 @@ class CasesService @Inject() (
       to           = updated.status,
       comment      = comment,
       attachmentId = attachment.map(_.id)
+    )
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addRejectCaseStatusChangeEvent(
+    original: Case,
+    updated: Case,
+    operator: Operator,
+    comment: Option[String],
+    attachment: Option[Attachment] = None,
+    reason: RejectReason
+  )(implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = RejectCaseStatusChange(
+      from         = original.status,
+      to           = updated.status,
+      comment      = comment,
+      attachmentId = attachment.map(_.id),
+      reason       = reason
     )
     addEvent(original, updated, details, operator)
   }

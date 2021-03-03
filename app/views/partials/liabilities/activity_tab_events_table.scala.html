@@ -60,6 +60,9 @@
                         case EventType.CASE_REFERRAL => {
                             activity_case_referral(index, event)
                         }
+                        case EventType.CASE_REJECTED => {
+                            activity_case_rejection(index, event)
+                        }
                         case EventType.CASE_COMPLETED => {
                             activity_case_completed(index, event)
                         }

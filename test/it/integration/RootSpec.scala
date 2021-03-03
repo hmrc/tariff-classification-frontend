@@ -5,6 +5,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import models.NoPagination
 import utils.{CasePayloads, CaseQueueBuilder}
+import utils.ReportPayloads
 
 class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
@@ -22,6 +23,15 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
           aResponse()
             .withStatus(OK)
             .withBody(CasePayloads.pagedGatewayCases)
+        )
+      )
+      stubFor(
+        get(
+          urlPathEqualTo("/report/queues")
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(ReportPayloads.sampleQueueReport)
         )
       )
 

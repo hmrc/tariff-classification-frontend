@@ -25,7 +25,6 @@ import models._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
-import scala.io.Source
 
 @Singleton
 class KeywordsService @Inject() (connector: BindingTariffClassificationConnector, auditService: AuditService) {
@@ -52,10 +51,7 @@ class KeywordsService @Inject() (connector: BindingTariffClassificationConnector
       successful(c)
     }
 
-  def autoCompleteKeywords: Future[Seq[String]] =
-    Future {
-      val url = getClass.getClassLoader.getResource("keywords.txt")
-      (for (line <- Source.fromURL(url, "UTF-8").getLines()) yield line).toSeq
-    }
+  def findAll(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
+    connector.findAllKeywords(pagination)
 
 }

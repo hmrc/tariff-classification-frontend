@@ -62,11 +62,11 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
     }
 
     "not create event on update failure when status is SUSPENDED" in {
-      eventUpdateFailure(CaseStatus.REFERRED)
+      eventUpdateFailure(CaseStatus.SUSPENDED)
     }
 
     "not create event on update failure when status is REFERRED" in {
-      eventUpdateFailure(CaseStatus.SUSPENDED)
+      eventUpdateFailure(CaseStatus.REFERRED)
     }
 
     "succeed on event create failure from status REFERRED" in {
