@@ -17,14 +17,14 @@
 package service
 
 import connector.BindingTariffClassificationConnector
-import models._
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
 import org.mockito.Mockito._
+import org.mockito.BDDMockito._
 import org.scalatest.BeforeAndAfterEach
+import models._
+import models.reporting._
 import uk.gov.hmrc.http.HeaderCarrier
-
+import play.api.mvc.QueryStringBindable
 import scala.concurrent.Future
 
 class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
@@ -37,7 +37,57 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
     reset(connector)
   }
 
-  "Reporting Service" should {
-    // TODO: Implement tests for new reports
+  "Reporting Service - caseReport" should {
+    "delegate to connector" in {
+      given(
+        connector.caseReport(any[CaseReport], any[Pagination])(
+          any[HeaderCarrier],
+          any[QueryStringBindable[CaseReport]],
+          any[QueryStringBindable[Pagination]]
+        )
+      ) willReturn Future.successful(Paged.empty[Map[String, ReportResultField[_]]])
+
+      await(
+        service.caseReport(CaseReport("ATaR Summary Report", fields = Seq(ReportField.Reference)), SearchPagination())
+      ) shouldBe Paged.empty
+    }
+  }
+
+  "Reporting Service - summaryReport" should {
+    "delegate to connector" in {
+      given(
+        connector.summaryReport(any[SummaryReport], any[Pagination])(
+          any[HeaderCarrier],
+          any[QueryStringBindable[SummaryReport]],
+          any[QueryStringBindable[Pagination]]
+        )
+      ) willReturn Future.successful(Paged.empty[ResultGroup])
+
+      await(
+        service.summaryReport(
+          SummaryReport("Case count by status", groupBy = ReportField.Status, sortBy = ReportField.Status),
+          SearchPagination()
+        )
+      ) shouldBe Paged.empty
+    }
+  }
+
+  "Reporting Service - queueReport" should {
+    "delegate to connector" in {
+      given(
+        connector.queueReport(any[QueueReport], any[Pagination])(
+          any[HeaderCarrier],
+          any[QueryStringBindable[QueueReport]],
+          any[QueryStringBindable[Pagination]]
+        )
+      ) willReturn Future.successful(Paged.empty[QueueResultGroup])
+
+      await(
+        service.queueReport(
+          QueueReport(),
+          SearchPagination()
+        )
+      ) shouldBe Paged.empty
+    }
   }
 }

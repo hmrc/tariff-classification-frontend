@@ -22,43 +22,30 @@
 
 @(
         caseHeader: CaseHeaderViewModel,
-        headingText: Option[String] = None,
-        headingPrefix: Option[String] = None
+        messageKey: Option[String] = None
 )(implicit messages: Messages)
 
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
-    <div id="case-reference" class="case-reference">
-            @caseHeader.businessName.map { businessName =>
-                @messages("case.heading.secondary", caseHeader.caseType.prettyName, caseHeader.referenceNumber, businessName)
-            }.getOrElse {
-                @messages("case.heading.secondary.nosuffix", caseHeader.caseType.prettyName, caseHeader.referenceNumber)
+    <div>
+        <div id="case-reference" class="case-reference">
+            @messages("case.heading.secondary.nosuffix", caseHeader.caseType.prettyName, caseHeader.referenceNumber)
+        </div>
+        <h1 class="heading-xlarge case-title">
+            @if(caseHeader.isMigrated && caseHeader.goodsName.isEmpty){
+            @messages("case.title.migrated.cases", caseHeader.referenceNumber)
+            } else if(messageKey.isDefined){
+            @messages(messageKey.get, caseHeader.goodsName)
+            }else{
+            @caseHeader.goodsName
             }
+        </h1>
+        @caseHeader.businessName.map { businessName =>
+        <h2 class="bold mb-1">@businessName</h2>
+        }
     </div>
 
-    <h1 class="heading-xlarge case-title">
-        @if(caseHeader.isMigrated && caseHeader.goodsName.isEmpty){
-            @messages("case.title.migrated.cases", caseHeader.referenceNumber)
-        } else {
-            @headingText.map(HtmlFormat.escape(_)).getOrElse {
-                @headingPrefix.fold(HtmlFormat.escape(caseHeader.goodsName)) { prefix =>
-                     @messages("case.title", prefix, caseHeader.goodsName)
-                    }
-             }
-        }
-
-    </h1>
-
-    @if(caseHeader.caseType == ApplicationType.CORRESPONDENCE) {
-        <div id="contact-section" class="mb-1">
-            <div class="bold">
-                @caseHeader.caseSource.getOrElse("")
-            </div>
-            <div class="bold">
-                @caseHeader.contact.email
-            </div>
-        </div>
-    }
-
-    @caseStatus(caseHeader.caseStatus)
+    <div id="case-status-section">
+        @caseStatus(caseHeader.caseStatus)
+    </div>
 </div>

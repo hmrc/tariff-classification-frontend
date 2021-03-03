@@ -24,7 +24,7 @@
 @import views.html.includes.main
 
 @(
-  report: models.reporting.CaseReport,
+  report: CaseReport,
   pagination: Pagination,
   results: Paged[Map[String, ReportResultField[_]]],
   users: Map[String, Operator],

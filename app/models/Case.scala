@@ -17,7 +17,6 @@
 package models
 
 import java.time.{Clock, Instant}
-
 import models.CaseStatus.CaseStatus
 
 case class Case(
