@@ -298,4 +298,22 @@ class BindingTariffClassificationConnector @Inject() (
       val url = s"${appConfig.bindingTariffClassificationUrl}/report/queues?$reportQuery&$pageQuery"
       client.GET[Paged[QueueResultGroup]](url)
     }
+
+  def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
+    withMetricsTimerAsync("create-keyword") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/keyword"
+      client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(keyword))
+    }
+
+  def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
+    withMetricsTimerAsync("find-all-keywords") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
+      client.GET[Paged[Keyword]](url)
+    }
+
+  def getCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
+    withMetricsTimerAsync("get-case-keywords") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/case-keywords"
+      client.GET[Paged[CaseKeyword]](url)
+    }
 }

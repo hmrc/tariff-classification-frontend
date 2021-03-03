@@ -100,7 +100,8 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       when(casesService.assignCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(aCaseWithQueue))
 
       val result: Result = await(
-        controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE)).post("reference")(newFakePOSTRequestWithCSRF(app))
+        controller(aCaseWithQueue, Set(Permission.ASSIGN_CASE))
+          .post("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true"))
       )
 
       status(result)        shouldBe Status.SEE_OTHER
@@ -112,7 +113,10 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to Case Index for cases assigned to self" in {
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(operator)))
 
-      val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(aCaseAssignedToSelf)
+          .post("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true"))
+      )
 
       status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -123,7 +127,10 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to Assign for cases already assigned" in {
       val aCaseAssignedToSelf = aCase(withQueue("1"), withAssignee(Some(Operator("other-id"))))
 
-      val result: Result = await(controller(aCaseAssignedToSelf).post("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(
+        controller(aCaseAssignedToSelf)
+          .post("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true"))
+      )
 
       status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

@@ -16,8 +16,8 @@
 
 package views.v2
 
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{ActivityViewModel, AppealTabViewModel, CaseViewModel, KeywordsTabViewModel, SampleStatusTabViewModel}
+import models.forms._
+import models.viewmodels._
 import models._
 import models.request.AuthenticatedRequest
 import play.api.data.Form

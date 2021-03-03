@@ -29,10 +29,10 @@
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <div id="dashboard-view" class="centered-content">
-
-    <span class="caption-xl mt-40">@Role.format(request.operator.role)</span>
-    <h1 class="heading-xlarge mt-0 mb-0">@request.operator.name.getOrElse("")</h1>
-
+    <div class="operation-dashboard-header column-two-thirds">
+        <span class="caption-xl mt-40">@request.operator.name.getOrElse("")</span>
+        <h1 class="heading-xlarge mt-0 mb-0">@messages("operator.dashboard.classification.header")</h1>
+    </div>
     @if(request.operator.manager) {
         <h2 class="heading-medium">@messages("cases.menu.manager_tools")</h2>
         <div class="flex-container govuk-grid-row">
