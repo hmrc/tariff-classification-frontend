@@ -1350,3 +1350,17 @@ reporting.miscellaneous.tab.heading = Miscellaneous
 reporting.miscellaneous.heading = Miscellaneous reports
 reporting.miscellaneous.miscellaneous-cases = Miscellaneous cases
 reporting.report_tab.run-report = Run report
+
+management.create-keyword-title=Create new keyword
+management.create-keyword.heading=Create new keyword
+management.create-keyword.caption=Manage keywords
+management.create-keyword.label=Enter a new keyword to add to the approved keyword list
+management.create-keyword.hint=Keywords will be saved in uppercase.
+management.create-keyword.placeholder=Start typing to search for a keyword
+management.create-keyword.save-button=Save keyword
+management.create-keyword.new-keyword-done=New keyword created
+management.create-keyword.new-keyword-done.caption=has been added to the approved keyword list
+management.create-keyword.new-keyword-done.next=Next steps
+management.create-keyword.new-keyword-done.link=Go back to manage all keywords
+management.create-keyword.error.empty.keyword=Enter a new keyword
+management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list

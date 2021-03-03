@@ -23,6 +23,8 @@ import javax.inject.{Inject, Singleton}
 import models._
 import models.forms._
 import models.reporting._
+import models.viewmodels.managementtools.ReportingTabViewModel
+import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, QueuesService, ReportingService, UserService}
