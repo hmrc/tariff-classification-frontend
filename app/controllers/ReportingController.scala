@@ -122,7 +122,7 @@ class ReportingController @Inject() (
         users   <- getUsers
         usersByPid = users.results.map(user => user.id -> user).toMap
         teamsById <- getTeams
-      } yield Ok(caseReportView(report, pagination, results, usersByPid, teamsById, "case-report"))
+      } yield Ok(caseReportView(report, pagination, results, usersByPid, teamsById))
     }
 
   def summaryReport(report: SummaryReport, pagination: Pagination) =
@@ -136,7 +136,7 @@ class ReportingController @Inject() (
         users   <- getUsers
         usersByPid = users.results.map(user => user.id -> user).toMap
         teamsById <- getTeams
-      } yield Ok(summaryReportView(report, pagination, results, usersByPid, teamsById, "summary-report"))
+      } yield Ok(summaryReportView(report, pagination, results, usersByPid, teamsById))
     }
 
   def getReportByName(reportName: String) =

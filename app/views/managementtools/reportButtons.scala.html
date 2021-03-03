@@ -18,7 +18,8 @@
 @import models.reporting
 
 @(
-  report: reporting.Report
+  report: reporting.Report,
+  id: String
 )(implicit messages: Messages)
 
 @downloadLink = {
@@ -32,16 +33,16 @@
   }
 }
 
-<div class="form-groups">
+<div id="@{id}-buttons" class="form-groups">
 
   <div class="form-group">
-    <a class="button button-gray" href="javascript:window.print()">
+    <a id="@{id}-print-button" class="button button-gray" href="javascript:window.print()">
       @messages("reporting.view_report.print")
     </a>
   </div>
 
   <div class="form-group">
-    <a class="button button-gray" href="#">
+    <a id="@{id}-download-button" class="button button-gray" href="@downloadLink">
       @messages("reporting.view_report.download")
     </a>
   </div>
