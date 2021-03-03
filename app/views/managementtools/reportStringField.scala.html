@@ -40,15 +40,15 @@
   @{
     teams.get(teamId)
       .map(_.name)
-      .getOrElse(messages("reporting.team.unassigned"))
+      .getOrElse(messages("reporting.team.unknown"))
   }
 }
 
 <td id="@{id}-@{field.fieldName}-@{index}">
   @if(field == ReportField.Reference) {
-    @result.data.map { id =>
-      <a href="@routes.CaseController.get(id)">@id</a>
-    }.getOrElse(messages("reporting.reference.unknown"))
+    @result.data.map { reference =>
+      <a href="@routes.CaseController.get(reference)">@reference</a>
+    }.getOrElse(messages("reporting.result.unknown"))
   } else if (field == ReportField.User) {
     @result.data.map(userForPid).getOrElse(messages("reporting.user.unassigned"))
   } else if (field == ReportField.Team) {
