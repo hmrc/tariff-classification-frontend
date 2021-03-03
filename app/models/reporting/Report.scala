@@ -57,9 +57,17 @@ object Report {
   )
 
   val cancelledCasesPerUser = SummaryReport(
-    name      = "Number of cases per user",
+    name      = "Cancelled cases by assigned user",
     groupBy   = ReportField.User,
     sortBy    = ReportField.User,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.CANCELLED)
+  )
+
+  val cancelledCasesByChapter = SummaryReport(
+    name      = "Cancelled cases by chapter",
+    groupBy   = ReportField.Chapter,
+    sortBy    = ReportField.Chapter,
     sortOrder = SortDirection.ASCENDING,
     statuses  = Set(PseudoCaseStatus.CANCELLED)
   )
@@ -68,7 +76,8 @@ object Report {
     "number-of-open-cases"             -> numberOfOpenCases,
     "completed-cases"                  -> completedCases,
     "number-of-cases-per-user"         -> numberOfCasesPerUser,
-    "cancelled-cases-by-assigned-user" -> cancelledCasesPerUser
+    "cancelled-cases-by-assigned-user" -> cancelledCasesPerUser,
+    "cancelled-cases-by-chapter"       -> cancelledCasesByChapter
   )
 
   private val groupByKey      = "group_by"
