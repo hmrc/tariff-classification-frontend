@@ -32,7 +32,7 @@
                 <span class="form-hint"></span>
             </div>
 
-            @helper.form(action = controllers.v2.routes.ManageKeywordsController.editApprovedKeywords(keywordsTabViewModel.),
+            @helper.form(action = controllers.v2.routes.ManageKeywordsController.editApprovedKeywords("potatoes"),
                 'id -> "edit-approved-keywords-form", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 

@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models.forms.KeywordForm
+import models.forms.v2.EditApprovedKeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
 import models.{CaseHeader, CaseStatus, Keyword, NoPagination, Paged, Permission}
@@ -44,6 +45,7 @@ class ManageKeywordsController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
   val keywordForm: Form[String] = KeywordForm.form
+  val editKeyword: Form[String] = EditApprovedKeywordForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -110,13 +112,13 @@ class ManageKeywordsController @Inject() (
       )
     )
 
-  def editApprovedKeywords(): Action[AnyContent] =
+  def editApprovedKeywords(keywordName : String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       for {
         count <- keywordService.fetchCaseKeywords().map(_.results.count(keyword => keyword.keyword.approved))
 
       } yield Ok(
-        editApprovedKeywordsView(count, keywordForm)
+        editApprovedKeywordsView(count, keywordName, editKeyword)
       )
     )
 }

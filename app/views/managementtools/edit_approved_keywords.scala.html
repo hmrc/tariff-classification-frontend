@@ -25,10 +25,19 @@
 @import controllers.v2.routes.ManageKeywordsController
 @import models.viewmodels.ManagerToolsKeywordsTab
 @import models.viewmodels.SubNavigationTab
+@import views.html.forms.components.{input_textarea, input_radiogroup, input_checkbox_group, input_text}
 
 @this()
 
-@(count: Int, form: Form[String], activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(count: Int, keywordName: String, form: Form[String], activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@inputTextContent(labelText: String) = {
+    @input_text(
+    label = labelText,
+    field = form("rename-keyword"),
+    inputClass = Some("w-50"),
+    customGroupClasses = Some("pl-15"))
+}
 
 @main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.edit-approved-keywords.title"))) {
 
@@ -44,7 +53,8 @@
         <p id="keyword-edit-p">@messages("management.change-keywords.edit-approved-keywords.p1", count)</p>
     </div>
 
-@*//@helper.form(action = ManageKeywordsController.editApprovedKeywords(), 'id -> "edit-approved-keywords-form", 'novalidate -> "novalidate") {*@
+@helper.form(action = controllers.v2.routes.ManageKeywordsController.editApprovedKeywords(keywordName), 'id -> "create_correspondence-form", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
 
         @input_radiogroup(
             field = form("keyword-status"),
@@ -52,7 +62,7 @@
             labelClass = Some("heading-large"),
             options = Seq(
                 RadioOption("delete",messages("management.change-keywords.edit-approved-keywords.radio.delete")),
-                RadioOption("rename",messages("management.change-keywords.edit-approved-keywords.radio.rename"))
+                RadioOption("rename", "rename" ,Some("rename-keyword"), Some(inputTextContent(messages("management.change-keywords.edit-approved-keywords.radio.rename")))))
             ),
         id = "change-keyword-status",
         customGroupId = Some("keyword-status")
@@ -62,5 +72,5 @@
         <button class="button" id="keyword-continue" type="submit">Continue</button>
     </div>
 
-@*//    }*@
+  }
 }
