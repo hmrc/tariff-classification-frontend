@@ -30,7 +30,7 @@
             @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")
         </dt>
         <dd class="cya-answer" id="summary">
-            <a class="float-right" href="#">@messages("reporting.report_tab.run-report")</a>
+            <a class="float-right" href="@routes.ReportingController.getReportByName(result.reportId)">@messages("reporting.report_tab.run-report")</a>
         </dd>
     </div>
     }
