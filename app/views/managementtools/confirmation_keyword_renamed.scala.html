@@ -16,19 +16,14 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import views.forms.components.RadioOption
-@import views.html.forms.components.input_radiogroup
 @import views.html.includes.main
-@import views.html.partials.error_summary
 @import views.html.components.manager_tools_secondary_navigation
 @import models.viewmodels.ManagerToolsKeywordsTab
 @import models.viewmodels.SubNavigationTab
-@import views.html.forms.components.{input_text}
-@import views.html.components.input_accessible_auto_complete
-@import views.html.partials.back_link
 
 @this()
-@(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@(oldKeywordName: String, newKeywordName: String, activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("Keyowrd deleted"))) {
 

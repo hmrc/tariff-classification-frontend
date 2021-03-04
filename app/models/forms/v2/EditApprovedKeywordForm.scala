@@ -16,16 +16,38 @@
 
 package models.forms.v2
 
-import models.forms.mappings.FormMappings.fieldNonEmpty
+import models.forms.mappings.FormMappings.oneOf
+import models.forms.v2.EditKeywordAction.EditKeywordAction
 import play.api.data.Form
-import play.api.data.Forms.mapping
+import play.api.data.Forms.{text, tuple}
+import play.api.data.validation._
+
+object EditKeywordAction extends Enumeration {
+  type EditKeywordAction = Value
+  val DELETE, RENAME = Value
+}
 
 object EditApprovedKeywordForm {
+  def nonExistingKeyword(allKeywords: Seq[String]): Constraint[(EditKeywordAction, String)] =
+    Constraint {
+      case (EditKeywordAction.DELETE, _) => Valid
+      case (EditKeywordAction.RENAME, name: String) if allKeywords.contains(name) =>
+        Invalid("management.create-keyword.error.duplicate.keyword")
+      case _ => Valid
+    }
 
-  val form: Form[String] = Form(
-    mapping(
-      "action" -> fieldNonEmpty("error.empty.action")
-    )(identity)(Some(_))
+  val nonEmptyKeyword: Constraint[(EditKeywordAction, String)] = Constraint {
+    case (EditKeywordAction.DELETE, _)                             => Valid
+    case (EditKeywordAction.RENAME, name: String) if name.nonEmpty => Valid
+    case _                                                         => Invalid("management.create-keyword.error.empty.keyword")
+  }
+
+  def formWithAuto(allKeywords: Seq[String]): Form[(EditKeywordAction, String)] = Form(
+    tuple(
+      "action" -> oneOf("error.empty.action", EditKeywordAction)
+        .transform[EditKeywordAction](EditKeywordAction.withName, _.toString),
+      "keywordName" -> text
+    ).verifying(nonEmptyKeyword, nonExistingKeyword(allKeywords))
   )
 
 }

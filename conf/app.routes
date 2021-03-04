@@ -168,6 +168,8 @@ POST       /users/user-delete/:pid                               controllers.v2.
 GET        /users/user-delete-done                               controllers.v2.ManageUserController.doneDeleteUser(userName: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
 GET        /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.displayManageKeywords()
+GET        /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.postDisplayManageKeywords()
+
 GET        /keywords/keyword-create                              controllers.v2.ManageKeywordsController.newKeyword()
 POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
@@ -175,7 +177,7 @@ GET        /keywords/keyword-create-done                         controllers.v2.
 GET        /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.editApprovedKeywords(keywordName: String)
 POST       /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.postEditApprovedKeywords(keywordName: String)
 
-GET      /keywords/keyword-deleted                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab ?= ManagerToolsKeywordsTab)
-GET      /keywords/keyword-renamed                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordRenamed(activeSubNav: SubNavigationTab ?= ManagerToolsKeywordsTab)
+GET        /keywords/keyword-deleted                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab ?= ManagerToolsKeywordsTab)
+GET        /keywords/keyword-renamed                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordRenamed(activeSubNav: SubNavigationTab ?= ManagerToolsKeywordsTab)
 
 

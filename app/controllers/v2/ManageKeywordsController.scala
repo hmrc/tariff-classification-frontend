@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models.forms.KeywordForm
-import models.forms.v2.EditApprovedKeywordForm
+import models.forms.v2.{EditApprovedKeywordForm, EditKeywordAction}
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
 import models.{Keyword, NoPagination, Permission}
@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.Future.successful
 
 class ManageKeywordsController @Inject() (
   verify: RequestActions,
@@ -47,7 +48,6 @@ class ManageKeywordsController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
   val keywordForm: Form[String] = KeywordForm.form
-  val editKeyword: Form[String] = EditApprovedKeywordForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -64,6 +64,9 @@ class ManageKeywordsController @Inject() (
         )
       )
     }
+
+  def postDisplayManageKeywords(): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request => ???)
 
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -120,15 +123,45 @@ class ManageKeywordsController @Inject() (
         count       <- keywordService.fetchCaseKeywords().map(_.results.count(keyword => keyword.keyword.approved))
         allKeywords <- keywordService.findAll(NoPagination())
       } yield Ok(
-        editApprovedKeywordsView(count, keywordName, allKeywords, editKeyword, keywordForm)
+        editApprovedKeywordsView(
+          count,
+          keywordName,
+          allKeywords,
+          EditApprovedKeywordForm.formWithAuto(allKeywords.results.map(_.name))
+        )
       )
     )
 
-  def postEditApprovedKeywords(keywordName: String): Action[AnyContent] =
+  def postEditApprovedKeywords(
+    keywordName: String
+  ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
-
-        ???
-
+      keywordService.findAll(NoPagination()).flatMap { keywords =>
+        EditApprovedKeywordForm
+          .formWithAuto(keywords.results.map(_.name))
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              Future.successful(
+                BadRequest(editApprovedKeywordsView(0, keywordName, keywords, formWithErrors))
+              ), {
+              case (EditKeywordAction.DELETE, _) =>
+                successful(
+                  Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmationKeywordDeleted())
+                )
+              case (EditKeywordAction.RENAME, keywordToRename) =>
+                successful(
+                  keywordService.renameKeyword(Keyword(keywordToRename, true), Keyword(keywordName, true)).map {
+                    renamedKeyword =>
+                      Redirect(
+                        controllers.v2.routes.ManageKeywordsController
+                          .displayConfirmationKeywordRenamed(keywordName, keywordToRename)
+                      )
+                  }
+                )
+            }
+          )
+      }
     )
 
   def displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
@@ -138,10 +171,10 @@ class ManageKeywordsController @Inject() (
       )
     )
 
-  def displayConfirmationKeywordRenamed(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def displayConfirmationKeywordRenamed(oldKeywordName: String, newKeywordName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
-        confirmKeywordRenamedView(activeSubNav)
+        confirmKeywordRenamedView(oldKeywordName, newKeywordName)
       )
     )
 }
