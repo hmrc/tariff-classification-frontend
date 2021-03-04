@@ -31,17 +31,19 @@ import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.managementtools.manage_reports_view
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val reportingService    = mock[ReportingService]
-  private val queueService        = injector.instanceOf[QueuesService]
-  private val usersService        = mock[UserService]
-  private val casesService        = mock[CasesService]
-  private val operator            = mock[Operator]
-  private val manage_reports_view = injector.instanceOf[manage_reports_view]
+  private val reportingService                     = mock[ReportingService]
+  private val queueService                         = injector.instanceOf[QueuesService]
+  private val usersService                         = mock[UserService]
+  private val casesService                         = mock[CasesService]
+  private val operator                             = mock[Operator]
+  private val requiredPermissions: Set[Permission] = Set(Permission.VIEW_REPORTS)
+  private val noPermissions: Set[Permission]       = Set.empty
+  private lazy val manage_reports_view             = injector.instanceOf[manage_reports_view]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
