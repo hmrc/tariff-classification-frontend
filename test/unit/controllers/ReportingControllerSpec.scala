@@ -59,6 +59,186 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       realAppConfig
     )
 
+  "downloadCaseReport" should {
+    val report = CaseReport(
+      name   = "ATaR Summary Report",
+      fields = List(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
+    )
+
+    val reportResults: Paged[Map[String, ReportResultField[_]]] = Paged(
+      Seq(
+        Map(
+          ReportField.Reference.fieldName  -> StringResultField(ReportField.Reference.fieldName, Some("123456")),
+          ReportField.GoodsName.fieldName  -> StringResultField(ReportField.GoodsName.fieldName, Some("Fireworks")),
+          ReportField.TraderName.fieldName -> StringResultField(ReportField.TraderName.fieldName, Some("Gandalf"))
+        ),
+        Map(
+          ReportField.Reference.fieldName -> StringResultField(ReportField.Reference.fieldName, Some("987654")),
+          ReportField.GoodsName.fieldName -> StringResultField(ReportField.GoodsName.fieldName, Some("Beer")),
+          ReportField.TraderName.fieldName -> StringResultField(
+            ReportField.TraderName.fieldName,
+            Some("Barliman Butterbur")
+          )
+        )
+      )
+    )
+
+    "return 200 OK and text/csv content type" in {
+      given(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Future.successful(reportResults))
+        .willReturn(Future.successful(Paged.empty[Map[String, ReportResultField[_]]]))
+
+      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+        .successful(Paged.empty[Operator])
+
+      val result =
+        await(controller(Set(Permission.VIEW_REPORTS)).downloadCaseReport(report)(fakeRequest))
+
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/csv")
+      contentAsString(result) shouldBe (
+        Seq(
+          "Reference,Goods name,Trader name",
+          "123456,Fireworks,Gandalf",
+          "987654,Beer,Barliman Butterbur"
+        ).mkString(
+          "",
+          "\r\n",
+          "\r\n"
+        )
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).downloadCaseReport(report)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
+
+  "downloadQueueReport" should {
+    val report = QueueReport()
+
+    val reportResults: Paged[QueueResultGroup] = Paged(
+      Seq(
+        QueueResultGroup(4, None, ApplicationType.ATAR),
+        QueueResultGroup(3, None, ApplicationType.LIABILITY),
+        QueueResultGroup(7, None, ApplicationType.CORRESPONDENCE),
+        QueueResultGroup(1, None, ApplicationType.MISCELLANEOUS),
+        QueueResultGroup(8, Some("2"), ApplicationType.ATAR),
+        QueueResultGroup(5, Some("2"), ApplicationType.LIABILITY),
+        QueueResultGroup(1, Some("3"), ApplicationType.CORRESPONDENCE),
+        QueueResultGroup(2, Some("3"), ApplicationType.MISCELLANEOUS)
+      )
+    )
+
+    "return 200 OK and text/csv content type" in {
+      given(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Future.successful(reportResults))
+        .willReturn(Future.successful(Paged.empty[QueueResultGroup]))
+
+      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+        .successful(Paged.empty[Operator])
+
+      val result =
+        await(controller(Set(Permission.VIEW_REPORTS)).downloadQueueReport(report)(fakeRequest))
+
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/csv")
+      contentAsString(result) shouldBe (
+        Seq(
+          "Assigned team,Case type,Count",
+          "Gateway,ATaR,4",
+          "Gateway,Liability,3",
+          "Gateway,Correspondence,7",
+          "Gateway,Miscellaneous,1",
+          "ACT,ATaR,8",
+          "ACT,Liability,5",
+          "CAP,Correspondence,1",
+          "CAP,Miscellaneous,2"
+        ).mkString(
+          "",
+          "\r\n",
+          "\r\n"
+        )
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).downloadQueueReport(report)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
+
+  "downloadSummaryReport" should {
+    val report = SummaryReport(
+      name      = "Case count by status",
+      groupBy   = ReportField.Status,
+      sortBy    = ReportField.Status,
+      maxFields = Seq(ReportField.ElapsedDays)
+    )
+
+    val reportResults: Paged[ResultGroup] = Paged(
+      Seq(
+        SimpleResultGroup(
+          2,
+          StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.COMPLETED)),
+          List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(5)))
+        ),
+        SimpleResultGroup(
+          4,
+          StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.CANCELLED)),
+          List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(2)))
+        ),
+        SimpleResultGroup(
+          6,
+          StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.OPEN)),
+          List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(8)))
+        ),
+        SimpleResultGroup(
+          7,
+          StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.NEW)),
+          List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(4)))
+        )
+      )
+    )
+
+    "return 200 OK and text/csv content type" in {
+      given(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Future.successful(reportResults))
+        .willReturn(Future.successful(Paged.empty[ResultGroup]))
+
+      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+        .successful(Paged.empty[Operator])
+
+      val result =
+        await(controller(Set(Permission.VIEW_REPORTS)).downloadSummaryReport(report)(fakeRequest))
+
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/csv")
+      contentAsString(result) shouldBe (
+        Seq(
+          "Case status,Count,Elapsed days",
+          "COMPLETED,2,5",
+          "CANCELLED,4,2",
+          "OPEN,6,8",
+          "NEW,7,4"
+        ).mkString(
+          "",
+          "\r\n",
+          "\r\n"
+        )
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).downloadSummaryReport(report)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
+
   "caseReport" should {
     val report = CaseReport(
       name   = "ATaR Summary Report",

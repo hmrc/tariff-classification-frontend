@@ -16,8 +16,12 @@
 
 package controllers
 
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+
 import akka.stream.scaladsl.Source
 import akka.stream.alpakka.csv.scaladsl.CsvFormatting
+import cats.syntax.all._
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import models._
@@ -25,11 +29,11 @@ import models.forms._
 import models.reporting._
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, QueuesService, ReportingService, UserService}
+import service.{QueuesService, ReportingService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools.{caseReportView, queueReportView, reportChooseDates, reportChooseTeams, summaryReportView}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ReportingController @Inject() (
@@ -39,20 +43,84 @@ class ReportingController @Inject() (
   usersService: UserService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
 
   lazy val chooseDatesForm = ReportDateForm.form
   lazy val chooseTeamsForm = ReportTeamForm.form
 
+  val DownloadPageSize               = 1000
+  val DownloadPagination: Pagination = SearchPagination(pageSize = DownloadPageSize)
+  val LocalDateFormatter             = DateTimeFormatter.ISO_LOCAL_DATE
+
   def downloadCaseReport(report: CaseReport) =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request => NotFound)
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
+      val dateString = LocalDateFormatter.format(dateTime)
+      val getUsers   = usersService.getAllUsers(Seq.empty, "", NoPagination())
+      val getTeams   = queuesService.getAllById
+
+      (getUsers, getTeams).mapN {
+        case (users, teamsById) =>
+          val usersByPid = users.results.map(user => user.id -> user).toMap
+
+          val fileData = Paged
+            .stream(DownloadPagination)(reportingService.caseReport(report, _))
+            .map(Reports.formatCaseReport(report, usersByPid, teamsById))
+            .prepend(Source.single(Reports.formatHeaders(report)))
+            .via(CsvFormatting.format[List[String]]())
+
+          Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
+            .withHeaders(
+              "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
+            )
+      }
+    }
 
   def downloadSummaryReport(report: SummaryReport) =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request => NotFound)
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
+      val dateString = LocalDateFormatter.format(dateTime)
+      val getUsers   = usersService.getAllUsers(Seq.empty, "", NoPagination())
+      val getTeams   = queuesService.getAllById
+
+      (getUsers, getTeams).mapN {
+        case (users, teamsById) =>
+          val usersByPid = users.results.map(user => user.id -> user).toMap
+
+          val fileData = Paged
+            .stream(DownloadPagination)(reportingService.summaryReport(report, _))
+            .map(Reports.formatSummaryReport(report, usersByPid, teamsById))
+            .prepend(Source.single(Reports.formatHeaders(report)))
+            .via(CsvFormatting.format[List[String]]())
+
+          Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
+            .withHeaders(
+              "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
+            )
+      }
+    }
 
   def downloadQueueReport(report: QueueReport) =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request => NotFound)
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
+      val dateString = LocalDateFormatter.format(dateTime)
+      val getTeams   = queuesService.getAllById
+
+      getTeams.map { teamsById =>
+        val fileData = Paged
+          .stream(DownloadPagination)(reportingService.queueReport(report, _))
+          .map(Reports.formatQueueReport(teamsById))
+          .prepend(Source.single(Reports.formatHeaders(report)))
+          .via(CsvFormatting.format[List[String]]())
+
+        Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
+          .withHeaders(
+            "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
+          )
+      }
+    }
 
   def showChangeDateFilter(report: Report, pagination: Pagination) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
