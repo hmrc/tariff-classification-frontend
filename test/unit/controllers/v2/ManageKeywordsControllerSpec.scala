@@ -156,6 +156,65 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
   }
 
+  "Approve, Reject or Rename Keyword" should {
+
+    "return 303 SEE_OTHER when keyword is successfully updated" in {
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      given(keywordService.updateKeywordStatus(any[Keyword], any[KeywordChangeStatusForm])(any[HeaderCarrier]))
+        .willReturn(Future(Keyword("updatedKeyword", true)))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .changeKeywordStatus("originalKeywordName", "caseReference", None)(newFakePUTRequestWithCSRF(Map("keyword" -> "updatedKeyword"))))
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword("approvedKeyword").path())
+
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).changeKeywordStatus("keywordName", "reference", None)(newFakePOSTRequestWithCSRF(Map("keyword" -> "updatedKeyword"))))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+    "render error if renamed Keyword is empty" in {
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS)).changeKeywordStatus("keywordName", "reference", None)(newFakePUTRequestWithCSRF(Map("keyword" -> ""))))
+
+      status(result)          shouldBe Status.BAD_REQUEST
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("error-summary")
+      contentAsString(result) should include(messages("management.update-keyword.error.empty.renamed.keyword"))
+
+    }
+
+    "render error if renamed Keyword would be a duplicate keyword entered" in {
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .changeKeywordStatus("keywordName", "reference", Some("shoes"))(newFakePUTRequestWithCSRF(Map("keyword" -> keywords.head.name))))
+
+      status(result)          shouldBe Status.BAD_REQUEST
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("error-summary")
+      contentAsString(result) should include(messages("management.update-keyword.error.duplicate.keyword"))
+    }
+
+  }
+
   "displayConfirmKeyword" should {
 
     "return 200 OK and HTML content type" in {

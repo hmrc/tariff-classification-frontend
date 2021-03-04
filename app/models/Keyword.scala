@@ -19,7 +19,8 @@ import models.LiabilityStatus.LiabilityStatus
 
 case class Keyword(
   name: String,
-  approved: Boolean = false
+  approved: Boolean = false,
+  rejected: Boolean = false
 )
 
 case class CaseHeader(

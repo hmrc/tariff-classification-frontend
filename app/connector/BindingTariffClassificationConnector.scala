@@ -275,6 +275,12 @@ class BindingTariffClassificationConnector @Inject() (
       client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(keyword))
     }
 
+  def updateKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
+    withMetricsTimerAsync("update-keyword") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
+      client.PUT[Keyword, Keyword](url = url, body = keyword)
+    }
+
   def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
     withMetricsTimerAsync("find-all-keywords") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"

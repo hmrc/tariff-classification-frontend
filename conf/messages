@@ -8,7 +8,6 @@ page.title.manager_tools.reports=Reports
 page.title.manager_tools.users=Users
 page.title.manager_tools.tools=Teams
 page.title.manager_tools.keywords=Keywords
-page.confirmation.keywords.info=This keyword has been rejected on the {0} case and will not be available to use in any future cases.
 cases.menu.gateway-cases=Gateway cases
 cases.list.my-cases=Cases for {0}
 cases.menu.assigned-cases=Assigned cases
@@ -502,7 +501,6 @@ page.title.edit_liability_decision=Edit liability decision
 page.title.create_misc.h1=Create miscellaneous case
 page.title.document.not.found=Document not found
 page.title.user.not.found=User not found
-page.title.keyword=Keyword {0}
 view.attachment.unavailable.title=Attachment unavailable
 view.attachment.unavailable.heading=Attachment is unavailable
 view.attachment.unavailable.content.failedToProcess=File failed to process. This could be because a virus was found.
@@ -1252,6 +1250,11 @@ management.create-keyword.new-keyword-done.link=Go back to manage all keywords
 management.create-keyword.error.empty.keyword=Enter a new keyword
 management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list
 
-
-
-
+management.update-keyword.confirmation.custom-title=Keyword Update Confirmation Page
+management.update-keyword.confirmation.title=Keyword {0}
+management.update-keyword.confirmation.title.keywords_old_new={0} has been renamed to {1}
+management.update-keyword.confirmation.info=This keyword has been {0} on the {1} case and will not be available to use in any future cases.
+management.update-keyword.confirmation.renamed.info=This keyword has been {0} with {1} on the {2} case and will not be available to use in any future cases.
+management.update-keyword.error.no-status-selected=Choose to approve, reject or rename this keyword
+management.update-keyword.error.empty.renamed.keyword=Enter a keyword to rename
+management.update-keyword.error.duplicate.keyword=This keyword has already been added to the list

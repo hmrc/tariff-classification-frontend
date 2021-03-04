@@ -1145,4 +1145,53 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
     }
   }
+
+  "Connector 'Approve, Reject or Rename Keyword'" should {
+
+    "update keyword" in {
+      val keyword = Keyword("updatedkeyword", true)
+      val request = Json.toJson(NewKeywordRequest(keyword)).toString()
+      val response = Json.toJson(keyword).toString()
+
+      stubFor(
+        post(urlEqualTo(s"/keyword/updatedkeyword"))
+          .withRequestBody(equalToJson(request))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_CREATED)
+              .withBody(response)
+          )
+      )
+
+      await(connector.createKeyword(keyword)) shouldBe keyword
+
+      verify(
+        postRequestedFor(urlEqualTo(s"/keyword"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "update user" in {
+    val operator = Operator("1")
+    val request  = Json.toJson(NewUserRequest(operator)).toString()
+    val response = Json.toJson(operator).toString()
+
+    stubFor(
+      post(urlEqualTo(s"/users/user:1"))
+        .withRequestBody(equalToJson(request))
+        .willReturn(
+          aResponse()
+            .withStatus(HttpStatus.SC_CREATED)
+            .withBody(response)
+        )
+    )
+
+    await(connector.createUser(operator)) shouldBe operator
+
+    verify(
+      postRequestedFor(urlEqualTo(s"/users"))
+        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+    )
+  }
 }

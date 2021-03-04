@@ -171,4 +171,4 @@ GET        /keywords/manage-keywords                             controllers.v2.
 GET        /keywords/keyword-create                              controllers.v2.ManageKeywordsController.newKeyword()
 POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
-
+POST       /keywords/keyword-update-done                         controllers.v2.ManageKeywordsController.displayConfirmKeywordChange(savedKeyword: Keyword, status: String, oldKeywordName: Option[String], operator: Operator)

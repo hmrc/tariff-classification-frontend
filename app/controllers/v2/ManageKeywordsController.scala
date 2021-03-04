@@ -22,11 +22,11 @@ import controllers.RequestActions
 import models.forms.KeywordForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
-import models.{Keyword, NoPagination, Permission}
+import models.{Keyword, NoPagination, Operator, Permission}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.ManageKeywordsService
+import service.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -36,13 +36,17 @@ class ManageKeywordsController @Inject()(
   verify: RequestActions,
   mcc: MessagesControllerComponents,
   keywordService: ManageKeywordsService,
+  casesService: CasesService,
   val manageKeywordsView: views.html.managementtools.manage_keywords_view,
   val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
+  val keywordUpdatedConfirmation: views.html.managementtools.confirm_keyword_status,
   val newKeywordView: views.html.managementtools.new_keyword_view,
+  val changeKeywordStatusView: views.html.managementtools.change_keyword_status_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
   val keywordForm: Form[String] = KeywordForm.form
+  val ChangeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -99,6 +103,38 @@ class ManageKeywordsController @Inject()(
       }
     }
 
+  def changeKeywordStatus(originalKeywordName: String, caseReference: String, newKeywordName: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+
+    val operator: Future[Option[Operator]] = casesService.getOne(caseReference).map(c => c.get.assignee)
+
+      keywordService.findAll(NoPagination()).flatMap {
+        keywords =>
+          val originalKeywordOpt: Option[Keyword] = keywords.results.find(keyword => keyword.name == originalKeywordName)
+          if(newKeywordName.isDefined) {
+            val keywordExists: Boolean = keywords.results.exists(keyword => keyword.name == newKeywordName.get)
+          }
+
+          ChangeKeywordStatusForm.bindFromRequest.fold(
+            formWithErrors =>
+              Future.successful(BadRequest(
+                changeKeywordStatusView(
+                  originalKeywordName,
+                  caseReference,
+                  formWithErrors
+                )
+              )),
+            keywordChangeStatusForm =>
+              keywordService.updateKeywordStatus(originalKeywordOpt.get, keywordChangeStatusForm).map { savedKeyword: Keyword =>
+                Redirect(
+                  controllers.v2.routes.ManageKeywordsController.displayConfirmKeywordChange(
+                    savedKeyword, keywordChangeStatusForm.action, originalKeywordOpt.get.name, operator.map(f => f.get))
+                )
+              }
+          )
+      }
+    }
+
   def displayConfirmKeyword(
     saveKeyword: String,
     activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
@@ -107,4 +143,16 @@ class ManageKeywordsController @Inject()(
         Ok(
           keywordCreatedConfirm(activeSubNav, saveKeyword)
       ))
+
+  def displayConfirmKeywordChange(
+    savedKeyword: Keyword,
+    status: String,
+    oldKeywordName: Option[String],
+    operator: Operator,
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+      implicit request =>
+        Ok(
+          keywordUpdatedConfirmation(activeSubNav, savedKeyword, status, oldKeywordName, operator)
+        ))
 }

@@ -34,4 +34,12 @@ class ManageKeywordsService @Inject()(connector: BindingTariffClassificationConn
 
   def fetchCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     connector.getCaseKeywords()
+
+  def updateKeywordStatus(keyword: Keyword, keywordStatusChange: KeywordStatusChange)(implicit hc: HeaderCarrier): Future[Keyword] = {
+    keywordStatusChange.action.toUpperCase match {
+      case "APPROVED" => connector.updateKeyword(keyword.copy(approved = true, rejected = false))
+      case "REJECTED" => connector.updateKeyword(keyword.copy(approved = false, rejected = true))
+      case "REPLACED" => connector.updateKeyword(keyword.copy(name = keywordStatusChange.newKeywordName.get))
+    }
+  }
 }
