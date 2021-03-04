@@ -21,7 +21,7 @@
 
 @(summaryReportTab: ReportTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<dl class="govuk-check-your-answers cya-questions-short">
+<dl class="govuk-check-your-answers cya-questions-long">
 
     @for((result, index) <- summaryReportTab.reports.zipWithIndex) {
     <div id="case-details-summary" class="grid-row">

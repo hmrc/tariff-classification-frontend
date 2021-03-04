@@ -45,7 +45,7 @@ class KeywordsTabSpec extends ViewSpec {
       val doc = view(
         manageKeywordsView()
       )
-      doc.getElementById("common-cases-heading") should containText("Manage keywords")
+      doc.getElementById("common-cases-heading") should containText("Reports Dashboard")
       doc.getElementById("create-new-keyword-button") should containText("Create new keyword")
       doc.getElementById("manage-keywords-tabs") should containText(messages("management.manage-keywords.approve-tab-title", 1))
       doc.getElementById("manage-keywords-tabs") should containText("All keywords")
