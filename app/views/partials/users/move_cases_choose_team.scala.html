@@ -39,9 +39,18 @@ queues: List[Queue],
 activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+
+@chooseMessage = @{
+    if(numberOfCases == 1){
+    messages("users.move_cases.choose_team.header.single")
+    }else{
+        messages("users.move_cases.choose_team.header", numberOfCases)
+    }
+}
+
 @main(
 bodyClasses = None,
-customTitle = Some(messages("Manage user")),
+customTitle = Some(chooseMessage),
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)

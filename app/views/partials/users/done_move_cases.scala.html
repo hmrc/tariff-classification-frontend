@@ -36,7 +36,7 @@ activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 
 @main(
 bodyClasses = None,
-customTitle = Some(messages("users.move_cases.done.header")),
+customTitle = Some(messages("users.move_cases.done.header", originalUser)),
 customPrimaryNavTab = ManagerToolsTab
 ) {
 @manager_tools_secondary_navigation(activeSubNav)
