@@ -22,8 +22,9 @@ import org.apache.http.HttpStatus
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils._
-
 import java.time.Instant
+
+import play.api.http.Status
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
@@ -37,11 +38,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases in 'gateway' queue" in {
       val url = buildQueryUrl(
-        types        = ApplicationType.values.toSeq,
+        types = ApplicationType.values.toSeq,
         withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
-        queueId      = "none",
-        assigneeId   = "none",
-        pag          = TestPagination()
+        queueId = "none",
+        assigneeId = "none",
+        pag = TestPagination()
       )
 
       stubFor(
@@ -63,11 +64,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in 'gateway' queue" in {
       val url = buildQueryUrl(
-        types        = ApplicationType.values.toSeq,
+        types = ApplicationType.values.toSeq,
         withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
-        queueId      = "none",
-        assigneeId   = "none",
-        pag          = TestPagination()
+        queueId = "none",
+        assigneeId = "none",
+        pag = TestPagination()
       )
 
       stubFor(
@@ -89,11 +90,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get empty cases in 'act' queue" in {
       val url = buildQueryUrl(
-        types        = ApplicationType.values.toSeq,
+        types = ApplicationType.values.toSeq,
         withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
-        queueId      = "2",
-        assigneeId   = "none",
-        pag          = TestPagination()
+        queueId = "2",
+        assigneeId = "none",
+        pag = TestPagination()
       )
 
       stubFor(
@@ -115,11 +116,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in 'act' queue" in {
       val url = buildQueryUrl(
-        types        = ApplicationType.values.toSeq,
+        types = ApplicationType.values.toSeq,
         withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
-        queueId      = "2",
-        assigneeId   = "none",
-        pag          = TestPagination()
+        queueId = "2",
+        assigneeId = "none",
+        pag = TestPagination()
       )
 
       stubFor(
@@ -141,11 +142,11 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases for liability version of 'act' queue" in {
       val url = buildQueryUrl(
-        types        = Seq(ApplicationType.LIABILITY),
+        types = Seq(ApplicationType.LIABILITY),
         withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
-        queueId      = "2",
-        assigneeId   = "none",
-        pag          = TestPagination()
+        queueId = "2",
+        assigneeId = "none",
+        pag = TestPagination()
       )
 
       stubFor(
@@ -172,10 +173,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
-        types      = ApplicationType.values.toSeq,
-        statuses   = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+        types = ApplicationType.values.toSeq,
+        statuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
         assigneeId = "none",
-        queueIds   = Queues.allQueues.map(_.id),
+        queueIds = Queues.allQueues.map(_.id),
         pagination = pagination
       )
 
@@ -242,8 +243,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val url =
         buildQueryUrl(
           withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
-          assigneeId   = "assignee",
-          pag          = TestPagination()
+          assigneeId = "assignee",
+          pag = TestPagination()
         )
 
       stubFor(
@@ -267,8 +268,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val url =
         buildQueryUrl(
           withStatuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
-          assigneeId   = "assignee",
-          pag          = TestPagination()
+          assigneeId = "assignee",
+          pag = TestPagination()
         )
 
       stubFor(
@@ -339,10 +340,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
 
       val search = Search(
-        traderName      = Some("trader"),
-        commodityCode   = Some("comm-code"),
+        traderName = Some("trader"),
+        commodityCode = Some("comm-code"),
         decisionDetails = Some("decision-details"),
-        status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
         applicationType = Some(
           Set(
             ApplicationType.ATAR,
@@ -532,9 +533,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Update Case'" should {
 
     "update valid case" in {
-      val ref       = "case-reference"
+      val ref = "case-reference"
       val validCase = Cases.btiCaseExample.copy(reference = ref)
-      val json      = Json.toJson(validCase).toString()
+      val json = Json.toJson(validCase).toString()
 
       stubFor(
         put(urlEqualTo(s"/cases/$ref"))
@@ -555,9 +556,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "update with an unknown case reference" in {
-      val unknownRef  = "unknownRef"
+      val unknownRef = "unknownRef"
       val unknownCase = Cases.btiCaseExample.copy(reference = unknownRef)
-      val json        = Json.toJson(unknownCase).toString()
+      val json = Json.toJson(unknownCase).toString()
 
       stubFor(
         put(urlEqualTo(s"/cases/$unknownRef"))
@@ -583,9 +584,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "create valid case" in {
       val application = Cases.btiApplicationExample
-      val validCase   = Cases.btiCaseExample
-      val request     = Json.toJson(NewCaseRequest(application)).toString()
-      val response    = Json.toJson(validCase).toString()
+      val validCase = Cases.btiCaseExample
+      val request = Json.toJson(NewCaseRequest(application)).toString()
+      val response = Json.toJson(validCase).toString()
 
       stubFor(
         post(urlEqualTo(s"/cases"))
@@ -609,12 +610,12 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Create Event'" should {
 
     "create event" in {
-      val ref               = "case-reference"
-      val validCase         = Cases.btiCaseExample.copy(reference = ref)
+      val ref = "case-reference"
+      val validCase = Cases.btiCaseExample.copy(reference = ref)
       val validEventRequest = Events.eventRequest
-      val validEvent        = Events.event.copy(caseReference = ref)
-      val requestJson       = Json.toJson(validEventRequest).toString()
-      val responseJson      = Json.toJson(validEvent).toString()
+      val validEvent = Events.event.copy(caseReference = ref)
+      val requestJson = Json.toJson(validEventRequest).toString()
+      val responseJson = Json.toJson(validEvent).toString()
 
       stubFor(
         post(urlEqualTo(s"/cases/$ref/events"))
@@ -635,10 +636,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "create event with an unknown case reference" in {
-      val ref               = "unknown-reference"
-      val validCase         = Cases.btiCaseExample.copy(reference = ref)
+      val ref = "unknown-reference"
+      val validCase = Cases.btiCaseExample.copy(reference = ref)
       val validEventRequest = Events.eventRequest
-      val requestJson       = Json.toJson(validEventRequest).toString()
+      val requestJson = Json.toJson(validEventRequest).toString()
 
       stubFor(
         post(urlEqualTo(s"/cases/$ref/events"))
@@ -869,9 +870,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'getAllUsers'" should {
 
     "get all users" in {
-      val ref           = "PID1"
+      val ref = "PID1"
       val validOperator = Cases.operatorWithPermissions.copy(id = ref)
-      val json          = Json.toJson(validOperator).toString()
+      val json = Json.toJson(validOperator).toString()
 
       stubFor(
         put(urlEqualTo(s"/users/$ref"))
@@ -893,10 +894,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
-        types      = ApplicationType.values.toSeq,
-        statuses   = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+        types = ApplicationType.values.toSeq,
+        statuses = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
         assigneeId = "none",
-        queueIds   = Queues.allQueues.map(_.id),
+        queueIds = Queues.allQueues.map(_.id),
         pagination = pagination
       )
 
@@ -922,9 +923,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Update User'" should {
 
     "update valid user" in {
-      val ref           = "PID1"
+      val ref = "PID1"
       val validOperator = Cases.operatorWithPermissions.copy(id = ref)
-      val json          = Json.toJson(validOperator).toString()
+      val json = Json.toJson(validOperator).toString()
 
       stubFor(
         put(urlEqualTo(s"/users/$ref"))
@@ -945,9 +946,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "update user with an unknown id" in {
-      val unknownId       = "unknownId"
+      val unknownId = "unknownId"
       val unknownOperator = Cases.operatorWithPermissions.copy(id = unknownId)
-      val json            = Json.toJson(unknownOperator).toString()
+      val json = Json.toJson(unknownOperator).toString()
 
       stubFor(
         put(urlEqualTo(s"/users/$unknownId"))
@@ -971,7 +972,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   "create new user" in {
     val operator = Operator("1")
-    val request  = Json.toJson(NewUserRequest(operator)).toString()
+    val request = Json.toJson(NewUserRequest(operator)).toString()
     val response = Json.toJson(operator).toString()
 
     stubFor(
@@ -994,7 +995,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   "update user" in {
     val operator = Operator("1")
-    val request  = Json.toJson(NewUserRequest(operator)).toString()
+    val request = Json.toJson(NewUserRequest(operator)).toString()
     val response = Json.toJson(operator).toString()
 
     stubFor(
@@ -1018,9 +1019,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'delete User'" should {
 
     "delete valid user" in {
-      val ref           = "PID1"
+      val ref = "PID1"
       val validOperator = Cases.operatorWithPermissions.copy(id = ref)
-      val json          = Json.toJson(validOperator).toString()
+      val json = Json.toJson(validOperator).toString()
 
       stubFor(
         put(urlEqualTo(s"/mark-deleted/users/$ref"))
@@ -1041,9 +1042,9 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "delete user with an unknown id" in {
-      val unknownId       = "unknownId"
+      val unknownId = "unknownId"
       val unknownOperator = Cases.operatorWithPermissions.copy(id = unknownId)
-      val json            = Json.toJson(unknownOperator).toString()
+      val json = Json.toJson(unknownOperator).toString()
 
       stubFor(
         put(urlEqualTo(s"/mark-deleted/users/$unknownId"))
@@ -1149,21 +1150,18 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "delete the keyword given" in {
       val keyword = Keyword("AKeyword", true)
-      val request = Json.toJson(keyword).toString()
-
       stubFor(
-        delete(urlEqualTo(s"/keyword/${keyword.name}"))
-          .withRequestBody(equalToJson(request))
+        delete(s"/keyword/${keyword.name}")
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(Status.NO_CONTENT)
           )
       )
 
-      await(connector.deleteKeyword(keyword)) shouldBe Unit
+      await(connector.deleteKeyword(keyword))
 
       verify(
-        postRequestedFor(urlEqualTo(s"/keyword${keyword.name}"))
+        deleteRequestedFor(urlEqualTo(s"/keyword/${keyword.name}"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }

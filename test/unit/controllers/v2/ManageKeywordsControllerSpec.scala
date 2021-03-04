@@ -26,7 +26,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import service.ManageKeywordsService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.managementtools.{confirm_keyword_created, confirmation_keyword_deleted, edit_approved_keywords, manage_keywords_view, new_keyword_view}
+import views.html.managementtools.{confirm_keyword_created, confirmation_keyword_deleted, confirmation_keyword_renamed, edit_approved_keywords, manage_keywords_view, new_keyword_view}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -46,6 +46,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
   private lazy val new_keyword_view                  = injector.instanceOf[new_keyword_view]
   private lazy val edit_approved_keyword_view        = injector.instanceOf[edit_approved_keywords]
   private lazy val confirmation_keyword_deleted_view = injector.instanceOf[confirmation_keyword_deleted]
+  private lazy val confirmation_keyword_renamed_view = injector.instanceOf[confirmation_keyword_renamed]
   private lazy val keywordService                    = mock[ManageKeywordsService]
 
   private def controller(permission: Set[Permission]) = new ManageKeywordsController(
@@ -57,6 +58,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
     new_keyword_view,
     edit_approved_keyword_view,
     confirmation_keyword_deleted_view,
+    confirmation_keyword_renamed_view,
     realAppConfig
   )
 

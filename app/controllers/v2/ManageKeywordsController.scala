@@ -42,6 +42,7 @@ class ManageKeywordsController @Inject() (
   val newKeywordView: views.html.managementtools.new_keyword_view,
   val editApprovedKeywordsView: views.html.managementtools.edit_approved_keywords,
   val confirmKeywordDeletedView: views.html.managementtools.confirmation_keyword_deleted,
+  val confirmKeywordRenamedView: views.html.managementtools.confirmation_keyword_renamed,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -123,10 +124,24 @@ class ManageKeywordsController @Inject() (
       )
     )
 
+  def postEditApprovedKeywords(keywordName: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
+
+        ???
+
+    )
+
   def displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         confirmKeywordDeletedView(activeSubNav)
+      )
+    )
+
+  def displayConfirmationKeywordRenamed(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
+      Ok(
+        confirmKeywordRenamedView(activeSubNav)
       )
     )
 }
