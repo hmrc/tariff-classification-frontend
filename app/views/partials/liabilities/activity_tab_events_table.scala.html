@@ -24,9 +24,10 @@
 
 @(activityViewModel: ActivityViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
+<h3 class="heading-medium mt-30 mb-30" aria-hidden="true">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
 
 <table id="activity-events">
+    <caption class="visually-hidden">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</caption>
     <thead>
         <tr>
             <th scope="col">Identifier</th>

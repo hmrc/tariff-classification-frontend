@@ -29,7 +29,7 @@
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
-    <h3 class="heading-medium mt-30 mb-30">@messages("page.title.case.attachments")</h3>
+    <h3 class="heading-medium mt-30 mb-30" aria-hidden="true">@messages("page.title.case.attachments")</h3>
 
     @attachments_state_message(attachments = attachments.allAttachments, autoRefresh = true, displayStateMessage = false)
 

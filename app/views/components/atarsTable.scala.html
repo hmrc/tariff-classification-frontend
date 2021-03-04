@@ -21,10 +21,11 @@
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
-@(atarTab: ApplicationsTab, assignmentType: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(atarTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{atarTab.tabMessageKey}-table">
-  <tbody>
+  <caption class="visually-hidden">@messages(captionMessage)</caption>
+  <thead class="govuk-table__head">
     <tr id="@{atarTab.tabMessageKey}-details" class="grid-row mb-2">
      <th id="@{atarTab.tabMessageKey}-reference" class="bold w-0">
      Reference
@@ -52,13 +53,19 @@
       Status
      </th>
     </tr>
-
+  </thead>
+  <tbody>
    @for((result, index) <- atarTab.searchResult.results.zipWithIndex) {
 
     @defining(result.application.asATAR) { atar =>
 
      <tr id="@{atarTab.tabMessageKey}-details-@index">
-      <td id="@{atarTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{atarTab.tabMessageKey}-reference-@index">
+       <a href="@routes.CaseController.get(result.reference)">
+        <span aria-hidden="true">@{result.reference}</span>
+        <span class="visually-hidden">case reference @{result.reference}</span>
+       </a>
+      </td>
       <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
       <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
       <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>

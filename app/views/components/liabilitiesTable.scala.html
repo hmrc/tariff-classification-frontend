@@ -22,10 +22,11 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 
-@(liabilityTab: ApplicationsTab, assignmentType: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(liabilityTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{liabilityTab.tabMessageKey}-table">
-  <tbody>
+  <caption class="visually-hidden">@messages(captionMessage)</caption>
+  <thead class="govuk-table__head">
     <tr id="@{liabilityTab.tabMessageKey}-details" class="grid-row mb-2">
      <th id="@{liabilityTab.tabMessageKey}-reference" class="bold w-0">
      Reference
@@ -58,13 +59,19 @@
      </th>
      }
     </tr>
-
+  </thead>
+  <tbody>
    @for((result, index) <- liabilityTab.searchResult.results.zipWithIndex) {
 
     @defining(result.application.asLiabilityOrder) { liability =>
 
      <tr id="@{liabilityTab.tabMessageKey}-details-@index">
-      <td id="@{liabilityTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{liabilityTab.tabMessageKey}-reference-@index">
+       <a href="@routes.CaseController.get(result.reference)">
+        <span aria-hidden="true">@{result.reference}</span>
+        <span class="visually-hidden">case reference @{result.reference}</span>
+       </a>
+      </td>
       <td id="@{liabilityTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
       <td id="@{liabilityTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
       <td id="@{liabilityTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {

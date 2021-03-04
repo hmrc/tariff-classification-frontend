@@ -22,10 +22,11 @@
 @import views.html.v2.case_status_tab
 @import utils.Dates
 
-@(miscellaneousTab: ApplicationsTab, assignmentType: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(miscellaneousTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{miscellaneousTab.tabMessageKey}-table">
-  <tbody>
+  <caption class="visually-hidden">@messages(captionMessage)</caption>
+  <thead class="govuk-table__head">
     <tr id="@{miscellaneousTab.tabMessageKey}-details" class="grid-row mb-2">
      <th id="@{miscellaneousTab.tabMessageKey}-reference" class="bold w-0">
      Reference
@@ -55,13 +56,19 @@
      </th>
      }
     </tr>
-
+  </thead>
+  <tbody>
    @for((result, index) <- miscellaneousTab.searchResult.results.zipWithIndex) {
 
     @defining(result.application.asMisc) { miscellaneous =>
 
      <tr id="@{miscellaneousTab.tabMessageKey}-details-@index">
-      <td id="@{miscellaneousTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{miscellaneousTab.tabMessageKey}-reference-@index">
+       <a href="@routes.CaseController.get(result.reference)">
+        <span aria-hidden="true">@{result.reference}</span>
+        <span class="visually-hidden">case reference @{result.reference}</span>
+       </a>
+      </td>
       <td id="@{miscellaneousTab.tabMessageKey}-subject-@index" class="pre-wrap">@{miscellaneous.name}</td>
       <td id="@{miscellaneousTab.tabMessageKey}-type-@index">@{MiscCaseType.format(miscellaneous.caseType)}</td>
       <td id="@{miscellaneousTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
