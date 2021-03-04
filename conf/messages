@@ -1237,7 +1237,7 @@ remove_user.form.state.required = Select yes if you want to delete this user
 users.user.delete.done={0} deleted
 
 management.manage-keywords-title=Manage keywords
-management.manage-keywords.heading=Manage keywords
+management.manage-keywords.heading=Reports Dashboard
 management.manage-keywords.approve-tab.heading=Keywords for approval
 management.manage-keywords.approve-tab-title=Approve keywords ({0})
 management.manage-keywords.all-tab-title=All keywords ({0})
@@ -1306,7 +1306,7 @@ management.create-keyword.new-keyword-done.link=Go back to manage all keywords
 management.create-keyword.error.empty.keyword=Enter a new keyword
 management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list
 
-reporting.manage_reports.title = Manage reports - Advance Tariff Rulings Case Manager - GOV.UK
+reporting.manage_reports.title = Manage reports
 reporting.summary.tab.heading = Summary
 reporting.summary.heading = Summary reports
 reporting.summary.number-of-new-cases = Number of new cases
@@ -1341,7 +1341,7 @@ reporting.atar.atar-cases = ATaR cases
 reporting.liability.tab.heading = Liability
 reporting.liability.heading = Liabilities reports
 reporting.liability.liabilities-cases = Liabilities cases
-reporting.liability.new-liabilities-cases = New liabilities (non-live) cases
+reporting.liability.new-liabilities-cases-non-live = New liabilities (non-live) cases
 reporting.liability.new-liabilities-cases = New liabilities (live) cases
 reporting.liability.new-liabilities = New Liabilities
 reporting.correspondence.tab.heading = Correspondence

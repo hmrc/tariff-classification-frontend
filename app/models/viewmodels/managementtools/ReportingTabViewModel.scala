@@ -68,7 +68,7 @@ object ReportingTabViewModel {
 
   def liabilityTabRows: List[ReportTabRow] = List(
     ReportTabRow("liabilities-cases", "liabilities-cases"),
-    ReportTabRow("new-liabilities-cases", "new-liabilities-cases-non-live"),
+    ReportTabRow("new-liabilities-cases-non-live", "new-liabilities-cases-non-live"),
     ReportTabRow("new-liabilities-cases", "new-liabilities-cases-live"),
     ReportTabRow("new-liabilities", "new-liabilities")
   )
