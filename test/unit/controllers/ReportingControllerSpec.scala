@@ -31,17 +31,19 @@ import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.managementtools.manage_reports_view
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val reportingService = mock[ReportingService]
-  private val queueService     = injector.instanceOf[QueuesService]
-  private val usersService     = mock[UserService]
-  private val casesService     = mock[CasesService]
-  private val operator         = mock[Operator]
-  private val manage_reports_view             = injector.instanceOf[manage_reports_view]
+  private val reportingService                     = mock[ReportingService]
+  private val queueService                         = injector.instanceOf[QueuesService]
+  private val usersService                         = mock[UserService]
+  private val casesService                         = mock[CasesService]
+  private val operator                             = mock[Operator]
+  private val requiredPermissions: Set[Permission] = Set(Permission.VIEW_REPORTS)
+  private val noPermissions: Set[Permission]       = Set.empty
+  private lazy val manage_reports_view             = injector.instanceOf[manage_reports_view]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -195,7 +197,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
             .postChangeTeamsFilter(caseReport, SearchPagination())(request)
         )
 
-      status(caseResult)           shouldBe Status.SEE_OTHER
+      status(caseResult) shouldBe Status.SEE_OTHER
       redirectLocation(caseResult) shouldBe Some(
         routes.ReportingController.caseReport(caseReport.copy(teams = Set.empty)).path()
       )
@@ -344,8 +346,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .summaryReport(
             summaryReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
-            )
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z")))
           )
           .path()
       )
@@ -359,8 +360,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .caseReport(
             caseReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
-            )
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z")))
           )
           .path()
       )
@@ -378,15 +378,18 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 400 and HTML content type when an invalid date is selected" in {
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody(
-        "specificDates"       -> "true",
-        "dateRange.min.year"  -> "2021",
-        "dateRange.min.month" -> "",
-        "dateRange.min.day"   -> "1",
-        "dateRange.max.year"  -> "2022",
-        "dateRange.max.month" -> "1",
-        "dateRange.max.day"   -> "1"
-      ).withCSRFToken
+      val request = fakeRequest
+        .withMethod("POST")
+        .withFormUrlEncodedBody(
+          "specificDates"       -> "true",
+          "dateRange.min.year"  -> "2021",
+          "dateRange.min.month" -> "",
+          "dateRange.min.day"   -> "1",
+          "dateRange.max.year"  -> "2022",
+          "dateRange.max.month" -> "1",
+          "dateRange.max.day"   -> "1"
+        )
+        .withCSRFToken
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 
@@ -397,15 +400,18 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 400 and HTML content type when end date is before start date" in {
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody(
-        "specificDates"       -> "true",
-        "dateRange.min.year"  -> "2022",
-        "dateRange.min.month" -> "1",
-        "dateRange.min.day"   -> "1",
-        "dateRange.max.year"  -> "2021",
-        "dateRange.max.month" -> "1",
-        "dateRange.max.day"   -> "1"
-      ).withCSRFToken
+      val request = fakeRequest
+        .withMethod("POST")
+        .withFormUrlEncodedBody(
+          "specificDates"       -> "true",
+          "dateRange.min.year"  -> "2022",
+          "dateRange.min.month" -> "1",
+          "dateRange.min.day"   -> "1",
+          "dateRange.max.year"  -> "2021",
+          "dateRange.max.month" -> "1",
+          "dateRange.max.day"   -> "1"
+        )
+        .withCSRFToken
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 

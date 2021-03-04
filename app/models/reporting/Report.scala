@@ -220,7 +220,7 @@ object SummaryReport {
         stringBindable.unbind(groupByKey, value.groupBy.fieldName),
         stringBindable.unbind(sortByKey, value.sortBy.fieldName),
         stringBindable.unbind(sortOrderKey, value.sortOrder.toString),
-        stringBindable.unbind(caseTypesKey, value.caseTypes.map(_.toString).mkString(",")),
+        stringBindable.unbind(caseTypesKey, value.caseTypes.map(_.name).mkString(",")),
         stringBindable.unbind(statusesKey, value.statuses.map(_.toString).mkString(",")),
         stringBindable.unbind(teamsKey, value.teams.mkString(",")),
         rangeBindable.unbind(dateRangeKey, value.dateRange),
@@ -294,7 +294,7 @@ object CaseReport {
         stringBindable.unbind(nameKey, value.name),
         stringBindable.unbind(sortByKey, value.sortBy.fieldName),
         stringBindable.unbind(sortOrderKey, value.sortOrder.toString),
-        stringBindable.unbind(caseTypesKey, value.caseTypes.map(_.toString).mkString(",")),
+        stringBindable.unbind(caseTypesKey, value.caseTypes.map(_.name).mkString(",")),
         stringBindable.unbind(statusesKey, value.statuses.map(_.toString).mkString(",")),
         stringBindable.unbind(teamsKey, value.teams.mkString(",")),
         rangeBindable.unbind(dateRangeKey, value.dateRange),
@@ -322,7 +322,6 @@ object QueueReport {
   private val sortOrderKey = "sort_order"
   private val caseTypesKey = "case_type"
   private val teamsKey     = "team"
-  private val fieldsKey    = "fields"
   private val statusesKey  = "status"
   private val assigneeKey  = "assigned_user"
 
@@ -362,7 +361,7 @@ object QueueReport {
         stringBindable.unbind(nameKey, value.name),
         stringBindable.unbind(sortByKey, value.sortBy.fieldName),
         stringBindable.unbind(sortOrderKey, value.sortOrder.toString),
-        stringBindable.unbind(caseTypesKey, value.caseTypes.map(_.toString).mkString(",")),
+        stringBindable.unbind(caseTypesKey, value.caseTypes.map(_.name).mkString(",")),
         stringBindable.unbind(statusesKey, value.statuses.map(_.toString).mkString(",")),
         stringBindable.unbind(teamsKey, value.teams.mkString(",")),
         rangeBindable.unbind(dateRangeKey, value.dateRange),

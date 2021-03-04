@@ -32,6 +32,24 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools.{caseReportView, reportChooseDates, reportChooseTeams, summaryReportView}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import models.Pagination
+import models.reporting.SummaryReport
+import service.UserService
+import models.NoPagination
+import models.Paged
+import models.forms.ReportDateForm
+import models.forms.ReportTeamForm
+import akka.stream.scaladsl.Source
+import models.SearchPagination
+import akka.stream.alpakka.csv.scaladsl.CsvFormatting
+import models.forms.ReportDateFormData
+import models.InstantRange
+import models.reporting.Report
+import models.reporting.CaseReport
+import models.reporting.QueueReport
+import models.viewmodels.managementtools.ReportingTabViewModel
+import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 
 @Singleton
 class ReportingController @Inject() (
@@ -125,7 +143,7 @@ class ReportingController @Inject() (
         users   <- getUsers
         usersByPid = users.results.map(user => user.id -> user).toMap
         teamsById <- getTeams
-      } yield Ok(caseReportView(report, pagination, results, usersByPid, teamsById, "case-report"))
+      } yield Ok(caseReportView(report, pagination, results, usersByPid, teamsById))
     }
 
   def summaryReport(report: SummaryReport, pagination: Pagination) =
@@ -139,7 +157,7 @@ class ReportingController @Inject() (
         users   <- getUsers
         usersByPid = users.results.map(user => user.id -> user).toMap
         teamsById <- getTeams
-      } yield Ok(summaryReportView(report, pagination, results, usersByPid, teamsById, "summary-report"))
+      } yield Ok(summaryReportView(report, pagination, results, usersByPid, teamsById))
     }
 
   def getReportByName(reportName: String) =
