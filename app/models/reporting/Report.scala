@@ -40,9 +40,9 @@ object Report {
   )
 
   val suppressedCaseCount = CaseReport(
-    name = "Suppressed cases count",
-    statuses = Set(PseudoCaseStatus.SUPPRESSED),
-    sortBy  = ReportField.ElapsedDays,
+    name      = "Suppressed cases count",
+    statuses  = Set(PseudoCaseStatus.SUPPRESSED),
+    sortBy    = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     fields = Seq(
       ReportField.Reference,
@@ -55,9 +55,9 @@ object Report {
   )
 
   val openCasesCount = CaseReport(
-    name = "Open cases count",
-    statuses = Set(PseudoCaseStatus.OPEN),
-    sortBy  = ReportField.ElapsedDays,
+    name      = "Open cases count",
+    statuses  = Set(PseudoCaseStatus.OPEN),
+    sortBy    = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     fields = Seq(
       ReportField.Reference,
@@ -71,30 +71,16 @@ object Report {
   )
 
   val rejectedCaseCountByUser = SummaryReport(
-    name = "Rejected cases breakdown by user",
-    statuses = Set(PseudoCaseStatus.REJECTED),
+    name      = "Rejected cases breakdown by user",
+    statuses  = Set(PseudoCaseStatus.REJECTED),
     groupBy   = ReportField.User,
-    sortBy  = ReportField.Count,
+    sortBy    = ReportField.Count,
     sortOrder = SortDirection.DESCENDING
   )
 
-  val casesUnderReviewByChapter = SummaryReport(
-    name = "Cases under review by chapter",
-    statuses = Set(PseudoCaseStatus.REFERRED, PseudoCaseStatus.SUSPENDED, PseudoCaseStatus.ANNULLED),
-    groupBy   = ReportField.Chapter,
-    sortBy  = ReportField.Chapter
-  )
-
-  val casesUnderReviewByUser = SummaryReport(
-    name = "Cases under review by user",
-    statuses = Set(PseudoCaseStatus.REFERRED, PseudoCaseStatus.SUSPENDED, PseudoCaseStatus.ANNULLED),
-    groupBy   = ReportField.User,
-    sortBy  = ReportField.User
-  )
-
   val calendarAtarCases = CaseReport(
-    name = "120 calendar days for ATaR",
-    sortBy  = ReportField.ElapsedDays,
+    name      = "120 calendar days for ATaR",
+    sortBy    = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.ATAR),
     fields = Seq(
@@ -110,13 +96,11 @@ object Report {
   )
 
   val byId = Map[String, Report](
-    "case-count-by-status" -> caseCountByStatus,
-    "suppressed-cases" -> suppressedCaseCount,
-    "open-cases"  -> openCasesCount,
-    "rejection-breakdown" -> rejectedCaseCountByUser,
-    "under-review-cases-by-chapter" -> casesUnderReviewByChapter,
-    "under-review-cases-by-assigned-user" -> casesUnderReviewByUser,
-    "calendar-days-atar-cases" -> calendarAtarCases
+    "case-count-by-status"                -> caseCountByStatus,
+    "suppressed-cases"                    -> suppressedCaseCount,
+    "open-cases"                          -> openCasesCount,
+    "rejection-breakdown"                 -> rejectedCaseCountByUser,
+    "calendar-days-atar-cases"            -> calendarAtarCases
   )
 
   private val groupByKey      = "group_by"
