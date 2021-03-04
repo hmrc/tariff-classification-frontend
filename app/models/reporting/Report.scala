@@ -130,6 +130,20 @@ object Report {
     caseTypes = Set(ApplicationType.ATAR)
   )
 
+  val numberOfNewCases = SummaryReport(
+    name      = "Number of new cases",
+    groupBy   = ReportField.CaseType,
+    sortBy    = ReportField.CaseType,
+    statuses  = Set(PseudoCaseStatus.NEW),
+  )
+
+  val numberOfNewanOpenCases = SummaryReport(
+    name      = "New and open cases",
+    groupBy   = ReportField.CaseType,
+    sortBy    = ReportField.ElapsedDays,
+    statuses  = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN),
+  )
+
   val byId = Map[String, Report](
     "number-of-open-cases"             -> numberOfOpenCases,
     "completed-cases"                  -> completedCases,
@@ -139,7 +153,9 @@ object Report {
     "liabilities-summary"              -> liabilitiesSummary,
     "atar-summary"                     -> atarSummary,
     "new-atar-cases"                   -> numberOfNewAtarCases,
-    "liabilities-cases"                -> liabilitiesCases
+    "liabilities-cases"                -> liabilitiesCases,
+    "number-of-new-cases"              -> numberOfNewCases,
+    "new-and-open-cases"               -> numberOfNewanOpenCases
   )
 
   private val groupByKey      = "group_by"

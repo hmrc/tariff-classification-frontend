@@ -645,4 +645,48 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   }
 
+  "numberOfNewCases" should {
+
+    val reportName = "number-of-new-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.numberOfNewCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "newAndOpenCases" should {
+
+    val reportName = "new-and-open-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.numberOfNewanOpenCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
 }
