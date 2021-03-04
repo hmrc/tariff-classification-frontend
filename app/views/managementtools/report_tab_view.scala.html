@@ -25,12 +25,13 @@
 <dl class="govuk-check-your-answers cya-questions-long">
 
     @for((result, index) <- summaryReportTab.reports.zipWithIndex) {
-    <div id="case-details-summary" class="grid-row">
+    <div id="report-tab-@{result.reportId}" class="grid-row">
         <dt class="cya-question">
             @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")
         </dt>
-        <dd class="cya-answer" id="summary">
+        <dd class="cya-answer" id="@result.reportId">
             <a class="float-right" href="@routes.ReportingController.getReportByName(result.reportId)">@messages("reporting.report_tab.run-report")</a>
+            <span class="visually-hidden">Run report for @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")</span>
         </dd>
     </div>
     }
