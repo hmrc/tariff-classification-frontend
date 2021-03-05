@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package models.forms
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
+import models.forms.mappings.FormMappings.{oneOf, textNonEmpty}
+import models.{CaseRejection, RejectReason}
+import play.api.data.Form
+import play.api.data.Forms.mapping
 
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
+object RejectCaseForm {
+
+  lazy val form: Form[CaseRejection] = Form(
+    mapping(
+      "reason" -> oneOf("error.empty.reject.reason", RejectReason),
+      "note"          -> textNonEmpty("error.empty.reject.note")
+    )(CaseRejection.apply)(CaseRejection.unapply)
+  )
+
 }
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)

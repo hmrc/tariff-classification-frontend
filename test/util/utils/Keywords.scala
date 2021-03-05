@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package utils
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
+import models.{Keyword, Paged}
 
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
+object Keywords {
+
+  val keyword1: Keyword = Keyword("keyword1")
+  val keyword2: Keyword = Keyword("keyword2")
+
+  val keywords = Seq(keyword1, keyword2)
+  val pagedKeywords: Paged[Keyword] = Paged(keywords)
+
+
+
 }
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)

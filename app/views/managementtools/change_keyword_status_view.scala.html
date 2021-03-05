@@ -1,0 +1,103 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import views.html.includes.main
+@import models.viewmodels.ManagerToolsKeywordsTab
+@import models.viewmodels.SubNavigationTab
+@import views.html.components.manager_tools_secondary_navigation
+@import views.forms.components.RadioOption
+@import views.html.forms.components.input_radiogroup
+@import views.html.partials.back_link
+@import views.html.partials.error_summary
+@import controllers.v2.routes.ManageKeywordsController
+@import controllers.routes.CaseController
+
+@this()
+
+@(keywordName: String, c: Case, form: Form[String], activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.change-keyword-status.keyword-details.title"))) {
+@manager_tools_secondary_navigation(activeSubNav)
+
+    @back_link()
+
+    @error_summary(form.errors)
+
+    <div class="keyword-edit-keyword mt-40">
+            <span class="heading-secondary"><span class="visuallyhidden">
+                This section is </span>
+            </span>Manage keywords
+        <h1 id="keyword-edit-heading" class="heading-xlarge mt-0 mb-40">@keywordName</h1>
+    </div>
+
+<h2 id ="keyword-case-details" class="heading-large mt-0 mb-20">@messages("management.manage-keywords.change-keyword-status.case.header")</h2>
+
+<dl class="govuk-check-your-answers cya-questions-short">
+
+    <div id="keyword-case-reference" class="grid-row">
+        <dt class="cya-question">
+            @messages("management.manage-keywords.change-keyword-status.case.reference")
+        </dt>
+        <dd class="cya-answer">
+            <a href="@CaseController.get(c.reference)">@c.reference</a>
+        </dd>
+    </div>
+
+    <div id="keyword-case-goods-name" class="grid-row">
+        <dt class="cya-question">
+            @messages("management.manage-keywords.change-keyword-status.case.goods")
+        </dt>
+        <dd class="cya-answer">
+            @c.application.goodsName
+        </dd>
+    </div>
+
+    <div id="keyword-case-keywords" class="grid-row">
+        <dt class="cya-question">
+            @messages("management.manage-keywords.change-keyword-status.case.keywords")
+        </dt>
+        <dd class="cya-answer">
+            @c.keywords.filterNot(_.contains(keywordName)).map { keyword =>
+                <span class="govuk-tag govuk-tag--grey">@keyword</span>
+            }
+        </dd>
+    </div>
+</dl>
+
+@helper.form(action = ManageKeywordsController.changeKeywordStatus(keywordName, c.reference), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
+
+        @input_radiogroup(
+            field = form("keyword-status"),
+            label = Some(messages("management.manage-keywords.change-keyword-status.heading.radio")),
+            labelClass = Some("heading-large"),
+            options = Seq(
+                RadioOption("approve",messages("management.manage-keywords.change-keyword-status.radio.approve")),
+                RadioOption("reject",messages("management.manage-keywords.change-keyword-status.radio.reject")),
+                RadioOption("rename",messages("management.manage-keywords.change-keyword-status.radio.rename"))
+            ),
+        id = "change-keyword-status",
+        customGroupId = Some("keyword-status")
+        )
+
+        <div>
+            <button class="button" id="keyword-continue" type="submit">Continue</button>
+        </div>
+
+    }
+}

@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package models
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
+object RejectReason extends Enumeration {
+  type RejectReason = Value
+  val APPLICATION_WITHDRAWN, ATAR_RULING_ALREADY_EXISTS, DUPLICATE_APPLICATION, NO_INFO_FROM_TRADER, OTHER = Value
 
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
+  def format(reason: RejectReason): String =
+    reason match {
+      case APPLICATION_WITHDRAWN      => "Application withdrawn"
+      case ATAR_RULING_ALREADY_EXISTS => "ATaR ruling already exists"
+      case DUPLICATE_APPLICATION      => "Duplicate application"
+      case NO_INFO_FROM_TRADER        => "No information from trader"
+      case OTHER                      => "Other"
+    }
 }
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)

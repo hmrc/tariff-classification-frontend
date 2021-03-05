@@ -20,33 +20,38 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models.forms.KeywordForm
+import models.forms.v2.ChangeKeywordStatusForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
 import models.{Keyword, NoPagination, Operator, Permission}
+import models.{Keyword, NoPagination, Permission, Case}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import service.CasesService
 import service.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
-  mcc: MessagesControllerComponents,
+  casesService: CasesService,
   keywordService: ManageKeywordsService,
   casesService: CasesService,
+  mcc: MessagesControllerComponents,
   val manageKeywordsView: views.html.managementtools.manage_keywords_view,
   val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
   val keywordUpdatedConfirmation: views.html.managementtools.confirm_keyword_status,
   val newKeywordView: views.html.managementtools.new_keyword_view,
   val changeKeywordStatusView: views.html.managementtools.change_keyword_status_view,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
-  val keywordForm: Form[String] = KeywordForm.form
-  val ChangeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
+  val keywordForm: Form[String]             = KeywordForm.form
+  val changeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -142,7 +147,17 @@ class ManageKeywordsController @Inject()(
       implicit request =>
         Ok(
           keywordCreatedConfirm(activeSubNav, saveKeyword)
-      ))
+      )
+    )
+
+
+  def changeKeywordStatus(keywordName: String, reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
+      casesService.getOne(reference).flatMap {
+        case Some(c: Case) => Future.successful(Ok(changeKeywordStatusView(keywordName, c, changeKeywordStatusForm)))
+        case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+      }
+    )
 
   def displayConfirmKeywordChange(
     savedKeyword: Keyword,

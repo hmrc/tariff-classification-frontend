@@ -14,24 +14,6 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package models
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
-
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
-}
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)
+case class CaseRejection(reason: String, note: String)

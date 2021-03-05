@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package utils
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
+import play.api.libs.json.{Json, Writes}
+import utils.JsonFormatters.keywordFormat
 
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
+object KeywordsPayloads {
+
+  val pagedKeywords = jsonOf(Keywords.pagedKeywords)
+
+  def jsonOf[A: Writes](obj: A): String =
+    Json.toJson(obj).toString()
+
 }
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)
