@@ -35,8 +35,8 @@ object Report {
   val caseCountByStatus = SummaryReport(
     name      = "Case count by status",
     groupBy   = ReportField.Status,
-    sortBy    = ReportField.Count,
-    sortOrder = SortDirection.DESCENDING
+    sortBy    = ReportField.Status,
+    sortOrder = SortDirection.ASCENDING
   )
 
   val suppressedCaseCount = CaseReport(
@@ -65,6 +65,7 @@ object Report {
       ReportField.Chapter,
       ReportField.GoodsName,
       ReportField.Team,
+      ReportField.User,
       ReportField.DateCreated,
       ReportField.ElapsedDays
     )
