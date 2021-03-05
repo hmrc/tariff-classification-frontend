@@ -609,7 +609,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(
-        controllers.routes.ReportingController.summaryReport(Report.calendarDaysNonLiveLiabilitiesCases).path()
+        controllers.routes.ReportingController.caseReport(Report.calendarDaysNonLiveLiabilitiesCases).path()
       )
     }
 
