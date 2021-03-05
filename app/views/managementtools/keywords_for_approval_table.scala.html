@@ -23,7 +23,7 @@
 @(manageKeywordsTab: ManageKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="@{manageKeywordsTab.tabMessageKey}-table">
-    <thead>
+    <thead class="govuk-table__head">
         <tr id="@{manageKeywordsTab.tabMessageKey}-details" class="grid-row mb-2">
             <th id="@{manageKeywordsTab.tabMessageKey}-keyword" class="bold w-0">Keyword</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-user-name" class="bold w-0">User</th>
