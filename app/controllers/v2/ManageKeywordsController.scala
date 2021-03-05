@@ -28,7 +28,6 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.ManageKeywordsService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -66,16 +65,6 @@ class ManageKeywordsController @Inject() (
       )
     }
 
-  private def manageKeywordsViewModel()(implicit hc: HeaderCarrier): Future[ManageKeywordsViewModel] =
-      for {
-        caseKeywords <- keywordService.fetchCaseKeywords()
-        allKeywords  <- keywordService.findAll(NoPagination())
-        manageKeywordsViewModel = ManageKeywordsViewModel
-          .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
-      } yield manageKeywordsViewModel
-
-
-
   def postDisplayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       keywordService.findAll(NoPagination()).flatMap { keywords =>
@@ -90,20 +79,20 @@ class ManageKeywordsController @Inject() (
                 allKeywords  <- keywordService.findAll(NoPagination())
                 manageKeywordsViewModel = ManageKeywordsViewModel
                   .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
-              } yield
-                BadRequest(
-                  manageKeywordsView(
-                    activeSubNav,
-                    manageKeywordsViewModel,
-                    formWithErrors
-                  )
-                ),
+              } yield BadRequest {
+
+                println("*****" * 150 + formWithErrors.data + "     -- -- " + formWithErrors.errors)
+                manageKeywordsView(
+                  activeSubNav,
+                  manageKeywordsViewModel,
+                  formWithErrors
+                )
+              },
             keyword =>
               successful(Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(keyword)))
           )
       }
     )
-
 
   def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -157,11 +146,9 @@ class ManageKeywordsController @Inject() (
   def editApprovedKeywords(keywordName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       for {
-        count       <- keywordService.fetchCaseKeywords().map(_.results.count(keyword => keyword.keyword.approved))
         allKeywords <- keywordService.findAll(NoPagination())
       } yield Ok(
         editApprovedKeywordsView(
-          count,
           keywordName,
           allKeywords,
           EditApprovedKeywordForm.formWithAuto(allKeywords.results.map(_.name))
@@ -180,18 +167,20 @@ class ManageKeywordsController @Inject() (
           .fold(
             formWithErrors =>
               Future.successful(
-                BadRequest(editApprovedKeywordsView(0, keywordName, keywords, formWithErrors))
+                BadRequest(editApprovedKeywordsView(keywordName, keywords, formWithErrors))
               ), {
               case (EditKeywordAction.DELETE, _) =>
-                successful(
-                  Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmationKeywordDeleted())
-                )
+                keywordService
+                  .deleteKeyword(Keyword(keywordName))
+                  .map(_ =>
+                    Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmationKeywordDeleted())
+                  )
               case (EditKeywordAction.RENAME, keywordToRename) =>
-                keywordService.renameKeyword(Keyword(keywordToRename, true), Keyword(keywordName, true)).map {
+                keywordService.renameKeyword(Keyword(keywordName, true), Keyword(keywordToRename, true)).map {
                   updatedKeyword: Keyword =>
                     Redirect(
                       routes.ManageKeywordsController
-                        .displayConfirmationKeywordRenamed(keywordName, keywordToRename)
+                        .displayConfirmationKeywordRenamed(keywordName, updatedKeyword.name)
                     )
                 }
             }

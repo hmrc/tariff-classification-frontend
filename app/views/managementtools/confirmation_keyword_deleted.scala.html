@@ -30,26 +30,26 @@
 @this()
 @(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("Keyowrd deleted"))) {
+    @main(bodyClasses = None, customTitle = Some(messages("management.manage-keywords.edit-approved-keywords.deleted.heading"))) {
 
-@manager_tools_secondary_navigation(activeSubNav)
+        @manager_tools_secondary_navigation(activeSubNav)
 
-<div class="grid-row">
-    <div id="confirm_keyword_deleted_id" class="column-two-thirds">
-        <div class="govuk-panel govuk-panel--confirmation">
-            <h2 class="heading-large mt-30">@messages("management.manage-keywords.edit-approved-keywords.deleted")</h2>
+        <div class="grid-row">
+            <div id="confirm_keyword_deleted_id" class="column-two-thirds">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h2 class="heading-large mt-30">@messages("management.manage-keywords.edit-approved-keywords.deleted")</h2>
 
+                </div>
+
+                <p id="deleted-keyword-p mt-45">@messages("management.manage-keywords.edit-approved-keywords.deleted.p")</p>
+
+                <h3 class="heading-medium mt-0">@messages("management.create-keyword.new-keyword-done.next")</h3>
+                <p>
+                    <a id="manage-all-keywords-link" href="@controllers.v2.routes.ManageKeywordsController.displayManageKeywords()">
+                    @messages("management.create-keyword.new-keyword-done.link")
+                    </a>
+                </p>
+
+            </div>
         </div>
-
-        <p id="deleted-keyword-p mt-45">@messages("management.manage-keywords.edit-approved-keywords.deleted.p")</p>
-
-        <h3 class="heading-medium mt-0">@messages("management.create-keyword.new-keyword-done.next")</h3>
-        <p>
-            <a id="manage-all-keywords-link" href="@controllers.v2.routes.ManageKeywordsController.displayManageKeywords()">
-                @messages("management.create-keyword.new-keyword-done.link")
-            </a>
-        </p>
-
-    </div>
-</div>
-}
+    }

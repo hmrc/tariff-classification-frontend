@@ -36,7 +36,10 @@ class ManageKeywordsService @Inject() (connector: BindingTariffClassificationCon
   def fetchCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     connector.getCaseKeywords()
 
-  def renameKeyword(oldKeyword: Keyword, newKeyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
-    connector.deleteKeyword(oldKeyword).flatMap(_ => connector.createKeyword(newKeyword))
+  def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =
+    connector.deleteKeyword(keyword)
+
+  def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
+    connector.deleteKeyword(keywordToDelete).flatMap(_ => connector.createKeyword(keywordToAdd))
 
 }

@@ -21,6 +21,7 @@ import akka.stream.Materializer
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
+
 import javax.inject.Singleton
 import metrics.HasMetrics
 import models._
@@ -30,7 +31,7 @@ import models.Role.Role
 import models._
 import models.request.NewEventRequest
 import play.api.mvc.QueryStringBindable
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import utils.JsonFormatters._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -272,7 +273,7 @@ class BindingTariffClassificationConnector @Inject() (
   def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
     withMetricsTimerAsync("create-keyword") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/keyword"
-      client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(keyword))
+      client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(Keyword(keyword.name.toUpperCase)))
     }
 
   def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
@@ -288,8 +289,9 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[CaseKeyword]](url)
     }
 
-  def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =
+    withMetricsTimerAsync("delete-keyword") { _ =>
     val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
-    client.DELETE[Option[Keyword]](url = url).map(_ => ())
+    client.DELETE[HttpResponse](url).map(_ => ())
   }
 }
