@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, QueuesService, ReportingService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.managementtools.{caseReportView, reportChooseDates, reportChooseTeams, summaryReportView}
+import views.html.managementtools.{caseReportView, queueReportView, reportChooseDates, reportChooseTeams, summaryReportView}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -57,7 +57,6 @@ class ReportingController @Inject() (
   reportingService: ReportingService,
   queuesService: QueuesService,
   usersService: UserService,
-  casesService: CasesService,
   mcc: MessagesControllerComponents,
   val manageReportsView: views.html.managementtools.manage_reports_view,
   implicit val appConfig: AppConfig
@@ -71,6 +70,9 @@ class ReportingController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request => NotFound)
 
   def downloadSummaryReport(report: SummaryReport) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request => NotFound)
+
+  def downloadQueueReport(report: QueueReport) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request => NotFound)
 
   def showChangeDateFilter(report: Report, pagination: Pagination) =
@@ -97,6 +99,11 @@ class ReportingController @Inject() (
                 Redirect(
                   controllers.routes.ReportingController
                     .summaryReport(summary.copy(dateRange = form.dateRange), pagination)
+                )
+              case queue: QueueReport =>
+                Redirect(
+                  controllers.routes.ReportingController
+                    .queueReport(queue.copy(dateRange = form.dateRange), pagination)
                 )
 
             }
@@ -126,6 +133,11 @@ class ReportingController @Inject() (
                 Redirect(
                   controllers.routes.ReportingController
                     .summaryReport(summary.copy(teams = teams), pagination)
+                )
+              case queue: QueueReport =>
+                Redirect(
+                  controllers.routes.ReportingController
+                    .queueReport(queue.copy(teams = teams), pagination)
                 )
             }
           }
@@ -160,6 +172,17 @@ class ReportingController @Inject() (
       } yield Ok(summaryReportView(report, pagination, results, usersByPid, teamsById))
     }
 
+  def queueReport(report: QueueReport, pagination: Pagination) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val getReport = reportingService.queueReport(report, pagination)
+      val getTeams  = queuesService.getAllById
+
+      for {
+        results   <- getReport
+        teamsById <- getTeams
+      } yield Ok(queueReportView(report, pagination, results, teamsById))
+    }
+
   def getReportByName(reportName: String) =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       Report.byId
@@ -169,8 +192,8 @@ class ReportingController @Inject() (
             Redirect(routes.ReportingController.summaryReport(summary, SearchPagination()))
           case cses: CaseReport =>
             Redirect(routes.ReportingController.caseReport(cses, SearchPagination()))
-          case _: QueueReport =>
-            NotFound(views.html.report_not_found(reportName))
+          case queue: QueueReport =>
+            Redirect(routes.ReportingController.queueReport(queue, SearchPagination()))
         }
         .getOrElse {
           NotFound(views.html.report_not_found(reportName))
