@@ -32,8 +32,64 @@ sealed abstract class Report extends Product with Serializable {
 }
 
 object Report {
-  val byId = Map[String, Report](
+
+   //awaiting additional review status for PseudoCaseStatus need additional status for these two
+    val casesUnderReviewByChapter = SummaryReport(
+      name = "Cases under review by chapter",
+//      statuses = Set(PseudoCaseStatus.???, PseudoCaseStatus.???, PseudoCaseStatus.???),
+      groupBy   = ReportField.Chapter,
+      sortBy  = ReportField.Chapter
     )
+
+    val casesUnderReviewByUser = SummaryReport(
+      name = "Cases under review by user",
+//      statuses = Set(PseudoCaseStatus.???, PseudoCaseStatus.???, PseudoCaseStatus.???),
+      groupBy   = ReportField.User,
+      sortBy  = ReportField.User
+    )
+
+  val correspondenceCases = CaseReport(
+    name      = "Correspondence cases count",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.CORRESPONDENCE),
+    fields = Seq(
+      ReportField.Reference,
+      ReportField.Description,
+      ReportField.CaseSource,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.DateCreated,
+      ReportField.ElapsedDays
+    )
+  )
+
+  //Missing field Case source
+  val miscellaneousCases = CaseReport(
+    name      = "Miscellaneous cases count",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.MISCELLANEOUS),
+    fields = Seq(
+      ReportField.Reference,
+      ReportField.Description,
+      ReportField.CaseSource,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.DateCreated,
+      ReportField.ElapsedDays
+    )
+  )
+
+  val byId = Map[String, Report](
+
+    "under-review-cases-by-chapter"       -> casesUnderReviewByChapter,
+    "under-review-cases-by-assigned-user" -> casesUnderReviewByUser,
+    "correspondence-cases"                -> correspondenceCases,
+    "miscellaneous-cases"                 -> miscellaneousCases
+  )
 
   private val groupByKey      = "group_by"
   private val maxFieldsKey    = "max_fields"
