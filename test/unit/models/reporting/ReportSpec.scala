@@ -71,6 +71,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=asc" +
           "&case_type=" +
           "&status=" +
+          "&liability_status=" +
           "&team=" +
           "&max_fields=" +
           "&include_cases=false"
@@ -78,7 +79,12 @@ class ReportSpec extends ModelsBaseSpec {
 
       val caseReport = CaseReport(
         "Case report",
-        fields = List(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
+        fields = List(
+          ReportField.Reference,
+          ReportField.Status,
+          ReportField.ElapsedDays,
+          ReportField.TotalDays
+        )
       )
       URLDecoder.decode(Report.reportQueryStringBindable.unbind("", caseReport), "UTF-8") shouldBe (
         "name=Case report" +
@@ -86,6 +92,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=asc" +
           "&case_type=" +
           "&status=" +
+          "&liability_status=" +
           "&team=" +
           "&fields=reference,status,elapsed_days,total_days"
       )
@@ -96,6 +103,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=asc" +
           "&case_type=" +
           "&status=" +
+          "&liability_status=" +
           "&team="
       )
     }
@@ -178,12 +186,13 @@ class ReportSpec extends ModelsBaseSpec {
         CaseReport.caseReportQueryStringBindable.unbind(
           "",
           CaseReport(
-            name      = "Case report",
-            sortBy    = ReportField.Count,
-            sortOrder = SortDirection.DESCENDING,
-            caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.NEW),
-            teams     = Set("1", "3"),
+            name              = "Case report",
+            sortBy            = ReportField.Count,
+            sortOrder         = SortDirection.DESCENDING,
+            caseTypes         = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
+            statuses          = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.NEW),
+            liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
+            teams             = Set("1", "3"),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
@@ -197,6 +206,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=desc" +
           "&case_type=BTI,CORRESPONDENCE" +
           "&status=LIVE,NEW" +
+          "&liability_status=NON_LIVE" +
           "&team=1,3" +
           "&min_date=2020-03-21T12:03:15Z" +
           "&max_date=2021-03-21T12:03:15Z" +
@@ -207,13 +217,14 @@ class ReportSpec extends ModelsBaseSpec {
         CaseReport.caseReportQueryStringBindable.unbind(
           "",
           CaseReport(
-            name      = "Case report",
-            sortBy    = ReportField.DateCreated,
-            sortOrder = SortDirection.ASCENDING,
-            caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
-            teams     = Set("4", "5"),
-            fields    = Seq(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
+            name              = "Case report",
+            sortBy            = ReportField.DateCreated,
+            sortOrder         = SortDirection.ASCENDING,
+            caseTypes         = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
+            statuses          = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
+            liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
+            teams             = Set("4", "5"),
+            fields            = Seq(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
           )
         ),
         "UTF-8"
@@ -223,6 +234,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=asc" +
           "&case_type=MISCELLANEOUS,CORRESPONDENCE" +
           "&status=COMPLETED,REJECTED" +
+          "&liability_status=NON_LIVE" +
           "&team=4,5" +
           "&fields=reference,status,elapsed_days,total_days"
       )
@@ -310,14 +322,15 @@ class ReportSpec extends ModelsBaseSpec {
         SummaryReport.summaryReportQueryStringBindable.unbind(
           "",
           SummaryReport(
-            name      = "Summary report",
-            groupBy   = ReportField.Status,
-            sortBy    = ReportField.Count,
-            sortOrder = SortDirection.DESCENDING,
-            caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
-            teams     = Set("1", "3"),
-            maxFields = Seq(ReportField.ElapsedDays),
+            name              = "Summary report",
+            groupBy           = ReportField.Status,
+            sortBy            = ReportField.Count,
+            sortOrder         = SortDirection.DESCENDING,
+            caseTypes         = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
+            statuses          = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
+            liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
+            teams             = Set("1", "3"),
+            maxFields         = Seq(ReportField.ElapsedDays),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
@@ -332,6 +345,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=desc" +
           "&case_type=BTI,CORRESPONDENCE" +
           "&status=LIVE,REFERRED" +
+          "&liability_status=NON_LIVE" +
           "&team=1,3" +
           "&min_date=2020-03-21T12:03:15Z" +
           "&max_date=2021-03-21T12:03:15Z" +
@@ -343,14 +357,15 @@ class ReportSpec extends ModelsBaseSpec {
         SummaryReport.summaryReportQueryStringBindable.unbind(
           "",
           SummaryReport(
-            name      = "Summary report",
-            groupBy   = ReportField.User,
-            sortBy    = ReportField.DateCreated,
-            sortOrder = SortDirection.ASCENDING,
-            caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
-            teams     = Set("4", "5"),
-            maxFields = Seq(ReportField.TotalDays)
+            name              = "Summary report",
+            groupBy           = ReportField.User,
+            sortBy            = ReportField.DateCreated,
+            sortOrder         = SortDirection.ASCENDING,
+            caseTypes         = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
+            statuses          = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
+            liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
+            teams             = Set("4", "5"),
+            maxFields         = Seq(ReportField.TotalDays)
           )
         ),
         "UTF-8"
@@ -361,6 +376,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=asc" +
           "&case_type=MISCELLANEOUS,CORRESPONDENCE" +
           "&status=COMPLETED,REJECTED" +
+          "&liability_status=NON_LIVE" +
           "&team=4,5" +
           "&max_fields=total_days" +
           "&include_cases=false"
@@ -444,6 +460,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=desc" +
           "&case_type=BTI,CORRESPONDENCE" +
           "&status=LIVE,NEW" +
+          "&liability_status=" +
           "&team=1,3" +
           "&min_date=2020-03-21T12:03:15Z" +
           "&max_date=2021-03-21T12:03:15Z"
@@ -467,6 +484,7 @@ class ReportSpec extends ModelsBaseSpec {
           "&sort_order=asc" +
           "&case_type=MISCELLANEOUS,CORRESPONDENCE" +
           "&status=COMPLETED,REJECTED" +
+          "&liability_status=" +
           "&team=4,5"
       )
     }
