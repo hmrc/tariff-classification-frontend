@@ -22,7 +22,9 @@
 @import controllers.routes.MyCasesController
 @import models.viewmodels.NoTabSelected
 
-@(keyword: Keyword, keywordStatus: String, oldKeywordName: String, operator: Operator, activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@this()
+
+@(keyword: Keyword, c: Case, activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.update-keyword.confirmation.custom-title"))) {
 
@@ -31,21 +33,19 @@
     <div class="column-two-thirds pl-0">
 
         <div class="govuk-panel govuk-panel--confirmation">
-            @if(keywordStatus == "renamed") {
-                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", keywordStatus)</h1>
-            <!-- need to set -has been renamed to- with different styling -->
-                <h2 class="heading-large mt-0">@messages("management.update-keyword.confirmation.title.keywords_old_new", "oldKeywordName.toUpperCase", keyword.name.toUpperCase)</h2>
+            @if(keyword.approved) {
+                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "approved"))</h1>
+                <h2 class="heading-large mt-0">@messages(keyword.name.toUpperCase)</h2>
             } else {
-                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", keywordStatus)</h1>
+                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "rejected"))</h1>
                 <h2 class="heading-large mt-0">@messages(keyword.name.toUpperCase)</h2>
             }
         </div>
 
-        <!-- need to set keyword.name.toUpperCase and keyword.goods with BOLD Styling -->
-        @if(keywordStatus == "renamed") {
-            <p>@messages("management.update-keyword.confirmation.renamed.info", keywordStatus, keyword.name.toUpperCase, keyword.goods.toUpperCase)</p>
+        @if(keyword.approved) {
+            <p>@messages("management.update-keyword.confirmation.info", "approved", <span class="bold">c.application.goodsName</span>)</p>
         } else {
-            <p>@messages("management.update-keyword.confirmation.info", keywordStatus, keyword.goods)</p>
+            <p>@messages("management.update-keyword.confirmation.info", "rejected", <span class="bold">c.application.goodsName</span>)</p>
         }
 
         <div class="grid-row">
@@ -53,7 +53,7 @@
                 <h2 class="heading-large mt-0">Next steps</h2>
                 <p>
                     <a id="my-cases-link" href="@MyCasesController.myCases()">
-                        @messages("back.user.keywords", operator.name)
+                        @messages("back.user.keywords", c.assignee)
                     </a>
                 </p>
             </div>

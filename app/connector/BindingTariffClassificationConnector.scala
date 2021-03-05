@@ -16,14 +16,12 @@
 
 package connector
 
-import akka.stream.scaladsl.Source
 import akka.stream.Materializer
+import akka.stream.scaladsl.Source
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
-import javax.inject.Singleton
 import metrics.HasMetrics
-import models._
 import models.CaseStatus._
 import models.EventType.EventType
 import models.Role.Role
@@ -31,10 +29,11 @@ import models._
 import models.request.NewEventRequest
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import utils.JsonFormatters._
 
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 @Singleton
 class BindingTariffClassificationConnector @Inject() (
@@ -273,12 +272,6 @@ class BindingTariffClassificationConnector @Inject() (
     withMetricsTimerAsync("create-keyword") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/keyword"
       client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(keyword))
-    }
-
-  def updateKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
-    withMetricsTimerAsync("update-keyword") { _ =>
-      val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
-      client.PUT[Keyword, Keyword](url = url, body = keyword)
     }
 
   def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =

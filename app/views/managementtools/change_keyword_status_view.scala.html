@@ -79,7 +79,7 @@
     </div>
 </dl>
 
-@helper.form(action = ManageKeywordsController.changeKeywordStatus(keywordName, c.reference), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+@helper.form(action = ManageKeywordsController.approveOrRejectKeyword(keywordName, c), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
 
         @input_radiogroup(
@@ -88,8 +88,7 @@
             labelClass = Some("heading-large"),
             options = Seq(
                 RadioOption("approve",messages("management.manage-keywords.change-keyword-status.radio.approve")),
-                RadioOption("reject",messages("management.manage-keywords.change-keyword-status.radio.reject")),
-                RadioOption("rename",messages("management.manage-keywords.change-keyword-status.radio.rename"))
+                RadioOption("reject",messages("management.manage-keywords.change-keyword-status.radio.reject"))
             ),
         id = "change-keyword-status",
         customGroupId = Some("keyword-status")

@@ -1271,13 +1271,8 @@ management.manage-keywords.change-keyword-status.case.reference=Reference
 management.manage-keywords.change-keyword-status.case.goods=Goods
 management.manage-keywords.change-keyword-status.case.keywords=Keywords
 
-
-
 management.update-keyword.confirmation.custom-title=Keyword Update Confirmation Page
 management.update-keyword.confirmation.title=Keyword {0}
-management.update-keyword.confirmation.title.keywords_old_new={0} has been renamed to {1}
 management.update-keyword.confirmation.info=This keyword has been {0} on the {1} case and will not be available to use in any future cases.
-management.update-keyword.confirmation.renamed.info=This keyword has been {0} with {1} on the {2} case and will not be available to use in any future cases.
 management.update-keyword.error.no-status-selected=Choose to approve, reject or rename this keyword
-management.update-keyword.error.empty.renamed.keyword=Enter a keyword to rename
 management.update-keyword.error.duplicate.keyword=This keyword has already been added to the list

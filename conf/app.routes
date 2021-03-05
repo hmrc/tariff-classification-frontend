@@ -172,4 +172,4 @@ GET        /keywords/keyword-create                              controllers.v2.
 POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
 GET        /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.changeKeywordStatus(keywordName: String, reference: String)
-POST       /keywords/keyword-update-done                         controllers.v2.ManageKeywordsController.displayConfirmKeywordChange(savedKeyword: Keyword, status: String, oldKeywordName: Option[String], operator: Operator)
+POST       /keywords/keyword-update-done                         controllers.v2.ManageKeywordsController.displayKeywordChangeConfirmation(savedKeyword: Keyword, c: Case)

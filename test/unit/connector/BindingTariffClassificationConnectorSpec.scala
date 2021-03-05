@@ -1146,7 +1146,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
   }
 
-  "Connector 'Approve, Reject or Rename Keyword'" should {
+  "Connector 'Approve or Reject Keyword'" should {
 
     "update keyword" in {
       val keyword = Keyword("updatedkeyword", true)

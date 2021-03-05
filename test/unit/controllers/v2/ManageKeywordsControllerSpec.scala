@@ -17,6 +17,7 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
+import models.CaseStatus.OPEN
 import models._
 import models.forms.KeywordForm
 import models.forms.v2.ChangeKeywordStatusForm
@@ -38,12 +39,14 @@ import scala.concurrent.Future.successful
 
 class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
+  val keyword: Keyword = Keyword("Scarf", true)
   val keywords    = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
   val keywordForm = KeywordForm.formWithAuto(keywords.map(_.name))
   val caseKeyword = CaseKeyword(
     Keyword("BOOK", false),
     List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None))
   )
+  val dummyCase: Case = Cases.liabilityCaseExample.copy(status = OPEN)
 
   private lazy val manage_keywords_view    = injector.instanceOf[manage_keywords_view]
   private lazy val confirm_keyword_view    = injector.instanceOf[confirm_keyword_created]
@@ -184,12 +187,12 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.updateKeywordStatus(any[Keyword], any[KeywordChangeStatusForm])(any[HeaderCarrier]))
+      given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
         .willReturn(Future(Keyword("updatedKeyword", true)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .changeKeywordStatus("originalKeywordName", "caseReference", None)(newFakePUTRequestWithCSRF(Map("keyword" -> "updatedKeyword"))))
+          .approveOrRejectKeyword("originalKeywordName", dummyCase)(newFakePUTRequestWithCSRF(Map("keyword" -> "updatedKeyword"))))
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(
@@ -198,7 +201,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
 
     "return unauthorised with no permissions" in {
-      val result = await(controller(Set()).changeKeywordStatus("keywordName", "reference", None)(newFakePOSTRequestWithCSRF(Map("keyword" -> "updatedKeyword"))))
+      val result = await(controller(Set()).approveOrRejectKeyword("name", dummyCase)(newFakePOSTRequestWithCSRF(Map("keyword" -> "kword"))))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
@@ -209,7 +212,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         .willReturn(Future(Paged(keywords)))
 
       val result = await(
-        controller(Set(Permission.MANAGE_USERS)).changeKeywordStatus("keywordName", "reference", None)(newFakePUTRequestWithCSRF(Map("keyword" -> ""))))
+        controller(Set(Permission.MANAGE_USERS)).approveOrRejectKeyword("name", dummyCase)(newFakePUTRequestWithCSRF(Map("keyword" -> ""))))
 
       status(result)          shouldBe Status.BAD_REQUEST
       contentType(result)     shouldBe Some("text/html")
@@ -225,7 +228,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .changeKeywordStatus("keywordName", "reference", Some("shoes"))(newFakePUTRequestWithCSRF(Map("keyword" -> keywords.head.name))))
+          .approveOrRejectKeyword("shoes", dummyCase)(newFakePUTRequestWithCSRF(Map("keyword" -> keywords.head.name))))
 
       status(result)          shouldBe Status.BAD_REQUEST
       contentType(result)     shouldBe Some("text/html")
@@ -300,4 +303,23 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
   }
 
+  "display Keyword Change Confirmation" should {
+
+    "return 200 OK and HTML content type" in {
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).displayKeywordChangeConfirmation(keyword, dummyCase)(fakeRequest))
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).displayKeywordChangeConfirmation(keyword, dummyCase)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+
+    }
+  }
 }
