@@ -56,7 +56,7 @@
       <h1 class="heading-xlarge mt-0">@messages("choose_team_misc_case.released_dynamic_message", c.application.getType, queueName)</h1>
     }
  }else{
-   <h1 class="govuk-panel__title">The @c.application.goodsName  case has been released to the @queueName team</h1>
+   <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message.atar", c.application.goodsName, queueName)</h1>
    <div class="govuk-panel__body">The case status is now </br><span class="bold">Open</span></div>
 
  }
