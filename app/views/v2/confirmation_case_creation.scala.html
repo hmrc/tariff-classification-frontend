@@ -48,16 +48,19 @@
 <div class="govuk-panel govuk-panel--confirmation">
  @if(c.application.isCorrespondence|| c.application.isMisc){
     @if(!queueName.isEmpty && c.application.isCorrespondence) {
-       <h1 class="heading-xlarge mt-0">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
+       <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
+       <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
     }else if(queueName.isEmpty){
-      <h1 class="heading-xlarge mt-0">Correspondence case created</h1>
+    <h1 class="govuk-panel__title">@messages("create_case.dynamic_message", c.application.getType)</h1>
+        <div class="govuk-panel__body">@messages("create_case.message")</div>
     }
     @if(!queueName.isEmpty && c.application.isMisc) {
-      <h1 class="heading-xlarge mt-0">@messages("choose_team_misc_case.released_dynamic_message", c.application.getType, queueName)</h1>
+      <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
+    <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
     }
  }else{
    <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message.atar", c.application.goodsName, queueName)</h1>
-   <div class="govuk-panel__body">The case status is now </br><span class="bold">Open</span></div>
+   <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
 
  }
 </div>
