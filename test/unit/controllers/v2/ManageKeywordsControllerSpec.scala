@@ -187,4 +187,23 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
     }
   }
+
+  "editApprovedKeywords" should {
+
+    "return 200 OK and HTML content type" in {
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).editApprovedKeywords("KEYWORD")(fakeRequest))
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).displayConfirmKeyword("KEYWORD")(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+
+    }
+  }
 }

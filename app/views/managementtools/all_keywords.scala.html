@@ -18,11 +18,14 @@
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.managementtools._
 @import views.html.components.input_accessible_auto_complete
+@import views.html.partials.error_summary
 @import controllers.v2.routes.ManageKeywordsController
 
 @(keywordsTabViewModel: KeywordsTabViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="keyword_search_edit-table">
+
+    @error_summary(keywordForm.errors)
 
     @helper.form(action = controllers.v2.routes.ManageKeywordsController.postDisplayManageKeywords(), 'id -> "edit-keyword-form", 'novalidate -> "novalidate") {
 
@@ -39,11 +42,9 @@
                     placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
                 )
                 </div>
-                <a href="@ManageKeywordsController.editApprovedKeywords("potatoes")">
                     <button id="keyword_search-edit-keyword-button" class="button left ml-1 mt-2" type="submit" name="editKeyword" value="true">
                     @messages("management.manage-keywords.search-all-keywords.edit-keyword-button")
                     </button>
-                </a>
             </div>
         </div>
     }
