@@ -70,26 +70,23 @@ class ManageKeywordsController @Inject() (
       keywordService.findAll(NoPagination()).flatMap { keywords =>
         val keywordNames = keywords.results.map(_.name)
         KeywordForm
-          .formWithAuto(keywordNames)
+          .formWithAutoReverse(keywordNames)
           .bindFromRequest
           .fold(
             formWithErrors =>
               for {
                 caseKeywords <- keywordService.fetchCaseKeywords()
-                allKeywords  <- keywordService.findAll(NoPagination())
                 manageKeywordsViewModel = ManageKeywordsViewModel
-                  .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
-              } yield BadRequest {
-
-                println("*****" * 150 + formWithErrors.data + "     -- -- " + formWithErrors.errors)
+                  .forManagedTeams(caseKeywords.results, keywordNames)
+              } yield BadRequest(
                 manageKeywordsView(
                   activeSubNav,
                   manageKeywordsViewModel,
                   formWithErrors
                 )
-              },
+              ),
             keyword =>
-              successful(Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(keyword)))
+              successful(Redirect(controllers.v2.routes.ManageKeywordsController.editApprovedKeywords(keyword)))
           )
       }
     )

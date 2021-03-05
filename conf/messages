@@ -1266,6 +1266,8 @@ management.change-keywords.edit-approved-keywords.radio.delete=Delete
 management.change-keywords.edit-approved-keywords.radio.rename=Rename
 management.manage-keywords.edit-approved-keywords.label=Enter a new keyword or choose from the approved list
 management.manage-keywords.edit-approved-keywords.hint=Keywords will be saved in uppercase.
+management.manage-keywords.edit-approved-keywords.error=This keyword is not in the list
+management.manage-keywords.edit-approved-keywords.empty.keyword=Enter a keyword
 
 management.manage-keywords.edit-approved-keywords.deleted.heading=Keyword deleted
 management.manage-keywords.edit-approved-keywords.deleted.p=This keyword has been deleted from the approved keyword list. It will still appear on any rulings that have been completed.
