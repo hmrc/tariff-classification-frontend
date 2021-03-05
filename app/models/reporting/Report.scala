@@ -32,8 +32,14 @@ sealed abstract class Report extends Product with Serializable {
 }
 
 object Report {
+
+  val openCasesInTeams = QueueReport(
+    statuses = Set(PseudoCaseStatus.OPEN)
+  )
+
   val byId = Map[String, Report](
-    )
+    "number-of-cases-in-teams" -> openCasesInTeams
+  )
 
   private val groupByKey      = "group_by"
   private val maxFieldsKey    = "max_fields"
