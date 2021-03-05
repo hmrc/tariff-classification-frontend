@@ -69,7 +69,8 @@ object ReportingTabViewModel {
     ReportTabRow("liabilities-cases", "liabilities-cases"),
     ReportTabRow("new-liabilities-cases-non-live", "new-liabilities-cases-non-live"),
     ReportTabRow("new-liabilities-cases", "new-liabilities-cases-live"),
-    ReportTabRow("new-liabilities", "new-liabilities")
+    ReportTabRow("new-liabilities", "new-liabilities"),
+    ReportTabRow("working-days-non-live-liabilities", "working-days-non-live-liabilities")
   )
 
   def correspondenceTabRows: List[ReportTabRow] = List(

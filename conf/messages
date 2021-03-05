@@ -1342,6 +1342,7 @@ reporting.atar.atar-cases = ATaR cases
 reporting.liability.tab.heading = Liability
 reporting.liability.heading = Liabilities reports
 reporting.liability.liabilities-cases = Liabilities cases
+reporting.liability.working-days-non-live-liabilities = Working days liability (non-live) cases
 reporting.liability.new-liabilities-cases-non-live = New liabilities (non-live) cases
 reporting.liability.new-liabilities-cases = New liabilities (live) cases
 reporting.liability.new-liabilities = New Liabilities

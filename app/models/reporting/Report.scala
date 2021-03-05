@@ -60,10 +60,29 @@ object Report {
     caseTypes         = Set(ApplicationType.LIABILITY)
   )
 
+  val calendarDaysNonLiveLiabilitiesCases = CaseReport(
+    name              = "Working days liability (non-live) cases",
+    sortBy            = ReportField.ElapsedDays,
+    sortOrder         = SortDirection.DESCENDING,
+    caseTypes         = Set(ApplicationType.LIABILITY),
+    liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
+    statuses          = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN, PseudoCaseStatus.REFERRED, PseudoCaseStatus.SUSPENDED),
+    fields = Seq(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
+
   val byId = Map[String, Report](
-    "new-liabilities"                -> numberOfNewLiabilityCases,
-    "new-liabilities-cases-live"     -> numberOfNewLiveLiabilityCases,
-    "new-liabilities-cases-non-live" -> numberOfNewNonLiveLiabilityCases
+    "new-liabilities"                   -> numberOfNewLiabilityCases,
+    "new-liabilities-cases-live"        -> numberOfNewLiveLiabilityCases,
+    "new-liabilities-cases-non-live"    -> numberOfNewNonLiveLiabilityCases,
+    "working-days-non-live-liabilities" -> calendarDaysNonLiveLiabilitiesCases
   )
 
   private val groupByKey      = "group_by"
