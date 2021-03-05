@@ -29,31 +29,33 @@
  <button id="move-misc-cases" class="button" type="submit">Move selected cases</button>
 </div>
 <table id="@{miscTab.tabMessageKey}-table">
+ <caption class="visually hidden">@messages("users.user.correspondence.heading")</caption>
+ <thead>
+  <tr id="@{miscTab.tabMessageKey}-details" class="grid-row mb-2">
+    <th id="@{miscTab.tabMessageKey}-select" class="bold w-0">
+     Select
+    </th>
+    <th id="@{miscTab.tabMessageKey}-reference" class="bold w-0">
+     Reference
+    </th>
+    <th id="@{miscTab.tabMessageKey}-subject" class="bold w-0">
+     Subject
+    </th>
+    <th id="@{miscTab.tabMessageKey}-trader" class="bold w-0">
+     Trader
+    </th>
+    <th id="@{miscTab.tabMessageKey}-type" class="bold w-0">
+     type
+    </th>
+    <th id="@{miscTab.tabMessageKey}-elapsed-days" class="bold w-0">
+     Elapsed days
+    </th>
+    <th id="@{miscTab.tabMessageKey}-team" class="bold w-0">
+     Team
+    </th>
+  </tr>
+ </thead>
  <tbody>
- <tr id="@{miscTab.tabMessageKey}-details" class="grid-row mb-2">
-  <th id="@{miscTab.tabMessageKey}-select" class="bold w-0">
-   Select
-  </th>
-  <th id="@{miscTab.tabMessageKey}-reference" class="bold w-0">
-   Reference
-  </th>
-  <th id="@{miscTab.tabMessageKey}-subject" class="bold w-0">
-   Subject
-  </th>
-  <th id="@{miscTab.tabMessageKey}-trader" class="bold w-0">
-   Trader
-  </th>
-  <th id="@{miscTab.tabMessageKey}-type" class="bold w-0">
-   type
-  </th>
-  <th id="@{miscTab.tabMessageKey}-elapsed-days" class="bold w-0">
-   Elapsed days
-  </th>
-  <th id="@{miscTab.tabMessageKey}-team" class="bold w-0">
-   Team
-  </th>
- </tr>
-
  @for((result, index) <- miscTab.searchResult.results.zipWithIndex) {
 
  @defining(result.application.asMisc) { misc =>
@@ -76,7 +78,12 @@
     </div>
    </div>
   </td>
-  <td id="@{miscTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+  <td id="@{miscTab.tabMessageKey}-reference-@index">
+      <a href="@routes.CaseController.get(result.reference)">
+          <span aria-hidden="true">@{result.reference}</span>
+          <span class="visually-hidden">case reference @{result.reference}</span>
+      </a>
+  </td>
   <td id="@{miscTab.tabMessageKey}-summary-@index">@{misc.name}</td>
   <td id="@{miscTab.tabMessageKey}-trader-@index">@{misc.contactName}</td>
   <td id="@{miscTab.tabMessageKey}-type-@index">@{MiscCaseType.format(misc.caseType)}</td>

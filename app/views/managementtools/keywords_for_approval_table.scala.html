@@ -23,7 +23,7 @@
 @(manageKeywordsTab: ManageKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="@{manageKeywordsTab.tabMessageKey}-table">
-    <tbody>
+    <thead>
         <tr id="@{manageKeywordsTab.tabMessageKey}-details" class="grid-row mb-2">
             <th id="@{manageKeywordsTab.tabMessageKey}-keyword" class="bold w-0">Keyword</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-user-name" class="bold w-0">User</th>
@@ -31,7 +31,8 @@
             <th id="@{manageKeywordsTab.tabMessageKey}-type-id" class="bold w-0">Case type</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-status-id" class="bold w-0">Case status</th>
         </tr>
-
+    </thead>
+    <tbody>
     @for((result, index) <- manageKeywordsTab.searchResult.results.zipWithIndex) {
         <tr id="@{manageKeywordsTab.tabMessageKey}-details-@index">
             <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index">
