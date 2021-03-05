@@ -20,30 +20,48 @@
 @import views.html.partials.pagination
 
 @(
-  report: reporting.CaseReport,
+  report: QueueReport,
   options: Pagination,
-  results: Paged[Map[String, ReportResultField[_]]],
-  users: Map[String, Operator],
+  results: Paged[QueueResultGroup],
   teams: Map[String, Queue],
   id: String
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
+@teamForId(teamId: String) = {
+  @{
+    teams.get(teamId)
+      .map(_.name)
+      .getOrElse(messages("reporting.team.unknown"))
+  }
+}
+
 <table id="@{id}-table">
   <thead>
     <tr id="@{id}-details" class="grid-row mb-2">
-      @for(field <- report.fields) {
-        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0">
-          @messages(s"reporting.field.${field.fieldName}")
-        </th>
-      }
+      <th scope="col" id="@{id}-assigned_team" class="bold w-0">
+        @messages(s"reporting.field.assigned_team")
+      </th>
+      <th scope="col" id="@{id}-case_type" class="bold w-0">
+        @messages(s"reporting.field.case_type")
+      </th>
+      <th scope="col" id="@{id}-count" class="bold w-0">
+        @messages(s"reporting.field.count")
+      </th>
     </tr>
   </thead>
+
   <tbody>
-    @for((result, rowIndex) <- results.results.zipWithIndex) {
-      <tr id="@{id}-details-@{rowIndex}" class="grid-row mb-2">
-        @for(field <- report.fields) {
-          @reportField(field, result(field.fieldName), users, teams, id, rowIndex)
-        }
+    @for((resultGroup, rowIndex) <- results.results.zipWithIndex) {
+      <tr>
+        <td id="@{id}-assigned_team-@{rowIndex}">
+          @{resultGroup.team.map(teamForId).getOrElse(messages("reporting.team.unassigned"))}
+        </td>
+        <td id="@{id}-case_type-@{rowIndex}">
+          @{resultGroup.caseType.prettyName}
+        </td>
+        <td id="@{id}-count-@{rowIndex}">
+          @{resultGroup.count}
+        </td>
       </tr>
     }
   </tbody>
@@ -54,5 +72,5 @@
   pager = results,
   containerClass = Some("mt-2 mb-1"),
   linksClass = Some("mt-2"),
-  onChange = page => controllers.routes.ReportingController.caseReport(report, options.withPage(page))
+  onChange = page => controllers.routes.ReportingController.queueReport(report, options.withPage(page))
 )

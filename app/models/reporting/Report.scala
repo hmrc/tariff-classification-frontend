@@ -38,14 +38,17 @@ object Report {
   private val groupByKey      = "group_by"
   private val maxFieldsKey    = "max_fields"
   private val includeCasesKey = "include_cases"
+  private val fieldsKey       = "fields"
 
   implicit val reportQueryStringBindable: QueryStringBindable[Report] =
     new QueryStringBindable[Report] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Report]] =
         if (params.contains(groupByKey) || params.contains(maxFieldsKey) || params.contains(includeCasesKey))
           SummaryReport.summaryReportQueryStringBindable.bind(key, params)
-        else
+        else if (params.contains(fieldsKey))
           CaseReport.caseReportQueryStringBindable.bind(key, params)
+        else
+          QueueReport.queueReportQueryStringBindable.bind(key, params)
 
       override def unbind(key: String, value: Report): String = value match {
         case cse: CaseReport =>
@@ -67,7 +70,7 @@ case class SummaryReport(
   statuses: Set[PseudoCaseStatus.Value] = Set.empty,
   teams: Set[String]                    = Set.empty,
   dateRange: InstantRange               = InstantRange.allTime,
-  maxFields: Set[ReportField[Long]]     = Set.empty,
+  maxFields: Seq[ReportField[Long]]     = Seq.empty,
   includeCases: Boolean                 = false
 ) extends Report
 
@@ -103,12 +106,12 @@ object SummaryReport {
       val statuses = params(statusesKey)(requestParams)
         .map(_.map(bindPseudoCaseStatus).collect { case Some(status) => status })
         .getOrElse(Set.empty)
-      val maxFields = params(maxFieldsKey)(requestParams)
+      val maxFields = orderedParams(maxFieldsKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get(_).collect[ReportField[Long]] {
           case days @ DaysSinceField(_) => days
           case num @ NumberField(_)     => num
         }))
-        .getOrElse(Set.empty)
+        .getOrElse(Seq.empty)
       (reportName, groupBy, sortBy).mapN {
         case (reportName, groupBy, sortBy) =>
           for {
@@ -228,7 +231,7 @@ case class QueueReport(
   assignee: Option[String]              = Option.empty,
   dateRange: InstantRange               = InstantRange.allTime
 ) extends Report {
-  override val name = "Cases by queue"
+  override val name = "Number of cases in queues"
 }
 
 object QueueReport {

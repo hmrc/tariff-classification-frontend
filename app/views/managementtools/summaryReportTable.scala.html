@@ -28,43 +28,42 @@
   id: String
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
-<div>
+<table id="@{id}-table">
+  <thead>
+    <tr id="@{id}-details" class="grid-row mb-2">
+      <th scope="col" id="@{id}-@{report.groupBy.fieldName}" class="bold w-0">
+        @messages(s"reporting.field.${report.groupBy.fieldName}")
+      </th>
+      <th scope="col" id="@{id}-count" class="bold w-0">
+        @messages(s"reporting.field.count")
+      </th>
+      @for((field, index) <- report.maxFields.zipWithIndex) {
+        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0">
+          @messages(s"reporting.field.${field.fieldName}")
+        </th>
+      }
+    </tr>
+  </thead>
 
-  <table id="@{id}-table">
-    <tbody>
-      <tr id="@{id}-details" class="grid-row mb-2">
-        <th id="@{id}-@{report.groupBy.fieldName}" class="bold w-0">
-          @messages(s"reporting.field.${report.groupBy.fieldName}")
-        </th>
-        <th id="@{id}-count" class="bold w-0">
-          @messages(s"reporting.field.count")
-        </th>
-        @for((field, index) <- report.maxFields.zipWithIndex) {
-          <th id="@{id}-@{field.fieldName}" class="bold w-0">
-            @messages(s"reporting.field.${field.fieldName}")
-          </th>
+  <tbody>
+    @for((resultGroup, rowIndex) <- results.results.zipWithIndex) {
+      <tr>
+        @reportField(report.groupBy, resultGroup.groupKey, users, teams, id, rowIndex)
+        <td id="@{id}-count-@{rowIndex}">
+          @{resultGroup.count}
+        </td>
+        @for(field <- resultGroup.maxFields) {
+          @reportNumberField(field, id, rowIndex)
         }
       </tr>
+    }
+  </tbody>
+</table>
 
-      @for((resultGroup, rowIndex) <- results.results.zipWithIndex) {
-        <tr>
-          @reportField(report.groupBy, resultGroup.groupKey, users, teams, id, rowIndex)
-          <td id="@{id}-count-@{rowIndex}">
-            @{resultGroup.count}
-          </td>
-          @for(field <- resultGroup.maxFields) {
-            @reportNumberField(field, id, rowIndex)
-          }
-        </tr>
-      }
-    </tbody>
-  </table>
-
-  @pagination(
-    id = s"${id}-pagination_bottom",
-    pager = results,
-    containerClass = Some("mt-2 mb-1"),
-    linksClass = Some("mt-2"),
-    onChange = page => controllers.routes.ReportingController.summaryReport(report, options.withPage(page))
-  )
-</div>
+@pagination(
+  id = s"${id}-pagination_bottom",
+  pager = results,
+  containerClass = Some("mt-2 mb-1"),
+  linksClass = Some("mt-2"),
+  onChange = page => controllers.routes.ReportingController.summaryReport(report, options.withPage(page))
+)
