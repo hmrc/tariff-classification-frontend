@@ -29,7 +29,7 @@
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 <table id="@{id}-table">
-  <thead>
+  <thead class="govuk-table__head">
     <tr id="@{id}-details" class="grid-row mb-2">
       <th scope="col" id="@{id}-@{report.groupBy.fieldName}" class="bold w-0">
         @messages(s"reporting.field.${report.groupBy.fieldName}")

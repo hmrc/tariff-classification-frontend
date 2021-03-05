@@ -29,7 +29,7 @@
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 <table id="@{id}-table">
-  <thead>
+  <thead class="govuk-table__head">
     <tr id="@{id}-details" class="grid-row mb-2">
       @for(field <- report.fields) {
         <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0">
