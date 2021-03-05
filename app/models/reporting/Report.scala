@@ -33,8 +33,38 @@ sealed abstract class Report extends Product with Serializable {
 }
 
 object Report {
+
+  val numberOfNewLiabilityCases = SummaryReport(
+    name      = "New Liabilities",
+    groupBy   = ReportField.LiabilityStatus,
+    sortBy    = ReportField.LiabilityStatus,
+    statuses  = Set(PseudoCaseStatus.NEW),
+    caseTypes = Set(ApplicationType.LIABILITY)
+  )
+
+  val numberOfNewLiveLiabilityCases = SummaryReport(
+    name              = "New liabilities (live) cases",
+    groupBy           = ReportField.LiabilityStatus,
+    sortBy            = ReportField.LiabilityStatus,
+    statuses          = Set(PseudoCaseStatus.NEW),
+    liabilityStatuses = Set(LiabilityStatus.LIVE),
+    caseTypes         = Set(ApplicationType.LIABILITY)
+  )
+
+  val numberOfNewNonLiveLiabilityCases = SummaryReport(
+    name              = "New liabilities (non-live) cases",
+    groupBy           = ReportField.LiabilityStatus,
+    sortBy            = ReportField.LiabilityStatus,
+    statuses          = Set(PseudoCaseStatus.NEW),
+    liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
+    caseTypes         = Set(ApplicationType.LIABILITY)
+  )
+
   val byId = Map[String, Report](
-    )
+    "new-liabilities"                -> numberOfNewLiabilityCases,
+    "new-liabilities-cases-live"     -> numberOfNewLiveLiabilityCases,
+    "new-liabilities-cases-non-live" -> numberOfNewNonLiveLiabilityCases
+  )
 
   private val groupByKey      = "group_by"
   private val maxFieldsKey    = "max_fields"
