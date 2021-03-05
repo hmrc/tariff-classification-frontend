@@ -45,8 +45,6 @@
 @main(bodyClasses = None, customTitle = customHeading) {
 <div class="grid-row column-two-thirds">
 
-@case_heading(CaseHeaderViewModel.fromCase(c))
-
 <div class="govuk-panel govuk-panel--confirmation">
  @if(c.application.isCorrespondence|| c.application.isMisc){
     @if(!queueName.isEmpty && c.application.isCorrespondence) {
@@ -58,8 +56,8 @@
       <h1 class="heading-xlarge mt-0">@messages("choose_team_misc_case.released_dynamic_message", c.application.getType, queueName)</h1>
     }
  }else{
-   <h2 class="heading-large mt-0">This case has been released to the @queueName queue for classification</h2>
-   <p class="heading-medium">The case status is now Open</p>
+   <h1 class="govuk-panel__title">The @c.application.goodsName  case has been released to the @queueName team</h1>
+   <div class="govuk-panel__body">The case status is now </br><span class="bold">Open</span></div>
 
  }
 </div>
