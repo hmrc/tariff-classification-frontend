@@ -28,7 +28,7 @@ case class ChapterField(override val fieldName: String) extends ReportField[Stri
 case class DateField(override val fieldName: String) extends ReportField[Instant](fieldName)
 case class StringField(override val fieldName: String) extends ReportField[String](fieldName)
 case class DaysSinceField(override val fieldName: String) extends ReportField[Long](fieldName)
-case class LiabilityStatusField(override val fieldName: String) extends ReportField[PseudoCaseStatus.Value](fieldName)
+case class LiabilityStatusField(override val fieldName: String) extends ReportField[LiabilityStatus.Value](fieldName)
 
 object ReportField {
   val Count           = NumberField("count")

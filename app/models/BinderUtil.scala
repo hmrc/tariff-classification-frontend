@@ -20,6 +20,7 @@ import java.time.Instant
 
 import cats.data.EitherT
 import models.CaseStatus.CaseStatus
+import models.LiabilityStatus.LiabilityStatus
 import models.PseudoCaseStatus.PseudoCaseStatus
 import models.SortDirection.SortDirection
 import play.api.mvc.QueryStringBindable
@@ -37,6 +38,9 @@ object BinderUtil {
 
   def bindPseudoCaseStatus(value: String): Option[PseudoCaseStatus] =
     PseudoCaseStatus.values.find(_.toString == value)
+
+  def bindLiabilityStatus(value: String): Option[LiabilityStatus] =
+    LiabilityStatus.values.find(_.toString.equalsIgnoreCase(value))
 
   def bindSortDirection(value: String): Option[SortDirection] =
     SortDirection.values.find(_.toString == value)
@@ -57,10 +61,14 @@ object BinderUtil {
   def subKey(parentKey: String, childKey: String) =
     Seq(parentKey, childKey).filterNot(_.isEmpty).mkString("_")
 
-  def bind[T](parentKey: String, childKey: String, params: Map[String, Seq[String]])(implicit binder: QueryStringBindable[T]) =
+  def bind[T](parentKey: String, childKey: String, params: Map[String, Seq[String]])(
+    implicit binder: QueryStringBindable[T]
+  ) =
     EitherT(binder.bind(subKey(parentKey, childKey), params))
 
-  def bind[T](default: => T)(parentKey: String, childKey: String, params: Map[String, Seq[String]])(implicit binder: QueryStringBindable[T]) =
+  def bind[T](
+    default: => T
+  )(parentKey: String, childKey: String, params: Map[String, Seq[String]])(implicit binder: QueryStringBindable[T]) =
     EitherT(binder.bind(subKey(parentKey, childKey), params).orElse(Some(Right(default))))
 
   def unbind[T](parentKey: String, childKey: String, value: T)(implicit binder: QueryStringBindable[T]) =
