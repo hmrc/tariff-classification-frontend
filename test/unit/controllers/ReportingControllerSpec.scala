@@ -29,16 +29,21 @@ import play.api.test.CSRFTokenHelper._
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.managementtools.manage_reports_view
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val reportingService = mock[ReportingService]
-  private val queueService     = injector.instanceOf[QueuesService]
-  private val usersService     = mock[UserService]
-  private val operator         = mock[Operator]
+  private val reportingService                     = mock[ReportingService]
+  private val queueService                         = injector.instanceOf[QueuesService]
+  private val usersService                         = mock[UserService]
+  private val casesService                         = mock[CasesService]
+  private val operator                             = mock[Operator]
+  private val requiredPermissions: Set[Permission] = Set(Permission.VIEW_REPORTS)
+  private val noPermissions: Set[Permission]       = Set.empty
+  private lazy val manage_reports_view             = injector.instanceOf[manage_reports_view]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -56,6 +61,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       queueService,
       usersService,
       mcc,
+      manage_reports_view,
       realAppConfig
     )
 
@@ -402,8 +408,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .summaryReport(
             summaryReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
-            )
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z")))
           )
           .path()
       )
@@ -417,8 +422,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .caseReport(
             caseReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
-            )
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z")))
           )
           .path()
       )
@@ -502,6 +506,26 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           controller(Set())
             .postChangeDateFilter(summaryReport, SearchPagination())(fakeRequest.withMethod("POST").withCSRFToken)
         )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
+
+  "displayManageReporting" should {
+
+    "return 200 OK and HTML content type" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).displayManageReporting()(fakeRequest))
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).displayManageReporting()(fakeRequest))
 
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)

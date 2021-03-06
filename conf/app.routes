@@ -180,3 +180,5 @@ GET        /keywords/keyword-create                              controllers.v2.
 POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
 
+GET        /manage-reports                                          controllers.ReportingController.displayManageReporting()
+
