@@ -32,8 +32,131 @@ sealed abstract class Report extends Product with Serializable {
 }
 
 object Report {
-  val byId = Map[String, Report](
+
+  val numberOfOpenCases = SummaryReport(
+    name      = "Number of open cases",
+    groupBy   = ReportField.Team,
+    sortBy    = ReportField.Team,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.OPEN)
+  )
+
+  val completedCases = SummaryReport(
+    name      = "Completed cases",
+    groupBy   = ReportField.Team,
+    sortBy    = ReportField.Team,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.COMPLETED)
+  )
+
+  val numberOfCasesPerUser = SummaryReport(
+    name      = "Number of cases per user",
+    groupBy   = ReportField.User,
+    sortBy    = ReportField.User,
+    sortOrder = SortDirection.ASCENDING
+  )
+
+  val cancelledCasesPerUser = SummaryReport(
+    name      = "Cancelled cases by assigned user",
+    groupBy   = ReportField.User,
+    sortBy    = ReportField.User,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.CANCELLED)
+  )
+
+  val cancelledCasesByChapter = SummaryReport(
+    name      = "Cancelled cases by chapter",
+    groupBy   = ReportField.Chapter,
+    sortBy    = ReportField.Chapter,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.CANCELLED)
+  )
+
+  val liabilitiesSummary = CaseReport(
+    name      = "Liabilities summary",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.LIABILITY),
+    fields = Seq(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Chapter,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
     )
+  )
+
+  val atarSummary = CaseReport(
+    name      = "ATaR summary",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.ATAR),
+    fields = Seq(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Chapter,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
+
+  val liabilitiesCases = CaseReport(
+    name      = "Liabilities cases",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.LIABILITY),
+    fields = Seq(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
+
+  val numberOfNewAtarCases = SummaryReport(
+    name      = "New ATaR cases",
+    groupBy   = ReportField.CaseType,
+    sortBy    = ReportField.CaseType,
+    statuses  = Set(PseudoCaseStatus.NEW),
+    caseTypes = Set(ApplicationType.ATAR)
+  )
+
+  val numberOfNewCases = SummaryReport(
+    name      = "Number of new cases",
+    groupBy   = ReportField.CaseType,
+    sortBy    = ReportField.CaseType,
+    statuses  = Set(PseudoCaseStatus.NEW)
+  )
+
+  val numberOfNewanOpenCases = SummaryReport(
+    name      = "New and open cases",
+    groupBy   = ReportField.CaseType,
+    sortBy    = ReportField.ElapsedDays,
+    statuses  = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
+  )
+
+  val byId = Map[String, Report](
+    "number-of-open-cases"             -> numberOfOpenCases,
+    "completed-cases"                  -> completedCases,
+    "number-of-cases-per-user"         -> numberOfCasesPerUser,
+    "cancelled-cases-by-assigned-user" -> cancelledCasesPerUser,
+    "cancelled-cases-by-chapter"       -> cancelledCasesByChapter,
+    "liabilities-summary"              -> liabilitiesSummary,
+    "atar-summary"                     -> atarSummary,
+    "new-atar-cases"                   -> numberOfNewAtarCases,
+    "liabilities-cases"                -> liabilitiesCases,
+    "number-of-new-cases"              -> numberOfNewCases,
+    "new-and-open-cases"               -> numberOfNewanOpenCases
+  )
 
   private val groupByKey      = "group_by"
   private val maxFieldsKey    = "max_fields"
