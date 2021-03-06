@@ -5,7 +5,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import models.{Case, Pagination}
 import utils.Cases._
-import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
+import utils.{CasePayloads, EventPayloads}
 import utils.JsonFormatters._
 
 class CaseSpec extends IntegrationTest with MockitoSugar {
@@ -79,17 +79,6 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
               .withStatus(OK)
               .withBody(EventPayloads.pagedEvents)
           )
-      )
-      stubFor(
-        get(
-          urlEqualTo(
-            s"/keywords?page=1&page_size=${Pagination.unlimited}"
-          )
-        ).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(KeywordsPayloads.pagedKeywords)
-        )
       )
 
       // When

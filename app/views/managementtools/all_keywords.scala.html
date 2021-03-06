@@ -25,18 +25,22 @@
 
     <div class="govuk-form-group">
         <div id="advanced_search_keywords">
+            <div class="display-inline w-75">
+                <label class="form-label" for="keyword_0">
+                    <span>Rename or delete a keyword from the approved list</span>
+                </label>
+                <span class="form-hint"></span>
+            </div>
             <div class="w-75 left display-inline">
                 @input_accessible_auto_complete(
                     field = keywordForm("keyword"),
-                    label = Some(messages("management.manage-keywords.search-all-keywords.label")),
                     formControlClass = Some("w-100"),
-                    labelClass = Some("un-bold"),
                     autoCompleteOptions = keywordsTabViewModel.globalKeywords,
                     placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
                 )
             </div>
-            <button id="keyword_search-edit-keyword-button" class="button left ml-1 mt-2" type="submit" name="editKeyword" value="true">
-                @messages("management.manage-keywords.search-all-keywords.edit-keyword-button")
+            <button id="keyword_search-edit-keyword-button" class="button left ml-1" type="submit" name="editKeyword" value="true">
+                Edit keyword
             </button>
         </div>
     </div>

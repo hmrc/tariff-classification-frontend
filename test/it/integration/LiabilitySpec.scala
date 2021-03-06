@@ -1,11 +1,11 @@
 package integration
 
-import com.github.tomakehurst.wiremock.client.WireMock.{stubFor, _}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import models.{Case, Pagination}
 import utils.Cases._
-import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
+import utils.{CasePayloads, EventPayloads}
 import utils.JsonFormatters._
 
 class LiabilitySpec extends IntegrationTest with MockitoSugar {
@@ -58,17 +58,6 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
             .withBody(EventPayloads.pagedEmpty)
         )
       )
-      stubFor(
-        get(
-          urlEqualTo(
-            s"/keywords?page=1&page_size=${Pagination.unlimited}"
-          )
-        ).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(KeywordsPayloads.pagedKeywords)
-        )
-        )
 
       // When
       val response = await(ws.url(s"$baseUrl/cases/v2/1/liability").get())
