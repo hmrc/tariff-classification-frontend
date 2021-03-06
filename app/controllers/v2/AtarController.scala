@@ -116,8 +116,8 @@ class AtarController @Inject() (
       queues <- queuesService.getAll
     } yield ActivityViewModel.fromCase(atarCase, events, queues)
 
-  private def getKeywordsTab(atarCase: Case): Future[KeywordsTabViewModel] =
-    keywordsService.autoCompleteKeywords.map { globalKeywords =>
-      KeywordsTabViewModel.fromCase(atarCase, globalKeywords)
+  private def getKeywordsTab(atarCase: Case)(implicit hc: HeaderCarrier): Future[KeywordsTabViewModel] =
+    keywordsService.findAll.map { globalKeywords =>
+      KeywordsTabViewModel.fromCase(atarCase, globalKeywords.results.map(_.name))
     }
 }

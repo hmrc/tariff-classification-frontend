@@ -56,8 +56,8 @@ class SearchController @Inject() (
     implicit request =>
       val focus: SearchTab = if (addToSearch.contains(true)) SearchTab.SEARCH_BOX else selectedTab
       def defaultAction: Future[Result] =
-        keywordsService.autoCompleteKeywords.map { keywords: Seq[String] =>
-          Results.Ok(html.advanced_search(SearchForm.form, None, keywords, focus))
+        keywordsService.findAll.map { keywords: Paged[Keyword] =>
+          Results.Ok(html.advanced_search(SearchForm.form, None, keywords.results.map(_.name), focus))
         }
 
       if (reference.isDefined) {
@@ -76,17 +76,17 @@ class SearchController @Inject() (
       } else if (search.isEmpty) {
         defaultAction
       } else {
-        keywordsService.autoCompleteKeywords.flatMap { keywords =>
+        keywordsService.findAll.flatMap { keywords =>
           SearchForm.form.bindFromRequest.fold(
             formWithErrors =>
-              Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords, focus))),
+              Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords.results.map(_.name), focus))),
             data =>
               for {
                 cases: Paged[Case]                            <- casesService.search(search, sort, SearchPagination(page))
                 attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
                 results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
               } yield Results
-                .Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords, focus))
+                .Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords.results.map(_.name), focus))
                 .addingToSession(
                   (backToSearchResultsLinkLabel, "search results"),
                   (

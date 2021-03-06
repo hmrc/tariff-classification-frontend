@@ -18,11 +18,13 @@ package controllers.v2
 
 import com.google.inject.Provider
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
+
 import javax.inject.Inject
 import models.forms.CommodityCodeConstraints
 import models.forms.v2.LiabilityDetailsForm
 import models.{Case, _}
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{any, refEq, eq => meq}
 import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
@@ -99,6 +101,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private lazy val keywordsService          = mock[KeywordsService]
   private lazy val casesService             = mock[CasesService]
 
+  private val keyword1: Keyword = Keyword("keyword1")
+  private val keyword2: Keyword = Keyword("keyword2")
+
   override def beforeEach(): Unit =
     reset(
       liability_view,
@@ -135,7 +140,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     when(fileStoreService.getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
     when(fileStoreService.getLetterOfAuthority(any[Case]())(any())) thenReturn (Future.successful(letterOfAuthority))
-    when(keywordsService.autoCompleteKeywords) thenReturn Future(Seq("keyword1", "keyword2"))
+    when(keywordsService.findAll) thenReturn Future(Paged(Seq(keyword1, keyword2)))
     when(keywordsService.addKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
       Cases.liabilityLiveCaseExample
     )
