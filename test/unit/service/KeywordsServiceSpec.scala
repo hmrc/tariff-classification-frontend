@@ -38,8 +38,6 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   private val operator: Operator = Operator("operator-id", None)
   private val aCase              = Cases.btiCaseExample
 
-  private val keyword: Keyword = Keyword("TEST")
-
   override protected def afterEach(): Unit = {
     super.afterEach()
     reset(connector, auditService)
@@ -125,9 +123,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Retrieve auto complete keywords" should {
 
     "return a list of keywords" in {
-      given(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])) willReturn successful(Paged(Seq(keyword)))
-
-      await(service.findAll(NoPagination())) shouldBe Paged(Seq(keyword))
+      await(service.autoCompleteKeywords) should contain("ABS")
     }
   }
 

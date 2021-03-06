@@ -53,7 +53,7 @@ object ManageKeywordsViewModel {
           caseHeader.goodsName.getOrElse(""),
           caseHeader.caseType,
           caseStatus,
-          allKeywords.contains(caseKeyword.keyword.name)
+          caseKeyword.keyword.approved
         )
     })
 
