@@ -168,7 +168,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result =
         await(
           controller(Set(Permission.VIEW_REPORTS))
-            .showChangeTeamsFilter(report, SearchPagination())(fakeRequest.withCSRFToken)
+            .showChangeTeamsFilter(report, SearchPagination())(newFakeGETRequestWithCSRF(app))
         )
 
       status(result)      shouldBe Status.OK
@@ -177,7 +177,8 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return unauthorised with no permissions" in {
-      val result = await(controller(Set()).showChangeTeamsFilter(report, SearchPagination())(fakeRequest.withCSRFToken))
+      val result =
+        await(controller(Set()).showChangeTeamsFilter(report, SearchPagination())(newFakeGETRequestWithCSRF(app)))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
@@ -201,7 +202,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return 303 and redirect to appropriate page when all teams is selected" in {
       val operator = Operator("0", Some("name"), memberOfTeams = Seq("4", "5"))
 
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody("allTeams" -> "true").withCSRFToken
+      val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("allTeams" -> "true")
 
       val summaryResult = await(
         controller(Set(Permission.VIEW_REPORTS), operator)
@@ -239,7 +240,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return 303 and redirect to appropriate page when managed teams is selected" in {
       val operator = Operator("0", Some("name"), memberOfTeams = Seq("4", "5"))
 
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody("allTeams" -> "false").withCSRFToken
+      val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("allTeams" -> "false")
 
       val summaryResult = await(
         controller(Set(Permission.VIEW_REPORTS), operator)
@@ -275,7 +276,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 400 and HTML content type for an invalid request" in {
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody().withCSRFToken
+      val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody()
       val result =
         await(
           controller(Set(Permission.VIEW_REPORTS)).postChangeTeamsFilter(summaryReport, SearchPagination())(request)
@@ -291,7 +292,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result =
         await(
           controller(Set())
-            .postChangeTeamsFilter(summaryReport, SearchPagination())(fakeRequest.withMethod("POST").withCSRFToken)
+            .postChangeTeamsFilter(summaryReport, SearchPagination())(newFakePOSTRequestWithCSRF(app))
         )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -310,7 +311,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result =
         await(
           controller(Set(Permission.VIEW_REPORTS))
-            .showChangeDateFilter(report, SearchPagination())(fakeRequest.withCSRFToken)
+            .showChangeDateFilter(report, SearchPagination())(newFakeGETRequestWithCSRF(app))
         )
 
       status(result)      shouldBe Status.OK
@@ -319,7 +320,8 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return unauthorised with no permissions" in {
-      val result = await(controller(Set()).showChangeDateFilter(report, SearchPagination())(fakeRequest.withCSRFToken))
+      val result =
+        await(controller(Set()).showChangeDateFilter(report, SearchPagination())(newFakeGETRequestWithCSRF(app)))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
@@ -353,7 +355,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     "return 303 and redirect to appropriate page when no specific date range is selected" in {
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody("specificDates" -> "false").withCSRFToken
+      val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("specificDates" -> "false")
 
       val summaryResult = await(
         controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request)
@@ -385,8 +387,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 303 and redirect to appropriate page when a date range is selected" in {
-      val request = fakeRequest
-        .withMethod("POST")
+      val request = newFakePOSTRequestWithCSRF(app)
         .withFormUrlEncodedBody(
           "specificDates"       -> "true",
           "dateRange.min.year"  -> "2021",
@@ -396,7 +397,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           "dateRange.max.month" -> "1",
           "dateRange.max.day"   -> "1"
         )
-        .withCSRFToken
 
       val summaryResult = await(
         controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request)
@@ -408,7 +408,8 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .summaryReport(
             summaryReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z")))
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
+            )
           )
           .path()
       )
@@ -422,7 +423,8 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .caseReport(
             caseReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z")))
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
+            )
           )
           .path()
       )
@@ -446,7 +448,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 400 and HTML content type when nothing is selected" in {
-      val request = fakeRequest.withMethod("POST").withFormUrlEncodedBody().withCSRFToken
+      val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody()
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 
@@ -457,18 +459,15 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 400 and HTML content type when an invalid date is selected" in {
-      val request = fakeRequest
-        .withMethod("POST")
-        .withFormUrlEncodedBody(
-          "specificDates"       -> "true",
-          "dateRange.min.year"  -> "2021",
-          "dateRange.min.month" -> "",
-          "dateRange.min.day"   -> "1",
-          "dateRange.max.year"  -> "2022",
-          "dateRange.max.month" -> "1",
-          "dateRange.max.day"   -> "1"
-        )
-        .withCSRFToken
+      val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody(
+        "specificDates"       -> "true",
+        "dateRange.min.year"  -> "2021",
+        "dateRange.min.month" -> "",
+        "dateRange.min.day"   -> "1",
+        "dateRange.max.year"  -> "2022",
+        "dateRange.max.month" -> "1",
+        "dateRange.max.day"   -> "1"
+      )
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 
@@ -479,18 +478,15 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return 400 and HTML content type when end date is before start date" in {
-      val request = fakeRequest
-        .withMethod("POST")
-        .withFormUrlEncodedBody(
-          "specificDates"       -> "true",
-          "dateRange.min.year"  -> "2022",
-          "dateRange.min.month" -> "1",
-          "dateRange.min.day"   -> "1",
-          "dateRange.max.year"  -> "2021",
-          "dateRange.max.month" -> "1",
-          "dateRange.max.day"   -> "1"
-        )
-        .withCSRFToken
+      val request = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody(
+        "specificDates"       -> "true",
+        "dateRange.min.year"  -> "2022",
+        "dateRange.min.month" -> "1",
+        "dateRange.min.day"   -> "1",
+        "dateRange.max.year"  -> "2021",
+        "dateRange.max.month" -> "1",
+        "dateRange.max.day"   -> "1"
+      )
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 
@@ -504,7 +500,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result =
         await(
           controller(Set())
-            .postChangeDateFilter(summaryReport, SearchPagination())(fakeRequest.withMethod("POST").withCSRFToken)
+            .postChangeDateFilter(summaryReport, SearchPagination())(newFakePOSTRequestWithCSRF(app))
         )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -531,4 +527,203 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
   }
+
+  "numberOfOpenCases" should {
+
+    val reportName = "number-of-open-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.numberOfOpenCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "completedCases" should {
+
+    val reportName = "completed-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.completedCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "numberOfCasesPerUser" should {
+
+    val reportName = "number-of-cases-per-user"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.numberOfCasesPerUser).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "cancelledCasesPerUser" should {
+
+    val reportName = "cancelled-cases-by-assigned-user"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.cancelledCasesPerUser).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "cancelledCasesByChapter" should {
+
+    val reportName = "cancelled-cases-by-chapter"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.cancelledCasesByChapter).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "liabilitiesSummary" should {
+
+    val reportName = "liabilities-summary"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.liabilitiesSummary).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "atarSummary" should {
+
+    val reportName = "atar-summary"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.atarSummary).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "numberOfNewAtarCases" should {
+
+    val reportName = "new-atar-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.numberOfNewAtarCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "liabilitiesCases" should {
+
+    val reportName = "liabilities-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.liabilitiesCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
 }
