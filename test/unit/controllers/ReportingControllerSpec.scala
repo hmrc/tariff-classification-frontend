@@ -33,6 +33,7 @@ import views.html.managementtools.manage_reports_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import cats.data.NonEmptySeq
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -68,7 +69,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "caseReport" should {
     val report = CaseReport(
       name   = "ATaR Summary Report",
-      fields = List(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
+      fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
     "return 200 OK and HTML content type" in {
@@ -94,7 +95,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "summaryReport" should {
     val report = SummaryReport(
       name    = "Case count by status",
-      groupBy = ReportField.Status,
+      groupBy = NonEmptySeq.one(ReportField.Status),
       sortBy  = ReportField.Status
     )
 
@@ -160,7 +161,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "showChangeTeamsFilter" should {
     val report = SummaryReport(
       name    = "Case count by status",
-      groupBy = ReportField.Status,
+      groupBy = NonEmptySeq.one(ReportField.Status),
       sortBy  = ReportField.Status
     )
 
@@ -187,14 +188,14 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "postChangeTeamsFilter" should {
     val summaryReport = SummaryReport(
       name    = "Case count by status",
-      groupBy = ReportField.Status,
+      groupBy = NonEmptySeq.one(ReportField.Status),
       sortBy  = ReportField.Status,
       teams   = Set("2", "3")
     )
 
     val caseReport = CaseReport(
       name   = "ATaR Summary Report",
-      fields = List(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
+      fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
     val queueReport = QueueReport()
@@ -303,7 +304,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "showChangeDateFilter" should {
     val report = SummaryReport(
       name    = "Case count by status",
-      groupBy = ReportField.Status,
+      groupBy = NonEmptySeq.one(ReportField.Status),
       sortBy  = ReportField.Status
     )
 
@@ -330,7 +331,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "postChangeDateFilter" should {
     val summaryReport = SummaryReport(
       name    = "Case count by status",
-      groupBy = ReportField.Status,
+      groupBy = NonEmptySeq.one(ReportField.Status),
       sortBy  = ReportField.Status,
       dateRange = InstantRange(
         Instant.parse("2020-01-01T09:00:00.00Z"),
@@ -340,7 +341,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     val caseReport = CaseReport(
       name   = "ATaR Summary Report",
-      fields = List(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName),
+      fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName),
       dateRange = InstantRange(
         Instant.parse("2020-01-01T09:00:00.00Z"),
         Instant.parse("2021-01-01T09:00:00.00Z")

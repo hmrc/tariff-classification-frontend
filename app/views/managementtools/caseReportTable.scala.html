@@ -31,7 +31,7 @@
 <table id="@{id}-table">
   <thead class="govuk-table__head">
     <tr id="@{id}-details" class="grid-row mb-2">
-      @for(field <- report.fields) {
+      @for(field <- report.fields.toSeq) {
         <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0">
           @messages(s"reporting.field.${field.fieldName}")
         </th>
@@ -41,7 +41,7 @@
   <tbody>
     @for((result, rowIndex) <- results.results.zipWithIndex) {
       <tr id="@{id}-details-@{rowIndex}" class="grid-row mb-2">
-        @for(field <- report.fields) {
+        @for(field <- report.fields.toSeq) {
           @reportField(field, result(field.fieldName), users, teams, id, rowIndex)
         }
       </tr>

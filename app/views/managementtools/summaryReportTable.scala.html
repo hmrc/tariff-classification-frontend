@@ -31,9 +31,11 @@
 <table id="@{id}-table">
   <thead class="govuk-table__head">
     <tr id="@{id}-details" class="grid-row mb-2">
-      <th scope="col" id="@{id}-@{report.groupBy.fieldName}" class="bold w-0">
-        @messages(s"reporting.field.${report.groupBy.fieldName}")
-      </th>
+      @for(groupBy <- report.groupBy.toSeq) {
+        <th scope="col" id="@{id}-@{groupBy.fieldName}" class="bold w-0">
+          @messages(s"reporting.field.${groupBy.fieldName}")
+        </th>
+      }
       <th scope="col" id="@{id}-count" class="bold w-0">
         @messages(s"reporting.field.count")
       </th>
@@ -48,7 +50,9 @@
   <tbody>
     @for((resultGroup, rowIndex) <- results.results.zipWithIndex) {
       <tr>
-        @reportField(report.groupBy, resultGroup.groupKey, users, teams, id, rowIndex)
+        @report.groupBy.zipWith(resultGroup.groupKey) { case (groupBy, groupKey) =>
+          @reportField(groupBy, groupKey, users, teams, id, rowIndex)
+        }.toSeq
         <td id="@{id}-count-@{rowIndex}">
           @{resultGroup.count}
         </td>
