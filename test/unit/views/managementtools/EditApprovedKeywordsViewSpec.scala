@@ -32,29 +32,29 @@ class EditApprovedKeywordsViewSpec extends ViewSpec {
 
     "render successfully with the default tab" in {
 
-//      val doc = view(
-//        editApprovedKeywordView(
-//          allKeywords    = keywords,
-//          newKeywordForm = keywordForm
-//        )
-//      )
-//      doc                                        should containText(messages("management.create-keyword.caption"))
-//      doc                                        should containElementWithID("common-cases-heading")
-//      doc.getElementById("common-cases-heading") should containText(messages("management.create-keyword.heading"))
-//    }
-//
-//    "contain a label and hint text" in {
-//
-//      val doc = view(
-//        newKeywordView(
-//          allKeywords    = keywords,
-//          newKeywordForm = keywordForm
-//        )
-//      )
-//      doc                                should containText(messages("management.create-keyword.label"))
-//      doc.getElementById("keyword-hint") should containText(messages("management.create-keyword.hint"))
-//    }
-//
-
-
+      //      val doc = view(
+      //        editApprovedKeywordView(
+      //          allKeywords    = keywords,
+      //          newKeywordForm = keywordForm
+      //        )
+      //      )
+      //      doc                                        should containText(messages("management.create-keyword.caption"))
+      //      doc                                        should containElementWithID("common-cases-heading")
+      //      doc.getElementById("common-cases-heading") should containText(messages("management.create-keyword.heading"))
+      //    }
+      //
+      //    "contain a label and hint text" in {
+      //
+      //      val doc = view(
+      //        newKeywordView(
+      //          allKeywords    = keywords,
+      //          newKeywordForm = keywordForm
+      //        )
+      //      )
+      //      doc                                should containText(messages("management.create-keyword.label"))
+      //      doc.getElementById("keyword-hint") should containText(messages("management.create-keyword.hint"))
+      //    }
+      //
+    }
+    }
 }

@@ -16,14 +16,15 @@
 
 package views.managementtools
 
+import play.twirl.api.HtmlFormat
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.confirmation_keyword_renamed
 
 class ConfirmationKeywordRenamedViewSpec extends ViewSpec {
 
-  val oldKeyword = "keyword"
-  val newKeyword = "keyword renamed"
+  val oldKeyword = "APPLE"
+  val newKeyword = "APPLES"
 
   def confirmKeywordRenamedView: confirmation_keyword_renamed = injector.instanceOf[confirmation_keyword_renamed]
 
@@ -37,12 +38,12 @@ class ConfirmationKeywordRenamedViewSpec extends ViewSpec {
           newKeyword
         )
       )
-      doc                                           should containText(messages("management.manage-keywords.edit-approved-keywords.renamed.heading"))
-      doc                                           should containElementWithID("confirm_keyword_renamed_id")
+      doc                                              should containText(messages("management.manage-keywords.edit-approved-keywords.renamed.heading"))
+      doc                                              should containElementWithID("confirm_keyword_renamed_id")
       doc.getElementById("confirm_keyword_renamed_id") should containText(oldKeyword.toUpperCase)
       doc.getElementById("confirm_keyword_renamed_id") should containText(newKeyword.toUpperCase)
-      doc.getElementById("renamed-keyword-p") should containText(
-        messages("management.manage-keywords.edit-approved-keywords.renamed.p")
+      doc should containText(
+        messages("management.manage-keywords.edit-approved-keywords.renamed.p", newKeyword)
       )
     }
 

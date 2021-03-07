@@ -23,11 +23,9 @@ import views.html.managementtools.confirmation_keyword_deleted
 
 class ConfirmationKeywordDeletedViewSpec extends ViewSpec {
 
-  val keyword = "keyword"
-
   def confirmKeywordDeletedView: confirmation_keyword_deleted = injector.instanceOf[confirmation_keyword_deleted]
 
-  "ConfirmationKeywordDeleteddView" should {
+  "ConfirmationKeywordDeletedView" should {
 
     "render successfully with the default tab" in {
 
@@ -36,10 +34,9 @@ class ConfirmationKeywordDeletedViewSpec extends ViewSpec {
           ManagerToolsKeywordsTab
         )
       )
-      doc                                           should containText(messages("management.manage-keywords.edit-approved-keywords.deleted"))
-      doc                                           should containElementWithID("confirm_keyword_deleted_id")
-      doc.getElementById("confirm_keyword_done_id") should containText(keyword.toUpperCase)
-      doc.getElementById("deleted-keyword-p") should containText(
+      doc should containText(messages("management.manage-keywords.edit-approved-keywords.deleted"))
+      doc should containElementWithID("confirm_keyword_deleted")
+      doc should containText(
         messages("management.manage-keywords.edit-approved-keywords.deleted.p")
       )
     }

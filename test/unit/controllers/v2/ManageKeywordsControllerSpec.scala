@@ -35,7 +35,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
   val keywords        = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
   val keywordForm     = KeywordForm.formWithAuto(keywords.map(_.name))
-  val editKeywordForm = EditApprovedKeywordForm.form
+  val editKeywordForm = EditApprovedKeywordForm
   val caseKeyword = CaseKeyword(
     Keyword("BOOK", false),
     List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None))
@@ -70,7 +70,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
       given(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
         .willReturn(Future(Paged(Seq(caseKeyword))))
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(fakeRequest))
+      val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(newFakeGETRequestWithCSRF))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -160,11 +160,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
           .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name)))
       )
 
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
-      contentAsString(result) should include("error-summary")
-      contentAsString(result) should include(messages("management.create-keyword.error.duplicate.keyword"))
+      status(result) shouldBe Status.SEE_OTHER
     }
 
   }
@@ -192,7 +188,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type" in {
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).editApprovedKeywords("KEYWORD")(fakeRequest))
+      val result =
+        await(controller(Set(Permission.MANAGE_USERS)).editApprovedKeywords("KEYWORD")(newFakeGETRequestWithCSRF))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -206,4 +203,32 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
     }
   }
+
+  "displayConfirmationKeywordDeleted" should {
+
+    "return 200 OK and HTML content type" in {
+
+      val result =
+        await(controller(Set(Permission.MANAGE_USERS)).displayConfirmationKeywordDeleted()(newFakeGETRequestWithCSRF))
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+    }
+  }
+
+  "displayConfirmationKeywordRenamed" should {
+
+    "return 200 OK and HTML content type" in {
+
+      val result =
+        await(
+          controller(Set(Permission.MANAGE_USERS))
+            .displayConfirmationKeywordRenamed("oldKeyword", "newKeyword")(newFakeGETRequestWithCSRF)
+        )
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+    }
+  }
+
 }
