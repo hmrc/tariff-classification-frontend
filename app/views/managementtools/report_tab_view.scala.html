@@ -16,7 +16,6 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import views.html.partials._
 
 @import models.viewmodels.managementtools._
 
@@ -29,6 +28,7 @@
         <dt class="cya-question">
             @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")
         </dt>
+
         <dd class="cya-answer" id="@result.reportId">
             <a class="float-right" href="@routes.ReportingController.getReportByName(result.reportId)">@messages("reporting.report_tab.run-report")</a>
             <span class="visually-hidden">Run report for @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")</span>

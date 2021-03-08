@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models
+@import config.AppConfig
+@import models.reporting._
+@import models.request.AuthenticatedRequest
 
-object PseudoCaseStatus extends Enumeration {
-  type PseudoCaseStatus = Value
-  val DRAFT, NEW, OPEN, SUPPRESSED, REFERRED, REJECTED, CANCELLED, SUSPENDED, COMPLETED, REVOKED, ANNULLED, LIVE,
-    EXPIRED = Value
+@(status: LiabilityStatus.Value, id: String)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+
+@status match {
+  case LiabilityStatus.LIVE => {
+    <span class="visuallyhidden">liability status</span>
+    <span id="@id" class="govuk-tag govuk-tag--red">
+      @status
+    </span>
+  }
+  case status => {
+    <span class="visuallyhidden">liability status</span>
+    <span id="@id" class="govuk-tag govuk-tag--green">
+      NON LIVE
+    </span>
+  }
 }

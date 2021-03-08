@@ -48,6 +48,13 @@
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
+  case LiabilityStatusResultField(_, data) => {
+    <td id="@{id}-@{field.fieldName}-@{index}">
+      @data.map { status =>
+        @liabilityStatus(status, s"${id}-${field.fieldName}-status-label-$index")
+      }.getOrElse(messages("reporting.result.unknown"))
+    </td>
+  }
   case other => {
     <td id="@{id}-@{field.fieldName}-@{index}">
       @Reports.formatField(field, result, users, teams)
