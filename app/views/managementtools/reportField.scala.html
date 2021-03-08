@@ -31,21 +31,13 @@
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
 @result match {
-  case result @ NumberResultField(_, _) => {
-    @reportNumberField(result, id, index)
-  }
-  case result @ StringResultField(_, data) => {
-    @reportStringField(field, result, users, teams, id, index)
-  }
-  case DateResultField(_, data) => {
+  case StringResultField(_, data) if field == ReportField.Reference => {
     <td id="@{id}-@{field.fieldName}-@{index}">
-      @data.map(Dates.format).getOrElse(messages("reporting.result.unknown"))
-    </td>
-  }
-  case CaseTypeResultField(_, data) => {
-    <td id="@{id}-@{field.fieldName}-@{index}">
-      @data.map { caseType =>
-        @caseType.prettyName
+      @data.map { reference =>
+        <a href="@routes.CaseController.get(reference)">
+          <span aria-hidden="true">@reference</span>
+          <span class="visually-hidden">case reference @reference</span>  
+        </a>
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
@@ -56,12 +48,16 @@
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
-
-case LiabilityStatusResultField(_, data) => {
-<td id="@{id}-@{field.fieldName}-@{index}">
-    @data.map { status =>
-    @liabilityStatus(status, s"${id}-${field.fieldName}-status-label-$index")
-    }.getOrElse(messages("reporting.result.unknown"))
-</td>
-}
+  case LiabilityStatusResultField(_, data) => {
+    <td id="@{id}-@{field.fieldName}-@{index}">
+      @data.map { status =>
+        @liabilityStatus(status, s"${id}-${field.fieldName}-status-label-$index")
+      }.getOrElse(messages("reporting.result.unknown"))
+    </td>
+  }
+  case other => {
+    <td id="@{id}-@{field.fieldName}-@{index}">
+      @Reports.formatField(field, result, users, teams)
+    </td>
+  }
 }

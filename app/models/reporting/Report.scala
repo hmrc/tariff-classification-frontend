@@ -31,6 +31,7 @@ sealed abstract class Report extends Product with Serializable {
   def liabilityStatuses: Set[LiabilityStatus.Value]
   def teams: Set[String]
   def dateRange: InstantRange
+  def fields: NonEmptySeq[ReportField[_]]
 }
 
 object Report {
@@ -319,7 +320,10 @@ case class SummaryReport(
   dateRange: InstantRange                       = InstantRange.allTime,
   maxFields: Seq[ReportField[Long]]             = Seq.empty,
   includeCases: Boolean                         = false
-) extends Report
+) extends Report {
+  override val fields: NonEmptySeq[ReportField[_]] =
+    groupBy.append(ReportField.Count).concat(maxFields.toList)
+}
 
 object SummaryReport {
   private val nameKey              = "name"
@@ -497,6 +501,8 @@ case class QueueReport(
   dateRange: InstantRange                       = InstantRange.allTime
 ) extends Report {
   override val name = "Number of cases in queues"
+  override val fields: NonEmptySeq[ReportField[_]] =
+    NonEmptySeq.of(ReportField.Team, ReportField.CaseType, ReportField.Count)
 }
 
 object QueueReport {
