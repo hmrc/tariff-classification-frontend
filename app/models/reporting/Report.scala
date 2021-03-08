@@ -37,7 +37,7 @@ object Report {
 
   val numberOfNewLiabilityCases = SummaryReport(
     name      = "New Liabilities",
-    groupBy   = ReportField.LiabilityStatus,
+    groupBy   = NonEmptySeq.one(ReportField.LiabilityStatus),
     sortBy    = ReportField.LiabilityStatus,
     statuses  = Set(PseudoCaseStatus.NEW),
     caseTypes = Set(ApplicationType.LIABILITY)
@@ -45,7 +45,7 @@ object Report {
 
   val numberOfNewLiveLiabilityCases = SummaryReport(
     name              = "New liabilities (live) cases",
-    groupBy           = ReportField.LiabilityStatus,
+    groupBy           = NonEmptySeq.one(ReportField.LiabilityStatus),
     sortBy            = ReportField.LiabilityStatus,
     statuses          = Set(PseudoCaseStatus.NEW),
     liabilityStatuses = Set(LiabilityStatus.LIVE),
@@ -54,7 +54,7 @@ object Report {
 
   val numberOfNewNonLiveLiabilityCases = SummaryReport(
     name              = "New liabilities (non-live) cases",
-    groupBy           = ReportField.LiabilityStatus,
+    groupBy           = NonEmptySeq.one(ReportField.LiabilityStatus),
     sortBy            = ReportField.LiabilityStatus,
     statuses          = Set(PseudoCaseStatus.NEW),
     liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
@@ -68,7 +68,7 @@ object Report {
     caseTypes         = Set(ApplicationType.LIABILITY),
     liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
     statuses          = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN, PseudoCaseStatus.REFERRED, PseudoCaseStatus.SUSPENDED),
-    fields = Seq(
+    fields = NonEmptySeq.of(
       ReportField.Reference,
       ReportField.GoodsName,
       ReportField.TraderName,
@@ -177,17 +177,17 @@ object Report {
   )
 
   val numberOfNewCases = SummaryReport(
-    name      = "Number of new cases",
-    groupBy   = NonEmptySeq.one(ReportField.CaseType),
-    sortBy    = ReportField.CaseType,
-    statuses  = Set(PseudoCaseStatus.NEW)
+    name     = "Number of new cases",
+    groupBy  = NonEmptySeq.one(ReportField.CaseType),
+    sortBy   = ReportField.CaseType,
+    statuses = Set(PseudoCaseStatus.NEW)
   )
 
   val numberOfNewanOpenCases = SummaryReport(
-    name      = "New and open cases",
-    groupBy   = NonEmptySeq.one(ReportField.CaseType),
-    sortBy    = ReportField.ElapsedDays,
-    statuses  = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
+    name     = "New and open cases",
+    groupBy  = NonEmptySeq.one(ReportField.CaseType),
+    sortBy   = ReportField.ElapsedDays,
+    statuses = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
   )
 
   val byId = Map[String, Report](
@@ -274,7 +274,7 @@ object SummaryReport {
       val sortBy       = param(sortByKey)(requestParams).flatMap(ReportField.fields.get(_))
       val sortOrder    = param(sortOrderKey)(requestParams).flatMap(bindSortDirection).getOrElse(SortDirection.ASCENDING)
       val teams        = params(teamsKey)(requestParams).getOrElse(Set.empty)
-      val groupBy      = orderedParams(groupByKey)(requestParams)
+      val groupBy = orderedParams(groupByKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get(_)))
         .flatMap(NonEmptySeq.fromSeq[ReportField[_]])
       val caseTypes = params(caseTypesKey)(requestParams)
@@ -335,13 +335,13 @@ object SummaryReport {
 case class CaseReport(
   name: String,
   fields: NonEmptySeq[ReportField[_]],
-  sortBy: ReportField[_]                = ReportField.Reference,
-  sortOrder: SortDirection.Value        = SortDirection.ASCENDING,
-  caseTypes: Set[ApplicationType]       = Set.empty,
-  statuses: Set[PseudoCaseStatus.Value] = Set.empty,
+  sortBy: ReportField[_]                        = ReportField.Reference,
+  sortOrder: SortDirection.Value                = SortDirection.ASCENDING,
+  caseTypes: Set[ApplicationType]               = Set.empty,
+  statuses: Set[PseudoCaseStatus.Value]         = Set.empty,
   liabilityStatuses: Set[LiabilityStatus.Value] = Set.empty,
-  teams: Set[String]                    = Set.empty,
-  dateRange: InstantRange               = InstantRange.allTime
+  teams: Set[String]                            = Set.empty,
+  dateRange: InstantRange                       = InstantRange.allTime
 ) extends Report
 
 object CaseReport {
