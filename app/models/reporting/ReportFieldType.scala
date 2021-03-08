@@ -22,6 +22,7 @@ sealed abstract class ReportFieldType(val name: String) extends Product with Ser
 object ReportFieldType {
   case object Number extends ReportFieldType("number")
   case object Status extends ReportFieldType("status")
+  case object LiabilityStatus extends ReportFieldType("liability_status")
   case object CaseType extends ReportFieldType("caseType")
   case object Chapter extends ReportFieldType("chapter")
   case object Date extends ReportFieldType("date")

@@ -1250,6 +1250,7 @@ management.manage-keywords.search-all-keywords.edit-keyword-button=Edit keyword
 reporting.field.count=Count
 reporting.field.reference=Reference
 reporting.field.status=Case status
+reporting.field.liability_status=Liability status
 reporting.field.case_type=Case type
 reporting.field.chapter=Chapter
 reporting.field.goods_name=Goods name
