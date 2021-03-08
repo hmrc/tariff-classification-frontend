@@ -23,11 +23,14 @@ import views.ViewSpec
 import views.html.managementtools.pseudoCaseStatus
 import views.html.managementtools.reportButtons
 import controllers.routes
+import cats.data.NonEmptySeq
 
 class ReportButtonsViewSpec extends ViewSpec {
   "reportButtons view" should {
-    val summaryReport = SummaryReport("Summary report", groupBy = ReportField.Status, sortBy = ReportField.Status)
-    val caseReport = CaseReport("Case report", fields = List(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays))
+    val summaryReport =
+      SummaryReport("Summary report", groupBy = NonEmptySeq.one(ReportField.Status), sortBy = ReportField.Status)
+    val caseReport =
+      CaseReport("Case report", fields = NonEmptySeq.of(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays))
 
     "render with the specified ID" in {
       val doc = view(reportButtons(summaryReport, "test-report"))
@@ -38,12 +41,16 @@ class ReportButtonsViewSpec extends ViewSpec {
 
     "display the appropriate download link for a summary report" in {
       val doc = view(reportButtons(summaryReport, "test-report"))
-      doc.getElementById("test-report-download-button").attr("href").trim shouldBe routes.ReportingController.downloadSummaryReport(summaryReport).path
+      doc.getElementById("test-report-download-button").attr("href").trim shouldBe routes.ReportingController
+        .downloadSummaryReport(summaryReport)
+        .path
     }
 
     "display the appropriate download link for a case report" in {
       val doc = view(reportButtons(caseReport, "test-report"))
-      doc.getElementById("test-report-download-button").attr("href").trim shouldBe routes.ReportingController.downloadCaseReport(caseReport).path
+      doc.getElementById("test-report-download-button").attr("href").trim shouldBe routes.ReportingController
+        .downloadCaseReport(caseReport)
+        .path
     }
   }
 }

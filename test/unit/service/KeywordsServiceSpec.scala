@@ -33,7 +33,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   private val connector    = mock[BindingTariffClassificationConnector]
   private val auditService = mock[AuditService]
 
-  private val service = new KeywordsService(connector, auditService)
+  private val service = new KeywordsService(realAppConfig, connector, auditService)
 
   private val operator: Operator = Operator("operator-id", None)
   private val aCase              = Cases.btiCaseExample
@@ -127,7 +127,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "return a list of keywords" in {
       given(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])) willReturn successful(Paged(Seq(keyword)))
 
-      await(service.findAll(NoPagination())) shouldBe Paged(Seq(keyword))
+      await(service.findAll) shouldBe Paged(Seq(keyword))
     }
   }
 

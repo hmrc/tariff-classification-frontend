@@ -26,6 +26,7 @@ import models.reporting._
 import uk.gov.hmrc.http.HeaderCarrier
 import play.api.mvc.QueryStringBindable
 import scala.concurrent.Future
+import cats.data.NonEmptySeq
 
 class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
@@ -48,7 +49,7 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
       ) willReturn Future.successful(Paged.empty[Map[String, ReportResultField[_]]])
 
       await(
-        service.caseReport(CaseReport("ATaR Summary Report", fields = Seq(ReportField.Reference)), SearchPagination())
+        service.caseReport(CaseReport("ATaR Summary Report", fields = NonEmptySeq.one(ReportField.Reference)), SearchPagination())
       ) shouldBe Paged.empty
     }
   }
@@ -65,7 +66,11 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
       await(
         service.summaryReport(
-          SummaryReport("Case count by status", groupBy = ReportField.Status, sortBy = ReportField.Status),
+          SummaryReport(
+            "Case count by status",
+            groupBy = NonEmptySeq.one(ReportField.Status),
+            sortBy  = ReportField.Status
+          ),
           SearchPagination()
         )
       ) shouldBe Paged.empty

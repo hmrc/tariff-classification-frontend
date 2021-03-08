@@ -16,17 +16,21 @@
 
 package utils
 
-import play.api.libs.json._
-import uk.gov.hmrc.play.json.Union
+import cats.data.NonEmptySeq
 import models._
 import models.reporting._
 import models.request.NewEventRequest
 import models.response.{FileMetadata, ScanStatus}
 import models.LiabilityStatus.LiabilityStatus
-import models.Role.Role
-import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import uk.gov.hmrc.play.json.Union
 
 object JsonFormatters {
+  implicit def formatNonEmptySeq[A: Format]: Format[NonEmptySeq[A]] = Format(
+    Reads.list[A].filter(JsonValidationError("error.empty"))(_.nonEmpty).map(NonEmptySeq.fromSeqUnsafe(_)),
+    Writes.seq[A].contramap(_.toSeq)
+  )
+
   implicit val role: Format[Role.Value]                           = EnumJson.format(Role)
   implicit val liabilityStatus: Format[LiabilityStatus]           = EnumJson.format(LiabilityStatus)
   implicit val formatReferralReason: Format[ReferralReason.Value] = EnumJson.format(ReferralReason)
