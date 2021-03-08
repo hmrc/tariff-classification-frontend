@@ -35,4 +35,7 @@ class QueuesService {
 
   def getAllForCaseType(applicationType: ApplicationType): Future[List[Queue]] =
     Future.successful(Queues.queuesForType(applicationType))
+
+  def getQueuesById(ids: Seq[String]): Future[Seq[Option[Queue]]] =
+    Future.successful(ids.map(id => Queues.queueById(id)))
 }

@@ -173,3 +173,25 @@ POST       /keywords/keyword-create                              controllers.v2.
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
 
 GET        /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.changeKeywordStatus(keywordName: String, reference: String)
+
+POST        /users/user/:pid/atar                                controllers.v2.MoveCasesController.postMoveATaRCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/liability                           controllers.v2.MoveCasesController.postMoveLiabCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/correspondence                      controllers.v2.MoveCasesController.postMoveCorrCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/miscellaneous                       controllers.v2.MoveCasesController.postMoveMiscCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases                               controllers.v2.MoveCasesController.chooseUserOrTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases                               controllers.v2.MoveCasesController.postTeamOrUserChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-team                          controllers.v2.MoveCasesController.chooseTeamToMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-team                          controllers.v2.MoveCasesController.postTeamChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET         /users/move/move-cases-done-team                     controllers.v2.MoveCasesController.casesMovedToTeamDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-user                          controllers.v2.MoveCasesController.chooseUserToMoveCases(teamId:Option[String] ?= None, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user                          controllers.v2.MoveCasesController.postUserChoice(teamId:Option[String] ?= None, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET         /users/move/move-cases-done-user                     controllers.v2.MoveCasesController.casesMovedToUserDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-user-choose-team              controllers.v2.MoveCasesController.chooseUserFromAnotherTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user-choose-team              controllers.v2.MoveCasesController.postChooseUserFromAnotherTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-user-team                     controllers.v2.MoveCasesController.chooseOneOfUsersTeams(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user-team                     controllers.v2.MoveCasesController.postChooseOneOfUsersTeams(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
