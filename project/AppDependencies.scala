@@ -8,9 +8,11 @@ object AppDependencies {
     "uk.gov.hmrc"        %% "play-ui"                    % "8.14.0-play-27",
     "uk.gov.hmrc"        %% "http-caching-client"        % "9.1.0-play-27",
     "uk.gov.hmrc"        %% "simple-reactivemongo"       % "7.30.0-play-27",
+    "com.typesafe.play"  %% "play-json"                  % "2.9.2",
     "uk.gov.hmrc"        %% "play-json-union-formatter"  % "1.12.0-play-27",
     "org.typelevel"      %% "cats-core"                  % "2.4.2",
-    "com.github.blemale" %% "scaffeine"                  % "4.0.2"
+    "com.github.blemale" %% "scaffeine"                  % "4.0.2",
+    "com.lightbend.akka" %% "akka-stream-alpakka-csv"    % "1.1.2"
   )
 
   val scope = "test, it"

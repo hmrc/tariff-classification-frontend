@@ -84,66 +84,6 @@ class QueueNavViewSpec extends ViewSpec with BeforeAndAfterEach {
       doc shouldNot containElementWithID("nav-menu-assigned-cases")
     }
 
-    "Render team cases if authorised" in {
-      // Given
-
-      // When
-      val doc = view(queue_nav(queues, "")(requestWithPermissions(Permission.VIEW_ASSIGNED_CASES), messages))
-
-      // Then
-      doc should containElementWithID("nav-menu-assigned-cases")
-    }
-
-    "Not render reports if unauthorised" in {
-      // Given
-
-      // When
-      val doc = view(queue_nav(queues, ""))
-
-      // Then
-      doc shouldNot containElementWithID("nav-menu-reports")
-    }
-
-    "Render reports if authorised" in {
-      // Given
-
-      // When
-      val doc = view(queue_nav(queues, "")(requestWithPermissions(Permission.VIEW_REPORTS), messages))
-
-      // Then
-      doc should containElementWithID("nav-menu-reports")
-    }
-
-    "Render reporting header if authorised with VIEW_REPORTS" in {
-      // Given
-
-      // When
-      val doc = view(queue_nav(queues, "")(requestWithPermissions(Permission.VIEW_REPORTS), messages))
-
-      // Then
-      doc should containElementWithID("nav-menu-header-reporting")
-    }
-
-    "Render reporting header if authorised with VIEW_ASSIGNED_CASES" in {
-      // Given
-
-      // When
-      val doc = view(queue_nav(queues, "")(requestWithPermissions(Permission.VIEW_ASSIGNED_CASES), messages))
-
-      // Then
-      doc should containElementWithID("nav-menu-header-reporting")
-    }
-
-    "Not render reporting header if unauthorised" in {
-      // Given
-
-      // When
-      val doc = view(queue_nav(queues, "")(requestWithPermissions(), messages))
-
-      // Then
-      doc shouldNot containElementWithID("nav-menu-header-reporting")
-    }
-
     "Render combined case count for gateway" in {
       // Given
       val queueCounts = Map("-BTI" -> 2, "-LIABILITY_ORDER" -> 2, "2-BTI" -> 3)

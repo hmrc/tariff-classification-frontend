@@ -61,6 +61,9 @@
                         case EventType.CASE_COMPLETED => {
                             activity_case_completed(index, event, startAtTabIndex + (index*2))
                         }
+                        case EventType.CASE_REJECTED => {
+                            activity_case_rejection(index, event, startAtTabIndex + (index*2))
+                        }
                         case EventType.APPEAL_ADDED => {
                             val body = event.details.asInstanceOf[AppealAdded]
                             if(body.appealType == AppealType.REVIEW) {

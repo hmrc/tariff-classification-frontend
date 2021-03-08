@@ -64,7 +64,7 @@ class EmailServiceSpec extends ServiceSpecBase {
       given(application.contact).willReturn(contact)
       given(application.goodName).willReturn("item")
 
-      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Any]]))
+      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Email[_]]]))
         .willReturn(successful((): Unit))
       given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]]))
         .willReturn(successful(template))
@@ -82,7 +82,7 @@ class EmailServiceSpec extends ServiceSpecBase {
             dateSubmitted = "01 Jan 2021"
           )
         ))
-      )(any[HeaderCarrier], any[Writes[Any]])
+      )(any[HeaderCarrier], any[Writes[Email[_]]])
     }
   }
 
