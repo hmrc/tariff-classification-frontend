@@ -34,7 +34,10 @@
   case StringResultField(_, data) if field == ReportField.Reference => {
     <td id="@{id}-@{field.fieldName}-@{index}">
       @data.map { reference =>
-        <a href="@routes.CaseController.get(reference)">@reference</a>
+        <a href="@routes.CaseController.get(reference)">
+          <span aria-hidden="true">@reference</span>
+          <span class="visually-hidden">case reference @reference</span>  
+        </a>
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
