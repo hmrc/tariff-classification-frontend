@@ -23,12 +23,14 @@ import models.reporting._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.reportFilters
+import cats.data.NonEmptySeq
 
 class ReportFiltersViewSpec extends ViewSpec {
   "reportFilters view" should {
-    val summaryReport = SummaryReport("Summary report", groupBy = ReportField.Status, sortBy = ReportField.Status)
+    val summaryReport =
+      SummaryReport("Summary report", groupBy = NonEmptySeq.one(ReportField.Status), sortBy = ReportField.Status)
     val caseReport =
-      CaseReport("Case report", fields = List(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays))
+      CaseReport("Case report", fields = NonEmptySeq.of(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays))
 
     "show all dates label when report range is not specified" in {
       val doc = view(reportFilters(summaryReport, SearchPagination(1, 25), Queues.allQueuesById))

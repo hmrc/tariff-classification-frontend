@@ -117,7 +117,7 @@ class AtarController @Inject() (
     } yield ActivityViewModel.fromCase(atarCase, events, queues)
 
   private def getKeywordsTab(atarCase: Case)(implicit hc: HeaderCarrier): Future[KeywordsTabViewModel] =
-    keywordsService.findAll(NoPagination()).map { globalKeywords =>
+    keywordsService.findAll.map { globalKeywords =>
       KeywordsTabViewModel.fromCase(atarCase, globalKeywords.results.map(_.name))
     }
 }
