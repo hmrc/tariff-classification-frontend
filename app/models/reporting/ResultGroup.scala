@@ -17,21 +17,23 @@
 package models
 package reporting
 
+import cats.data.NonEmptySeq
+
 sealed abstract class ResultGroup {
   def count: Long
-  def groupKey: ReportResultField[_]
+  def groupKey: NonEmptySeq[ReportResultField[_]]
   def maxFields: List[NumberResultField]
 }
 
 case class SimpleResultGroup(
   count: Long,
-  groupKey: ReportResultField[_],
+  groupKey: NonEmptySeq[ReportResultField[_]],
   maxFields: List[NumberResultField] = List.empty
 ) extends ResultGroup
 
 case class CaseResultGroup(
   count: Long,
-  groupKey: ReportResultField[_],
+  groupKey: NonEmptySeq[ReportResultField[_]],
   maxFields: List[NumberResultField] = List.empty,
   cases: List[Case] = List.empty
 ) extends ResultGroup

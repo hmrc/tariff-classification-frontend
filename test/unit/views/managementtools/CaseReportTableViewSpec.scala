@@ -21,13 +21,14 @@ import models.reporting._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.caseReportTable
+import cats.data.NonEmptySeq
 
 class CaseReportTableViewSpec extends ViewSpec {
 
   "caseReportTable view" should {
     val report = CaseReport(
       "ATaR Summary Report",
-      fields = List(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
+      fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
     val reportResults: Paged[Map[String, ReportResultField[_]]] = Paged(Seq(
@@ -45,7 +46,7 @@ class CaseReportTableViewSpec extends ViewSpec {
 
     "render a header for each field" in {
       val doc = view(caseReportTable(report, SearchPagination(), reportResults, Map.empty, Map.empty, "case-report"))
-      for (field <- report.fields) {
+      for (field <- report.fields.toSeq) {
         doc should containElementWithID(s"case-report-${field.fieldName}")
       }
       doc.getElementById("case-report-reference") should containText(messages("reporting.field.reference"))

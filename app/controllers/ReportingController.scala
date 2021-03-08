@@ -23,6 +23,8 @@ import javax.inject.{Inject, Singleton}
 import models._
 import models.forms._
 import models.reporting._
+import models.viewmodels.managementtools.ReportingTabViewModel
+import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, QueuesService, ReportingService, UserService}
@@ -30,6 +32,24 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools.{caseReportView, queueReportView, reportChooseDates, reportChooseTeams, summaryReportView}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import models.Pagination
+import models.reporting.SummaryReport
+import service.UserService
+import models.NoPagination
+import models.Paged
+import models.forms.ReportDateForm
+import models.forms.ReportTeamForm
+import akka.stream.scaladsl.Source
+import models.SearchPagination
+import akka.stream.alpakka.csv.scaladsl.CsvFormatting
+import models.forms.ReportDateFormData
+import models.InstantRange
+import models.reporting.Report
+import models.reporting.CaseReport
+import models.reporting.QueueReport
+import models.viewmodels.managementtools.ReportingTabViewModel
+import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 
 @Singleton
 class ReportingController @Inject() (
@@ -38,6 +58,7 @@ class ReportingController @Inject() (
   queuesService: QueuesService,
   usersService: UserService,
   mcc: MessagesControllerComponents,
+  val manageReportsView: views.html.managementtools.manage_reports_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -178,4 +199,14 @@ class ReportingController @Inject() (
           NotFound(views.html.report_not_found(reportName))
         }
     }
+
+  def displayManageReporting(activeSubNav: SubNavigationTab = ManagerToolsReportsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request =>
+      Ok(
+        manageReportsView(
+          activeSubNav,
+          ReportingTabViewModel.reportingTabs()
+        )
+      )
+    )
 }
