@@ -18,6 +18,7 @@ package controllers
 
 import java.time.Instant
 
+import cats.data.NonEmptySeq
 import models._
 import models.reporting._
 import org.mockito.ArgumentMatchers._
@@ -33,7 +34,6 @@ import views.html.managementtools.manage_reports_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import cats.data.NonEmptySeq
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -69,7 +69,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "downloadCaseReport" should {
     val report = CaseReport(
       name   = "ATaR Summary Report",
-      fields = List(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
+      fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
     val reportResults: Paged[Map[String, ReportResultField[_]]] = Paged(
@@ -181,7 +181,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "downloadSummaryReport" should {
     val report = SummaryReport(
       name      = "Case count by status",
-      groupBy   = ReportField.Status,
+      groupBy   = NonEmptySeq.one(ReportField.Status),
       sortBy    = ReportField.Status,
       maxFields = Seq(ReportField.ElapsedDays)
     )
@@ -190,22 +190,22 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       Seq(
         SimpleResultGroup(
           2,
-          StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.COMPLETED)),
+          NonEmptySeq.one(StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.COMPLETED))),
           List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(5)))
         ),
         SimpleResultGroup(
           4,
-          StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.CANCELLED)),
+          NonEmptySeq.one(StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.CANCELLED))),
           List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(2)))
         ),
         SimpleResultGroup(
           6,
-          StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.OPEN)),
+          NonEmptySeq.one(StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.OPEN))),
           List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(8)))
         ),
         SimpleResultGroup(
           7,
-          StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.NEW)),
+          NonEmptySeq.one(StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.NEW))),
           List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(4)))
         )
       )

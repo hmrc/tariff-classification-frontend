@@ -62,14 +62,14 @@ object Reports {
   def formatCaseReport(report: CaseReport, usersByPid: Map[String, Operator], teamsById: Map[String, Queue])(
     row: Map[String, ReportResultField[_]]
   )(implicit messages: Messages): List[String] =
-    report.fields.toList.map { field =>
+    report.fields.toSeq.map { field =>
       row
         .get(field.fieldName)
         .map(formatField(field, _, usersByPid, teamsById))
         .getOrElse {
           messages("reporting.result.unknown")
         }
-    }
+    }.toList
 
   def formatSummaryReport(
     report: SummaryReport,
@@ -78,16 +78,19 @@ object Reports {
   )(
     row: ResultGroup
   )(implicit messages: Messages): List[String] = {
-    val group = formatField(report.groupBy, row.groupKey, usersByPid, teamsById)
+    val group = report.groupBy.zipWith(row.groupKey) {
+      case (groupBy, groupKey) =>
+        formatField(groupBy, groupKey, usersByPid, teamsById)
+    }
 
     val count = row.count.toString
 
-    val maxFields = report.maxFields.zip(row.maxFields).toList.map {
+    val maxFields = report.maxFields.zip(row.maxFields).map {
       case (field, result) =>
         formatField(field, result, usersByPid, teamsById)
     }
 
-    group :: count :: maxFields
+    (group.toSeq ++ Seq(count) ++ maxFields).toList
   }
 
   def formatQueueReport(teamsById: Map[String, Queue])(
@@ -100,5 +103,5 @@ object Reports {
     )
 
   def formatHeaders(report: Report)(implicit messages: Messages): List[String] =
-    report.fields.toList.map(field => messages(s"reporting.field.${field.fieldName}"))
+    report.fields.toSeq.map(field => messages(s"reporting.field.${field.fieldName}")).toList
 }
