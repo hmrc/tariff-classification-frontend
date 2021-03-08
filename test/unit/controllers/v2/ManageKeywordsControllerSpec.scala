@@ -20,20 +20,21 @@ import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.forms.KeywordForm
 import models.forms.v2.EditApprovedKeywordForm
+import models.viewmodels.ManagerToolsKeywordsTab
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import play.api.http.Status
 import play.api.test.Helpers._
 import service.ManageKeywordsService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.managementtools.{confirm_keyword_created, confirmation_keyword_deleted, confirmation_keyword_renamed, edit_approved_keywords, manage_keywords_view, new_keyword_view}
+import views.html.managementtools._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ManageKeywordsControllerSpec extends ControllerBaseSpec {
 
-  val keywords        = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
+  val keywords        = Seq(Keyword("shoes", true), Keyword("HATS", true), Keyword("shirts", true))
   val keywordForm     = KeywordForm.formWithAuto(keywords.map(_.name))
   val editKeywordForm = EditApprovedKeywordForm
   val caseKeyword = CaseKeyword(
@@ -229,6 +230,106 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec {
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
     }
+  }
+
+  "postEditApprovedKeywords" should {
+    "delete a keyword when keyword has been selected and found" in {
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      given(keywordService.deleteKeyword(any[Keyword])(any[HeaderCarrier])).willReturn(Future.successful((): Unit))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postEditApprovedKeywords("keywordName")(
+            newFakePOSTRequestWithCSRF(Map("action" -> "DELETE", "keywordName" -> "keywordName"))
+          )
+      )
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe
+        Some(controllers.v2.routes.ManageKeywordsController.displayConfirmationKeywordDeleted().url)
+
+    }
+
+    "rename a keyword when keyword has been selected and found" in {
+      val oldKeyword = Keyword("oldKeyword", true)
+      val newKeyword = Keyword("updatedKeyword", true)
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      given(keywordService.renameKeyword(any[Keyword], any[Keyword])(any[HeaderCarrier])).willReturn(Future(newKeyword))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postEditApprovedKeywords("oldKeyword")(
+            newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> "updatedKeyword"))
+          )
+      )
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe
+        Some(
+          controllers.v2.routes.ManageKeywordsController
+            .displayConfirmationKeywordRenamed("oldKeyword", "updatedKeyword")
+            .path()
+        )
+
+    }
+
+    "return Bad request when form has errors" in {
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postEditApprovedKeywords("oldKeyword")(newFakePOSTRequestWithCSRF(Map("action" -> "NON-Existing", "" -> "")))
+      )
+
+      status(result) shouldBe Status.BAD_REQUEST
+
+    }
+  }
+
+  "postDisplayManageKeywords" should {
+    "redirect to editApprovedKeywords if the keyword has been selected" in {
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      given(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+        .willReturn(Future(Paged(Seq(caseKeyword))))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postDisplayManageKeywords(activeSubNav = ManagerToolsKeywordsTab)(
+            newFakePOSTRequestWithCSRF(Map("keyword" -> "HATS"))
+          )
+      )
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe
+        Some(controllers.v2.routes.ManageKeywordsController.editApprovedKeywords("HATS").path())
+    }
+
+    "return Bad Request with form with errors" in {
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      given(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+        .willReturn(Future(Paged(Seq(caseKeyword))))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postDisplayManageKeywords(activeSubNav = ManagerToolsKeywordsTab)(newFakePOSTRequestWithCSRF(Map("" -> "")))
+      )
+
+      status(result) shouldBe Status.BAD_REQUEST
+    }
+
   }
 
 }
