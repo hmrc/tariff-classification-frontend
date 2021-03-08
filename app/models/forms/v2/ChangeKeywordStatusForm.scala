@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package models.forms.v2
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
+import models.forms.mappings.FormMappings.fieldNonEmpty
+import play.api.data.Form
+import play.api.data.Forms.mapping
 
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
+object ChangeKeywordStatusForm {
+
+  val form: Form[String] = Form(
+    mapping(
+      "action" -> fieldNonEmpty("error.empty.action")
+    )(identity)(Some(_))
+  )
+
 }
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)

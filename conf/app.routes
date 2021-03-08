@@ -172,6 +172,7 @@ GET        /keywords/keyword-create                              controllers.v2.
 POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
 
+GET        /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.changeKeywordStatus(keywordName: String, reference: String)
 
 POST        /users/user/:pid/atar                                controllers.v2.MoveCasesController.postMoveATaRCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 POST        /users/user/:pid/liability                           controllers.v2.MoveCasesController.postMoveLiabCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)

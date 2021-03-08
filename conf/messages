@@ -317,6 +317,7 @@ error.empty.sample.status=Select yes if a sample is being sent
 error.empty.sample.return=Select yes if the applicant wants the sample returned
 error.empty.queue=Select a team
 error.empty.team= Select a team
+error.empty.action=Select an action
 error.empty.appealType=Select Alternative Dispute Resolution, review or a level of appeal to continue
 error.empty.appealStatus=Select status to continue
 error.empty.liability-status=Select yes if this is a live liability
@@ -1272,7 +1273,16 @@ management.create-keyword.new-keyword-done.link=Go back to manage all keywords
 management.create-keyword.error.empty.keyword=Enter a new keyword
 management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list
 
+management.manage-keywords.change-keyword-status.heading.radio=Choose keyword action
+management.manage-keywords.change-keyword-status.radio.approve=Approve
+management.manage-keywords.change-keyword-status.radio.reject=Reject
+management.manage-keywords.change-keyword-status.radio.rename=Rename
 
+management.change-keywords.change-keyword-status.keyword-details.title=Keyword details
+management.manage-keywords.change-keyword-status.case.header=Case details
+management.manage-keywords.change-keyword-status.case.reference=Reference
+management.manage-keywords.change-keyword-status.case.goods=Goods
+management.manage-keywords.change-keyword-status.case.keywords=Keywords
 
 
 
