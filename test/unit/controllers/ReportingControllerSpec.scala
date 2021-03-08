@@ -18,6 +18,7 @@ package controllers
 
 import java.time.Instant
 
+import cats.data.NonEmptySeq
 import models._
 import models.reporting._
 import org.mockito.ArgumentMatchers._
@@ -25,7 +26,6 @@ import org.mockito.BDDMockito._
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.test.CSRFTokenHelper._
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,17 +33,13 @@ import views.html.managementtools.manage_reports_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import cats.data.NonEmptySeq
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val reportingService                     = mock[ReportingService]
   private val queueService                         = injector.instanceOf[QueuesService]
   private val usersService                         = mock[UserService]
-  private val casesService                         = mock[CasesService]
   private val operator                             = mock[Operator]
-  private val requiredPermissions: Set[Permission] = Set(Permission.VIEW_REPORTS)
-  private val noPermissions: Set[Permission]       = Set.empty
   private lazy val manage_reports_view             = injector.instanceOf[manage_reports_view]
 
   override protected def afterEach(): Unit = {
@@ -65,6 +61,186 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       manage_reports_view,
       realAppConfig
     )
+
+  "downloadCaseReport" should {
+    val report = CaseReport(
+      name   = "ATaR Summary Report",
+      fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
+    )
+
+    val reportResults: Paged[Map[String, ReportResultField[_]]] = Paged(
+      Seq(
+        Map(
+          ReportField.Reference.fieldName  -> StringResultField(ReportField.Reference.fieldName, Some("123456")),
+          ReportField.GoodsName.fieldName  -> StringResultField(ReportField.GoodsName.fieldName, Some("Fireworks")),
+          ReportField.TraderName.fieldName -> StringResultField(ReportField.TraderName.fieldName, Some("Gandalf"))
+        ),
+        Map(
+          ReportField.Reference.fieldName -> StringResultField(ReportField.Reference.fieldName, Some("987654")),
+          ReportField.GoodsName.fieldName -> StringResultField(ReportField.GoodsName.fieldName, Some("Beer")),
+          ReportField.TraderName.fieldName -> StringResultField(
+            ReportField.TraderName.fieldName,
+            Some("Barliman Butterbur")
+          )
+        )
+      )
+    )
+
+    "return 200 OK and text/csv content type" in {
+      given(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Future.successful(reportResults))
+        .willReturn(Future.successful(Paged.empty[Map[String, ReportResultField[_]]]))
+
+      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+        .successful(Paged.empty[Operator])
+
+      val result =
+        await(controller(Set(Permission.VIEW_REPORTS)).downloadCaseReport(report)(fakeRequest))
+
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/csv")
+      contentAsString(result) shouldBe (
+        Seq(
+          "Reference,Goods name,Trader name",
+          "123456,Fireworks,Gandalf",
+          "987654,Beer,Barliman Butterbur"
+        ).mkString(
+          "",
+          "\r\n",
+          "\r\n"
+        )
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).downloadCaseReport(report)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
+
+  "downloadQueueReport" should {
+    val report = QueueReport()
+
+    val reportResults: Paged[QueueResultGroup] = Paged(
+      Seq(
+        QueueResultGroup(4, None, ApplicationType.ATAR),
+        QueueResultGroup(3, None, ApplicationType.LIABILITY),
+        QueueResultGroup(7, None, ApplicationType.CORRESPONDENCE),
+        QueueResultGroup(1, None, ApplicationType.MISCELLANEOUS),
+        QueueResultGroup(8, Some("2"), ApplicationType.ATAR),
+        QueueResultGroup(5, Some("2"), ApplicationType.LIABILITY),
+        QueueResultGroup(1, Some("3"), ApplicationType.CORRESPONDENCE),
+        QueueResultGroup(2, Some("3"), ApplicationType.MISCELLANEOUS)
+      )
+    )
+
+    "return 200 OK and text/csv content type" in {
+      given(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Future.successful(reportResults))
+        .willReturn(Future.successful(Paged.empty[QueueResultGroup]))
+
+      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+        .successful(Paged.empty[Operator])
+
+      val result =
+        await(controller(Set(Permission.VIEW_REPORTS)).downloadQueueReport(report)(fakeRequest))
+
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/csv")
+      contentAsString(result) shouldBe (
+        Seq(
+          "Assigned team,Case type,Count",
+          "Gateway,ATaR,4",
+          "Gateway,Liability,3",
+          "Gateway,Correspondence,7",
+          "Gateway,Miscellaneous,1",
+          "ACT,ATaR,8",
+          "ACT,Liability,5",
+          "CAP,Correspondence,1",
+          "CAP,Miscellaneous,2"
+        ).mkString(
+          "",
+          "\r\n",
+          "\r\n"
+        )
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).downloadQueueReport(report)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
+
+  "downloadSummaryReport" should {
+    val report = SummaryReport(
+      name      = "Case count by status",
+      groupBy   = NonEmptySeq.one(ReportField.Status),
+      sortBy    = ReportField.Status,
+      maxFields = Seq(ReportField.ElapsedDays)
+    )
+
+    val reportResults: Paged[ResultGroup] = Paged(
+      Seq(
+        SimpleResultGroup(
+          2,
+          NonEmptySeq.one(StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.COMPLETED))),
+          List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(5)))
+        ),
+        SimpleResultGroup(
+          4,
+          NonEmptySeq.one(StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.CANCELLED))),
+          List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(2)))
+        ),
+        SimpleResultGroup(
+          6,
+          NonEmptySeq.one(StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.OPEN))),
+          List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(8)))
+        ),
+        SimpleResultGroup(
+          7,
+          NonEmptySeq.one(StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.NEW))),
+          List(NumberResultField(ReportField.ElapsedDays.fieldName, Some(4)))
+        )
+      )
+    )
+
+    "return 200 OK and text/csv content type" in {
+      given(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Future.successful(reportResults))
+        .willReturn(Future.successful(Paged.empty[ResultGroup]))
+
+      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+        .successful(Paged.empty[Operator])
+
+      val result =
+        await(controller(Set(Permission.VIEW_REPORTS)).downloadSummaryReport(report)(fakeRequest))
+
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/csv")
+      contentAsString(result) shouldBe (
+        Seq(
+          "Case status,Count,Elapsed days",
+          "COMPLETED,2,5",
+          "CANCELLED,4,2",
+          "OPEN,6,8",
+          "NEW,7,4"
+        ).mkString(
+          "",
+          "\r\n",
+          "\r\n"
+        )
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).downloadSummaryReport(report)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
 
   "caseReport" should {
     val report = CaseReport(
@@ -810,6 +986,227 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return unauthorised with no permissions" in {
 
       val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "numberOfNewLiabilityCases" should {
+
+    val reportName = "new-liabilities"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.numberOfNewLiabilityCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "numberOfNewLiveLiabilityCases" should {
+
+    val reportName = "new-liabilities-cases-live"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.numberOfNewLiveLiabilityCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "numberOfNewNonLiveLiabilityCases" should {
+
+    val reportName = "new-liabilities-cases-non-live"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.numberOfNewNonLiveLiabilityCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "calendarDaysNonLiveLiabilitiesCases" should {
+
+    val reportName = "working-days-non-live-liabilities"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.calendarDaysNonLiveLiabilitiesCases).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "openCasesInTeams" should {
+
+    val reportName = "number-of-cases-in-teams"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.queueReport(Report.openCasesInTeams).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+
+  "caseCountByStatus" should {
+
+    val reportName = "case-count-by-status"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+
+      status(result)      shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.summaryReport(Report.caseCountByStatus).path())
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "suppressedCaseStatus" should {
+
+    val reportName = "suppressed-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+
+      status(result)      shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.caseReport(Report.suppressedCaseCount).path())
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "openCases" should {
+
+    val reportName = "open-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+
+      status(result)      shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.caseReport(Report.openCasesCount).path())
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "rejectedBreakdownByUser" should {
+
+    val reportName = "rejection-breakdown"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+
+      status(result)      shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.summaryReport(Report.rejectedCaseCountByUser).path())
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+
+  }
+
+  "120CalendarDaysForAtar" should {
+
+    val reportName = "calendar-days-atar-cases"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+
+      status(result)      shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.caseReport(Report.calendarAtarCases).path())
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
