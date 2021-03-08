@@ -35,6 +35,50 @@ sealed abstract class Report extends Product with Serializable {
 
 object Report {
 
+  val numberOfNewLiabilityCases = SummaryReport(
+    name      = "New Liabilities",
+    groupBy   = NonEmptySeq.one(ReportField.LiabilityStatus),
+    sortBy    = ReportField.LiabilityStatus,
+    statuses  = Set(PseudoCaseStatus.NEW),
+    caseTypes = Set(ApplicationType.LIABILITY)
+  )
+
+  val numberOfNewLiveLiabilityCases = SummaryReport(
+    name              = "New liabilities (live) cases",
+    groupBy           = NonEmptySeq.one(ReportField.LiabilityStatus),
+    sortBy            = ReportField.LiabilityStatus,
+    statuses          = Set(PseudoCaseStatus.NEW),
+    liabilityStatuses = Set(LiabilityStatus.LIVE),
+    caseTypes         = Set(ApplicationType.LIABILITY)
+  )
+
+  val numberOfNewNonLiveLiabilityCases = SummaryReport(
+    name              = "New liabilities (non-live) cases",
+    groupBy           = NonEmptySeq.one(ReportField.LiabilityStatus),
+    sortBy            = ReportField.LiabilityStatus,
+    statuses          = Set(PseudoCaseStatus.NEW),
+    liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
+    caseTypes         = Set(ApplicationType.LIABILITY)
+  )
+
+  val calendarDaysNonLiveLiabilitiesCases = CaseReport(
+    name              = "Working days liability (non-live) cases",
+    sortBy            = ReportField.ElapsedDays,
+    sortOrder         = SortDirection.DESCENDING,
+    caseTypes         = Set(ApplicationType.LIABILITY),
+    liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
+    statuses          = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN, PseudoCaseStatus.REFERRED, PseudoCaseStatus.SUSPENDED),
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
+
   val numberOfOpenCases = SummaryReport(
     name      = "Number of open cases",
     groupBy   = NonEmptySeq.one(ReportField.Team),
@@ -133,36 +177,40 @@ object Report {
   )
 
   val numberOfNewCases = SummaryReport(
-    name      = "Number of new cases",
-    groupBy   = NonEmptySeq.one(ReportField.CaseType),
-    sortBy    = ReportField.CaseType,
-    statuses  = Set(PseudoCaseStatus.NEW)
+    name     = "Number of new cases",
+    groupBy  = NonEmptySeq.one(ReportField.CaseType),
+    sortBy   = ReportField.CaseType,
+    statuses = Set(PseudoCaseStatus.NEW)
   )
 
   val numberOfNewanOpenCases = SummaryReport(
-    name      = "New and open cases",
-    groupBy   = NonEmptySeq.one(ReportField.CaseType),
-    sortBy    = ReportField.ElapsedDays,
-    statuses  = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
+    name     = "New and open cases",
+    groupBy  = NonEmptySeq.one(ReportField.CaseType),
+    sortBy   = ReportField.ElapsedDays,
+    statuses = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
   )
-    
+
   val openCasesInTeams = QueueReport(
     statuses = Set(PseudoCaseStatus.OPEN)
   )
 
   val byId = Map[String, Report](
-    "number-of-open-cases"             -> numberOfOpenCases,
-    "completed-cases"                  -> completedCases,
-    "number-of-cases-per-user"         -> numberOfCasesPerUser,
-    "cancelled-cases-by-assigned-user" -> cancelledCasesPerUser,
-    "cancelled-cases-by-chapter"       -> cancelledCasesByChapter,
-    "liabilities-summary"              -> liabilitiesSummary,
-    "atar-summary"                     -> atarSummary,
-    "new-atar-cases"                   -> numberOfNewAtarCases,
-    "liabilities-cases"                -> liabilitiesCases,
-    "number-of-new-cases"              -> numberOfNewCases,
-    "new-and-open-cases"               -> numberOfNewanOpenCases,
-    "number-of-cases-in-teams" -> openCasesInTeams
+    "new-liabilities"                   -> numberOfNewLiabilityCases,
+    "new-liabilities-cases-live"        -> numberOfNewLiveLiabilityCases,
+    "new-liabilities-cases-non-live"    -> numberOfNewNonLiveLiabilityCases,
+    "working-days-non-live-liabilities" -> calendarDaysNonLiveLiabilitiesCases,
+    "number-of-open-cases"              -> numberOfOpenCases,
+    "completed-cases"                   -> completedCases,
+    "number-of-cases-per-user"          -> numberOfCasesPerUser,
+    "cancelled-cases-by-assigned-user"  -> cancelledCasesPerUser,
+    "cancelled-cases-by-chapter"        -> cancelledCasesByChapter,
+    "liabilities-summary"               -> liabilitiesSummary,
+    "atar-summary"                      -> atarSummary,
+    "new-atar-cases"                    -> numberOfNewAtarCases,
+    "liabilities-cases"                 -> liabilitiesCases,
+    "number-of-new-cases"               -> numberOfNewCases,
+    "new-and-open-cases"                -> numberOfNewanOpenCases,
+    "number-of-cases-in-teams"          -> openCasesInTeams
   )
 
   private val groupByKey      = "group_by"
@@ -292,13 +340,13 @@ object SummaryReport {
 case class CaseReport(
   name: String,
   fields: NonEmptySeq[ReportField[_]],
-  sortBy: ReportField[_]                = ReportField.Reference,
-  sortOrder: SortDirection.Value        = SortDirection.ASCENDING,
-  caseTypes: Set[ApplicationType]       = Set.empty,
-  statuses: Set[PseudoCaseStatus.Value] = Set.empty,
+  sortBy: ReportField[_]                        = ReportField.Reference,
+  sortOrder: SortDirection.Value                = SortDirection.ASCENDING,
+  caseTypes: Set[ApplicationType]               = Set.empty,
+  statuses: Set[PseudoCaseStatus.Value]         = Set.empty,
   liabilityStatuses: Set[LiabilityStatus.Value] = Set.empty,
-  teams: Set[String]                    = Set.empty,
-  dateRange: InstantRange               = InstantRange.allTime
+  teams: Set[String]                            = Set.empty,
+  dateRange: InstantRange                       = InstantRange.allTime
 ) extends Report
 
 object CaseReport {
