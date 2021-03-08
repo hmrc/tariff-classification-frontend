@@ -453,50 +453,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
   }
 
-    "casesUnderReviewByChapter" should {
-
-      val reportName = "under-review-cases-by-chapter"
-
-      "return 303 SEE_OTHER and redirect to correct report url" in {
-
-        val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
-
-        status(result)      shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.summaryReport(Report.casesUnderReviewByChapter).path())
-      }
-
-      "return unauthorised with no permissions" in {
-
-        val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
-
-        status(result)           shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
-      }
-
-    }
-
-    "casesUnderReviewByUser" should {
-
-      val reportName = "under-review-cases-by-assigned-user"
-
-      "return 303 SEE_OTHER and redirect to correct report url" in {
-
-        val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
-
-        status(result)      shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.summaryReport(Report.casesUnderReviewByUser).path())
-      }
-
-      "return unauthorised with no permissions" in {
-
-        val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
-
-        status(result)           shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
-      }
-
-    }
-
   "correspondenceCaseCount" should {
 
     val reportName = "correspondence-cases"

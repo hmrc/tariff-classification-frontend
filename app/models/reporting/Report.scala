@@ -33,21 +33,6 @@ sealed abstract class Report extends Product with Serializable {
 
 object Report {
 
-   //awaiting additional review status for PseudoCaseStatus need additional status for these two
-    val casesUnderReviewByChapter = SummaryReport(
-      name = "Cases under review by chapter",
-//      statuses = Set(PseudoCaseStatus.???, PseudoCaseStatus.???, PseudoCaseStatus.???),
-      groupBy   = ReportField.Chapter,
-      sortBy  = ReportField.Chapter
-    )
-
-    val casesUnderReviewByUser = SummaryReport(
-      name = "Cases under review by user",
-//      statuses = Set(PseudoCaseStatus.???, PseudoCaseStatus.???, PseudoCaseStatus.???),
-      groupBy   = ReportField.User,
-      sortBy  = ReportField.User
-    )
-
   val correspondenceCases = CaseReport(
     name      = "Correspondence cases count",
     sortBy    = ReportField.ElapsedDays,
@@ -65,7 +50,6 @@ object Report {
     )
   )
 
-  //Missing field Case source
   val miscellaneousCases = CaseReport(
     name      = "Miscellaneous cases count",
     sortBy    = ReportField.ElapsedDays,
@@ -85,8 +69,6 @@ object Report {
 
   val byId = Map[String, Report](
 
-    "under-review-cases-by-chapter"       -> casesUnderReviewByChapter,
-    "under-review-cases-by-assigned-user" -> casesUnderReviewByUser,
     "correspondence-cases"                -> correspondenceCases,
     "miscellaneous-cases"                 -> miscellaneousCases
   )
