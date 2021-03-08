@@ -292,6 +292,6 @@ class BindingTariffClassificationConnector @Inject() (
   def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =
     withMetricsTimerAsync("delete-keyword") { _ =>
     val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
-    client.DELETE[HttpResponse](url).map(_ => ())
+    client.DELETE[Unit](url).map(_ => ())
   }
 }
