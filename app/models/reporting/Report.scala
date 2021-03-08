@@ -35,7 +35,7 @@ sealed abstract class Report extends Product with Serializable {
 object Report {
   val caseCountByStatus = SummaryReport(
     name      = "Case count by status",
-    groupBy   = ReportField.Status,
+    groupBy   = NonEmptySeq.one(ReportField.Status),
     sortBy    = ReportField.Status,
     sortOrder = SortDirection.ASCENDING
   )
@@ -45,7 +45,7 @@ object Report {
     statuses  = Set(PseudoCaseStatus.SUPPRESSED),
     sortBy    = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
-    fields = Seq(
+    fields = NonEmptySeq.of(
       ReportField.Reference,
       ReportField.CaseType,
       ReportField.GoodsName,
@@ -60,7 +60,7 @@ object Report {
     statuses  = Set(PseudoCaseStatus.OPEN),
     sortBy    = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
-    fields = Seq(
+    fields = NonEmptySeq.of(
       ReportField.Reference,
       ReportField.CaseType,
       ReportField.Chapter,
@@ -75,7 +75,7 @@ object Report {
   val rejectedCaseCountByUser = SummaryReport(
     name      = "Rejected cases breakdown by user",
     statuses  = Set(PseudoCaseStatus.REJECTED),
-    groupBy   = ReportField.User,
+    groupBy   = NonEmptySeq.one(ReportField.User),
     sortBy    = ReportField.Count,
     sortOrder = SortDirection.DESCENDING
   )
@@ -85,7 +85,7 @@ object Report {
     sortBy    = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.ATAR),
-    fields = Seq(
+    fields = NonEmptySeq.of(
       ReportField.Reference,
       ReportField.GoodsName,
       ReportField.TraderName,
@@ -96,7 +96,6 @@ object Report {
       ReportField.ElapsedDays
     )
   )
-
 
   val numberOfOpenCases = SummaryReport(
     name      = "Number of open cases",
