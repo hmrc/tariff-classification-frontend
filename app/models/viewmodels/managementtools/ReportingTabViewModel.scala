@@ -16,6 +16,8 @@
 
 package models.viewmodels.managementtools
 
+import models.reporting.Report
+
 case class ReportTabRow(nameMessageKey: String, reportId: String)
 
 case class ReportTab(tabMessageKey: String, elementId: String, reports: List[ReportTabRow])
@@ -31,6 +33,8 @@ case class ReportingTabViewModel(
 )
 
 object ReportingTabViewModel {
+  def reportImplemented(row: ReportTabRow) =
+    Report.byId.contains(row.reportId)
 
   def summaryTabRows: List[ReportTabRow] = List(
     ReportTabRow("number-of-new-cases", "number-of-new-cases"),
@@ -42,7 +46,7 @@ object ReportingTabViewModel {
     ReportTabRow("rejection-breakdown", "rejection-breakdown"),
     ReportTabRow("atar-summary", "atar-summary"),
     ReportTabRow("liabilities-summary", "liabilities-summary")
-  )
+  ).filter(reportImplemented)
 
   def statusTabRows: List[ReportTabRow] = List(
     ReportTabRow("case-status", "case-count-by-status"),
@@ -57,13 +61,13 @@ object ReportingTabViewModel {
     ReportTabRow("under-appeal-cases-by-assigned-user", "under-appeal-cases-by-assigned-user"),
     ReportTabRow("cancelled-cases-by-chapter", "cancelled-cases-by-chapter"),
     ReportTabRow("cancelled-cases-by-assigned-user", "cancelled-cases-by-assigned-user")
-  )
+  ).filter(reportImplemented)
 
   def atarTabRows: List[ReportTabRow] = List(
     ReportTabRow("new-atar-cases", "new-atar-cases"),
     ReportTabRow("atar-summary", "atar-summary"),
     ReportTabRow("calendar-days-atar-cases", "calendar-days-atar-cases")
-  )
+  ).filter(reportImplemented)
 
   def liabilityTabRows: List[ReportTabRow] = List(
     ReportTabRow("liabilities-cases", "liabilities-cases"),
@@ -71,15 +75,15 @@ object ReportingTabViewModel {
     ReportTabRow("new-liabilities-cases", "new-liabilities-cases-live"),
     ReportTabRow("new-liabilities", "new-liabilities"),
     ReportTabRow("working-days-non-live-liabilities", "working-days-non-live-liabilities")
-  )
+  ).filter(reportImplemented)
 
   def correspondenceTabRows: List[ReportTabRow] = List(
     ReportTabRow("correspondence-cases", "correspondence-cases")
-  )
+  ).filter(reportImplemented)
 
   def miscTabRows: List[ReportTabRow] = List(
     ReportTabRow("miscellaneous-cases", "miscellaneous-cases")
-  )
+  ).filter(reportImplemented)
 
   def reportingTabs(): ReportingTabViewModel =
     ReportingTabViewModel(

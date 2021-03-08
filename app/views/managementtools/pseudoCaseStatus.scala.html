@@ -24,37 +24,43 @@
   case PseudoCaseStatus.CANCELLED => {
     <span class="visuallyhidden">case status</span>
     <span id="@id" class="govuk-tag govuk-tag--red">
-      @status
+      @PseudoCaseStatus.format(status)
     </span>
   }
   case PseudoCaseStatus.EXPIRED => {
     <span class="visuallyhidden">case status</span>
     <span id="@id" class="govuk-tag govuk-tag--green">
-      @status
+      @PseudoCaseStatus.format(status)
     </span>
   }
   case PseudoCaseStatus.REFERRED | PseudoCaseStatus.SUSPENDED => {
     <span class="visually-hidden">case status</span>
     <span id="@id" class="govuk-tag govuk-tag--yellow">
-      @status
+      @PseudoCaseStatus.format(status)
     </span>
   }
   case PseudoCaseStatus.OPEN => {
     <span class="visually-hidden">case status</span>
     <span id="@id" class="govuk-tag govuk-tag--blue">
-      @status
+      @PseudoCaseStatus.format(status)
     </span>
   }
   case PseudoCaseStatus.REJECTED => {
     <span class="visually-hidden">case status</span>
     <span id="@id" class="govuk-tag govuk-tag--red">
-      @status
+      @PseudoCaseStatus.format(status)
+    </span>
+  }
+  case PseudoCaseStatus.UNDER_REVIEW | PseudoCaseStatus.UNDER_APPEAL => {
+    <span class="visually-hidden">case status</span>
+    <span id="@id" class="govuk-tag govuk-tag--red">
+      @PseudoCaseStatus.format(status)
     </span>
   }
   case status => {
     <span class="visuallyhidden">case status</span>
     <span id="@id" class="govuk-tag govuk-tag--green">
-      @status
+      @PseudoCaseStatus.format(status)
     </span>
   }
 }

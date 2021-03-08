@@ -16,7 +16,6 @@
 
 @import models.viewmodels.SubNavigationTab
 @import models.viewmodels.ManagerToolsUsersTab
-@import models.viewmodels.ManagerToolsTeamsTab
 @import models.viewmodels.ManagerToolsKeywordsTab
 @import models.viewmodels.ManagerToolsReportsTab
 @import controllers.v2.routes
@@ -34,15 +33,6 @@
                 <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link"
                 href="@routes.ManageUserController.displayManageUsers()">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
             }
-        </li>
-        <li class="moj-sub-navigation__item">
-        @if(selectedTab == ManagerToolsTeamsTab) {
-            <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link" aria-current="page"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsTeamsTab)">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>
-        } else {
-            <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsTeamsTab)">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>
-        }
         </li>
         <li class="moj-sub-navigation__item">
         @if(selectedTab == ManagerToolsKeywordsTab) {
