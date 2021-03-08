@@ -25,7 +25,7 @@
 
 @this()
 
-@(keyword: Keyword, c: Case, activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(keyword: String, approved: Boolean, goodsName: String, operatorName: String, activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.update-keyword.confirmation.custom-title"))) {
 
@@ -34,19 +34,19 @@
     <div class="column-two-thirds pl-0">
 
         <div class="govuk-panel govuk-panel--confirmation">
-            @if(keyword.approved) {
+            @if(approved) {
                 <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "approved"))</h1>
-                <h2 class="heading-large mt-0">@messages(keyword.name.toUpperCase)</h2>
+                <h2 class="heading-large mt-0">@messages(keyword.toUpperCase)</h2>
             } else {
                 <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "rejected"))</h1>
-                <h2 class="heading-large mt-0">@messages(keyword.name.toUpperCase)</h2>
+                <h2 class="heading-large mt-0">@messages(keyword.toUpperCase)</h2>
             }
         </div>
 
-        @if(keyword.approved) {
-            <p>@messages("management.update-keyword.confirmation.info", "approved", <span class="bold">c.application.goodsName</span>)</p>
+        @if(approved) {
+            <p>@messages("management.update-keyword.confirmation.info", "approved", <span class="bold">goodsName</span>)</p>
         } else {
-            <p>@messages("management.update-keyword.confirmation.info", "rejected", <span class="bold">c.application.goodsName</span>)</p>
+            <p>@messages("management.update-keyword.confirmation.info", "rejected", <span class="bold">goodsName</span>)</p>
         }
 
         <div class="grid-row">
@@ -54,7 +54,7 @@
                 <h2 class="heading-large mt-0">Next steps</h2>
                 <p>
                     <a id="my-cases-link" href="@MyCasesController.myCases()">
-                        @messages("back.user.keywords", c.assignee)
+                        @messages("back.user.keywords", operatorName)
                     </a>
                 </p>
             </div>

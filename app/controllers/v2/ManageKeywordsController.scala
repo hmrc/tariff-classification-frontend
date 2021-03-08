@@ -24,6 +24,7 @@ import models.forms.v2.ChangeKeywordStatusForm
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
 import models._
+import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -31,6 +32,7 @@ import service.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import utils.JsonFormatters._
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
@@ -51,10 +53,9 @@ class ManageKeywordsController @Inject()(
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-
       for {
-        caseKeywords           <- keywordService.fetchCaseKeywords()
-        allKeywords            <- keywordService.findAll(NoPagination())
+        caseKeywords <- keywordService.fetchCaseKeywords()
+        allKeywords  <- keywordService.findAll(NoPagination())
         manageKeywordsViewModel = ManageKeywordsViewModel
           .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
       } yield
@@ -83,52 +84,65 @@ class ManageKeywordsController @Inject()(
 
   def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-
-      keywordService.findAll(NoPagination()).flatMap {
-        keywords =>
-          val keywordNames = keywords.results.map(_.name)
-          KeywordForm.formWithAuto(keywordNames).bindFromRequest.fold(
+      keywordService.findAll(NoPagination()).flatMap { keywords =>
+        val keywordNames = keywords.results.map(_.name)
+        KeywordForm
+          .formWithAuto(keywordNames)
+          .bindFromRequest
+          .fold(
             formWithErrors =>
-              Future.successful(BadRequest(
-                newKeywordView(
-                  activeSubNav,
-                  keywords.results,
-                  formWithErrors
-                )
-              )),
+              Future.successful(
+                BadRequest(
+                  newKeywordView(
+                    activeSubNav,
+                    keywords.results,
+                    formWithErrors
+                  )
+                )),
             keyword =>
               keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
                 Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
-              }
+            }
           )
       }
     }
 
-  def approveOrRejectKeyword(keywordName: String, `case`: Case): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
-      changeKeywordStatusForm.bindFromRequest.fold(
-        formWithErrors =>
-          Future.successful(BadRequest(
-            changeKeywordStatusView(
-              keywordName,
-              `case`,
-              formWithErrors
+  def approveOrRejectKeyword(keywordName: String, reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
+      implicit request: AuthenticatedRequest[AnyContent] =>
+        casesService.getOne(reference).flatMap {
+          case Some(c: Case) => {
+            changeKeywordStatusForm.bindFromRequest.fold(
+              formWithErrors =>
+                Future.successful(
+                  BadRequest(
+                    changeKeywordStatusView(
+                      keywordName,
+                      c,
+                      formWithErrors
+                    )
+                  )),
+              action =>
+                action.toUpperCase match {
+                  case "APPROVE" =>
+                    keywordService.createKeyword(Keyword(keywordName, approved = true)).map { savedKeyword: Keyword =>
+                      Redirect(
+                        controllers.v2.routes.ManageKeywordsController
+                          .displayKeywordChangeConfirmation(savedKeyword.name, savedKeyword.approved, c.application.goodsName, c.assignee.get.name.getOrElse(""))
+                      )
+                    }
+                  case "REJECT" =>
+                    keywordService.createKeyword(Keyword(keywordName)).map { savedKeyword: Keyword =>
+                      Redirect(
+                        controllers.v2.routes.ManageKeywordsController
+                          .displayKeywordChangeConfirmation(savedKeyword.name, savedKeyword.approved, c.application.goodsName, c.assignee.get.name.getOrElse(""))
+                      )
+                    }
+              }
             )
-          )),
-        action =>
-          action.toUpperCase match {
-            case "APPROVED" => keywordService.createKeyword(Keyword(keywordName, approved = true)).map { savedKeyword: Keyword =>
-              Redirect(
-                controllers.v2.routes.ManageKeywordsController.displayKeywordChangeConfirmation(savedKeyword, `case`)
-              )
-            }
-            case "REJECTED" => keywordService.createKeyword(Keyword(keywordName)).map { savedKeyword: Keyword =>
-              Redirect(
-                controllers.v2.routes.ManageKeywordsController.displayKeywordChangeConfirmation(savedKeyword, `case`)
-              )
-            }
           }
-        )
+          case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+        }
     }
 
   def displayConfirmKeyword(
@@ -145,14 +159,17 @@ class ManageKeywordsController @Inject()(
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       casesService.getOne(reference).flatMap {
         case Some(c: Case) => Future.successful(Ok(changeKeywordStatusView(keywordName, c, changeKeywordStatusForm)))
-        case _ => Future.successful(Ok(views.html.case_not_found(reference)))
-      }
-    )
+        case _             => Future.successful(Ok(views.html.case_not_found(reference)))
+    })
 
-  def displayKeywordChangeConfirmation(keyword: Keyword, `case`: Case): Action[AnyContent] =
+  def displayKeywordChangeConfirmation(
+    keyword: String,
+    approved: Boolean,
+    goodsName: String,
+    operatorName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
       implicit request =>
         Ok(
-          keywordChangeConfirm(keyword, `case`)
-        ))
+          keywordChangeConfirm(keyword, approved, goodsName, operatorName)
+      ))
 }
