@@ -39,7 +39,7 @@ object Report {
     sortBy    = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.CORRESPONDENCE),
-    fields = Seq(
+    fields = NonEmptySeq.of(
       ReportField.Reference,
       ReportField.Description,
       ReportField.CaseSource,
@@ -56,7 +56,7 @@ object Report {
     sortBy    = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.MISCELLANEOUS),
-    fields = Seq(
+    fields = NonEmptySeq.of(
       ReportField.Reference,
       ReportField.Description,
       ReportField.CaseSource,
@@ -181,8 +181,8 @@ object Report {
 
   val byId = Map[String, Report](
 
-    "correspondence-cases"             -> correspondenceCases,
-    "miscellaneous-cases"              -> miscellaneousCases
+    "correspondence-cases"      -> correspondenceCases,
+    "miscellaneous-cases"              -> miscellaneousCases,
     "number-of-open-cases"             -> numberOfOpenCases,
     "completed-cases"                  -> completedCases,
     "number-of-cases-per-user"         -> numberOfCasesPerUser,
