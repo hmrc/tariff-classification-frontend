@@ -19,12 +19,13 @@ package controllers.v2
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
+import models._
 import models.forms.KeywordForm
 import models.forms.v2.ChangeKeywordStatusForm
+import models.request.AuthenticatedRequest
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
-import models._
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -32,7 +33,6 @@ import service.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
-import utils.JsonFormatters._
 
 class ManageKeywordsController @Inject()(
   verify: RequestActions,
@@ -47,7 +47,7 @@ class ManageKeywordsController @Inject()(
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
-    with I18nSupport {
+    with I18nSupport with Logging {
   val keywordForm: Form[String]             = KeywordForm.form
   val changeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
 
@@ -127,33 +127,28 @@ class ManageKeywordsController @Inject()(
                   case "APPROVE" =>
                     keywordService.createKeyword(Keyword(keywordName, approved = true)).map {
                       savedKeyword: Keyword =>
-                        /*  Redirect(
-                        controllers.v2.routes.ManageKeywordsController
-                          .displayKeywordChangeConfirmation(savedKeyword.name, savedKeyword.approved, c.application.goodsName, c.assignee.get.name.getOrElse(""))
+                         Redirect(
+                           controllers.v2.routes.ManageKeywordsController
+                             .displayKeywordChangeConfirmation(
+                               savedKeyword.name,
+                               savedKeyword.approved,
+                               c.application.goodsName,
+                               c.assignee.get.name.getOrElse("")
+                          )
                       )
-                         */
-                        Ok(
-                          keywordChangeConfirm(
-                            savedKeyword.name,
-                            savedKeyword.approved,
-                            c.application.goodsName,
-                            c.assignee.get.name.getOrElse("")))
                     }
                   case "REJECT" =>
                     keywordService.createKeyword(Keyword(keywordName)).map {
                       savedKeyword: Keyword =>
-                        /*Redirect(
-                        controllers.v2.routes.ManageKeywordsController
-                          .displayKeywordChangeConfirmation(savedKeyword.name, savedKeyword.approved, c.application.goodsName, c.assignee.get.name.getOrElse(""))
-                      )*/
-
-                        Ok(
-                          keywordChangeConfirm(
-                            savedKeyword.name,
-                            savedKeyword.approved,
-                            c.application.goodsName,
-                            c.assignee.get.name.getOrElse("")))
-
+                        Redirect(
+                          controllers.v2.routes.ManageKeywordsController
+                            .displayKeywordChangeConfirmation(
+                              savedKeyword.name,
+                              savedKeyword.approved,
+                              c.application.goodsName,
+                              c.assignee.get.name.getOrElse("")
+                            )
+                        )
                     }
               }
             )
@@ -184,9 +179,11 @@ class ManageKeywordsController @Inject()(
     approved: Boolean,
     goodsName: String,
     operatorName: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)){
       implicit request =>
         Ok(
           keywordChangeConfirm(keyword, approved, goodsName, operatorName)
-      ))
+        )
+    }
+
 }

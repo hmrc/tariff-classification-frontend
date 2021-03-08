@@ -73,12 +73,4 @@ class ControllerBaseSpec extends SpecBase {
       .withFormUrlEncodedBody(encodedBody.toSeq: _*)
       .withCSRFToken
       .asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
-
-  protected def newFakePUTRequestWithCSRF(
-    encodedBody: Map[String, String]
-  ): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest("PUT", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsFormUrlEncoded)
-      .withFormUrlEncodedBody(encodedBody.toSeq: _*)
-      .withCSRFToken
-      .asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
 }

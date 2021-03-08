@@ -19,7 +19,7 @@
 @import models.Keyword
 @import views.html.includes.main
 @import views.html.partials._
-@import controllers.routes.MyCasesController
+@import controllers.v2.routes.ManageKeywordsController
 @import models.viewmodels.{NoTabSelected, ManagerToolsKeywordsTab, SubNavigationTab}
 @import views.html.components.manager_tools_secondary_navigation
 
@@ -35,25 +35,25 @@
 
         <div class="govuk-panel govuk-panel--confirmation">
             @if(approved) {
-                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "approved"))</h1>
+                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "approved")</h1>
                 <h2 class="heading-large mt-0">@messages(keyword.toUpperCase)</h2>
             } else {
-                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "rejected"))</h1>
+                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "rejected")</h1>
                 <h2 class="heading-large mt-0">@messages(keyword.toUpperCase)</h2>
             }
         </div>
 
         @if(approved) {
-            <p>@messages("management.update-keyword.confirmation.info", "approved", <span class="bold">goodsName</span>)</p>
+            <p>@messages("management.update-keyword.confirmation.info.start", "approved") <span class="bold">@goodsName</span> @messages("management.update-keyword.confirmation.info.end")</p>
         } else {
-            <p>@messages("management.update-keyword.confirmation.info", "rejected", <span class="bold">goodsName</span>)</p>
+            <p>@messages("management.update-keyword.confirmation.info.start", "rejected") <span class="bold">@goodsName</span> @messages("management.update-keyword.confirmation.info.end")</p>
         }
 
         <div class="grid-row">
             <div class="column-full">
                 <h2 class="heading-large mt-0">Next steps</h2>
                 <p>
-                    <a id="my-cases-link" href="@MyCasesController.myCases()">
+                    <a id="my-cases-link" href="@ManageKeywordsController.displayManageKeywords()">
                         @messages("back.user.keywords", operatorName)
                     </a>
                 </p>
