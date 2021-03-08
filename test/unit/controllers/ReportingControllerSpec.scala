@@ -26,7 +26,6 @@ import org.mockito.BDDMockito._
 import org.mockito.Mockito
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.test.CSRFTokenHelper._
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,10 +39,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val reportingService                     = mock[ReportingService]
   private val queueService                         = injector.instanceOf[QueuesService]
   private val usersService                         = mock[UserService]
-  private val casesService                         = mock[CasesService]
   private val operator                             = mock[Operator]
-  private val requiredPermissions: Set[Permission] = Set(Permission.VIEW_REPORTS)
-  private val noPermissions: Set[Permission]       = Set.empty
   private lazy val manage_reports_view             = injector.instanceOf[manage_reports_view]
 
   override protected def afterEach(): Unit = {
@@ -1039,12 +1035,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   }
 
-  
   "openCasesInTeams" should {
 
     val reportName = "number-of-cases-in-teams"
-    
-    
+
     "return 303 SEE_OTHER and redirect to correct report url" in {
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
@@ -1053,7 +1047,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         controllers.routes.ReportingController.queueReport(Report.openCasesInTeams).path()
       )
     }
-    
+
     "return unauthorised with no permissions" in {
 
       val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))

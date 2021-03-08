@@ -18,12 +18,12 @@ package controllers
 
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import javax.inject.{Inject, Singleton}
 
 import akka.stream.scaladsl.Source
 import akka.stream.alpakka.csv.scaladsl.CsvFormatting
 import cats.syntax.all._
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
 import models._
 import models.forms._
 import models.reporting._

@@ -48,6 +48,8 @@ object Reports {
       data.map(_.toString).getOrElse("0")
     case StatusResultField(_, data) =>
       data.map(_.toString).getOrElse(messages("reporting.result.unknown"))
+    case LiabilityStatusResultField(_, data) =>
+      data.map(_.toString).getOrElse(messages("reporting.result.unknown"))
     case StringResultField(_, data) =>
       field match {
         case ReportField.User =>
