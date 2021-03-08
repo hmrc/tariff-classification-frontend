@@ -190,6 +190,10 @@ object Report {
     statuses = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
   )
 
+  val openCasesInTeams = QueueReport(
+    statuses = Set(PseudoCaseStatus.OPEN)
+  )
+
   val byId = Map[String, Report](
     "new-liabilities"                   -> numberOfNewLiabilityCases,
     "new-liabilities-cases-live"        -> numberOfNewLiveLiabilityCases,
@@ -205,7 +209,8 @@ object Report {
     "new-atar-cases"                    -> numberOfNewAtarCases,
     "liabilities-cases"                 -> liabilitiesCases,
     "number-of-new-cases"               -> numberOfNewCases,
-    "new-and-open-cases"                -> numberOfNewanOpenCases
+    "new-and-open-cases"                -> numberOfNewanOpenCases,
+    "number-of-cases-in-teams"          -> openCasesInTeams
   )
 
   private val groupByKey      = "group_by"
@@ -274,7 +279,7 @@ object SummaryReport {
       val sortBy       = param(sortByKey)(requestParams).flatMap(ReportField.fields.get(_))
       val sortOrder    = param(sortOrderKey)(requestParams).flatMap(bindSortDirection).getOrElse(SortDirection.ASCENDING)
       val teams        = params(teamsKey)(requestParams).getOrElse(Set.empty)
-      val groupBy = orderedParams(groupByKey)(requestParams)
+      val groupBy      = orderedParams(groupByKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get(_)))
         .flatMap(NonEmptySeq.fromSeq[ReportField[_]])
       val caseTypes = params(caseTypesKey)(requestParams)
