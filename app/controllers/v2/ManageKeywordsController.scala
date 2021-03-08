@@ -125,18 +125,35 @@ class ManageKeywordsController @Inject()(
               action =>
                 action.toUpperCase match {
                   case "APPROVE" =>
-                    keywordService.createKeyword(Keyword(keywordName, approved = true)).map { savedKeyword: Keyword =>
-                      Redirect(
+                    keywordService.createKeyword(Keyword(keywordName, approved = true)).map {
+                      savedKeyword: Keyword =>
+                        /*  Redirect(
                         controllers.v2.routes.ManageKeywordsController
                           .displayKeywordChangeConfirmation(savedKeyword.name, savedKeyword.approved, c.application.goodsName, c.assignee.get.name.getOrElse(""))
                       )
+                         */
+                        Ok(
+                          keywordChangeConfirm(
+                            savedKeyword.name,
+                            savedKeyword.approved,
+                            c.application.goodsName,
+                            c.assignee.get.name.getOrElse("")))
                     }
                   case "REJECT" =>
-                    keywordService.createKeyword(Keyword(keywordName)).map { savedKeyword: Keyword =>
-                      Redirect(
+                    keywordService.createKeyword(Keyword(keywordName)).map {
+                      savedKeyword: Keyword =>
+                        /*Redirect(
                         controllers.v2.routes.ManageKeywordsController
                           .displayKeywordChangeConfirmation(savedKeyword.name, savedKeyword.approved, c.application.goodsName, c.assignee.get.name.getOrElse(""))
-                      )
+                      )*/
+
+                        Ok(
+                          keywordChangeConfirm(
+                            savedKeyword.name,
+                            savedKeyword.approved,
+                            c.application.goodsName,
+                            c.assignee.get.name.getOrElse("")))
+
                     }
               }
             )
