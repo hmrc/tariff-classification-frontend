@@ -41,7 +41,7 @@ object ReportingTabViewModel {
     ReportTabRow("new-and-open-cases", "new-and-open-cases"),
     ReportTabRow("number-of-cases-in-teams", "number-of-cases-in-teams"),
     ReportTabRow("number-of-cases-per-user", "number-of-cases-per-user"),
-    ReportTabRow("working-days-liability-cases", "working-days-liability-cases"),
+    ReportTabRow("working-days-non-live-liabilities", "working-days-non-live-liabilities"),
     ReportTabRow("calendar-days-atar-cases", "calendar-days-atar-cases"),
     ReportTabRow("rejection-breakdown", "rejection-breakdown"),
     ReportTabRow("atar-summary", "atar-summary"),
@@ -49,7 +49,7 @@ object ReportingTabViewModel {
   ).filter(reportImplemented)
 
   def statusTabRows: List[ReportTabRow] = List(
-    ReportTabRow("case-status", "case-status"),
+    ReportTabRow("case-status", "case-count-by-status"),
     ReportTabRow("suppressed-cases", "suppressed-cases"),
     ReportTabRow("open-cases", "open-cases"),
     ReportTabRow("number-of-open-cases", "number-of-open-cases"),
@@ -73,7 +73,8 @@ object ReportingTabViewModel {
     ReportTabRow("liabilities-cases", "liabilities-cases"),
     ReportTabRow("new-liabilities-cases-non-live", "new-liabilities-cases-non-live"),
     ReportTabRow("new-liabilities-cases", "new-liabilities-cases-live"),
-    ReportTabRow("new-liabilities", "new-liabilities")
+    ReportTabRow("new-liabilities", "new-liabilities"),
+    ReportTabRow("working-days-non-live-liabilities", "working-days-non-live-liabilities")
   ).filter(reportImplemented)
 
   def correspondenceTabRows: List[ReportTabRow] = List(

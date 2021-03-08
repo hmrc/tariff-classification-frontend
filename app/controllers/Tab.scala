@@ -16,7 +16,6 @@
 
 package controllers
 
-
 sealed abstract class Tab(val name: String) extends Product with Serializable
 
 object Tab {
@@ -39,6 +38,13 @@ object Tab {
   case object CASE_DETAILS_TAB extends Tab("case_details_tab")
   case object CONTACT_TAB extends Tab("contact_details_tab")
   case object MESSAGES_TAB extends Tab("messages_tab")
+
+  case object USER_DETAIS_TAB extends Tab("user_details_tab")
+  case object ATAR_TAB extends Tab("atar_tab")
+  case object LIABILITY_TAB extends Tab("liability_tab")
+  case object CORRESPONDENCE_TAB extends Tab("correspondence_tab")
+  case object MISCELLANEOUS_TAB extends Tab("miscellaneous_tab")
+
   val values =
     Set(
       SAMPLE_TAB,
@@ -54,6 +60,14 @@ object Tab {
       CONTACT_TAB,
       MESSAGES_TAB
     )
+
+  val userTabs = Set(
+    USER_DETAIS_TAB,
+    ATAR_TAB,
+    LIABILITY_TAB,
+    CORRESPONDENCE_TAB,
+    MISCELLANEOUS_TAB
+  )
 
   def fromValue(value: String): Option[Tab] = values.find(_.name == value)
 }

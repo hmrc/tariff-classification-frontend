@@ -96,7 +96,7 @@ object JsonFormatters {
   implicit val formatCancellationCaseStatusChange: OFormat[CancellationCaseStatusChange] =
     Json.format[CancellationCaseStatusChange]
   implicit val formatReferralCaseStatusChange: OFormat[ReferralCaseStatusChange] = Json.format[ReferralCaseStatusChange]
-  implicit val formatRejectCaseStatusChange: OFormat[RejectCaseStatusChange] = Json.format[RejectCaseStatusChange]
+  implicit val formatRejectCaseStatusChange: OFormat[RejectCaseStatusChange]     = Json.format[RejectCaseStatusChange]
   implicit val formatCompletedCaseStatusChange: OFormat[CompletedCaseStatusChange] =
     Json.format[CompletedCaseStatusChange]
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange]           = Json.format[AppealStatusChange]
@@ -133,8 +133,8 @@ object JsonFormatters {
   implicit val newEventRequestFormat: OFormat[NewEventRequest] =
     Json.using[Json.WithDefaultValues].format[NewEventRequest]
 
-  implicit val formatCaseHeader: OFormat[CaseHeader]              = Json.format[CaseHeader]
-  implicit val formatCaseKeyword: OFormat[CaseKeyword]            = Json.format[CaseKeyword]
+  implicit val formatCaseHeader: OFormat[CaseHeader]   = Json.format[CaseHeader]
+  implicit val formatCaseKeyword: OFormat[CaseKeyword] = Json.format[CaseKeyword]
   implicit val emailCompleteParamsFormat: OFormat[CaseCompletedEmailParameters] =
     Json.format[CaseCompletedEmailParameters]
   implicit val emailCompleteFormat: OFormat[CaseCompletedEmail] = Json.format[CaseCompletedEmail]
@@ -146,18 +146,20 @@ object JsonFormatters {
 
   implicit val formatPseudoCaseStatus: Format[PseudoCaseStatus.Value] = EnumJson.format(PseudoCaseStatus)
 
-  implicit val formatNumberField: OFormat[NumberField]       = Json.format[NumberField]
-  implicit val formatStatusField: OFormat[StatusField]       = Json.format[StatusField]
-  implicit val formatCaseTypeField: OFormat[CaseTypeField]   = Json.format[CaseTypeField]
-  implicit val formatChapterField: OFormat[ChapterField]     = Json.format[ChapterField]
-  implicit val formatDateField: OFormat[DateField]           = Json.format[DateField]
-  implicit val formatStringField: OFormat[StringField]       = Json.format[StringField]
-  implicit val formatDaysSinceField: OFormat[DaysSinceField] = Json.format[DaysSinceField]
+  implicit val formatNumberField: OFormat[NumberField]                   = Json.format[NumberField]
+  implicit val formatStatusField: OFormat[StatusField]                   = Json.format[StatusField]
+  implicit val formatLiabilityStatusField: OFormat[LiabilityStatusField] = Json.format[LiabilityStatusField]
+  implicit val formatCaseTypeField: OFormat[CaseTypeField]               = Json.format[CaseTypeField]
+  implicit val formatChapterField: OFormat[ChapterField]                 = Json.format[ChapterField]
+  implicit val formatDateField: OFormat[DateField]                       = Json.format[DateField]
+  implicit val formatStringField: OFormat[StringField]                   = Json.format[StringField]
+  implicit val formatDaysSinceField: OFormat[DaysSinceField]             = Json.format[DaysSinceField]
 
   implicit val formatReportField: Format[ReportField[_]] = Union
     .from[ReportField[_]]("type")
     .and[NumberField](ReportFieldType.Number.name)
     .and[StatusField](ReportFieldType.Status.name)
+    .and[LiabilityStatusField](ReportFieldType.LiabilityStatus.name)
     .and[CaseTypeField](ReportFieldType.CaseType.name)
     .and[ChapterField](ReportFieldType.Chapter.name)
     .and[DateField](ReportFieldType.Date.name)
@@ -165,8 +167,10 @@ object JsonFormatters {
     .and[DaysSinceField](ReportFieldType.DaysSince.name)
     .format
 
-  implicit val formatNumberResultField: OFormat[NumberResultField]     = Json.format[NumberResultField]
-  implicit val formatStatusResultField: OFormat[StatusResultField]     = Json.format[StatusResultField]
+  implicit val formatNumberResultField: OFormat[NumberResultField] = Json.format[NumberResultField]
+  implicit val formatStatusResultField: OFormat[StatusResultField] = Json.format[StatusResultField]
+  implicit val formatLiabilityStatusResultField: OFormat[LiabilityStatusResultField] =
+    Json.format[LiabilityStatusResultField]
   implicit val formatCaseTypeResultField: OFormat[CaseTypeResultField] = Json.format[CaseTypeResultField]
   implicit val formatDateResultField: OFormat[DateResultField]         = Json.format[DateResultField]
   implicit val formatStringResultField: OFormat[StringResultField]     = Json.format[StringResultField]
@@ -175,6 +179,7 @@ object JsonFormatters {
     .from[ReportResultField[_]]("type")
     .and[NumberResultField](ReportFieldType.Number.name)
     .and[StatusResultField](ReportFieldType.Status.name)
+    .and[LiabilityStatusResultField](ReportFieldType.LiabilityStatus.name)
     .and[CaseTypeResultField](ReportFieldType.CaseType.name)
     .and[DateResultField](ReportFieldType.Date.name)
     .and[StringResultField](ReportFieldType.String.name)
