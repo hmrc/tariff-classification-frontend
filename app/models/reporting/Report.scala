@@ -17,6 +17,7 @@
 package models
 package reporting
 
+import cats.data.NonEmptySeq
 import cats.syntax.all._
 import models.BinderUtil._
 import play.api.mvc.QueryStringBindable
@@ -33,8 +34,131 @@ sealed abstract class Report extends Product with Serializable {
 }
 
 object Report {
-  val byId = Map[String, Report](
+
+  val numberOfOpenCases = SummaryReport(
+    name      = "Number of open cases",
+    groupBy   = NonEmptySeq.one(ReportField.Team),
+    sortBy    = ReportField.Team,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.OPEN)
+  )
+
+  val completedCases = SummaryReport(
+    name      = "Completed cases",
+    groupBy   = NonEmptySeq.one(ReportField.Team),
+    sortBy    = ReportField.Team,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.COMPLETED)
+  )
+
+  val numberOfCasesPerUser = SummaryReport(
+    name      = "Number of cases per user",
+    groupBy   = NonEmptySeq.one(ReportField.User),
+    sortBy    = ReportField.User,
+    sortOrder = SortDirection.ASCENDING
+  )
+
+  val cancelledCasesPerUser = SummaryReport(
+    name      = "Cancelled cases by assigned user",
+    groupBy   = NonEmptySeq.one(ReportField.User),
+    sortBy    = ReportField.User,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.CANCELLED)
+  )
+
+  val cancelledCasesByChapter = SummaryReport(
+    name      = "Cancelled cases by chapter",
+    groupBy   = NonEmptySeq.one(ReportField.Chapter),
+    sortBy    = ReportField.Chapter,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.CANCELLED)
+  )
+
+  val liabilitiesSummary = CaseReport(
+    name      = "Liabilities summary",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.LIABILITY),
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Chapter,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
     )
+  )
+
+  val atarSummary = CaseReport(
+    name      = "ATaR summary",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.ATAR),
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Chapter,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
+
+  val liabilitiesCases = CaseReport(
+    name      = "Liabilities cases",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.LIABILITY),
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
+
+  val numberOfNewAtarCases = SummaryReport(
+    name      = "New ATaR cases",
+    groupBy   = NonEmptySeq.one(ReportField.CaseType),
+    sortBy    = ReportField.CaseType,
+    statuses  = Set(PseudoCaseStatus.NEW),
+    caseTypes = Set(ApplicationType.ATAR)
+  )
+
+  val numberOfNewCases = SummaryReport(
+    name      = "Number of new cases",
+    groupBy   = NonEmptySeq.one(ReportField.CaseType),
+    sortBy    = ReportField.CaseType,
+    statuses  = Set(PseudoCaseStatus.NEW)
+  )
+
+  val numberOfNewanOpenCases = SummaryReport(
+    name      = "New and open cases",
+    groupBy   = NonEmptySeq.one(ReportField.CaseType),
+    sortBy    = ReportField.ElapsedDays,
+    statuses  = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
+  )
+
+  val byId = Map[String, Report](
+    "number-of-open-cases"             -> numberOfOpenCases,
+    "completed-cases"                  -> completedCases,
+    "number-of-cases-per-user"         -> numberOfCasesPerUser,
+    "cancelled-cases-by-assigned-user" -> cancelledCasesPerUser,
+    "cancelled-cases-by-chapter"       -> cancelledCasesByChapter,
+    "liabilities-summary"              -> liabilitiesSummary,
+    "atar-summary"                     -> atarSummary,
+    "new-atar-cases"                   -> numberOfNewAtarCases,
+    "liabilities-cases"                -> liabilitiesCases,
+    "number-of-new-cases"              -> numberOfNewCases,
+    "new-and-open-cases"               -> numberOfNewanOpenCases
+  )
 
   private val groupByKey      = "group_by"
   private val maxFieldsKey    = "max_fields"
@@ -64,7 +188,7 @@ object Report {
 
 case class SummaryReport(
   name: String,
-  groupBy: ReportField[_],
+  groupBy: NonEmptySeq[ReportField[_]],
   sortBy: ReportField[_],
   sortOrder: SortDirection.Value        = SortDirection.ASCENDING,
   caseTypes: Set[ApplicationType]       = Set.empty,
@@ -100,10 +224,12 @@ object SummaryReport {
       val reportName   = stringBindable.bind(nameKey, requestParams)
       val includeCases = boolBindable.bind(includeCasesKey, requestParams).getOrElse(Right(false))
       val dateRange    = rangeBindable.bind(dateRangeKey, requestParams).getOrElse(Right(InstantRange.allTime))
-      val groupBy      = param(groupByKey)(requestParams).flatMap(ReportField.fields.get(_))
-      val sortBy       = param(sortByKey)(requestParams).flatMap(ReportField.fields.get(_)).orElse(groupBy)
+      val sortBy       = param(sortByKey)(requestParams).flatMap(ReportField.fields.get(_))
       val sortOrder    = param(sortOrderKey)(requestParams).flatMap(bindSortDirection).getOrElse(SortDirection.ASCENDING)
       val teams        = params(teamsKey)(requestParams).getOrElse(Set.empty)
+      val groupBy      = orderedParams(groupByKey)(requestParams)
+        .map(_.flatMap(ReportField.fields.get(_)))
+        .flatMap(NonEmptySeq.fromSeq[ReportField[_]])
       val caseTypes = params(caseTypesKey)(requestParams)
         .map(_.map(bindApplicationType).collect { case Some(value) => value })
         .getOrElse(Set.empty)
@@ -116,6 +242,7 @@ object SummaryReport {
           case num @ NumberField(_)     => num
         }))
         .getOrElse(Seq.empty)
+
       (reportName, groupBy, sortBy).mapN {
         case (reportName, groupBy, sortBy) =>
           for {
@@ -140,7 +267,7 @@ object SummaryReport {
     override def unbind(key: String, value: SummaryReport): String =
       Seq(
         stringBindable.unbind(nameKey, value.name),
-        stringBindable.unbind(groupByKey, value.groupBy.fieldName),
+        stringBindable.unbind(groupByKey, value.groupBy.map(_.fieldName).mkString_(",")),
         stringBindable.unbind(sortByKey, value.sortBy.fieldName),
         stringBindable.unbind(sortOrderKey, value.sortOrder.toString),
         stringBindable.unbind(caseTypesKey, value.caseTypes.map(_.name).mkString(",")),
@@ -155,13 +282,13 @@ object SummaryReport {
 
 case class CaseReport(
   name: String,
+  fields: NonEmptySeq[ReportField[_]],
   sortBy: ReportField[_]                = ReportField.Reference,
   sortOrder: SortDirection.Value        = SortDirection.ASCENDING,
   caseTypes: Set[ApplicationType]       = Set.empty,
   statuses: Set[PseudoCaseStatus.Value] = Set.empty,
   teams: Set[String]                    = Set.empty,
-  dateRange: InstantRange               = InstantRange.allTime,
-  fields: Seq[ReportField[_]]           = Seq.empty
+  dateRange: InstantRange               = InstantRange.allTime
 ) extends Report
 
 object CaseReport {
@@ -193,6 +320,7 @@ object CaseReport {
         .getOrElse(Set.empty)
       val fields = orderedParams(fieldsKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get(_)))
+        .flatMap(NonEmptySeq.fromSeq)
 
       (reportName, fields).mapN {
         case (reportName, fields) =>
@@ -221,7 +349,7 @@ object CaseReport {
         stringBindable.unbind(statusesKey, value.statuses.map(_.toString).mkString(",")),
         stringBindable.unbind(teamsKey, value.teams.mkString(",")),
         rangeBindable.unbind(dateRangeKey, value.dateRange),
-        stringBindable.unbind(fieldsKey, value.fields.map(_.fieldName).mkString(","))
+        stringBindable.unbind(fieldsKey, value.fields.map(_.fieldName).mkString_(","))
       ).filterNot(_.isEmpty).mkString("&")
   }
 }

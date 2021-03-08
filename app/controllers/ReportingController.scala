@@ -27,6 +27,8 @@ import javax.inject.{Inject, Singleton}
 import models._
 import models.forms._
 import models.reporting._
+import models.viewmodels.managementtools.ReportingTabViewModel
+import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{QueuesService, ReportingService, UserService}
@@ -42,6 +44,7 @@ class ReportingController @Inject() (
   queuesService: QueuesService,
   usersService: UserService,
   mcc: MessagesControllerComponents,
+  val manageReportsView: views.html.managementtools.manage_reports_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -246,4 +249,14 @@ class ReportingController @Inject() (
           NotFound(views.html.report_not_found(reportName))
         }
     }
+
+  def displayManageReporting(activeSubNav: SubNavigationTab = ManagerToolsReportsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request =>
+      Ok(
+        manageReportsView(
+          activeSubNav,
+          ReportingTabViewModel.reportingTabs()
+        )
+      )
+    )
 }
