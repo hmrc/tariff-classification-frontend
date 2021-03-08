@@ -132,31 +132,63 @@ object Report {
   )
 
   val numberOfNewCases = SummaryReport(
-    name      = "Number of new cases",
-    groupBy   = NonEmptySeq.one(ReportField.CaseType),
-    sortBy    = ReportField.CaseType,
-    statuses  = Set(PseudoCaseStatus.NEW)
+    name     = "Number of new cases",
+    groupBy  = NonEmptySeq.one(ReportField.CaseType),
+    sortBy   = ReportField.CaseType,
+    statuses = Set(PseudoCaseStatus.NEW)
   )
 
-  val numberOfNewanOpenCases = SummaryReport(
-    name      = "New and open cases",
-    groupBy   = NonEmptySeq.one(ReportField.CaseType),
-    sortBy    = ReportField.ElapsedDays,
-    statuses  = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
+  val numberOfNewAndOpenCases = SummaryReport(
+    name     = "New and open cases",
+    groupBy  = NonEmptySeq.one(ReportField.CaseType),
+    sortBy   = ReportField.ElapsedDays,
+    statuses = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
+  )
+
+  val casesUnderReviewByChapter = SummaryReport(
+    name     = "Cases under review by chapter",
+    groupBy  = NonEmptySeq.one(ReportField.Chapter),
+    sortBy   = ReportField.Chapter,
+    statuses = Set(PseudoCaseStatus.UNDER_REVIEW)
+  )
+
+  val casesUnderReviewByUser = SummaryReport(
+    name     = "Cases under review by assigned user",
+    groupBy  = NonEmptySeq.one(ReportField.User),
+    sortBy   = ReportField.User,
+    statuses = Set(PseudoCaseStatus.UNDER_REVIEW)
+  )
+
+  val casesUnderAppealByChapter = SummaryReport(
+    name     = "Cases under appeal by chapter",
+    groupBy  = NonEmptySeq.one(ReportField.Chapter),
+    sortBy   = ReportField.Chapter,
+    statuses = Set(PseudoCaseStatus.UNDER_APPEAL)
+  )
+
+  val casesUnderAppealByUser = SummaryReport(
+    name     = "Cases under appeal by assigned user",
+    groupBy  = NonEmptySeq.one(ReportField.User),
+    sortBy   = ReportField.User,
+    statuses = Set(PseudoCaseStatus.UNDER_APPEAL)
   )
 
   val byId = Map[String, Report](
-    "number-of-open-cases"             -> numberOfOpenCases,
-    "completed-cases"                  -> completedCases,
-    "number-of-cases-per-user"         -> numberOfCasesPerUser,
-    "cancelled-cases-by-assigned-user" -> cancelledCasesPerUser,
-    "cancelled-cases-by-chapter"       -> cancelledCasesByChapter,
-    "liabilities-summary"              -> liabilitiesSummary,
-    "atar-summary"                     -> atarSummary,
-    "new-atar-cases"                   -> numberOfNewAtarCases,
-    "liabilities-cases"                -> liabilitiesCases,
-    "number-of-new-cases"              -> numberOfNewCases,
-    "new-and-open-cases"               -> numberOfNewanOpenCases
+    "number-of-open-cases"                -> numberOfOpenCases,
+    "completed-cases"                     -> completedCases,
+    "number-of-cases-per-user"            -> numberOfCasesPerUser,
+    "cancelled-cases-by-assigned-user"    -> cancelledCasesPerUser,
+    "cancelled-cases-by-chapter"          -> cancelledCasesByChapter,
+    "liabilities-summary"                 -> liabilitiesSummary,
+    "atar-summary"                        -> atarSummary,
+    "new-atar-cases"                      -> numberOfNewAtarCases,
+    "liabilities-cases"                   -> liabilitiesCases,
+    "number-of-new-cases"                 -> numberOfNewCases,
+    "new-and-open-cases"                  -> numberOfNewAndOpenCases,
+    "under-review-cases-by-chapter"       -> casesUnderReviewByChapter,
+    "under-review-cases-by-assigned-user" -> casesUnderReviewByUser,
+    "under-appeal-cases-by-chapter"       -> casesUnderAppealByChapter,
+    "under-appeal-cases-by-assigned-user" -> casesUnderAppealByUser
   )
 
   private val groupByKey      = "group_by"
@@ -223,7 +255,7 @@ object SummaryReport {
       val sortBy       = param(sortByKey)(requestParams).flatMap(ReportField.fields.get(_))
       val sortOrder    = param(sortOrderKey)(requestParams).flatMap(bindSortDirection).getOrElse(SortDirection.ASCENDING)
       val teams        = params(teamsKey)(requestParams).getOrElse(Set.empty)
-      val groupBy      = orderedParams(groupByKey)(requestParams)
+      val groupBy = orderedParams(groupByKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get(_)))
         .flatMap(NonEmptySeq.fromSeq[ReportField[_]])
       val caseTypes = params(caseTypesKey)(requestParams)

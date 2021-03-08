@@ -18,5 +18,12 @@ package models
 
 object PseudoCaseStatus extends Enumeration {
   type PseudoCaseStatus = Value
-  val DRAFT, NEW, OPEN, SUPPRESSED, REFERRED, REJECTED, CANCELLED, SUSPENDED, COMPLETED, REVOKED, ANNULLED, LIVE, EXPIRED = Value
+  val DRAFT, NEW, OPEN, SUPPRESSED, REFERRED, REJECTED, CANCELLED, SUSPENDED, COMPLETED, REVOKED, ANNULLED, LIVE,
+    EXPIRED, UNDER_APPEAL, UNDER_REVIEW = Value
+
+  def format(status: PseudoCaseStatus.Value): String = status match {
+    case UNDER_APPEAL => "UNDER APPEAL"
+    case UNDER_REVIEW => "UNDER REVIEW"
+    case _ => status.toString
+  }
 }

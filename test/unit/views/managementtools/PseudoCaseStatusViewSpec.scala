@@ -32,7 +32,7 @@ class PseudoCaseStatusViewSpec extends ViewSpec {
     "render with the appropriate label" in {
       for (status <- PseudoCaseStatus.values) {
         val doc = view(pseudoCaseStatus(status, "test-pseudo-status"))
-        doc.getElementById("test-pseudo-status") should containText(status.toString())
+        doc.getElementById("test-pseudo-status") should containText(PseudoCaseStatus.format(status))
       }
     }
   }

@@ -111,7 +111,6 @@ class CaseCardsViewSpec extends ViewSpec {
       doc should containElementWithID("bti-cases-id")
 
       doc should containElementWithID("manager-tools-users-id")
-      doc should containElementWithID("manager-tools-tools-id")
       doc should containElementWithID("manager-tools-keywords-id")
       doc should containElementWithID("manager-tools-reports-id")
 
