@@ -53,8 +53,6 @@ class QueuesControllerSpec extends ControllerBaseSpec {
       given(
         casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), any[Seq[ApplicationType]])(any[HeaderCarrier])
       ).willReturn(Future.successful(Paged.empty[Case]))
-      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
       given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
@@ -75,8 +73,6 @@ class QueuesControllerSpec extends ControllerBaseSpec {
           any[HeaderCarrier]
         )
       ).willReturn(Future.successful(Paged.empty[Case]))
-      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
       given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 

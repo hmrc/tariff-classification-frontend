@@ -56,10 +56,10 @@
         <li class="moj-sub-navigation__item">
         @if(selectedTab == ManagerToolsReportsTab) {
             <a id ="sub_nav_manager_tools_reports_tab" class="moj-sub-navigation__link" aria-current="page"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsReportsTab)">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
+            href="@controllers.routes.ReportingController.displayManageReporting()">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
         } else {
             <a id ="sub_nav_manager_tools_reports_tab" class="moj-sub-navigation__link"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsReportsTab)">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
+            href="@controllers.routes.ReportingController.displayManageReporting()">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
         }
         </li>
     </ul>

@@ -17,15 +17,16 @@
 package service
 
 import connector.BindingTariffClassificationConnector
-import models._
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
 import org.mockito.Mockito._
+import org.mockito.BDDMockito._
 import org.scalatest.BeforeAndAfterEach
+import models._
+import models.reporting._
 import uk.gov.hmrc.http.HeaderCarrier
-
+import play.api.mvc.QueryStringBindable
 import scala.concurrent.Future
+import cats.data.NonEmptySeq
 
 class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
@@ -37,65 +38,61 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
     reset(connector)
   }
 
-  "Reporting Service" should {
-    "Build & Request SLA Report" in {
-      val dateRange = mock[InstantRange]
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
-        Seq.empty[ReportResult]
-      )
+  "Reporting Service - caseReport" should {
+    "delegate to connector" in {
+      given(
+        connector.caseReport(any[CaseReport], any[Pagination])(
+          any[HeaderCarrier],
+          any[QueryStringBindable[CaseReport]],
+          any[QueryStringBindable[Pagination]]
+        )
+      ) willReturn Future.successful(Paged.empty[Map[String, ReportResultField[_]]])
 
-      await(service.getSLAReport(dateRange)) shouldBe Seq.empty[ReportResult]
-
-      theReport shouldBe CaseReport(
-        filter = CaseReportFilter(
-          decisionStartDate = Some(dateRange),
-          applicationType   = Some(Set("BTI"))
-        ),
-        group = Set(CaseReportGroup.QUEUE),
-        field = CaseReportField.ACTIVE_DAYS_ELAPSED
-      )
-    }
-
-    "Build & Request Queue Report" in {
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
-        Seq.empty[ReportResult]
-      )
-
-      await(service.getQueueReport(mock[HeaderCarrier])) shouldBe Seq.empty[ReportResult]
-
-      theReport shouldBe CaseReport(
-        filter = CaseReportFilter(
-          status     = Some(Set("NEW", "OPEN", "REFERRED", "SUSPENDED")),
-          assigneeId = Some("none")
-        ),
-        group = Set(CaseReportGroup.QUEUE, CaseReportGroup.APPLICATION_TYPE),
-        field = CaseReportField.ACTIVE_DAYS_ELAPSED
-      )
-    }
-
-    "Build & Request Referral Report" in {
-      val dateRange = mock[InstantRange]
-      given(connector.generateReport(any[CaseReport])(any[HeaderCarrier])) willReturn Future.successful(
-        Seq.empty[ReportResult]
-      )
-
-      await(service.getReferralReport(dateRange)) shouldBe Seq.empty[ReportResult]
-
-      theReport shouldBe CaseReport(
-        filter = CaseReportFilter(
-          referralDate    = Some(dateRange),
-          applicationType = Some(Set("BTI"))
-        ),
-        group = Set(CaseReportGroup.QUEUE),
-        field = CaseReportField.REFERRED_DAYS_ELAPSED
-      )
-    }
-
-    def theReport: CaseReport = {
-      val captor: ArgumentCaptor[CaseReport] = ArgumentCaptor.forClass(classOf[CaseReport])
-      verify(connector).generateReport(captor.capture())(any[HeaderCarrier])
-      captor.getValue
+      await(
+        service.caseReport(CaseReport("ATaR Summary Report", fields = NonEmptySeq.one(ReportField.Reference)), SearchPagination())
+      ) shouldBe Paged.empty
     }
   }
 
+  "Reporting Service - summaryReport" should {
+    "delegate to connector" in {
+      given(
+        connector.summaryReport(any[SummaryReport], any[Pagination])(
+          any[HeaderCarrier],
+          any[QueryStringBindable[SummaryReport]],
+          any[QueryStringBindable[Pagination]]
+        )
+      ) willReturn Future.successful(Paged.empty[ResultGroup])
+
+      await(
+        service.summaryReport(
+          SummaryReport(
+            "Case count by status",
+            groupBy = NonEmptySeq.one(ReportField.Status),
+            sortBy  = ReportField.Status
+          ),
+          SearchPagination()
+        )
+      ) shouldBe Paged.empty
+    }
+  }
+
+  "Reporting Service - queueReport" should {
+    "delegate to connector" in {
+      given(
+        connector.queueReport(any[QueueReport], any[Pagination])(
+          any[HeaderCarrier],
+          any[QueryStringBindable[QueueReport]],
+          any[QueryStringBindable[Pagination]]
+        )
+      ) willReturn Future.successful(Paged.empty[QueueResultGroup])
+
+      await(
+        service.queueReport(
+          QueueReport(),
+          SearchPagination()
+        )
+      ) shouldBe Paged.empty
+    }
+  }
 }

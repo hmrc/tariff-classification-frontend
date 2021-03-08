@@ -18,6 +18,7 @@ package models
 
 import java.time.Instant
 
+import models.BinderUtil._
 import play.api.mvc.QueryStringBindable
 
 case class InstantRange(
@@ -26,6 +27,7 @@ case class InstantRange(
 )
 
 object InstantRange {
+  val allTime = InstantRange(Instant.MIN, Instant.MAX)
 
   implicit def bindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[InstantRange] =
     new QueryStringBindable[InstantRange] {
@@ -35,23 +37,23 @@ object InstantRange {
       private def max(key: String) = s"max_$key"
 
       override def bind(key: String, requestParams: Map[String, Seq[String]]): Option[Either[String, InstantRange]] = {
-        import BinderUtil._
-        implicit val rp: Map[String, Seq[String]] = requestParams
+        val minValue: Instant = param(min(key))(requestParams).flatMap(bindInstant).getOrElse(Instant.MIN)
+        val maxValue: Instant = param(max(key))(requestParams).flatMap(bindInstant).getOrElse(Instant.MAX)
+        val range             = InstantRange(minValue, maxValue)
 
-        val minValue: Option[Instant] = param(min(key)).flatMap(bindInstant)
-        val maxValue: Option[Instant] = param(max(key)).flatMap(bindInstant)
-
-        (minValue, maxValue) match {
-          case (Some(mn), Some(mx)) => Some(Right(InstantRange(mn, mx)))
-          case (None, None)         => None
-          case _                    => Some(Left(s"Params ${min(key)} and ${max(key)} are both required"))
-        }
+        if (range == InstantRange.allTime)
+          None
+        else
+          Some(Right(range))
       }
 
-      override def unbind(key: String, filter: InstantRange): String =
-        Seq(
-          stringBinder.unbind(min(key), filter.min.toString),
-          stringBinder.unbind(max(key), filter.max.toString)
-        ).mkString("&")
+      override def unbind(key: String, filter: InstantRange): String = {
+        val minFilter =
+          if (filter.min == Instant.MIN) Seq.empty else Seq(stringBinder.unbind(min(key), filter.min.toString))
+        val maxFilter =
+          if (filter.max == Instant.MAX) Seq.empty else Seq(stringBinder.unbind(max(key), filter.max.toString))
+
+        (minFilter ++ maxFilter).filterNot(_.isEmpty).mkString("&")
+      }
     }
 }

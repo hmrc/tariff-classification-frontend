@@ -30,9 +30,7 @@
         formControlUnBold: Boolean = false
 )(implicit messages: Messages)
 
-
-
-<div class="form-group @formGroupClass @if(dateField.hasErrors) {form-group-error}">
+<div id="@{dateField.id}" class="form-group @formGroupClass @if(dateField.hasErrors) {form-group-error}">
     <fieldset class="inline" id="@fieldsetId" @if(dateField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
         <legend class="@labelClass">
             @legend
