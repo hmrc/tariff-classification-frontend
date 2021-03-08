@@ -34,6 +34,69 @@ sealed abstract class Report extends Product with Serializable {
 }
 
 object Report {
+  val caseCountByStatus = SummaryReport(
+    name      = "Case count by status",
+    groupBy   = NonEmptySeq.one(ReportField.Status),
+    sortBy    = ReportField.Status,
+    sortOrder = SortDirection.ASCENDING
+  )
+
+  val suppressedCaseCount = CaseReport(
+    name      = "Suppressed cases count",
+    statuses  = Set(PseudoCaseStatus.SUPPRESSED),
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.CaseType,
+      ReportField.GoodsName,
+      ReportField.Team,
+      ReportField.DateCreated,
+      ReportField.ElapsedDays
+    )
+  )
+
+  val openCasesCount = CaseReport(
+    name      = "Open cases count",
+    statuses  = Set(PseudoCaseStatus.OPEN),
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.CaseType,
+      ReportField.Chapter,
+      ReportField.GoodsName,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.DateCreated,
+      ReportField.ElapsedDays
+    )
+  )
+
+  val rejectedCaseCountByUser = SummaryReport(
+    name      = "Rejected cases breakdown by user",
+    statuses  = Set(PseudoCaseStatus.REJECTED),
+    groupBy   = NonEmptySeq.one(ReportField.User),
+    sortBy    = ReportField.Count,
+    sortOrder = SortDirection.DESCENDING
+  )
+
+  val calendarAtarCases = CaseReport(
+    name      = "120 calendar days for ATaR",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.ATAR),
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.GoodsName,
+      ReportField.TraderName,
+      ReportField.Status,
+      ReportField.Chapter,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.ElapsedDays
+    )
+  )
 
   val numberOfNewLiabilityCases = SummaryReport(
     name      = "New Liabilities",
@@ -195,6 +258,11 @@ object Report {
   )
 
   val byId = Map[String, Report](
+    "case-count-by-status"              -> caseCountByStatus,
+    "suppressed-cases"                  -> suppressedCaseCount,
+    "open-cases"                        -> openCasesCount,
+    "rejection-breakdown"               -> rejectedCaseCountByUser,
+    "calendar-days-atar-cases"          -> calendarAtarCases,
     "new-liabilities"                   -> numberOfNewLiabilityCases,
     "new-liabilities-cases-live"        -> numberOfNewLiveLiabilityCases,
     "new-liabilities-cases-non-live"    -> numberOfNewNonLiveLiabilityCases,

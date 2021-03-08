@@ -45,7 +45,7 @@ object ReportingTabViewModel {
   )
 
   def statusTabRows: List[ReportTabRow] = List(
-    ReportTabRow("case-status", "case-status"),
+    ReportTabRow("case-status", "case-count-by-status"),
     ReportTabRow("suppressed-cases", "suppressed-cases"),
     ReportTabRow("open-cases", "open-cases"),
     ReportTabRow("number-of-open-cases", "number-of-open-cases"),
