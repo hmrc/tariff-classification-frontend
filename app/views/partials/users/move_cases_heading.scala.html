@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.viewmodels.managementtools
-
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
-
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
-}
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
+@this(
 )
+
+@(
+        heading: String
+)(implicit messages: Messages)
+
+<div id="move-cases-heading" class="case-heading mb-4">
+
+    <div id="move-cases-subheading" class="case-reference">
+        Move selected cases
+    </div>
+
+    <h1 class="heading-xlarge case-title">
+        @heading
+    </h1>
+</div>

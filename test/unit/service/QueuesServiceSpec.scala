@@ -16,7 +16,7 @@
 
 package service
 
-import models.Queue
+import models.{Queue, Queues}
 
 class QueuesServiceSpec extends ServiceSpecBase {
 
@@ -55,6 +55,12 @@ class QueuesServiceSpec extends ServiceSpecBase {
 
     "not find unknown queue" in {
       await(service.getOneById("0")) shouldBe None
+    }
+  }
+
+  "Get Queues By Id" should {
+    "find relevant queues" in {
+      await(service.getQueuesById(Seq("1", "2"))) shouldBe Seq(Some(Queues.gateway), Some(Queues.act))
     }
   }
 

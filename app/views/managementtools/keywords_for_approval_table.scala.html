@@ -17,6 +17,7 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.managementtools._
+@import controllers.v2.routes.ManageKeywordsController
 @import views.html.v2.case_status_keywords_view
 
 
@@ -35,7 +36,7 @@
     @for((result, index) <- manageKeywordsTab.searchResult.results.zipWithIndex) {
         <tr id="@{manageKeywordsTab.tabMessageKey}-details-@index">
             <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index">
-                <a href="#">@{result.keyword.trim.toUpperCase}</a>
+                <a href="@ManageKeywordsController.changeKeywordStatus(result.keyword, result.reference)">@{result.keyword.trim.toUpperCase}</a>
             </td>
             <td id="@{manageKeywordsTab.tabMessageKey}-user-name-@index">@result.name</td>
             <td id="@{manageKeywordsTab.tabMessageKey}-goods-id-@index">@result.goods</td>

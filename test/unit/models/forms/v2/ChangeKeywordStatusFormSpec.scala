@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package models.forms.v2
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
+import models.ModelsBaseSpec
 
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
+class ChangeKeywordStatusFormSpec extends ModelsBaseSpec {
+
+  "Bind from request" should {
+
+    "Bind a blank form" in {
+      val form = ChangeKeywordStatusForm.form.bindFromRequest(
+        Map(
+          "action" -> Seq()
+        )
+      )
+
+      form.hasErrors shouldBe false
+      form.errors should have(size(0))
+    }
+
+  }
 }
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)

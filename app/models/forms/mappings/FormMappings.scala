@@ -57,4 +57,16 @@ object FormMappings {
       override def unbind(key: String, value: String): Map[String, String] =
         Map(key -> value)
     })
+
+  def oneFromList(errorKey: String = "error.required", list: List[String]): FieldMapping[String] =
+    of(new Formatter[String] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        data.get(key) match {
+          case Some(s) if list.contains(s) => Right(s)
+          case _                           => Left(Seq(FormError(key, errorKey)))
+        }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    })
 }
