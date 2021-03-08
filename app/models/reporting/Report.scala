@@ -144,6 +144,10 @@ object Report {
     sortBy    = ReportField.ElapsedDays,
     statuses  = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
   )
+    
+  val openCasesInTeams = QueueReport(
+    statuses = Set(PseudoCaseStatus.OPEN)
+  )
 
   val byId = Map[String, Report](
     "number-of-open-cases"             -> numberOfOpenCases,
@@ -156,7 +160,8 @@ object Report {
     "new-atar-cases"                   -> numberOfNewAtarCases,
     "liabilities-cases"                -> liabilitiesCases,
     "number-of-new-cases"              -> numberOfNewCases,
-    "new-and-open-cases"               -> numberOfNewanOpenCases
+    "new-and-open-cases"               -> numberOfNewanOpenCases,
+    "number-of-cases-in-teams" -> openCasesInTeams
   )
 
   private val groupByKey      = "group_by"
