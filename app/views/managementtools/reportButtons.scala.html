@@ -30,6 +30,9 @@
     case cse: reporting.CaseReport => {
       @ReportingController.downloadCaseReport(cse)
     }
+    case queue: reporting.QueueReport => {
+      @ReportingController.downloadQueueReport(queue)
+    }
   }
 }
 

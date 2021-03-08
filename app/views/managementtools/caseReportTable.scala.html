@@ -28,32 +28,31 @@
   id: String
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
-<div>
-  <table id="@{id}-table">
-    <tbody>
-      <tr id="@{id}-details" class="grid-row mb-2">
-        @for(field <- report.fields) {
-          <th id="@{id}-@{field.fieldName}" class="bold w-0">
-            @messages(s"reporting.field.${field.fieldName}")
-          </th>
+<table id="@{id}-table">
+  <thead class="govuk-table__head">
+    <tr id="@{id}-details" class="grid-row mb-2">
+      @for(field <- report.fields.toSeq) {
+        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0">
+          @messages(s"reporting.field.${field.fieldName}")
+        </th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for((result, rowIndex) <- results.results.zipWithIndex) {
+      <tr id="@{id}-details-@{rowIndex}" class="grid-row mb-2">
+        @for(field <- report.fields.toSeq) {
+          @reportField(field, result(field.fieldName), users, teams, id, rowIndex)
         }
       </tr>
+    }
+  </tbody>
+</table>
 
-      @for((result, rowIndex) <- results.results.zipWithIndex) {
-        <tr id="@{id}-details-@{rowIndex}" class="grid-row mb-2">
-          @for(field <- report.fields) {
-            @reportField(field, result(field.fieldName), users, teams, id, rowIndex)
-          }
-        </tr>
-      }
-    </tbody>
-  </table>
-
-  @pagination(
-    id = s"${id}-pagination_bottom",
-    pager = results,
-    containerClass = Some("mt-2 mb-1"),
-    linksClass = Some("mt-2"),
-    onChange = page => controllers.routes.ReportingController.caseReport(report, options.withPage(page))
-  )
-</div>
+@pagination(
+  id = s"${id}-pagination_bottom",
+  pager = results,
+  containerClass = Some("mt-2 mb-1"),
+  linksClass = Some("mt-2"),
+  onChange = page => controllers.routes.ReportingController.caseReport(report, options.withPage(page))
+)

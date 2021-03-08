@@ -47,7 +47,10 @@
 <td id="@{id}-@{field.fieldName}-@{index}">
   @if(field == ReportField.Reference) {
     @result.data.map { reference =>
-      <a href="@routes.CaseController.get(reference)">@reference</a>
+      <a href="@routes.CaseController.get(reference)">
+        <span aria-hidden="true">@reference</span>
+        <span class="visually-hidden">case reference @reference</span>
+      </a>
     }.getOrElse(messages("reporting.result.unknown"))
   } else if (field == ReportField.User) {
     @result.data.map(userForPid).getOrElse(messages("reporting.user.unassigned"))

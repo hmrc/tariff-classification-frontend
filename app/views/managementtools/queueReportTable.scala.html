@@ -20,45 +20,48 @@
 @import views.html.partials.pagination
 
 @(
-  report: SummaryReport,
+  report: QueueReport,
   options: Pagination,
-  results: Paged[ResultGroup],
-  users: Map[String, Operator],
+  results: Paged[QueueResultGroup],
   teams: Map[String, Queue],
   id: String
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
+@teamForId(teamId: String) = {
+  @{
+    teams.get(teamId)
+      .map(_.name)
+      .getOrElse(messages("reporting.team.unknown"))
+  }
+}
+
 <table id="@{id}-table">
   <thead class="govuk-table__head">
     <tr id="@{id}-details" class="grid-row mb-2">
-      @for(groupBy <- report.groupBy.toSeq) {
-        <th scope="col" id="@{id}-@{groupBy.fieldName}" class="bold w-0">
-          @messages(s"reporting.field.${groupBy.fieldName}")
-        </th>
-      }
+      <th scope="col" id="@{id}-assigned_team" class="bold w-0">
+        @messages(s"reporting.field.assigned_team")
+      </th>
+      <th scope="col" id="@{id}-case_type" class="bold w-0">
+        @messages(s"reporting.field.case_type")
+      </th>
       <th scope="col" id="@{id}-count" class="bold w-0">
         @messages(s"reporting.field.count")
       </th>
-      @for((field, index) <- report.maxFields.zipWithIndex) {
-        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0">
-          @messages(s"reporting.field.${field.fieldName}")
-        </th>
-      }
     </tr>
   </thead>
 
   <tbody>
     @for((resultGroup, rowIndex) <- results.results.zipWithIndex) {
       <tr>
-        @report.groupBy.zipWith(resultGroup.groupKey) { case (groupBy, groupKey) =>
-          @reportField(groupBy, groupKey, users, teams, id, rowIndex)
-        }.toSeq
+        <td id="@{id}-assigned_team-@{rowIndex}">
+          @{resultGroup.team.map(teamForId).getOrElse(messages("reporting.team.unassigned"))}
+        </td>
+        <td id="@{id}-case_type-@{rowIndex}">
+          @{resultGroup.caseType.prettyName}
+        </td>
         <td id="@{id}-count-@{rowIndex}">
           @{resultGroup.count}
         </td>
-        @for(field <- resultGroup.maxFields) {
-          @reportNumberField(field, id, rowIndex)
-        }
       </tr>
     }
   </tbody>
@@ -69,5 +72,5 @@
   pager = results,
   containerClass = Some("mt-2 mb-1"),
   linksClass = Some("mt-2"),
-  onChange = page => controllers.routes.ReportingController.summaryReport(report, options.withPage(page))
+  onChange = page => controllers.routes.ReportingController.queueReport(report, options.withPage(page))
 )
