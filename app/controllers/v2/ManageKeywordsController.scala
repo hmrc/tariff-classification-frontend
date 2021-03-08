@@ -149,10 +149,7 @@ class ManageKeywordsController @Inject()(
       }
     )
 
-  def displayKeywordChangeConfirmation(
-    keyword: Keyword,
-    `case`: Case
-  ): Action[AnyContent] =
+  def displayKeywordChangeConfirmation(keyword: Keyword, `case`: Case): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
       implicit request =>
         Ok(

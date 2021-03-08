@@ -20,11 +20,12 @@
 @import views.html.includes.main
 @import views.html.partials._
 @import controllers.routes.MyCasesController
-@import models.viewmodels.NoTabSelected
+@import models.viewmodels.{NoTabSelected, ManagerToolsKeywordsTab, SubNavigationTab}
+@import views.html.components.manager_tools_secondary_navigation
 
 @this()
 
-@(keyword: Keyword, c: Case, activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(keyword: Keyword, c: Case, activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.update-keyword.confirmation.custom-title"))) {
 
