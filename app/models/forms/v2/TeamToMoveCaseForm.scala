@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package models.forms.v2
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
+import models.Queues
+import play.api.data.Form
+import play.api.data.Forms.mapping
+import models.forms.mappings.FormMappings._
 
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
+object TeamToMoveCaseForm {
+
+  val form: Form[String] = Form(
+    mapping(
+      "team" -> oneFromList("error.empty.moveCases.teamToMove", Queues.allDynamicQueues.map(_.id))
+    )(identity)(Some(_))
+  )
 }
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)

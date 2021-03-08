@@ -18,7 +18,8 @@ package service
 
 import audit.AuditService
 import connector.BindingTariffClassificationConnector
-import models.Operator
+import models.{NoPagination, Operator, Paged, Pagination}
+import models.Role.Role
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.reset
@@ -72,6 +73,17 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       given(connector.markDeleted(refEq(oldUser))(any[HeaderCarrier])) willReturn successful(updatedUser)
 
       await(service.markDeleted(oldUser, manager)) shouldBe updatedUser
+    }
+  }
+
+  "Get all users" should {
+
+    "return all users" in {
+      given(connector.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Operator("1"))))
+      await(service.getAllUsers(Seq(models.Role.CLASSIFICATION_OFFICER), "2", NoPagination())) shouldBe (Paged(
+        Seq(Operator("1"))
+      ))
     }
   }
 }

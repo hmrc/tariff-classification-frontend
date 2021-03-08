@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package models.viewmodels.managementtools
+package models.forms.v2
 
-import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
+import play.api.data.Forms._
+import play.api.data.Form
 
-case class KeywordViewModel(
-  reference: String,
-  keyword: String,
-  name: String,
-  goods: String,
-  caseType: ApplicationType,
-  status: CaseStatusKeywordViewModel,
-  approved: Boolean
-) {
-  def isApproved: Boolean = approved
+object MoveCasesForm {
+
+  def moveCasesForm(fieldName: String): Form[Set[String]] = Form(
+    mapping(
+      fieldName -> set(text).verifying("error.moveCases.empty", cases => cases.nonEmpty)
+    )(identity)(cases => Some(cases))
+  )
 }
-
-case class CaseStatusKeywordViewModel(
-  caseStatus: CaseStatus,
-  overdue: Boolean
-)
