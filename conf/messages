@@ -319,6 +319,7 @@ error.empty.sample.status=Select yes if a sample is being sent
 error.empty.sample.return=Select yes if the applicant wants the sample returned
 error.empty.queue=Select a team
 error.empty.team= Select a team
+error.empty.action=Select an action
 error.empty.appealType=Select Alternative Dispute Resolution, review or a level of appeal to continue
 error.empty.appealStatus=Select status to continue
 error.empty.liability-status=Select yes if this is a live liability
@@ -1236,8 +1237,22 @@ users.user.delete.confirm.message=This user will be deleted but all their previo
 remove_user.form.state.required = Select yes if you want to delete this user
 users.user.delete.done={0} deleted
 
+users.move_cases.team_or_user.header=Where would you like to move these {0} cases?
+users.move_cases.team_or_user.header.single=Where would you like to move this case?
+users.move_cases.choose_team.header=Which team would you like these {0} cases moved to?
+users.move_cases.choose_team.header.single=Which team would you like this case moved to?
+users.move_cases.choose_users_team.header=Which team would you like choose users from?
+users.move_cases.choose_user.header=Which user would you like these {0} cases moved to?
+users.move_cases.choose_user.header.single=Which user would you like this case moved to?
+users.move_cases.choose_user.user_from_another_team.label=Choose a user from another team
+users.move_cases.done.header=Cases moved from {0}
+users.move_cases.team.done.subHeader=<strong>Cases moved to the </strong><br>{0} team
+users.move_cases.user.done.subHeader= <strong>Cases moved to </strong><br>{0} <strong>on the</strong> </br>{1} team
+users.move_cases.choose_user.choose_team={0} is a member of {1} teams. Which team should these {2} cases be moved to?
+users.move_cases.choose_user.choose_team.single={0} is a member of {1} teams. Which team should this case be moved to?
+
 management.manage-keywords-title=Manage keywords
-management.manage-keywords.heading=Reports Dashboard
+management.manage-keywords.heading=Manage keywords
 management.manage-keywords.approve-tab.heading=Keywords for approval
 management.manage-keywords.approve-tab-title=Approve keywords ({0})
 management.manage-keywords.all-tab-title=All keywords ({0})
@@ -1369,3 +1384,19 @@ management.create-keyword.new-keyword-done.next=Next steps
 management.create-keyword.new-keyword-done.link=Go back to manage all keywords
 management.create-keyword.error.empty.keyword=Enter a new keyword
 management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list
+
+management.manage-keywords.change-keyword-status.heading.radio=Choose keyword action
+management.manage-keywords.change-keyword-status.radio.approve=Approve
+management.manage-keywords.change-keyword-status.radio.reject=Reject
+management.manage-keywords.change-keyword-status.radio.rename=Rename
+
+management.change-keywords.change-keyword-status.keyword-details.title=Keyword details
+management.manage-keywords.change-keyword-status.case.header=Case details
+management.manage-keywords.change-keyword-status.case.reference=Reference
+management.manage-keywords.change-keyword-status.case.goods=Goods
+management.manage-keywords.change-keyword-status.case.keywords=Keywords
+
+move_cases.error.empty.teamOrUser=Select if you are moving the case or cases to a team or user
+error.empty.moveCases.teamToMove=Select a team to move the case or cases to
+error.empty.moveCases.userToMove=Select a user to move the case or cases to
+error.moveCases.empty=Select the case or cases you want to move
