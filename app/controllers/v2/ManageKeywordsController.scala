@@ -168,21 +168,19 @@ class ManageKeywordsController @Inject() (
                       )
                     }
                   case ChangeKeywordStatusAction.REJECT =>
-                    keywordService.createKeyword(Keyword(keywordName)).map {
-                      savedKeyword: Keyword =>
-                        Redirect(
+                    successful(Redirect(
                           controllers.v2.routes.ManageKeywordsController
                             .displayKeywordChangeConfirmation(
-                              savedKeyword.name,
-                              savedKeyword.approved,
+                              keywordName,
+                              false,
                               c.application.goodsName
                             )
                         )
-                    }
-              }
+                    )
+                }
             )
           }
-          case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+          case _ => successful(Ok(views.html.case_not_found(reference)))
         }
     }
 
