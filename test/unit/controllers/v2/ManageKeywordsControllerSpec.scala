@@ -192,11 +192,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
         .willReturn(Future(Keyword("updatedKeyword", true)))
 
-      given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
-        .willReturn(Future(Keyword("updatedKeyword", true)))
-
-      given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
-        .willReturn(Future(Keyword("updatedKeyword", true)))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(Future(Some(dummyCase)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
