@@ -247,7 +247,7 @@ object Report {
     statuses = Set(PseudoCaseStatus.NEW)
   )
 
-  val numberOfNewanOpenCases = SummaryReport(
+  val numberOfNewAndOpenCases = SummaryReport(
     name     = "New and open cases",
     groupBy  = NonEmptySeq.one(ReportField.CaseType),
     sortBy   = ReportField.ElapsedDays,
@@ -258,28 +258,60 @@ object Report {
     statuses = Set(PseudoCaseStatus.OPEN)
   )
 
+  val casesUnderReviewByChapter = SummaryReport(
+    name     = "Cases under review by chapter",
+    groupBy  = NonEmptySeq.one(ReportField.Chapter),
+    sortBy   = ReportField.Chapter,
+    statuses = Set(PseudoCaseStatus.UNDER_REVIEW)
+  )
+
+  val casesUnderReviewByUser = SummaryReport(
+    name     = "Cases under review by assigned user",
+    groupBy  = NonEmptySeq.one(ReportField.User),
+    sortBy   = ReportField.User,
+    statuses = Set(PseudoCaseStatus.UNDER_REVIEW)
+  )
+
+  val casesUnderAppealByChapter = SummaryReport(
+    name     = "Cases under appeal by chapter",
+    groupBy  = NonEmptySeq.one(ReportField.Chapter),
+    sortBy   = ReportField.Chapter,
+    statuses = Set(PseudoCaseStatus.UNDER_APPEAL)
+  )
+
+  val casesUnderAppealByUser = SummaryReport(
+    name     = "Cases under appeal by assigned user",
+    groupBy  = NonEmptySeq.one(ReportField.User),
+    sortBy   = ReportField.User,
+    statuses = Set(PseudoCaseStatus.UNDER_APPEAL)
+  )
+
   val byId = Map[String, Report](
-    "case-count-by-status"              -> caseCountByStatus,
-    "suppressed-cases"                  -> suppressedCaseCount,
-    "open-cases"                        -> openCasesCount,
-    "rejection-breakdown"               -> rejectedCaseCountByUser,
-    "calendar-days-atar-cases"          -> calendarAtarCases,
-    "new-liabilities"                   -> numberOfNewLiabilityCases,
-    "new-liabilities-cases-live"        -> numberOfNewLiveLiabilityCases,
-    "new-liabilities-cases-non-live"    -> numberOfNewNonLiveLiabilityCases,
-    "working-days-non-live-liabilities" -> calendarDaysNonLiveLiabilitiesCases,
-    "number-of-open-cases"              -> numberOfOpenCases,
-    "completed-cases"                   -> completedCases,
-    "number-of-cases-per-user"          -> numberOfCasesPerUser,
-    "cancelled-cases-by-assigned-user"  -> cancelledCasesPerUser,
-    "cancelled-cases-by-chapter"        -> cancelledCasesByChapter,
-    "liabilities-summary"               -> liabilitiesSummary,
-    "atar-summary"                      -> atarSummary,
-    "new-atar-cases"                    -> numberOfNewAtarCases,
-    "liabilities-cases"                 -> liabilitiesCases,
-    "number-of-new-cases"               -> numberOfNewCases,
-    "new-and-open-cases"                -> numberOfNewanOpenCases,
-    "number-of-cases-in-teams"          -> openCasesInTeams
+    "case-count-by-status"                -> caseCountByStatus,
+    "suppressed-cases"                    -> suppressedCaseCount,
+    "open-cases"                          -> openCasesCount,
+    "rejection-breakdown"                 -> rejectedCaseCountByUser,
+    "calendar-days-atar-cases"            -> calendarAtarCases,
+    "new-liabilities"                     -> numberOfNewLiabilityCases,
+    "new-liabilities-cases-live"          -> numberOfNewLiveLiabilityCases,
+    "new-liabilities-cases-non-live"      -> numberOfNewNonLiveLiabilityCases,
+    "working-days-non-live-liabilities"   -> calendarDaysNonLiveLiabilitiesCases,
+    "number-of-open-cases"                -> numberOfOpenCases,
+    "completed-cases"                     -> completedCases,
+    "number-of-cases-per-user"            -> numberOfCasesPerUser,
+    "cancelled-cases-by-assigned-user"    -> cancelledCasesPerUser,
+    "cancelled-cases-by-chapter"          -> cancelledCasesByChapter,
+    "liabilities-summary"                 -> liabilitiesSummary,
+    "atar-summary"                        -> atarSummary,
+    "new-atar-cases"                      -> numberOfNewAtarCases,
+    "liabilities-cases"                   -> liabilitiesCases,
+    "number-of-new-cases"                 -> numberOfNewCases,
+    "new-and-open-cases"                  -> numberOfNewAndOpenCases,
+    "number-of-cases-in-teams"            -> openCasesInTeams,
+    "under-review-cases-by-chapter"       -> casesUnderReviewByChapter,
+    "under-review-cases-by-assigned-user" -> casesUnderReviewByUser,
+    "under-appeal-cases-by-chapter"       -> casesUnderAppealByChapter,
+    "under-appeal-cases-by-assigned-user" -> casesUnderAppealByUser
   )
 
   private val groupByKey      = "group_by"
