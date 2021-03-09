@@ -33,10 +33,9 @@ import play.api.mvc._
 import service.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
+
 
 class ManageKeywordsController @Inject() (
   verify: RequestActions,
@@ -156,7 +155,7 @@ class ManageKeywordsController @Inject() (
                   )),
               action =>
                 action.toUpperCase match {
-                  case "APPROVE" =>
+                  case ChangeKeywordStatusAction.APPROVE.toString =>
                     keywordService.createKeyword(Keyword(keywordName, approved = true)).map {
                       savedKeyword: Keyword =>
                          Redirect(
@@ -168,7 +167,7 @@ class ManageKeywordsController @Inject() (
                           )
                       )
                     }
-                  case "REJECT" =>
+                  case ChangeKeywordStatusAction.REJECT.toString =>
                     keywordService.createKeyword(Keyword(keywordName)).map {
                       savedKeyword: Keyword =>
                         Redirect(
@@ -264,8 +263,6 @@ class ManageKeywordsController @Inject() (
         confirmKeywordRenamedView(oldKeywordName, newKeywordName)
       )
     )
-        case _             => Future.successful(Ok(views.html.case_not_found(reference)))
-    })
 
   def displayKeywordChangeConfirmation(
     keyword: String,

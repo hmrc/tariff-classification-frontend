@@ -16,14 +16,13 @@
 
 package models
 
-object KeywordStatus extends Enumeration {
-  type KeywordStatus = Value
-  val APPROVED, REJECTED, REPLACED = Value
+object ChangeKeywordStatusAction extends Enumeration {
+  type ChangeKeywordStatusAction = Value
+  val APPROVE, REJECT = Value
 
-  def format(status: KeywordStatus): String =
+  def format(status: ChangeKeywordStatusAction): String =
     status match {
-      case APPROVED => "Approved"
-      case REJECTED => "Rejected"
-      case REPLACED => "Renamed"
+      case APPROVE => "Approve"
+      case REJECT => "Reject"
     }
 }
