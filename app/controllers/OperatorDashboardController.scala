@@ -41,7 +41,9 @@ class OperatorDashboardController @Inject() (
       for {
         casesByAssignee <- casesService.getCasesByAssignee(request.operator, NoPagination())
         casesByQueue    <- casesService.countCasesByQueue
-        totalCasesAssignedToMe = casesByAssignee.resultCount
+        totalCasesAssignedToMe = casesByAssignee.results.count(c =>
+          c.status == CaseStatus.OPEN
+        )
         referredCasesAssignedToMe = casesByAssignee.results.count(c =>
           c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED
         )
