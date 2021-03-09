@@ -44,9 +44,9 @@
         </div>
 
         @if(approved) {
-            <p>@messages("management.update-keyword.confirmation.info.start", "approved") <span class="bold">@goodsName</span> @messages("management.update-keyword.confirmation.info.end")</p>
+            <p>@messages("management.update-keyword.confirmation.info.start", "approved") <span class="bold">@goodsName</span> @messages("management.update-keyword.confirmation.approved.info.end")</p>
         } else {
-            <p>@messages("management.update-keyword.confirmation.info.start", "rejected") <span class="bold">@goodsName</span> @messages("management.update-keyword.confirmation.info.end")</p>
+            <p>@messages("management.update-keyword.confirmation.info.start", "rejected") <span class="bold">@goodsName</span> @messages("management.update-keyword.confirmation.rejected.info.end")</p>
         }
 
         <div class="grid-row">
