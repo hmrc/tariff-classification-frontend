@@ -154,8 +154,8 @@ class ManageKeywordsController @Inject() (
                     )
                   )),
               action =>
-                action.toUpperCase match {
-                  case ChangeKeywordStatusAction.APPROVE.toString =>
+                ChangeKeywordStatusAction.format(action) match {
+                  case ChangeKeywordStatusAction.APPROVE =>
                     keywordService.createKeyword(Keyword(keywordName, approved = true)).map {
                       savedKeyword: Keyword =>
                          Redirect(
@@ -167,7 +167,7 @@ class ManageKeywordsController @Inject() (
                           )
                       )
                     }
-                  case ChangeKeywordStatusAction.REJECT.toString =>
+                  case ChangeKeywordStatusAction.REJECT =>
                     keywordService.createKeyword(Keyword(keywordName)).map {
                       savedKeyword: Keyword =>
                         Redirect(

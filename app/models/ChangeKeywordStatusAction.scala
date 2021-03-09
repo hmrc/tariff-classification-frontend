@@ -20,9 +20,10 @@ object ChangeKeywordStatusAction extends Enumeration {
   type ChangeKeywordStatusAction = Value
   val APPROVE, REJECT = Value
 
-  def format(status: ChangeKeywordStatusAction): String =
-    status match {
-      case APPROVE => "Approve"
-      case REJECT => "Reject"
+  def format(status: String): ChangeKeywordStatusAction =
+    status.toUpperCase match {
+      case "APPROVE" => APPROVE
+      case "REJECT"  => REJECT
     }
+
 }
