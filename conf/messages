@@ -1322,7 +1322,8 @@ management.create-keyword.new-keyword-done.link=Go back to manage all keywords
 management.create-keyword.error.empty.keyword=Enter a new keyword
 management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list
 
-reporting.manage_reports.title = Manage reports
+reporting.manage_reports.title = Reporting dashboard
+reporting.manage_reports.heading = Reporting dashboard
 reporting.summary.tab.heading = Summary
 reporting.summary.heading = Summary reports
 reporting.summary.number-of-new-cases = Number of new cases
