@@ -1264,6 +1264,8 @@ management.manage-keywords.search-all-keywords.edit-keyword-button=Edit keyword
 
 reporting.field.count=Count
 reporting.field.reference=Reference
+reporting.field.description=Case description
+reporting.field.source=Case source
 reporting.field.status=Case status
 reporting.field.liability_status=Liability status
 reporting.field.case_type=Case type
