@@ -24,6 +24,9 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils._
 import cats.data.NonEmptySeq
+import java.time.Instant
+
+import play.api.http.Status
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
@@ -1182,9 +1185,12 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'create Keyword'" should {
 
     "create new keyword" in {
-      val keyword  = Keyword("AKeyword", true)
+      val keyword  = Keyword("AKeyword".toUpperCase, true)
       val request  = Json.toJson(NewKeywordRequest(keyword)).toString()
       val response = Json.toJson(keyword).toString()
+
+      println("@@@@@@@@@@@@@@@@@@@@@" + request)
+      println("**********************" + response)
 
       stubFor(
         post(urlEqualTo(s"/keyword"))
@@ -1226,6 +1232,27 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       verify(
         getRequestedFor(urlEqualTo("/case-keywords"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+  }
+
+  "Connector 'delete Keyword'" should {
+
+    "delete the keyword given" in {
+      val keyword = Keyword("AKeyword", true)
+      stubFor(
+        delete(s"/keyword/${keyword.name}")
+          .willReturn(
+            aResponse()
+              .withStatus(Status.NO_CONTENT)
+          )
+      )
+
+      await(connector.deleteKeyword(keyword))
+
+      verify(
+        deleteRequestedFor(urlEqualTo(s"/keyword/${keyword.name}"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }

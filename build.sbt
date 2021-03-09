@@ -67,7 +67,8 @@ lazy val microservice = (project in file("."))
       "models.viewmodels.ATaRTab",
       "models.viewmodels.SubNavigationTab",
       "models.viewmodels.ManagerToolsReportsTab",
-      "models.viewmodels.ManagerToolsUsersTab"
+      "models.viewmodels.ManagerToolsUsersTab",
+      "models.viewmodels.ManagerToolsKeywordsTab"
     )
   )
   .configs(IntegrationTest)
