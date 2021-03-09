@@ -33,7 +33,7 @@ class ReportsTabSpec extends ViewSpec {
     "include a heading and tabs" in {
       val doc = view(manageReportsView)
 
-      doc.getElementById("common-cases-heading") should containText(messages("management.manage-keywords.heading"))
+      doc.getElementById("common-cases-heading") should containText(messages("reporting.manage_reports.heading"))
       doc.getElementById("manage-keywords-tabs") should containText(messages("reporting.summary.tab.heading"))
       doc.getElementById("manage-keywords-tabs") should containText(messages("reporting.status.tab.heading"))
       doc.getElementById("manage-keywords-tabs") should containText(messages("reporting.atar.tab.heading"))
