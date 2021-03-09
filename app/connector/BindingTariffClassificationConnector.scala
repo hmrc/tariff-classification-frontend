@@ -21,6 +21,8 @@ import akka.stream.scaladsl.Source
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
+
+import javax.inject.Singleton
 import metrics.HasMetrics
 import models.CaseStatus._
 import models.EventType.EventType
@@ -229,9 +231,9 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   def getAllUsers(roles: Seq[Role], team: String, pagination: Pagination)(
-    implicit hc: HeaderCarrier): Future[Paged[Operator]] =
+    implicit hc: HeaderCarrier
+  ): Future[Paged[Operator]] =
     withMetricsTimerAsync("get-all-users") { _ =>
-
       val searchParam = s"role=${roles.mkString(",")}&member_of_teams=$team"
       val url =
         s"${appConfig.bindingTariffClassificationUrl}/users?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
@@ -302,12 +304,13 @@ class BindingTariffClassificationConnector @Inject() (
   def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
     withMetricsTimerAsync("create-keyword") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/keyword"
-      client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(keyword))
+      client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(Keyword(keyword.name.toUpperCase, keyword.approved)))
     }
 
   def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
     withMetricsTimerAsync("find-all-keywords") { _ =>
-      val url = s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
+      val url =
+        s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
       client.GET[Paged[Keyword]](url)
     }
 
@@ -316,4 +319,10 @@ class BindingTariffClassificationConnector @Inject() (
       val url = s"${appConfig.bindingTariffClassificationUrl}/case-keywords"
       client.GET[Paged[CaseKeyword]](url)
     }
+
+  def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =
+    withMetricsTimerAsync("delete-keyword") { _ =>
+    val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
+    client.DELETE[Unit](url).map(_ => ())
+  }
 }

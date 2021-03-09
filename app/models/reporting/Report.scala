@@ -143,6 +143,40 @@ object Report {
     )
   )
 
+  val correspondenceCases = CaseReport(
+    name      = "Correspondence cases count",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.CORRESPONDENCE),
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.Description,
+      ReportField.CaseSource,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.DateCreated,
+      ReportField.ElapsedDays
+    )
+  )
+
+  val miscellaneousCases = CaseReport(
+    name      = "Miscellaneous cases count",
+    sortBy    = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.MISCELLANEOUS),
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.Description,
+      ReportField.CaseSource,
+      ReportField.Status,
+      ReportField.Team,
+      ReportField.User,
+      ReportField.DateCreated,
+      ReportField.ElapsedDays
+    )
+  )
+
   val numberOfOpenCases = SummaryReport(
     name      = "Number of open cases",
     groupBy   = NonEmptySeq.one(ReportField.Team),
@@ -287,6 +321,8 @@ object Report {
   )
 
   val byId = Map[String, Report](
+    "correspondence-cases"                -> correspondenceCases,
+    "miscellaneous-cases"                 -> miscellaneousCases,
     "case-count-by-status"                -> caseCountByStatus,
     "suppressed-cases"                    -> suppressedCaseCount,
     "open-cases"                          -> openCasesCount,
