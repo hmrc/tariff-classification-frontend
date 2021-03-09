@@ -191,7 +191,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("This case has been suppressed")
+      bodyOf(result)        should include("The Laptop case has been suppressed")
     }
 
     "redirect to a default page on validation error" in {
