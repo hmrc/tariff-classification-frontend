@@ -37,15 +37,15 @@
 @customHeading = @{
     if(c.application.isCorrespondence) {
         Some(messages("page.title.create_correspondence.h1"))
+}   else if(c.application.isMisc) {
+        Some(messages("page.title.case.mis-created"))
 }   else {
-        Some(messages("page.title.create_misc.h1"))
+        Some(messages("page.title.case.released"))
     }
 }
 
 @main(bodyClasses = None, customTitle = customHeading) {
 <div class="grid-row column-two-thirds">
-
-@case_heading(CaseHeaderViewModel.fromCase(c))
 
 <div class="govuk-panel govuk-panel--confirmation">
  @if(c.application.isCorrespondence|| c.application.isMisc){
@@ -58,8 +58,8 @@
       <h1 class="heading-xlarge mt-0">@messages("choose_team_misc_case.released_dynamic_message", c.application.getType, queueName)</h1>
     }
  }else{
-   <h2 class="heading-large mt-0">This case has been released to the @queueName queue for classification</h2>
-   <p class="heading-medium">The case status is now Open</p>
+   <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message.atar", c.application.goodsName, queueName)</h1>
+   <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
 
  }
 </div>

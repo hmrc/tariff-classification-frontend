@@ -179,7 +179,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         await(controller(caseWithQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("This case has been released")
+      bodyOf(result) should include("case has been released")
     }
 
     "return resource not found when the queue is not found" in {
