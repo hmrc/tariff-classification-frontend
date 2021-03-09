@@ -46,7 +46,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     Keyword("BOOK", false),
     List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None))
   )
-  val dummyCase: Case = Cases.liabilityCaseExample.copy(status = OPEN)
+  val dummyCase: Case = Cases.caseAssignedExample
 
   private lazy val manage_keywords_view    = injector.instanceOf[manage_keywords_view]
   private lazy val confirm_keyword_view    = injector.instanceOf[confirm_keyword_created]
@@ -182,7 +182,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
   }
 
-  "Approve, Reject or Rename Keyword" should {
+  "Approve, Reject Keyword" should {
 
     "return 303 SEE_OTHER when keyword is successfully updated" in {
 
@@ -197,14 +197,13 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .approveOrRejectKeyword("updatedKeyword", "12345678")(newFakePOSTRequestWithCSRF(Map("keyword" -> "updatedKeyword"))))
+          .approveOrRejectKeyword("updatedKeyword", "12345678")(newFakePOSTRequestWithCSRF(Map("keyword-status" -> "APPROVE"))))
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(
         controllers.v2.routes.ManageKeywordsController.displayKeywordChangeConfirmation(
-          keyword.name,
+          "updatedKeyword",
           keyword.approved,
-          "goodsName",
-          "Alex Smith"
+          "Laptop"
         ).path())
 
     }
@@ -214,38 +213,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
     }
-
-    "render error if renamed Keyword is empty" in {
-
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
-
-      val result = await(
-        controller(Set(Permission.MANAGE_USERS)).approveOrRejectKeyword("name", "12345678")(newFakePOSTRequestWithCSRF(Map("keyword" -> ""))))
-
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
-      contentAsString(result) should include("error-summary")
-      contentAsString(result) should include(messages("management.update-keyword.error.empty.renamed.keyword"))
-
-    }
-
-    "render error if renamed Keyword would be a duplicate keyword entered" in {
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
-
-      val result = await(
-        controller(Set(Permission.MANAGE_USERS))
-          .approveOrRejectKeyword("shoes", dummyCase.reference)(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name))))
-
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
-      contentAsString(result) should include("error-summary")
-      contentAsString(result) should include(messages("management.update-keyword.error.duplicate.keyword"))
-    }
-
   }
 
   "displayConfirmKeyword" should {
@@ -321,7 +288,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           keyword.name,
           keyword.approved,
           "goodsName",
-          "Alex Smith"
         )(fakeRequest)
       )
       status(result)      shouldBe Status.OK
@@ -336,8 +302,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         controller(Set()).displayKeywordChangeConfirmation(
           keyword.name,
           keyword.approved,
-          "goodsName",
-          "Alex Smith"
+          "goodsName"
         )(fakeRequest)
       )
 

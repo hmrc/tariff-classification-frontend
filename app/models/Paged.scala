@@ -16,8 +16,9 @@
 
 package models
 
+import akka.stream.scaladsl.Source
 import play.api.libs.json._
-
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 case class Paged[T](results: Seq[T], pageIndex: Int, pageSize: Int, resultCount: Int) {
@@ -29,6 +30,15 @@ case class Paged[T](results: Seq[T], pageIndex: Int, pageSize: Int, resultCount:
 }
 
 object Paged {
+  def stream[T](initialPagination: Pagination)(fetchPage: Pagination => Future[Paged[T]])(implicit ec: ExecutionContext): Source[T, _] =
+    Source
+      .unfoldAsync(initialPagination) { pagination =>
+        fetchPage(pagination).map { page =>
+          if (page.isEmpty) None
+          else Some((pagination.withPage(pagination.page + 1), page))
+        }
+      }
+      .flatMapConcat(page => Source(page.results.toList))
 
   def empty[T]: Paged[T] = Paged[T](Seq.empty, NoPagination(), 0)
 

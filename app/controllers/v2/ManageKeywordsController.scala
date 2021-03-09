@@ -132,8 +132,7 @@ class ManageKeywordsController @Inject()(
                              .displayKeywordChangeConfirmation(
                                savedKeyword.name,
                                savedKeyword.approved,
-                               c.application.goodsName,
-                               c.assignee.get.name.getOrElse("")
+                               c.application.goodsName
                           )
                       )
                     }
@@ -145,8 +144,7 @@ class ManageKeywordsController @Inject()(
                             .displayKeywordChangeConfirmation(
                               savedKeyword.name,
                               savedKeyword.approved,
-                              c.application.goodsName,
-                              c.assignee.get.name.getOrElse("")
+                              c.application.goodsName
                             )
                         )
                     }
@@ -177,12 +175,11 @@ class ManageKeywordsController @Inject()(
   def displayKeywordChangeConfirmation(
     keyword: String,
     approved: Boolean,
-    goodsName: String,
-    operatorName: String): Action[AnyContent] =
+    goodsName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)){
       implicit request =>
         Ok(
-          keywordChangeConfirm(keyword, approved, goodsName, operatorName)
+          keywordChangeConfirm(keyword, approved, goodsName)
         )
     }
 

@@ -39,14 +39,6 @@ class AssignedCasesSpec extends IntegrationTest with MockitoSugar with CaseQueue
               .withBody(CasePayloads.pagedEmpty)
           )
       )
-      stubFor(
-        get(urlEqualTo(testReportServiceUrl))
-          .willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(CasePayloads.reportEmpty)
-          )
-      )
 
       // When
       val response: WSResponse = await(ws.url(s"$baseUrl/queues/assigned").get())

@@ -16,10 +16,9 @@
 
 package utils
 
-import play.api.libs.json.Json
 import models._
-import utils.JsonFormatters.{caseFormat, reportResult}
-import play.api.libs.json.Writes
+import utils.JsonFormatters._
+import play.api.libs.json.{Json, Writes}
 
 object CasePayloads {
 
@@ -30,12 +29,7 @@ object CasePayloads {
   val gatewayCases: String             = jsonOf(Seq(Cases.btiCaseExample))
   val pagedGatewayCases: String        = jsonOf(Paged(Seq(Cases.btiCaseExample), NoPagination(), 1))
   val pagedAssignedCases: String       = jsonOf(Paged(Seq(Cases.caseAssignedExample), NoPagination(), 1))
-  val report: String                   = jsonOfReport(Seq(ReportResult(Map(CaseReportGroup.QUEUE -> Some("test-report")), Seq(1, 2))))
-  val reportEmpty: String              = jsonOfReport(Seq.empty)
   val pagedEmpty: String               = jsonOf(Paged.empty[Case])
-
-  def jsonOfReport(obj: Seq[ReportResult]): String =
-    Json.toJson(obj).toString()
 
   def jsonOf[A: Writes](obj: A): String =
     Json.toJson(obj).toString()
