@@ -1185,9 +1185,12 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'create Keyword'" should {
 
     "create new keyword" in {
-      val keyword  = Keyword("AKeyword", true)
+      val keyword  = Keyword("AKeyword".toUpperCase, true)
       val request  = Json.toJson(NewKeywordRequest(keyword)).toString()
       val response = Json.toJson(keyword).toString()
+
+      println("@@@@@@@@@@@@@@@@@@@@@" + request)
+      println("**********************" + response)
 
       stubFor(
         post(urlEqualTo(s"/keyword"))

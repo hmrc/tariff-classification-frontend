@@ -129,7 +129,7 @@ class ManageKeywordsController @Inject() (
                 )
               ),
             keyword =>
-              keywordService.createKeyword(Keyword(keyword, true)).map { saveKeyword: Keyword =>
+              keywordService.createKeyword(Keyword(keyword.toUpperCase, true)).map { saveKeyword: Keyword =>
                 Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
               }
           )
