@@ -252,7 +252,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       )
 
       status(result)          shouldBe Status.OK
-      contentAsString(result) should include("The Correspondence case has been released")
+      contentAsString(result) should include("Create correspondence case")
     }
 
     "display no results found when a queue is not found GET" in {
