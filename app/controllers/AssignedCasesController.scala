@@ -54,8 +54,7 @@ class AssignedCasesController @Inject() (
     for {
       cases            <- casesService.getAssignedCases(NoPagination())
       queues           <- queuesService.getAll
-      caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId, caseCountByQueue, startAtTabIndex))
+    } yield Ok(views.html.assigned_cases(queues, cases.results, assigneeId, Map.empty, startAtTabIndex))
       .addingToSession(
         (backToQueuesLinkLabel, request2Messages(implicitly)("cases.menu.assigned-cases")),
         (

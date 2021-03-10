@@ -56,7 +56,7 @@ class SearchController @Inject() (
     implicit request =>
       val focus: SearchTab = if (addToSearch.contains(true)) SearchTab.SEARCH_BOX else selectedTab
       def defaultAction: Future[Result] =
-        keywordsService.findAll(NoPagination()).map { keywords: Paged[Keyword] =>
+        keywordsService.findAll.map { keywords: Paged[Keyword] =>
           Results.Ok(html.advanced_search(SearchForm.form, None, keywords.results.map(_.name), focus))
         }
 
@@ -76,7 +76,7 @@ class SearchController @Inject() (
       } else if (search.isEmpty) {
         defaultAction
       } else {
-        keywordsService.findAll(NoPagination()).flatMap { keywords =>
+        keywordsService.findAll.flatMap { keywords =>
           SearchForm.form.bindFromRequest.fold(
             formWithErrors =>
               Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords.results.map(_.name), focus))),

@@ -38,7 +38,7 @@
         @heading(messages("management.create-keyword.heading"), "heading-xlarge mt-0")
     </div>
 
-    @helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), 'id -> "create_correspondence-form", 'novalidate -> "novalidate") {
+    @helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), 'id -> "create_new_keyword-form", 'novalidate -> "novalidate") {
 
         @helper.CSRF.formField
 

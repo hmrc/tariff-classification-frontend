@@ -17,21 +17,43 @@
 package service
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
+
+import akka.stream.Materializer
 import audit.AuditService
+import com.github.blemale.scaffeine.Scaffeine
 import connector.BindingTariffClassificationConnector
 import models._
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
+import config.AppConfig
 
 @Singleton
-class KeywordsService @Inject() (connector: BindingTariffClassificationConnector, auditService: AuditService) {
+class KeywordsService @Inject() (
+  config: AppConfig,
+  connector: BindingTariffClassificationConnector,
+  auditService: AuditService
+)(
+  implicit mat: Materializer
+) {
+
+  implicit val ec: ExecutionContext = mat.executionContext
+
+  val cacheHeaderCarrier = HeaderCarrier().withExtraHeaders("X-Api-Token" -> config.apiToken)
+
+  val KeywordsCacheKey = "allKeywords"
+
+  val keywordsCache = Scaffeine()
+    .executor(mat.executionContext)
+    .expireAfterWrite(config.keywordsCacheExpiration)
+    .maximumSize(1)
+    .buildAsyncFuture[String, Paged[Keyword]](_ => connector.findAllKeywords(NoPagination())(cacheHeaderCarrier))
 
   def addKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     if (c.keywords.contains(keyword.toUpperCase)) {
-      successful(c)
+      Future.successful(c)
     } else {
       val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
       connector.updateCase(caseToUpdate) map { updated: Case =>
@@ -48,10 +70,9 @@ class KeywordsService @Inject() (connector: BindingTariffClassificationConnector
         updated
       }
     } else {
-      successful(c)
+      Future.successful(c)
     }
 
-  def findAll(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
-    connector.findAllKeywords(pagination)
-
+  def findAll: Future[Paged[Keyword]] =
+    keywordsCache.get(KeywordsCacheKey)
 }

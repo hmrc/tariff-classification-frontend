@@ -38,16 +38,6 @@ class ManagerToolsSecondaryNavigationViewSpec extends ViewSpec {
 
     }
 
-    "display Teams tab" in {
-      val doc = view(managerToolsSecondaryNavigationView(ManagerToolsTeamsTab))
-
-      doc should containElementWithID("sub_nav_manager_tools_teams_tab")
-
-      val call = controllers.v2.routes.ManagerToolsController.displayManagerTools(ManagerToolsTeamsTab)
-      doc.getElementById("sub_nav_manager_tools_teams_tab") should haveAttribute("href", call.url)
-
-    }
-
     "display Keywords tab" in {
       val doc = view(managerToolsSecondaryNavigationView(ManagerToolsKeywordsTab))
 
@@ -63,7 +53,7 @@ class ManagerToolsSecondaryNavigationViewSpec extends ViewSpec {
 
       doc should containElementWithID("sub_nav_manager_tools_reports_tab")
 
-      val call = controllers.v2.routes.ManagerToolsController.displayManagerTools(ManagerToolsReportsTab)
+      val call = controllers.routes.ReportingController.displayManageReporting()
       doc.getElementById("sub_nav_manager_tools_reports_tab") should haveAttribute("href", call.url)
 
     }

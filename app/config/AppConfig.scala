@@ -17,11 +17,16 @@
 package config
 
 import java.time.Clock
+import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
+
 import play.api.Mode.Mode
 import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import scala.concurrent.duration.FiniteDuration
+
 @Singleton
 class AppConfig @Inject() (
   config: Configuration,
@@ -73,6 +78,11 @@ class AppConfig @Inject() (
       accessibilityBaseUrl + referrer).encodedUrl}"
 
   lazy val maxUriLength: Long = config.underlying.getBytes("akka.http.parsing.max-uri-length")
+
+  lazy val keywordsCacheExpiration: FiniteDuration = {
+    val javaDuration = config.underlying.getDuration("keywords-cache.expiration")
+    FiniteDuration(javaDuration.toMillis(), TimeUnit.MILLISECONDS)
+  }
 
   lazy val clock: Clock = Clock.systemUTC()
 
