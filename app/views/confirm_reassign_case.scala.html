@@ -30,6 +30,29 @@
 
 @(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+@backToCase =@{
+    if(c.application.isCorrespondence) {
+        MyCasesController.displayMyCases().withFragment("correspondence_tab")
+    } else if(c.application.isMisc) {
+        MyCasesController.displayMyCases().withFragment("miscellaneous_tab")
+    } else if(c.application.isBTI){
+        MyCasesController.displayMyCases().withFragment("atar_tab")
+    }else {
+        MyCasesController.displayMyCases().withFragment("liability_tab")
+    }
+}
+
+@backToCaseLinkText =@{
+    if(c.application.isCorrespondence) {
+        messages("back.correspondence")
+    } else if(c.application.isMisc) {
+        messages("back.mis-cases")
+    } else if(c.application.isBTI){
+        messages("back.my_cases")
+    }else {
+        messages("back.liability")
+    }
+}
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.moved")),
     customPrimaryNavTab = NoTabSelected) {
@@ -37,13 +60,13 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <div class="govuk-panel govuk-panel--confirmation">
-                <h1 class="govuk-panel__title">@messages("case.reassign.header", c.application.goodsName, queue.name)</h1>
+                <h1 class="govuk-panel__title">@messages("case.reassign.header", c.application.getType, queue.name)</h1>
                 <div class="govuk-panel__body">The case status is still </br><span class="bold">@c.status</span></div>
             </div>
 
             @confirmation_next_steps(
-                linkText = messages("back.my_cases"),
-                backHref = MyCasesController.displayMyCases()
+                linkText = backToCaseLinkText,
+                backHref = backToCase
             )
 
         </div>
