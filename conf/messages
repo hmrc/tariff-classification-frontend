@@ -1130,7 +1130,7 @@ release_case.released_dynamic_message = {0} case released to {1} team
 release_case.released_dynamic_message.atar = The {0}  case has been released to the {1} team
 
 back.home = Back to home
-back.gateway = Back to gateway cases
+back.gateway = Back to Gateway cases
 back.my_cases = Back to my cases
 
 misc.create_misc.description.heading=Short case description
