@@ -508,7 +508,8 @@ page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case teams
 page.title.create_liability.h1=New liability information
 page.title.confirmation.h1=New case information
-page.title.create_correspondence.h1=Correspondence case released to this team
+page.title.create_correspondence.h1=Create correspondence case
+page.title.release_correspondence.h1=Correspondence case released to this team
 page.title.edit_liability_decision=Edit liability decision
 page.title.create_misc.h1=Create miscellaneous case
 page.title.document.not.found=Document not found
@@ -1127,6 +1128,7 @@ release_case.question.header = Do you want to release this new case to a team no
 release_case.question.error=Select yes if you want to release this new case to a team
 release_case.released_dynamic_message = {0} case released to {1} team
 release_case.released_dynamic_message.atar = The {0}  case has been released to the {1} team
+
 back.home = Back to home
 back.gateway = Back to gateway cases
 back.my_cases = Back to my cases
