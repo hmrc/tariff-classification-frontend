@@ -17,6 +17,7 @@
 package views.partials.users
 
 import models.ApplicationType
+import models.forms.v2.MoveCasesForm
 import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
 import play.twirl.api.Html
 import utils.Cases
@@ -25,8 +26,9 @@ import views.ViewSpec
 import views.html.partials.users.misc_table
 
 class MiscTableViewSpec extends ViewSpec {
+  private val moveMiscCasesForm = MoveCasesForm.moveCasesForm("miscCases")
 
-  def miscTable(miscTab: ApplicationsTab): Html = misc_table(miscTab)
+  def miscTable(miscTab: ApplicationsTab): Html = misc_table(miscTab, moveMiscCasesForm, "1")
 
   val assignedToMeCasesTab =
     ApplicationTabViewModel(

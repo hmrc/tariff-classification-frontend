@@ -43,8 +43,7 @@ class MyCasesController @Inject() (
       for {
         cases                         <- casesService.getCasesByAssignee(request.operator, NoPagination())
         queues: Seq[Queue]            <- queuesService.getAll
-        countQueues: Map[String, Int] <- casesService.countCasesByQueue(request.operator)
-      } yield Ok(views.html.my_cases(queues, cases.results, request.operator, countQueues))
+      } yield Ok(views.html.my_cases(queues, cases.results, request.operator, Map.empty))
         .addingToSession(
           (backToQueuesLinkLabel, request2Messages(implicitly)("cases.menu.my-cases")),
           (backToQueuesLinkUrl, MyCasesController.myCases().url)

@@ -31,7 +31,21 @@ object KeywordForm {
     mapping(
       "keyword" -> FormMappings
         .textNonEmpty("management.create-keyword.error.empty.keyword")
-        .verifying("management.create-keyword.error.duplicate.keyword",  keyword => !allKeywords.contains(keyword))
+        .verifying(
+          "management.create-keyword.error.duplicate.keyword",
+          keyword => !allKeywords.contains(keyword.toUpperCase)
+        )
+    )(identity)(Some(_))
+  )
+
+  def formWithAutoReverse(allKeywords: Seq[String]): Form[String] = Form(
+    mapping(
+      "keyword" -> FormMappings
+        .textNonEmpty("management.manage-keywords.edit-approved-keywords.empty.keyword")
+        .verifying(
+          "management.manage-keywords.edit-approved-keywords.error",
+          keyword => allKeywords.contains(keyword.toUpperCase)
+        )
     )(identity)(Some(_))
   )
 

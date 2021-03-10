@@ -17,6 +17,7 @@
 package views.partials.users
 
 import models.ApplicationType
+import models.forms.v2.MoveCasesForm
 import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
 import play.twirl.api.Html
 import utils.Cases
@@ -25,8 +26,9 @@ import views.ViewSpec
 import views.html.partials.users.correspondence_table
 
 class CorrespondenceTableViewSpec extends ViewSpec {
+  private val moveCorrCasesForm = MoveCasesForm.moveCasesForm("corrCases")
 
-  def corrTable(corrTab: ApplicationsTab): Html = correspondence_table(corrTab)
+  def corrTable(corrTab: ApplicationsTab): Html = correspondence_table(corrTab, moveCorrCasesForm, "1")
 
   val assignedToMeCasesTab =
     ApplicationTabViewModel(

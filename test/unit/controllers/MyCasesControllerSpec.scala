@@ -52,8 +52,6 @@ class MyCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Future.successful(Paged.empty[Case]))
-      given(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Map.empty[String, Int]))
       given(queuesService.getAll).willReturn(Future.successful(List(queue)))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).myCases()(fakeRequest))
