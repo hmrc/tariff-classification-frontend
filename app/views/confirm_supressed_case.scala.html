@@ -27,7 +27,7 @@
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("suppress_case.confirm.header", c.application.goodsName))) {
+@main(bodyClasses = None, customTitle = Some(messages("case.suppress.title"))) {
 <div class="grid-row column-two-thirds">
 
     <div class="govuk-panel govuk-panel--confirmation">
