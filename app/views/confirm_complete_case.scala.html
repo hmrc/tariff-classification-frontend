@@ -17,56 +17,53 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.Case
+@import controllers.v2.routes.AllOpenCasesController
 @import views.html.includes.main
 @import views.html.partials.{back_link, case_heading}
 @import models.ApplicationType
 @import models.viewmodels.{NoTabSelected, CorrespondenceTab, LiabilitiesTab, ATaRTab, MiscellaneousTab}
+@import views.html.v2.confirmation_next_steps
 
 @import views.html.components.success_panel
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.completed")),
-    customPrimaryNavTab = NoTabSelected) {
+@customHeading = @{
+if(c.application.isCorrespondence) {
+Some(messages("page.title.create_correspondence.h1"))
+}   else if(c.application.isMisc) {
+Some(messages("page.title.case.mis-created"))
+}   else {
+Some(messages("page.title.case.released"))
+}
+}
 
-    @back_link()
+@callToRedirect =@{
+if(c.application.isCorrespondence) {
+AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)
+} else if(c.application.isMisc) {
+AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)
+} else if(c.application.isBTI){
+AllOpenCasesController.displayAllOpenCases(ATaRTab)
+}else {
+AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)
+}
+}
 
-    @case_heading(c)
+@main(bodyClasses = None, customTitle = customHeading) {
+<div class="grid-row column-two-thirds">
 
-    <div class="grid-row">
-        @if(c.application.`type` == ApplicationType.ATAR) {
-            @success_panel(
-                messages("case.completed.atar"),
-                None,
-                None,
-                "View ATaR cases",
-                ATaRTab
-            )
-        } else if (c.application.`type` == ApplicationType.LIABILITY) {
-        @success_panel(
-            messages("case.completed.liability"),
-            Some(messages("case.completed.email")),
-            None,
-            "View liability cases",
-            LiabilitiesTab
-        )
-
-        } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
-        @success_panel(
-            messages("case.completed.correspondence"),
-            None,
-            None,
-            "View correspondence cases",
-            CorrespondenceTab
-        )
-        } else {
-        @success_panel(
-            messages("case.completed.misc"),
-            None,
-            None,
-            "View miscellaneous cases",
-            MiscellaneousTab
-        )
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">@messages("complete_case.completed.header", c.application.goodsName, c.application.getType)</h1>
+        @if(c.application.isLiabilityOrder|| c.application.isBTI){
+        @c.decision.map(_.effectiveEndDate.map(date => <div class="govuk-panel__body">Html(messages("complete_case.completed.subheader",date))</div>))
         }
+
     </div>
 
-}
+
+    @confirmation_next_steps(
+    linkText = messages("back.open_cases.caseType", c.application.getType),
+    backHref = callToRedirect
+    )
+    }
+</div>

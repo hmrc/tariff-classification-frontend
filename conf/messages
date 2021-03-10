@@ -1127,10 +1127,12 @@ release_case.question.header = Do you want to release this new case to a team no
 release_case.question.error=Select yes if you want to release this new case to a team
 release_case.released_dynamic_message = {0} case released to {1} team
 release_case.released_dynamic_message.atar = The {0}  case has been released to the {1} team
+complete_case.completed.header = The {0} {1} case has been completed
+complete_case.completed.subheader = A ruling certificate has been created with an expiry date of<br><strong>{0}</strong>
 back.home = Back to home
 back.gateway = Back to gateway cases
 back.my_cases = Back to my cases
-
+back.open_cases.caseType = Back to open {0} cases
 misc.create_misc.description.heading=Short case description
 misc.create_misc.contact.name.heading=Case contact name
 misc.create_misc.type.heading=Choose a case type
