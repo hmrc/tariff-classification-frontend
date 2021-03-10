@@ -16,6 +16,8 @@
 
 @import controllers.routes.AssignedCasesController
 @import controllers.v2.routes.MyCasesController
+@import controllers.v2.routes.AllOpenCasesController
+@import models.viewmodels.{CorrespondenceTab, MiscellaneousTab, ATaRTab, LiabilitiesTab}
 @import config.AppConfig
 @import models.{Case, Queue}
 @import models.request.AuthenticatedRequest
@@ -32,13 +34,13 @@
 
 @backToCase =@{
     if(c.application.isCorrespondence) {
-        MyCasesController.displayMyCases().withFragment("correspondence_tab")
+        AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)
     } else if(c.application.isMisc) {
-        MyCasesController.displayMyCases().withFragment("miscellaneous_tab")
+        AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)
     } else if(c.application.isBTI){
-        MyCasesController.displayMyCases().withFragment("atar_tab")
+        AllOpenCasesController.displayAllOpenCases(ATaRTab)
     }else {
-        MyCasesController.displayMyCases().withFragment("liability_tab")
+        AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)
     }
 }
 
@@ -60,7 +62,7 @@
     <div class="grid-row">
         <div class="column-two-thirds">
             <div class="govuk-panel govuk-panel--confirmation">
-                <h1 class="govuk-panel__title">@messages("case.reassign.header", c.application.getType, queue.name)</h1>
+                <h1 class="govuk-panel__title">@messages("case.reassign.header", c.application.goodsName, queue.name)</h1>
                 <div class="govuk-panel__body">The case status is still </br><span class="bold">@c.status</span></div>
             </div>
 
