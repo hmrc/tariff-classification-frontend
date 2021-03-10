@@ -20,7 +20,7 @@ object CaseStatus extends Enumeration {
   type CaseStatus = Value
   val DRAFT, NEW, OPEN, SUPPRESSED, REFERRED, REJECTED, CANCELLED, SUSPENDED, COMPLETED, REVOKED, ANNULLED = Value
 
-  val reassignCaseStatuses: Set[models.CaseStatus.Value] = Set(OPEN, REFERRED, SUSPENDED)
+  val openStatuses: Set[Value] = Set(OPEN, REFERRED, SUSPENDED)
 
   def formatCancellation(cse: Case) = cse.status match {
     case CaseStatus.CANCELLED =>

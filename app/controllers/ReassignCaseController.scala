@@ -17,11 +17,10 @@
 package controllers
 
 import config.AppConfig
-import models.forms.ReleaseCaseForm
 import javax.inject.{Inject, Singleton}
-import models.CaseStatus._
+import models._
+import models.forms.ReleaseCaseForm
 import models.request.AuthenticatedCaseRequest
-import models.{Permission, Queue}
 import play.api.data.Form
 import play.api.mvc._
 import service.{CasesService, QueuesService}
@@ -87,7 +86,7 @@ class ReassignCaseController @Inject() (
         successful(views.html.resource_not_found(s"Case Queue"))
 
       renderView(
-        c => reassignCaseStatuses.contains(c.status),
+        c => CaseStatus.openStatuses.contains(c.status),
         c =>
           c.queueId
             .map(id =>
