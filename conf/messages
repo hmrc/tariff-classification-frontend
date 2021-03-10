@@ -1130,7 +1130,7 @@ release_case.released_dynamic_message.atar = The {0}  case has been released to 
 suppress_case.confirm.header = The {0} case has been suppressed
 case_status.confirm.subheader = The case status is now<br><span class="bold">{0}</span>
 back.home = Back to home
-back.gateway = Back to gateway cases
+back.gateway = Back to Gateway cases
 back.my_cases = Back to my cases
 
 misc.create_misc.description.heading=Short case description
