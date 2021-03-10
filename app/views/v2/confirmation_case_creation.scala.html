@@ -36,9 +36,13 @@
 
 @customHeading = @{
     if(c.application.isCorrespondence) {
-        Some(messages("page.title.create_correspondence.h1"))
-}   else {
-        Some(messages("page.title.create_misc.h1"))
+        Some(messages("page.title.create_correspondence.confirmation"))
+    }   else if(c.application.isMisc) {
+        Some(messages("page.title.create_miscellaneous.confirmation"))
+    } else if(c.application.isBTI) {
+        Some(messages("page.title.create_atar.confirmation"))
+    } else {
+        Some(messages("page.title.create_miscellaneous.confirmation"))
     }
 }
 
@@ -48,14 +52,14 @@
 <div class="govuk-panel govuk-panel--confirmation">
  @if(c.application.isCorrespondence|| c.application.isMisc){
     @if(!queueName.isEmpty && c.application.isCorrespondence) {
-       <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
+       <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.goodsName, queueName)</h1>
        <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
     }else if(queueName.isEmpty){
     <h1 class="govuk-panel__title">@messages("create_case.dynamic_message", c.application.getType)</h1>
         <div class="govuk-panel__body">@messages("create_case.message")</div>
     }
     @if(!queueName.isEmpty && c.application.isMisc) {
-      <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.getType, queueName)</h1>
+      <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.goodsName, queueName)</h1>
     <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
     }
  }else{
