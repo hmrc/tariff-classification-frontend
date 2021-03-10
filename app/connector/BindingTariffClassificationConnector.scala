@@ -47,13 +47,7 @@ class BindingTariffClassificationConnector @Inject() (
 
   implicit val ec: ExecutionContext = mat.executionContext
 
-  private lazy val statuses: String = Set(NEW, OPEN, REFERRED, SUSPENDED, COMPLETED)
-    .map(_.toString)
-    .mkString(",")
-
-  private lazy val liveStatuses: String = Set(OPEN, REFERRED, SUSPENDED)
-    .map(_.toString)
-    .mkString(",")
+  private lazy val statuses: Set[CaseStatus] = Set(NEW, OPEN, REFERRED, SUSPENDED, COMPLETED)
 
   def createCase(application: Application)(implicit hc: HeaderCarrier): Future[Case] =
     withMetricsTimerAsync("create-case") { _ =>
@@ -68,22 +62,31 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   private def buildQueryUrl(
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq,
-    statuses: String,
+    types: Set[ApplicationType] = ApplicationType.values,
+    statuses: Set[CaseStatus],
     queueIds: Seq[String],
     assigneeId: String,
     pagination: Pagination
   ): String = {
     val sortBy = "application.type,application.status,days-elapsed"
+
     val queryString =
-      s"application_type=${types.map(_.name).mkString(",")}&queue_id=${queueIds.mkString(",")}&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+      s"application_type=${types.map(_.name).mkString(",")}" +
+        s"&queue_id=${queueIds.mkString(",")}" +
+        s"&assignee_id=$assigneeId" +
+        s"&status=${statuses.map(_.toString).mkString(",")}" +
+        s"&sort_by=$sortBy" +
+        "&sort_direction=desc" +
+        s"&page=${pagination.page}" +
+        s"&page_size=${pagination.pageSize}"
+
     s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
   }
 
   def findCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq
+    types: Set[ApplicationType] = ApplicationType.values
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val queueId = if (queue == Queues.gateway) "none" else queue.id
@@ -100,7 +103,8 @@ class BindingTariffClassificationConnector @Inject() (
   def findCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq,
+    types: Set[ApplicationType] = ApplicationType.values,
+    statuses: Set[CaseStatus] = CaseStatus.openStatuses,
     assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
@@ -122,7 +126,12 @@ class BindingTariffClassificationConnector @Inject() (
 
   def findAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-assigned-cases") { _ =>
-      val url = buildQueryUrl(statuses = liveStatuses, queueIds = Seq(), assigneeId = "some", pagination = pagination)
+      val url = buildQueryUrl(
+        statuses   = CaseStatus.openStatuses,
+        queueIds   = Seq(),
+        assigneeId = "some",
+        pagination = pagination
+      )
       client.GET[Paged[Case]](url)
     }
 
@@ -271,8 +280,8 @@ class BindingTariffClassificationConnector @Inject() (
   ): Future[Paged[Map[String, ReportResultField[_]]]] =
     withMetricsTimerAsync("case-report") { _ =>
       val reportQuery = reportBind.unbind("", report)
-      val pageQuery = pageBind.unbind("", pagination)
-      val url = s"${appConfig.bindingTariffClassificationUrl}/report/cases?$reportQuery&$pageQuery"
+      val pageQuery   = pageBind.unbind("", pagination)
+      val url         = s"${appConfig.bindingTariffClassificationUrl}/report/cases?$reportQuery&$pageQuery"
       client.GET[Paged[Map[String, ReportResultField[_]]]](url)
     }
 
@@ -283,8 +292,8 @@ class BindingTariffClassificationConnector @Inject() (
   ): Future[Paged[ResultGroup]] =
     withMetricsTimerAsync("summary-report") { _ =>
       val reportQuery = reportBind.unbind("", report)
-      val pageQuery = pageBind.unbind("", pagination)
-      val url = s"${appConfig.bindingTariffClassificationUrl}/report/summary?$reportQuery&$pageQuery"
+      val pageQuery   = pageBind.unbind("", pagination)
+      val url         = s"${appConfig.bindingTariffClassificationUrl}/report/summary?$reportQuery&$pageQuery"
       client.GET[Paged[ResultGroup]](url)
     }
 
@@ -295,15 +304,16 @@ class BindingTariffClassificationConnector @Inject() (
   ): Future[Paged[QueueResultGroup]] =
     withMetricsTimerAsync("queue-report") { _ =>
       val reportQuery = reportBind.unbind("", report)
-      val pageQuery = pageBind.unbind("", pagination)
-      val url = s"${appConfig.bindingTariffClassificationUrl}/report/queues?$reportQuery&$pageQuery"
+      val pageQuery   = pageBind.unbind("", pagination)
+      val url         = s"${appConfig.bindingTariffClassificationUrl}/report/queues?$reportQuery&$pageQuery"
       client.GET[Paged[QueueResultGroup]](url)
     }
 
   def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
     withMetricsTimerAsync("create-keyword") { _ =>
       val url = s"${appConfig.bindingTariffClassificationUrl}/keyword"
-      client.POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(Keyword(keyword.name.toUpperCase, keyword.approved)))
+      client
+        .POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(Keyword(keyword.name.toUpperCase, keyword.approved)))
     }
 
   def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
@@ -321,7 +331,7 @@ class BindingTariffClassificationConnector @Inject() (
 
   def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =
     withMetricsTimerAsync("delete-keyword") { _ =>
-    val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
-    client.DELETE[Unit](url).map(_ => ())
-  }
+      val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
+      client.DELETE[Unit](url).map(_ => ())
+    }
 }
