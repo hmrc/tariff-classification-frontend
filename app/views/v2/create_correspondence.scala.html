@@ -32,7 +32,9 @@
 
 @error_summary(form.errors)
 
+<div class="govuk-notification-banner-width">
 <h1 id="create_correspondence-heading" class="heading-xlarge">@messages("page.title.create_correspondence.h1")</h1>
+</div>
 
 @helper.form(action = routes.CreateCorrespondenceController.post(), 'id -> "create_correspondence-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
