@@ -292,7 +292,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("case.completed.atar"))
+      bodyOf(result)        should include(messages("complete_case.completed.header", "Laptop", "ATaR"))
     }
 
     "redirect to a default page if the status is not right" in {

@@ -28,7 +28,7 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
       val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(confirm_complete_case(c))
       lazy val expected =
-        "This ATaR decision is complete Next steps Back to home View ATaR cases"
+        "The Laptop ATaR case has been completed A ruling certificate has been created with an expiry date of 28 Feb 2021 Next steps Back to home Back to open ATaR cases"
       lazy val actual = doc.getElementById("confirm_complete_id").text()
 
       // Then
@@ -37,10 +37,11 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
 
     "Render text for Liability" in {
       // When
-      val c             = Cases.aLiabilityCase()
-      val doc           = view(confirm_complete_case(c))
-      lazy val expected = "This liability decision is complete Email the applicant with a copy of this decision Next steps Back to home View liability cases"
-      lazy val actual   = doc.getElementById("confirm_complete_id").text()
+      val c   = Cases.aLiabilityCase()
+      val doc = view(confirm_complete_case(c))
+      lazy val expected =
+        "The good-name Liability case has been completed Next steps Back to home Back to open Liability cases"
+      lazy val actual = doc.getElementById("confirm_complete_id").text()
 
       // Then
       actual should startWith(expected)
@@ -48,10 +49,11 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
 
     "Render text for Correspondence" in {
       // When
-      val c             = Cases.aCorrespondenceCase()
-      val doc           = view(confirm_complete_case(c))
-      lazy val expected = "Correspondence case is complete Next steps Back to home View correspondence cases"
-      lazy val actual   = doc.getElementById("confirm_complete_id").text()
+      val c   = Cases.aCorrespondenceCase()
+      val doc = view(confirm_complete_case(c))
+      lazy val expected =
+        "The A short summary Correspondence case has been completed Next steps Back to home Back to open Correspondence cases"
+      lazy val actual = doc.getElementById("confirm_complete_id").text()
 
       // Then
       actual should startWith(expected)
@@ -61,7 +63,7 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
       // When
       val c             = Cases.aMiscellaneousCase()
       val doc           = view(confirm_complete_case(c))
-      lazy val expected = "Miscellaneous case is complete Next steps Back to home View miscellaneous cases"
+      lazy val expected = "The name Misc case has been completed Next steps Back to home Back to open Misc cases"
       lazy val actual   = doc.getElementById("confirm_complete_id").text()
 
       // Then

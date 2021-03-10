@@ -23,7 +23,7 @@
 @import models.ApplicationType
 @import models.viewmodels.{NoTabSelected, CorrespondenceTab, LiabilitiesTab, ATaRTab, MiscellaneousTab}
 @import views.html.v2.confirmation_next_steps
-
+@import utils.Dates
 @import views.html.components.success_panel
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -50,12 +50,17 @@ AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)
 }
 
 @main(bodyClasses = None, customTitle = customHeading) {
-<div class="grid-row column-two-thirds">
+<div class="grid-row column-two-thirds" id="confirm_complete_id">
 
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">@messages("complete_case.completed.header", c.application.goodsName, c.application.getType)</h1>
         @if(c.application.isLiabilityOrder|| c.application.isBTI){
-        @c.decision.map(_.effectiveEndDate.map(date => <div class="govuk-panel__body">Html(messages("complete_case.completed.subheader",date))</div>))
+
+
+        @c.decision.map(_.effectiveEndDate.map(
+        date => Html(messages("complete_case.completed.subheader", Dates.format(date)))
+        )
+        )
         }
 
     </div>
