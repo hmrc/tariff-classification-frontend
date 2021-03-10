@@ -178,14 +178,6 @@ GET        /users/user-delete/:pid                               controllers.v2.
 POST       /users/user-delete/:pid                               controllers.v2.ManageUserController.confirmRemoveUser(pid: String)
 GET        /users/user-delete-done                               controllers.v2.ManageUserController.doneDeleteUser(userName: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
-GET        /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.displayManageKeywords()
-GET        /keywords/keyword-create                              controllers.v2.ManageKeywordsController.newKeyword()
-POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
-GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
-GET        /keywords/keyword-update-done                         controllers.v2.ManageKeywordsController.displayKeywordChangeConfirmation(keyword: String, approved: Boolean, goodsName: String)
-GET        /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.changeKeywordStatus(keywordName: String, reference: String)
-POST       /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.approveOrRejectKeyword(keywordName: String, reference: String)
-
 POST        /users/user/:pid/atar                                controllers.v2.MoveCasesController.postMoveATaRCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 POST        /users/user/:pid/liability                           controllers.v2.MoveCasesController.postMoveLiabCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 POST        /users/user/:pid/correspondence                      controllers.v2.MoveCasesController.postMoveCorrCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
@@ -214,6 +206,7 @@ POST       /keywords/manage-keywords                             controllers.v2.
 GET        /keywords/keyword-create                              controllers.v2.ManageKeywordsController.newKeyword()
 POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
+GET        /keywords/keyword-update-done                         controllers.v2.ManageKeywordsController.displayKeywordChangeConfirmation(keyword: String, approved: Boolean, goodsName: String)
 
 GET        /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.editApprovedKeywords(keywordName: String)
 POST       /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.postEditApprovedKeywords(keywordName: String)
@@ -221,5 +214,5 @@ POST       /keywords/keyword-edit                                controllers.v2.
 GET        /keywords/keyword-deleted                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab ?= ManagerToolsKeywordsTab)
 GET        /keywords/keyword-renamed                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordRenamed(oldKeywordName: String, newKeywordName: String)
 
-
 GET        /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.changeKeywordStatus(keywordName: String, reference: String)
+POST       /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.approveOrRejectKeyword(keywordName: String, reference: String)
