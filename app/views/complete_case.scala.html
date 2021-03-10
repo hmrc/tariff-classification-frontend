@@ -19,36 +19,53 @@
 @import models.request.AuthenticatedRequest
 @import models.{BTIApplication, Case}
 @import views.html.includes.main
-@import views.html.partials.{case_heading, back_link}
+@import views.html.partials.{case_heading, back_link, error_summary}
 @import views.html.helper.{CSRF, form}
-@import models.viewmodels.MyCasesTab
+@import models.viewmodels.NoTabSelected
+@import views.html.forms.components.input_yes_no
+@import utils.Dates
 
-@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[Boolean])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.complete.case")),
-    customPrimaryNavTab = MyCasesTab) {
+    customPrimaryNavTab = NoTabSelected) {
     @defining(c.application.asATAR) { btiApp: BTIApplication =>
 
-        @back_link()
+<div class="mt-15">@back_link()</div>
+@error_summary(form.errors)
+<div class="grid-row">
+<div class="column-two-thirds pl-0">
+        @case_heading(c, messageKey = Some("complete_case.areYouSure"))
 
-        @case_heading(c)
+    <p class="govuk-body govuk-!-margin-top-9">When this case is completed:</p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>a ruling certificate will be created @c.decision.map(_.effectiveEndDate.map(date => s"and will expire on ${Dates.format(date)}"))</li>
+        <li>a ruling will be added to the holder's account</li>
+        <li>a ruling will be published to the Search for Advance Tariff Rulings website</li>
+        <li>a notification email will be sent to the holder</li>
+        <li>an entry will be added to the case activity tab</li>
+    </ul>
 
-        <div class="grid-row">
-            <div class="column-full">
-                <h2 class="heading-large mt-0">Complete this case</h2>
+    <div class="notice govuk-!-margin-top-9 govuk-!-margin-bottom-9">
+        <i class="icon icon-important">
+            <span class="visually-hidden">Warning</span>
+        </i>
+        <strong class="bold-small">
+            Once this ruling is completed it cannot be undone.
+        </strong>
+    </div>
+    @helper.form(action = CompleteCaseController.postCompleteCase(c.reference), 'class -> "form", 'id -> "complete-case", 'novalidate -> "novalidate") {
+    @helper.CSRF.formField
 
-                <p>Completing this case will generate an ATaR certificate, valid for <span id="decision-lifetime">@{appConfig.decisionLifetimeYears}</span> years from today.</p>
-                <p>This certificate will be available to the applicant on their listed rulings page.</p>
-                <p>The ruling will also be published on the public rulings website.</p>
-                <p>An email will be automatically sent to the applicant, notifying them of the publication of the ruling.</p>
+    @input_yes_no(form("state"), "complete-case")
 
-                @form(action = CompleteCaseController.postCompleteCase(c.reference), 'class -> "form") {
-                    @CSRF.formField
-                    <button class="button" id="complete-case-button" type="submit">Complete and publish case</button>
-                    <a class="secondary-button" id="cancel-button" href="@CaseController.rulingDetails(c.reference)">Cancel</a>
-                }
+    <div>
+        <button class="button" id="complete-case-button" type="submit">Continue</button>
+    </div>
+    }
 
-            </div>
-        </div>
+</div>
+</div>
+
     }
 }
