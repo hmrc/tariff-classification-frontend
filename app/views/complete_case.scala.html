@@ -38,12 +38,12 @@
         @case_heading(c, messageKey = Some("complete_case.areYouSure"))
 
     <p class="govuk-body govuk-!-margin-top-9">When this case is completed:</p>
-    <ul class="govuk-list govuk-list--bullet">
-        <li>a ruling certificate will be created @c.decision.map(_.effectiveEndDate.map(date => s"and will expire on ${Dates.format(date)}"))</li>
-        <li>a ruling will be added to the holder's account</li>
-        <li>a ruling will be published to the Search for Advance Tariff Rulings website</li>
-        <li>a notification email will be sent to the holder</li>
-        <li>an entry will be added to the case activity tab</li>
+    <ul class="list list-bullet">
+        <li class="acceList_item">a ruling certificate will be created @c.decision.map(_.effectiveEndDate.map(date => s"and will expire on ${Dates.format(date)}"))</li>
+        <li class="acceList_item">a ruling will be added to the holder's account</li>
+        <li class="acceList_item">a ruling will be published to the Search for Advance Tariff Rulings website</li>
+        <li class="acceList_item">a notification email will be sent to the holder</li>
+        <li class="acceList_item">an entry will be added to the case activity tab</li>
     </ul>
 
     <div class="notice govuk-!-margin-top-9 govuk-!-margin-bottom-9">
