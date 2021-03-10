@@ -41,10 +41,10 @@ class QueuesController @Inject() (
 
   def queue(slug: String, caseType: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
-      val types: Seq[ApplicationType] = caseType
-        .map(x => Seq[ApplicationType](ApplicationType.withName(x)))
+      val types: Set[ApplicationType] = caseType
+        .map(x => Set(ApplicationType.withName(x)))
         .getOrElse(
-          ApplicationType.values.toSeq
+          ApplicationType.values
         )
 
       queuesService.getOneBySlug(slug) flatMap {
