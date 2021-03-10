@@ -63,7 +63,7 @@ class ManageKeywordsController @Inject() (
         caseKeywords <- keywordService.fetchCaseKeywords()
         allKeywords  <- keywordService.findAll(NoPagination())
         manageKeywordsViewModel = ManageKeywordsViewModel
-          .forManagedTeams(caseKeywords.results, allKeywords.results.map(_.name))
+          .forManagedTeams(caseKeywords.results, allKeywords.results)
       } yield Ok(
         manageKeywordsView(
           activeSubNav,
@@ -85,7 +85,7 @@ class ManageKeywordsController @Inject() (
               for {
                 caseKeywords <- keywordService.fetchCaseKeywords()
                 manageKeywordsViewModel = ManageKeywordsViewModel
-                  .forManagedTeams(caseKeywords.results, keywordNames)
+                  .forManagedTeams(caseKeywords.results, keywords.results)
               } yield BadRequest(
                 manageKeywordsView(
                   activeSubNav,
@@ -168,7 +168,19 @@ class ManageKeywordsController @Inject() (
                       )
                     }
                   case ChangeKeywordStatusAction.REJECT =>
-                    successful(Redirect(
+
+                    keywordService.createKeyword(Keyword(keywordName, approved = false)).map {
+                      savedKeyword: Keyword =>
+                        Redirect(
+                          controllers.v2.routes.ManageKeywordsController
+                            .displayKeywordChangeConfirmation(
+                              savedKeyword.name,
+                              savedKeyword.approved,
+                              c.application.goodsName
+                            )
+                        )
+                    }
+                   /* successful(Redirect(
                           controllers.v2.routes.ManageKeywordsController
                             .displayKeywordChangeConfirmation(
                               keywordName,
@@ -176,7 +188,7 @@ class ManageKeywordsController @Inject() (
                               c.application.goodsName
                             )
                         )
-                    )
+                    )*/
                 }
             )
           }
