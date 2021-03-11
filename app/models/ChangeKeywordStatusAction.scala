@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package models.forms.v2
+package models
 
-import models.ModelsBaseSpec
+object ChangeKeywordStatusAction extends Enumeration {
+  type ChangeKeywordStatusAction = Value
+  val APPROVE, REJECT = Value
 
-class ChangeKeywordStatusFormSpec extends ModelsBaseSpec {
-
-  "Bind from request" should {
-
-    "Bind a blank form" in {
-      val form = ChangeKeywordStatusForm.form.bindFromRequest(
-        Map(
-          "keyword-status" -> Seq()
-        )
-      )
-
-      form.hasErrors shouldBe false
-      form.errors should have(size(0))
+  def format(status: String): ChangeKeywordStatusAction =
+    status.toUpperCase match {
+      case "APPROVE" => APPROVE
+      case "REJECT"  => REJECT
     }
 
-  }
 }

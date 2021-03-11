@@ -16,26 +16,27 @@
 
 package connector
 
-import akka.stream.scaladsl.Source
 import akka.stream.Materializer
+import akka.stream.scaladsl.Source
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
 
 import javax.inject.Singleton
 import metrics.HasMetrics
-import models._
 import models.CaseStatus._
 import models.EventType.EventType
 import models.Role.Role
 import models.reporting._
 import models.request.NewEventRequest
 import play.api.mvc.QueryStringBindable
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import utils.JsonFormatters._
+import javax.inject.Singleton
+import models._
 
 import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 @Singleton
 class BindingTariffClassificationConnector @Inject() (

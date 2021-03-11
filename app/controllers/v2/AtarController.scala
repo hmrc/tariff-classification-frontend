@@ -118,6 +118,6 @@ class AtarController @Inject() (
 
   private def getKeywordsTab(atarCase: Case)(implicit hc: HeaderCarrier): Future[KeywordsTabViewModel] =
     keywordsService.findAll.map { globalKeywords =>
-      KeywordsTabViewModel.fromCase(atarCase, globalKeywords.results.map(_.name))
+      KeywordsTabViewModel.fromCase(atarCase, globalKeywords.map(_.name))
     }
 }
