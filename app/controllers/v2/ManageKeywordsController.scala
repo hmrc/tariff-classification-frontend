@@ -168,8 +168,7 @@ class ManageKeywordsController @Inject() (
                       )
                     }
                   case ChangeKeywordStatusAction.REJECT =>
-
-                    keywordService.createKeyword(Keyword(keywordName, approved = false)).map {
+                    keywordService.createKeyword(Keyword(keywordName)).map {
                       savedKeyword: Keyword =>
                         Redirect(
                           controllers.v2.routes.ManageKeywordsController
@@ -180,15 +179,6 @@ class ManageKeywordsController @Inject() (
                             )
                         )
                     }
-                   /* successful(Redirect(
-                          controllers.v2.routes.ManageKeywordsController
-                            .displayKeywordChangeConfirmation(
-                              keywordName,
-                              false,
-                              c.application.goodsName
-                            )
-                        )
-                    )*/
                 }
             )
           }
