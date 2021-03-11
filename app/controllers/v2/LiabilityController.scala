@@ -73,7 +73,7 @@ class LiabilityController @Inject() (
       c592        = Some(C592ViewModel.fromCase(liabilityCase))
       activityTab = Some(ActivityViewModel.fromCase(liabilityCase, activityEvents, queues))
       keywordsTab <- keywordsService.findAll.map(kws =>
-                      KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.results.map(_.name))
+                      KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name))
                     )
     } yield {
       Ok(

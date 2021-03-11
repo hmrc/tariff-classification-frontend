@@ -32,7 +32,9 @@
 
 @error_summary(form.errors)
 
-<h1 id="create_misc-heading" class="heading-xlarge">@messages("page.title.create_misc.h1")</h1>
+<div class="govuk-notification-banner-width">
+    <h1 id="create_misc-heading" class="heading-xlarge">@messages("page.title.create_misc.h1")</h1>
+</div>
 
 @helper.form(action = routes.CreateMiscellaneousController.post(), 'id -> "create_misc-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField

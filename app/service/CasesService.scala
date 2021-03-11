@@ -16,25 +16,26 @@
 
 package service
 
-import java.time.{Instant, LocalDate}
+import java.nio.file.{Files, StandardOpenOption}
+import java.time.LocalDate
 import java.util.UUID
+import javax.inject.{Inject, Singleton}
+
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
-
-import java.nio.file.{Files, StandardOpenOption}
-import javax.inject.{Inject, Singleton}
+import models._
+import models.reporting._
+import models.request.NewEventRequest
 import models.ApplicationType._
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models.CancelReason.CancelReason
+import models.CaseStatus.CaseStatus
 import models.ReferralReason.ReferralReason
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models.RejectReason.RejectReason
-import models._
-import models.reporting._
-import models.request.NewEventRequest
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
@@ -42,7 +43,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.templates.{decision_template, ruling_template}
 
 import scala.concurrent.{ExecutionContext, Future}
-import models.reporting.ReportField
 
 @Singleton
 class CasesService @Inject() (
@@ -411,17 +411,18 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq
+    forTypes: Set[ApplicationType] = ApplicationType.values
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq,
+    forTypes: Set[ApplicationType] = ApplicationType.values,
+    forStatuses: Set[CaseStatus] = CaseStatus.openStatuses,
     assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    connector.findCasesByAllQueues(queue, pagination, forTypes, assignee)
+    connector.findCasesByAllQueues(queue, pagination, forTypes, forStatuses, assignee)
 
   def countCasesByQueue(implicit hc: HeaderCarrier): Future[Map[(Option[String], ApplicationType), Int]] =
     for {

@@ -51,7 +51,7 @@ class QueuesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type when Queue is found" in {
       given(
-        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), any[Seq[ApplicationType]])(any[HeaderCarrier])
+        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), any[Set[ApplicationType]])(any[HeaderCarrier])
       ).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(Some(queue)))
       given(queuesService.getAll).willReturn(Future.successful(List(queue)))
@@ -69,7 +69,7 @@ class QueuesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type when Queue is found with specific case type specified" in {
       given(
-        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), refEq(Seq(ApplicationType.LIABILITY)))(
+        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), refEq(Set(ApplicationType.LIABILITY)))(
           any[HeaderCarrier]
         )
       ).willReturn(Future.successful(Paged.empty[Case]))
@@ -89,7 +89,7 @@ class QueuesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type when Queue is not found" in {
       given(
-        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), any[Seq[ApplicationType]])(any[HeaderCarrier])
+        casesService.getCasesByQueue(refEq(queue), refEq(NoPagination()), any[Set[ApplicationType]])(any[HeaderCarrier])
       ).willReturn(Future.successful(Paged.empty[Case]))
       given(queuesService.getOneBySlug("slug")).willReturn(Future.successful(None))
       given(queuesService.getAll).willReturn(Future.successful(List(queue)))

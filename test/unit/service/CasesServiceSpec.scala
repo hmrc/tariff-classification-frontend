@@ -19,6 +19,7 @@ package service
 import audit.AuditService
 import connector.{BindingTariffClassificationConnector, RulingConnector}
 import models._
+import models.CaseStatus.CaseStatus
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
@@ -58,7 +59,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Get Cases 'By Queue'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
+      given(connector.findCasesByQueue(any[Queue], any[Pagination], any[Set[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
         Paged(manyCases)
       )
 
@@ -67,19 +68,19 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
     "retrieve connector cases with type restriction" in {
       given(
-        connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Seq(ApplicationType.LIABILITY)))(
+        connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Set(ApplicationType.LIABILITY)))(
           any[HeaderCarrier]
         )
       ) willReturn successful(Paged(manyCases))
 
-      await(service.getCasesByQueue(queue, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(manyCases)
+      await(service.getCasesByQueue(queue, pagination, Set(ApplicationType.LIABILITY))) shouldBe Paged(manyCases)
     }
 
   }
 
   "Get Cases 'By All Queues'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(any[HeaderCarrier])) willReturn successful(
+      given(connector.findCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])) willReturn successful(
         Paged(manyCases)
       )
 

@@ -24,7 +24,7 @@ object ChangeKeywordStatusForm {
 
   val form: Form[String] = Form(
     mapping(
-      "action" -> fieldNonEmpty("error.empty.action")
+      "keyword-status" -> fieldNonEmpty("error.empty.action")
     )(identity)(Some(_))
   )
 
