@@ -519,6 +519,43 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     }
   }
 
+  "Service 'auditManagerKeywordDeleted'" should {
+
+    "audit keyword deleted" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordDeleted(operator, keyword)
+
+      val payload = Map(
+        "operatorId" -> operator.id,
+        "keywordDeleted" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordDeleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+  }
+
+  "Service 'auditManagerKeywordRenamed'" should {
+
+    "audit keyword renamed" in {
+      val oldKeyword = Keyword("oldKeywordName", true)
+      val newKeyword = Keyword("newKeywordName", true)
+
+      service.auditManagerKeywordRenamed(operator, oldKeyword, newKeyword)
+
+      val payload = Map(
+        "operatorId" -> operator.id,
+        "originalKeyword" -> oldKeyword.name,
+        "updatedKeyword" -> newKeyword.name
+      )
+
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordRenamed"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+  }
+
   private def caseCreatedAudit(caseReference: String, operatorId: String, comment: String): Map[String, String] =
     Map[String, String](
       "caseReference" -> caseReference,
