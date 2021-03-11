@@ -485,7 +485,8 @@ page.title.reject.case=Change case status to: Rejected
 page.title.case.rejected=This case has been rejected
 case.rejected.header = The {0} case has been rejected
 page.title.release.case=Choose a team to release this case to
-page.title.case.released=Case released
+page.title.case.released=This case has been released to the team
+page.title.case.mis-created=Miscellaneous case created for this team
 page.title.create.case=Create this case for a team
 page.title.take.ownership=Do you want to take ownership of this case?
 page.title.move.case=Move this case back to a team
@@ -1131,6 +1132,9 @@ correspondence.create_correspondence.confirm-button = Create case
 release_case.header = Choose a team to release the {0} case to
 release_case.question.header = Do you want to release this new case to a team now?
 release_case.question.error=Select yes if you want to release this new case to a team
+
+suppress_case.confirm.header = The {0} case has been suppressed
+case_status.confirm.subheader = The case status is now<br><span class="bold">{0}</span>
 release_case.released_dynamic_message = The {0}  case has been released to the {1} team
 create_case.dynamic_message = The {0} case has been created
 create_case.message = The case has not been released to a team
@@ -1139,6 +1143,7 @@ back.home = Back to home
 back.gateway = Back to Gateway cases
 back.my_cases = Back to open ATaR cases
 back.user.keywords = Go back to keywords
+
 
 misc.create_misc.description.heading=Short case description
 misc.create_misc.contact.name.heading=Case contact name
