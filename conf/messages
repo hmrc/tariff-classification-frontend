@@ -1142,7 +1142,7 @@ complete_case.areYouSure = Are you sure you want to complete the {0} case?
 complete-case.form.state.required = Select yes if you want to complete this case
 back.home = Back to home
 back.gateway = Back to Gateway cases
-back.my_cases = Back to Open ATaR cases
+back.my_cases = Back to open ATaR cases
 back.user.keywords = Go back to keywords
 
 back.open_cases.caseType = Back to open {0} cases
