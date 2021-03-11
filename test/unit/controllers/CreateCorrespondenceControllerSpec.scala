@@ -234,7 +234,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       )
 
       status(result)          shouldBe Status.OK
-      contentAsString(result) should include("Correspondence case created")
+      contentAsString(result) should include("case has been created")
     }
 
     "display Confirmation case page for creating a correspondence with a queue GET" in {
@@ -252,7 +252,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       )
 
       status(result)          shouldBe Status.OK
-      contentAsString(result) should include("Correspondence case released to queue team")
+      contentAsString(result) should include("case has been released to a queue")
     }
 
     "display no results found when a queue is not found GET" in {
