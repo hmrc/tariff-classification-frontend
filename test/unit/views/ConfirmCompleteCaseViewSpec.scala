@@ -16,7 +16,10 @@
 
 package views
 
-import utils.Cases
+import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
+
+import utils.{Cases, Dates}
 import views.html.confirm_complete_case
 
 class ConfirmCompleteCaseViewSpec extends ViewSpec {
@@ -28,7 +31,8 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
       val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(confirm_complete_case(c))
       lazy val expected =
-        "The Laptop ATaR case has been completed A ruling certificate has been created with an expiry date of 28 Feb 2021 Next steps Back to home Back to open ATaR cases"
+        s"The Laptop ATaR case has been completed A ruling certificate has been created with an expiry date of ${Dates
+          .format(Instant.now().plus(-10, DAYS))} Next steps Back to home Back to open ATaR cases"
       lazy val actual = doc.getElementById("confirm_complete_id").text()
 
       // Then

@@ -27,15 +27,6 @@
 @import views.html.components.success_panel
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@customHeading = @{
-if(c.application.isCorrespondence) {
-Some(messages("page.title.create_correspondence.h1"))
-}   else if(c.application.isMisc) {
-Some(messages("page.title.case.mis-created"))
-}   else {
-Some(messages("page.title.case.released"))
-}
-}
 
 @callToRedirect =@{
 if(c.application.isCorrespondence) {
@@ -49,7 +40,7 @@ AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)
 }
 }
 
-@main(bodyClasses = None, customTitle = customHeading) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.completed"))) {
 <div class="grid-row column-two-thirds" id="confirm_complete_id">
 
     <div class="govuk-panel govuk-panel--confirmation">
