@@ -27,11 +27,13 @@ case class ManageKeywordsViewModel(
 )
 
 object ManageKeywordsViewModel {
-  def forManagedTeams(caseKeywords: Seq[CaseKeyword], allKeywords: Seq[String]): ManageKeywordsViewModel = {
+  def forManagedTeams(caseKeywords: Seq[CaseKeyword], allKeywords: Seq[Keyword]): ManageKeywordsViewModel = {
+
+    val approvedKeywords = allKeywords.filter(_.approved)
 
     val keywordViewModel = caseKeywords.flatMap(caseKeyword =>
-      caseKeyword.cases.map { caseHeader =>
 
+      caseKeyword.cases.map { caseHeader =>
         val overdue = (caseHeader.caseType, caseHeader.liabilityStatus) match {
           case (ApplicationType.LIABILITY, Some(LiabilityStatus.LIVE)) if caseHeader.daysElapsed >= 5 => true
           case (_, _) if caseHeader.daysElapsed >= 30                                                 => true
@@ -40,7 +42,11 @@ object ManageKeywordsViewModel {
 
         val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, overdue)
 
+        val notApprovedRejected = !allKeywords.exists(kw => caseKeyword.keyword.name == kw.name)
+
+
         KeywordViewModel(
+          caseHeader.reference,
           caseKeyword.keyword.name,
           caseHeader.assignee
             .map { assignee =>
@@ -53,14 +59,15 @@ object ManageKeywordsViewModel {
           caseHeader.goodsName.getOrElse(""),
           caseHeader.caseType,
           caseStatus,
-          allKeywords.contains(caseKeyword.keyword.name)
+          notApprovedRejected
         )
-    })
+      }
+    )
 
     ManageKeywordsViewModel(
       "Manage keywords",
-      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(keywordViewModel.filter(k => !k.isApproved))),
-      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), allKeywords)
+      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(keywordViewModel.filter(_.isApproved))),
+      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), approvedKeywords.map(_.name))
     )
   }
 

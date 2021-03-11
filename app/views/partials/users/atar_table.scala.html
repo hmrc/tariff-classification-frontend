@@ -21,12 +21,28 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
-@(atarTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import controllers.v2.routes.MoveCasesController
+@import views.html.partials.{error_summary}
+@import controllers.Tab
 
+@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@error_summary(form.errors)
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.atar.heading")</h2>
+@helper.form(action = MoveCasesController.postMoveATaRCases(userID).withFragment(Tab.ATAR_TAB.name), 'id -> "atarCases", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
+
 <div class="form-group">
  <button id="move-atar-cases" class="button" type="submit">Move selected cases</button>
 </div>
+@form("atarCases").errors.map { error =>
+<div class="form-group mb-0">
+ <fieldset>
+  <legend class="advanced_search--filters_heading">
+   <span class="error-message" id="error-message-@{form("atarCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+  </legend>
+ </fieldset>
+</div>
+}
 <table id="@{atarTab.tabMessageKey}-table">
  <caption class="visually-hidden">@messages("users.user.atar.heading")</caption>
  <thead class="govuk-table__head">
@@ -62,34 +78,36 @@
 
  @defining(result.application.asATAR) { atar =>
 
-  <tr id="@{atarTab.tabMessageKey}-details-@index">
-    <td id="@{atarTab.tabMessageKey}-select-@index">
-     <div class="form-group">
-      <div class="multiple-choice">
-       <fieldset>
-        <input
-                class="form-control"
-                type="checkbox"
-                id="@{result.reference}"
-                name="@{result.reference}"
-                value="@{result.reference}"/>
-        <!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
+ <tr id="@{atarTab.tabMessageKey}-details-@index">
+  <td id="@{atarTab.tabMessageKey}-select-@index" @if(form("atarCases").hasErrors){class="form-group-error"}>
+   @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
+   <div class="form-group" >
+   <div class="multiple-choice">
+    <fieldset>
+     @defining(s"${form("atarCases").id}-$index") { id: String =>
 
-        <label></label>
-       </fieldset>
-      </div>
-     </div>
-       </td>
-    <td id="@{atarTab.tabMessageKey}-reference-@index">
-     <a href="@routes.CaseController.get(result.reference)">
-      <span aria-hidden="true">@{result.reference}</span>
-      <span class="visually-hidden">case reference @{result.reference}</span>
-     </a>
-    </td>
-    <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
-    <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
-    <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-    <td id="@{atarTab.tabMessageKey}-total-days-@index">@{Dates.daysCount(result.createdDate)}</td>
+     <input
+           class="form-control"
+           type="checkbox"
+           id="@{id}"
+           name="@{form("atarCases").name}[@index]"
+           value="@{result.reference}"
+     @if(form("atarCases").hasErrors){
+     aria-describedby="error-message-@{id}-input"
+     }
+           @if(form("atarCases").value.contains(result.reference)){ checked="checked"}
+   />
+     <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+    }</fieldset>
+   </div>
+  </div>
+   }
+  </td>
+  <td id="@{atarTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+  <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
+  <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
+  <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{atarTab.tabMessageKey}-total-days-@index">@{Dates.daysCount(result.createdDate)}</td>
 
     <td id="@{atarTab.tabMessageKey}-status-@index">
      @case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
@@ -103,4 +121,4 @@
  }
  </tbody>
 </table>
-
+}

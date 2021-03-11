@@ -20,6 +20,7 @@ import models.CaseStatus.CaseStatus
 import models.{ApplicationType, CaseStatus}
 
 case class KeywordViewModel(
+  reference: String,
   keyword: String,
   name: String,
   goods: String,

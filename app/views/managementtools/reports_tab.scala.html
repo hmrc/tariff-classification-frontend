@@ -1,0 +1,93 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.managementtools.{keywords_for_approval_table, all_keywords}
+@import views.html.components.heading
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.managementtools._
+@import controllers.v2.routes._
+
+@import views.html.components.change_case_status_button
+
+@(reportingViewModel: ReportingTabViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+
+    @heading(messages("reporting.manage_reports.heading"))
+
+    <div id="manage-keywords-tabs" class="govuk-tabs" data-module="govuk-tabs">
+        <ul class="govuk-tabs__list">
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.summaryReportTab.elementId">
+                @messages("reporting.summary.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.statusReportTab.elementId">
+                @messages("reporting.status.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.atarReportTab.elementId">
+                @messages("reporting.atar.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.liabilityReportTab.elementId">
+                @messages("reporting.liability.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.correspondenceReportTab.elementId">
+                    @messages("reporting.correspondence.tab.heading")
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@reportingViewModel.miscReportTab.elementId">
+                    @messages("reporting.miscellaneous.tab.heading")
+                </a>
+            </li>
+        </ul>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.summaryReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.summary.heading")</h2>
+            @report_tab_view(reportingViewModel.summaryReportTab)
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.statusReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.status.heading")</h2>
+            @report_tab_view(reportingViewModel.statusReportTab)
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.atarReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.atar.heading")</h2>
+            @report_tab_view(reportingViewModel.atarReportTab)
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.liabilityReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.liability.heading")</h2>
+            @report_tab_view(reportingViewModel.liabilityReportTab)
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.correspondenceReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.correspondence.heading")</h2>
+            @report_tab_view(reportingViewModel.correspondenceReportTab)
+        </div>
+
+        <div class="govuk-tabs__panel" id="@reportingViewModel.miscReportTab.elementId">
+            <h2 class="heading-large mt-0">@messages("reporting.miscellaneous.heading")</h2>
+            @report_tab_view(reportingViewModel.miscReportTab)
+        </div>
+    </div>

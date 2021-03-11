@@ -16,24 +16,26 @@
 
 package service
 
-import java.time.{Instant, LocalDate}
+import java.nio.file.{Files, StandardOpenOption}
+import java.time.LocalDate
 import java.util.UUID
+import javax.inject.{Inject, Singleton}
+
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
-
-import java.nio.file.{Files, StandardOpenOption}
-import javax.inject.{Inject, Singleton}
+import models._
+import models.reporting._
+import models.request.NewEventRequest
 import models.ApplicationType._
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models.CancelReason.CancelReason
+import models.CaseStatus.CaseStatus
 import models.ReferralReason.ReferralReason
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models.RejectReason.RejectReason
-import models._
-import models.request.NewEventRequest
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
@@ -238,19 +240,20 @@ class CasesService @Inject() (
           .atStartOfDay(appConfig.clock.getZone)
 
         val decision: Decision = original.decision
-            .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
+          .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
 
         val endDate =
           (original.application.isBTI, decision.effectiveEndDate.isDefined) match {
             case (false, _) => None
-            case (_,  true) => decision.effectiveEndDate
-            case  _         => Some(
-              startDate
-                .plusYears(appConfig.decisionLifetimeYears)
-                .minusDays(appConfig.decisionLifetimeDays)
-                .toInstant
-            )
-        }
+            case (_, true)  => decision.effectiveEndDate
+            case _ =>
+              Some(
+                startDate
+                  .plusYears(appConfig.decisionLifetimeYears)
+                  .minusDays(appConfig.decisionLifetimeDays)
+                  .toInstant
+              )
+          }
 
         val decisionWithDates: Decision = decision
           .copy(effectiveStartDate = Some(startDate.toInstant), effectiveEndDate = endDate)
@@ -408,35 +411,35 @@ class CasesService @Inject() (
   def getCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq
+    forTypes: Set[ApplicationType] = ApplicationType.values
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByQueue(queue, pagination, forTypes)
 
   def getCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    forTypes: Seq[ApplicationType] = ApplicationType.values.toSeq,
+    forTypes: Set[ApplicationType] = ApplicationType.values,
+    forStatuses: Set[CaseStatus] = CaseStatus.openStatuses,
     assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    connector.findCasesByAllQueues(queue, pagination, forTypes, assignee)
+    connector.findCasesByAllQueues(queue, pagination, forTypes, forStatuses, assignee)
 
-  def countCasesByQueue(operator: Operator)(implicit hc: HeaderCarrier): Future[Map[String, Int]] =
+  def countCasesByQueue(implicit hc: HeaderCarrier): Future[Map[(Option[String], ApplicationType), Int]] =
     for {
-      countMyCases <- getCasesByAssignee(operator, NoPagination())
-      countByQueue <- reportingService.getQueueReport
-      casesByQueueAndMyCases = countByQueue
-        .map(report =>
-          (
-            report.group.getOrElse(CaseReportGroup.QUEUE, Some(Queues.gateway.id)).getOrElse("") + "-" + report.group
-              .getOrElse(CaseReportGroup.APPLICATION_TYPE, Some(""))
-              .get,
-            report.value.size
-          )
-        )
-        .toMap + ("my-cases" -> countMyCases.size) + ("assigned-to-me" -> countMyCases.results.count(c =>
-        c.status == CaseStatus.OPEN
-      ))
-    } yield casesByQueueAndMyCases
+      countByQueue <- reportingService.queueReport(
+        QueueReport(statuses = Set(
+          PseudoCaseStatus.NEW,
+          PseudoCaseStatus.OPEN,
+          PseudoCaseStatus.REFERRED,
+          PseudoCaseStatus.SUSPENDED
+        )), NoPagination()
+      )
+
+      casesByQueue = countByQueue.results.map { resultGroup =>
+        (resultGroup.team, resultGroup.caseType) -> resultGroup.count.toInt
+      }.toMap
+
+    } yield casesByQueue
 
   def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAssignee(assignee, pagination)

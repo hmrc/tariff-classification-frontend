@@ -140,7 +140,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     when(fileStoreService.getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
     when(fileStoreService.getLetterOfAuthority(any[Case]())(any())) thenReturn (Future.successful(letterOfAuthority))
-    when(keywordsService.findAll(any[Pagination])(any[HeaderCarrier])) thenReturn Future(Paged(Seq(keyword1, keyword2)))
+    when(keywordsService.findAll) thenReturn Future(Seq(keyword1, keyword2))
     when(keywordsService.addKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
       Cases.liabilityLiveCaseExample
     )

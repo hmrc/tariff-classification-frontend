@@ -16,13 +16,36 @@
 
 package models
 
+import cats.data.EitherT
+import cats.syntax.all._
+import play.api.mvc.QueryStringBindable
+
 trait Pagination {
   val page: Int
   val pageSize: Int
+  def withPage(page: Int) = this match {
+    case NoPagination(_, pageSize) =>
+      NoPagination(page, pageSize)
+    case SearchPagination(_, pageSize) =>
+      SearchPagination(page, pageSize)
+  }
 }
 
 object Pagination {
   val unlimited: Int = Integer.MAX_VALUE
+
+  implicit val paginationQueryStringBindable = new QueryStringBindable[Pagination] {
+    def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Pagination]] =
+      (
+        BinderUtil.bind[Int](1)(key, "page", params),
+        BinderUtil.bind[Int](50)(key, "page_size", params)
+      ).mapN(SearchPagination.apply).value
+    def unbind(key: String, value: Pagination): String =
+      Seq(
+        BinderUtil.unbind[Int](key, "page", value.page),
+        BinderUtil.unbind[Int](key, "page_size", value.pageSize)
+      ).filterNot(_.isEmpty).mkString("&")
+  }
 }
 
 case class SearchPagination(

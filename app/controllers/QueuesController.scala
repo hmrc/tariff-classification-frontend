@@ -41,10 +41,10 @@ class QueuesController @Inject() (
 
   def queue(slug: String, caseType: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async { implicit request =>
-      val types: Seq[ApplicationType] = caseType
-        .map(x => Seq[ApplicationType](ApplicationType.withName(x)))
+      val types: Set[ApplicationType] = caseType
+        .map(x => Set(ApplicationType.withName(x)))
         .getOrElse(
-          ApplicationType.values.toSeq
+          ApplicationType.values
         )
 
       queuesService.getOneBySlug(slug) flatMap {
@@ -53,8 +53,7 @@ class QueuesController @Inject() (
           for {
             cases            <- casesService.getCasesByQueue(q, NoPagination(), types)
             queues           <- queuesService.getAll
-            caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-          } yield Ok(views.html.queue(queues, q, caseCountByQueue, cases, types.mkString(",")))
+          } yield Ok(views.html.queue(queues, q, Map.empty, cases, types.mkString(",")))
             .addingToSession(
               (backToQueuesLinkLabel, s"${q.name} cases"),
               (backToQueuesLinkUrl, QueuesController.queue(q.slug, caseType).url)

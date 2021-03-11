@@ -21,8 +21,19 @@ import play.api.mvc.QueryStringBindable
 sealed abstract class SubNavigationTab(val id: String) extends Product with Serializable
 
 object SubNavigationTab {
-  val values = Set(ATaRTab, LiabilitiesTab, CorrespondenceTab, MiscellaneousTab, AssignedToMeTab, ReferredByMeTab,
-    CompletedByMeTab, ManagerToolsUsersTab, ManagerToolsTeamsTab, ManagerToolsKeywordsTab, ManagerToolsReportsTab)
+  val values = Set(
+    ATaRTab,
+    LiabilitiesTab,
+    CorrespondenceTab,
+    MiscellaneousTab,
+    AssignedToMeTab,
+    ReferredByMeTab,
+    CompletedByMeTab,
+    ManagerToolsUsersTab,
+    ManagerToolsKeywordsTab,
+    ManagerToolsReportsTab
+  )
+
   implicit def subNavigationTabQueryStringBindable(
     implicit stringBindable: QueryStringBindable[String]
   ): QueryStringBindable[SubNavigationTab] =
@@ -58,8 +69,6 @@ case object ReferredByMeTab extends SubNavigationTab("sub_nav_referred_by_me_tab
 case object CompletedByMeTab extends SubNavigationTab("sub_nav_completed_by_me_tab")
 
 case object ManagerToolsUsersTab extends SubNavigationTab("sub_nav_manager_tools_users_tab")
-
-case object ManagerToolsTeamsTab extends SubNavigationTab("sub_nav_manager_tools_teams_tab")
 
 case object ManagerToolsKeywordsTab extends SubNavigationTab("sub_nav_manager_tools_keywords_tab")
 

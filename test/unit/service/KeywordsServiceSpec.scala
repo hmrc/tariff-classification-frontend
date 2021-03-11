@@ -26,14 +26,16 @@ import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
+import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   private val connector    = mock[BindingTariffClassificationConnector]
   private val auditService = mock[AuditService]
 
-  private val service = new KeywordsService(connector, auditService)
+  private val service = new KeywordsService(realAppConfig, connector, auditService)
 
   private val operator: Operator = Operator("operator-id", None)
   private val aCase              = Cases.btiCaseExample
@@ -127,7 +129,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "return a list of keywords" in {
       given(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])) willReturn successful(Paged(Seq(keyword)))
 
-      await(service.findAll(NoPagination())) shouldBe Paged(Seq(keyword))
+      await(service.findAll) shouldBe Seq.empty[Keyword]
     }
   }
 

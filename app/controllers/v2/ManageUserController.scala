@@ -16,11 +16,15 @@
 
 package controllers.v2
 
+import javax.inject.Inject
+
+import akka.stream.Materializer
 import config.AppConfig
 import controllers.RequestActions
-import javax.inject.Inject
 import models._
 import models.forms.v2.{RemoveUserForm, UserEditTeamForm}
+import models.forms.v2.UserEditTeamForm
+import models.forms.v2.MoveCasesForm
 import models.request.AuthenticatedRequest
 import models.viewmodels.managementtools.UsersTabViewModel
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
@@ -29,12 +33,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, UserService}
+import views.html.partials.assignee
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageUserController @Inject()(
+class ManageUserController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   userService: UserService,
@@ -46,16 +51,24 @@ class ManageUserController @Inject()(
   val confirmDeleteUser: views.html.partials.users.confirm_delete_user,
   val doneDeleteUserPage: views.html.partials.users.done_delete_user
 )(
-  implicit val appConfig: AppConfig,
-  implicit val ec: ExecutionContext
+  implicit
+  val appConfig: AppConfig,
+  mat: Materializer
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {
 
-  private val userEditTeamForm = UserEditTeamForm.editTeamsForm
+  implicit val ec: ExecutionContext = mat.executionContext
 
-  val Unassigned    = "unassigned"
-  val assignedCases = "some"
+  private val userEditTeamForm                   = UserEditTeamForm.editTeamsForm
+  private lazy val removeUserForm: Form[Boolean] = RemoveUserForm.form
+  private val moveATaRCasesForm                  = MoveCasesForm.moveCasesForm("atarCases")
+  private val moveLiabCasesForm                  = MoveCasesForm.moveCasesForm("liabilityCases")
+  private val moveCorrCasesForm                  = MoveCasesForm.moveCasesForm("corrCases")
+  private val moveMiscCasesForm                  = MoveCasesForm.moveCasesForm("miscCases")
+
+  val assignedCases           = "some"
+  val AssignedCasesPagination = SearchPagination(pageSize = 1000)
 
   def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -66,19 +79,25 @@ class ManageUserController @Inject()(
           for {
             allUsers <- userService
                          .getAllUsers(Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER), "", NoPagination())
-            managerTeamsCases <- casesService
-                                  .getCasesByAllQueues(managerQueues, NoPagination(), assignee = assignedCases)
-            usersWithCount = managerTeamsCases.results.toList
-              .groupBy(singleCase => singleCase.assignee.map(_.id).getOrElse(Unassigned))
-              .filterKeys(_ != Unassigned)
+
+            managerTeamsCases <- Paged
+                                  .stream(AssignedCasesPagination) { pagination =>
+                                    casesService
+                                      .getCasesByAllQueues(managerQueues, pagination, assignee = assignedCases)
+                                  }
+                                  .runFold(List.empty[Case]) { case (cases, nextCase) => nextCase :: cases }
+
+            usersWithCount = managerTeamsCases
+              .groupBy(singleCase => singleCase.assignee.map(_.id))
+              .collect { case (Some(pid), cases) => pid -> cases }
+
             usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
+
           } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
         }
-        case _ => Future(NotFound(views.html.user_not_found("")))
+        case _ => Future(NotFound(views.html.user_not_found(request.operator.id)))
       }
     }
-
-  private lazy val removeUserForm: Form[Boolean] = RemoveUserForm.form
 
   def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
@@ -87,10 +106,11 @@ class ManageUserController @Inject()(
           userTab <- userService.getUser(pid)
           cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
-        } yield
-          userTab
-            .map(user => Ok(viewUser(user, userCaseTabs)))
-            .getOrElse(NotFound(views.html.user_not_found(pid)))
+        } yield userTab
+          .map(user =>
+            Ok(viewUser(user, userCaseTabs, moveATaRCasesForm, moveLiabCasesForm, moveCorrCasesForm, moveMiscCasesForm))
+          )
+          .getOrElse(NotFound(views.html.user_not_found(pid)))
     }
 
   def deleteUser(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
@@ -116,40 +136,38 @@ class ManageUserController @Inject()(
   def confirmRemoveUser(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(
       Permission.MANAGE_USERS
-    )).async(
-      implicit request =>
-        removeUserForm
-          .bindFromRequest()
-          .fold(
-            errors =>
+    )).async(implicit request =>
+      removeUserForm
+        .bindFromRequest()
+        .fold(
+          errors =>
+            for {
+              user <- userService.getUser(pid)
+            } yield user
+              .map(u => Ok(confirmDeleteUser(u, errors)))
+              .getOrElse(NotFound(views.html.user_not_found(pid))), {
+            case true =>
               for {
                 user <- userService.getUser(pid)
-              } yield
+              } yield {
                 user
-                  .map(u => Ok(confirmDeleteUser(u, errors)))
-                  .getOrElse(NotFound(views.html.user_not_found(pid))), {
-              case true =>
-                for {
-                  user <- userService.getUser(pid)
-                } yield {
-                  user
-                    .map { u =>
-                      userService.markDeleted(u, request.operator)
-                      Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(u.safeName))
-                    }
-                    .getOrElse(NotFound(views.html.user_not_found(pid)))
-                }
-              case _ =>
-                successful(
-                  Redirect(controllers.v2.routes.ManageUserController.displayUserDetails(pid))
-                )
-            }
-        ))
+                  .map { u =>
+                    userService.markDeleted(u, request.operator)
+                    Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(u.safeName))
+                  }
+                  .getOrElse(NotFound(views.html.user_not_found(pid)))
+              }
+            case _ =>
+              successful(
+                Redirect(controllers.v2.routes.ManageUserController.displayUserDetails(pid))
+              )
+          }
+        )
+    )
 
   def doneDeleteUser(userName: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)) {
-      implicit request: AuthenticatedRequest[AnyContent] =>
-        Ok(doneDeleteUserPage(userName))
+      implicit request: AuthenticatedRequest[AnyContent] => Ok(doneDeleteUserPage(userName))
     }
 
   def editUserTeamDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
@@ -172,7 +190,8 @@ class ManageUserController @Inject()(
           userService
             .getUser(pid)
             .map(user =>
-              userService.updateUser(user.get.copy(memberOfTeams = updatedMemberOfTeams.toSeq), request.operator))
+              userService.updateUser(user.get.copy(memberOfTeams = updatedMemberOfTeams.toSeq), request.operator)
+            )
             .map(_ => Redirect(routes.ManageUserController.displayUserDetails(pid)))
       )
     }

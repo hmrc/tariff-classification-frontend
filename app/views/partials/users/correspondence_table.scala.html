@@ -22,79 +22,100 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 @import views.html.forms.components.input_checkbox
-@(corresTab: ApplicationsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@import controllers.v2.routes.MoveCasesController
+@import views.html.partials.{error_summary}
+@import controllers.Tab
 
+@(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@error_summary(form.errors)
 <h2 class="heading-large mt-0 mb-30">@messages("users.user.correspondence.heading")</h2>
+@helper.form(action = MoveCasesController.postMoveCorrCases(userID).withFragment(Tab.CORRESPONDENCE_TAB.name), 'id -> "corrCases", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
 <div class="form-group">
  <button id="move-corr-cases" class="button" type="submit">Move selected cases</button>
 </div>
+@form("corrCases").errors.map { error =>
+<div class="form-group mb-0">
+<fieldset>
+<legend class="advanced_search--filters_heading">
+ <span class="error-message" id="error-message-@{form("corrCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+</legend>
+</fieldset>
+</div>
+}
 <table id="@{corresTab.tabMessageKey}-table">
  <caption class="visually-hidden">@messages("users.user.correspondence.heading")</caption>
  <thead class="govuk-table__head">
-  <tr id="@{corresTab.tabMessageKey}-details" class="grid-row mb-2">
-    <th id="@{corresTab.tabMessageKey}-select" class="bold w-0">
-     Select
-    </th>
-    <th id="@{corresTab.tabMessageKey}-reference" class="bold w-0">
-     Reference
-    </th>
-    <th id="@{corresTab.tabMessageKey}-subject" class="bold w-0">
-     Subject
-    </th>
-    <th id="@{corresTab.tabMessageKey}-trader" class="bold w-0">
-     Trader
-    </th>
-    <th id="@{corresTab.tabMessageKey}-contact" class="bold w-0">
-     Contact
-    </th>
-    <th id="@{corresTab.tabMessageKey}-elapsed-days" class="bold w-0">
-     Elapsed days
-    </th>
-    <th id="@{corresTab.tabMessageKey}-team" class="bold w-0">
-     Team
-    </th>
-  </tr>
+ <tr id="@{corresTab.tabMessageKey}-details" class="grid-row mb-2">
+  <th id="@{corresTab.tabMessageKey}-select" class="bold w-0">
+   Select
+  </th>
+  <th id="@{corresTab.tabMessageKey}-reference" class="bold w-0">
+   Reference
+  </th>
+  <th id="@{corresTab.tabMessageKey}-subject" class="bold w-0">
+   Subject
+  </th>
+  <th id="@{corresTab.tabMessageKey}-trader" class="bold w-0">
+   Trader
+  </th>
+  <th id="@{corresTab.tabMessageKey}-contact" class="bold w-0">
+   Contact
+  </th>
+  <th id="@{corresTab.tabMessageKey}-elapsed-days" class="bold w-0">
+   Elapsed days
+  </th>
+  <th id="@{corresTab.tabMessageKey}-team" class="bold w-0">
+   Team
+  </th>
+ </tr>
  </thead>
  <tbody>
  @for((result, index) <- corresTab.searchResult.results.zipWithIndex) {
 
  @defining(result.application.asCorrespondence) { corres =>
 
-  <tr id="@{corresTab.tabMessageKey}-details-@index">
-    <td id="@{corresTab.tabMessageKey}-select-@index">
-     <div class="form-group">
-      <div class="multiple-choice">
-       <fieldset>
-        <input
-                class="form-control"
-                type="checkbox"
-                id="@{result.reference}"
-                name="@{result.reference}"
-                value="@{result.reference}"/>
-        <!--    TODO uncomment when form is created if(field.value.contains(s"$value")){ checked="checked"}/>-->
-
-        <label></label>
-       </fieldset>
-      </div>
-     </div>
-    </td>
-    <td id="@{corresTab.tabMessageKey}-reference-@index">
-     <a href="@routes.CaseController.get(result.reference)">
-      <span aria-hidden="true">@{result.reference}</span>
-      <span class="visually-hidden">case reference @{result.reference}</span>
-     </a>
-    </td>
-    <td id="@{corresTab.tabMessageKey}-summary-@index">@{corres.summary}</td>
-    <td id="@{corresTab.tabMessageKey}-trader-@index">@{corres.correspondenceStarter}</td>
-    <td id="@{corresTab.tabMessageKey}-contact-@index">@{corres.contact.email}</td>
-    <td id="@{corresTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-    <td id="@{corresTab.tabMessageKey}-team-@index">
-     @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
-    </td>
-  </tr>
+ <tr id="@{corresTab.tabMessageKey}-details-@index">
+  <td id="@{corresTab.tabMessageKey}-select-@index" @if(form("corrCases").hasErrors){class="form-group-error"}>
+   @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
+   <div class="form-group ">
+    <div class="multiple-choice">
+     <fieldset>
+      @defining(s"${form("corrCases").id}-$index") { id: String =>
+      <input
+              class="form-control"
+              type="checkbox"
+              id="@{id}"
+              name="@{form("corrCases").name}[@index]"
+              value="@{result.reference}"
+      @if(form("corrCases").hasErrors){
+      aria-describedby="error-message-@{id}-input"
+      }
+              @if(form("corrCases").value.contains(result.reference)){ checked="checked"}
+      />
+      <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+     }</fieldset>
+    </div>
+   </div>
+   }
+  </td>
+  <td id="@{corresTab.tabMessageKey}-reference-@index">
+   <a href="@routes.CaseController.get(result.reference)">
+    <span aria-hidden="true">@{result.reference}</span>
+    <span class="visually-hidden">case reference @{result.reference}</span>
+   </a>
+  </td>
+  <td id="@{corresTab.tabMessageKey}-summary-@index">@{corres.summary}</td>
+  <td id="@{corresTab.tabMessageKey}-trader-@index">@{corres.correspondenceStarter}</td>
+  <td id="@{corresTab.tabMessageKey}-contact-@index">@{corres.contact.email}</td>
+  <td id="@{corresTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{corresTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+  </td>
+ </tr>
  }
 
  }
  </tbody>
 </table>
-
+}

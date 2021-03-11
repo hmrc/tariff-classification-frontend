@@ -35,18 +35,6 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         )
       )
 
-      stubFor(
-        get(
-          urlEqualTo(
-            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
-          )
-        ).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(CasePayloads.report)
-        )
-      )
-
       // When
       val response = await(ws.url(s"$baseUrl/queues").get())
 
@@ -94,18 +82,6 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
           aResponse()
             .withStatus(OK)
             .withBody(CasePayloads.pagedGatewayCases)
-        )
-      )
-
-      stubFor(
-        get(
-          urlEqualTo(
-            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"
-          )
-        ).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(CasePayloads.report)
         )
       )
 
@@ -158,18 +134,6 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         )
       )
 
-      stubFor(
-        get(
-          urlEqualTo(
-            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id&report_field=active-days-elapsed"
-          )
-        ).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(CasePayloads.report)
-        )
-      )
-
       // When
       val response = await(ws.url(s"$baseUrl/queues/act").get())
 
@@ -216,18 +180,6 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
           aResponse()
             .withStatus(OK)
             .withBody(CasePayloads.pagedGatewayCases)
-        )
-      )
-
-      stubFor(
-        get(
-          urlEqualTo(
-            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
-          )
-        ).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(CasePayloads.report)
         )
       )
 
@@ -280,18 +232,6 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
         )
       )
 
-      stubFor(
-        get(
-          urlEqualTo(
-            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
-          )
-        ).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(CasePayloads.report)
-        )
-      )
-
       // When
       val response = await(ws.url(s"$baseUrl/queues/car").get())
 
@@ -338,18 +278,6 @@ class QueuesSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder
           aResponse()
             .withStatus(OK)
             .withBody(CasePayloads.pagedGatewayCases)
-        )
-      )
-
-      stubFor(
-        get(
-          urlEqualTo(
-            "/report?status=NEW&status=OPEN&status=REFERRED&status=SUSPENDED&assignee_id=none&report_group=queue-id%2Capplication-type&report_field=active-days-elapsed"
-          )
-        ).willReturn(
-          aResponse()
-            .withStatus(OK)
-            .withBody(CasePayloads.report)
         )
       )
 

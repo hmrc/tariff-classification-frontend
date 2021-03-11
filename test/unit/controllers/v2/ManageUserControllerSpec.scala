@@ -16,9 +16,11 @@
 
 package controllers.v2
 
+import akka.stream.Materializer
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models.Role.Role
 import models._
+import models.CaseStatus.CaseStatus
+import models.Role.Role
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.when
@@ -37,7 +39,6 @@ import scala.concurrent.Future.successful
 
 class ManageUserControllerSpec extends ControllerBaseSpec {
 
-  private val eventService             = mock[EventsService]
   private val casesService             = mock[CasesService]
   private val userService              = mock[UserService]
   private lazy val user_team_edit      = injector.instanceOf[user_team_edit]
@@ -59,9 +60,9 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       cannot_delete_user,
       confirm_delete_user,
       done_delete_user
-    )(realAppConfig, global)
+    )(realAppConfig, injector.instanceOf[Materializer])
 
-  "displayUserDetals" should {
+  "displayUserDetails" should {
 
     "return 200 OK and HTML content type" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
@@ -69,7 +70,8 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(fakeRequest))
+      val result =
+        await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(newFakeGETRequestWithCSRF(app)))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -130,6 +132,30 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
     }
 
+    "return Not Found when no user found with given ID" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq.empty[Case]))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("1")(newFakeGETRequestWithCSRF(app)))
+      status(result)      shouldBe Status.NOT_FOUND
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
+    "return unauthorised when trying to delete themselves" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("0")))
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("0")(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+
+    }
+
     "return unauthorised with no permissions" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
@@ -155,33 +181,65 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       status(result) shouldBe OK
     }
 
-  }
+    "redirect to done page when user selects `yes`" in {
+      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Operator("1", deleted = true)))
 
-  "redirect to manage users when user selects `yes`" in {
-    when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier]))
-      .thenReturn(successful(Operator("1", deleted = true)))
+      val result: Result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .confirmRemoveUser("1")(
+            newFakePOSTRequestWithCSRF(app)
+              .withFormUrlEncodedBody("state" -> "true")
+          )
+      )
 
-    val result: Result = await(
-      controller(Set(Permission.MANAGE_USERS))
-        .confirmRemoveUser("1")(
-          newFakePOSTRequestWithCSRF(app)
-            .withFormUrlEncodedBody("state" -> "true")
-        )
-    )
+      redirectLocation(result) shouldBe Some(routes.ManageUserController.doneDeleteUser("PID 1").path)
+    }
 
-    redirectLocation(result) shouldBe Some(routes.ManageUserController.doneDeleteUser("PID 1").path)
-  }
+    "redirect to not found with complete form" in {
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
-  "redirect to manage user when user selects `no`" in {
-    val result: Result = await(
-      controller(Set(Permission.MANAGE_USERS))
-        .confirmRemoveUser("1")(
-          newFakePOSTRequestWithCSRF(app)
-            .withFormUrlEncodedBody("state" -> "false")
-        )
-    )
+      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Operator("1", deleted = true)))
 
-    redirectLocation(result) shouldBe Some(routes.ManageUserController.displayUserDetails("1").path)
+      val result: Result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .confirmRemoveUser("1")(
+            newFakePOSTRequestWithCSRF(app)
+              .withFormUrlEncodedBody("state" -> "true")
+          )
+      )
+
+      status(result) shouldBe NOT_FOUND
+    }
+
+    "redirect to not found with error form" in {
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
+
+      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Operator("1", deleted = true)))
+
+      val result: Result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .confirmRemoveUser("1")(
+            newFakePOSTRequestWithCSRF(app)
+          )
+      )
+
+      status(result) shouldBe NOT_FOUND
+    }
+
+    "redirect to manage user when user selects `no`" in {
+      val result: Result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .confirmRemoveUser("1")(
+            newFakePOSTRequestWithCSRF(app)
+              .withFormUrlEncodedBody("state" -> "false")
+          )
+      )
+
+      redirectLocation(result) shouldBe Some(routes.ManageUserController.displayUserDetails("1").path)
+    }
   }
 
   "doneDeleteUser" should {
@@ -200,90 +258,120 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
 
     }
+  }
 
-    "Edit User Team Details" should {
+  "Edit User Team Details" should {
 
-      "return 200 and load the editUserTeamDetails form" in {
-        val result = await(
-          controller(Set(Permission.MANAGE_USERS))
-            .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
-        )
-        status(result) shouldBe OK
-      }
+    "return 200 and load the editUserTeamDetails form" in {
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("reference")))
 
-      "return unauthorised if the user is not a manager (does not have the right permissions)" in {
-
-        val result = await(
-          controller(Set(Permission.VIEW_ASSIGNED_CASES))
-            .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
-        )
-        status(result)               shouldBe SEE_OTHER
-        redirectLocation(result).get should include("unauthorized")
-      }
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
+      )
+      status(result) shouldBe OK
     }
 
-    "Post Edit User Teams" should {
+    "return not found when there is no user with given pid" in {
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
-      "redirect to displayUser after user presses 'save changes' button" in {
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
+      )
+      status(result) shouldBe NOT_FOUND
+    }
 
-        when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-          Cases.operatorWithPermissions
+    "return unauthorised if the user is not a manager (does not have the right permissions)" in {
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("reference")))
+
+      val result = await(
+        controller(Set(Permission.VIEW_ASSIGNED_CASES))
+          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
+      )
+      status(result)               shouldBe SEE_OTHER
+      redirectLocation(result).get should include("unauthorized")
+    }
+  }
+
+  "Post Edit User Teams" should {
+
+    "redirect to displayUser after user presses 'save changes' button" in {
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Cases.operatorWithPermissions))
+      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        Cases.operatorWithPermissions
+      )
+
+      val fakeReq = newFakePOSTRequestWithCSRF(
+        app,
+        Map(
+          "memberOfTeams" -> ("2")
         )
+      )
 
-        val fakeReq = newFakePOSTRequestWithCSRF(
-          app,
-          Map(
-            "memberOfTeams" -> ("2")
-          )
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postEditUserTeams("refPID")(fakeReq)
+      )
+
+      status(result) shouldBe SEE_OTHER
+
+      locationOf(result) shouldBe Some(
+        "/manage-tariff-classifications/users/user/refPID"
+      )
+    }
+
+    "return to the view if form fails to validate" in {
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Cases.operatorWithPermissions))
+
+      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        Cases.operatorWithPermissions
+      )
+
+      val fakeReq = newFakePOSTRequestWithCSRF(
+        app,
+        Map(
+          "" -> ""
         )
+      )
 
-        val result = await(
-          controller(Set(Permission.MANAGE_USERS))
-            .postEditUserTeams("refPID")(fakeReq)
-        )
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postEditUserTeams("refPID")(fakeReq)
+      )
 
-        status(result) shouldBe SEE_OTHER
-
-        locationOf(result) shouldBe Some(
-          "/manage-tariff-classifications/users/user/refPID"
-        )
-      }
-
-      "return to the view if form fails to validate" in {
-        when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-          Cases.operatorWithPermissions
-        )
-
-        val fakeReq = newFakePOSTRequestWithCSRF(
-          app,
-          Map(
-            "" -> ""
-          )
-        )
-
-        val result = await(
-          controller(Set(Permission.MANAGE_USERS))
-            .postEditUserTeams("refPID")(fakeReq)
-        )
-
-        status(result)           shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/manage-tariff-classifications/users/user/refPID")
-      }
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some("/manage-tariff-classifications/users/user/refPID")
     }
   }
 
   "displayManageUsers" should {
 
     "return 200 OK and HTML content type" in {
+      val manager   = Operator("id", Some("name"), Some("email"), Role.CLASSIFICATION_MANAGER, Seq("2"), Seq())
+      val operator1 = Operator("1", Some("name1"), Some("email1"), Role.CLASSIFICATION_OFFICER, Seq("2"), Seq())
+      val operator2 = Operator("2", Some("name2"), Some("email2"), Role.CLASSIFICATION_OFFICER, Seq(), Seq())
+
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
       given(
-        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
-          any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
-      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
+        casesService.getCasesByAllQueues(
+          any[Seq[Queue]],
+          any[Pagination],
+          any[Set[ApplicationType]],
+          any[Set[CaseStatus.Value]],
+          any[String]
+        )(
+          any[HeaderCarrier]
+        )
+      ).willReturn(Paged(Seq(Cases.btiCaseExample.copy(assignee = Some(operator1)), Cases.aCase())))
+        .willReturn(Paged.empty[Case])
+
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(manager))
+
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Operator("2"), Operator("3"))))
+        .willReturn(Paged(Seq(operator1, operator2)))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageUsers()(fakeRequest))
       status(result)      shouldBe Status.OK
@@ -292,14 +380,52 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
     }
 
+    "return Not Found when manager is not present" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
+      given(
+        casesService.getCasesByAllQueues(
+          any[Seq[Queue]],
+          any[Pagination],
+          any[Set[ApplicationType]],
+          any[Set[CaseStatus.Value]],
+          any[String]
+        )(
+          any[HeaderCarrier]
+        )
+      ).willReturn(Paged(Seq(Cases.btiCaseExample, Cases.aCase()))).willReturn(Paged.empty[Case])
+
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
+
+      given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
+        .willReturn(Paged(Seq(Operator("1"))))
+
+      val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageUsers()(fakeRequest))
+      status(result)      shouldBe Status.NOT_FOUND
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
     "return unauthorised with no permissions" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
       given(
-        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
-          any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        casesService.getCasesByAllQueues(
+          any[Seq[Queue]],
+          any[Pagination],
+          any[Set[ApplicationType]],
+          any[Set[CaseStatus.Value]],
+          any[String]
+        )(
+          any[HeaderCarrier]
+        )
+      ).willReturn(Paged(Seq(Cases.aCase(), Cases.aCase()))).willReturn(Paged.empty[Case])
+
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
+
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("2"), Operator("3"))))
 

@@ -72,8 +72,8 @@ class LiabilityController @Inject() (
       sampleTab                <- getSampleTab(liabilityCase)
       c592        = Some(C592ViewModel.fromCase(liabilityCase))
       activityTab = Some(ActivityViewModel.fromCase(liabilityCase, activityEvents, queues))
-      keywordsTab <- keywordsService.findAll(NoPagination()).map(kws =>
-                      KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.results.map(_.name))
+      keywordsTab <- keywordsService.findAll.map(kws =>
+                      KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name))
                     )
     } yield {
       Ok(
