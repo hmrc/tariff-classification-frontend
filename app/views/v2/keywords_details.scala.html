@@ -63,6 +63,7 @@
 
             }
             <h3 class="heading-medium">Case keyword list</h3>
+
             @if(ktvm.caseKeywords.size<3){
             <div>
                 <p>
@@ -78,6 +79,7 @@
             </div>
 
             }
+
             <div id="keywords-table">
                 @for((keyword: String, index: Int) <- ktvm.caseKeywords.toSeq.sorted.zipWithIndex) {
                     <div class="grid-row mt-1 mb-1">
