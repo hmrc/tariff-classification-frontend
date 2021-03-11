@@ -26,7 +26,9 @@ import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
+import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
@@ -127,7 +129,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "return a list of keywords" in {
       given(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])) willReturn successful(Paged(Seq(keyword)))
 
-      await(service.findAll) shouldBe Paged(Seq(keyword))
+      await(service.findAll) shouldBe Seq.empty[Keyword]
     }
   }
 

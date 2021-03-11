@@ -206,6 +206,7 @@ POST       /keywords/manage-keywords                             controllers.v2.
 GET        /keywords/keyword-create                              controllers.v2.ManageKeywordsController.newKeyword()
 POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
 GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
+GET        /keywords/keyword-update-done                         controllers.v2.ManageKeywordsController.displayKeywordChangeConfirmation(keyword: String, approved: Boolean, goodsName: String)
 
 GET        /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.editApprovedKeywords(keywordName: String)
 POST       /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.postEditApprovedKeywords(keywordName: String)
@@ -213,5 +214,5 @@ POST       /keywords/keyword-edit                                controllers.v2.
 GET        /keywords/keyword-deleted                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab ?= ManagerToolsKeywordsTab)
 GET        /keywords/keyword-renamed                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordRenamed(oldKeywordName: String, newKeywordName: String)
 
-
 GET        /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.changeKeywordStatus(keywordName: String, reference: String)
+POST       /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.approveOrRejectKeyword(keywordName: String, reference: String)

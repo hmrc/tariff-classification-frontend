@@ -160,7 +160,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.findCasesByQueue(Queues.act, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(
+      await(connector.findCasesByQueue(Queues.act, pagination, Set(ApplicationType.LIABILITY))) shouldBe Paged(
         Seq(Cases.btiCaseExample)
       )
 
@@ -176,7 +176,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
         types      = ApplicationType.values.toSeq,
-        statuses   = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+        statuses   = "OPEN,REFERRED,SUSPENDED",
         assigneeId = "none",
         queueIds   = Queues.allQueues.map(_.id),
         pagination = pagination
@@ -860,7 +860,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get cases in all queues" in {
       val url = buildQueryUrlAllQueues(
         types      = ApplicationType.values.toSeq,
-        statuses   = "SUSPENDED,COMPLETED,NEW,OPEN,REFERRED",
+        statuses   = "OPEN,REFERRED,SUSPENDED",
         assigneeId = "none",
         queueIds   = Queues.allQueues.map(_.id),
         pagination = pagination
@@ -1188,9 +1188,6 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val keyword  = Keyword("AKeyword".toUpperCase, true)
       val request  = Json.toJson(NewKeywordRequest(keyword)).toString()
       val response = Json.toJson(keyword).toString()
-
-      println("@@@@@@@@@@@@@@@@@@@@@" + request)
-      println("**********************" + response)
 
       stubFor(
         post(urlEqualTo(s"/keyword"))
