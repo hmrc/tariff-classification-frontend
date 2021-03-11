@@ -1137,7 +1137,7 @@ create_case.message = The case has not been released to a team
 release_case.released_dynamic_message.atar = The {0}  case has been released to the {1} team
 back.home = Back to home
 back.gateway = Back to Gateway cases
-back.my_cases = Back to Open ATaR cases
+back.my_cases = Back to open ATaR cases
 back.user.keywords = Go back to keywords
 
 misc.create_misc.description.heading=Short case description
