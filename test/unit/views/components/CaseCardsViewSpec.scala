@@ -101,7 +101,7 @@ class CaseCardsViewSpec extends ViewSpec {
       )
     }
 
-    "display the manager tools, my cases and open cases and not contain gateway" in {
+    "display the manager tools, my cases, open cases and gateway" in {
       val doc =
         view(cases_cards(Map.empty, 2, 0, 0)(authenticatedManagerFakeRequest, messages, appConfig))
 
@@ -114,7 +114,7 @@ class CaseCardsViewSpec extends ViewSpec {
       doc should containElementWithID("manager-tools-keywords-id")
       doc should containElementWithID("manager-tools-reports-id")
 
-      doc shouldNot containElementWithID("gateway-cases-id")
+      doc should containElementWithID("gateway-cases-id")
     }
   }
 }

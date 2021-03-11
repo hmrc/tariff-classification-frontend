@@ -25,7 +25,7 @@ class ChangeKeywordStatusFormSpec extends ModelsBaseSpec {
     "Bind a blank form" in {
       val form = ChangeKeywordStatusForm.form.bindFromRequest(
         Map(
-          "action" -> Seq()
+          "keyword-status" -> Seq()
         )
       )
 
