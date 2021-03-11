@@ -22,7 +22,8 @@
 @import views.html.partials.{case_heading, back_link, error_summary}
 @import views.html.helper.{CSRF, form}
 @import models.viewmodels.NoTabSelected
-@import views.html.forms.components.input_yes_no
+@import views.html.forms.components.input_radiogroup
+@import views.forms.components.RadioOption
 @import utils.Dates
 
 @(c: Case, form: Form[Boolean])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -31,10 +32,11 @@
     customPrimaryNavTab = NoTabSelected) {
     @defining(c.application.asATAR) { btiApp: BTIApplication =>
 
-<div class="mt-15">@back_link()</div>
-@error_summary(form.errors)
+
 <div class="grid-row">
 <div class="column-two-thirds pl-0">
+    <div class="mt-15">@back_link()</div>
+    @error_summary(form.errors)
         @case_heading(c, messageKey = Some("complete_case.areYouSure"))
 
     <p class="govuk-body govuk-!-margin-top-9">When this case is completed:</p>
@@ -57,7 +59,14 @@
     @helper.form(action = CompleteCaseController.postCompleteCase(c.reference), 'class -> "form", 'id -> "complete-case", 'novalidate -> "novalidate") {
     @helper.CSRF.formField
 
-    @input_yes_no(form("state"), "complete-case")
+    @input_radiogroup(
+    field = form("state"),
+    options = Seq(RadioOption("true", "Yes, complete and publish case"), RadioOption("false", "No, go back")),
+    id = "complete-case",
+    ariaDescribedBy = Some("heading"),
+    label = Some(messages("complete_case.areYouSure", c.application.goodsName)),
+    labelClass = Some("visually-hidden")
+    )
 
     <div>
         <button class="button" id="complete-case-button" type="submit">Continue</button>

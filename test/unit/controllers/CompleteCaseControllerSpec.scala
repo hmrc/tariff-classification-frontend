@@ -100,7 +100,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         status(result)        shouldBe Status.OK
         contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
         charsetOf(result)     shouldBe Some("utf-8")
-        bodyOf(result)        should include("Complete this case")
+        bodyOf(result)        should include("Are you sure you want to complete the Laptop case?")
       }
 
       "Case is a valid Liability" in {
