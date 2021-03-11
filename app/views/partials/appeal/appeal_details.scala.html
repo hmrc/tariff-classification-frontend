@@ -48,7 +48,7 @@
 </table>
 
 @if(request.hasPermission(Permission.APPEAL_CASE)) {
-    <a tabindex="@{startTabIndex+50}" id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTab.caseReference)">Add a review or appeal</a>
+    <a id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTab.caseReference)">Add a review or appeal</a>
 }
 
 @if(appealTab.caseStatus == CaseStatus.CANCELLED) {
