@@ -16,10 +16,11 @@
 
 package controllers.v2
 
+import akka.stream.Materializer
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models.Role.Role
 import models._
-import models.request.AuthenticatedRequest
+import models.CaseStatus.CaseStatus
+import models.Role.Role
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.when
@@ -38,7 +39,6 @@ import scala.concurrent.Future.successful
 
 class ManageUserControllerSpec extends ControllerBaseSpec {
 
-  private val eventService             = mock[EventsService]
   private val casesService             = mock[CasesService]
   private val userService              = mock[UserService]
   private lazy val user_team_edit      = injector.instanceOf[user_team_edit]
@@ -60,7 +60,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       cannot_delete_user,
       confirm_delete_user,
       done_delete_user
-    )(realAppConfig, global)
+    )(realAppConfig, injector.instanceOf[Materializer])
 
   "displayUserDetails" should {
 
@@ -351,14 +351,25 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       val manager   = Operator("id", Some("name"), Some("email"), Role.CLASSIFICATION_MANAGER, Seq("2"), Seq())
       val operator1 = Operator("1", Some("name1"), Some("email1"), Role.CLASSIFICATION_OFFICER, Seq("2"), Seq())
       val operator2 = Operator("2", Some("name2"), Some("email2"), Role.CLASSIFICATION_OFFICER, Seq(), Seq())
+
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
       given(
-        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
+        casesService.getCasesByAllQueues(
+          any[Seq[Queue]],
+          any[Pagination],
+          any[Set[ApplicationType]],
+          any[Set[CaseStatus.Value]],
+          any[String]
+        )(
           any[HeaderCarrier]
         )
       ).willReturn(Paged(Seq(Cases.btiCaseExample.copy(assignee = Some(operator1)), Cases.aCase())))
+        .willReturn(Paged.empty[Case])
+
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(manager))
+
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(operator1, operator2)))
 
@@ -372,12 +383,21 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     "return Not Found when manager is not present" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
       given(
-        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
+        casesService.getCasesByAllQueues(
+          any[Seq[Queue]],
+          any[Pagination],
+          any[Set[ApplicationType]],
+          any[Set[CaseStatus.Value]],
+          any[String]
+        )(
           any[HeaderCarrier]
         )
-      ).willReturn(Paged(Seq(Cases.btiCaseExample, Cases.aCase())))
+      ).willReturn(Paged(Seq(Cases.btiCaseExample, Cases.aCase()))).willReturn(Paged.empty[Case])
+
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
+
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1"))))
 
@@ -391,12 +411,21 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     "return unauthorised with no permissions" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+
       given(
-        casesService.getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]], any[String])(
+        casesService.getCasesByAllQueues(
+          any[Seq[Queue]],
+          any[Pagination],
+          any[Set[ApplicationType]],
+          any[Set[CaseStatus.Value]],
+          any[String]
+        )(
           any[HeaderCarrier]
         )
-      ).willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+      ).willReturn(Paged(Seq(Cases.aCase(), Cases.aCase()))).willReturn(Paged.empty[Case])
+
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
+
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("2"), Operator("3"))))
 

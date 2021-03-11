@@ -17,6 +17,7 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
+import models.CaseStatus.OPEN
 import models._
 import models.forms.KeywordForm
 import models.forms.v2.EditApprovedKeywordForm
@@ -33,7 +34,7 @@ import service.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.managementtools._
 import utils.Cases
-import views.html.managementtools.{change_keyword_status_view, confirm_keyword_created, manage_keywords_view, new_keyword_view}
+import views.html.managementtools.{change_keyword_status_view, confirm_keyword_created, confirm_keyword_status, manage_keywords_view, new_keyword_view}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,6 +42,7 @@ import scala.concurrent.Future.successful
 
 class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
+  val keyword: Keyword = Keyword("Scarf", true)
   val keywords = Seq(Keyword("SHOES", true), Keyword("HATS", true), Keyword("SHIRTS", true))
   val keywordForm = KeywordForm.formWithAuto(keywords.map(_.name))
   val editKeywordForm = EditApprovedKeywordForm
@@ -48,6 +50,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     Keyword("BOOK", false),
     List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None))
   )
+  val dummyCase: Case = Cases.caseAssignedExample
 
   private lazy val manage_keywords_view = injector.instanceOf[manage_keywords_view]
   private lazy val confirm_keyword_view = injector.instanceOf[confirm_keyword_created]
@@ -56,6 +59,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private lazy val confirmation_keyword_deleted_view = injector.instanceOf[confirmation_keyword_deleted]
   private lazy val confirmation_keyword_renamed_view = injector.instanceOf[confirmation_keyword_renamed]
   private lazy val keywordService = mock[ManageKeywordsService]
+  private lazy val keywordChangeConfirm    = injector.instanceOf[confirm_keyword_status]
   private lazy val changeKeywordStatusView = injector.instanceOf[change_keyword_status_view]
   private val casesService = mock[CasesService]
   val form: Form[String] = ChangeKeywordStatusForm.form
@@ -73,6 +77,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     manage_keywords_view,
     confirm_keyword_view,
     new_keyword_view,
+    keywordChangeConfirm,
     changeKeywordStatusView,
     edit_approved_keyword_view,
     confirmation_keyword_deleted_view,
@@ -187,6 +192,39 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
   }
 
+  "Approve, Reject Keyword" should {
+
+    "return 303 SEE_OTHER when keyword is successfully updated" in {
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
+        .willReturn(Future(Keyword("updatedKeyword", true)))
+
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(Future(Some(dummyCase)))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .approveOrRejectKeyword("updatedKeyword", "12345678")(newFakePOSTRequestWithCSRF(Map("keyword-status" -> "APPROVE"))))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.v2.routes.ManageKeywordsController.displayKeywordChangeConfirmation(
+          "updatedKeyword",
+          keyword.approved,
+          "Laptop"
+        ).path())
+
+    }
+
+    "return unauthorised with no permissions" in {
+      val result = await(controller(Set()).approveOrRejectKeyword("kword", "12345678")(newFakePOSTRequestWithCSRF(Map("keyword" -> "kword"))))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+    }
+  }
+
   "displayConfirmKeyword" should {
 
     "return 200 OK and HTML content type" in {
@@ -252,6 +290,38 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
   }
 
+  "display Keyword Change Confirmation" should {
+
+    "return 200 OK and HTML content type" in {
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS)).displayKeywordChangeConfirmation(
+          keyword.name,
+          keyword.approved,
+          "goodsName",
+        )(fakeRequest)
+      )
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(
+        controller(Set()).displayKeywordChangeConfirmation(
+          keyword.name,
+          keyword.approved,
+          "goodsName"
+        )(fakeRequest)
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+
+    }
+  }
   "editApprovedKeywords" should {
 
     "return 200 OK and HTML content type" in {

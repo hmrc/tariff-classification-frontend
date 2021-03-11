@@ -16,23 +16,14 @@
 
 package models
 
-object CaseStatus extends Enumeration {
-  type CaseStatus = Value
-  val DRAFT, NEW, OPEN, SUPPRESSED, REFERRED, REJECTED, CANCELLED, SUSPENDED, COMPLETED, REVOKED, ANNULLED = Value
+object ChangeKeywordStatusAction extends Enumeration {
+  type ChangeKeywordStatusAction = Value
+  val APPROVE, REJECT = Value
 
-  val openStatuses: Set[Value] = Set(OPEN, REFERRED, SUSPENDED)
+  def format(status: String): ChangeKeywordStatusAction =
+    status.toUpperCase match {
+      case "APPROVE" => APPROVE
+      case "REJECT"  => REJECT
+    }
 
-  def formatCancellation(cse: Case) = cse.status match {
-    case CaseStatus.CANCELLED =>
-      val cancellationCode = cse.decision
-        .flatMap(_.cancellation)
-        .flatMap(c => CancelReason.code(c.reason))
-        .map(c => s" - $c")
-        .getOrElse("")
-
-      cse.status.toString + cancellationCode
-
-    case _ =>
-      cse.status.toString
-  }
 }
