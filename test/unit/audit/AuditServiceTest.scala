@@ -473,6 +473,52 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       .sendExplicitAudit(refEq("userUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
   }
 
+  "Service 'auditManagerKeywordCreated'" should {
+
+    "audit keyword created" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.CREATED)
+
+      val payload = Map(
+        "operatorId"     -> operator.id,
+        "keywordCreated" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+
+    "audit keyword approved" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.APPROVE)
+
+      val payload = Map(
+        "operatorId"      -> operator.id,
+        "keywordApproved" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordApproved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+
+    "audit keyword rejected" in {
+
+      val keyword = Keyword("new keyword")
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.REJECT)
+
+      val payload = Map(
+        "operatorId"      -> operator.id,
+        "keywordRejected" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordRejected"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+  }
+
   private def caseCreatedAudit(caseReference: String, operatorId: String, comment: String): Map[String, String] =
     Map[String, String](
       "caseReference" -> caseReference,
