@@ -16,24 +16,27 @@
 
 package controllers.v2
 
+import javax.inject.Inject
+
+import akka.stream.Materializer
 import config.AppConfig
 import controllers.RequestActions
 import models._
-import models.request.AuthenticatedRequest
-import play.api.Logging
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, UserService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
-import scala.concurrent.Future.successful
-import javax.inject.Inject
 import models.forms.v2.{RemoveUserForm, UserEditTeamForm}
 import models.forms.v2.UserEditTeamForm
 import models.forms.v2.MoveCasesForm
+import models.request.AuthenticatedRequest
 import models.viewmodels.managementtools.UsersTabViewModel
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
+import play.api.Logging
 import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import service.{CasesService, UserService}
+import views.html.partials.assignee
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
+import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 class ManageUserController @Inject() (
@@ -48,11 +51,14 @@ class ManageUserController @Inject() (
   val confirmDeleteUser: views.html.partials.users.confirm_delete_user,
   val doneDeleteUserPage: views.html.partials.users.done_delete_user
 )(
-  implicit val appConfig: AppConfig,
-  implicit val ec: ExecutionContext
+  implicit
+  val appConfig: AppConfig,
+  mat: Materializer
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {
+
+  implicit val ec: ExecutionContext = mat.executionContext
 
   private val userEditTeamForm                   = UserEditTeamForm.editTeamsForm
   private lazy val removeUserForm: Form[Boolean] = RemoveUserForm.form
@@ -61,8 +67,8 @@ class ManageUserController @Inject() (
   private val moveCorrCasesForm                  = MoveCasesForm.moveCasesForm("corrCases")
   private val moveMiscCasesForm                  = MoveCasesForm.moveCasesForm("miscCases")
 
-  val Unassigned    = "unassigned"
-  val assignedCases = "some"
+  val assignedCases           = "some"
+  val AssignedCasesPagination = SearchPagination(pageSize = 1000)
 
   def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -73,12 +79,20 @@ class ManageUserController @Inject() (
           for {
             allUsers <- userService
                          .getAllUsers(Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER), "", NoPagination())
-            managerTeamsCases <- casesService
-                                  .getCasesByAllQueues(managerQueues, NoPagination(), assignee = assignedCases)
-            usersWithCount = managerTeamsCases.results.toList
-              .groupBy(singleCase => singleCase.assignee.map(_.id).getOrElse(Unassigned))
-              .filterKeys(_ != Unassigned)
+
+            managerTeamsCases <- Paged
+                                  .stream(AssignedCasesPagination) { pagination =>
+                                    casesService
+                                      .getCasesByAllQueues(managerQueues, pagination, assignee = assignedCases)
+                                  }
+                                  .runFold(List.empty[Case]) { case (cases, nextCase) => nextCase :: cases }
+
+            usersWithCount = managerTeamsCases
+              .groupBy(singleCase => singleCase.assignee.map(_.id))
+              .collect { case (Some(pid), cases) => pid -> cases }
+
             usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
+
           } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
         }
         case _ => Future(NotFound(views.html.user_not_found(request.operator.id)))

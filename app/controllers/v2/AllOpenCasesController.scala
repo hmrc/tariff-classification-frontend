@@ -54,7 +54,7 @@ class AllOpenCasesController @Inject() (
         casesForQueues <- casesService.getCasesByAllQueues(
                            queue      = queuesForType,
                            pagination = NoPagination(),
-                           forTypes   = Seq(applicationType),
+                           forTypes   = Set(applicationType),
                            assignee   = "none"
         )
 
