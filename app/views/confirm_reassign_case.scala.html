@@ -14,13 +14,17 @@
  * limitations under the License.
  *@
 
-@import controllers.routes.{AssignedCasesController, MyCasesController}
+@import controllers.routes.AssignedCasesController
+@import controllers.v2.routes.MyCasesController
 @import config.AppConfig
 @import models.{Case, Queue}
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
 @import views.html.partials._
 @import models.viewmodels.NoTabSelected
+@import controllers.routes._
+@import views.html.v2.confirmation_next_steps
+
 
 @import scala.util.matching.Regex
 
@@ -30,29 +34,17 @@
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.moved")),
     customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
-
-    @case_heading(c)
-
     <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large mt-0">This case has been moved to the @queue.name queue</h2>
-            <p>The case status is still @c.status.toString.toLowerCase. </p>
-            <h3 class="heading-medium mt-0">Next steps</h3>
+        <div class="column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">@messages("case.reassign.header", c.application.goodsName, queue.name)</h1>
+                <div class="govuk-panel__body">The case status is still </br><span class="bold">@c.status</span></div>
+            </div>
 
-            @if(originUrl.matches(".*/manage-tariff-classifications/cases/[0-9]+/activity.*")) {
-                <p>Go to <a href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>.</p>
-            } else {
-                @defining(".*/manage-tariff-classifications/queues/assigned/([0-9]+).*".r) { casesAssignedToUrlRegex: Regex =>
-                    @defining(casesAssignedToUrlRegex.findFirstMatchIn(originUrl)) { matched: Option[Regex.Match] =>
-                        @if(matched.isDefined) {
-                            <p>Go to <a href="@AssignedCasesController.assignedCasesFor(matched.get.group(1),0)">Assigned cases</a>.</p>
-                        } else {
-                            <p></p>
-                        }
-                    }
-                }
-            }
+            @confirmation_next_steps(
+                linkText = messages("back.my_cases"),
+                backHref = MyCasesController.displayMyCases()
+            )
 
         </div>
     </div>

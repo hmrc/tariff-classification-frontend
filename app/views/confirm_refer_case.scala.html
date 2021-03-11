@@ -28,41 +28,39 @@
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.referred")),
     customPrimaryNavTab = NoTabSelected) {
 
-    @case_heading(c)
-
     <div class="grid-row">
         <div class="column-full">
             @if(c.application.`type` == ApplicationType.ATAR) {
                 @success_panel(
-                    messages("case.referred.confirm_referred"),
+                    messages("case.referred.confirm_referred", c.application.goodsName),
                     None,
                     Some(days_elapsed_paused(c)),
-                    "View ATaR cases",
+                    "Back to Open ATaR cases",
                     ATaRTab
                 )
             } else if (c.application.`type` == ApplicationType.LIABILITY) {
             @success_panel(
-                messages("case.referred.confirm_referred"),
+                messages("case.referred.confirm_referred", c.application.goodsName),
                 None,
                 Some(days_elapsed_paused(c)),
-                "View liability cases",
+                "Back to Open Liability cases",
                 LiabilitiesTab
             )
 
             } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
             @success_panel(
-                messages("case.referred.confirm_referred"),
+                messages("case.referred.confirm_referred", c.application.getType),
                 None,
                 Some(days_elapsed_paused(c)),
-                "View correspondence cases",
+                "Back to Open Correspondence cases",
                 CorrespondenceTab
             )
             } else {
             @success_panel(
-                messages("case.referred.confirm_referred"),
+                messages("case.referred.confirm_referred", c.application.getType),
                 None,
                 Some(days_elapsed_paused(c)),
-                "View miscellaneous cases",
+                "Back to Open Miscellaneous cases",
                 MiscellaneousTab
             )
             }
