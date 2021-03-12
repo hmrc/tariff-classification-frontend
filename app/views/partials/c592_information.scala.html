@@ -16,10 +16,10 @@
 
 @import models.viewmodels.RulingViewModel
 
-@(traderCommodityCode: String, officerCommodityCode: String)(implicit messages: Messages)
+@(traderCommodityCode: String, officerCommodityCode: String, textClass:Option[String] = None)(implicit messages: Messages)
 
 <h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.info.from.c592")</h3>
-<dl class="dl-mb-2">
+<dl class="dl-mb-2 @textClass.getOrElse("")">
 
  <div id="ruling_code_by_trader" class="grid-row">
   <dt class="column-one-third">

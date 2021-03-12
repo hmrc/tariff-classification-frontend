@@ -150,7 +150,6 @@ case.decision.application.title=Information from applicant
 case.decision.information-applicant-heading=Edit the ruling details for the {0} case
 case.decision.information-applicant=Information from applicant
 case.decision.information-not-published=Information not to be published
-case.decision.edit-ruling.heading=Edit ruling for {0}
 case.decision.edit-ruling-details.heading=Edit the ruling details for the {0} case
 case.decision.edit-ruling=Edit ruling
 case.decision.ruling-details=Information to be published on the public rulings website
