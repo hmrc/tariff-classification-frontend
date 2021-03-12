@@ -244,7 +244,7 @@ object Permission {
   case object KEYWORDS extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
+      managersOrAssignedTeamMembersOnly(`case`, operator) && !(`case`.status == CaseStatus.COMPLETED || `case`.status == CaseStatus.REJECTED)
   }
 
   case object EDIT_LIABILITY extends CasePermission {
