@@ -57,8 +57,9 @@
     @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search-results_and_filters"),
         'id -> "advanced_search-form", 'novalidate -> "novalidate") {
         @input_text(
-            field = form("trader_name"),
-            label = "Trader name",
+            field = form("case_details"),
+            label = "Case details",
+            hint = Some("Search the goods name or case description"),
             formControlClass = Some("w-75")
         )
 
@@ -70,9 +71,16 @@
         )
 
         @input_text(
+        field = form("case_source"),
+        label = "Case source",
+        hint= Some("Search the trader name, case source or case contact"),
+        formControlClass = Some("w-75")
+        )
+
+        @input_text(
             field = form("decision_details"),
             label = "Ruling details",
-            hint = Some("Search the goods description, justification and the commercial denomination"),
+            hint = Some("Search the goods description, justification or commercial denomination"),
             formControlClass = Some("w-75")
         )
 
@@ -108,7 +116,9 @@
                                     field = form("application_type"),
                                     options = Seq(
                                         CheckOption("ATaR", ApplicationType.ATAR.name, checked = formHasApplicationType(ApplicationType.ATAR)),
-                                        CheckOption("Liability", ApplicationType.LIABILITY.name, checked = formHasApplicationType(ApplicationType.LIABILITY))
+                                        CheckOption("Liability", ApplicationType.LIABILITY.name, checked = formHasApplicationType(ApplicationType.LIABILITY)),
+                                        CheckOption("Corres", ApplicationType.CORRESPONDENCE.name, checked = formHasApplicationType(ApplicationType.CORRESPONDENCE)),
+                                        CheckOption("Misc", ApplicationType.MISCELLANEOUS.name, checked = formHasApplicationType(ApplicationType.MISCELLANEOUS))
                                     ),
                                     legend = Some("Apply filters"),
                                     submitOnChange = true,
@@ -119,7 +129,7 @@
                                     field = form("status"),
                                     options = Seq(
                                         CheckOption("Open", PseudoCaseStatus.OPEN.toString, checked = formHasStatus(PseudoCaseStatus.OPEN)),
-                                        CheckOption("Completed", PseudoCaseStatus.LIVE.toString, checked = formHasStatus(PseudoCaseStatus.LIVE)),
+                                        CheckOption("Completed", PseudoCaseStatus.COMPLETED.toString, checked = formHasStatus(PseudoCaseStatus.COMPLETED)),
                                         CheckOption("Expired", PseudoCaseStatus.EXPIRED.toString, checked = formHasStatus(PseudoCaseStatus.EXPIRED)),
                                         CheckOption("Cancelled", PseudoCaseStatus.CANCELLED.toString, checked = formHasStatus(PseudoCaseStatus.CANCELLED)),
                                         CheckOption("New", PseudoCaseStatus.NEW.toString, checked = formHasStatus(PseudoCaseStatus.NEW)),
