@@ -35,7 +35,7 @@ class ApplicationSpec extends ModelsBaseSpec {
     }
 
     "convert misc type" in {
-      Cases.miscExample.getType shouldBe "Misc"
+      Cases.miscExample.getType shouldBe "Miscellaneous"
     }
 
   }
@@ -169,7 +169,9 @@ class ApplicationSpec extends ModelsBaseSpec {
   "Application 'Business Name'" should {
 
     "return for Liability" in {
-      Cases.liabilityApplicationExample.businessName shouldBe Some(Cases.liabilityApplicationExample.asLiabilityOrder.traderName)
+      Cases.liabilityApplicationExample.businessName shouldBe Some(
+        Cases.liabilityApplicationExample.asLiabilityOrder.traderName
+      )
     }
 
     "return for ATaR" in {

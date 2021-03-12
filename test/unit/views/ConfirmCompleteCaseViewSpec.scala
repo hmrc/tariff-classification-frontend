@@ -65,10 +65,11 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
 
     "Render text for Miscellaneous" in {
       // When
-      val c             = Cases.aMiscellaneousCase()
-      val doc           = view(confirm_complete_case(c))
-      lazy val expected = "The name Misc case has been completed Next steps Back to home Back to open Misc cases"
-      lazy val actual   = doc.getElementById("confirm_complete_id").text()
+      val c   = Cases.aMiscellaneousCase()
+      val doc = view(confirm_complete_case(c))
+      lazy val expected =
+        "The name Miscellaneous case has been completed Next steps Back to home Back to open Miscellaneous cases"
+      lazy val actual = doc.getElementById("confirm_complete_id").text()
 
       // Then
       actual should startWith(expected)
