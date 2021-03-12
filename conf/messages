@@ -1132,6 +1132,9 @@ correspondence.create_correspondence.confirm-button = Create case
 release_case.header = Choose a team to release the {0} case to
 release_case.question.header = Do you want to release this new case to a team now?
 release_case.question.error=Select yes if you want to release this new case to a team
+
+suppress_case.confirm.header = The {0} case has been suppressed
+case_status.confirm.subheader = The case status is now<br><span class="bold">{0}</span>
 release_case.released_dynamic_message = The {0}  case has been released to the {1} team
 create_case.dynamic_message = The {0} case has been created
 create_case.message = The case has not been released to a team
