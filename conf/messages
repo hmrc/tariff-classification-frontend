@@ -365,7 +365,7 @@ release-case.submit.button=Save changes
 release-case-queue.submit.button=Continue
 release-case.submit.choice.button=Continue
 release-case.submit.cancel=Cancel
-reassign-case.submit.button=Move back to team
+reassign-case.submit.button=Save changes
 suppress_case.form.state.required=Select yes if you have contacted the applicant
 reject_case.form.state.required=Select yes if you have contacted the applicant
 refer_case.form.state.required=Select yes if you have contacted the applicant
@@ -1203,7 +1203,7 @@ case.ownership.assign_case.view_case=View the case
 case.ownership.assign_case.back=Back to my cases
 
 case.change_status.move_back_to_team.heading=Move this case back to a team
-case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team.
+case.change_status.move_back_to_team.description=This case is currently assigned to the <span id="previous-queue">{0}</span> team.
 
 notification.success.keywords.add = The keyword has been added to this case
 notification.success.keywords.remove = The keyword has been removed from this case
