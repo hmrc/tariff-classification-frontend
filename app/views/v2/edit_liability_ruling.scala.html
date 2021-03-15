@@ -80,8 +80,8 @@
 
   @confirm_or_cancel_buttons(
    id = "edit_liability_decision",
-   confirmText = "Save changes",
-   cancelText = "Cancel editing details",
+   confirmText = messages("case.v2.liability.ruling.details_edit.save_and_continue_button"),
+   cancelText = messages("case.v2.liability.ruling.details_edit.cancel_button"),
    cancelHref = controllers.routes.CaseController.rulingDetails(caseHeaderViewModel.referenceNumber)
   )
  }

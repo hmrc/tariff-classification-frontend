@@ -878,6 +878,8 @@ case.v2.liability.c592.details_edit.date_of_receipt=Date of receipt
 case.v2.liability.c592.details_edit.date_of_receipt_hint=Date stamped on the C592 when received by Gateway officer, for example, 27 3 2015.
 case.v2.liability.c592.details_edit.cancel_button=Cancel editing details
 case.v2.liability.c592.details_edit.save_and_continue_button=Save changes
+case.v2.liability.ruling.details_edit.save_and_continue_button=Save changes
+case.v2.liability.ruling.details_edit.cancel_button=Cancel editing details
 
 case.v2.liability.save_and_continue_button=Save and continue
 case.v2.liability.cancel_button=Cancel
