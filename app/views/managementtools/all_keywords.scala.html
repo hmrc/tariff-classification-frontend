@@ -22,6 +22,7 @@
 
 @(keywordsTabViewModel: KeywordsTabViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+<div id="keyword_search_edit-table">
 @error_summary(keywordForm.errors)
 
 @helper.form(action = controllers.v2.routes.ManageKeywordsController.postDisplayManageKeywords(), 'id -> "all-keywords-form", 'novalidate -> "novalidate") {
@@ -41,4 +42,5 @@
         @messages("management.manage-keywords.search-all-keywords.edit-keyword-button")
         </button>
     </div>
+</div>
 }

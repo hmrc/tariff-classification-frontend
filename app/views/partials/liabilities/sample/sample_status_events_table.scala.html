@@ -25,10 +25,11 @@
 @(events: Paged[Event], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 
-    <h3 class="heading-medium" id="sample-status-events-heading">@messages("case.v2.liability.sample_status_tab.sample_activity_timeline_heading")</h3>
+    <h3 class="heading-medium" id="sample-status-events-heading" aria-hidden="true">@messages("case.v2.liability.sample_status_tab.sample_activity_timeline_heading")</h3>
 
-    <table id="activity-events">
-        <thead>
+    <table id="sample-status-events">
+        <caption class="visually-hidden">@messages("case.v2.liability.sample_status_tab.sample_activity_timeline_heading")</caption>
+        <thead class="govuk-table__head">
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Description</th>
