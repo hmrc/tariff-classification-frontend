@@ -950,7 +950,8 @@ case.v2.correspondence.case-details-edit-description=Detailed description
 case.v2.correspondence.case-details-edit-boards-file-number=Boards file number
 case.v2.correspondence.case-details-edit-similar-cases=Similar cases
 
-case.v2.correspondence.case-contact-edit-title=Edit contact details
+case.v2.correspondence.case-contact-edit-title=Edit the contact details for this case
+case.v2.correspondence.case-contact-edit-header=Edit the contact details for the {0} case
 case.v2.correspondence.case-contact-edit-heading1=Edit details
 case.v2.correspondence.case-contact-edit-heading2=Contact details
 case.v2.correspondence.case-contact-edit-heading3=Contact address
