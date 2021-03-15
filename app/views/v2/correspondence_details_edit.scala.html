@@ -20,7 +20,7 @@
 @import helper._
 @import models.{Case, CorrespondenceApplication}
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseHeaderViewModel, MyCasesTab}
+@import models.viewmodels.{CaseHeaderViewModel, NoTabSelected}
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.includes.main
 @import views.html.forms.components._
@@ -30,12 +30,12 @@
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.v2.correspondence.case-details-edit-title")), customPrimaryNavTab = MyCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.correspondence.case-details-edit-title")), customPrimaryNavTab = NoTabSelected) {
 <div class="grid-row">
     <div class="column-two-thirds">
 <div class="mt-5">@back_link()</div>
         @error_summary(form.errors)
-    @case_heading(CaseHeaderViewModel.fromCase(c), messageKey = Some("case.v2.correspondence.case-details-edit-title"))
+    @case_heading(CaseHeaderViewModel.fromCase(c), messageKey = Some("case.v2.correspondence.case-details-edit-header"))
     </div>
     <div class="column-full">
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
