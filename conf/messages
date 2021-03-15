@@ -1158,7 +1158,8 @@ misc.create_misc.radio.type-nomenclature=Nomenclature
 misc.create_misc.radio.type-other-gov-dep=Other government department
 misc.create_misc.radio.type-other=Other
 misc.create_misc.confirm-button=Create case
-case.v2.misc.case-details-edit-title=Edit case details
+case.v2.misc.case-details-edit-title=Edit the contact details for this case
+case.v2.misc.case-details-edit-header=Edit the contact details for the {0} case
 misc.edit_misc.boards.file.heading=Boards file number
 
 choose.team.misc=Choose a team for {0} case
