@@ -22,21 +22,22 @@
 @import views.html.includes.main
 @import views.html.partials._
 @import controllers.v2.routes.MyCasesController
+@import controllers.v2.routes.AllOpenCasesController
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.rejected")),
 customPrimaryNavTab = NoTabSelected) {
     <div class="column-two-thirds pl-0">
-        @case_heading(c, true, None, Some("case.heading.case_rejected_for"))
 
         <div class="govuk-panel govuk-panel--confirmation">
-            <h1 class="heading-xlarge mt-0">@messages("page.title.case.rejected")</h1>
+            <h1 class="govuk-panel__title">@messages("case.rejected.header", c.application.goodsName)</h1>
+            <div class="govuk-panel__body">The case status is now </br><span class="bold">REJECTED</span></div>
         </div>
 
         @confirmation_next_steps(
             linkText = messages("back.my_cases"),
-            backHref = MyCasesController.displayMyCases()
+            backHref = AllOpenCasesController.displayAllOpenCases()
         )
     </div>
 }

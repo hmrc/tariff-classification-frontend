@@ -28,44 +28,44 @@ class ConfirmReferCaseViewSpec extends ViewSpec {
       val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(confirm_refer_case(c))
       lazy val expected =
-        "Case referred The days elapsed count has been paused at 0"
+        "case has been referred The elapsed days count is paused at 0"
       lazy val actual = doc.getElementById("confirm_complete_id").text()
 
       // Then
-      actual should startWith(expected)
+      actual should include(expected)
     }
 
     "Render text for Liability" in {
       // When
       val c             = Cases.aLiabilityCase()
       val doc           = view(confirm_refer_case(c))
-      lazy val expected = "Case referred The days elapsed count has been paused at 0"
+      lazy val expected = "case has been referred The elapsed days count is paused at 0"
       lazy val actual   = doc.getElementById("confirm_complete_id").text()
 
       // Then
-      actual should startWith(expected)
+      actual should include(expected)
     }
 
     "Render text for Correspondence" in {
       // When
       val c             = Cases.aCorrespondenceCase()
       val doc           = view(confirm_refer_case(c))
-      lazy val expected = "Case referred The days elapsed count has been paused at 0"
+      lazy val expected = "case has been referred The elapsed days count is paused at 0"
       lazy val actual   = doc.getElementById("confirm_complete_id").text()
 
       // Then
-      actual should startWith(expected)
+      actual should include(expected)
     }
 
     "Render text for Miscellaneous" in {
       // When
       val c             = Cases.aMiscellaneousCase()
       val doc           = view(confirm_refer_case(c))
-      lazy val expected = "Case referred The days elapsed count has been paused at 0"
+      lazy val expected = "case has been referred The elapsed days count is paused at 0"
       lazy val actual   = doc.getElementById("confirm_complete_id").text()
 
       // Then
-      actual should startWith(expected)
+      actual should include(expected)
     }
 
   }

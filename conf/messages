@@ -94,8 +94,9 @@ case.completed.liability=This liability decision is complete
 case.completed.correspondence=Correspondence case is complete
 case.completed.misc=Miscellaneous case is complete
 case.completed.email=Email the applicant with a copy of this decision
-case.referred.confirm_referred=Case referred
-case.referred.elapsed_day_count=The days elapsed count has been paused at
+case.referred.confirm_referred=The {0} case has been referred
+case.referred.elapsed_day_count=The elapsed days count is paused at
+case.reassign.header= The {0} case has been moved to the {1} team
 change_case_status.complete=Complete
 change_case_status.refer=Refer
 change_case_status.reject=Reject
@@ -112,7 +113,7 @@ change_case_status.to.cancelled=Change case status to: Cancelled
 change_case_status.to.referred=Change case status to: Referred
 change_case_status.to.rejected=Change case status to: Rejected
 change_case_status.to.suppressed=Change case status to: Suppressed
-change_case_status.to.suspended=Change case status to: Suspended
+change_case_status.to.suspended=This case has been suspended
 change_case_status.referred.title=Who are you referring this case to?
 change_case_status.referred.heading=Provide details to refer the {0} case
 change_case_status.referred.note.label=Add a case note
@@ -474,20 +475,22 @@ page.title.advanced.search=Advanced search
 page.title.searchByCaseReference=Search by case reference
 page.title.case.not.found=Case not found
 page.title.refer.case=Provide details to refer this case
-page.title.case.referred=Change case status to: Referred
+page.title.case.referred=This case has been referred
 page.title.case.reopened=Case reopened
 page.title.suspend.case=Change case status to: Suspended
-page.title.case.suspended=Change case status to: Suspended
+page.title.case.suspended=This case has been suspended
 page.title.change.sample.status=What should this sample status be changed to?
 page.title.change.sample.return=Should this sample be returned?
 page.title.reject.case=Change case status to: Rejected
-page.title.case.rejected=Case rejected
+page.title.case.rejected=This case has been rejected
+case.rejected.header = The {0} case has been rejected
 page.title.release.case=Choose a team to release this case to
-page.title.case.released=Case released
+page.title.case.released=This case has been released to the team
+page.title.case.mis-created=Miscellaneous case created for this team
 page.title.create.case=Create this case for a team
 page.title.take.ownership=Do you want to take ownership of this case?
 page.title.move.case=Move this case back to a team
-page.title.case.moved=Cased moved
+page.title.case.moved=This case has been moved to this team
 page.title.suppress.case=Change case status to: Suppressed
 page.title.case.suppressed=Case suppressed
 page.title.complete.case=Complete this case
@@ -508,6 +511,11 @@ page.title.case.queues=Tariff classification case teams
 page.title.create_liability.h1=New liability information
 page.title.confirmation.h1=New case information
 page.title.create_correspondence.h1=Create correspondence case
+page.title.create_correspondence.confirmation=The correspondence case has been released to a queue
+page.title.create_miscellaneous.confirmation=The miscellaneous case has been released to a queue
+page.title.create_atar.confirmation=The atar case has been released to a queue
+page.title.create_liability.confirmation=The liability case has been released to a queue
+page.title.release_liability.h1=Correspondence case released to this team
 page.title.edit_liability_decision=Edit liability decision
 page.title.create_misc.h1=Create miscellaneous case
 page.title.document.not.found=Document not found
@@ -981,7 +989,7 @@ case.v2.correspondence.sample-details.sample-no-activity=No activity to show.
 
 case.v2.correspondence.messages-details.heading=Messages
 
-
+case.suspended.header=The {0} case has been suspended
 
 
 
@@ -1124,11 +1132,18 @@ correspondence.create_correspondence.confirm-button = Create case
 release_case.header = Choose a team to release the {0} case to
 release_case.question.header = Do you want to release this new case to a team now?
 release_case.question.error=Select yes if you want to release this new case to a team
-release_case.released_dynamic_message = {0} case released to {1} team
+
+suppress_case.confirm.header = The {0} case has been suppressed
+case_status.confirm.subheader = The case status is now<br><span class="bold">{0}</span>
+release_case.released_dynamic_message = The {0}  case has been released to the {1} team
+create_case.dynamic_message = The {0} case has been created
+create_case.message = The case has not been released to a team
+release_case.released_dynamic_message.atar = The {0}  case has been released to the {1} team
 back.home = Back to home
-back.gateway = Back to gateway cases
+back.gateway = Back to Gateway cases
+back.my_cases = Back to open ATaR cases
 back.user.keywords = Go back to keywords
-back.my_cases = Back to my cases
+
 
 misc.create_misc.description.heading=Short case description
 misc.create_misc.contact.name.heading=Case contact name
