@@ -191,7 +191,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("This case has been moved to the NAME queue")
+      bodyOf(result) should include("case has been moved")
     }
 
     "return resource not found when the queue is not found" in {

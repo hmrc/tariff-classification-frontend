@@ -17,30 +17,29 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.Case
-@import controllers.routes.MyCasesController
+@import controllers.v2.routes.MyCasesController
 @import views.html.includes.main
 @import views.html.partials.{days_elapsed_paused, case_heading, back_link}
 @import models.viewmodels.NoTabSelected
+@import controllers.routes._
+@import views.html.v2.confirmation_next_steps
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.suspended")),
     customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
-
-    @case_heading(c)
-
     <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large mt-0">This case has been suspended</h2>
-
+        <div class="column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="heading-large mt-0">@messages("case.suspended.header", c.application.goodsName)</h1>
             @days_elapsed_paused(c)
+            </div>
 
-            <h3 class="heading-medium mt-0">Next steps</h3>
-
-            <p>Go to <a id="my-cases-link" href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a>
-
+            @confirmation_next_steps(
+                linkText = messages("back.my_cases"),
+                backHref = MyCasesController.displayMyCases()
+            )
         </div>
     </div>
 

@@ -22,4 +22,4 @@
 
 @(c: Case)(implicit appConfig: AppConfig, messages: Messages)
 
-<p>@messages("case.referred.elapsed_day_count") @days_elapsed(c.daysElapsed) </p>
+<div class="govuk-panel__body">@messages("case.referred.elapsed_day_count") <br>@days_elapsed(c.daysElapsed)</div>
