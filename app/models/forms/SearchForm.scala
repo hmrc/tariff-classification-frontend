@@ -27,7 +27,8 @@ object SearchForm {
 
   val form: Form[Search] = Form(
     mapping(
-      "trader_name"      -> optional[String](text),
+      "case_details"     -> optional[String](text),
+      "case_source"      -> optional[String](text),
       "commodity_code"   -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
       "decision_details" -> optional[String](text),
       "status"           -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
@@ -40,7 +41,8 @@ object SearchForm {
 
   val formWithoutValidation: Form[Search] = Form(
     mapping(
-      "trader_name"      -> optional[String](text),
+      "case_details"     -> optional[String](text),
+      "case_source"      -> optional[String](text),
       "commodity_code"   -> optional[String](text),
       "decision_details" -> optional[String](text),
       "status"           -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
