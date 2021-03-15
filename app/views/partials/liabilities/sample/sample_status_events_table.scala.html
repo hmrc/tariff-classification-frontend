@@ -69,6 +69,16 @@
                                 useTabIndex = Some(startAtTabIndex + (index * 2))
                             )
                         }
+                        case EventType.SAMPLE_SEND_CHANGE => {
+                            val body = event.details.asInstanceOf[SampleSendChange]
+                            val sampleType = "Who is sending sample"
+                            progressive_disclosure(
+                                id = s"sample-send-events-row-$index",
+                                summary = s"$sampleType changed from ${SampleSend.format(body.from).toLowerCase} to ${SampleSend.format(body.to).toLowerCase}",
+                                body = body.comment.map(Html(_)),
+                                useTabIndex = Some(startAtTabIndex + (index * 2))
+                            )
+                        }
                         case _ => {
                             throw new IllegalArgumentException(s"Unhandled Event Type [${event.details.`type`}]")
                         }
