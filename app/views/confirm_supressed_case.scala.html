@@ -16,30 +16,31 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import controllers.routes.QueuesController
+@import controllers.v2.routes.GatewayCasesController
 @import models.Case
 @import views.html.includes.main
 @import views.html.partials._
 @import models.viewmodels.NoTabSelected
+@import views.html.v2.confirmation_next_steps
+
+
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.suppressed")),
-    customPrimaryNavTab = NoTabSelected) {
+@main(bodyClasses = None, customTitle = Some(messages("case.suppress.title"))) {
+<div class="grid-row column-two-thirds">
 
-    @back_link()
+    <div class="govuk-panel govuk-panel--confirmation">
 
-    @case_heading(c)
+        <h1 class="govuk-panel__title">@messages("suppress_case.confirm.header", c.application.goodsName)</h1>
+        <div class="govuk-panel__body">@Html(messages("case_status.confirm.subheader", "Suppressed"))</div>
 
-    <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("case.suppress.title")</h2>
 
-            <h3 class="heading-medium mt-45">@messages("case.suppress.next")</h3>
-
-            <p>@messages("case.suppress.link") <a href="@QueuesController.queue("gateway")">@messages("cases.menu.gateway-cases")</a>.</p>
-
-        </div>
     </div>
 
-}
+    @confirmation_next_steps(
+    linkText = messages("back.gateway"),
+    backHref = GatewayCasesController.displayGatewayCases()
+    )
+    }
+</div>

@@ -22,6 +22,7 @@
 @import views.html.includes.main
 @import views.html.partials._
 @import controllers.v2.routes.MyCasesController
+@import controllers.v2.routes.AllOpenCasesController
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -36,7 +37,7 @@ customPrimaryNavTab = NoTabSelected) {
 
         @confirmation_next_steps(
             linkText = messages("back.my_cases"),
-            backHref = MyCasesController.displayMyCases()
+            backHref = AllOpenCasesController.displayAllOpenCases()
         )
     </div>
 }

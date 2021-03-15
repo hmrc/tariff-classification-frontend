@@ -40,7 +40,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Complete this case")
+      response.body   should include("Are you sure you want to complete the Laptop case?")
       response.body   should not include "disabled=disabled"
     }
 
