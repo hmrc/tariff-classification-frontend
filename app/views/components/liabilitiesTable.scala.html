@@ -28,33 +28,33 @@
   <caption class="visually-hidden">@messages(captionMessage)</caption>
   <thead class="govuk-table__head">
     <tr id="@{liabilityTab.tabMessageKey}-details" class="grid-row mb-2">
-     <th id="@{liabilityTab.tabMessageKey}-reference" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-reference" class="bold w-0" scope="col">
      Reference
      </th>
-     <th id="@{liabilityTab.tabMessageKey}-goods" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-goods" class="bold w-0" scope="col">
       Goods
      </th>
-     <th id="@{liabilityTab.tabMessageKey}-trader" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-trader" class="bold w-0" scope="col">
       Trader
      </th>
-     <th id="@{liabilityTab.tabMessageKey}-type" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-type" class="bold w-0" scope="col">
       Type
      </th>
-     <th id="@{liabilityTab.tabMessageKey}-elapsed-days" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
       Elapsed days
      </th>
      @if(assignmentType == "applicationTab.referredByMe") {
-     <th id="@{liabilityTab.tabMessageKey}-refer-days" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-refer-days" class="bold w-0" scope="col">
       Refer days
      </th>
      }
      @if(assignmentType == "applicationTab.completedByMe") {
-     <th id="@{liabilityTab.tabMessageKey}-completed-date" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-completed-date" class="bold w-0" scope="col">
       Completed date
      </th>
      }
      @if(assignmentType != "applicationTab.completedByMe") {
-     <th id="@{liabilityTab.tabMessageKey}-status" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-status" class="bold w-0" scope="col">
       Status
      </th>
      }

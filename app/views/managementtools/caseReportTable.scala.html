@@ -32,7 +32,7 @@
   <thead class="govuk-table__head">
     <tr id="@{id}-details" class="grid-row mb-2">
       @for(field <- report.fields.toSeq) {
-        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0">
+        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0" scope="col">
           @messages(s"reporting.field.${field.fieldName}")
         </th>
       }

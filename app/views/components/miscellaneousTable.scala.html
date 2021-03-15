@@ -28,30 +28,30 @@
   <caption class="visually-hidden">@messages(captionMessage)</caption>
   <thead class="govuk-table__head">
     <tr id="@{miscellaneousTab.tabMessageKey}-details" class="grid-row mb-2">
-     <th id="@{miscellaneousTab.tabMessageKey}-reference" class="bold w-0">
+     <th id="@{miscellaneousTab.tabMessageKey}-reference" class="bold w-0" scope="col">
      Reference
      </th>
-     <th id="@{miscellaneousTab.tabMessageKey}-subject" class="bold w-0">
+     <th id="@{miscellaneousTab.tabMessageKey}-subject" class="bold w-0" scope="col">
       Subject
      </th>
-     <th id="@{miscellaneousTab.tabMessageKey}-type" class="bold w-0">
+     <th id="@{miscellaneousTab.tabMessageKey}-type" class="bold w-0" scope="col">
       Type
      </th>
-     <th id="@{miscellaneousTab.tabMessageKey}-elapsed-days" class="bold w-0">
+     <th id="@{miscellaneousTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
       Elapsed days
      </th>
      @if(assignmentType == "applicationTab.completedByMe") {
-     <th id="@{miscellaneousTab.tabMessageKey}-completed-date" class="bold w-0">
+     <th id="@{miscellaneousTab.tabMessageKey}-completed-date" class="bold w-0" scope="col">
       Completed date
      </th>
      }
      @if(assignmentType == "applicationTab.referredByMe") {
-     <th id="@{miscellaneousTab.tabMessageKey}-refer-days" class="bold w-0">
+     <th id="@{miscellaneousTab.tabMessageKey}-refer-days" class="bold w-0" scope="col">
       Refer days
      </th>
      }
      @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway" || assignmentType == "applicationTab.assignedToMe") {
-     <th id="@{miscellaneousTab.tabMessageKey}-status" class="bold w-0">
+     <th id="@{miscellaneousTab.tabMessageKey}-status" class="bold w-0" scope="col">
       Status
      </th>
      }
