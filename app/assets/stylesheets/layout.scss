@@ -591,6 +591,12 @@ table tbody tr th {
 .word-break {
     word-break: break-word;
 }
+/* tables */
+.govuk-table__head {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
 .govuk-panel__body {
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale;
