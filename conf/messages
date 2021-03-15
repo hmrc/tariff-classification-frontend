@@ -493,8 +493,8 @@ page.title.move.case=Move this case back to a team
 page.title.case.moved=This case has been moved to this team
 page.title.suppress.case=Change case status to: Suppressed
 page.title.case.suppressed=Case suppressed
-page.title.complete.case=Complete this case
-page.title.case.completed=Case completed
+page.title.complete.case=Are you sure you want to complete this case?
+page.title.case.completed=This case has been completed
 page.title.cancel.ruling=Cancel the ruling
 page.title.ruling.cancelled=Ruling cancelled
 page.title.remove.attachment=Remove attachment
@@ -1139,12 +1139,16 @@ release_case.released_dynamic_message = The {0}  case has been released to the {
 create_case.dynamic_message = The {0} case has been created
 create_case.message = The case has not been released to a team
 release_case.released_dynamic_message.atar = The {0}  case has been released to the {1} team
+complete_case.completed.header = The {0} {1} case has been completed
+complete_case.completed.subheader = <div class="govuk-panel__body">A ruling certificate has been created with an expiry date of<br><strong>{0}</strong></div>
+complete_case.areYouSure = Are you sure you want to complete the {0} case?
+complete-case.form.state.required = Select yes if you want to complete this case
 back.home = Back to home
 back.gateway = Back to Gateway cases
 back.my_cases = Back to open ATaR cases
 back.user.keywords = Go back to keywords
 
-
+back.open_cases.caseType = Back to open {0} cases
 misc.create_misc.description.heading=Short case description
 misc.create_misc.contact.name.heading=Case contact name
 misc.create_misc.type.heading=Choose a case type
@@ -1244,7 +1248,6 @@ users.user.noCases=There are no {0} cases assigned to this user.
 users.user.editUserTeams.heading=Assign {0} to a team or teams
 
 take-ownership.form.state.required=Select yes if you want to take ownership of this case
-
 users.user.delete.header=Delete {0}
 users.user.delete.casesMustBeMoved=Cases must be moved before {0} can be deleted
 users.user.delete.casesMustBeMoved.message=This user's active cases must be moved to another user or team before they can be deleted.

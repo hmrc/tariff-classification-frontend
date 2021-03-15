@@ -85,7 +85,7 @@ sealed trait Application {
       case ApplicationType.ATAR           => "ATaR"
       case ApplicationType.LIABILITY      => "Liability"
       case ApplicationType.CORRESPONDENCE => "Correspondence"
-      case ApplicationType.MISCELLANEOUS  => "Misc"
+      case ApplicationType.MISCELLANEOUS  => "Miscellaneous"
     }
 
   def contactEmail: Option[String] =
