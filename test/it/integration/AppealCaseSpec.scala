@@ -62,7 +62,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
         get(
           urlEqualTo(
             "/events?case_reference=1" +
-              "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE" +
+              "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&type=SAMPLE_SEND_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(

@@ -26,7 +26,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           urlEqualTo(
             "/events?case_reference=1" +
               "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE" +
-              s"&page=1&page_size=${Pagination.unlimited}"
+              s"&type=SAMPLE_SEND_CHANGE&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
             aResponse()
