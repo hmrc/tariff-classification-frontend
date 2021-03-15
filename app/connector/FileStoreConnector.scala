@@ -17,7 +17,7 @@
 package connector
 
 import akka.stream.{IOResult, Materializer}
-import akka.stream.scaladsl.{FileIO, Source, Sink}
+import akka.stream.scaladsl.{FileIO, Sink, Source}
 import akka.util.ByteString
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
@@ -25,7 +25,8 @@ import config.AppConfig
 import javax.inject.Singleton
 import metrics.HasMetrics
 import models._
-import models.response.FileMetadata
+import models.request.FileStoreInitiateRequest
+import models.response._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData
@@ -76,6 +77,12 @@ class FileStoreConnector @Inject() (
       http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId")
     }
 
+  def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
+    withMetricsTimerAsync("initiate-file-upload") { _ =>
+      http
+        .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](s"${appConfig.fileStoreUrl}/file/initiate", request)
+    }
+
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileMetadata] =
     withMetricsTimerAsync("upload-file") { _ =>
       val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
@@ -100,7 +107,8 @@ class FileStoreConnector @Inject() (
 
   def downloadFile(url: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
     withMetricsTimerAsync("download-file") { _ =>
-      val fileStoreResponse = ws.url(url)
+      val fileStoreResponse = ws
+        .url(url)
         .withHttpHeaders(hc.headers: _*)
         .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .get()
@@ -109,7 +117,7 @@ class FileStoreConnector @Inject() (
         if (response.status / 100 == 2)
           Future.successful(Some(response.bodyAsSource))
         else if (response.status / 100 > 4)
-          Future.failed(new RuntimeException(s"Unable to retrieve file ${url} from filestore"))
+          Future.failed(new RuntimeException(s"Unable to retrieve file $url from filestore"))
         else
           Future.successful(None)
       }
