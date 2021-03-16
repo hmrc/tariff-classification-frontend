@@ -27,14 +27,16 @@
 @(c: Case, form: Form[String], queues: Seq[Queue], actualQueue: Option[Queue], originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.move.case")), customPrimaryNavTab = NoTabSelected) {
-
+<div class="grid-row">
+    <div class="column-full">
 <div class="mt-15">@back_link()</div>
 
     @error_summary(form.errors)
+    </div>
 <div class="column-two-thirds pl-0">
     @case_heading(c, messageKey = Some("release_case.header"))
+</div>
 
-    <div class="grid-row">
         <div class="column-full">
             <p> @Html(messages("case.change_status.move_back_to_team.description", HtmlFormat.escape(actualQueue.map(_.name).getOrElse("")))) </p>
 
@@ -50,5 +52,5 @@
 
         </div>
     </div>
-</div>
+
 }
