@@ -489,7 +489,7 @@ page.title.case.released=This case has been released to the team
 page.title.case.mis-created=Miscellaneous case created for this team
 page.title.create.case=Create this case for a team
 page.title.take.ownership=Do you want to take ownership of this case?
-page.title.move.case=Move this case back to a team
+page.title.move.case=Choose a team to move this case to
 page.title.case.moved=This case has been moved to this team
 page.title.suppress.case=Change case status to: Suppressed
 page.title.case.suppressed=Case suppressed
@@ -1130,6 +1130,7 @@ correspondence.create_correspondence.source.hint = For example: a trader, port o
 correspondence.create_correspondence.contactEmail.heading = Case contact email address
 correspondence.create_correspondence.confirm-button = Create case
 release_case.header = Choose a team to release the {0} case to
+move_case.header = Choose a team to move the {0} case to
 release_case.question.header = Do you want to release this new case to a team now?
 release_case.question.error=Select yes if you want to release this new case to a team
 
