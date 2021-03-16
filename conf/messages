@@ -220,6 +220,7 @@ case.sample.return.change-return-header=Should the sample be returned?
 case.sample.return.change-return-confirm=Continue
 case.sample.return.change-return-cancel=Cancel this action
 case.sample.return.none-selected=Select a sample return
+case.sample.sender.who-sending=Who is sending the {0} sample?
 case.liability.sending.sample.change-return-confirm=Continue
 case.liability.sending.sample.change-return-cancel=Cancel this action
 case.liability.sending.sample.change-return-header=Is a sample being sent?
