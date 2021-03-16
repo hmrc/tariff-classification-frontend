@@ -944,8 +944,9 @@ case.v2.correspondence.case-details.case_created=Case created
 case.v2.correspondence.case-details.boards_file_number=Boards file number
 case.v2.correspondence.case-details.similar_cases=Similar cases
 
-case.v2.correspondence.case-details-edit-title=Edit case details
-case.v2.correspondence.case-details-edit-summary=Summary
+case.v2.correspondence.case-details-edit-title=Edit the details for this case
+case.v2.correspondence.case-details-edit-header=Edit the details for the {0} case
+case.v2.correspondence.case-details-edit-summary=Case description
 case.v2.correspondence.case-details-edit-description=Detailed description
 case.v2.correspondence.case-details-edit-boards-file-number=Boards file number
 case.v2.correspondence.case-details-edit-similar-cases=Similar cases

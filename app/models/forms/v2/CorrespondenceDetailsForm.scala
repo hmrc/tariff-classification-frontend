@@ -34,7 +34,7 @@ object CorrespondenceDetailsForm extends Constraints {
         Option[String],
         Option[String]
       ](
-        "summary"             -> textNonEmpty("Enter a summary"),
+        "summary"             -> textNonEmpty("Enter a case description"),
         "detailedDescription" -> text,
         "boardsFileNumber"    -> optional(text),
         "relatedBTIReference" -> optional(text)
@@ -45,7 +45,7 @@ object CorrespondenceDetailsForm extends Constraints {
     String,
     String,
     Option[String],
-      Option[String]
+    Option[String]
   ) => Case = {
     case (
         summary,
