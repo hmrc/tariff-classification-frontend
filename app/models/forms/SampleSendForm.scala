@@ -25,13 +25,13 @@ import play.api.data.{Form, Forms, Mapping}
 
 object SampleSendForm {
 
-  private def oneOf(values: SampleSend.ValueSet): Constraint[String] = Constraint("constraints.sample-return") {
+  private def oneOf(values: SampleSend.ValueSet): Constraint[String] = Constraint("constraints.sample-sender") {
     case s: String if SampleSend.values.exists(_.toString == s) => Valid
     case _                                                        => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
   }
 
   private val mapping: Mapping[Option[SampleSend]] = Forms.mapping[Option[SampleSend], String](
-    "return" -> fieldNonEmpty("error.empty.sample.return").verifying(emptyOr(oneOf(SampleSend.values)): _*)
+    "sample-sender" -> fieldNonEmpty("error.empty.sample.sender").verifying(emptyOr(oneOf(SampleSend.values)): _*)
   )(v => SampleSend.values.find(_.toString == v))(_.map(_.toString))
 
   val form: Form[Option[SampleSend]] = Form[Option[SampleSend]](mapping)

@@ -63,13 +63,8 @@ class SampleWhoSendingController @Inject()(
     }
 
   override protected def update(c: Case, sampleSender: Option[SampleSend], operator: Operator)(
-    implicit hc: HeaderCarrier): Future[Case] = {
-    println("hiiii ")
-    println("hiiii ")
-    println("hiiii ")
-    println("hiiii ")
+    implicit hc: HeaderCarrier): Future[Case] =
     caseService.updateWhoSendSample(c, sampleSender, operator)
-  }
 
   override protected def onSuccessRedirect(reference: String): Call =
     controllers.routes.CaseController.sampleDetails(reference)
