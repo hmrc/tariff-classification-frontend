@@ -19,6 +19,8 @@
 @import models.response.ScanStatus
 @import models.viewmodels.atar.AttachmentsTabViewModel
 @import views.html.partials.attachment_atar
+@import controllers.v2.routes.AttachmentsController
+
 
 @(id: String,
   attachments: AttachmentsTabViewModel,
@@ -75,16 +77,16 @@
                         }}
                         }
                     </td>
-<!--                              TODO: uncomment once the functionality  is done-->
-<!--                            @if(request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {-->
-<!--                                <td id="@{id}-row-@{index}-edit-attachment-details" class="govuk-table__row">-->
-<!--                                    @*                                    TODO href*@-->
-<!--                                    <a id="@{id}-row-@{index}-edit-attachment-link" href="#">-->
-<!--                                        <span>@messages("case.attachment.edit.file.text")</span>-->
-<!--                                        <span class="visually-hidden">@messages("case.attachment.edit.file.hidden.text",file.fileName)</span>-->
-<!--                                    </a>-->
-<!--                                </td>-->
-<!--                            }-->
+                    @if(!attachments.caseReference.isEmpty
+                            && !file.operator.isEmpty
+                            && request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
+                        <td id="@{id}-row-@{index}-remove">
+                            <a id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(attachments.caseReference, file.id, file.fileName)">
+                                <span>@messages("case.attachment.remove.file.text")</span>
+                                <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName)</span>
+                            </a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
