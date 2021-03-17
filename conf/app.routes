@@ -138,7 +138,7 @@ GET         /cases/v2/:reference/liability                      controllers.v2.L
 GET         /cases/v2/:reference/liability/edit-details         controllers.v2.LiabilityController.editLiabilityDetails(reference: String)
 POST        /cases/v2/:reference/liability/edit-details         controllers.v2.LiabilityController.postLiabilityDetails(reference: String)
 
-GET         /cases/v2/:reference/attachments                    controllers.v2.AttachmentsController.handleUploadSuccess(reference: String, fileId: String)
+GET         /cases/v2/:reference/attachments                    controllers.CaseController.addAttachment(reference: String, fileId: String)
 GET         /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.removeAttachment(reference: String, fileId: String, fileName: String)
 POST        /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)
 

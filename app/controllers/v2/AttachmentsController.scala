@@ -16,34 +16,28 @@
 
 package controllers.v2
 
+import javax.inject.{Inject, Singleton}
+
 import akka.stream.Materializer
 import config.AppConfig
 import controllers.{RenderCaseAction, RequestActions}
 import models._
-import models.forms.{RemoveAttachmentForm, UploadAttachmentForm}
-import models.request.AuthenticatedCaseRequest
+import models.forms.RemoveAttachmentForm
 import models.viewmodels.CaseHeaderViewModel
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.Files.TemporaryFile
 import play.api.mvc._
 import service.CasesService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AttachmentsController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
-  liabilityController: LiabilityController,
-  atarController: AtarController,
-  correspondenceController: CorrespondenceController,
-  miscellaneousController: MiscellaneousController,
   remove_attachment: views.html.v2.remove_attachment,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
@@ -93,12 +87,5 @@ class AttachmentsController @Inject() (
           }
         )
 
-    }
-
-  def handleUploadSuccess(reference: String, fileId: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      caseService
-        .addAttachment(request.`case`, fileId, request.operator)
-        .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
     }
 }

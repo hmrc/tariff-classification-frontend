@@ -52,17 +52,18 @@ class MiscellaneousController @Inject() (
 
   def displayMiscellaneous(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
-      handleUploadErrorAndRender(uploadForm => renderView(fileId = uploadFileId, uploadForm = uploadForm))
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
     }
 
   def renderView(
-    fileId: String = UUID.randomUUID().toString,
+    fileId: Option[String]               = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    val miscellaneousCase: Case         = request.`case`
+    val miscellaneousCase: Case = request.`case`
+    val uploadFileId            = fileId.getOrElse(UUID.randomUUID().toString)
+
     val miscellaneousViewModel          = CaseViewModel.fromCase(miscellaneousCase, request.operator)
     val caseDetailsTab                  = DetailsViewModel.fromCase(miscellaneousCase)
     val messagesTab                     = MessagesTabViewModel.fromCase(miscellaneousCase)
@@ -76,9 +77,13 @@ class MiscellaneousController @Inject() (
     )
 
     val fileUploadSuccessRedirect =
-      appConfig.host + routes.AttachmentsController.handleUploadSuccess(miscellaneousCase.reference, fileId).path
+      appConfig.host + controllers.routes.CaseController.addAttachment(miscellaneousCase.reference, uploadFileId).path
+
     val fileUploadErrorRedirect =
-      appConfig.host + routes.MiscellaneousController.displayMiscellaneous(miscellaneousCase.reference, Some(fileId)).withFragment(Tab.ATTACHMENTS_TAB.name).path
+      appConfig.host + routes.MiscellaneousController
+        .displayMiscellaneous(miscellaneousCase.reference, Some(uploadFileId))
+        .withFragment(Tab.ATTACHMENTS_TAB.name)
+        .path
 
     for {
       attachmentsTab <- attachmentsTabViewModel
@@ -87,7 +92,7 @@ class MiscellaneousController @Inject() (
       sampleTab      <- miscellaneousSampleTabViewModel
       initiateResponse <- fileService.initiate(
                            FileStoreInitiateRequest(
-                             id              = Some(fileId),
+                             id              = Some(uploadFileId),
                              successRedirect = Some(fileUploadSuccessRedirect),
                              errorRedirect   = Some(fileUploadErrorRedirect),
                              maxFileSize     = appConfig.fileUploadMaxSize

@@ -59,10 +59,10 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
               s"&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(EventPayloads.pagedSampleEvents)
-          )
+          aResponse()
+            .withStatus(OK)
+            .withBody(EventPayloads.pagedSampleEvents)
+        )
       )
       stubFor(
         get(
@@ -75,10 +75,10 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
               s"&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(EventPayloads.pagedEvents)
-          )
+          aResponse()
+            .withStatus(OK)
+            .withBody(EventPayloads.pagedEvents)
+        )
       )
       stubFor(
         get(
@@ -90,6 +90,14 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
             .withStatus(OK)
             .withBody(KeywordsPayloads.pagedKeywords)
         )
+      )
+      stubFor(
+        post(urlEqualTo("/file/initiate"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
+          )
       )
 
       // When

@@ -222,4 +222,11 @@ class CaseController @Inject() (
             .flashing(success("notification.success.keywords.remove"))
         }
       }
+
+  def addAttachment(reference: String, fileId: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      caseService
+        .addAttachment(request.`case`, fileId, request.operator)
+        .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
+    }
 }

@@ -25,7 +25,6 @@ import models.forms._
 import models.forms.v2.LiabilityDetailsForm
 import models._
 import models.request._
-import models.response.FileStoreInitiateResponse
 import models.viewmodels._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -58,27 +57,32 @@ class LiabilityController @Inject() (
 
   def displayLiability(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
-      handleUploadErrorAndRender(uploadForm => renderView(fileId = uploadFileId, uploadForm = uploadForm))
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
     }
 
   def renderView(
-    fileId: String                       = UUID.randomUUID().toString,
+    fileId: Option[String]               = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form,
     keywordForm: Form[String]            = KeywordForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val liabilityCase: Case = request.`case`
-    val liabilityViewModel  = CaseViewModel.fromCase(liabilityCase, request.operator)
-    val rulingViewModel     = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
-    val appealTabViewModel  = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
-    val ownCase             = liabilityCase.assignee.exists(_.id == request.operator.id)
-    val activeNavTab        = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(liabilityCase.status, ownCase)
+    val uploadFileId        = fileId.getOrElse(UUID.randomUUID().toString)
+
+    val liabilityViewModel = CaseViewModel.fromCase(liabilityCase, request.operator)
+    val rulingViewModel    = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
+    val appealTabViewModel = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
+    val ownCase            = liabilityCase.assignee.exists(_.id == request.operator.id)
+    val activeNavTab       = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(liabilityCase.status, ownCase)
 
     val fileUploadSuccessRedirect =
-      appConfig.host + routes.AttachmentsController.handleUploadSuccess(liabilityCase.reference, fileId).path
+      appConfig.host + controllers.routes.CaseController.addAttachment(liabilityCase.reference, uploadFileId).path
+
     val fileUploadErrorRedirect =
-      appConfig.host + routes.LiabilityController.displayLiability(liabilityCase.reference, Some(fileId)).withFragment(Tab.ATTACHMENTS_TAB.name).path
+      appConfig.host + routes.LiabilityController
+        .displayLiability(liabilityCase.reference, Some(uploadFileId))
+        .withFragment(Tab.ATTACHMENTS_TAB.name)
+        .path
 
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
@@ -91,7 +95,7 @@ class LiabilityController @Inject() (
                     )
       initiateResponse <- fileService.initiate(
                            FileStoreInitiateRequest(
-                             id              = Some(fileId),
+                             id              = Some(uploadFileId),
                              successRedirect = Some(fileUploadSuccessRedirect),
                              errorRedirect   = Some(fileUploadErrorRedirect),
                              maxFileSize     = appConfig.fileUploadMaxSize

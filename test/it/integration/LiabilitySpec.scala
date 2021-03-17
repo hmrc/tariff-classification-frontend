@@ -68,7 +68,15 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
             .withStatus(OK)
             .withBody(KeywordsPayloads.pagedKeywords)
         )
-        )
+      )
+      stubFor(
+        post(urlEqualTo("/file/initiate"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
+          )
+      )
 
       // When
       val response = await(ws.url(s"$baseUrl/cases/v2/1/liability").get())

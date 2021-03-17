@@ -16,9 +16,10 @@
 
 package views.v2
 
-import models.forms._
-import models.viewmodels._
 import models._
+import models.forms._
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import models.viewmodels._
 import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc.AnyContentAsEmpty
@@ -48,6 +49,15 @@ class LiabilityViewSpec extends ViewSpec {
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
+  val initiateResponse = FileStoreInitiateResponse(
+    id = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
+
   def keywordForm: Form[String] = KeywordForm.form
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
@@ -75,6 +85,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -95,6 +106,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -115,6 +127,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -135,6 +148,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -155,6 +169,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -175,6 +190,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -195,6 +211,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -216,6 +233,7 @@ class LiabilityViewSpec extends ViewSpec {
           Cases.attachmentsTabViewModel
             .map(_.copy(attachments = Seq(Cases.storedAttachment), letter = Some(Cases.letterOfAuthority))),
           UploadAttachmentForm.form,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -236,6 +254,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -256,6 +275,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -277,6 +297,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -300,6 +321,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -322,6 +344,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -350,6 +373,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel

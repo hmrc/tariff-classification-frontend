@@ -23,7 +23,6 @@ import config.AppConfig
 import controllers.{RequestActions, Tab}
 import models.forms._
 import models.request._
-import models.response.FileStoreInitiateResponse
 import models.viewmodels.atar._
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
 import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, MessagesTabViewModel, MyCasesTab, OpenCasesTab, PrimaryNavigationViewModel, SampleStatusTabViewModel}
@@ -53,17 +52,18 @@ class CorrespondenceController @Inject() (
 
   def displayCorrespondence(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
-      handleUploadErrorAndRender(uploadForm => renderView(fileId = uploadFileId, uploadForm = uploadForm))
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
     }
 
   def renderView(
-    fileId: String = UUID.randomUUID().toString,
+    fileId: Option[String]               = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    val correspondenceCase: Case         = request.`case`
+    val correspondenceCase: Case = request.`case`
+    val uploadFileId             = fileId.getOrElse(UUID.randomUUID().toString)
+
     val correspondenceViewModel          = CaseViewModel.fromCase(correspondenceCase, request.operator)
     val caseDetailsTab                   = CaseDetailsViewModel.fromCase(correspondenceCase)
     val contactDetailsTab                = ContactDetailsTabViewModel.fromCase(correspondenceCase)
@@ -78,9 +78,13 @@ class CorrespondenceController @Inject() (
     )
 
     val fileUploadSuccessRedirect =
-      appConfig.host + routes.AttachmentsController.handleUploadSuccess(correspondenceCase.reference, fileId).path
+      appConfig.host + controllers.routes.CaseController.addAttachment(correspondenceCase.reference, uploadFileId).path
+
     val fileUploadErrorRedirect =
-      appConfig.host + routes.CorrespondenceController.displayCorrespondence(correspondenceCase.reference, Some(fileId)).withFragment(Tab.ATTACHMENTS_TAB.name).path
+      appConfig.host + routes.CorrespondenceController
+        .displayCorrespondence(correspondenceCase.reference, Some(uploadFileId))
+        .withFragment(Tab.ATTACHMENTS_TAB.name)
+        .path
 
     for {
       attachmentsTab <- attachmentsTabViewModel
@@ -89,7 +93,7 @@ class CorrespondenceController @Inject() (
       sampleTab      <- correspondenceSampleTabViewModel
       initiateResponse <- fileService.initiate(
                            FileStoreInitiateRequest(
-                             id              = Some(fileId),
+                             id              = Some(uploadFileId),
                              successRedirect = Some(fileUploadSuccessRedirect),
                              errorRedirect   = Some(fileUploadErrorRedirect),
                              maxFileSize     = appConfig.fileUploadMaxSize

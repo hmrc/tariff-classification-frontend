@@ -26,7 +26,6 @@ import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, 
 import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
 import models.viewmodels.atar._
 import models.request._
-import models.response.UploadError
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -35,7 +34,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.NonFatal
 
 @Singleton
 class AtarController @Inject() (
@@ -56,16 +54,16 @@ class AtarController @Inject() (
 
   def displayAtar(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
-      handleUploadErrorAndRender(uploadForm => renderView(fileId = uploadFileId, uploadForm = uploadForm))
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
     }
 
   def renderView(
-    fileId: String                       = UUID.randomUUID().toString,
+    fileId: Option[String]               = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     keywordForm: Form[String]            = KeywordForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+    val uploadFileId   = fileId.getOrElse(UUID.randomUUID().toString)
     val atarCase: Case = request.`case`
     val atarViewModel  = CaseViewModel.fromCase(atarCase, request.operator)
     val countryNames   = countriesService.getAllCountriesById.mapValues(_.countryName)
@@ -86,9 +84,13 @@ class AtarController @Inject() (
     )
 
     val fileUploadSuccessRedirect =
-      appConfig.host + routes.AttachmentsController.handleUploadSuccess(atarCase.reference, fileId).path
+      appConfig.host + controllers.routes.CaseController.addAttachment(atarCase.reference, uploadFileId).path
+
     val fileUploadErrorRedirect =
-      appConfig.host + routes.AtarController.displayAtar(atarCase.reference, Some(fileId)).withFragment(Tab.ATTACHMENTS_TAB.name).path
+      appConfig.host + routes.AtarController
+        .displayAtar(atarCase.reference, Some(uploadFileId))
+        .withFragment(Tab.ATTACHMENTS_TAB.name)
+        .path
 
     for {
       sampleTab      <- sampleTabViewModel
@@ -98,7 +100,7 @@ class AtarController @Inject() (
       attachments    <- storedAttachments
       initiateResponse <- fileService.initiate(
                            FileStoreInitiateRequest(
-                             id              = Some(fileId),
+                             id              = Some(uploadFileId),
                              successRedirect = Some(fileUploadSuccessRedirect),
                              errorRedirect   = Some(fileUploadErrorRedirect),
                              maxFileSize     = appConfig.fileUploadMaxSize
@@ -141,7 +143,7 @@ class AtarController @Inject() (
       queues <- queuesService.getAll
     } yield ActivityViewModel.fromCase(atarCase, events, queues)
 
-  private def getKeywordsTab(atarCase: Case)(implicit hc: HeaderCarrier): Future[KeywordsTabViewModel] =
+  private def getKeywordsTab(atarCase: Case): Future[KeywordsTabViewModel] =
     keywordsService.findAll.map { globalKeywords =>
       KeywordsTabViewModel.fromCase(atarCase, globalKeywords.map(_.name))
     }

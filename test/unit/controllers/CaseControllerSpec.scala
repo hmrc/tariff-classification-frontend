@@ -344,7 +344,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
 
       when(
-        liabilityController.renderView(any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+        liabilityController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
           any[AuthenticatedCaseRequest[_]]
         )
       ) thenReturn Future.successful(Results.Ok("error"))
@@ -362,7 +362,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
 
       when(
-        atarController.renderView(any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+        atarController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
           any[AuthenticatedCaseRequest[_]]
         )
       ) thenReturn Future.successful(Results.Ok("error"))
@@ -407,7 +407,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
 
       when(
-        liabilityController.renderView(any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+        liabilityController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
           any[AuthenticatedCaseRequest[_]]
         )
       ) thenReturn Future.successful(Results.Ok("error"))
@@ -509,7 +509,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq  = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessage))
 
       when(
-        correspondenceController.renderView(any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
+        correspondenceController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
           any[AuthenticatedCaseRequest[_]]
         )
       ) thenReturn Future.successful(Results.Ok("error"))

@@ -18,6 +18,7 @@ package views.v2
 
 import models._
 import models.forms._
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels._
 import models.viewmodels.atar.AttachmentsTabViewModel
 import models.viewmodels.miscellaneous.DetailsViewModel
@@ -78,6 +79,15 @@ class MiscellaneousViewSpec extends ViewSpec {
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
+  val initiateResponse = FileStoreInitiateResponse(
+    id = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
+
   def keywordForm: Form[String] = KeywordForm.form
 
   val emptyKeywordsTabViewModel: KeywordsTabViewModel = KeywordsTabViewModel("", Set.empty[String], Nil)
@@ -95,6 +105,7 @@ class MiscellaneousViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -114,6 +125,7 @@ class MiscellaneousViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -133,6 +145,7 @@ class MiscellaneousViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -152,6 +165,7 @@ class MiscellaneousViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -171,6 +185,7 @@ class MiscellaneousViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -190,6 +205,7 @@ class MiscellaneousViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty

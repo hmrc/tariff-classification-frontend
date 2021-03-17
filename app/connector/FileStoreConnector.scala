@@ -17,7 +17,7 @@
 package connector
 
 import akka.stream.{IOResult, Materializer}
-import akka.stream.scaladsl.{FileIO, Sink, Source}
+import akka.stream.scaladsl.{FileIO, Source}
 import akka.util.ByteString
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
