@@ -105,7 +105,7 @@ class BindingTariffClassificationConnector @Inject() (
     queue: Seq[Queue],
     pagination: Pagination,
     types: Set[ApplicationType] = ApplicationType.values,
-    statuses: Set[CaseStatus] = CaseStatus.openStatuses,
+    statuses: Set[CaseStatus]   = CaseStatus.openStatuses,
     assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
@@ -226,7 +226,8 @@ class BindingTariffClassificationConnector @Inject() (
       )
 
       val optParams = Seq(
-        search.traderName.map(qb.unbind("trader_name", _)),
+        search.caseDetails.map(qb.unbind("case_details", _)),
+        search.caseSource.map(qb.unbind("case_source", _)),
         search.commodityCode.map(qb.unbind("commodity_code", _)),
         search.decisionDetails.map(qb.unbind("decision_details", _)),
         search.status.map(_.map(s => qb.unbind("status", s.toString)).mkString("&")),

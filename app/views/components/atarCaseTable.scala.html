@@ -22,25 +22,31 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
 
-@(caseTab : CasesTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(caseTab : CasesTab, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="@{caseTab.tabMessageKey}-table">
-    <tbody>
+    <caption class="visually-hidden">@messages(captionMessage)</caption>
+    <thead class="govuk-table__head">
         <tr id="@{caseTab.tabMessageKey}-details" class="grid-row mb-2">
-            <th id="@{caseTab.tabMessageKey}-reference" class="bold w-0">Reference</th>
-            <th id="@{caseTab.tabMessageKey}-goods" class="bold w-0">Goods</th>
-            <th id="@{caseTab.tabMessageKey}-trader" class="bold w-0">Trader</th>
-            <th id="@{caseTab.tabMessageKey}-elapsed-days" class="bold w-0">Elapsed days</th>
-            <th id="@{caseTab.tabMessageKey}-status" class="bold w-0">Status</th>
+            <th id="@{caseTab.tabMessageKey}-reference" class="bold w-0" scope="col">Reference</th>
+            <th id="@{caseTab.tabMessageKey}-goods" class="bold w-0" scope="col">Goods</th>
+            <th id="@{caseTab.tabMessageKey}-trader" class="bold w-0" scope="col">Trader</th>
+            <th id="@{caseTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">Elapsed days</th>
+            <th id="@{caseTab.tabMessageKey}-status" class="bold w-0" scope="col">Status</th>
         </tr>
-
+    </thead>
+    <tbody>
         @for((result, index) <- caseTab.searchResult.results.zipWithIndex) {
             @defining(result.application.asATAR) { atar =>
                 <tr id="@{caseTab.tabMessageKey}-details-@index">
                     <td id="@{caseTab.tabMessageKey}-reference-@index">
                         @if(result.queueId.isDefined && !result.assignee.map(_.id).contains(request.operator.id)) {
-                            <a href="@AssignCaseController.get(result.reference)">@result.reference</a>
+                            <a href="@AssignCaseController.get(result.reference)">
+                                <span aria-hidden="true">@result.reference</span>
+                                <span class="visually-hidden">case reference @result.reference</span>
+                            </a>
                         } else {
+                        <span class="visually-hidden">case reference @result.reference</span>
                             <a href="@CaseController.get(result.reference)">@result.reference</a>
                         }
                     </td>

@@ -29,7 +29,8 @@
         </div>
     } else {
         <a id="@{id}-file" href="@file.url" target="_blank">
-            @name.getOrElse(file.fileName)
+            <span aria-hidden="true">@name.getOrElse(file.fileName)</span>
+            <span class="visually-hidden">view attached file @name.getOrElse(file.fileName)</span>
         </a>
     }
 } else {

@@ -28,12 +28,13 @@
         customErrorMessage : Option[String] = None,
         customGroupId : Option[String] = None,
         contentHtml : Option[Html] = None,
-        customOtherOptions: Seq[RadioOption] = Seq()
+        customOtherOptions: Seq[RadioOption] = Seq(),
+        ariaDescribedBy: Option[String] = None
 )(implicit messages: Messages)
 
 <div class="form-group @if(field.hasErrors){form-group-error}"
     @{customGroupId.map(x => s"id=$x").getOrElse(s"id=${field.id}")}>
-    <fieldset>
+    <fieldset @{ariaDescribedBy.map(aria => s"aria-describedby=$aria")}>
 
             <legend>
                 <span class="@labelClass">@label</span>

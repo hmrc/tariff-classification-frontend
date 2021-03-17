@@ -32,15 +32,15 @@
   <thead class="govuk-table__head">
     <tr id="@{id}-details" class="grid-row mb-2">
       @for(groupBy <- report.groupBy.toSeq) {
-        <th scope="col" id="@{id}-@{groupBy.fieldName}" class="bold w-0">
+        <th scope="col" id="@{id}-@{groupBy.fieldName}" class="bold w-0" scope="col">
           @messages(s"reporting.field.${groupBy.fieldName}")
         </th>
       }
-      <th scope="col" id="@{id}-count" class="bold w-0">
+      <th scope="col" id="@{id}-count" class="bold w-0" scope="col">
         @messages(s"reporting.field.count")
       </th>
       @for((field, index) <- report.maxFields.zipWithIndex) {
-        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0">
+        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0" scope="col">
           @messages(s"reporting.field.${field.fieldName}")
         </th>
       }
