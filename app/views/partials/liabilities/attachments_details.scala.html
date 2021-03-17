@@ -51,7 +51,7 @@
 
 @if(showUploadAttachments) {
     @helpers.form(
-        action = AttachmentsController.uploadAttachment(attachmentsTabViewModel.caseReference),
+        action = AttachmentsController.uploadAttachment(attachmentsTabViewModel.caseReference).withFragment(Tab.ATTACHMENTS_TAB.name),
         'enctype -> "multipart/form-data",
         'id -> "upload-files-form") {
 
