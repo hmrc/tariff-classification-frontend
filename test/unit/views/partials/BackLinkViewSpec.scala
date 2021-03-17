@@ -16,10 +16,6 @@
 
 package views.partials
 
-import controllers.SessionKeys._
-import models.Operator
-import models.request.AuthenticatedRequest
-import play.api.test.FakeRequest
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.back_link
@@ -29,91 +25,14 @@ class BackLinkViewSpec extends ViewSpec {
   "Back link view" should {
 
     "render back link with details from session" in {
-      // When
       val doc = view(back_link()(messages))
 
-      // Then
-      doc                             should containElementWithID("back-link")
+      doc should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
       doc.getElementById("back-link") should haveAttribute("href", "#")
-      doc.getElementById("back-link") should containText("Back")
+      doc.text() shouldBe messages("errors.all.back")
     }
 
-    "render back link with default details if session does not contain details" in {
-      // When
-      val doc = view(back_link())
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "#")
-      doc.getElementById("back-link") should containText(messages("errors.all.back"))
-    }
-
-    "render back link with default details if session does not contain search label but contains search url" in {
-      // When
-      val doc = view(back_link()(messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "#")
-      doc.text()                      shouldBe messages("errors.all.back")
-    }
-
-    "render back link with default details if session does not contain queues label but contains queues url" in {
-      // When
-      val doc = view(back_link()(messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "#")
-      doc.text()                      shouldBe messages("errors.all.back")
-    }
-
-    "render back link with details from session with default text for search result" in {
-      // When
-      val doc = view(back_link()(messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "#")
-      doc.text()                      shouldBe "Back"
-    }
-
-    "render back link with details from session with custom text for search result" in {
-      // When
-      val doc = view(back_link()(messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "#")
-      doc.text()                      shouldBe "Back"
-    }
-
-    "render back link with details from session with default text for queues result" in {
-      // When
-      val doc = view(back_link()(messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "#")
-      doc.text()                      shouldBe "Back"
-    }
-
-    "render back link with details from session with custom text for queues result" in {
-      // When
-      val doc = view(back_link()(messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "#")
-      doc.text()                      shouldBe "Back"
-    }
   }
+
 }
