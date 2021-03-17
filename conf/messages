@@ -364,7 +364,7 @@ release-case.submit.button=Save changes
 release-case-queue.submit.button=Continue
 release-case.submit.choice.button=Continue
 release-case.submit.cancel=Cancel
-reassign-case.submit.button=Move back to team
+reassign-case.submit.button=Save changes
 suppress_case.form.state.required=Select yes if you have contacted the applicant
 reject_case.form.state.required=Select yes if you have contacted the applicant
 refer_case.form.state.required=Select yes if you have contacted the applicant
@@ -488,7 +488,7 @@ page.title.case.released=This case has been released to the team
 page.title.case.mis-created=Miscellaneous case created for this team
 page.title.create.case=Create this case for a team
 page.title.take.ownership=Do you want to take ownership of this case?
-page.title.move.case=Move this case back to a team
+page.title.move.case=Choose a team to move this case to
 page.title.case.moved=This case has been moved to this team
 page.title.suppress.case=Change case status to: Suppressed
 page.title.case.suppressed=Case suppressed
@@ -1133,6 +1133,7 @@ correspondence.create_correspondence.source.hint = For example: a trader, port o
 correspondence.create_correspondence.contactEmail.heading = Case contact email address
 correspondence.create_correspondence.confirm-button = Create case
 release_case.header = Choose a team to release the {0} case to
+move_case.header = Choose a team to move the {0} case to
 release_case.question.header = Do you want to release this new case to a team now?
 release_case.question.error=Select yes if you want to release this new case to a team
 
@@ -1206,7 +1207,7 @@ case.ownership.assign_case.view_case=View the case
 case.ownership.assign_case.back=Back to my cases
 
 case.change_status.move_back_to_team.heading=Move this case back to a team
-case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team.
+case.change_status.move_back_to_team.description=This case is currently assigned to the <span id="previous-queue">{0}</span> team.
 
 notification.success.keywords.add = The keyword has been added to this case
 notification.success.keywords.remove = The keyword has been removed from this case
