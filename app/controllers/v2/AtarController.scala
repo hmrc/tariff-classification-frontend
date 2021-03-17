@@ -16,22 +16,26 @@
 
 package controllers.v2
 
+import java.util.UUID
+
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{RequestActions, Tab}
 import javax.inject.{Inject, Singleton}
 import models.{Case, EventType, NoPagination}
 import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, UploadAttachmentForm}
 import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
 import models.viewmodels.atar._
 import models.request._
+import models.response.UploadError
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import service._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
 class AtarController @Inject() (
@@ -47,12 +51,17 @@ class AtarController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
+    with UpscanErrorHandling
     with I18nSupport {
 
-  def displayAtar(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
+  def displayAtar(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = uploadFileId, uploadForm = uploadForm))
+    }
 
   def renderView(
+    fileId: String                       = UUID.randomUUID().toString,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     keywordForm: Form[String]            = KeywordForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
@@ -75,12 +84,27 @@ class AtarController @Inject() (
       atarCase.status,
       atarCase.assignee.exists(_.id == request.operator.id)
     )
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + routes.AttachmentsController.handleUploadSuccess(atarCase.reference, fileId).path
+    val fileUploadErrorRedirect =
+      appConfig.host + routes.AtarController.displayAtar(atarCase.reference, Some(fileId)).withFragment(Tab.ATTACHMENTS_TAB.name).path
+
     for {
       sampleTab      <- sampleTabViewModel
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
       keywordsTab    <- keywordsTabViewModel
       attachments    <- storedAttachments
+      initiateResponse <- fileService.initiate(
+                           FileStoreInitiateRequest(
+                             id              = Some(fileId),
+                             successRedirect = Some(fileUploadSuccessRedirect),
+                             errorRedirect   = Some(fileUploadErrorRedirect),
+                             maxFileSize     = appConfig.fileUploadMaxSize
+                           )
+                         )
+
     } yield Ok(
       atarView(
         atarViewModel,
@@ -89,6 +113,7 @@ class AtarController @Inject() (
         sampleTab,
         attachmentsTab,
         uploadForm,
+        initiateResponse,
         activityTab,
         activityForm,
         keywordsTab,

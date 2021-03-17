@@ -202,6 +202,8 @@ object JsonFormatters {
   implicit val formatResultGroup: OFormat[ResultGroup] = OFormat(readResultGroup, writeResultGroup)
 
   implicit val formatQueueResultGroup: OFormat[QueueResultGroup] = Json.format[QueueResultGroup]
+
+  implicit val formatCaseReferral: OFormat[CaseReferral] = Json.format[CaseReferral]
 }
 
 object EnumJson {

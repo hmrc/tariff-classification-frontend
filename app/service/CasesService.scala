@@ -166,13 +166,25 @@ class CasesService @Inject() (
     original: Case,
     referredTo: String,
     reason: Seq[ReferralReason],
-    f: FileUpload,
+    fileUpload: FileUpload,
     note: String,
     operator: Operator
   )(implicit hc: HeaderCarrier): Future[Case] =
     for {
-      fileStored <- fileService.upload(fileUpload = f)
+      fileStored <- fileService.upload(fileUpload)
       attachment = Attachment(id = fileStored.id, operator = Some(operator))
+      result <- referCase(original, referredTo, reason, attachment, note, operator)
+    } yield result
+
+  def referCase(
+    original: Case,
+    referredTo: String,
+    reason: Seq[ReferralReason],
+    attachment: Attachment,
+    note: String,
+    operator: Operator
+  )(implicit hc: HeaderCarrier): Future[Case] =
+    for {
       updated <- connector.updateCase(
                   original
                     .addAttachment(attachment)
@@ -456,6 +468,10 @@ class CasesService @Inject() (
       _           <- addCaseCreatedEvent(caseCreated, operator)
       _ = auditService.auditCaseCreated(caseCreated, operator)
     } yield caseCreated
+
+  def addAttachment(cse: Case, fileId: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+    connector.updateCase(cse.addAttachment(Attachment(id = fileId, public = true, operator = Some(operator))))
+  }
 
   def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] =
     fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>

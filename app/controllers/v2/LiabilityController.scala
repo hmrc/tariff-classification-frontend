@@ -16,14 +16,17 @@
 
 package controllers.v2
 
-import config.AppConfig
-import controllers.{RequestActions, v2}
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
+
+import config.AppConfig
+import controllers.{RequestActions, Tab, v2}
 import models.forms._
 import models.forms.v2.LiabilityDetailsForm
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import models._
+import models.request._
+import models.response.FileStoreInitiateResponse
 import models.viewmodels._
-import models.{Case, Permission, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -50,14 +53,19 @@ class LiabilityController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
+    with UpscanErrorHandling
     with I18nSupport {
 
-  def displayLiability(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
+  def displayLiability(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = uploadFileId, uploadForm = uploadForm))
+    }
 
   def renderView(
+    fileId: String                       = UUID.randomUUID().toString,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
-    uploadAttachmentForm: Form[String]   = UploadAttachmentForm.form,
+    uploadForm: Form[String]             = UploadAttachmentForm.form,
     keywordForm: Form[String]            = KeywordForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
     val liabilityCase: Case = request.`case`
@@ -66,6 +74,12 @@ class LiabilityController @Inject() (
     val appealTabViewModel  = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
     val ownCase             = liabilityCase.assignee.exists(_.id == request.operator.id)
     val activeNavTab        = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(liabilityCase.status, ownCase)
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + routes.AttachmentsController.handleUploadSuccess(liabilityCase.reference, fileId).path
+    val fileUploadErrorRedirect =
+      appConfig.host + routes.LiabilityController.displayLiability(liabilityCase.reference, Some(fileId)).withFragment(Tab.ATTACHMENTS_TAB.name).path
+
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
       attachmentsTab           <- getAttachmentTab(liabilityCase)
@@ -75,6 +89,14 @@ class LiabilityController @Inject() (
       keywordsTab <- keywordsService.findAll.map(kws =>
                       KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name))
                     )
+      initiateResponse <- fileService.initiate(
+                           FileStoreInitiateRequest(
+                             id              = Some(fileId),
+                             successRedirect = Some(fileUploadSuccessRedirect),
+                             errorRedirect   = Some(fileUploadErrorRedirect),
+                             maxFileSize     = appConfig.fileUploadMaxSize
+                           )
+                         )
     } yield {
       Ok(
         liability_view(
@@ -85,7 +107,8 @@ class LiabilityController @Inject() (
           activityTab,
           activityForm,
           attachmentsTab,
-          uploadAttachmentForm,
+          uploadForm,
+          initiateResponse,
           keywordsTab,
           keywordForm,
           appealTabViewModel,

@@ -16,8 +16,10 @@
 
 package controllers.v2
 
+import java.util.UUID
+
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{RequestActions, Tab}
 import javax.inject.{Inject, Singleton}
 import models.forms._
 import models.request._
@@ -45,12 +47,17 @@ class MiscellaneousController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
+    with UpscanErrorHandling
     with I18nSupport {
 
-  def displayMiscellaneous(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
+  def displayMiscellaneous(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = uploadFileId, uploadForm = uploadForm))
+    }
 
   def renderView(
+    fileId: String = UUID.randomUUID().toString,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
@@ -67,12 +74,25 @@ class MiscellaneousController @Inject() (
       miscellaneousCase.status,
       miscellaneousCase.assignee.exists(_.id == request.operator.id)
     )
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + routes.AttachmentsController.handleUploadSuccess(miscellaneousCase.reference, fileId).path
+    val fileUploadErrorRedirect =
+      appConfig.host + routes.MiscellaneousController.displayMiscellaneous(miscellaneousCase.reference, Some(fileId)).withFragment(Tab.ATTACHMENTS_TAB.name).path
+
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
       attachments    <- storedAttachments
       sampleTab      <- miscellaneousSampleTabViewModel
-
+      initiateResponse <- fileService.initiate(
+                           FileStoreInitiateRequest(
+                             id              = Some(fileId),
+                             successRedirect = Some(fileUploadSuccessRedirect),
+                             errorRedirect   = Some(fileUploadErrorRedirect),
+                             maxFileSize     = appConfig.fileUploadMaxSize
+                           )
+                         )
     } yield Ok(
       miscellaneousView(
         miscellaneousViewModel,
@@ -82,6 +102,7 @@ class MiscellaneousController @Inject() (
         sampleTab,
         attachmentsTab,
         uploadForm,
+        initiateResponse,
         activityTab,
         activityForm,
         attachments,

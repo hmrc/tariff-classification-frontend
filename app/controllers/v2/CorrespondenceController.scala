@@ -16,10 +16,14 @@
 
 package controllers.v2
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
+
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{RequestActions, Tab}
 import models.forms._
 import models.request._
+import models.response.FileStoreInitiateResponse
 import models.viewmodels.atar._
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
 import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, MessagesTabViewModel, MyCasesTab, OpenCasesTab, PrimaryNavigationViewModel, SampleStatusTabViewModel}
@@ -30,7 +34,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,12 +48,17 @@ class CorrespondenceController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
+    with UpscanErrorHandling
     with I18nSupport {
 
-  def displayCorrespondence(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
+  def displayCorrespondence(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = uploadFileId, uploadForm = uploadForm))
+    }
 
   def renderView(
+    fileId: String = UUID.randomUUID().toString,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
@@ -68,12 +76,25 @@ class CorrespondenceController @Inject() (
       correspondenceCase.status,
       correspondenceCase.assignee.exists(_.id == request.operator.id)
     )
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + routes.AttachmentsController.handleUploadSuccess(correspondenceCase.reference, fileId).path
+    val fileUploadErrorRedirect =
+      appConfig.host + routes.CorrespondenceController.displayCorrespondence(correspondenceCase.reference, Some(fileId)).withFragment(Tab.ATTACHMENTS_TAB.name).path
+
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
       attachments    <- storedAttachments
       sampleTab      <- correspondenceSampleTabViewModel
-
+      initiateResponse <- fileService.initiate(
+                           FileStoreInitiateRequest(
+                             id              = Some(fileId),
+                             successRedirect = Some(fileUploadSuccessRedirect),
+                             errorRedirect   = Some(fileUploadErrorRedirect),
+                             maxFileSize     = appConfig.fileUploadMaxSize
+                           )
+                         )
     } yield Ok(
       correspondenceView(
         correspondenceViewModel,
@@ -84,6 +105,7 @@ class CorrespondenceController @Inject() (
         sampleTab,
         attachmentsTab,
         uploadForm,
+        initiateResponse,
         activityTab,
         activityForm,
         attachments,
