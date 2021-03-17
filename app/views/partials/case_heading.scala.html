@@ -30,7 +30,7 @@
     </div>
 
     @if(customPrefix.isDefined){
-        <h1 class="heading-xlarge case-title">
+        <h1 class="heading-xlarge case-title" id="heading">
             @customPrefix.map { customPrefix =>
                 @messages(customPrefix, c.application.goodsName)
             }.getOrElse {
@@ -38,7 +38,7 @@
             }
         </h1>
     } else {
-        <h1 class="heading-xlarge case-title">
+        <h1 class="heading-xlarge case-title" id="heading">
             @if(messageKey.isDefined){
                 @messages(messageKey.get, c.application.goodsName)
             }else{

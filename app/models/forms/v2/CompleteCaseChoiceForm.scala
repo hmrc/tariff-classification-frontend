@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(id: String, summary: String, body: Option[Html] = None, open: Boolean = false, useTabIndex: Option[Int] = None)
+package models.forms.v2
 
-@if(body.isDefined) {
-    <details role="group" @if(open){open} >
-        <summary role="button" >
-            <span id="@{id}-title">
-                @summary
-            </span>
-        </summary>
-        <div id="@{id}-body">
-            @{body.get}
-        </div>
-    </details>
-} else {
-    <div id="@{id}-title">
-        @summary
-    </div>
+import models.forms.MandatoryBooleanForm
+import play.api.data.Form
+
+object CompleteCaseChoiceForm {
+  val form: Form[Boolean] = MandatoryBooleanForm.form("complete-case")
 }
-
-
-

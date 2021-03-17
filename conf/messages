@@ -150,7 +150,6 @@ case.decision.application.title=Information from applicant
 case.decision.information-applicant-heading=Edit the ruling details for the {0} case
 case.decision.information-applicant=Information from applicant
 case.decision.information-not-published=Information not to be published
-case.decision.edit-ruling.heading=Edit ruling for {0}
 case.decision.edit-ruling-details.heading=Edit the ruling details for the {0} case
 case.decision.edit-ruling=Edit ruling
 case.decision.ruling-details=Information to be published on the public rulings website
@@ -485,15 +484,16 @@ page.title.reject.case=Change case status to: Rejected
 page.title.case.rejected=This case has been rejected
 case.rejected.header = The {0} case has been rejected
 page.title.release.case=Choose a team to release this case to
-page.title.case.released=Case released
+page.title.case.released=This case has been released to the team
+page.title.case.mis-created=Miscellaneous case created for this team
 page.title.create.case=Create this case for a team
 page.title.take.ownership=Do you want to take ownership of this case?
 page.title.move.case=Move this case back to a team
 page.title.case.moved=This case has been moved to this team
 page.title.suppress.case=Change case status to: Suppressed
 page.title.case.suppressed=Case suppressed
-page.title.complete.case=Complete this case
-page.title.case.completed=Case completed
+page.title.complete.case=Are you sure you want to complete this case?
+page.title.case.completed=This case has been completed
 page.title.cancel.ruling=Cancel the ruling
 page.title.ruling.cancelled=Ruling cancelled
 page.title.remove.attachment=Remove attachment
@@ -878,6 +878,8 @@ case.v2.liability.c592.details_edit.date_of_receipt=Date of receipt
 case.v2.liability.c592.details_edit.date_of_receipt_hint=Date stamped on the C592 when received by Gateway officer, for example, 27 3 2015.
 case.v2.liability.c592.details_edit.cancel_button=Cancel editing details
 case.v2.liability.c592.details_edit.save_and_continue_button=Save changes
+case.v2.liability.ruling.details_edit.save_and_continue_button=Save changes
+case.v2.liability.ruling.details_edit.cancel_button=Cancel editing details
 
 case.v2.liability.save_and_continue_button=Save and continue
 case.v2.liability.cancel_button=Cancel
@@ -943,13 +945,15 @@ case.v2.correspondence.case-details.case_created=Case created
 case.v2.correspondence.case-details.boards_file_number=Boards file number
 case.v2.correspondence.case-details.similar_cases=Similar cases
 
-case.v2.correspondence.case-details-edit-title=Edit case details
-case.v2.correspondence.case-details-edit-summary=Summary
+case.v2.correspondence.case-details-edit-title=Edit the details for this case
+case.v2.correspondence.case-details-edit-header=Edit the details for the {0} case
+case.v2.correspondence.case-details-edit-summary=Case description
 case.v2.correspondence.case-details-edit-description=Detailed description
 case.v2.correspondence.case-details-edit-boards-file-number=Boards file number
 case.v2.correspondence.case-details-edit-similar-cases=Similar cases
 
-case.v2.correspondence.case-contact-edit-title=Edit contact details
+case.v2.correspondence.case-contact-edit-title=Edit the contact details for this case
+case.v2.correspondence.case-contact-edit-header=Edit the contact details for the {0} case
 case.v2.correspondence.case-contact-edit-heading1=Edit details
 case.v2.correspondence.case-contact-edit-heading2=Contact details
 case.v2.correspondence.case-contact-edit-heading3=Contact address
@@ -1131,15 +1135,23 @@ correspondence.create_correspondence.confirm-button = Create case
 release_case.header = Choose a team to release the {0} case to
 release_case.question.header = Do you want to release this new case to a team now?
 release_case.question.error=Select yes if you want to release this new case to a team
+
+suppress_case.confirm.header = The {0} case has been suppressed
+case_status.confirm.subheader = The case status is now<br><span class="bold">{0}</span>
 release_case.released_dynamic_message = The {0}  case has been released to the {1} team
 create_case.dynamic_message = The {0} case has been created
 create_case.message = The case has not been released to a team
 release_case.released_dynamic_message.atar = The {0}  case has been released to the {1} team
+complete_case.completed.header = The {0} {1} case has been completed
+complete_case.completed.subheader = <div class="govuk-panel__body">A ruling certificate has been created with an expiry date of<br><strong>{0}</strong></div>
+complete_case.areYouSure = Are you sure you want to complete the {0} case?
+complete-case.form.state.required = Select yes if you want to complete this case
 back.home = Back to home
 back.gateway = Back to Gateway cases
 back.my_cases = Back to open ATaR cases
 back.user.keywords = Go back to keywords
 
+back.open_cases.caseType = Back to open {0} cases
 misc.create_misc.description.heading=Short case description
 misc.create_misc.contact.name.heading=Case contact name
 misc.create_misc.type.heading=Choose a case type
@@ -1239,7 +1251,6 @@ users.user.noCases=There are no {0} cases assigned to this user.
 users.user.editUserTeams.heading=Assign {0} to a team or teams
 
 take-ownership.form.state.required=Select yes if you want to take ownership of this case
-
 users.user.delete.header=Delete {0}
 users.user.delete.casesMustBeMoved=Cases must be moved before {0} can be deleted
 users.user.delete.casesMustBeMoved.message=This user's active cases must be moved to another user or team before they can be deleted.

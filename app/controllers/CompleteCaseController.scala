@@ -17,11 +17,12 @@
 package controllers
 
 import config.AppConfig
-import models.forms.{DecisionForm}
+import models.forms.DecisionForm
 import javax.inject.{Inject, Singleton}
 import models._
-import models.forms.v2.LiabilityDetailsForm
+import models.forms.v2.{CompleteCaseChoiceForm, LiabilityDetailsForm}
 import models.request.AuthenticatedRequest
+import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,6 +43,7 @@ class CompleteCaseController @Inject() (
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
+  private lazy val completeCaseForm: Form[Boolean] = CompleteCaseChoiceForm.form
 
   def completeCase(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE))
@@ -49,7 +51,7 @@ class CompleteCaseController @Inject() (
         validateAndRespond(c =>
           c.application.`type` match {
             case ApplicationType.ATAR =>
-              successful(Ok(views.html.complete_case(c)))
+              successful(Ok(views.html.complete_case(c, completeCaseForm)))
 
             case ApplicationType.LIABILITY | ApplicationType.CORRESPONDENCE | ApplicationType.MISCELLANEOUS =>
               casesService
@@ -62,11 +64,20 @@ class CompleteCaseController @Inject() (
   def postCompleteCase(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.COMPLETE_CASE))
       .async { implicit request =>
-        validateAndRedirect(
-          casesService
-            .completeCase(_, request.operator)
-            .map(c => routes.CompleteCaseController.confirmCompleteCase(c.reference))
-        )
+        completeCaseForm
+          .bindFromRequest()
+          .fold(
+            errors => validateAndRespond(c => successful(Ok(views.html.complete_case(c, errors)))), {
+              case true =>
+                validateAndRedirect(
+                  casesService
+                    .completeCase(_, request.operator)
+                    .map(c => routes.CompleteCaseController.confirmCompleteCase(c.reference))
+                )
+              case false => successful(Redirect(routes.CaseController.rulingDetails(reference)))
+            }
+          )
+
       }
 
   def confirmCompleteCase(reference: String): Action[AnyContent] =
