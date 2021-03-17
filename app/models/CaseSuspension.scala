@@ -16,4 +16,4 @@
 
 package models
 
-case class CaseReferral(referredTo: String, reasons: List[String], note: String, referManually: Option[String])
+case class CaseSuspension(note: String, attachment: Attachment)

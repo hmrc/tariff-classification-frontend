@@ -25,7 +25,7 @@ import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import play.api.mvc.MultipartFormData.FilePart
 import play.api.mvc.{MultipartFormData, Result}
 import play.api.test.Helpers.{redirectLocation, _}
-import service.CasesService
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
@@ -35,6 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
+  private val fileService  = mock[FileStoreService]
   private val operator     = Operator(id = "id")
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
@@ -51,6 +52,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     new SuspendCaseController(
       new SuccessfulRequestActions(playBodyParsers, operator, c = c),
       casesService,
+      fileService,
       mcc,
       realAppConfig
     )
@@ -59,6 +61,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     new SuspendCaseController(
       new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
       casesService,
+      fileService,
       mcc,
       realAppConfig
     )

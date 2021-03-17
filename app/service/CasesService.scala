@@ -224,9 +224,15 @@ class CasesService @Inject() (
   def suspendCase(original: Case, fileUpload: FileUpload, note: String, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] =
+    fileService.upload(fileUpload).flatMap { fileStored =>
+      val attachment = Attachment(id = fileStored.id, operator = Some(operator))
+      suspendCase(original, attachment, note, operator)
+    }
+
+  def suspendCase(original: Case, attachment: Attachment, note: String, operator: Operator)(
+    implicit hc: HeaderCarrier
+  ): Future[Case] =
     for {
-      fileStored <- fileService.upload(fileUpload)
-      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUSPENDED))
       _       <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
       _ = auditService.auditCaseSuspended(original, updated, operator)
@@ -431,7 +437,7 @@ class CasesService @Inject() (
     queue: Seq[Queue],
     pagination: Pagination,
     forTypes: Set[ApplicationType] = ApplicationType.values,
-    forStatuses: Set[CaseStatus] = CaseStatus.openStatuses,
+    forStatuses: Set[CaseStatus]   = CaseStatus.openStatuses,
     assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes, forStatuses, assignee)
@@ -439,13 +445,16 @@ class CasesService @Inject() (
   def countCasesByQueue(implicit hc: HeaderCarrier): Future[Map[(Option[String], ApplicationType), Int]] =
     for {
       countByQueue <- reportingService.queueReport(
-        QueueReport(statuses = Set(
-          PseudoCaseStatus.NEW,
-          PseudoCaseStatus.OPEN,
-          PseudoCaseStatus.REFERRED,
-          PseudoCaseStatus.SUSPENDED
-        )), NoPagination()
-      )
+                       QueueReport(statuses =
+                         Set(
+                           PseudoCaseStatus.NEW,
+                           PseudoCaseStatus.OPEN,
+                           PseudoCaseStatus.REFERRED,
+                           PseudoCaseStatus.SUSPENDED
+                         )
+                       ),
+                       NoPagination()
+                     )
 
       casesByQueue = countByQueue.results.map { resultGroup =>
         (resultGroup.team, resultGroup.caseType) -> resultGroup.count.toInt
@@ -469,9 +478,8 @@ class CasesService @Inject() (
       _ = auditService.auditCaseCreated(caseCreated, operator)
     } yield caseCreated
 
-  def addAttachment(cse: Case, fileId: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] = {
+  def addAttachment(cse: Case, fileId: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     connector.updateCase(cse.addAttachment(Attachment(id = fileId, public = true, operator = Some(operator))))
-  }
 
   def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] =
     fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>

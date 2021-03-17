@@ -17,99 +17,107 @@
 package controllers
 
 import config.AppConfig
+import controllers.v2.UpscanErrorHandling
 import models.forms.AddNoteForm
+import models.request.FileStoreInitiateRequest
 import javax.inject.{Inject, Singleton}
 import models.CaseStatus.SUSPENDED
 import models.Permission
+import models.forms.{SuspendCaseForm, UploadAttachmentForm}
 import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.libs.Files
+import play.api.libs.json._
 import play.api.mvc._
-import service.CasesService
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JsonFormatters._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import play.twirl.api.HtmlFormat
+import models.request.AuthenticatedRequest
+import uk.gov.hmrc.http.HeaderCarrier
+import models.CaseSuspension
+import views.html.suspend_case
+import java.util.UUID
 
 @Singleton
 class SuspendCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
+  fileService: FileStoreService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with RenderCaseAction
-    with ExtractableFile {
+    with UpscanErrorHandling {
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService
-  private val form: Form[String]                   = AddNoteForm.getForm("suspend")
+  private val uploadForm                           = UploadAttachmentForm.form
 
-  def getSuspendCase(reference: String): Action[AnyContent] =
+  def getSuspendCase(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE))
-      .async(implicit request => validateAndRenderView(c => successful(views.html.suspend_case(c, form))))
+      .async(implicit request => handleUploadErrorAndRender(renderView(fileId = fileId, SuspendCaseForm.form, _)))
 
-  def postSuspendCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE))
-      .async(parse.multipartFormData) { implicit request =>
-        extractFile(key = "email")(
-          onFileValid = validFile => {
-            form
-              .bindFromRequest()
-              .fold(
-                formWithErrors =>
-                  getCaseAndRenderView(
-                    reference,
-                    c => successful(views.html.suspend_case(c, formWithErrors))
-                  ),
-                note =>
-                  validateAndRedirect(
-                    casesService
-                      .suspendCase(_, validFile, note, request.operator)
-                      .map(c => routes.SuspendCaseController.confirmSuspendCase(c.reference))
-                  )
-              )
-          },
-          onFileTooLarge = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.restrictionSize")
-            form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
-                note => getCaseAndRenderEmailError(reference, form.fill(note), error)
-              )
-          },
-          onFileInvalidType = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.fileType")
-            form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
-                note => getCaseAndRenderEmailError(reference, form.fill(note), error)
-              )
-          },
-          onFileMissing = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.mustSelect")
-            form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderEmailError(reference, formWithErrors, error),
-                note => getCaseAndRenderEmailError(reference, form.fill(note), error)
-              )
+  def renderView(
+    fileId: Option[String] = None,
+    suspendForm: Form[CaseSuspension],
+    uploadForm: Form[String] = UploadAttachmentForm.form
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[HtmlFormat.Appendable] = {
+    val caseToSuspend = request.`case`
+    val uploadFileId  = fileId.getOrElse(UUID.randomUUID().toString)
 
-          }
+    val fileStoreSuccessRedirect =
+      appConfig.host + routes.SuspendCaseController.confirmSuspendCase(request.`case`.reference).path
+
+    val fileStoreErrorRedirect =
+      appConfig.host + routes.SuspendCaseController.getSuspendCase(request.`case`.reference).path
+
+    fileService
+      .initiate(
+        FileStoreInitiateRequest(
+          id              = Some(uploadFileId),
+          // successRedirect = Some(fileStoreSuccessRedirect),
+          // errorRedirect   = Some(fileStoreErrorRedirect),
+          publishable     = true,
+          maxFileSize     = appConfig.fileUploadMaxSize
         )
+      )
+      .flatMap { initiateResponse =>
+        successful(views.html.suspend_case(caseToSuspend, suspendForm, uploadForm, initiateResponse))
       }
+  }
 
-  private def getCaseAndRenderEmailError(
-    reference: String,
-    form: Form[String],
-    error: String
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = getCaseAndRenderView(
-    reference,
-    c => successful(views.html.suspend_case(c, form.withError("email", error)))
-  )
+  def postSuspendNote(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE)) {
+      implicit request =>
+        AddNoteForm
+          .getForm("suspend")
+          .bindFromRequest()
+          .fold(
+            form => BadRequest(form.errorsAsJson),
+            note => Ok(Json.toJson(note))
+          )
+    }
+
+  def postSuspendCase(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE))
+      .async { implicit request =>
+        SuspendCaseForm.form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => renderView(suspendForm = formWithErrors).map(BadRequest(_)),
+            suspension =>
+              validateAndRedirect(
+                casesService
+                  .suspendCase(_, suspension.attachment, suspension.note, request.operator)
+                  .map(c => routes.SuspendCaseController.confirmSuspendCase(c.reference))
+              )
+          )
+      }
 
   def confirmSuspendCase(reference: String): Action[AnyContent] =
     (verify.authenticated

@@ -1,0 +1,59 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import models.response.FileStoreInitiateResponse
+@import views.html.components.input_file
+
+@(
+    form: Form[String],
+    action: String
+)(implicit messages: Messages)
+
+<div id="attach-email-heading">
+    <h3 class="heading-medium mt-30 mb-30">@messages("email.attach.title")</h3>
+</div>
+
+<p class="form-hint">@messages("email.attach.notify", action)</p>
+<details role="group" class="mb-2">
+    <summary role="button">
+        <span id="release-suppress-help-title">@messages("email.attach.save")</span>
+    </summary>
+    <div id="release-suppress-help-body" class="panel panel-border">
+        <ol class="list list-number">
+            <li>@messages("email.attach.save.bullet1")</li>
+            <li>@messages("email.attach.save.bullet2")</li>
+            <li>@messages("email.attach.save.bullet3")</li>
+            <li>@messages("email.attach.save.bullet4")</li>
+            <li>@messages("email.attach.save.bullet5")</li>
+        </ol>
+    </div>
+</details>
+
+<p>@messages("status.change.upload.title")</p>
+<ul class="list list-bullet">
+    <li>@messages("status.change.upload.restrictionSize")</li>
+    <li>@messages("status.change.upload.typeOfFiles")</li>
+</ul>
+
+<div class="mt-0">
+    @input_file(
+        field = form("file"),
+        label = messages("status.change.upload.label"),
+        inputClass= Some("govuk-file-upload"),
+        accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt")
+    )
+</div>

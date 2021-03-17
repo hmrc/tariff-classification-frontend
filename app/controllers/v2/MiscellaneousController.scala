@@ -35,6 +35,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import play.twirl.api.HtmlFormat
 
 @Singleton
 class MiscellaneousController @Inject() (
@@ -60,7 +61,7 @@ class MiscellaneousController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[HtmlFormat.Appendable] = {
     val miscellaneousCase: Case = request.`case`
     val uploadFileId            = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -98,21 +99,19 @@ class MiscellaneousController @Inject() (
                              maxFileSize     = appConfig.fileUploadMaxSize
                            )
                          )
-    } yield Ok(
-      miscellaneousView(
-        miscellaneousViewModel,
-        caseDetailsTab,
-        messagesTab,
-        messageForm,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        initiateResponse,
-        activityTab,
-        activityForm,
-        attachments,
-        activeNavTab
-      )
+    } yield miscellaneousView(
+      miscellaneousViewModel,
+      caseDetailsTab,
+      messagesTab,
+      messageForm,
+      sampleTab,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      activityTab,
+      activityForm,
+      attachments,
+      activeNavTab
     )
   }
 

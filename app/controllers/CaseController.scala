@@ -141,7 +141,7 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE))
       .async { implicit request =>
         def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
-          request.`case`.application.`type` match {
+          val renderView = request.`case`.application.`type` match {
             case ApplicationType.ATAR =>
               atarController.renderView(activityForm = errorForm)
             case ApplicationType.LIABILITY =>
@@ -151,6 +151,8 @@ class CaseController @Inject() (
             case ApplicationType.MISCELLANEOUS =>
               miscellaneousController.renderView(activityForm = errorForm)
           }
+
+          renderView.map(BadRequest(_))
         }
 
         def onSuccess: ActivityFormData => Future[Result] = validForm => {
@@ -169,12 +171,14 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE))
       .async { implicit request =>
         def onError: Form[MessageFormData] => Future[Result] = errorForm => {
-          request.`case`.application.`type` match {
+          val renderHtml = request.`case`.application.`type` match {
             case ApplicationType.CORRESPONDENCE =>
               correspondenceController.renderView(messageForm = errorForm)
             case ApplicationType.MISCELLANEOUS =>
               miscellaneousController.renderView(messageForm = errorForm)
           }
+
+          renderHtml.map(BadRequest(_))
         }
 
         def onSuccess: MessageFormData => Future[Result] = validForm => {
@@ -194,12 +198,14 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS))
       .async { implicit request =>
         def onError: Form[String] => Future[Result] = (errorForm: Form[String]) => {
-          request.`case`.application.`type` match {
+          val renderHtml = request.`case`.application.`type` match {
             case ApplicationType.ATAR =>
               atarController.renderView(keywordForm = errorForm)
             case ApplicationType.LIABILITY =>
               liabilityController.renderView(keywordForm = errorForm)
           }
+
+          renderHtml.map(BadRequest(_))
         }
 
         def onSuccess: String => Future[Result] = validForm => {

@@ -36,6 +36,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext
+import play.twirl.api.HtmlFormat
 
 @Singleton
 class LiabilityController @Inject() (
@@ -65,7 +66,7 @@ class LiabilityController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form,
     keywordForm: Form[String]            = KeywordForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[HtmlFormat.Appendable] = {
     val liabilityCase: Case = request.`case`
     val uploadFileId        = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -101,25 +102,21 @@ class LiabilityController @Inject() (
                              maxFileSize     = appConfig.fileUploadMaxSize
                            )
                          )
-    } yield {
-      Ok(
-        liability_view(
-          liabilityViewModel,
-          c592,
-          rulingViewModel,
-          sampleTab,
-          activityTab,
-          activityForm,
-          attachmentsTab,
-          uploadForm,
-          initiateResponse,
-          keywordsTab,
-          keywordForm,
-          appealTabViewModel,
-          activeNavTab
-        )
-      )
-    }
+    } yield liability_view(
+      liabilityViewModel,
+      c592,
+      rulingViewModel,
+      sampleTab,
+      activityTab,
+      activityForm,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      keywordsTab,
+      keywordForm,
+      appealTabViewModel,
+      activeNavTab
+    )
   }
 
   def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]) =

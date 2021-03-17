@@ -49,8 +49,9 @@ GET         /cases/:reference/reject                            controllers.Reje
 POST        /cases/:reference/reject                            controllers.RejectCaseController.postRejectCase(reference: String)
 GET         /cases/:reference/reject/confirmation               controllers.RejectCaseController.confirmRejectCase(reference: String)
 
-GET         /cases/:reference/suspend                           controllers.SuspendCaseController.getSuspendCase(reference: String)
+GET         /cases/:reference/suspend                           controllers.SuspendCaseController.getSuspendCase(reference: String, fileId: Option[String] = None)
 POST        /cases/:reference/suspend                           controllers.SuspendCaseController.postSuspendCase(reference: String)
+POST        /cases/:reference/suspend-note                      controllers.SuspendCaseController.postSuspendNote(reference: String)
 GET         /cases/:reference/suspend/confirmation              controllers.SuspendCaseController.confirmSuspendCase(reference: String)
 
 

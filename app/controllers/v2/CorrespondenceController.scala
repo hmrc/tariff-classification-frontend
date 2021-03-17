@@ -35,6 +35,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import play.twirl.api.HtmlFormat
 
 @Singleton
 class CorrespondenceController @Inject() (
@@ -60,7 +61,7 @@ class CorrespondenceController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[HtmlFormat.Appendable] = {
     val correspondenceCase: Case = request.`case`
     val uploadFileId             = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -99,22 +100,20 @@ class CorrespondenceController @Inject() (
                              maxFileSize     = appConfig.fileUploadMaxSize
                            )
                          )
-    } yield Ok(
-      correspondenceView(
-        correspondenceViewModel,
-        caseDetailsTab,
-        contactDetailsTab,
-        messagesTab,
-        messageForm,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        initiateResponse,
-        activityTab,
-        activityForm,
-        attachments,
-        activeNavTab
-      )
+    } yield correspondenceView(
+      correspondenceViewModel,
+      caseDetailsTab,
+      contactDetailsTab,
+      messagesTab,
+      messageForm,
+      sampleTab,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      activityTab,
+      activityForm,
+      attachments,
+      activeNavTab
     )
   }
 

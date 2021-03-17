@@ -18,21 +18,22 @@
 @import models.request.AuthenticatedRequest
 @import controllers.routes
 @import models.Case
+@import models.response.FileStoreInitiateResponse
 @import models.viewmodels.NoTabSelected
 @import views.html.components.{confirm_or_cancel_buttons}
 @import views.html.forms.components.input_textarea
 @import views.html.includes.main
 @import views.html.partials.case_heading
-@import views.html.partials.statuses.status_change_upload
+@import views.html.partials.statuses.status_change_upscan_upload
 @import views.html.partials.{error_summary, back_link}
 
-@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, suspendForm: Form[CaseSuspension], attachmentForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case")), customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
-    @error_summary(form.errors)
+    @error_summary(suspendForm.errors)
 
     @case_heading(c)
 
@@ -40,26 +41,97 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">@messages("change_case_status.to.suspended")</h2>
 
-            @helper.form(action = routes.SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
-                @helper.CSRF.formField
+            @input_textarea(
+                field = suspendForm("note"),
+                label = "Add a note",
+                labelClass = Some("heading-medium"),
+                hint = Some("Give details of why you are suspending this case. Keep the note clear and concise."),
+                customErrorMessage = Some(messages("error.empty.suspend.note"))
+            )
 
-                @input_textarea(
-                    field = form("note"),
-                    label = "Add a note",
-                    labelClass = Some("heading-medium"),
-                    hint = Some("Give details of why you are suspending this case. Keep the note clear and concise."),
-                    customErrorMessage = Some(messages("error.empty.suspend.note"))
-                )
+            @status_change_upscan_upload(attachmentForm, "suspending")
 
-                @status_change_upload(form("email"), "suspending")
-
-                @confirm_or_cancel_buttons(
-                    id = "suspend_case",
-                    confirmText = "Confirm status change",
-                    cancelText = "Cancel and return to case",
-                    cancelHref = routes.CaseController.get(c.reference)
-                )
-            }
+            @confirm_or_cancel_buttons(
+                id = "suspend_case",
+                confirmText = "Confirm status change",
+                cancelText = "Cancel and return to case",
+                cancelHref = routes.CaseController.get(c.reference)
+            )
         </div>
     </div>
+
+    <script>
+        $('#suspend_case-button').click(function(elem) {
+            elem.preventDefault();
+
+            var noteFormData = {
+                @{suspendForm("note").name}: $('#@suspendForm("note").id').val()
+            };
+
+            var postSuspendNote = $.ajax({
+                type: 'POST',
+                url: '@controllers.routes.SuspendCaseController.postSuspendNote(c.reference)',
+                contentType: 'application/json',
+                data: JSON.stringify(noteFormData),
+                dataType: 'json',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('CSRF-Token', '@helper.CSRF.getToken.value');
+                },
+                success: function(response, status, xhr) {
+                    console.log('Note success!');
+                },
+                error: function(xhr, status, response) {
+                    console.log('Note error!');
+                }
+            });
+
+            var fileFormData = new FormData();
+            var selectedFile = $('#@attachmentForm("file").id')[0].files[0];
+            if (selectedFile) {
+                @for((k, v) <- initiateResponse.uploadRequest.fields) {
+                    fileFormData.append('@k', '@v');
+                }
+                fileFormData.append('@attachmentForm("file").name', selectedFile);
+            }
+
+            var postSuspendFile = $.ajax({
+                type: 'POST',
+                url: '@initiateResponse.uploadRequest.href',
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                data: fileFormData,
+                success: function(response, status, xhr) {
+                    console.log('Upload success!');
+                },
+                error: function(xhr, status, response) {
+                    console.log('Upload error!');
+                }
+            });
+
+            $.when(postSuspendNote, postSuspendFile).done(function() {
+                var suspendFormData = new FormData();
+                suspendFormData.append('@suspendForm("note").name', $('#@suspendForm("note").id').val());
+                suspendFormData.append('@suspendForm("file").name', '@initiateResponse.id');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@controllers.routes.SuspendCaseController.postSuspendCase(c.reference)',
+                    contentType: false,
+                    processData: false,
+                    data: suspendFormData,
+                    dataType: 'html',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('CSRF-Token', '@helper.CSRF.getToken.value');
+                    },
+                    success: function(response, status, xhr) {
+                        console.log('All success!');
+                    },
+                    error: function(xhr, status, response) {
+                        console.log('All error!');
+                    }
+                });
+            })
+        });
+    </script>
 }

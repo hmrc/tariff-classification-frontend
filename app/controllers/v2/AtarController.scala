@@ -34,6 +34,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
+import play.twirl.api.HtmlFormat
 
 @Singleton
 class AtarController @Inject() (
@@ -62,7 +63,7 @@ class AtarController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     keywordForm: Form[String]            = KeywordForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[HtmlFormat.Appendable] = {
     val uploadFileId   = fileId.getOrElse(UUID.randomUUID().toString)
     val atarCase: Case = request.`case`
     val atarViewModel  = CaseViewModel.fromCase(atarCase, request.operator)
@@ -107,25 +108,23 @@ class AtarController @Inject() (
                            )
                          )
 
-    } yield Ok(
-      atarView(
-        atarViewModel,
-        applicantTab,
-        goodsTab,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        initiateResponse,
-        activityTab,
-        activityForm,
-        keywordsTab,
-        keywordForm,
-        rulingTab,
-        rulingForm,
-        attachments,
-        appealTab,
-        activeNavTab
-      )
+    } yield atarView(
+      atarViewModel,
+      applicantTab,
+      goodsTab,
+      sampleTab,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      activityTab,
+      activityForm,
+      keywordsTab,
+      keywordForm,
+      rulingTab,
+      rulingForm,
+      attachments,
+      appealTab,
+      activeNavTab
     )
   }
 

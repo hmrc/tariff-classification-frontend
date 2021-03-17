@@ -26,6 +26,7 @@ import scala.concurrent.Future
 import scala.util.control.NonFatal
 import models.request.AuthenticatedCaseRequest
 import scala.concurrent.ExecutionContext
+import play.twirl.api.HtmlFormat
 
 trait UpscanErrorHandling { self: FrontendBaseController =>
   val UpscanErrorCodeKey        = "errorCode"
@@ -33,7 +34,7 @@ trait UpscanErrorHandling { self: FrontendBaseController =>
   val UploadAttachmentFormField = "file"
 
   def handleUploadErrorAndRender(
-    renderView: Form[String] => Future[Result]
+    renderView: Form[String] => Future[HtmlFormat.Appendable]
   )(implicit request: AuthenticatedCaseRequest[_], ec: ExecutionContext): Future[Result] =
     request
       .getQueryString(UpscanErrorCodeKey)
@@ -41,11 +42,11 @@ trait UpscanErrorHandling { self: FrontendBaseController =>
         // Received an error from Upscan
         val uploadError = UploadError.fromErrorCode(errorCode)
         val uploadForm  = UploadAttachmentForm.form.withError(UploadAttachmentFormField, uploadError.errorMessageKey)
-        renderView(uploadForm)
+        renderView(uploadForm).map(BadRequest(_))
       }
       .getOrElse {
         // Normal page render
-        renderView(UploadAttachmentForm.form)
+        renderView(UploadAttachmentForm.form).map(Ok(_))
       }
       .recoverWith {
         case NonFatal(_) =>
