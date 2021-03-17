@@ -17,8 +17,8 @@
 @(id: String, summary: String, body: Option[Html] = None, open: Boolean = false, useTabIndex: Option[Int] = None)
 
 @if(body.isDefined) {
-    <details role="group" @if(open){open} @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}"}>
-        <summary role="button" @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}"}>
+    <details role="group" @if(open){open} >
+        <summary role="button" >
             <span id="@{id}-title">
                 @summary
             </span>

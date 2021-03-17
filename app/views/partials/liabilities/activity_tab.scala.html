@@ -48,7 +48,7 @@
 
   <div class="column-full">
 
-  @form(action = routes.CaseController.addNote(activityViewModel.referenceNumber), 'class -> "form") {
+  @form(action = routes.CaseController.addNote(activityViewModel.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),

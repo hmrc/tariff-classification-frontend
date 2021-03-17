@@ -29,6 +29,7 @@
 
 @if(attachments.allAttachments.nonEmpty){
     <table id="@{id}-table" class="govuk-table govuk-!-font-size-16">
+        <caption class="visually-hidden">@messages("page.title.case.attachments")</caption>
         <thead class="govuk-table__head">
             <tr>
                 <th class="govuk-table__header" scope="col">File name</th>
@@ -60,7 +61,7 @@
                     </td>
 
                     <td id="@{id}-row-@{index}-attachment-status" class="govuk-table__cell w-20">
-                        <span class="visually-hidden">attachment-status</span>
+                        <span class="visually-hidden">attachment status</span>
                         @if(file.scanStatus.isEmpty) {
                             <span id="@id" class="govuk-tag govuk-tag--blue">@messages("case.attachment.upload.status-processing")</span>
                             <span id="@id" class="refresh-content">@messages("case.attachment.refresh.content")</span>

@@ -125,7 +125,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
     "render results if not empty" in {
       // Given
-      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
       val c      = aCase()
       val attachment =
         StoredAttachment(
@@ -150,7 +150,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
       // When
       val request = fakeRequest.withFormUrlEncodedBody(
-        "trader_name"    -> "trader",
+        "case_source"    -> "trader",
         "commodity_code" -> "00"
       )
       val result = await(controller.search(defaultTab, search = search, page = 2)(request))
@@ -164,13 +164,13 @@ class SearchControllerSpec extends ControllerBaseSpec {
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe Some("search results")
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe
         Some(
-          "/manage-tariff-classifications/search?addToSearch=false&trader_name=trader&commodity_code=00&page=2#advanced_search_keywords"
+          "/manage-tariff-classifications/search?addToSearch=false&case_source=trader&commodity_code=00&page=2#advanced_search_keywords"
         )
     }
 
     "render errors if form invalid" in {
       // Given
-      val search = Search(traderName = Some("trader"))
+      val search = Search(caseSource = Some("trader"))
 
       given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
 
@@ -189,7 +189,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
     "return OK when user has right permissions" in {
       // Given
-      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
       val c      = aCase()
       val attachment =
         StoredAttachment(
@@ -214,7 +214,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
       // When
       val request = fakeRequest.withFormUrlEncodedBody(
-        "trader_name"    -> "trader",
+        "case_source"    -> "trader",
         "commodity_code" -> "00"
       )
       val result =
@@ -225,9 +225,9 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
       val request = fakeRequest.withFormUrlEncodedBody(
-        "trader_name"    -> "trader",
+        "case_source"    -> "trader",
         "commodity_code" -> "00"
       )
       val result = await(controller(Set.empty).search(defaultTab, search = search, page = 2)(request))

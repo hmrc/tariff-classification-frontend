@@ -32,7 +32,8 @@
 
     @if(attachments.nonEmpty){
         <table id="@{id}-table">
-            <thead>
+            <caption class="visually-hidden">@messages("case.menu.attachments")</caption>
+            <thead class="govuk-table__head">
                 <tr>
                     <th scope="col">File name</th>
                     @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col">Uploaded by</th>}

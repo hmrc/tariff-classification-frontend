@@ -320,7 +320,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val url = s"/cases" +
         s"?sort_direction=asc" +
         s"&sort_by=commodity-code" +
-        s"&trader_name=trader" +
+        s"&case_source=trader" +
         s"&commodity_code=comm-code" +
         s"&decision_details=decision-details" +
         s"&status=OPEN" +
@@ -344,7 +344,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
 
       val search = Search(
-        traderName      = Some("trader"),
+        caseSource      = Some("trader"),
         commodityCode   = Some("comm-code"),
         decisionDetails = Some("decision-details"),
         status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
@@ -371,7 +371,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'trader name'" in {
-      val url = "/cases?sort_direction=asc&sort_by=commodity-code&trader_name=trader&page=1&page_size=2"
+      val url = "/cases?sort_direction=asc&sort_by=commodity-code&case_source=trader&page=1&page_size=2"
 
       stubFor(
         get(urlEqualTo(url))
@@ -382,7 +382,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      val search = Search(traderName = Some("trader"))
+      val search = Search(caseSource = Some("trader"))
 
       await(
         connector
