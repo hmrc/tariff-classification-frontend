@@ -58,6 +58,7 @@ class SampleController @Inject() (
           views.html.change_sample_status(c, notFilledForm)
         }
       case ApplicationType.CORRESPONDENCE => views.html.change_correspondence_sending_sample(c, notFilledForm)
+      case ApplicationType.MISCELLANEOUS  => views.html.change_correspondence_sending_sample(c, notFilledForm)
       case _ =>       views.html.change_sample_status(c, notFilledForm)
     }
 
