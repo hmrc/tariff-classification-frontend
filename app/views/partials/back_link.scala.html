@@ -14,16 +14,8 @@
  * limitations under the License.
  *@
 
-@import controllers.routes
-@import models.request.AuthenticatedRequest
-@()(implicit request: AuthenticatedRequest[_], messages: Messages)
+@()(implicit messages: Messages)
 
-    @if(request.session.get(SessionKeys.backToSearchResultsLinkUrl).isDefined) {
-        <a id="back-link" class="link-back mt-15" href="@request.session.get(SessionKeys.backToSearchResultsLinkUrl).getOrElse(routes.IndexController.get())">
-            @request.session.get(SessionKeys.backToSearchResultsLinkLabel).map(l =>  if(l.isEmpty) "Back" else s"Back to $l").getOrElse(messages("errors.all.back"))
-            </a>
-    } else {
-        <a id="back-link" class="link-back mt-15" href="@request.session.get(SessionKeys.backToQueuesLinkUrl).getOrElse(routes.IndexController.get())">
-            @request.session.get(SessionKeys.backToQueuesLinkLabel).map(l =>  if(l.isEmpty) "Back" else s"Back to $l").getOrElse(messages("errors.all.back"))
-            </a>
-    }
+<div class="js-visible">
+    <p class="back-link-text"><a id="back-link" class="link-back mt-15" href="#">@messages("errors.all.back")</a></p>
+</div>
