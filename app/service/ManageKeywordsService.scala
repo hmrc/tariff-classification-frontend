@@ -16,19 +16,25 @@
 
 package service
 
+import audit.AuditService
 import connector.BindingTariffClassificationConnector
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
-
 import javax.inject.{Inject, Singleton}
+import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ManageKeywordsService @Inject() (connector: BindingTariffClassificationConnector) {
+class ManageKeywordsService @Inject()(auditService: AuditService, connector: BindingTariffClassificationConnector) {
 
-  def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
-    connector.createKeyword(keyword)
+  def createKeyword(keyword: Keyword, user: Operator, keywordStatusAction: ChangeKeywordStatusAction)(
+    implicit hc: HeaderCarrier): Future[Keyword] =
+    for {
+      keywordCreated <- connector.createKeyword(keyword)
+      _ = auditService.auditManagerKeywordCreated(user, keywordCreated, keywordStatusAction)
+    } yield keywordCreated
 
   def findAll(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
     connector.findAllKeywords(pagination)
@@ -36,10 +42,13 @@ class ManageKeywordsService @Inject() (connector: BindingTariffClassificationCon
   def fetchCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     connector.getCaseKeywords()
 
-  def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =
-    connector.deleteKeyword(keyword)
+  def deleteKeyword(keyword: Keyword, user: Operator)(implicit hc: HeaderCarrier): Future[Unit] =
+    connector.deleteKeyword(keyword).map(_ => auditService.auditManagerKeywordDeleted(user, keyword))
 
-  def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
-    connector.deleteKeyword(keywordToDelete).flatMap(_ => connector.createKeyword(keywordToAdd))
-
+  def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword, user: Operator)(
+    implicit hc: HeaderCarrier): Future[Keyword] =
+    for {
+      keywordRenamed <- connector.deleteKeyword(keywordToDelete).flatMap(_ => connector.createKeyword(keywordToAdd))
+      _ = auditService.auditManagerKeywordRenamed(user, keywordToDelete, keywordRenamed)
+    } yield keywordRenamed
 }

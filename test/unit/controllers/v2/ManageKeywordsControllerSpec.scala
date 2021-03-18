@@ -18,6 +18,7 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.CaseStatus.OPEN
+import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 import models._
 import models.forms.KeywordForm
 import models.forms.v2.EditApprovedKeywordForm
@@ -136,7 +137,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
+      given(keywordService.createKeyword(any[Keyword], any[Operator], any[ChangeKeywordStatusAction])(any[HeaderCarrier]))
         .willReturn(Future(Keyword("newkeyword", true)))
 
       val result = await(
@@ -199,7 +200,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.createKeyword(any[Keyword])(any[HeaderCarrier]))
+      given(keywordService.createKeyword(any[Keyword], any[Operator], any[ChangeKeywordStatusAction])(any[HeaderCarrier]))
         .willReturn(Future(Keyword("updatedKeyword", true)))
 
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
@@ -374,7 +375,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.deleteKeyword(any[Keyword])(any[HeaderCarrier])).willReturn(Future.successful((): Unit))
+      given(keywordService.deleteKeyword(any[Keyword], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful((): Unit))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -396,7 +397,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.renameKeyword(any[Keyword], any[Keyword])(any[HeaderCarrier])).willReturn(Future(newKeyword))
+      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier])).willReturn(Future(newKeyword))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))

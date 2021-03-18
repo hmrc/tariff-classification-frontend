@@ -18,12 +18,13 @@ package models
 
 object ChangeKeywordStatusAction extends Enumeration {
   type ChangeKeywordStatusAction = Value
-  val APPROVE, REJECT = Value
+  val APPROVE, REJECT, CREATED = Value
 
   def format(status: String): ChangeKeywordStatusAction =
     status.toUpperCase match {
       case "APPROVE" => APPROVE
       case "REJECT"  => REJECT
+      case "CREATED"  => CREATED
     }
 
 }

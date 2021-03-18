@@ -473,6 +473,89 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       .sendExplicitAudit(refEq("userUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
   }
 
+  "Service 'auditManagerKeywordCreated'" should {
+
+    "audit keyword created" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.CREATED)
+
+      val payload = Map(
+        "operatorId"     -> operator.id,
+        "keywordCreated" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+
+    "audit keyword approved" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.APPROVE)
+
+      val payload = Map(
+        "operatorId"      -> operator.id,
+        "keywordApproved" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordApproved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+
+    "audit keyword rejected" in {
+
+      val keyword = Keyword("new keyword")
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.REJECT)
+
+      val payload = Map(
+        "operatorId"      -> operator.id,
+        "keywordRejected" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordRejected"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+  }
+
+  "Service 'auditManagerKeywordDeleted'" should {
+
+    "audit keyword deleted" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordDeleted(operator, keyword)
+
+      val payload = Map(
+        "operatorId" -> operator.id,
+        "keywordDeleted" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordDeleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+  }
+
+  "Service 'auditManagerKeywordRenamed'" should {
+
+    "audit keyword renamed" in {
+      val oldKeyword = Keyword("oldKeywordName", true)
+      val newKeyword = Keyword("newKeywordName", true)
+
+      service.auditManagerKeywordRenamed(operator, oldKeyword, newKeyword)
+
+      val payload = Map(
+        "operatorId" -> operator.id,
+        "originalKeyword" -> oldKeyword.name,
+        "updatedKeyword" -> newKeyword.name
+      )
+
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordRenamed"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+  }
+
   private def caseCreatedAudit(caseReference: String, operatorId: String, comment: String): Map[String, String] =
     Map[String, String](
       "caseReference" -> caseReference,
