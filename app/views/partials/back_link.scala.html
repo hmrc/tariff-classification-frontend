@@ -19,11 +19,15 @@
 @()(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(request.session.get(SessionKeys.backToSearchResultsLinkUrl).isDefined) {
-        <a id="back-link" class="link-back mt-15" href="@request.session.get(SessionKeys.backToSearchResultsLinkUrl).getOrElse(routes.IndexController.get())">
+        <div class="mt-15">
+            <a id="back-link" class="link-back mt-15" href="@request.session.get(SessionKeys.backToSearchResultsLinkUrl).getOrElse(routes.IndexController.get())">
             @request.session.get(SessionKeys.backToSearchResultsLinkLabel).map(l =>  if(l.isEmpty) "Back" else s"Back to $l").getOrElse(messages("errors.all.back"))
             </a>
+        </div>
     } else {
-        <a id="back-link" class="link-back mt-15" href="@request.session.get(SessionKeys.backToQueuesLinkUrl).getOrElse(routes.IndexController.get())">
+        <div class="mt-15">
+            <a id="back-link" class="link-back mt-15" href="@request.session.get(SessionKeys.backToQueuesLinkUrl).getOrElse(routes.IndexController.get())">
             @request.session.get(SessionKeys.backToQueuesLinkLabel).map(l =>  if(l.isEmpty) "Back" else s"Back to $l").getOrElse(messages("errors.all.back"))
             </a>
+        </div>
     }
