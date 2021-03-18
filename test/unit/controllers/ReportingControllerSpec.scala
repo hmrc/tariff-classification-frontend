@@ -36,11 +36,11 @@ import scala.concurrent.Future
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val reportingService                     = mock[ReportingService]
-  private val queueService                         = injector.instanceOf[QueuesService]
-  private val usersService                         = mock[UserService]
-  private val operator                             = mock[Operator]
-  private lazy val manage_reports_view             = injector.instanceOf[manage_reports_view]
+  private val reportingService         = mock[ReportingService]
+  private val queueService             = injector.instanceOf[QueuesService]
+  private val usersService             = mock[UserService]
+  private val operator                 = mock[Operator]
+  private lazy val manage_reports_view = injector.instanceOf[manage_reports_view]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -585,7 +585,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .summaryReport(
             summaryReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-02T00:00:00.00Z"))
             )
           )
           .path()
@@ -713,8 +713,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
 
-      status(result)      shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.caseReport(Report.correspondenceCases).path())
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.correspondenceCases).path()
+      )
     }
 
     "return unauthorised with no permissions" in {
@@ -735,8 +737,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
 
-      status(result)      shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.caseReport(Report.miscellaneousCases).path())
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.miscellaneousCases).path()
+      )
     }
 
     "return unauthorised with no permissions" in {
@@ -748,7 +752,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
   }
-
 
   "numberOfOpenCases" should {
 
@@ -1102,7 +1105,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   }
 
-
   "caseCountByStatus" should {
 
     val reportName = "case-count-by-status"
@@ -1111,8 +1113,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
 
-      status(result)      shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.summaryReport(Report.caseCountByStatus).path())
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.caseCountByStatus).path()
+      )
     }
 
     "return unauthorised with no permissions" in {
@@ -1133,8 +1137,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
 
-      status(result)      shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.caseReport(Report.suppressedCaseCount).path())
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.suppressedCaseCount).path()
+      )
     }
 
     "return unauthorised with no permissions" in {
@@ -1155,8 +1161,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
 
-      status(result)      shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.caseReport(Report.openCasesCount).path())
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.openCasesCount).path()
+      )
     }
 
     "return unauthorised with no permissions" in {
@@ -1177,8 +1185,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
 
-      status(result)      shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.summaryReport(Report.rejectedCaseCountByUser).path())
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.summaryReport(Report.rejectedCaseCountByUser).path()
+      )
     }
 
     "return unauthorised with no permissions" in {
@@ -1199,8 +1209,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
 
-      status(result)      shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.ReportingController.caseReport(Report.calendarAtarCases).path())
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.calendarAtarCases).path()
+      )
     }
 
     "return unauthorised with no permissions" in {
