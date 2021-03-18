@@ -41,7 +41,7 @@
     <div class="grid-row">
         <div class="column-full">
             @if(request.hasPermission(Permission.KEYWORDS)) {
-            @form(action = routes.CaseController.addKeyword(ktvm.caseReference), 'class -> "form mt-3") {
+            @form(action = routes.CaseController.addKeyword(ktvm.caseReference).withFragment(Tab.KEYWORDS_TAB.name), 'class -> "form mt-3") {
 
             @CSRF.formField
             @input_accessible_auto_complete(

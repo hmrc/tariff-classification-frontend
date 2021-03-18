@@ -76,7 +76,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Move this case back to a team")
+      bodyOf(result)        should include("Choose a team to move this case to")
     }
 
     "return OK when user has right permissions" in {

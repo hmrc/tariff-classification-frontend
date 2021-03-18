@@ -51,14 +51,8 @@ class EmailServiceSpec extends ServiceSpecBase {
     }
 
     "Delegate to connector" in {
-      val aDate = LocalDate.of(2021, 1, 1)
-        .atStartOfDay()
-        .atZone(ZoneOffset.UTC)
-        .toInstant()
-
       given(aCase.reference).willReturn("ref")
       given(aCase.application).willReturn(application)
-      given(aCase.createdDate).willReturn(aDate)
       given(application.isBTI).willReturn(true)
       given(application.asATAR).willReturn(application)
       given(application.contact).willReturn(contact)
@@ -78,8 +72,7 @@ class EmailServiceSpec extends ServiceSpecBase {
             recipientName_line1 = "name",
             reference = "ref",
             goodsName = "item",
-            officerName = "officer",
-            dateSubmitted = "01 Jan 2021"
+            officerName = "officer"
           )
         ))
       )(any[HeaderCarrier], any[Writes[Email[_]]])
