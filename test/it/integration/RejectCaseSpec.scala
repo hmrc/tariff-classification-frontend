@@ -58,7 +58,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reject").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reject-reason").get())
 
       // Then
       response.status shouldBe OK
@@ -67,7 +67,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reject").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reject-reason").get())
 
       // Then
       response.status shouldBe OK

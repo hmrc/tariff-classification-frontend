@@ -16,46 +16,56 @@
 
 package controllers
 
-import java.io.File
-
-import models.ReferralReason.ReferralReason
+import connector.FakeDataCacheConnector
 import models._
+import models.request.FileStoreInitiateRequest
+import models.response._
+import models.ReferralReason.ReferralReason
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, refEq}
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
-import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
-import play.api.mvc.MultipartFormData.FilePart
-import play.api.mvc.{MultipartFormData, Result}
-import play.api.test.Helpers.{redirectLocation, _}
-import service.CasesService
+import play.api.test.Helpers._
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import utils.JsonFormatters._
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
-import java.nio.file.Path
 
 class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
-
-  private val largeFileSize: Long = 16485760
-  private val casesService        = mock[CasesService]
-  private val operator            = Operator(id = "id")
+  private val casesService = mock[CasesService]
+  private val fileService  = mock[FileStoreService]
+  private val operator     = Operator(id = "id")
 
   private val caseWithStatusNEW      = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN     = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
 
+  private val initiateResponse = FileStoreInitiateResponse(
+    id              = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
+
   override def afterEach(): Unit = {
     super.afterEach()
-    reset(casesService)
+    reset(casesService, fileService)
+    await(FakeDataCacheConnector.clear())
   }
 
   private def controller(requestedCase: Case) =
     new ReferCaseController(
       new SuccessfulRequestActions(playBodyParsers, operator, c = requestedCase),
       casesService,
+      fileService,
+      FakeDataCacheConnector,
       mcc,
       realAppConfig
     )
@@ -64,314 +74,272 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     new ReferCaseController(
       new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
       casesService,
+      fileService,
+      FakeDataCacheConnector,
       mcc,
       realAppConfig
     )
 
-  private def aMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-    val file     = SingletonTemporaryFileCreator.create("example-file.txt")
-    val filePart = FilePart[TemporaryFile](key = "email", "file.txt", contentType = Some("text/plain"), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  private def aEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-    val filePart = FilePart[TemporaryFile](
-      key = "email",
-      "",
-      contentType = Some("text/plain"),
-      ref         = SingletonTemporaryFileCreator.create("example-file.txt")
-    )
-    MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  private def aMultipartFileOfType(mimeType: String): MultipartFormData[TemporaryFile] = {
-    val file     = SingletonTemporaryFileCreator.create("example-file")
-    val filePart = FilePart[TemporaryFile](key = "email", "example-file", contentType = Some(mimeType), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  private def aMultipartFileOfLargeSize: MultipartFormData[TemporaryFile] = {
-    val file      = mock[TemporaryFile]
-    val filePath  = mock[Path]
-    val innerFile = mock[File]
-    when(file.path).thenReturn(filePath)
-    when(filePath.toFile).thenReturn(innerFile)
-    when(innerFile.length()).thenReturn(largeFileSize)
-    val filePart = FilePart[TemporaryFile](key = "email", "example-file", contentType = Some("text/plain"), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  "Refer Case" should {
+  "GET refer case reason" should {
 
     "return OK and HTML content type" in {
-      val result: Result =
-        await(controller(caseWithStatusOPEN).getReferCase("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
+          .getReferCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Provide details to refer this case")
+      bodyOf(result) should include(
+        messages("change_case_status.referred.heading", caseWithStatusOPEN.application.goodsName)
+      )
     }
 
-    "return OK when user has right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-          .getReferCase("reference")(newFakeGETRequestWithCSRF(app))
+    "redirect to unauthorised when the user does not have right permissions" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty)
+          .getReferCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
       )
 
-      status(result) shouldBe Status.OK
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result =
-        await(controller(caseWithStatusNEW, Set.empty).getReferCase("reference")(newFakeGETRequestWithCSRF(app)))
-
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
     }
 
   }
 
-  "Post Confirm Refer a Case" should {
-
-    "redirect to confirmation page when data filled correctly" in {
-      when(
-        casesService.referCase(
-          refEq(caseWithStatusOPEN),
-          any[String],
-          any[Seq[ReferralReason]],
-          any[FileUpload],
-          any[String],
-          any[Operator]
-        )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(
-              aMultipartFileWithParams(
-                "referredTo" -> Seq("Applicant"),
-                "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString),
-                "note"       -> Seq("some-note")
-              )
+  "POST refer case reason" should {
+    "redirect to refer case email page when filled correctly" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(
+            app,
+            Map(
+              "referredTo" -> "Applicant",
+              "reasons[0]" -> ReferralReason.REQUEST_SAMPLE.toString,
+              "note"       -> "some-note"
             )
+          )
         )
       )
 
-      status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/refer/confirmation")
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.ReferCaseController.getReferCaseEmail(caseWithStatusOPEN.reference).path
+      )
     }
 
-    "display required field when failing to submit referred to" in {
-      when(
-        casesService.referCase(
-          refEq(caseWithStatusOPEN),
-          any[String],
-          any[Seq[ReferralReason]],
-          any[FileUpload],
-          any[String],
-          any[Operator]
-        )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(aMultipartFileWithParams("note" -> Seq("some-note")))
+    "display error page when referent is missing" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
         )
       )
 
-      status(result)        shouldBe Status.OK
+      status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Select who you are referring this case to")
+      bodyOf(result)        should include(messages("error.empty.refer.to"))
     }
 
-    "display required field when failing to submit reason when referred to is Applicant" in {
-      when(
-        casesService.referCase(
-          refEq(caseWithStatusOPEN),
-          any[String],
-          any[Seq[ReferralReason]],
-          any[FileUpload],
-          any[String],
-          refEq(operator)
-        )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(aMultipartFileWithParams("referredTo" -> Seq("Applicant"), "note" -> Seq("some-note")))
+    "display error page when referred to applicant and no reason is selected" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(app, Map("referredTo" -> "Applicant", "note" -> "some-note"))
         )
       )
 
-      status(result)        shouldBe Status.OK
+      status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
       bodyOf(result)        should include("Select why you are referring this case")
     }
 
-    "display required field when failing to submit referManually detail when referred to is Other" in {
-      when(
-        casesService.referCase(
-          refEq(caseWithStatusOPEN),
-          any[String],
-          any[Seq[ReferralReason]],
-          any[FileUpload],
-          any[String],
-          refEq(operator)
-        )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(aMultipartFileWithParams("referredTo" -> Seq("Other"), "note" -> Seq("some-note")))
+    "display error page when referred to Other and no details of who is referred to are provided" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(app, Map("referredTo" -> "Other", "note" -> "some-note"))
         )
       )
 
-      status(result)        shouldBe Status.OK
+      status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
       bodyOf(result)        should include("Enter who you are referring this case to")
     }
 
-    "remove reasons when referred to is set to Lab Analyst" in {
+    "display error page when note is missing" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(app, Map("referredTo" -> "LAB"))
+        )
+      )
+
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("error.empty.refer.note"))
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val result = await(
+        controller(caseWithStatusNEW, Set.empty)
+          .postReferCaseReason(caseWithStatusNEW.reference)(
+            newFakePOSTRequestWithCSRF(
+              app,
+              Map(
+                "referredTo" -> "APPLICANT",
+                "reasons[0]" -> ReferralReason.REQUEST_SAMPLE.toString,
+                "note"       -> "some-note"
+              )
+            )
+          )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+  }
+
+  "GET refer case email" should {
+
+    "return OK and HTML content type" in {
+      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+        initiateResponse
+      )
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
+          .getReferCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)        shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result) should include(
+        messages("change_case_status.referred.heading", caseWithStatusOPEN.application.goodsName)
+      )
+    }
+
+    "redirect to unauthorised when the user does not have right permissions" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty)
+          .getReferCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+  }
+
+  "GET refer case" should {
+
+    "redirect to confirmation page" in {
+      val cacheKey = s"refer_case-${caseWithStatusOPEN.reference}"
+      val referral = CaseReferral("APPLICANT", List(ReferralReason.REQUEST_SAMPLE), "some-note", None)
+      val cacheMap = UserAnswers(cacheKey).set("referral", referral).cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
+
+      given(
+        casesService.referCase(
+          refEq(caseWithStatusOPEN),
+          refEq("APPLICANT"),
+          refEq(Seq(ReferralReason.REQUEST_SAMPLE)),
+          any[Attachment],
+          any[String],
+          any[Operator]
+        )(any[HeaderCarrier])
+      ) willReturn successful(caseWithStatusREFERRED)
+
+      val result = await(
+        controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.ReferCaseController.confirmReferCase(caseWithStatusREFERRED.reference).path
+      )
+    }
+
+    "ignore reasons when referred to is set to Lab Analyst" in {
+      val cacheKey = s"refer_case-${caseWithStatusOPEN.reference}"
+      val referral = CaseReferral(
+        "Lab Analyst",
+        List(ReferralReason.REQUEST_SAMPLE, ReferralReason.REQUEST_MORE_INFO),
+        "some-note",
+        None
+      )
+      val cacheMap = UserAnswers(cacheKey).set("referral", referral).cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
+
       val captor = ArgumentCaptor.forClass(classOf[Seq[ReferralReason]])
-      when(
+
+      given(
         casesService.referCase(
           refEq(caseWithStatusOPEN),
           any[String],
           captor.capture(),
-          any[FileUpload],
+          any[Attachment],
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusREFERRED))
+      ) willReturn successful(caseWithStatusREFERRED)
 
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(
-              aMultipartFileWithParams(
-                "referredTo" -> Seq("Lab Analyst"),
-                "reasons[0]" -> Seq(ReferralReason.REQUEST_SAMPLE.toString),
-                "reasons[1]" -> Seq(ReferralReason.REQUEST_MORE_INFO.toString),
-                "note"       -> Seq("some-note")
-              )
-            )
+      val result = await(
+        controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
         )
       )
 
-      assert(captor.getValue == Seq.empty)
-      status(result) shouldBe Status.SEE_OTHER
+      captor.getValue shouldBe Seq.empty
+      status(result)  shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.ReferCaseController.confirmReferCase(caseWithStatusREFERRED.reference).path
+      )
     }
 
-    "display required field when failing to submit a note" in {
-      when(
-        casesService.referCase(
-          refEq(caseWithStatusOPEN),
-          any[String],
-          any[Seq[ReferralReason]],
-          any[FileUpload],
-          any[String],
-          any[Operator]
-        )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(aMultipartFileWithParams("referredTo" -> Seq("LAB")))
+    "redirect to unauthorised when the user does not have any saved answers" in {
+      val result = await(
+        controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
         )
       )
 
-      status(result)        shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Add a note giving details of why you are referring this case")
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
     }
 
-    "return to form on missing file" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN)
-          .postReferCase("reference")(newFakePOSTRequestWithCSRF(app).withBody(aEmptyMultipartFileWithParams()))
-      )
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val cacheKey = s"refer_case-${caseWithStatusOPEN.reference}"
+      val referral = CaseReferral("APPLICANT", List(ReferralReason.REQUEST_SAMPLE), "some-note", None)
+      val cacheMap = UserAnswers(cacheKey).set("referral", referral).cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
 
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Provide details to refer this case")
-    }
-
-    "return to form on wrong type of file" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postReferCase("reference")(
-          newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfType("audio/mpeg"))
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty).referCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
         )
       )
 
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Provide details to refer this case")
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
     }
-
-    "return to form on file size too large" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN)
-          .postReferCase("reference")(newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfLargeSize))
-      )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include(" Why are you referring this case?")
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusNEW, Set.empty)
-          .postReferCase("reference")(
-            newFakePOSTRequestWithCSRF(app)
-              .withBody(
-                aMultipartFileWithParams(
-                  "referredTo" -> Seq("APPLICANT"),
-                  "reason"     -> Seq(ReferralReason.REQUEST_SAMPLE.toString),
-                  "note"       -> Seq("some-note")
-                )
-              )
-          )
-      )
-
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
-    }
-
   }
 
-  "View Confirm page for a referred case" should {
-
+  "GET confirm refer case" should {
     "return OK and HTML content type" in {
-      when(
-        casesService.referCase(
-          refEq(caseWithStatusREFERRED),
-          any[String],
-          any[Seq[ReferralReason]],
-          any[FileUpload],
-          any[String],
-          any[Operator]
-        )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusREFERRED))
-
-      val result: Result = await(
-        controller(caseWithStatusREFERRED).confirmReferCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withFormUrlEncodedBody("state" -> "true")
+      val result = await(
+        controller(caseWithStatusREFERRED).confirmReferCase(caseWithStatusREFERRED.reference)(
+          newFakeGETRequestWithCSRF(app)
         )
       )
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("case has been referred")
+      bodyOf(result)        should include(messages("page.title.case.referred"))
     }
   }
-
 }

@@ -40,7 +40,12 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">@messages("change_case_status.to.suspended")</h2>
 
-            @helper.form(action = routes.SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
+            @helper.form(
+                action = routes.SuspendCaseController.postSuspendCaseReason(c.reference),
+                'id -> "suspend_case",
+                'enctype -> "multipart/form-data",
+                'novalidate -> "novalidate"
+            ) {
                 @helper.CSRF.formField
 
                 @input_textarea(
@@ -50,8 +55,6 @@
                     hint = Some("Give details of why you are suspending this case. Keep the note clear and concise."),
                     customErrorMessage = Some(messages("error.empty.suspend.note"))
                 )
-
-                @status_change_upload(form("email"), "suspending")
 
                 @confirm_or_cancel_buttons(
                     id = "suspend_case",

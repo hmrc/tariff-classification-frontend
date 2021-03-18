@@ -29,6 +29,7 @@ import models.request._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -62,7 +63,7 @@ class AtarController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     keywordForm: Form[String]            = KeywordForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId   = fileId.getOrElse(UUID.randomUUID().toString)
     val atarCase: Case = request.`case`
     val atarViewModel  = CaseViewModel.fromCase(atarCase, request.operator)
@@ -107,25 +108,23 @@ class AtarController @Inject() (
                            )
                          )
 
-    } yield Ok(
-      atarView(
-        atarViewModel,
-        applicantTab,
-        goodsTab,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        initiateResponse,
-        activityTab,
-        activityForm,
-        keywordsTab,
-        keywordForm,
-        rulingTab,
-        rulingForm,
-        attachments,
-        appealTab,
-        activeNavTab
-      )
+    } yield atarView(
+      atarViewModel,
+      applicantTab,
+      goodsTab,
+      sampleTab,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      activityTab,
+      activityForm,
+      keywordsTab,
+      keywordForm,
+      rulingTab,
+      rulingForm,
+      attachments,
+      appealTab,
+      activeNavTab
     )
   }
 

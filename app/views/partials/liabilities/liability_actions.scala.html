@@ -29,7 +29,7 @@
         @if(show.refer) {
             <div id="refer-case-section" class="mt-1">
                 <p class="mt-1">
-                    <a id="refer-case-button" href="@ReferCaseController.getReferCase(c.reference)">
+                    <a id="refer-case-button" href="@ReferCaseController.getReferCaseReason(c.reference)">
                         Refer this case</a>
                 </p>
             </div>
@@ -38,7 +38,7 @@
         @if(show.reject) {
             <div id="reject-case-section" class="mt-1">
                 <p>
-                    <a id="reject-case-button" href="@RejectCaseController.getRejectCase(c.reference)">
+                    <a id="reject-case-button" href="@RejectCaseController.getRejectCaseReason(c.reference)">
                         Reject this case</a>
                 </p>
             </div>
@@ -47,7 +47,7 @@
         @if(show.suspend) {
             <div id="suspend-case-section" class="mt-1">
                 <p>
-                    <a id="suspend-case-button" href="@SuspendCaseController.getSuspendCase(c.reference)">
+                    <a id="suspend-case-button" href="@SuspendCaseController.getSuspendCaseReason(c.reference)">
                         Suspend this case</a>
                 </p>
             </div>
@@ -63,7 +63,7 @@
         @if(show.suppress) {
             <div id="supress-case-section" class="mt-1">
                 <p class="mt-30">
-                    <a id="suppress_link" href="@SuppressCaseController.getSuppressCase(c.reference)">
+                    <a id="suppress_link" href="@SuppressCaseController.getSuppressCaseReason(c.reference)">
                         Suppress this case</a>
                 </p>
             </div>

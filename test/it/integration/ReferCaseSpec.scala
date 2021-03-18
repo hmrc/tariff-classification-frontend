@@ -58,7 +58,7 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/refer").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/refer-reason").get())
 
       // Then
       response.status shouldBe OK
@@ -67,7 +67,7 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/refer").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/refer-reason").get())
 
       // Then
       response.status shouldBe OK

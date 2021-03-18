@@ -49,7 +49,7 @@
 }
 @main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case"))) {
 
-    <div class="mt-15">@back_link()</div>
+    @back_link()
 
     @error_summary(form.errors)
 
@@ -60,7 +60,7 @@
     <div class="grid-row">
         <div class="column-full">
 
-            @helper.form(action = routes.ReferCaseController.postReferCase(c.reference), 'id -> "refer_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
+            @helper.form(action = routes.ReferCaseController.postReferCaseReason(c.reference), 'id -> "refer_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 
                 @input_radiogroup(
@@ -136,14 +136,12 @@
                     customGroupId = Some("referredTo")
                 )
 
-                  @input_textarea(
-                      field = form("note"),
-                      label = messages("change_case_status.referred.note.label"),
-                      labelClass = Some("heading-medium"),
-                      hint = Some(messages("change_case_status.referred.note.hint"))
-                  )
-
-                @status_change_upload(form("email"), "referring")
+                @input_textarea(
+                    field = form("note"),
+                    label = messages("change_case_status.referred.note.label"),
+                    labelClass = Some("heading-medium"),
+                    hint = Some(messages("change_case_status.referred.note.hint"))
+                )
 
                 @confirm_or_cancel_buttons(
                     id = "refer_case",

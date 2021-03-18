@@ -16,4 +16,4 @@
 
 package models
 
-case class CaseRejection(reason: String, note: String)
+case class CaseRejection(reason: RejectReason.Value, note: String)

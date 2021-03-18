@@ -40,7 +40,7 @@
         <div class="column-full">
             <h2 class="heading-large mt-0">@messages("change_case_status.to.cancelled")</h2>
 
-            @helper.form(action = CancelRulingController.postCancelRuling(c.reference), 'id -> "cancel_ruling", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
+            @helper.form(action = CancelRulingController.postCancelRulingReason(c.reference), 'id -> "cancel_ruling", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 
                 @input_radiogroup(
@@ -60,8 +60,6 @@
                     hint = Some("Give details of why you are cancelling this case. Keep the note clear and concise."),
                     customErrorMessage = Some(messages("error.empty.cancel.note"))
                 )
-
-                @status_change_upload(form("email"), "cancelling")
 
                 @warning(
                     if(c.application.isBTI) {

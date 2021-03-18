@@ -56,7 +56,7 @@ class ReleaseOrSuppressCaseController @Inject() (
           case CaseStatusRadioInput.Release =>
             Redirect(routes.ReleaseCaseController.releaseCase(reference))
           case CaseStatusRadioInput.Suppress =>
-            Redirect(routes.SuppressCaseController.getSuppressCase(reference))
+            Redirect(routes.SuppressCaseController.getSuppressCaseReason(reference))
         }
       )
     }

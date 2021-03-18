@@ -30,6 +30,7 @@ import models.{Case, CaseStatus, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -60,7 +61,7 @@ class CorrespondenceController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val correspondenceCase: Case = request.`case`
     val uploadFileId             = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -99,22 +100,20 @@ class CorrespondenceController @Inject() (
                              maxFileSize     = appConfig.fileUploadMaxSize
                            )
                          )
-    } yield Ok(
-      correspondenceView(
-        correspondenceViewModel,
-        caseDetailsTab,
-        contactDetailsTab,
-        messagesTab,
-        messageForm,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        initiateResponse,
-        activityTab,
-        activityForm,
-        attachments,
-        activeNavTab
-      )
+    } yield correspondenceView(
+      correspondenceViewModel,
+      caseDetailsTab,
+      contactDetailsTab,
+      messagesTab,
+      messageForm,
+      sampleTab,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      activityTab,
+      activityForm,
+      attachments,
+      activeNavTab
     )
   }
 

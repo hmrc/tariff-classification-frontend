@@ -20,15 +20,36 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings.textNonEmpty
 import models.CaseReferral
+import play.api.data.validation.Constraint
+import play.api.data.validation.Invalid
+import play.api.data.validation.Valid
+import models.ReferralReason
 
 object ReferCaseForm {
+  val referentSpecified: Constraint[CaseReferral] = Constraint { referral =>
+    val noReferent = referral.referManually.filterNot(_.isEmpty).isEmpty
+    if (referral.referredTo.equalsIgnoreCase("Other") & noReferent)
+      Invalid("Enter who you are referring this case to")
+    else
+      Valid
+  }
+
+  val reasonSpecified: Constraint[CaseReferral] = Constraint { referral =>
+    if (referral.referredTo.equalsIgnoreCase("Applicant") && referral.reasons.isEmpty)
+      Invalid("Select why you are referring this case")
+    else
+      Valid
+  }
 
   lazy val form: Form[CaseReferral] = Form(
     mapping(
       "referredTo"    -> textNonEmpty("error.empty.refer.to"),
-      "reasons"       -> list(text),
+      "reasons"       -> list(text.transform[ReferralReason.Value](ReferralReason.withName, _.toString)),
       "note"          -> textNonEmpty("error.empty.refer.note"),
       "referManually" -> optional(text)
-    )(CaseReferral.apply)(CaseReferral.unapply)
+    )(CaseReferral.apply)(CaseReferral.unapply).verifying(
+      referentSpecified,
+      reasonSpecified
+    )
   )
 }

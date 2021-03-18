@@ -18,48 +18,44 @@
 @import models.request.AuthenticatedRequest
 @import controllers.routes
 @import models.Case
+@import models.response.FileStoreInitiateResponse
 @import models.viewmodels.NoTabSelected
-@import views.html.components.{confirm_or_cancel_buttons, warning}
+@import views.html.components.{confirm_or_cancel_buttons}
 @import views.html.forms.components.input_textarea
 @import views.html.includes.main
 @import views.html.partials.case_heading
 @import views.html.partials.statuses.status_change_upload
 @import views.html.partials.{error_summary, back_link}
 
-@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case")), customPrimaryNavTab = NoTabSelected) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case")), customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
-    @error_summary(form.errors)
+    @error_summary(uploadForm.errors)
 
     @case_heading(c)
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("change_case_status.to.suppressed")</h2>
+            <h2 class="heading-large mt-0">@messages("change_case_status.to.suspended")</h2>
 
-            @helper.form(action = routes.SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
-                @helper.CSRF.formField
+            @helper.form(
+                action = Call("POST", initiateResponse.uploadRequest.href),
+                'id -> "suppress-case",
+                'enctype -> "multipart/form-data",
+                'novalidate -> "novalidate"
+            ) {
 
-                @input_textarea(
-                    field = form("note"),
-                    label = "Add a note",
-                    labelClass = Some("heading-medium"),
-                    hint = Some("Give details of why you are suppressing this case. Keep the note clear and concise."),
-                    customErrorMessage = Some(messages("error.empty.suppress.note"))
-                )
+                @for((key, value) <- initiateResponse.uploadRequest.fields) {
+                    <input type="hidden" name="@key" value="@value" />
+                }
 
-                @status_change_upload(form("email"), "suppressing")
-
-                @warning(
-                    "This case cannot be reopened once it has been suppressed.",
-                    containerClass = "mb-4"
-                )
+                @status_change_upload(uploadForm("file"), "suspending")
 
                 @confirm_or_cancel_buttons(
-                    id = "suppress_case",
+                    id = "suspend_case",
                     confirmText = "Confirm status change",
                     cancelText = "Cancel and return to case",
                     cancelHref = routes.CaseController.get(c.reference)
