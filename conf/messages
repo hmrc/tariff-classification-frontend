@@ -546,6 +546,7 @@ liability.create_liability.liability-status.radio.yes=Yes
 liability.create_liability.liability-status.radio.no=No
 liability.create_liability.confirm-button=Confirm and create case
 liability.create_liability.cancel-button=Cancel
+misc.create_misc.cancel-button=Cancel this action
 
 page.title.case.queues.my-cases = My cases
 page.title.case.queues.cases = {0} cases
