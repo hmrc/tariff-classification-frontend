@@ -34,8 +34,7 @@ class EmailConnectorSpec extends ConnectorTest {
         recipientName_line1 = "name",
         reference = "case-ref",
         goodsName = "item-name",
-        officerName = "officer",
-        dateSubmitted = "01 Jan 2021"
+        officerName = "officer"
       )
     )
 

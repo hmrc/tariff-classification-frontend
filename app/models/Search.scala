@@ -22,7 +22,8 @@ import forms.SearchForm
 import models.PseudoCaseStatus.PseudoCaseStatus
 
 case class Search(
-  traderName: Option[String]                    = None,
+  caseDetails: Option[String]                   = None,
+  caseSource: Option[String]                    = None,
   commodityCode: Option[String]                 = None,
   decisionDetails: Option[String]               = None,
   status: Option[Set[PseudoCaseStatus]]         = None,
@@ -32,7 +33,7 @@ case class Search(
 
   def isEmpty: Boolean =
     // Status & Application Type omitted intentionally as it is a post-search filter
-    traderName.isEmpty && commodityCode.isEmpty && decisionDetails.isEmpty && keywords.isEmpty
+    caseDetails.isEmpty && caseSource.isEmpty && commodityCode.isEmpty && decisionDetails.isEmpty && keywords.isEmpty
 
   def isDefined: Boolean = !isEmpty
 }

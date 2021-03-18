@@ -70,7 +70,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Change case status to: Suppressed")
+      bodyOf(result)        should include("Provide details to suppress this case")
     }
 
     "return OK when user has right permissions" in {
@@ -137,7 +137,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suppressed")
+      bodyOf(result) should include("Provide details to suppress this case")
     }
 
     "return to form on missing form field" in {
@@ -149,7 +149,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suppressed")
+      bodyOf(result) should include("Provide details to suppress this case")
     }
 
     "return to form on invalid file type" in {
@@ -161,7 +161,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suppressed")
+      bodyOf(result) should include("Provide details to suppress this case")
     }
 
     "redirect unauthorised when does not have right permissions" in {

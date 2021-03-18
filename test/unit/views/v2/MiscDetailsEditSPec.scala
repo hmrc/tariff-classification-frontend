@@ -32,19 +32,6 @@ class MiscDetailsEditSPec extends ViewSpec {
 
   "Misc Details Edit View" should {
 
-    "render h2 heading" in {
-      val doc =
-        view(
-          mistDetailsEdit(
-            sampleCase,
-            MiscDetailsForm.miscDetailsForm(sampleCase),
-            CaseViewModel.fromCase(sampleCase, operator)
-          )
-        )
-
-      doc.getElementById("misc-details-edit").text shouldBe "Edit case details"
-    }
-
     "render the misc fields correctly" in {
       val doc =
         view(
