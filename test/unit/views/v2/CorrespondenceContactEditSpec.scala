@@ -30,18 +30,12 @@ class CorrespondenceContactEditSpec extends ViewSpec {
 
   "Correspondence Contact Edit View" should {
 
-    "render h2 heading" in {
-      val doc =
-        view(correspondenceContactEdit(sampleCase, CorrespondenceContactForm.correspondenceContactForm(sampleCase)))
-
-      doc.getElementById("correspondence-contact-edit").text shouldBe "Edit details"
-    }
-
     "render h3 heading" in {
       val doc =
         view(correspondenceContactEdit(sampleCase, CorrespondenceContactForm.correspondenceContactForm(sampleCase)))
 
-      doc.getElementById("contact-details-edit").text shouldBe "Contact details"
+      doc.getElementById("contact-details-section-header").text shouldBe "Contact details"
+      doc.getElementById("contact-address-section-header").text shouldBe "Contact address"
     }
 
     "render the correspondence fields correctly" in {

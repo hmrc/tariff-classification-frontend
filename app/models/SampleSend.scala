@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(active: Boolean, title: String, call: Call, tabIndex : Int = 0)
+package models
 
-<li class="tabs__list-item" role="tab">
-    @if(active) {
-        <span id="tab-item-@title" tabindex="@tabIndex" class="tabs__tab" aria-selected="true">@title</span>ffff
-    } else {
-        <a id="tab-item-@title" tabindex="@tabIndex" class="tabs__tab" href="@call">@title</a>
+object SampleSend extends Enumeration {
+  type SampleSend = Value
+
+  val TRADER, AGENT, COMPLIANCE_OR_PORT_OFFICER, UNKNOWN = Value
+
+  def format(status: Option[SampleSend]): String =
+    status match {
+      case Some(TRADER)                     => "Trader"
+      case Some(AGENT)                      => "Agent"
+      case Some(COMPLIANCE_OR_PORT_OFFICER) => "Compliance or Port Officer"
+      case Some(UNKNOWN)                    => "Unknown"
+      case _                                => ""
     }
-</li>
-
-
+}

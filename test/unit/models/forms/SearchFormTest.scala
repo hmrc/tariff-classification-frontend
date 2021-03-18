@@ -38,7 +38,7 @@ class SearchFormTest extends ModelsBaseSpec {
         .bindFromRequest(
           Map(
             "commodity_code"      -> Seq(""),
-            "trader_name"         -> Seq(""),
+            "case_source"         -> Seq(""),
             "decision_details"    -> Seq(""),
             "status[0]"           -> Seq(""),
             "application_type[0]" -> Seq(""),
@@ -83,7 +83,7 @@ class SearchFormTest extends ModelsBaseSpec {
         .bindFromRequest(
           Map(
             "commodity_code"      -> Seq("00"),
-            "trader_name"         -> Seq("trader-name"),
+            "case_source"         -> Seq("trader-name"),
             "decision_details"    -> Seq("decision-details"),
             "status[0]"           -> Seq("OPEN"),
             "status[1]"           -> Seq("LIVE"),
@@ -94,7 +94,7 @@ class SearchFormTest extends ModelsBaseSpec {
           )
         )
         .get shouldBe Search(
-        traderName      = Some("trader-name"),
+        caseSource      = Some("trader-name"),
         commodityCode   = Some("00"),
         decisionDetails = Some("decision-details"),
         status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
@@ -107,7 +107,7 @@ class SearchFormTest extends ModelsBaseSpec {
       SearchForm.form
         .fill(
           Search(
-            traderName      = Some("trader-name"),
+            caseSource      = Some("trader-name"),
             commodityCode   = Some("00"),
             decisionDetails = Some("decision-details"),
             status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
@@ -116,7 +116,7 @@ class SearchFormTest extends ModelsBaseSpec {
           )
         )
         .data shouldBe Map[String, String](
-        "trader_name"         -> "trader-name",
+        "case_source"         -> "trader-name",
         "commodity_code"      -> "00",
         "decision_details"    -> "decision-details",
         "status[0]"           -> "OPEN",

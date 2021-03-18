@@ -22,51 +22,57 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 
-@(correspondenceTab: ApplicationsTab, assignmentType: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(correspondenceTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{correspondenceTab.tabMessageKey}-table">
-  <tbody>
+  <caption class="visually-hidden">@messages(captionMessage)</caption>
+  <thead class="govuk-table__head">
     <tr id="@{correspondenceTab.tabMessageKey}-details" class="grid-row mb-2">
-     <th id="@{correspondenceTab.tabMessageKey}-reference" class="bold w-0">
+     <th id="@{correspondenceTab.tabMessageKey}-reference" class="bold w-0" scope="col">
      Reference
      </th>
-     <th id="@{correspondenceTab.tabMessageKey}-subject" class="bold w-0">
+     <th id="@{correspondenceTab.tabMessageKey}-subject" class="bold w-0" scope="col">
       Subject
      </th>
-     <th id="@{correspondenceTab.tabMessageKey}-source" class="bold w-0">
+     <th id="@{correspondenceTab.tabMessageKey}-source" class="bold w-0" scope="col">
       Case source
      </th>
      @if(assignmentType != "applicationTab.referredByMe") {
-     <th id="@{correspondenceTab.tabMessageKey}-contact-email" class="bold w-0">
+     <th id="@{correspondenceTab.tabMessageKey}-contact-email" class="bold w-0" scope="col">
       Contact email
      </th>
      }
-     <th id="@{correspondenceTab.tabMessageKey}-elapsed-days" class="bold w-0">
+     <th id="@{correspondenceTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
       Elapsed days
      </th>
      @if(assignmentType == "applicationTab.completedByMe") {
-     <th id="@{correspondenceTab.tabMessageKey}-completed-date" class="bold w-0">
+     <th id="@{correspondenceTab.tabMessageKey}-completed-date" class="bold w-0" scope="col">
       Completed date
      </th>
      }
      @if(assignmentType == "applicationTab.referredByMe") {
-     <th id="@{correspondenceTab.tabMessageKey}-refer-days" class="bold w-0">
+     <th id="@{correspondenceTab.tabMessageKey}-refer-days" class="bold w-0" scope="col">
       Refer days
      </th>}
      @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway") {
-     <th id="@{correspondenceTab.tabMessageKey}-status" class="bold w-0">
+     <th id="@{correspondenceTab.tabMessageKey}-status" class="bold w-0" scope="col">
       Status
      </th>
      }
-
     </tr>
-
+  </thead>
+  <tbody>
    @for((result, index) <- correspondenceTab.searchResult.results.zipWithIndex) {
 
     @defining(result.application.asCorrespondence) { correspondence =>
 
      <tr id="@{correspondenceTab.tabMessageKey}-details-@index">
-      <td id="@{correspondenceTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{correspondenceTab.tabMessageKey}-reference-@index">
+       <a href="@routes.CaseController.get(result.reference)">
+        <span aria-hidden="true">@{result.reference}</span>
+        <span class="visually-hidden">case reference @{result.reference}</span>
+       </a>
+      </td>
       <td id="@{correspondenceTab.tabMessageKey}-subject-@index" class="pre-wrap">@{correspondence.summary}</td>
       <td id="@{correspondenceTab.tabMessageKey}-source-@index" class="pre-wrap">@{correspondence.correspondenceStarter}</td>
       @if(assignmentType != "applicationTab.referredByMe") {

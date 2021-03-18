@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@(subheadingMsg: String, subheadingSize: String = "heading-medium")
+package models.forms.v2
 
-<h2 class="@subheadingSize">@subheadingMsg</h2>
+import models.forms.MandatoryBooleanForm
+import play.api.data.Form
+
+object CompleteCaseChoiceForm {
+  val form: Form[Boolean] = MandatoryBooleanForm.form("complete-case")
+}

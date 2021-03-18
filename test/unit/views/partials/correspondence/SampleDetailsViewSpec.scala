@@ -17,7 +17,7 @@
 package views.partials.correspondence
 
 import models.viewmodels.SampleStatusTabViewModel
-import models.{Event, Paged, Permission}
+import models.{Event, Paged, Permission, SampleSend}
 import views.ViewMatchers.{containText, _}
 import views.ViewSpec
 import views.html.partials.sample.sample_details_correspondence
@@ -35,7 +35,7 @@ class SampleDetailsViewSpec extends ViewSpec {
           SampleStatusTabViewModel(
             "caseReference",
             isSampleBeingSent = true,
-            Some("a person"),
+            Some(SampleSend.AGENT),
             None,
             "location",
             sampleActivity = Paged.empty[Event]
@@ -54,7 +54,7 @@ class SampleDetailsViewSpec extends ViewSpec {
           SampleStatusTabViewModel(
             "caseReference",
             isSampleBeingSent = false,
-            Some("a person"),
+            Some(SampleSend.AGENT),
             None,
             "location",
             sampleActivity = Paged.empty[Event]
@@ -73,7 +73,7 @@ class SampleDetailsViewSpec extends ViewSpec {
           SampleStatusTabViewModel(
             "caseReference",
             isSampleBeingSent = true,
-            Some("a person"),
+            Some(SampleSend.AGENT),
             None,
             "location",
             sampleActivity = Paged.empty[Event]
@@ -91,7 +91,7 @@ class SampleDetailsViewSpec extends ViewSpec {
           SampleStatusTabViewModel(
             "caseReference",
             isSampleBeingSent = true,
-            Some("a person"),
+            Some(SampleSend.AGENT),
             None,
             "location",
             sampleActivity = Paged.empty[Event]
@@ -109,7 +109,7 @@ class SampleDetailsViewSpec extends ViewSpec {
           SampleStatusTabViewModel(
             "caseReference",
             isSampleBeingSent = true,
-            Some("a person"),
+            Some(SampleSend.AGENT),
             None,
             "location",
             sampleActivity = Paged.empty[Event]
