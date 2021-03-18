@@ -21,7 +21,7 @@
 @import views.html.includes.main
 @import views.html.partials.{assignee, case_heading, error_summary, back_link}
 @import views.html.helper.{CSRF, form}
-@import models.viewmodels.NoTabSelected
+@import models.viewmodels.{NoTabSelected, AssignedToMeTab }
 @import views.html.forms.components.input_radiogroup
 @import views.forms.components.RadioOption
 
@@ -72,7 +72,7 @@
             </a>
         </p>
         <p>
-            <a id="assign_case-back_to_my_cases" href="@routes.MyCasesController.myCases()">
+            <a id="assign_case-back_to_my_cases" href="@controllers.v2.routes.MyCasesController.displayMyCases(activeSubNav=AssignedToMeTab)">
             @messages("case.ownership.assign_case.back")
             </a>
         </p>
