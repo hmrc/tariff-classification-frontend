@@ -474,6 +474,10 @@ page.title.advanced.search=Advanced search
 page.title.searchByCaseReference=Search by case reference
 page.title.case.not.found=Case not found
 page.title.refer.case=Provide details to refer this case
+page.title.case_correspondence.referred=The correspondence case has been referred
+page.title.case_miscellaneous.referred=The miscellaneous case has been referred
+page.title.case_liability.referred=The liability case has been referred
+page.title.case_atar.referred=The atar case has been referred
 page.title.case.referred=This case has been referred
 page.title.case.reopened=Case reopened
 page.title.suspend.case=Change case status to: Suspended
@@ -489,7 +493,7 @@ page.title.case.mis-created=Miscellaneous case created for this team
 page.title.create.case=Create this case for a team
 page.title.take.ownership=Do you want to take ownership of this case?
 page.title.move.case=Choose a team to move this case to
-page.title.case.moved=This case has been moved to this team
+page.title.case.moved=This case has been moved to a team
 page.title.suppress.case=Provide details to suppress this case
 page.title.case.suppressed=Case suppressed
 page.title.complete.case=Are you sure you want to complete this case?
@@ -1136,17 +1140,19 @@ release_case.header = Choose a team to release the {0} case to
 move_case.header = Choose a team to move the {0} case to
 release_case.question.header = Do you want to release this new case to a team now?
 release_case.question.error=Select yes if you want to release this new case to a team
-
 suppress_case.confirm.header = The {0} case has been suppressed
 case_status.confirm.subheader = The case status is now<br><span class="bold">{0}</span>
+
 release_case.released_dynamic_message = The {0}  case has been released to the {1} team
 create_case.dynamic_message = The {0} case has been created
 create_case.message = The case has not been released to a team
 release_case.released_dynamic_message.atar = The {0}  case has been released to the {1} team
+
 complete_case.completed.header = The {0} {1} case has been completed
 complete_case.completed.subheader = <div class="govuk-panel__body">A ruling certificate has been created with an expiry date of<br><strong>{0}</strong></div>
 complete_case.areYouSure = Are you sure you want to complete the {0} case?
 complete-case.form.state.required = Select yes if you want to complete this case
+
 back.home = Back to home
 back.gateway = Back to Gateway cases
 back.my_cases = Back to open ATaR cases
@@ -1253,6 +1259,7 @@ users.user.noCases=There are no {0} cases assigned to this user.
 users.user.editUserTeams.heading=Assign {0} to a team or teams
 
 take-ownership.form.state.required=Select yes if you want to take ownership of this case
+
 users.user.delete.header=Delete {0}
 users.user.delete.casesMustBeMoved=Cases must be moved before {0} can be deleted
 users.user.delete.casesMustBeMoved.message=This user's active cases must be moved to another user or team before they can be deleted.
