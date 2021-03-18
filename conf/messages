@@ -837,7 +837,7 @@ case.v2.atar.ruling.tab_title=Ruling
 
 case.v2.atar.appeal.tab_title=Appeals
 
-case.v2.liability.page_title=Liability details
+case.v2.liability.page_title=Case details for this
 case.v2.liability.c592.entry_number=Entry number
 case.v2.liability.c592.tab_title=Details
 case.v2.liability.c592.tab_heading=Details
@@ -942,7 +942,7 @@ case.v2.liability.reopen.button=Reopen case
 
 case.v2.liability.advanced_search.button=Search cases
 
-case.v2.correspondence.page_title=Correspondence case details
+case.v2.correspondence.page_title=Case details for this
 
 case.v2.correspondence.case-details_title=Edit correspondence case details
 case.v2.correspondence.case-details.tab_title=Case Details
@@ -1197,7 +1197,7 @@ atar.editRuling.expiryDate.emptyDate.month = Enter a month
 atar.editRuling.expiryDate.emptyDate.year = Enter a year
 atar.editRuling.expiryDate.invalidFormat = Expiry date must be a real date
 
-case.v2.miscellaneous.page_title=Miscellaneous case details
+case.v2.miscellaneous.page_title=Case details for this
 
 case.v2.miscellaneous.case-details.tab_title=Details
 
