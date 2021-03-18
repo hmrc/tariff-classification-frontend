@@ -421,6 +421,25 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     }
   }
 
+  "Service 'audit sample send changed'" should {
+    val original = aCase(withReference("ref"))
+    val updated  = aCase(withReference("ref"), withSample(Sample(whoIsSending = Some(SampleSend.AGENT))))
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditSampleSendChange(original, updated, operator)
+
+      val payload = sampleSendChangeAudit(
+        caseReference  = "ref",
+        newSender      = "AGENT",
+        previousSender = "None",
+        operatorId     = operator.id
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("caseSampleSendChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
   "Service 'audit message'" should {
     val message = "this is my message"
     val corrCase = correspondenceCaseExample.copy(
@@ -655,5 +674,18 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       "operatorId"           -> operatorId,
       "newSampleReturn"      -> newStatus,
       "previousSampleReturn" -> previousStatus
+    )
+
+  private def sampleSendChangeAudit(
+    caseReference: String,
+    newSender: String,
+    previousSender: String,
+    operatorId: String
+  ): Map[String, String] =
+    Map[String, String](
+      "caseReference"        -> caseReference,
+      "operatorId"           -> operatorId,
+      "newSampleSender"      -> newSender,
+      "previousSampleSender" -> previousSender
     )
 }

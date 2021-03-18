@@ -16,13 +16,17 @@
 
 package models
 
-import models.SampleReturn.SampleReturn
-import models.SampleSend.SampleSend
-import models.SampleStatus.SampleStatus
+object SampleSend extends Enumeration {
+  type SampleSend = Value
 
-case class Sample(
-  status: Option[SampleStatus]       = None,
-  requestedBy: Option[Operator]      = None,
-  returnStatus: Option[SampleReturn] = None,
-  whoIsSending: Option[SampleSend]   = None
-)
+  val TRADER, AGENT, COMPLIANCE_OR_PORT_OFFICER, UNKNOWN = Value
+
+  def format(status: Option[SampleSend]): String =
+    status match {
+      case Some(TRADER)                     => "Trader"
+      case Some(AGENT)                      => "Agent"
+      case Some(COMPLIANCE_OR_PORT_OFFICER) => "Compliance or Port Officer"
+      case Some(UNKNOWN)                    => "Unknown"
+      case _                                => ""
+    }
+}

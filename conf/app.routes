@@ -103,6 +103,9 @@ POST        /cases/:reference/sample/status                     controllers.Samp
 GET         /cases/:reference/sample/return-status              controllers.SampleReturnController.chooseStatus(reference: String)
 POST        /cases/:reference/sample/return-status              controllers.SampleReturnController.updateStatus(reference: String)
 
+GET         /cases/:reference/sample/sample-send                controllers.SampleWhoSendingController.chooseStatus(reference: String)
+POST        /cases/:reference/sample/sample-send                controllers.SampleWhoSendingController.updateStatus(reference: String)
+
 GET         /cases/:reference/extended-use/status               controllers.ExtendedUseCaseController.chooseStatus(reference: String)
 POST        /cases/:reference/extended-use/status               controllers.ExtendedUseCaseController.updateStatus(reference: String)
 

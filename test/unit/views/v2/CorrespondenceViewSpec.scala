@@ -33,13 +33,13 @@ import views.html.v2.correspondence_view
 class CorrespondenceViewSpec extends ViewSpec {
 
   private val sampleStatusTabViewModel = SampleStatusTabViewModel(
-      "caseReference",
-      isSampleBeingSent = false,
-      Some("a person"),
-      None,
-      "location",
-      sampleActivity = Paged.empty[Event]
-    )
+    "caseReference",
+    isSampleBeingSent = false,
+    Some(SampleSend.AGENT),
+    None,
+    "location",
+    sampleActivity = Paged.empty[Event]
+  )
 
   private val caseDetailsTab: CaseDetailsViewModel = CaseDetailsViewModel(
     "1",
