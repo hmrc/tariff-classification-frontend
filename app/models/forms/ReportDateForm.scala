@@ -43,9 +43,11 @@ object ReportDateForm {
 
   private val formDate2InstantAtEndOfDay: DateForm => Instant = { dateForm =>
     LocalDate
-      .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt + 1)
+      .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt)
+      .plusDays(1)
       .atStartOfDay(ZoneOffset.UTC)
       .toInstant
+
   }
 
   private val instant2FormDate: Instant => DateForm = { date =>

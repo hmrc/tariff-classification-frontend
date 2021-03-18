@@ -600,7 +600,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .caseReport(
             caseReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-02T00:00:00.00Z"))
             )
           )
           .path()
@@ -617,7 +617,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         routes.ReportingController
           .queueReport(
             queueReport.copy(dateRange =
-              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-01T00:00:00.00Z"))
+              InstantRange(Instant.parse("2021-01-01T00:00:00.00Z"), Instant.parse("2022-01-02T00:00:00.00Z"))
             )
           )
           .path()
