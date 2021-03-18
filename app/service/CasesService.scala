@@ -496,6 +496,21 @@ class CasesService @Inject() (
     } yield updated
   }
 
+  def updateCases(refs: Set[String], user: Option[Operator], teamId: String, originalUserId: String)(
+    implicit hc: HeaderCarrier
+  ) =
+    for {
+      casesToUpdate <- getCasesByAssignee(Operator(originalUserId), NoPagination())
+    } yield
+      refs
+        .flatMap(ref => casesToUpdate.results.find(c => c.reference == ref))
+        .map(c =>
+          for {
+            updatedCase <- updateCase(c.copy(assignee = user, queueId = Some(teamId)))
+            _ = auditService.auditUserCaseMoved(c.reference, user, teamId, originalUserId)
+
+          } yield updatedCase)
+
   private def addCompletedEvent(
     original: Case,
     updated: Case,

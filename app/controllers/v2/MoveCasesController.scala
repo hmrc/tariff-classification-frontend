@@ -122,6 +122,8 @@ class MoveCasesController @Inject() (
       Ok(teamOrUserPage(caseNumber, teamOrUserForm))
     }
 
+
+  // TEAM OR USER CHOICE PAGE POST ///////////////////////////////////////////
   def postTeamOrUserChoice(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
@@ -270,7 +272,7 @@ class MoveCasesController @Inject() (
             request.userAnswers
               .get[String](ChosenUserPID)
               .map(pid =>
-                updateCases(
+                casesService.updateCases(
                   request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty),
                   Some(Operator(pid)),
                   team,
@@ -333,7 +335,7 @@ class MoveCasesController @Inject() (
               queues <- queueService.getNonGateway
             } yield Ok(chooseTeamPage(caseNumber, errors, queues)),
           team => {
-            val updatedCases = updateCases(caseRefs, None, team, request.userAnswers.get[String](OriginalUserPID).get)
+            val updatedCases = casesService.updateCases(caseRefs, None, team, request.userAnswers.get[String](OriginalUserPID).get)
             for {
               _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())
@@ -398,20 +400,6 @@ class MoveCasesController @Inject() (
 
     }
 
-  private def updateCases(refs: Set[String], user: Option[Operator], teamId: String, originalUserId: String)(
-    implicit hc: HeaderCarrier
-  ) =
-    for {
-      casesToUpdate <- casesService.getCasesByAssignee(Operator(originalUserId), NoPagination())
-    } yield refs
-      .map(ref => casesToUpdate.results.find(c => c.reference == ref))
-      .flatten
-      .map(c =>
-        for {
-          updatedCase <- casesService.updateCase(c.copy(assignee = user, queueId = Some(teamId)))
-        } yield updatedCase
-      )
-
   private def findChosenCasesInAssignedCases(assignedCases: Seq[Case], chosenCaseRefs: Set[String]) =
     chosenCaseRefs.map(ref => assignedCases.find(c => c.reference == ref)).flatten
 
@@ -460,7 +448,7 @@ class MoveCasesController @Inject() (
       case Some(u) => {
         val userAnswersWithNewUser = request.userAnswers.set(ChosenUserPID, pid)
         if (u.memberOfTeams.filterNot(_ == Queues.gateway.id).size == 1) {
-          val updatedCases = updateCases(
+          val updatedCases = casesService.updateCases(
             caseRefs,
             Some(u),
             u.memberOfTeams.head,

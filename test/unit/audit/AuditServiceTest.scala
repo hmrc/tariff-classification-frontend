@@ -492,6 +492,21 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       .sendExplicitAudit(refEq("userUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
   }
 
+  "Service 'audit user case moved'" in {
+    val operator = Operator("PID")
+
+    service.auditUserCaseMoved("ref", Some(operator), "2", "id")
+
+    val payload = Map(
+      "operatorId" -> "id",
+      "team"       -> "2",
+      "newOperatorId"       -> operator.id
+    )
+
+    verify(connector)
+      .sendExplicitAudit(refEq("userCaseMoved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+  }
+
   "Service 'auditManagerKeywordCreated'" should {
 
     "audit keyword created" in {

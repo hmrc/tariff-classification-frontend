@@ -209,6 +209,17 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       )
     )
 
+  def auditUserCaseMoved(refs: String, user: Option[Operator], teamId: String, originalUserId: String)(
+    implicit hc: HeaderCarrier): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = UserCaseMoved,
+      auditPayload = Map(
+        "operatorId"    -> originalUserId,
+        "team"          -> teamId,
+        "newOperatorId" -> user.map(_.id).getOrElse("")
+      )
+    )
+
   def auditManagerKeywordCreated(user: Operator, keyword: Keyword, keywordStatusAction: ChangeKeywordStatusAction)(
     implicit hc: HeaderCarrier): Unit = {
 
@@ -314,6 +325,7 @@ object AuditPayloadType {
   val CaseSampleSendChange   = "caseSampleSendChange"
   val UserUpdated            = "userUpdated"
   val UserDeleted            = "userDeleted"
+  val UserCaseMoved          = "userCaseMoved"
   val ManagerKeywordCreated  = "managerKeywordCreated"
   val ManagerKeywordRenamed  = "managerKeywordRenamed"
   val ManagerKeywordDeleted  = "managerKeywordDeleted"
