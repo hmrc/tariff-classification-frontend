@@ -210,16 +210,21 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       )
     )
 
-  def auditUserCaseMoved(refs: List[String], user: Option[Operator], teamId: String, originalUserId: String)(
-    implicit hc: HeaderCarrier): Unit ={
+  def auditUserCaseMoved(
+    refs: List[String],
+    user: Option[Operator],
+    teamId: String,
+    originalUserId: String,
+    operatorUpdating: String)(implicit hc: HeaderCarrier): Unit = {
     val operatorId: String = user.map(_.id).getOrElse("")
     sendExplicitAuditEvent(
       auditEventType = UserCasesMoved,
       auditPayload = Json.obj(
-        "operatorId"     -> originalUserId,
-        "team"           -> teamId,
-        "newOperatorId"  -> operatorId,
-        "caseReferences" -> Json.toJson(refs)
+        "operatorId"       -> originalUserId,
+        "team"             -> teamId,
+        "newOperatorId"    -> operatorId,
+        "caseReferences"   -> Json.toJson(refs),
+        "operatorUpdating" -> operatorUpdating
       )
     )
   }

@@ -495,16 +495,17 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
   }
 
   "Service 'audit user case moved'" in {
-    val operator = Operator("PID")
+    val operator       = Operator("PID")
     val caseReferences = List("ref1", "ref2", "ref3")
 
-    service.auditUserCaseMoved(caseReferences, Some(operator), "2", "id")
+    service.auditUserCaseMoved(caseReferences, Some(operator), "2", "id", "managerId")
 
     val payload = Json.obj(
-      "operatorId" -> "id",
-      "team"       -> "2",
-      "newOperatorId"       -> operator.id,
-      "caseReferences" -> Json.toJson(caseReferences)
+      "operatorId"       -> "id",
+      "team"             -> "2",
+      "newOperatorId"    -> operator.id,
+      "caseReferences"   -> Json.toJson(caseReferences),
+      "operatorUpdating" -> "managerId"
     )
 
     verify(connector)

@@ -274,7 +274,8 @@ class MoveCasesController @Inject() (
                   request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty),
                   Some(Operator(pid)),
                   team,
-                  request.userAnswers.get[String](OriginalUserPID).get
+                  request.userAnswers.get[String](OriginalUserPID).get,
+                  request.operator.id
                 )
               )
             for {
@@ -333,7 +334,12 @@ class MoveCasesController @Inject() (
               queues <- queueService.getNonGateway
             } yield Ok(chooseTeamPage(caseNumber, errors, queues)),
           team => {
-            val updatedCases = casesService.updateCases(caseRefs, None, team, request.userAnswers.get[String](OriginalUserPID).get)
+            val updatedCases = casesService.updateCases(
+              caseRefs,
+              None,
+              team,
+              request.userAnswers.get[String](OriginalUserPID).get,
+              request.operator.id)
             for {
               _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())
@@ -450,7 +456,8 @@ class MoveCasesController @Inject() (
             caseRefs,
             Some(u),
             u.memberOfTeams.head,
-            request.userAnswers.get[String](OriginalUserPID).get
+            request.userAnswers.get[String](OriginalUserPID).get,
+            request.operator.id
           )
           for {
             _ <- dataCacheConnector.save(
