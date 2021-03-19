@@ -514,7 +514,7 @@ page.title.refer.case.error=Contact applicant before case referral
 page.title.change.appeal.status=Change appeal status
 page.title.choose.appeal.status=Choose appeal status
 page.title.choose.appeal.type=Choose appeal type
-page.title.extended.use=Extended use of this ruling
+page.title.extended.use=Do you want to extend the use of this case ruling?
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case teams
 page.title.create_liability.h1=New liability information
@@ -1473,3 +1473,5 @@ management.update-keyword.confirmation.approved.info.end= case and will be avail
 management.update-keyword.confirmation.rejected.info.end= case and will not be available to use in any future cases.
 management.update-keyword.error.no-status-selected=Choose to approve, reject or rename this keyword
 management.update-keyword.error.duplicate.keyword=This keyword has already been added to the list
+
+case.extend.heading=Do you want to extend the use of the {0} case ruling?
