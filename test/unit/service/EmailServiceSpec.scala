@@ -35,7 +35,7 @@ class EmailServiceSpec extends ServiceSpecBase {
 
   "Email Service 'sendCompleteCaseEmail'" should {
     val aCase       = mock[Case]
-    val anOperator = Operator("1", Some("officer"))
+    val anOperator  = Operator("1", Some("officer"))
     val application = mock[BTIApplication]
     val contact     = Contact("name", "email", None)
     val template    = mock[EmailTemplate]
@@ -51,8 +51,15 @@ class EmailServiceSpec extends ServiceSpecBase {
     }
 
     "Delegate to connector" in {
+      val aDate = LocalDate
+        .of(2021, 1, 1)
+        .atStartOfDay()
+        .atZone(ZoneOffset.UTC)
+        .toInstant()
+
       given(aCase.reference).willReturn("ref")
       given(aCase.application).willReturn(application)
+      given(aCase.createdDate).willReturn(aDate)
       given(application.isBTI).willReturn(true)
       given(application.asATAR).willReturn(application)
       given(application.contact).willReturn(contact)
@@ -66,15 +73,18 @@ class EmailServiceSpec extends ServiceSpecBase {
       await(service.sendCaseCompleteEmail(aCase, anOperator))
 
       verify(connector).send(
-        refEq(CaseCompletedEmail(
-          Seq("email"),
-          CaseCompletedEmailParameters(
-            recipientName_line1 = "name",
-            reference = "ref",
-            goodsName = "item",
-            officerName = "officer"
+        refEq(
+          CaseCompletedEmail(
+            Seq("email"),
+            CaseCompletedEmailParameters(
+              recipientName_line1 = "name",
+              reference           = "ref",
+              goodsName           = "item",
+              officerName         = "officer",
+              dateSubmitted       = "01 Jan 2021"
+            )
           )
-        ))
+        )
       )(any[HeaderCarrier], any[Writes[Email[_]]])
     }
   }
