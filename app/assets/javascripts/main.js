@@ -34,4 +34,10 @@ window.onload = function () {
 
 };
 
+function keep() {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "/manage-tariff-classifications", true);
+    xhr.send(null);
+};
+setInterval(keep, 780000);
 
