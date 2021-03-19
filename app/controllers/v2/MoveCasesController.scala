@@ -122,8 +122,6 @@ class MoveCasesController @Inject() (
       Ok(teamOrUserPage(caseNumber, teamOrUserForm))
     }
 
-
-  // TEAM OR USER CHOICE PAGE POST ///////////////////////////////////////////
   def postTeamOrUserChoice(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey

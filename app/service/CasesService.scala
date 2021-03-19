@@ -20,23 +20,24 @@ import java.nio.file.{Files, StandardOpenOption}
 import java.time.LocalDate
 import java.util.UUID
 
-import javax.inject.{Inject, Singleton}
 import audit.AuditService
+import cats.syntax.all._
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
-import models._
-import models.reporting._
-import models.request.NewEventRequest
-import models.ApplicationType._
+import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
+import models.ApplicationType._
 import models.CancelReason.CancelReason
 import models.CaseStatus.CaseStatus
 import models.ReferralReason.ReferralReason
-import models.SampleReturn.SampleReturn
-import models.SampleStatus.SampleStatus
 import models.RejectReason.RejectReason
+import models.SampleReturn.SampleReturn
 import models.SampleSend.SampleSend
+import models.SampleStatus.SampleStatus
+import models._
+import models.reporting._
+import models.request.NewEventRequest
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
@@ -500,16 +501,13 @@ class CasesService @Inject() (
     implicit hc: HeaderCarrier
   ) =
     for {
-      casesToUpdate <- getCasesByAssignee(Operator(originalUserId), NoPagination())
-    } yield
-      refs
-        .flatMap(ref => casesToUpdate.results.find(c => c.reference == ref))
-        .map(c =>
-          for {
-            updatedCase <- updateCase(c.copy(assignee = user, queueId = Some(teamId)))
-            _ = auditService.auditUserCaseMoved(c.reference, user, teamId, originalUserId)
-
-          } yield updatedCase)
+      assignedCases <- getCasesByAssignee(Operator(originalUserId), NoPagination())
+      casesToUpdate = assignedCases.results.filter(c => refs.contains(c.reference))
+      updatedCases  <- casesToUpdate.toList.traverse { c =>
+                       updateCase(c.copy(assignee = user, queueId = Some(teamId)))
+                     }
+      _             = auditService.auditUserCaseMoved(updatedCases.map(_.reference), user, teamId, originalUserId)
+    } yield ()
 
   private def addCompletedEvent(
     original: Case,

@@ -27,8 +27,10 @@ import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import utils.Cases._
-
 import java.time.Instant
+
+import play.api.libs.json.Json
+
 import scala.concurrent.ExecutionContext
 
 class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
@@ -494,17 +496,19 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
   "Service 'audit user case moved'" in {
     val operator = Operator("PID")
+    val caseReferences = List("ref1", "ref2", "ref3")
 
-    service.auditUserCaseMoved("ref", Some(operator), "2", "id")
+    service.auditUserCaseMoved(caseReferences, Some(operator), "2", "id")
 
-    val payload = Map(
+    val payload = Json.obj(
       "operatorId" -> "id",
       "team"       -> "2",
-      "newOperatorId"       -> operator.id
+      "newOperatorId"       -> operator.id,
+      "caseReferences" -> Json.toJson(caseReferences)
     )
 
     verify(connector)
-      .sendExplicitAudit(refEq("userCaseMoved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+      .sendExplicitAudit(refEq("userCasesMoved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
   }
 
   "Service 'auditManagerKeywordCreated'" should {
