@@ -36,7 +36,7 @@ class LiabilityViewSpec extends ViewSpec {
   private val sampleStatusTabViewModel = SampleStatusTabViewModel(
     "caseReference",
     isSampleBeingSent = true,
-    Some("a person"),
+    Some(SampleSend.AGENT),
     None,
     "location",
     sampleActivity = Paged.empty[Event]

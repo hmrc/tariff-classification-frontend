@@ -64,6 +64,7 @@ object JsonFormatters {
   implicit val appealStatusFormat: Format[AppealStatus.Value]            = EnumJson.format(AppealStatus)
   implicit val sampleStatusFormat: Format[SampleStatus.Value]            = EnumJson.format(SampleStatus)
   implicit val sampleReturnFormat: Format[SampleReturn.Value]            = EnumJson.format(SampleReturn)
+  implicit val sampleSendFormat: Format[SampleSend.Value]                = EnumJson.format(SampleSend)
   implicit val appealTypeFormat: Format[AppealType.Value]                = EnumJson.format(AppealType)
   implicit val cancelReasonFormat: Format[CancelReason.Value]            = EnumJson.format(CancelReason)
   implicit val caseStatusFormat: Format[CaseStatus.Value]                = EnumJson.format(CaseStatus)
@@ -102,6 +103,7 @@ object JsonFormatters {
   implicit val formatAppealStatusChange: OFormat[AppealStatusChange]           = Json.format[AppealStatusChange]
   implicit val formatSampleStatusChange: OFormat[SampleStatusChange]           = Json.format[SampleStatusChange]
   implicit val formatSampleReturnChange: OFormat[SampleReturnChange]           = Json.format[SampleReturnChange]
+  implicit val formatSampleSendChange: OFormat[SampleSendChange]               = Json.format[SampleSendChange]
   implicit val formatAppealAdded: OFormat[AppealAdded]                         = Json.format[AppealAdded]
   implicit val formatExtendedUseStatusChange: OFormat[ExtendedUseStatusChange] = Json.format[ExtendedUseStatusChange]
   implicit val formatAssignmentChange: OFormat[AssignmentChange]               = Json.format[AssignmentChange]
@@ -120,6 +122,7 @@ object JsonFormatters {
     .and[AppealStatusChange](EventType.APPEAL_STATUS_CHANGE.toString)
     .and[SampleStatusChange](EventType.SAMPLE_STATUS_CHANGE.toString)
     .and[SampleReturnChange](EventType.SAMPLE_RETURN_CHANGE.toString)
+    .and[SampleSendChange](EventType.SAMPLE_SEND_CHANGE.toString)
     .and[AppealAdded](EventType.APPEAL_ADDED.toString)
     .and[ExtendedUseStatusChange](EventType.EXTENDED_USE_STATUS_CHANGE.toString)
     .and[AssignmentChange](EventType.ASSIGNMENT_CHANGE.toString)

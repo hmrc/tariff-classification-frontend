@@ -38,9 +38,10 @@ class EmailService @Inject() (connector: EmailConnector) {
       Seq(c.application.contact.email),
       CaseCompletedEmailParameters(
         recipientName_line1 = c.application.contact.name,
-        reference = c.reference,
-        goodsName = c.application.asATAR.goodName,
-        officerName = operator.name.getOrElse("")
+        reference           = c.reference,
+        goodsName           = c.application.asATAR.goodName,
+        officerName         = operator.name.getOrElse(""),
+        dateSubmitted       = Dates.format(c.createdDate)
       )
     )
 
