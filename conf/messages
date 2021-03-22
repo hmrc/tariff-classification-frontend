@@ -202,6 +202,7 @@ case.attachment.upload.status-confidential=CONFIDENTIAL
 case.attachment.upload.status-failed=UPLOAD FAILED
 case.attachment.upload.status-processing=PROCESSING
 case.attachment.refresh.content=Refresh page to confirm file upload
+case.attachment.remove_attachment.confirm=Confirm
 case.sample.sample-status-header=Sample status
 case.sample.change-sample-status=Change sample status
 case.sample.status.change-status-header=Change sample status
@@ -494,7 +495,7 @@ page.title.complete.case=Are you sure you want to complete this case?
 page.title.case.completed=This case has been completed
 page.title.cancel.ruling=Cancel the ruling
 page.title.ruling.cancelled=Ruling cancelled
-page.title.remove.attachment=Remove attachment
+page.title.remove.attachment=Are you sure you want to remove the attachment from this case?
 page.title.suspend.case.error=Contact applicant before case suspension
 page.title.suppress.case.error=Contact applicant before case suppression
 page.title.reject.case.error=Contact applicant before case rejection
@@ -1205,6 +1206,8 @@ case.ownership.assign_case.back=Back to my cases
 
 case.change_status.move_back_to_team.heading=Move this case back to a team
 case.change_status.move_back_to_team.description=This case was previously assigned to the <span id="previous-queue">{0}</span> team.
+
+case.attachments.remove_attachment.heading=Are you sure you want to remove {0} from this case?
 
 notification.success.keywords.add = The keyword has been added to this case
 notification.success.keywords.remove = The keyword has been removed from this case
