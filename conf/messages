@@ -47,7 +47,7 @@ case.heading.secondary.nosuffix={0} case {1}
 case.heading.reject_case_for=Reject case for {0}
 case.heading.case_rejected_for=Case rejected for {0}
 case.heading.ownership=Do you want to take ownership of the {0} case?
-case.details.title=Case details for the goods
+case.details.title=ATaR case details
 case.heading.details=Case details for {0}
 case.status=Status
 case.status.error=Select a case status
@@ -113,7 +113,16 @@ change_case_status.to.cancelled=Change case status to: Cancelled
 change_case_status.to.referred=Change case status to: Referred
 change_case_status.to.rejected=Change case status to: Rejected
 change_case_status.to.suppressed.header = Provide details to suppress the {0} case
-change_case_status.to.suspended=This case has been suspended
+change_case_status.to.suppressed.note = Add a case note
+change_case_status.to.suppressed.hint = Give details of why you are suppressing this case. Keep the note clear and concise.
+change_case_status.to.suppressed.warning = This case cannot be reopened once it has been suppressed.
+change_case_status.to.suppressed.confirm = Save changes
+change_case_status.to.suppressed.cancel = Cancel this action
+change_case_status.to.suspended.header = Provide details to suspend the {0} case
+change_case_status.to.suspended.note = Add a case note
+change_case_status.to.suspended.hint = Give details of why you are suspending this case. Keep the note clear and concise.
+change_case_status.to.suspended.confirm = Save changes
+change_case_status.to.suspended.cancel = Cancel this action
 change_case_status.referred.title=Who are you referring this case to?
 change_case_status.referred.heading=Provide details to refer the {0} case
 change_case_status.referred.note.label=Add a case note
@@ -461,7 +470,6 @@ site.no=No
 site.yes=Yes
 site.none=None
 site.unknown=Unknown
-page.title.liability=Liability details
 page.title.trader=Applicant
 page.title.application=Item
 page.title.sample=Samples
@@ -517,10 +525,10 @@ page.title.create_liability.h1=New liability information
 page.title.confirmation.h1=New case information
 page.title.create_correspondence.h1=Create correspondence case
 page.title.release_correspondence.h1=Correspondence case released to this team
-page.title.create_correspondence.confirmation=The correspondence case has been released to a queue
-page.title.create_miscellaneous.confirmation=The miscellaneous case has been released to a queue
-page.title.create_atar.confirmation=The atar case has been released to a queue
-page.title.create_liability.confirmation=The liability case has been released to a queue
+page.title.create_correspondence.confirmation=The correspondence case has been released to a team
+page.title.create_miscellaneous.confirmation=The miscellaneous case has been released to a team
+page.title.create_atar.confirmation=The atar case has been released to a team
+page.title.create_liability.confirmation=The liability case has been released to a team
 page.title.release_liability.h1=Correspondence case released to this team
 page.title.edit_liability_decision=Edit liability decision
 page.title.create_misc.h1=Create miscellaneous case
@@ -836,7 +844,7 @@ case.v2.atar.ruling.tab_title=Ruling
 
 case.v2.atar.appeal.tab_title=Appeals
 
-case.v2.liability.page_title=Liability details
+case.v2.liability.page_title=Liability case details
 case.v2.liability.c592.entry_number=Entry number
 case.v2.liability.c592.tab_title=Details
 case.v2.liability.c592.tab_heading=Details
@@ -996,12 +1004,9 @@ case.v2.correspondence.sample-details.sample-sent=Is a sample being sent?
 case.v2.correspondence.sample-details.sample-activity-title=Sample activity
 case.v2.correspondence.sample-details.sample-no-activity=No activity to show.
 
-
 case.v2.correspondence.messages-details.heading=Messages
 
 case.suspended.header=The {0} case has been suspended
-
-
 
 upload.button = Upload
 upload.files.title = Upload new files
