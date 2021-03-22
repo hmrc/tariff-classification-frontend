@@ -35,12 +35,12 @@
 
     @error_summary(uploadForm.errors)
 
-    @case_heading(c)
+    <div class="column-two-thirds pl-0">
+        @case_heading(c, messageKey = Some("change_case_status.suspended.email.heading"))
+    </div>
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("change_case_status.suspended.email.heading", c.application.goodsName)</h2>
-
             @helper.form(
                 action = Call("POST", initiateResponse.uploadRequest.href),
                 'id -> "suppress-case",
