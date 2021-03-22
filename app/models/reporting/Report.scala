@@ -185,10 +185,18 @@ object Report {
     statuses  = Set(PseudoCaseStatus.OPEN)
   )
 
-  val completedCases = SummaryReport(
-    name      = "Completed cases",
+  val completedCasesByTeam = SummaryReport(
+    name      = "Completed cases by team",
     groupBy   = NonEmptySeq.one(ReportField.Team),
     sortBy    = ReportField.Team,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.COMPLETED)
+  )
+
+  val completedCasesByAssignedUser = SummaryReport(
+    name      = "Completed cases by assigned user",
+    groupBy   = NonEmptySeq.one(ReportField.User),
+    sortBy    = ReportField.User,
     sortOrder = SortDirection.ASCENDING,
     statuses  = Set(PseudoCaseStatus.COMPLETED)
   )
@@ -333,7 +341,8 @@ object Report {
     "new-liabilities-cases-non-live"      -> numberOfNewNonLiveLiabilityCases,
     "working-days-non-live-liabilities"   -> calendarDaysNonLiveLiabilitiesCases,
     "number-of-open-cases"                -> numberOfOpenCases,
-    "completed-cases"                     -> completedCases,
+    "completed-cases-by-team"             -> completedCasesByTeam,
+    "completed-cases-by-assigned-user"    -> completedCasesByAssignedUser,
     "number-of-cases-per-user"            -> numberOfCasesPerUser,
     "cancelled-cases-by-assigned-user"    -> cancelledCasesPerUser,
     "cancelled-cases-by-chapter"          -> cancelledCasesByChapter,
@@ -419,7 +428,7 @@ object SummaryReport {
       val sortBy       = param(sortByKey)(requestParams).flatMap(ReportField.fields.get(_))
       val sortOrder    = param(sortOrderKey)(requestParams).flatMap(bindSortDirection).getOrElse(SortDirection.ASCENDING)
       val teams        = params(teamsKey)(requestParams).getOrElse(Set.empty)
-      val groupBy      = orderedParams(groupByKey)(requestParams)
+      val groupBy = orderedParams(groupByKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get(_)))
         .flatMap(NonEmptySeq.fromSeq[ReportField[_]])
       val caseTypes = params(caseTypesKey)(requestParams)
