@@ -212,7 +212,7 @@ object Report {
     name      = "Cancelled cases by assigned user",
     groupBy   = NonEmptySeq.one(ReportField.User),
     sortBy    = ReportField.Count,
-    sortOrder = SortDirection.ASCENDING,
+    sortOrder = SortDirection.DESCENDING,
     statuses  = Set(PseudoCaseStatus.CANCELLED)
   )
 
