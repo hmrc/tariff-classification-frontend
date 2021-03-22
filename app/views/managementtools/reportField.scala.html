@@ -55,6 +55,11 @@
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
+  case NumberResultField(_, data) if field == ReportField.TotalDays => {
+    <td id="@{id}-@{field.fieldName}-@{index}" @if(data.exists(_>=120)){class="live-red-text"}>
+        @Reports.formatField(field, result, users, teams)
+    </td>
+  }
   case other => {
     <td id="@{id}-@{field.fieldName}-@{index}">
       @Reports.formatField(field, result, users, teams)

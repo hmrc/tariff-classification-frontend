@@ -95,7 +95,7 @@ object Report {
       ReportField.Chapter,
       ReportField.Team,
       ReportField.User,
-      ReportField.ElapsedDays
+      ReportField.TotalDays
     )
   )
 
