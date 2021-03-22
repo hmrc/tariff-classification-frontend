@@ -84,7 +84,7 @@ object Report {
 
   val calendarAtarCases = CaseReport(
     name      = "120 calendar days for ATaR",
-    sortBy    = ReportField.ElapsedDays,
+    sortBy    = ReportField.TotalDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.ATAR),
     fields = NonEmptySeq.of(
