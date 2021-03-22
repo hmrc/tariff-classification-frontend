@@ -88,7 +88,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.to.suspended"))
+      bodyOf(result)        should include(messages("change_case_status.suspended.reason.heading", caseWithStatusOPEN.application.goodsName))
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {
@@ -160,7 +160,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.to.suspended"))
+      bodyOf(result)        should include(messages("change_case_status.suspended.email.heading", caseWithStatusOPEN.application.goodsName))
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {

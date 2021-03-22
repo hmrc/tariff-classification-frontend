@@ -91,7 +91,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
       bodyOf(result) should include(
-        messages("case.heading.reject_case_for", caseWithStatusOPEN.application.goodsName)
+        messages("change_case_status.rejected.reason.heading", caseWithStatusOPEN.application.goodsName)
       )
     }
 
@@ -188,7 +188,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
       bodyOf(result) should include(
-        messages("case.heading.reject_case_for", caseWithStatusOPEN.application.goodsName)
+        messages("change_case_status.rejected.email.heading", caseWithStatusOPEN.application.goodsName)
       )
     }
 

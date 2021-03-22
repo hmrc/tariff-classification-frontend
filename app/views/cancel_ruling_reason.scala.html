@@ -28,7 +28,7 @@
 
 @(c: Case, form: Form[RulingCancellation])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling")), customPrimaryNavTab = MyCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling.reason")), customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 
@@ -38,7 +38,7 @@
 
     <div class="grid-row" id="div-cancel-ruling">
         <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("change_case_status.to.cancelled")</h2>
+            <h2 class="heading-large mt-0">@messages("change_case_status.cancelled.reason.heading", c.application.goodsName)</h2>
 
             @helper.form(action = CancelRulingController.postCancelRulingReason(c.reference), 'id -> "cancel_ruling", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
@@ -73,7 +73,7 @@
 
                 @confirm_or_cancel_buttons(
                     id = "cancel_ruling",
-                    confirmText = "Confirm status change",
+                    confirmText = "Continue",
                     cancelText = "Cancel and return to case",
                     cancelHref = CaseController.rulingDetails(c.reference)
                 )

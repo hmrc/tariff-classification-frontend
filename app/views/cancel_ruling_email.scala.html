@@ -29,7 +29,7 @@
 
 @(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling")), customPrimaryNavTab = MyCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.cancel.ruling.email")), customPrimaryNavTab = MyCasesTab) {
 
     @back_link()
 
@@ -39,7 +39,7 @@
 
     <div class="grid-row" id="div-cancel-ruling">
         <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("change_case_status.to.cancelled")</h2>
+            <h2 class="heading-large mt-0">@messages("change_case_status.cancelled.email.heading", c.application.goodsName)</h2>
 
             @helper.form(
                 action = Call("POST", initiateResponse.uploadRequest.href),

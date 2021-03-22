@@ -92,7 +92,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.to.cancelled"))
+      bodyOf(result)        should include(messages("change_case_status.cancelled.reason.heading", caseWithStatusCOMPLETED.application.goodsName))
     }
 
     "redirect to unauthorised when the user does not have right permissions" in {
@@ -176,7 +176,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.to.cancelled"))
+      bodyOf(result)        should include(messages("change_case_status.cancelled.email.heading", caseWithStatusCOMPLETED.application.goodsName))
     }
 
     "redirect to unauthorised when the user does not have right permissions" in {

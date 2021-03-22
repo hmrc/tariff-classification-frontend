@@ -28,7 +28,7 @@
 
 @(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case")), customPrimaryNavTab = NoTabSelected) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case.reason")), customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
@@ -38,7 +38,7 @@
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("change_case_status.to.suspended")</h2>
+            <h2 class="heading-large mt-0">@messages("change_case_status.suspended.reason.heading", c.application.goodsName)</h2>
 
             @helper.form(
                 action = routes.SuspendCaseController.postSuspendCaseReason(c.reference),
@@ -58,7 +58,7 @@
 
                 @confirm_or_cancel_buttons(
                     id = "suspend_case",
-                    confirmText = "Confirm status change",
+                    confirmText = "Continue",
                     cancelText = "Cancel and return to case",
                     cancelHref = routes.CaseController.get(c.reference)
                 )

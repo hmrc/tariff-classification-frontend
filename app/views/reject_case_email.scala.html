@@ -32,14 +32,14 @@
 
 @(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.heading.reject_case_for", c.application.goodsName)),
+@main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case.email", c.application.goodsName)),
 customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
     @error_summary(uploadForm.errors)
 
-    @case_heading(c, true, None, Some("case.heading.reject_case_for"))
+    @case_heading(c, true, None, Some("change_case_status.rejected.email.heading"))
 
     <div class="grid-row">
         <div class="column-full">

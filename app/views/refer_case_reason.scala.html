@@ -47,14 +47,14 @@
         @messages("change_case_status.referred.title")
     </h2>
 }
-@main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case"))) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case.reason"))) {
 
     @back_link()
 
     @error_summary(form.errors)
 
     <div class="column-two-thirds pl-0">
-        @case_heading( c, messageKey = Some("change_case_status.referred.heading"))
+        @case_heading( c, messageKey = Some("change_case_status.referred.reason.heading"))
     </div>
 
     <div class="grid-row">
@@ -65,7 +65,7 @@
 
                 @input_radiogroup(
                     field = form("referredTo"),
-                    label = Some(messages("change_case_status.referred.heading", c.application.goodsName)),
+                    label = Some(messages("change_case_status.referred.reason.heading", c.application.goodsName)),
                     labelClass = Some ("visually-hidden"),
                     contentHtml = Some(contents),
                     options = Seq(
@@ -145,8 +145,8 @@
 
                 @confirm_or_cancel_buttons(
                     id = "refer_case",
-                    confirmText = "Save changes",
-                    cancelText = "Cancel this action",
+                    confirmText = "Continue",
+                    cancelText = "Cancel and return to case",
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }

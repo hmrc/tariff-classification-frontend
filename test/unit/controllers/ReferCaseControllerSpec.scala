@@ -92,7 +92,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
       bodyOf(result) should include(
-        messages("change_case_status.referred.heading", caseWithStatusOPEN.application.goodsName)
+        messages("change_case_status.referred.reason.heading", caseWithStatusOPEN.application.goodsName)
       )
     }
 
@@ -217,7 +217,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
       bodyOf(result) should include(
-        messages("change_case_status.referred.heading", caseWithStatusOPEN.application.goodsName)
+        messages("change_case_status.referred.email.heading", caseWithStatusOPEN.application.goodsName)
       )
     }
 
