@@ -19,8 +19,8 @@ package service
 import java.nio.file.{Files, StandardOpenOption}
 import java.time.LocalDate
 import java.util.UUID
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
@@ -36,6 +36,7 @@ import models.ReferralReason.ReferralReason
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models.RejectReason.RejectReason
+import models.SampleSend.SampleSend
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
@@ -128,6 +129,15 @@ class CasesService @Inject() (
       updated <- connector.updateCase(original.copy(sample = original.sample.copy(returnStatus = status)))
       _       <- addSampleReturnChangeEvent(original, updated, operator)
       _ = auditService.auditSampleReturnChange(original, updated, operator)
+    } yield updated
+
+  def updateWhoSendSample(original: Case, sampleSend: Option[SampleSend], operator: Operator)(
+    implicit hc: HeaderCarrier
+  ): Future[Case] =
+    for {
+      updated <- connector.updateCase(original.copy(sample = original.sample.copy(whoIsSending = sampleSend)))
+      _       <- addSampleSendChangeEvent(original, updated, operator)
+      _ = auditService.auditSampleSendChange(original, updated, operator)
     } yield updated
 
   def assignCase(original: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
@@ -586,6 +596,16 @@ class CasesService @Inject() (
     comment: Option[String] = None
   )(implicit hc: HeaderCarrier): Future[Unit] = {
     val details = SampleReturnChange(original.sample.returnStatus, updated.sample.returnStatus, comment)
+    addEvent(original, updated, details, operator)
+  }
+
+  private def addSampleSendChangeEvent(
+    original: Case,
+    updated: Case,
+    operator: Operator,
+    comment: Option[String] = None
+  )(implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = SampleSendChange(original.sample.whoIsSending, updated.sample.whoIsSending, comment)
     addEvent(original, updated, details, operator)
   }
 

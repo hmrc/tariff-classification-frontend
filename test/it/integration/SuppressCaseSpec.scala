@@ -39,7 +39,7 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Provide details to suppress")
+      response.body   should include("Provide details to suppress this case")
     }
 
     "redirect on auth failure" in {

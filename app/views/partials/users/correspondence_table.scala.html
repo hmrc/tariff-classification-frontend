@@ -44,30 +44,32 @@
 </div>
 }
 <table id="@{corresTab.tabMessageKey}-table">
- <thead>
+ <caption class="visually-hidden">@messages("users.user.correspondence.heading")</caption>
+ <thead class="govuk-table__head">
  <tr id="@{corresTab.tabMessageKey}-details" class="grid-row mb-2">
-  <th id="@{corresTab.tabMessageKey}-select" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-select" class="bold w-0" scope="col">
    Select
   </th>
-  <th id="@{corresTab.tabMessageKey}-reference" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-reference" class="bold w-0" scope="col">
    Reference
   </th>
-  <th id="@{corresTab.tabMessageKey}-subject" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-subject" class="bold w-0" scope="col">
    Subject
   </th>
-  <th id="@{corresTab.tabMessageKey}-trader" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-trader" class="bold w-0" scope="col">
    Trader
   </th>
-  <th id="@{corresTab.tabMessageKey}-contact" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-contact" class="bold w-0" scope="col">
    Contact
   </th>
-  <th id="@{corresTab.tabMessageKey}-elapsed-days" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
    Elapsed days
   </th>
-  <th id="@{corresTab.tabMessageKey}-team" class="bold w-0">
+  <th id="@{corresTab.tabMessageKey}-team" class="bold w-0" scope="col">
    Team
   </th>
- </tr></thead>
+ </tr>
+ </thead>
  <tbody>
  @for((result, index) <- corresTab.searchResult.results.zipWithIndex) {
 
@@ -97,7 +99,12 @@
    </div>
    }
   </td>
-  <td id="@{corresTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+  <td id="@{corresTab.tabMessageKey}-reference-@index">
+   <a href="@routes.CaseController.get(result.reference)">
+    <span aria-hidden="true">@{result.reference}</span>
+    <span class="visually-hidden">case reference @{result.reference}</span>
+   </a>
+  </td>
   <td id="@{corresTab.tabMessageKey}-summary-@index">@{corres.summary}</td>
   <td id="@{corresTab.tabMessageKey}-trader-@index">@{corres.correspondenceStarter}</td>
   <td id="@{corresTab.tabMessageKey}-contact-@index">@{corres.contact.email}</td>

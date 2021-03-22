@@ -23,22 +23,23 @@
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components._
 @import models.LiabilityStatus
-@import views.html.partials.error_summary
+@import views.html.partials.{error_summary, back_link}
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseViewModel, MyCasesTab}
+@import models.viewmodels.{CaseViewModel, NoTabSelected}
 
 @this( case_heading: views.html.v2.case_heading)
 
 @(c: Case, form : Form[Case], caseViewModel: CaseViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.v2.misc.case-details-edit-title")), customPrimaryNavTab = MyCasesTab) {
-
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.misc.case-details-edit-title")), customPrimaryNavTab = NoTabSelected) {
+<div class="grid-row">
+    <div class="column-two-thirds">
+<div class="mt-5">@back_link()</div>
 @error_summary(form.errors)
 
-@case_heading(caseViewModel.caseHeader)
-
-<h2 id="misc-details-edit" class="heading-large">@messages("case.v2.misc.case-details-edit-title")</h2>
-
+@case_heading(caseViewModel.caseHeader, messageKey=Some("case.v2.misc.case-details-edit-header"))
+    </div>
+<div class="column-full">
 @helper.form(action = routes.CreateMiscellaneousController.postMiscDetails(c.reference), 'class -> "form" , 'id -> "misc-details-edit-form", 'novalidate -> "novalidate") {
 
     @helper.CSRF.formField
@@ -93,4 +94,5 @@ confirmText = messages("case.v2.liability.c592.details_edit.save_and_continue_bu
 cancelText = messages("case.v2.liability.c592.details_edit.cancel_button"),
 cancelHref = controllers.v2.routes.MiscellaneousController.displayMiscellaneous(c.reference)
 )
-}}
+}</div></div>
+    }

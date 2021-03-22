@@ -36,7 +36,7 @@ class MiscellaneousViewSpec extends ViewSpec {
   private val sampleStatusTabViewModel = SampleStatusTabViewModel(
     "caseReference",
     isSampleBeingSent = false,
-    Some("a person"),
+    Some(SampleSend.AGENT),
     None,
     "location",
     sampleActivity = Paged.empty[Event]

@@ -339,7 +339,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("page.title.case.referred"))
+      bodyOf(result)        should include(messages("case.referred.confirm_referred", caseWithStatusREFERRED.application.goodsName))
     }
   }
 }

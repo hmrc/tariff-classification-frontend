@@ -28,7 +28,7 @@
     <p>This ruling may be cancelled if the binding commodity code changes or expires, or if the applicant provided incorrect information.</p>
     <p>If the binding commodity code has changed, you may need to issue a revised ruling.</p>
 
-    <a @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"} id="cancel-ruling-button" class="button" role="button" href="@CancelRulingController.getCancelRulingReason(ruling.caseReference)">
+    <a id="cancel-ruling-button" class="button" role="button" href="@CancelRulingController.getCancelRulingReason(ruling.caseReference)">
         Cancel this ruling
     </a>
 }

@@ -50,7 +50,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       stubFor(
         get(
           urlEqualTo(
-            s"/events?case_reference=1&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&page=1&page_size=${Pagination.unlimited}"
+            s"/events?case_reference=1&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&type=SAMPLE_SEND_CHANGE&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
           aResponse()

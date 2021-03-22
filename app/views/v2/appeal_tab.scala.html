@@ -25,10 +25,17 @@
 
 @tab_heading("appeal", messages("case.menu.appeal"))
 
-<p>@messages("case.v2.liability.appeals.tab_paragraph")</p>
 
 @defining(appealTabViewModel.appeals) { appeals: Seq[Appeal] =>
  <table id="appeal_details">
+  <caption class="mb-2">@messages("case.v2.liability.appeals.tab_paragraph")</caption>
+  <thead>
+  <tr class="visually-hidden">
+   <th class="w-40" scope="col">Review or a level of appeal</th>
+   <th class="w-40" scope="col">Appeal status</th>
+   <th class="w-40" scope="col">Change</th>
+  </tr>
+  </thead>
   <tbody>
    @for((appeal: Appeal, index: Int) <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id).zipWithIndex) {
     <tr id="appeal_details-@{index}" class="grid-row mb-2">

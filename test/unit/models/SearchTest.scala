@@ -21,7 +21,7 @@ import java.net.URLDecoder
 class SearchTest extends ModelsBaseSpec {
 
   private val populatedSearch = Search(
-    traderName      = Some("trader-name"),
+    caseSource      = Some("trader-name"),
     commodityCode   = Some("commodity-code"),
     decisionDetails = Some("decision-details"),
     status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
@@ -54,7 +54,7 @@ class SearchTest extends ModelsBaseSpec {
   "Search Binder" should {
 
     val populatedParams: Map[String, Seq[String]] = Map(
-      "trader_name"         -> Seq("trader-name"),
+      "case_source"         -> Seq("trader-name"),
       "commodity_code"      -> Seq("commodity-code"),
       "decision_details"    -> Seq("decision-details"),
       "application_type[0]" -> Seq("BTI"),
@@ -69,7 +69,7 @@ class SearchTest extends ModelsBaseSpec {
 
     val populatedQueryParam: Set[String] = Set(
       "decision_details=decision-details",
-      "trader_name=trader-name",
+      "case_source=trader-name",
       "commodity_code=commodity-code",
       "application_type[0]=BTI",
       "application_type[1]=LIABILITY_ORDER",

@@ -45,34 +45,36 @@
 </div>
 }
 <table id="@{liabTab.tabMessageKey}-table">
- <thead>
- <tr id="@{liabTab.tabMessageKey}-details" class="grid-row mb-2">
-  <th id="@{liabTab.tabMessageKey}-select" class="bold w-0">
-   Select
-  </th>
-  <th id="@{liabTab.tabMessageKey}-reference" class="bold w-0">
-   Reference
-  </th>
-  <th id="@{liabTab.tabMessageKey}-goods" class="bold w-0">
-   Goods
-  </th>
-  <th id="@{liabTab.tabMessageKey}-trader" class="bold w-0">
-   Trader
-  </th>
-  <th id="@{liabTab.tabMessageKey}-elapsed-days" class="bold w-0">
-   Elapsed days
-  </th>
-  <th id="@{liabTab.tabMessageKey}-type" class="bold w-0">
-   Type
-  </th>
-  <th id="@{liabTab.tabMessageKey}-status" class="bold w-0">
-   Status
-  </th>
-  <th id="@{liabTab.tabMessageKey}-team" class="bold w-0">
-   Team
-  </th>
- </tr>
-</thead><tbody>
+ <caption class="visually-hidden">@messages("users.user.liability.heading")</caption>
+ <thead class="govuk-table__head">
+  <tr id="@{liabTab.tabMessageKey}-details" class="grid-row mb-2">
+    <th id="@{liabTab.tabMessageKey}-select" class="bold w-0" scope="col">
+     Select
+    </th>
+    <th id="@{liabTab.tabMessageKey}-reference" class="bold w-0" scope="col">
+     Reference
+    </th>
+    <th id="@{liabTab.tabMessageKey}-goods" class="bold w-0" scope="col">
+     Goods
+    </th>
+    <th id="@{liabTab.tabMessageKey}-trader" class="bold w-0" scope="col">
+     Trader
+    </th>
+    <th id="@{liabTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
+     Elapsed days
+    </th>
+    <th id="@{liabTab.tabMessageKey}-type" class="bold w-0" scope="col">
+     Type
+    </th>
+    <th id="@{liabTab.tabMessageKey}-status" class="bold w-0" scope="col">
+     Status
+    </th>
+    <th id="@{liabTab.tabMessageKey}-team" class="bold w-0" scope="col">
+     Team
+    </th>
+  </tr>
+ </thead>
+ <tbody>
  @for((result, index) <- liabTab.searchResult.results.zipWithIndex) {
 
  @defining(result.application.asLiabilityOrder) { liab =>
@@ -101,7 +103,12 @@
    </div>
    }
   </td>
-  <td id="@{liabTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+  <td id="@{liabTab.tabMessageKey}-reference-@index">
+   <a href="@routes.CaseController.get(result.reference)">
+    <span aria-hidden="true">@{result.reference}</span>
+    <span class="visually-hidden">case reference @{result.reference}</span>
+   </a>
+  </td>
   <td id="@{liabTab.tabMessageKey}-goods-@index">@{liab.goodName}</td>
   <td id="@{liabTab.tabMessageKey}-trader-@index">@{liab.traderName}</td>
   <td id="@{liabTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
@@ -109,12 +116,12 @@
    <span class="govuk-tag govuk-tag--pink">@{liab.status}</span>
    }</td>
 
-  <td id="@{liabTab.tabMessageKey}-status-@index">
-   @case_status_tab(result, s"${liabTab.tabMessageKey}-status-label-$index")
-  </td>
-  <td id="@{liabTab.tabMessageKey}-team-@index">
-   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
-  </td>
+   <td id="@{liabTab.tabMessageKey}-status-@index">
+    @case_status_tab(result, s"${liabTab.tabMessageKey}-status-label-$index")
+   </td>
+   <td id="@{liabTab.tabMessageKey}-team-@index">
+    @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+   </td>
  </tr>
  }
 

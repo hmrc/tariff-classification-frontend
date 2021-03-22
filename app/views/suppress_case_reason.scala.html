@@ -30,16 +30,17 @@
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case.reason")), customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
-
-    @error_summary(form.errors)
-
-    @case_heading(c)
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("change_case_status.suppressed.reason.heading", c.application.goodsName)</h2>
+            <div class="mt-5">@back_link()</div>
 
+            @error_summary(form.errors)
+        </div>
+        <div class="column-two-thirds">
+            @case_heading(c, messageKey=Some("change_case_status.suppressed.reason.heading"))
+        </div>
+        <div class="column-full">
             @helper.form(
                 action = routes.SuppressCaseController.postSuppressCaseReason(c.reference),
                 'id -> "suppress-case",
@@ -50,7 +51,7 @@
 
                 @input_textarea(
                     field = form("note"),
-                    label = "Add a note",
+                    label = "Add a case note",
                     labelClass = Some("heading-medium"),
                     hint = Some("Give details of why you are suppressing this case. Keep the note clear and concise."),
                     customErrorMessage = Some(messages("error.empty.suppress.note"))

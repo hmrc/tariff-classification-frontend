@@ -129,11 +129,13 @@ class ManageKeywordsController @Inject() (
                     formWithErrors
                   )
                 )
-              ),
+            ),
             keyword =>
-              keywordService.createKeyword(Keyword(keyword.toUpperCase, true)).map { saveKeyword: Keyword =>
-                Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
-            }
+              keywordService
+                .createKeyword(Keyword(keyword.toUpperCase, true), request.operator, ChangeKeywordStatusAction.CREATED)
+                .map { saveKeyword: Keyword =>
+                  Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
+              }
           )
       }
     }
@@ -156,20 +158,12 @@ class ManageKeywordsController @Inject() (
               action =>
                 ChangeKeywordStatusAction.format(action) match {
                   case ChangeKeywordStatusAction.APPROVE =>
-                    keywordService.createKeyword(Keyword(keywordName, approved = true)).map {
-                      savedKeyword: Keyword =>
-                         Redirect(
-                           controllers.v2.routes.ManageKeywordsController
-                             .displayKeywordChangeConfirmation(
-                               savedKeyword.name,
-                               savedKeyword.approved,
-                               c.application.goodsName
-                          )
-                      )
-                    }
-                  case ChangeKeywordStatusAction.REJECT =>
-                    keywordService.createKeyword(Keyword(keywordName)).map {
-                      savedKeyword: Keyword =>
+                    keywordService
+                      .createKeyword(
+                        Keyword(keywordName, approved = true),
+                        request.operator,
+                        ChangeKeywordStatusAction.APPROVE)
+                      .map { savedKeyword: Keyword =>
                         Redirect(
                           controllers.v2.routes.ManageKeywordsController
                             .displayKeywordChangeConfirmation(
@@ -178,8 +172,21 @@ class ManageKeywordsController @Inject() (
                               c.application.goodsName
                             )
                         )
-                    }
-                }
+                      }
+                  case ChangeKeywordStatusAction.REJECT =>
+                    keywordService
+                      .createKeyword(Keyword(keywordName), request.operator, ChangeKeywordStatusAction.REJECT)
+                      .map { savedKeyword: Keyword =>
+                        Redirect(
+                          controllers.v2.routes.ManageKeywordsController
+                            .displayKeywordChangeConfirmation(
+                              savedKeyword.name,
+                              savedKeyword.approved,
+                              c.application.goodsName
+                            )
+                        )
+                      }
+              }
             )
           }
           case _ => successful(Ok(views.html.case_not_found(reference)))
@@ -233,12 +240,12 @@ class ManageKeywordsController @Inject() (
               ), {
               case (EditKeywordAction.DELETE, _) =>
                 keywordService
-                  .deleteKeyword(Keyword(keywordName))
+                  .deleteKeyword(Keyword(keywordName), request.operator)
                   .map(_ =>
                     Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmationKeywordDeleted())
                   )
               case (EditKeywordAction.RENAME, keywordToRename) =>
-                keywordService.renameKeyword(Keyword(keywordName, true), Keyword(keywordToRename, true)).map {
+                keywordService.renameKeyword(Keyword(keywordName, true), Keyword(keywordToRename, true), request.operator).map {
                   updatedKeyword: Keyword =>
                     Redirect(
                       routes.ManageKeywordsController

@@ -33,7 +33,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SampleController @Inject() (
+class SampleController @Inject()(
   override val verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
@@ -52,13 +52,21 @@ class SampleController @Inject() (
   ): Html =
     c.application.`type` match {
       case ApplicationType.LIABILITY =>
-        if (options.contains("liability")) {
+        if (options.contains("liability"))
           views.html.change_liablity_sending_sample(c, notFilledForm)
-        } else {
+        else
           views.html.change_sample_status(c, notFilledForm)
-        }
-      case ApplicationType.CORRESPONDENCE => views.html.change_correspondence_sending_sample(c, notFilledForm)
-      case _ =>       views.html.change_sample_status(c, notFilledForm)
+      case ApplicationType.CORRESPONDENCE =>
+        if (options.contains("correspondence"))
+          views.html.change_correspondence_sending_sample(c, notFilledForm)
+        else
+          views.html.change_sample_status(c, notFilledForm)
+      case ApplicationType.MISCELLANEOUS =>
+        if (options.contains("correspondence"))
+          views.html.change_correspondence_sending_sample(c, notFilledForm)
+        else
+          views.html.change_sample_status(c, notFilledForm)
+      case _ => views.html.change_sample_status(c, notFilledForm)
     }
 
   override def chooseStatus(reference: String, options: Option[String]): Action[AnyContent] =
