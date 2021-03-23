@@ -33,7 +33,7 @@
 @main(bodyClasses = None, customTitle = Some(messages("page.title.edit.ruling")), customPrimaryNavTab = NoTabSelected) {
     @defining(c.application.asATAR) { btiApp: BTIApplication =>
 
-        <div class="mt-15">@back_link()</div>
+        @back_link()
 
         @error_summary(decisionForm.errors)
 
