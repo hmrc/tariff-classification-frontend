@@ -16,6 +16,8 @@
 
 @import controllers.routes.AssignedCasesController
 @import controllers.v2.routes.MyCasesController
+@import controllers.v2.routes.AllOpenCasesController
+@import models.viewmodels.{CorrespondenceTab, MiscellaneousTab, ATaRTab, LiabilitiesTab}
 @import config.AppConfig
 @import models.{Case, Queue}
 @import models.request.AuthenticatedRequest
@@ -30,6 +32,29 @@
 
 @(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
+@backToCase =@{
+    if(c.application.isCorrespondence) {
+        AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)
+    } else if(c.application.isMisc) {
+        AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)
+    } else if(c.application.isBTI){
+        AllOpenCasesController.displayAllOpenCases(ATaRTab)
+    }else {
+        AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)
+    }
+}
+
+@backToCaseLinkText =@{
+    if(c.application.isCorrespondence) {
+        messages("back.correspondence")
+    } else if(c.application.isMisc) {
+        messages("back.mis-cases")
+    } else if(c.application.isBTI){
+        messages("back.my_cases")
+    }else {
+        messages("back.liability")
+    }
+}
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.case.moved")),
     customPrimaryNavTab = NoTabSelected) {
@@ -42,8 +67,8 @@
             </div>
 
             @confirmation_next_steps(
-                linkText = messages("back.my_cases"),
-                backHref = MyCasesController.displayMyCases()
+                linkText = backToCaseLinkText,
+                backHref = backToCase
             )
 
         </div>

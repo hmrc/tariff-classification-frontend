@@ -32,9 +32,10 @@ class EmailConnectorSpec extends ConnectorTest {
       Seq("user@domain.com"),
       CaseCompletedEmailParameters(
         recipientName_line1 = "name",
-        reference = "case-ref",
-        goodsName = "item-name",
-        officerName = "officer"
+        reference           = "case-ref",
+        goodsName           = "item-name",
+        officerName         = "officer",
+        dateSubmitted       = "01 Jan 2021"
       )
     )
 

@@ -41,6 +41,15 @@ object ReportDateForm {
       .toInstant
   }
 
+  private val formDate2InstantAtEndOfDay: DateForm => Instant = { dateForm =>
+    LocalDate
+      .of(dateForm.year.toInt, dateForm.month.toInt, dateForm.day.toInt)
+      .plusDays(1)
+      .atStartOfDay(ZoneOffset.UTC)
+      .toInstant
+
+  }
+
   private val instant2FormDate: Instant => DateForm = { date =>
     if (date == Instant.MIN || date == Instant.MAX)
       DateForm("", "", "")
@@ -66,6 +75,18 @@ object ReportDateForm {
       )
       .transform(formDate2Instant, instant2FormDate)
 
+  def endDateInclusive =
+    mapping(
+      "day"   -> text,
+      "month" -> text,
+      "year"  -> text
+    )(DateForm.apply)(DateForm.unapply)
+      .verifying(
+        "reporting.choose_date.invalid_date",
+        date => Try(LocalDate.of(date.year.toInt, date.month.toInt, date.day.toInt)).isSuccess
+      )
+      .transform(formDate2InstantAtEndOfDay, instant2FormDate)
+
   val optionalDateRangeFormat: Formatter[InstantRange] = new Formatter[InstantRange] {
 
     private def min(key: String) = s"$key.min"
@@ -76,7 +97,7 @@ object ReportDateForm {
         if (specificDates)
           mapping(
             min(dateRangeKey) -> date,
-            max(dateRangeKey) -> date
+            max(dateRangeKey) -> endDateInclusive
           )(InstantRange.apply)(InstantRange.unapply).bind(data)
         else
           Right(InstantRange.allTime)
@@ -84,7 +105,7 @@ object ReportDateForm {
     override def unbind(key: String, value: InstantRange): Map[String, String] =
       mapping(
         min(dateRangeKey) -> date,
-        max(dateRangeKey) -> date
+        max(dateRangeKey) -> endDateInclusive
       )(InstantRange.apply)(InstantRange.unapply).unbind(value)
   }
 

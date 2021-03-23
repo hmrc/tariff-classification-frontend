@@ -16,10 +16,6 @@
 
 package views.partials
 
-import controllers.SessionKeys._
-import models.Operator
-import models.request.AuthenticatedRequest
-import play.api.test.FakeRequest
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.back_link
@@ -29,154 +25,14 @@ class BackLinkViewSpec extends ViewSpec {
   "Back link view" should {
 
     "render back link with details from session" in {
-      // Given
-      val requestWithSessionData = AuthenticatedRequest(
-        Operator("0", Some("name")),
-        FakeRequest().withSession(
-          (backToQueuesLinkUrl, "url"),
-          (backToQueuesLinkLabel, "somewhere nice")
-        )
-      )
+      val doc = view(back_link()(messages))
 
-      // When
-      val doc = view(back_link()(requestWithSessionData, messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
+      doc should containElementWithID("back-link")
       doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.getElementById("back-link") should containText("somewhere nice")
+      doc.getElementById("back-link") should haveAttribute("href", "#")
+      doc.text() shouldBe messages("errors.all.back")
     }
 
-    "render back link with default details if session does not contain details" in {
-      // When
-      val doc = view(back_link())
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "/manage-tariff-classifications")
-      doc.getElementById("back-link") should containText(messages("errors.all.back"))
-    }
-
-    "render back link with default details if session does not contain search label but contains search url" in {
-      // Given
-      val requestWithSessionData = AuthenticatedRequest(
-        Operator("0", Some("name")),
-        FakeRequest().withSession(
-          (backToSearchResultsLinkUrl, "url")
-        )
-      )
-
-      // When
-      val doc = view(back_link()(requestWithSessionData, messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text()                      shouldBe messages("errors.all.back")
-    }
-
-    "render back link with default details if session does not contain queues label but contains queues url" in {
-      // Given
-      val requestWithSessionData = AuthenticatedRequest(
-        Operator("0", Some("name")),
-        FakeRequest().withSession(
-          (backToQueuesLinkUrl, "url")
-        )
-      )
-
-      // When
-      val doc = view(back_link()(requestWithSessionData, messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text()                      shouldBe messages("errors.all.back")
-    }
-
-    "render back link with details from session with default text for search result" in {
-      // Given
-      val requestWithSessionData = AuthenticatedRequest(
-        Operator("0", Some("name")),
-        FakeRequest().withSession(
-          (backToSearchResultsLinkUrl, "url"),
-          (backToSearchResultsLinkLabel, "")
-        )
-      )
-
-      // When
-      val doc = view(back_link()(requestWithSessionData, messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text()                      shouldBe "Back"
-    }
-
-    "render back link with details from session with custom text for search result" in {
-      val customLabel = "custom"
-      // Given
-      val requestWithSessionData = AuthenticatedRequest(
-        Operator("0", Some("name")),
-        FakeRequest().withSession(
-          (backToSearchResultsLinkUrl, "url"),
-          (backToSearchResultsLinkLabel, customLabel)
-        )
-      )
-
-      // When
-      val doc = view(back_link()(requestWithSessionData, messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text()                      shouldBe "Back to " + customLabel
-    }
-
-    "render back link with details from session with default text for queues result" in {
-      // Given
-      val requestWithSessionData = AuthenticatedRequest(
-        Operator("0", Some("name")),
-        FakeRequest().withSession(
-          (backToQueuesLinkUrl, "url"),
-          (backToQueuesLinkLabel, "")
-        )
-      )
-
-      // When
-      val doc = view(back_link()(requestWithSessionData, messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text()                      shouldBe "Back"
-    }
-
-    "render back link with details from session with custom text for queues result" in {
-      val customLabel = "custom"
-      // Given
-      val requestWithSessionData = AuthenticatedRequest(
-        Operator("0", Some("name")),
-        FakeRequest().withSession(
-          (backToQueuesLinkUrl, "url"),
-          (backToQueuesLinkLabel, customLabel)
-        )
-      )
-
-      // When
-      val doc = view(back_link()(requestWithSessionData, messages))
-
-      // Then
-      doc                             should containElementWithID("back-link")
-      doc.getElementById("back-link") should haveTag("a")
-      doc.getElementById("back-link") should haveAttribute("href", "url")
-      doc.text()                      shouldBe "Back to " + customLabel
-    }
   }
+
 }
