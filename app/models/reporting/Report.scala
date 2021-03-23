@@ -196,23 +196,23 @@ object Report {
   val completedCasesByAssignedUser = SummaryReport(
     name      = "Completed cases by assigned user",
     groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.User,
-    sortOrder = SortDirection.ASCENDING,
+    sortBy    = ReportField.Count,
+    sortOrder = SortDirection.DESCENDING,
     statuses  = Set(PseudoCaseStatus.COMPLETED)
   )
 
   val numberOfCasesPerUser = SummaryReport(
     name      = "Number of cases per user",
     groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.User,
-    sortOrder = SortDirection.ASCENDING
+    sortBy    = ReportField.Count,
+    sortOrder = SortDirection.DESCENDING
   )
 
   val cancelledCasesPerUser = SummaryReport(
     name      = "Cancelled cases by assigned user",
     groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.User,
-    sortOrder = SortDirection.ASCENDING,
+    sortBy    = ReportField.Count,
+    sortOrder = SortDirection.DESCENDING,
     statuses  = Set(PseudoCaseStatus.CANCELLED)
   )
 
@@ -308,10 +308,11 @@ object Report {
   )
 
   val casesUnderReviewByUser = SummaryReport(
-    name     = "Cases under review by assigned user",
-    groupBy  = NonEmptySeq.one(ReportField.User),
-    sortBy   = ReportField.User,
-    statuses = Set(PseudoCaseStatus.UNDER_REVIEW)
+    name      = "Cases under review by assigned user",
+    groupBy   = NonEmptySeq.one(ReportField.User),
+    sortBy    = ReportField.Count,
+    sortOrder = SortDirection.DESCENDING,
+    statuses  = Set(PseudoCaseStatus.UNDER_REVIEW)
   )
 
   val casesUnderAppealByChapter = SummaryReport(
@@ -322,10 +323,11 @@ object Report {
   )
 
   val casesUnderAppealByUser = SummaryReport(
-    name     = "Cases under appeal by assigned user",
-    groupBy  = NonEmptySeq.one(ReportField.User),
-    sortBy   = ReportField.User,
-    statuses = Set(PseudoCaseStatus.UNDER_APPEAL)
+    name      = "Cases under appeal by assigned user",
+    groupBy   = NonEmptySeq.one(ReportField.User),
+    sortBy    = ReportField.Count,
+    sortOrder = SortDirection.DESCENDING,
+    statuses  = Set(PseudoCaseStatus.UNDER_APPEAL)
   )
 
   val byId = Map[String, Report](
