@@ -53,5 +53,11 @@ class ReportFieldViewSpec extends ViewSpec {
       doc should containElementWithID("case-report-status-0")
       doc.getElementById("case-report-status-0") should containText("CANCELLED")
     }
+    "render total days field correctly" in {
+      val doc = view(withTableWrapper(reportField(ReportField.TotalDays, NumberResultField(ReportField.TotalDays.fieldName, Some(120)), Map.empty, Map.empty, "case-report", 0)))
+      doc should containElementWithID("case-report-total_days-0")
+      doc.getElementById("case-report-total_days-0") should containText("120")
+      doc.getElementById("case-report-total_days-0").hasClass("live-red-text")
+    }
   }
 }
