@@ -108,7 +108,7 @@ class BindingTariffClassificationConnector @Inject() (
     statuses: Set[CaseStatus]   = CaseStatus.openStatuses,
     assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    withMetricsTimerAsync("get-cases-by-queue") { _ =>
+    withMetricsTimerAsync("get-cases-by-all-queues") { _ =>
       val url = buildQueryUrl(
         types      = types,
         statuses   = statuses,
