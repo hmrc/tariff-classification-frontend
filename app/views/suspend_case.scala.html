@@ -28,19 +28,16 @@
 
 @(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case")), customPrimaryNavTab = NoTabSelected) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case")), customPrimaryNavTab = NoTabSelected) {
 
-        <div class="grid-row">
-            <div class="column-full">
-                <div class="mt-5">@back_link()</div>
+    @back_link()
 
-                @error_summary(form.errors)
-            </div>
-            <div class="column-two-thirds">
-            @case_heading(c, messageKey=Some("change_case_status.to.suspended.header"))
-            </div>
+    @error_summary(form.errors)
 
-        <div class="column-full">
+<div class="govuk-notification-banner-width">
+    @case_heading(c, true, None, Some("change_case_status.to.suspended.header"))
+
+
             @helper.form(action = routes.SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 
@@ -61,6 +58,5 @@
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }
-        </div>
-    </div>
+</div>
 }

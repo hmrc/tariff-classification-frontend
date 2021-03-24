@@ -73,7 +73,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Change case status to: Suspended")
+      bodyOf(result)        should include("Provide details to suspend this case")
     }
 
     "return OK when user has right permissions" in {
@@ -140,7 +140,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suspended")
+      bodyOf(result) should include("Provide details to suspend this case")
     }
 
     "return to form on missing form field" in {
@@ -152,7 +152,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suspended")
+      bodyOf(result) should include("Provide details to suspend this case")
     }
 
     "return to form on invalid file type" in {
@@ -164,7 +164,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suspended")
+      bodyOf(result) should include("Provide details to suspend this case")
     }
 
     "redirect unauthorised when does not have right permissions" in {
