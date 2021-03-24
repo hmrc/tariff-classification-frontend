@@ -60,6 +60,26 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     }
   }
 
+  "Service 'audit case updated'" should {
+    val originalCase = aLiabilityCase(withReference("ref"))
+    val updatedCase = originalCase.copy(decision = Some(
+        Decision(bindingCommodityCode = "123456",justification = "acceptable", goodsDescription = "quirky")
+      )
+    )
+
+    "Delegate to connector" in {
+      service.auditCaseUpdated(originalCase, updatedCase)
+
+      val payload = caseUpdatedAudit(
+        previousCase = originalCase,
+        updatedCase  = updatedCase,
+      )
+
+      verify(connector)
+        .sendExplicitAudit(refEq("caseUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
   "Service 'audit case assigned'" should {
 
     "Delegate to connector" in {
@@ -580,6 +600,12 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       "caseReference" -> caseReference,
       "operatorId"    -> operatorId,
       "comment"       -> comment
+    )
+
+  private def caseUpdatedAudit(previousCase: Case, updatedCase: Case): Map[String, Case] =
+    Map[String, Case](
+      "previousCase" -> previousCase,
+      "updatedCase" -> updatedCase,
     )
 
   private def caseChangeAudit(

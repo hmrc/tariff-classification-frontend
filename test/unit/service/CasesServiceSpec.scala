@@ -125,6 +125,17 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
       await(service.updateCase(oldCase)) shouldBe updatedCase
     }
+
+    "Update Case with Auditing" should {
+      val oldCase     = mock[Case]
+      val updatedCase = mock[Case]
+
+      "delegate to connector" in {
+        given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
+
+        await(service.updateCaseWithAuditing(oldCase)) shouldBe updatedCase
+      }
+    }
   }
 
   "Create Case" should {

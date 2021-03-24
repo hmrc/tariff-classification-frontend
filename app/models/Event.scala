@@ -64,6 +64,12 @@ case class CaseCreated(
   override val `type`: EventType = EventType.CASE_CREATED
 }
 
+case class CaseUpdated(
+  comment: String
+) extends Details {
+  override val `type`: EventType = EventType.CASE_UPDATED
+}
+
 case class CaseStatusChange(
   override val from: CaseStatus,
   override val to: CaseStatus,
@@ -221,6 +227,7 @@ object EventType extends Enumeration {
   val SAMPLE_RETURN_CHANGE       = Value
   val SAMPLE_SEND_CHANGE         = Value
   val CASE_CREATED               = Value
+  val CASE_UPDATED               = Value
   val EXPERT_ADVICE_RECEIVED     = Value
 
   def sampleEvents: Set[EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)

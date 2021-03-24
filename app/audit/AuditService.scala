@@ -21,8 +21,11 @@ import models.ApplicationType.{CORRESPONDENCE, MISCELLANEOUS}
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
+
 import javax.inject.{Inject, Singleton}
 import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
+import play.api.libs.json.JsObject
+import play.libs.Json
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -128,6 +131,17 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       auditEventType = CaseCreated,
       auditPayload   = baseAuditPayload(c, operator) + ("comment" -> "Liability case created")
     )
+
+  def auditCaseUpdated(originalCase: Case, updatedCase: Case)(implicit hc: HeaderCarrier): Unit = {
+    sendExplicitAuditEvent(
+      auditEventType = CaseUpdated,
+      //This will need to be changed to Json.obj
+      auditPayload = Map(
+        "previousCase" -> Json.toJson(originalCase),
+        "updatedCase" -> Json.toJson(updatedCase)
+      )
+    )
+  }
 
   def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)(
     implicit hc: HeaderCarrier
@@ -292,6 +306,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
 object AuditPayloadType {
 
   val CaseCreated            = "caseCreated"
+  val CaseUpdated            = "caseUpdated"
   val CaseReleased           = "caseReleased"
   val CaseAssigned           = "caseAssigned"
   val CaseCompleted          = "caseCompleted"

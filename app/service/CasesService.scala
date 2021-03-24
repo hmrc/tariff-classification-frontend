@@ -460,6 +460,13 @@ class CasesService @Inject() (
   def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] =
     connector.updateCase(caseToUpdate)
 
+  def updateCaseWithAuditing(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] = {
+    for {
+      caseUpdated <- connector.updateCase(caseToUpdate)
+      _ = auditService.auditCaseUpdated(caseToUpdate, caseUpdated)
+    } yield caseUpdated
+  }
+
   def createCase(application: Application, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     for {
       caseCreated <- connector.createCase(application)
@@ -677,6 +684,11 @@ class CasesService @Inject() (
   private def addCaseCreatedEvent(caseCreated: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CaseCreated(s"${caseCreated.application.`type`.prettyName} case created")
     addEvent(caseCreated, caseCreated, details, operator)
+  }
+
+  private def addCaseUpdatedEvent(originalCase: Case, updatedCase: Case)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val details = CaseUpdated(s"${updatedCase.application.`type`.prettyName} case updated")
+    addEvent(originalCase, updatedCase, details, updatedCase.assignee.get)
   }
 
   private def extendedUseStatus: Case => Boolean =

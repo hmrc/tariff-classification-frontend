@@ -233,12 +233,12 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "update and redirect for permitted user" when {
       "Case is an ATaR" in {
-        given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+        given(casesService.updateCaseWithAuditing(any[Case])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
         given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier]))
           .willReturn(Future.successful(Seq(attachment)))
 
         val result = await(controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
-        verify(casesService).updateCase(any[Case])(any[HeaderCarrier])
+        verify(casesService).updateCaseWithAuditing(any[Case])(any[HeaderCarrier])
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(
           v2.routes.AtarController.displayAtar("reference").withFragment(Tab.RULING_TAB.name).path
