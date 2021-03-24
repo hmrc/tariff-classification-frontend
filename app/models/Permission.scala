@@ -61,7 +61,6 @@ object Permission {
     EXTENDED_USE,
     MOVE_CASE_BACK_TO_QUEUE,
     EDIT_SAMPLE,
-    EDIT_ATTACHMENT_DETAIL,
     EDIT_CORRESPONDENCE,
     EDIT_MISCELLANEOUS
   )
@@ -212,7 +211,7 @@ object Permission {
   case object REMOVE_ATTACHMENTS extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
+      managersOrTeamMembersOnly(operator)
   }
 
   case object CANCEL_CASE extends CasePermission {
@@ -233,12 +232,6 @@ object Permission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
       managersOrTeamMembersOnly(operator)
-  }
-
-  case object EDIT_ATTACHMENT_DETAIL extends CasePermission {
-    override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
   }
 
   case object KEYWORDS extends CasePermission {
