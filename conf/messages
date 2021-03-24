@@ -1119,6 +1119,11 @@ common.cases.secondaryNav.assigned=Assigned to me
 common.cases.secondaryNav.referred=Referred by me
 common.cases.secondaryNav.completed=Completed by me
 
+cases.opencases.atar.title=ATaR case
+cases.opencases.liability.title=Liability cases
+cases.opencases.correspondence.title=Correspondence cases
+cases.opencases.miscellaneous.title=Miscellaneous cases
+
 cases.opencases.atar.heading=ATaR cases
 cases.opencases.liability.heading=Liability cases
 cases.opencases.correspondence.heading=Correspondence cases
@@ -1132,6 +1137,10 @@ cases.opencases.tab_FLEX=FLEX
 cases.opencases.tab_TTA=TT-A
 cases.opencases.tab_TTB=TT-B
 cases.opencases.tab_TTC=TT-C
+
+cases.mycases.assignedToMe.title = Assigned to me
+cases.mycases.referredByMe.title = Referred by me
+cases.mycases.completedByMe.title = Completed by me
 
 applicationTab.atar=ATaR
 applicationTab.liability=Liability
