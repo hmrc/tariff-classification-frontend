@@ -108,7 +108,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Reject case for")
+      bodyOf(result)        should include("Provide details to reject this case")
     }
 
     "return OK when user has right permissions" in {
@@ -161,7 +161,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Reject case for")
+      bodyOf(result) should include("Provide details to reject this case")
     }
 
     "return to form on wrong type of file" in {
@@ -172,7 +172,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Reject case for")
+      bodyOf(result) should include("Provide details to reject this case")
     }
 
     "return to form on file size too large" in {
@@ -182,7 +182,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Reject case for")
+      bodyOf(result) should include("Provide details to reject this case")
     }
 
     "return to form on missing form field" in {
@@ -192,7 +192,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Reject case for")
+      bodyOf(result) should include("Provide details to reject this case")
     }
 
     "redirect unauthorised when does not have right permissions" in {

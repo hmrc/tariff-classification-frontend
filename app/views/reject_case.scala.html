@@ -32,13 +32,14 @@
 
 @(c: Case, form: Form[CaseRejection])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.heading.reject_case_for", c.application.goodsName)),
+@main(bodyClasses = None, customTitle = Some(messages("case.title.reject_case_for")),
 customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
     @error_summary(form.errors)
 
+<div class="govuk-notification-banner-width">
     @case_heading(c, true, None, Some("case.heading.reject_case_for"))
 
     <div class="grid-row">
@@ -64,7 +65,7 @@ customPrimaryNavTab = NoTabSelected) {
 
                 @input_textarea(
                     field = form("note"),
-                    label = "Add a note",
+                    label = "Add a case note",
                     labelClass = Some("heading-medium"),
                     hint = Some(messages("change_case_status.rejected.note.hint")),
                     customErrorMessage = Some(messages("error.empty.reject.note"))
@@ -79,11 +80,12 @@ customPrimaryNavTab = NoTabSelected) {
 
                 @confirm_or_cancel_buttons(
                     id = "reject_case",
-                    confirmText = "Confirm status change",
-                    cancelText = "Cancel",
+                    confirmText = "Save changes",
+                    cancelText = "Cancel this action",
                     cancelHref = routes.ChangeCaseStatusController.onPageLoad(c.reference)
                 )
             }
         </div>
     </div>
+</div>
 }
