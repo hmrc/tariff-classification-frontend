@@ -1485,6 +1485,5 @@ case.extend.heading=Do you want to extend the use of the {0} case ruling?
 
 ruling.cancelled.header=The {0} ruling has been cancelled
 ruling.cancelled.sub-header=This ruling was cancelled due to <br><span class="bold">{0}</span>
-ruling.cancelled.email-sent=An email has been sent to {0} at: <br><span class="bold">{1}</span
 ruling.cancelled.status=Case status has been set to {0}
-ruling.cancelled.information=This ruling has been removed from the Search for Advance Tariff Rulings website, the expiry date for this ruling has been set to 29 Nov 2020 and an entry has been added to the case activity tab.
+ruling.cancelled.information=This ruling has been removed from the Search for Advance Tariff Rulings website, the expiry date for this ruling has been set to {0} and an entry has been added to the case activity tab.

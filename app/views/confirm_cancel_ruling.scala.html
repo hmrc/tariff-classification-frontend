@@ -24,6 +24,8 @@
 @import controllers.routes._
 @import controllers.v2.routes.MyCasesController
 @import models.viewmodels.CompletedByMeTab
+@import utils.Dates
+@import java.time.Instant
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -45,13 +47,13 @@
     <div class="grid-row">
         <div id="confirm_cancel_id" class="column-full">
             @if(c.application.isBTI) {
-                <p class="govuk-body">@Html(messages("ruling.cancelled.email-sent", c.application.businessName.getOrElse("") , c.application.contact.email))</p>
 
                 <p class="govuk-body">@Html(messages("ruling.cancelled.status", case_status(c, "case-status")))</p>
 
-            <p class="govuk-body">@messages("ruling.cancelled.information")</p>
+            <p class="govuk-body">@messages("ruling.cancelled.information", Dates.format(Instant.now()))</p>
+
             } else {
-                <h2 class="heading-large mt-0">The liability decision has been cancelled</h2>
+                <h2 class="heading-large mt-0">The liability decision has been cancelled </h2>
             }
 
             <h2 class="heading-medium mt-0 mb-2 pt-20">Next steps</h2>
