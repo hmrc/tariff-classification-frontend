@@ -177,7 +177,7 @@ class ManageUserController @Inject() (
           .getUser(pid)
           .map {
             case Some(userDetails) =>
-              Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet), activeSubNav))
+              Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet)))
             case _ => NotFound(views.html.user_not_found(pid))
           }
     }
@@ -185,7 +185,7 @@ class ManageUserController @Inject() (
   def postEditUserTeams(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       userEditTeamForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors, activeSubNav))),
+        formWithErrors => Future.successful(Ok(user_team_edit(Operator(pid), formWithErrors))),
         updatedMemberOfTeams =>
           userService
             .getUser(pid)

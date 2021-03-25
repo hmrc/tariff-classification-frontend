@@ -24,7 +24,7 @@
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
-@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
+@import models.viewmodels.{NoTabSelected, ApplicationTabViewModel}
 @import models.forms.v2.TeamOrUser
 @import models.forms.v2.TeamOrUser.TeamOrUser
 @import controllers.v2.routes
@@ -36,8 +36,7 @@ user_details: views.html.partials.users.user_details
 
 @(
 numberOfCases:Integer,
-form: Form[TeamOrUser],
-activeSubNav : SubNavigationTab = ManagerToolsUsersTab
+form: Form[TeamOrUser]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
@@ -47,9 +46,8 @@ Some(messages("users.move_cases.team_or_user.header.single"))
 }else{
 Some(messages("users.move_cases.team_or_user.header", numberOfCases))
 },
-customPrimaryNavTab = ManagerToolsTab
+customPrimaryNavTab = NoTabSelected
 ) {
-@manager_tools_secondary_navigation(activeSubNav)
 
 <div class="column-two-thirds mt-5">
     @back_link()

@@ -33,7 +33,6 @@ class ConfirmKeywordCreatedViewSpec extends ViewSpec {
 
       val doc = view(
         confirmKeywordCreatedView(
-          ManagerToolsKeywordsTab,
           keyword
         )
       )
@@ -49,7 +48,6 @@ class ConfirmKeywordCreatedViewSpec extends ViewSpec {
 
       val doc = view(
         confirmKeywordCreatedView(
-          ManagerToolsKeywordsTab,
           keyword
         )
       )

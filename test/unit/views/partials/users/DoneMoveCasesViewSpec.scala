@@ -29,16 +29,14 @@ class DoneMoveCasesViewSpec extends ViewSpec {
 
   "Done move cases" should {
     "render successfully with only team present" in {
-      val doc = view(done("name", "team", None, ManagerToolsUsersTab))
+      val doc = view(done("name", "team", None))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containElementWithClass("govuk-panel govuk-panel--confirmation")
     }
 
     "render successfully with user and team present" in {
-      val doc = view(done("name", "team", Some("new user"), ManagerToolsUsersTab))
+      val doc = view(done("name", "team", Some("new user")))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containElementWithClass("govuk-panel govuk-panel--confirmation")
     }
   }

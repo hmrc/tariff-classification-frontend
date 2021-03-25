@@ -30,16 +30,14 @@ class MoveCasesTeamOrUserViewSpec extends ViewSpec {
 
   "Team or User" should {
     "render successfully with one case" in {
-      val doc = view(teamOrUser(1, teamOrUserForm, ManagerToolsUsersTab))
+      val doc = view(teamOrUser(1, teamOrUserForm))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containText(messages("users.move_cases.team_or_user.header.single"))
     }
 
     "render successfully with multiple cases" in {
-      val doc = view(teamOrUser(5, teamOrUserForm, ManagerToolsUsersTab))
+      val doc = view(teamOrUser(5, teamOrUserForm))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containText(messages("users.move_cases.team_or_user.header", 5))
 
     }

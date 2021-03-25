@@ -21,8 +21,6 @@
 @import views.html.includes.main
 @import views.html.partials.error_summary
 @import views.html.components.manager_tools_secondary_navigation
-@import models.viewmodels.ManagerToolsKeywordsTab
-@import models.viewmodels.SubNavigationTab
 @import views.html.components.input_accessible_auto_complete
 @import models.forms.v2.EditKeywordAction
 @import models.forms.v2.EditKeywordAction.EditKeywordAction
@@ -30,11 +28,9 @@
 
 @this()
 
-@(keywordName: String, globalKeywords: Paged[Keyword], form: Form[(EditKeywordAction, String)], activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(keywordName: String, globalKeywords: Paged[Keyword], form: Form[(EditKeywordAction, String)])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.edit-approved-keywords.title"))) {
-
-        @manager_tools_secondary_navigation(activeSubNav)
 
         @back_link()
 
