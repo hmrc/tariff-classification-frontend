@@ -45,6 +45,7 @@
             <span class="heading-secondary"><span class="visuallyhidden">
                 This section is </span>
             </span><div class="caption-xl mt-40">@messages("management.create-keyword.caption")</div>
+            <h1 id="keyword-edit-heading" class="heading-large mt-0 mb-0">@keywordName</h1>
         </div>
 
         @helper.form(action = controllers.v2.routes.ManageKeywordsController.postEditApprovedKeywords(keywordName), 'id -> "edit-keyword-form", 'novalidate -> "novalidate") {

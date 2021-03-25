@@ -66,7 +66,7 @@ class RemoveAttachmentViewSpec extends ViewSpec {
       val doc = view(renderWithoutError)
 
       doc
-        .getElementById("remove_question")
+        .getElementsByClass("heading-xlarge case-title")
         .text()
         .trim shouldBe "Are you sure you want to remove name test from this case?"
     }

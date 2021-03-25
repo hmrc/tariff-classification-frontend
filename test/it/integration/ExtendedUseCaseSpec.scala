@@ -37,7 +37,7 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
 
       // Then
       response.status shouldBe OK
-      response.body   should include("id=\"change_extended_use_status-heading\"")
+      response.body   should include("Do you want to extend the use of this case ruling?")
     }
 
     "redirect on auth failure" in {

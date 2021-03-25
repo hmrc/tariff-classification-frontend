@@ -132,47 +132,6 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     }
 
-    "Render show edit details link when user has permission " in {
-      val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
-        fileName = "name",
-        operator = Some(Operator("id", Some("operator name")))
-      )
-
-      val c = Cases.btiCaseExample
-      val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
-
-      // When
-      val doc = view(
-        attachments_list_atar("MODULE", attachments)(
-          requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL),
-          messages
-        )
-      )
-      //TODO: uncomment when the functunallity is done
-
-//      // Then
-//      doc                                                        should containElementWithID("MODULE-row-0-edit-attachment-details")
-//      doc.getElementById("MODULE-row-0-edit-attachment-details") should containText("Edit details")
-    }
-
-    "Do not render show edit details link when user does not have permission" in {
-      val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
-        fileName = "name",
-        operator = Some(Operator("id", Some("operator name")))
-      )
-
-      val c = Cases.btiCaseExample
-      val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
-
-      // When
-      val doc = view(attachments_list_atar("MODULE", attachments))
-
-      // Then
-      doc shouldNot containElementWithID("MODULE-row-0-remove")
-    }
-
     "Status should display PUBLISHED if the file is public" in {
       val attachment = Cases.storedAttachment
         .copy(id = "FILE_ID", public = true, fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
