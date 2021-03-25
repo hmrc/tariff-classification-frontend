@@ -28,7 +28,7 @@ class ConfirmCancelRulingViewSpec extends ViewSpec {
       val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(confirm_cancel_ruling(c))
       lazy val expected =
-        "This ruling has been removed from the Search for Advance Tariff Rulings website, the expiry date for this ruling has been set to 29 Nov 2020 and an entry has been added to the case activity tab."
+        "This ruling has been removed from the Search for Advance Tariff Rulings website"
       lazy val actual = doc.getElementById("confirm_cancel_id").text()
 
       // Then
