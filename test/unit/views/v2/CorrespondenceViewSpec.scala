@@ -20,6 +20,7 @@ import java.time.Instant
 
 import models._
 import models.forms._
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels.atar.AttachmentsTabViewModel
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
 import models.viewmodels._
@@ -55,6 +56,15 @@ class CorrespondenceViewSpec extends ViewSpec {
     "Bob",
     Seq.empty,
     Seq.empty
+  )
+
+  val initiateResponse = FileStoreInitiateResponse(
+    id = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
   )
 
   private val activityTab: ActivityViewModel =
@@ -98,6 +108,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -118,6 +129,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -138,6 +150,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -158,6 +171,7 @@ class CorrespondenceViewSpec extends ViewSpec {
               sampleStatusTabViewModel,
               attachmentsTab,
               uploadAttachmentForm,
+              initiateResponse,
               activityTab,
               activityForm,
               Seq.empty
@@ -178,6 +192,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -198,6 +213,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -218,6 +234,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty

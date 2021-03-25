@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.response
 
-case class CaseReferral(
-  referredTo: String,
-  reasons: List[ReferralReason.Value],
-  note: String,
-  referManually: Option[String]
-)
+import play.api.libs.json.{ OFormat, Json }
+
+case class FileStoreInitiateResponse(id: String, upscanReference: String, uploadRequest: UpscanFormTemplate)
+
+object FileStoreInitiateResponse {
+  implicit val format: OFormat[FileStoreInitiateResponse] = Json.format[FileStoreInitiateResponse]
+}

@@ -107,7 +107,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       )
 
       status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe ReferCaseController.getReferCase("reference").url
+      redirectLocation(result).get shouldBe ReferCaseController.getReferCaseReason("reference").url
     }
 
     "redirect to Reject case page POST" in {
@@ -119,7 +119,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       )
 
       status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe RejectCaseController.getRejectCase("reference").url
+      redirectLocation(result).get shouldBe RejectCaseController.getRejectCaseReason("reference").url
     }
 
     "redirect to Suspend case page with POST" in {
@@ -132,7 +132,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       )
 
       status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get shouldBe SuspendCaseController.getSuspendCase("reference").url
+      redirectLocation(result).get shouldBe SuspendCaseController.getSuspendCaseReason("reference").url
     }
 
     "redirect to Move back to queue page with POST" in {

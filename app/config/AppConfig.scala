@@ -95,4 +95,5 @@ class AppConfig @Inject() (
       .getOrElse(Mode.Dev.equals(environment.mode))
   }
 
+  lazy val host = config.get[String]("platform.frontend.host")
 }

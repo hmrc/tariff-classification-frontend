@@ -16,34 +16,28 @@
 
 package controllers.v2
 
+import javax.inject.{Inject, Singleton}
+
 import akka.stream.Materializer
 import config.AppConfig
 import controllers.{RenderCaseAction, RequestActions}
 import models._
-import models.forms.{RemoveAttachmentForm, UploadAttachmentForm}
-import models.request.AuthenticatedCaseRequest
+import models.forms.RemoveAttachmentForm
 import models.viewmodels.CaseHeaderViewModel
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.Files.TemporaryFile
 import play.api.mvc._
 import service.CasesService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AttachmentsController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
-  liabilityController: LiabilityController,
-  atarController: AtarController,
-  correspondenceController: CorrespondenceController,
-  miscellaneousController: MiscellaneousController,
   remove_attachment: views.html.v2.remove_attachment,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
@@ -94,74 +88,4 @@ class AttachmentsController @Inject() (
         )
 
     }
-
-  def uploadAttachment(reference: String): Action[Either[MaxSizeExceeded, MultipartFormData[TemporaryFile]]] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_ATTACHMENT))
-      .async(parse.maxLength(appConfig.fileUploadMaxSize.toLong, parse.multipartFormData)) { implicit request =>
-        request.body match {
-          case Left(MaxSizeExceeded(_)) =>
-            renderAttachmentsErrors(
-              reference,
-              request2Messages(implicitly)("cases.attachment.upload.error.restrictionSize")
-            )
-          case Right(multipartForm) =>
-            multipartForm match {
-              case file: MultipartFormData[TemporaryFile] if file.files.nonEmpty =>
-                uploadAndSave(reference, file)
-              case _ =>
-                renderAttachmentsErrors(
-                  reference,
-                  request2Messages(implicitly)("cases.attachment.upload.error.mustSelect")
-                )
-            }
-        }
-      }
-
-  private def uploadAndSave(
-    reference: String,
-    multiPartFormData: MultipartFormData[TemporaryFile]
-  )(implicit hc: HeaderCarrier, request: AuthenticatedCaseRequest[_]): Future[Result] =
-    multiPartFormData.file("file-input") match {
-      case Some(filePart) if filePart.filename.isEmpty =>
-        renderAttachmentsErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.mustSelect"))
-      case Some(filePart) if hasInvalidContentType(filePart) =>
-        renderAttachmentsErrors(reference, request2Messages(implicitly)("cases.attachment.upload.error.fileType"))
-      case Some(filePart) =>
-        val fileUpload = FileUpload.fromFilePart(filePart)
-        casesService.getOne(reference).flatMap {
-          case Some(c: Case) =>
-            casesService
-              .addAttachment(c, fileUpload, request.operator)
-              .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
-          case _ =>
-            successful(Ok(views.html.case_not_found(reference)))
-        }
-      case _ =>
-        renderAttachmentsErrors(reference, "expected type file on the form")
-    }
-
-  private def hasInvalidContentType: MultipartFormData.FilePart[TemporaryFile] => Boolean = { f =>
-    f.contentType match {
-      case Some(c: String) if appConfig.fileUploadMimeTypes.contains(c) => false
-      case _                                                            => true
-    }
-  }
-
-  private def renderAttachmentsErrors(reference: String, errorMessage: String)(
-    implicit request: AuthenticatedCaseRequest[_]
-  ): Future[Result] = {
-    val errors         = Seq(FormError("file-input", errorMessage))
-    val formWithErrors = UploadAttachmentForm.form.copy(errors = errors)
-    request.`case`.application.`type` match {
-      case ApplicationType.ATAR =>
-        atarController.renderView(uploadForm = formWithErrors)
-      case ApplicationType.LIABILITY =>
-        liabilityController.renderView(uploadAttachmentForm = formWithErrors)
-      case ApplicationType.CORRESPONDENCE =>
-        correspondenceController.renderView(uploadForm = formWithErrors)
-      case ApplicationType.MISCELLANEOUS =>
-        miscellaneousController.renderView(uploadForm = formWithErrors)
-    }
-  }
-
 }

@@ -16,8 +16,11 @@
 
 package controllers.v2
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
+
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{RequestActions, Tab}
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
@@ -27,10 +30,10 @@ import models.{Case, CaseStatus, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,17 +48,23 @@ class CorrespondenceController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
+    with UpscanErrorHandling
     with I18nSupport {
 
-  def displayCorrespondence(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
+  def displayCorrespondence(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+    }
 
   def renderView(
+    fileId: Option[String]               = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    val correspondenceCase: Case         = request.`case`
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+    val correspondenceCase: Case = request.`case`
+    val uploadFileId             = fileId.getOrElse(UUID.randomUUID().toString)
+
     val correspondenceViewModel          = CaseViewModel.fromCase(correspondenceCase, request.operator)
     val caseDetailsTab                   = CaseDetailsViewModel.fromCase(correspondenceCase)
     val contactDetailsTab                = ContactDetailsTabViewModel.fromCase(correspondenceCase)
@@ -68,27 +77,43 @@ class CorrespondenceController @Inject() (
       correspondenceCase.status,
       correspondenceCase.assignee.exists(_.id == request.operator.id)
     )
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + controllers.routes.CaseController.addAttachment(correspondenceCase.reference, uploadFileId).path
+
+    val fileUploadErrorRedirect =
+      appConfig.host + routes.CorrespondenceController
+        .displayCorrespondence(correspondenceCase.reference, Some(uploadFileId))
+        .withFragment(Tab.ATTACHMENTS_TAB.name)
+        .path
+
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
       attachments    <- storedAttachments
       sampleTab      <- correspondenceSampleTabViewModel
-
-    } yield Ok(
-      correspondenceView(
-        correspondenceViewModel,
-        caseDetailsTab,
-        contactDetailsTab,
-        messagesTab,
-        messageForm,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        activityTab,
-        activityForm,
-        attachments,
-        activeNavTab
-      )
+      initiateResponse <- fileService.initiate(
+                           FileStoreInitiateRequest(
+                             id              = Some(uploadFileId),
+                             successRedirect = Some(fileUploadSuccessRedirect),
+                             errorRedirect   = Some(fileUploadErrorRedirect),
+                             maxFileSize     = appConfig.fileUploadMaxSize
+                           )
+                         )
+    } yield correspondenceView(
+      correspondenceViewModel,
+      caseDetailsTab,
+      contactDetailsTab,
+      messagesTab,
+      messageForm,
+      sampleTab,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      activityTab,
+      activityForm,
+      attachments,
+      activeNavTab
     )
   }
 

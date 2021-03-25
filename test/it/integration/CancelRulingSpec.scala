@@ -58,16 +58,16 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/ruling/cancel").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/ruling/cancel-reason").get())
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Cancel the ruling")
+      response.body   should include("Provide details to cancel")
     }
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/ruling/cancel").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/ruling/cancel-reason").get())
 
       // Then
       response.status shouldBe OK
