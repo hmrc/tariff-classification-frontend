@@ -37,8 +37,7 @@ abstract class ViewSpec extends SpecBase {
   protected val authenticatedManager: Operator = Operator(
     id          = "operator-id",
     name        = Some("operator-name"),
-    role        = Role.CLASSIFICATION_MANAGER,
-    permissions = Set(Permission.EDIT_ATTACHMENT_DETAIL)
+    role        = Role.CLASSIFICATION_MANAGER
   )
 
   val request: FakeRequest[AnyContentAsEmpty.type] =

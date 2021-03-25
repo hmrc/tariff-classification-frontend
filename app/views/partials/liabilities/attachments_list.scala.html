@@ -27,7 +27,6 @@
         attachments: Seq[StoredAttachment],
         showUploadedBy: Boolean = false,
         showRemoval: Boolean = false,
-        showEditDetails: Boolean = false,
         caseRef: String = ""
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
@@ -41,7 +40,6 @@
                     <th id="@{id}-header-details" scope="col">Details</th>
                     <th class="attachment-table-date" scope="col">Date</th>
                     <th><span class="visuallyhidden">attachment action</span></th>
-                    <th><span class="visuallyhidden">edit details</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -71,20 +69,8 @@
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove">
                                     <a id="@{id}-row-@{index}-remove-link" href="@AttachmentsController.removeAttachment(caseRef, file.id, file.fileName)">
-                                        <span>@messages("case.attachment.remove.file.text")</span>
+                                        <span aria-hidden="true">@messages("case.attachment.remove.file.text")</span>
                                         <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName)</span>
-                                    </a>
-                                </td>
-                            }
-
-                            @if(showEditDetails &&
-                                !caseRef.isEmpty &&
-                                request.hasPermission(Permission.EDIT_ATTACHMENT_DETAIL)) {
-                                <td id="@{id}-row-@{index}-edit-attachment-details">
-@*                                    TODO href*@
-                                    <a id="@{id}-row-@{index}-edit-attachment-link" href="#">
-                                        <span>@messages("case.attachment.edit.file.text")</span>
-                                        <span class="visually-hidden">@messages("case.attachment.edit.file.hidden.text",file.fileName)</span>
                                     </a>
                                 </td>
                             }

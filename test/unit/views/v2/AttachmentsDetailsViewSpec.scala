@@ -49,7 +49,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
       UploadAttachmentForm.form,
       AttachmentsTabViewModel("ref", Seq(attachment), None),
       showUploadAttachments = true
-    )(requestWithPermissions(Permission.EDIT_ATTACHMENT_DETAIL, Permission.REMOVE_ATTACHMENTS), messages, appConfig)
+    )(requestWithPermissions(Permission.REMOVE_ATTACHMENTS), messages, appConfig)
 
   "Attachments Details View" should {
 
@@ -88,14 +88,6 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
       val doc = view(renderAttachmentsDetailsWithAttachments)
 
       doc.getElementsByTag("table").size() shouldBe 1
-    }
-
-    "render upload form and some elements in attachments table check edit details button" in {
-      val doc = view(renderAttachmentsDetailsWithAttachments)
-      val expectedMsg = messages("case.attachment.edit.file.text") + " " +
-        messages("case.attachment.edit.file.hidden.text", attachment.fileName)
-
-      doc.getElementById(s"all-row-0-edit-attachment-details").text().trim shouldBe expectedMsg
     }
 
     "render upload form and some elements in attachments table check remove attachment button" in {
