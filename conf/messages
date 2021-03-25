@@ -506,7 +506,7 @@ page.title.case.suppressed=Case suppressed
 page.title.complete.case=Are you sure you want to complete this case?
 page.title.case.completed=This case has been completed
 page.title.cancel.ruling=Cancel the ruling
-page.title.ruling.cancelled=Ruling cancelled
+page.title.ruling.cancelled=The Ruling has been cancelled
 page.title.remove.attachment=Are you sure you want to remove the attachment from this case?
 page.title.suspend.case.error=Contact applicant before case suspension
 page.title.suppress.case.error=Contact applicant before case suppression
@@ -1174,6 +1174,7 @@ back.correspondence = Back to open Correspondence cases
 back.liability = Back to open Liability cases
 back.mis-cases = Back to open Miscellaneous cases
 back.user.keywords = Go back to keywords
+back.to.my_case.completed-by-me=Back to my completed cases
 
 back.open_cases.caseType = Back to open {0} cases
 misc.create_misc.description.heading=Short case description
@@ -1481,3 +1482,8 @@ management.update-keyword.error.no-status-selected=Choose to approve, reject or 
 management.update-keyword.error.duplicate.keyword=This keyword has already been added to the list
 
 case.extend.heading=Do you want to extend the use of the {0} case ruling?
+
+ruling.cancelled.header=The {0} ruling has been cancelled
+ruling.cancelled.sub-header=This ruling was cancelled due to <br><span class="bold">{0}</span>
+ruling.cancelled.status=Case status has been set to {0}
+ruling.cancelled.information=This ruling has been removed from the Search for Advance Tariff Rulings website, the expiry date for this ruling has been set to {0} and an entry has been added to the case activity tab.
