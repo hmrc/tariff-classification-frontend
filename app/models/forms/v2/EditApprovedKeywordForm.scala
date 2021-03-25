@@ -39,7 +39,7 @@ object EditApprovedKeywordForm {
   val nonEmptyKeyword: Constraint[(EditKeywordAction, String)] = Constraint {
     case (EditKeywordAction.DELETE, _)                             => Valid
     case (EditKeywordAction.RENAME, name: String) if name.nonEmpty => Valid
-    case _                                                         => Invalid("management.create-keyword.error.empty.keyword")
+    case _                                                         => Invalid("management.manage-keywords.edit-approved-keywords.empty.keyword.renamed")
   }
 
   def formWithAuto(allKeywords: Seq[String]): Form[(EditKeywordAction, String)] = Form(

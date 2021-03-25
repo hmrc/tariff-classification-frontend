@@ -67,7 +67,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
-      contentAsString(result) should include("change_extended_use_status-heading")
+      contentAsString(result) should include("Do you want to extend the use of this case ruling?")
     }
 
     "redirect unauthorised when does not have right permissions" in {

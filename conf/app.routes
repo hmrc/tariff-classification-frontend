@@ -4,6 +4,8 @@ GET         /assets/*file                                       controllers.Asse
 
 GET         /unauthorized                                       controllers.SecurityController.unauthorized()
 
+GET         /keep-alive                                         controllers.SecurityController.keepAlive()
+
 GET         /                                                   controllers.IndexController.get()
 
 GET         /manage-reports                                     controllers.ReportingController.displayManageReporting()
