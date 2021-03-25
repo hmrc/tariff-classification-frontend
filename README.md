@@ -30,7 +30,7 @@ This application runs on port 9581.
 
 Open `http://localhost:9581/manage-tariff-classifications`.
 
-You can also run the DIGITAL_TARIFFS profile using `sm --start DIGITAL_TARIFFS -r` and then stop this service using `sm --stop TARIFF_CLASSIFICATION_FRONTEND` before running with sbt.
+You can also run the DIGITAL_TARIFFS profile using `sm --start DIGITAL_TARIFFS -r` and then stop the Service Manager instance of this service using `sm --stop TARIFF_CLASSIFICATION_FRONTEND` before running with sbt.
 
 ##### Starting With Service Manager
 
@@ -50,7 +50,7 @@ Run `sm --start PDF_GENERATOR_SERVICE -r 1.20.0`
 
 ### Testing
 
-Run `./run_all_tests.sh`. This also runs Scalastyle and does coverage testing
+Run `./run_all_tests.sh`. This also runs Scalastyle and does coverage testing.
 
 or `sbt test it:test` to run the tests only.
 
