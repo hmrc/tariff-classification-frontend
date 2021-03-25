@@ -57,7 +57,6 @@ class AppealCaseController @Inject() (
   def chooseType(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
-
       getCaseAndRenderView(
         reference,
         c => successful(views.html.appeal_choose_type(c, typeForm))
