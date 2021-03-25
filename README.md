@@ -9,7 +9,7 @@ The frontend for the internal Operational Service for reviewing & answering ATaR
 
 1) [Service Manager](https://github.com/hmrc/service-manager) installed
 2) [SBT](https://www.scala-sbt.org) Version `>=1.x` installed
-3) [MongoDB] version `>=3.6` installed and running on port 27017
+3) [MongoDB](https://www.mongodb.com/) version `>=3.6` installed and running on port 27017
 4) [Localstack](https://github.com/localstack/localstack) installed and running on port 4572
 5) Create an S3 bucket in localstack by using `awslocal s3 mb s3://digital-tariffs-local` within the localstack container
 
