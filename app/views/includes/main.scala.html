@@ -30,9 +30,6 @@
 
 @import uk.gov.hmrc.play.views.html.layouts
 
-
-@serviceInfoContent = {}
-
 @primaryNavComponent = {
   @if(request.hasPermission(Permission.VIEW_MY_CASES)) {
       @components.primary_navigation(customPrimaryNavTab)
@@ -52,7 +49,6 @@
                sidebar = sidebar,
                contentHeader = contentHeader,
                mainContent = layouts.article(mainContent),
-               serviceInfoContent = serviceInfoContent,
                scriptElem = scriptElem,
                primaryNavComponent = Some(primaryNavComponent),
                customPrimaryNavTab = customPrimaryNavTab
