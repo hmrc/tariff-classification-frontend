@@ -48,7 +48,7 @@ case.heading.reject_case_for=Provide details to reject the {0} case
 case.title.reject_case_for=Provide details to reject this case
 case.heading.case_rejected_for=Case rejected for {0}
 case.heading.ownership=Do you want to take ownership of the {0} case?
-case.details.title=ATaR case details
+case.details.title=Case details for the goods
 case.heading.details=Case details for {0}
 case.status=Status
 case.status.error=Select a case status
@@ -1122,7 +1122,7 @@ common.cases.secondaryNav.assigned=Assigned to me
 common.cases.secondaryNav.referred=Referred by me
 common.cases.secondaryNav.completed=Completed by me
 
-cases.opencases.atar.title=ATaR case
+cases.opencases.atar.title=ATaR cases
 cases.opencases.liability.title=Liability cases
 cases.opencases.correspondence.title=Correspondence cases
 cases.opencases.miscellaneous.title=Miscellaneous cases
