@@ -685,11 +685,6 @@ class CasesService @Inject() (
     addEvent(caseCreated, caseCreated, details, operator)
   }
 
-  private def addCaseUpdatedEvent(originalCase: Case, updatedCase: Case)(implicit hc: HeaderCarrier): Future[Unit] = {
-    val details = CaseUpdated(s"${updatedCase.application.`type`.prettyName} case updated")
-    addEvent(originalCase, updatedCase, details, updatedCase.assignee.get)
-  }
-
   private def extendedUseStatus: Case => Boolean =
     _.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).get
 
