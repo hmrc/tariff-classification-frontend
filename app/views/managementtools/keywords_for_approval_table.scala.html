@@ -26,7 +26,7 @@
 <table id="@{manageKeywordsTab.tabMessageKey}-table">
     <thead class="govuk-table__head">
         <tr id="@{manageKeywordsTab.tabMessageKey}-details" class="grid-row mb-2">
-            <th id="@{manageKeywordsTab.tabMessageKey}-keyword" class="bold w-0" scope="col">Keyword</th>
+            <th id="@{manageKeywordsTab.tabMessageKey}-keyword" class="bold w-40" scope="col">Keyword</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-user-name" class="bold w-0" scope="col">User</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-goods-id" class="bold w-0" scope="col">Goods</th>
             <th id="@{manageKeywordsTab.tabMessageKey}-type-id" class="bold w-0" scope="col">Case type</th>
@@ -36,7 +36,7 @@
     <tbody>
     @for((result, index) <- manageKeywordsTab.searchResult.results.zipWithIndex) {
         <tr id="@{manageKeywordsTab.tabMessageKey}-details-@index">
-            <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index">
+            <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index" class="word-break">
                 <a href="@ManageKeywordsController.changeKeywordStatus(result.keyword, result.reference)">@{result.keyword.trim.toUpperCase}</a>
             </td>
             <td id="@{manageKeywordsTab.tabMessageKey}-user-name-@index">@result.name</td>
