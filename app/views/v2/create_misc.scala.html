@@ -23,18 +23,19 @@
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_text
 @import models.LiabilityStatus
-@import views.html.partials.error_summary
+@import views.html.partials.{error_summary, back_link}
 @import models.request.AuthenticatedRequest
 
 @(form: Form[MiscApplication])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.create_misc.h1"))) {
 
+@back_link()
+
 @error_summary(form.errors)
 
 <div class="govuk-notification-banner-width">
     <h1 id="create_misc-heading" class="heading-xlarge">@messages("page.title.create_misc.h1")</h1>
-</div>
 
 @helper.form(action = routes.CreateMiscellaneousController.post(), 'id -> "create_misc-form", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
@@ -72,8 +73,9 @@
     @confirm_or_cancel_buttons(
         id = "create_misc",
         confirmText = messages("misc.create_misc.confirm-button"),
-        cancelText = messages("liability.create_liability.cancel-button"),
+        cancelText = messages("misc.create_misc.cancel-button"),
         cancelHref = routes.IndexController.get()
         )
     }
+</div>
 }

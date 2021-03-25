@@ -19,7 +19,7 @@
 @import controllers.routes
 @import models.Case
 @import models.viewmodels.NoTabSelected
-@import views.html.components.{confirm_or_cancel_buttons}
+@import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_textarea
 @import views.html.includes.main
 @import views.html.partials.case_heading
@@ -34,20 +34,20 @@
 
     @error_summary(form.errors)
 
-    @case_heading(c)
+<div class="govuk-notification-banner-width">
+    @case_heading(c, true, None, Some("change_case_status.to.suspended.header"))
 
-    <div class="grid-row">
-        <div class="column-full">
-            <h2 class="heading-large mt-0">@messages("change_case_status.to.suspended")</h2>
 
             @helper.form(action = routes.SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
                 @helper.CSRF.formField
 
                 @input_textarea(
                     field = form("note"),
-                    label = "Add a note",
+
+                    label = messages("change_case_status.to.suspended.note"),
+
                     labelClass = Some("heading-medium"),
-                    hint = Some("Give details of why you are suspending this case. Keep the note clear and concise."),
+                    hint = Some(messages("change_case_status.to.suspended.hint")),
                     customErrorMessage = Some(messages("error.empty.suspend.note"))
                 )
 
@@ -55,11 +55,12 @@
 
                 @confirm_or_cancel_buttons(
                     id = "suspend_case",
-                    confirmText = "Confirm status change",
-                    cancelText = "Cancel and return to case",
+                    confirmText = messages("change_case_status.to.suspended.confirm"),
+                    cancelText = messages("change_case_status.to.suspended.cancel"),
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }
-        </div>
-    </div>
+</div>
+
 }
+
