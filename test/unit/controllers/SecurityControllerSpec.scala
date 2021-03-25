@@ -35,4 +35,16 @@ class SecurityControllerSpec extends ControllerBaseSpec {
 
   }
 
+  "keepAlive" should {
+
+    "return 204- No content" in {
+
+      val result = await(controller.keepAlive()(fakeRequest))
+
+      status(result)      shouldBe Status.NO_CONTENT
+      contentType(result) shouldBe None
+    }
+
+  }
+
 }
