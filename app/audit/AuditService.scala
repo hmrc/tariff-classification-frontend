@@ -18,15 +18,12 @@ package audit
 
 import models.AppealStatus.AppealStatus
 import models.ApplicationType.{CORRESPONDENCE, MISCELLANEOUS}
+import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 
 import javax.inject.{Inject, Singleton}
-import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
-import play.api.libs.json.JsObject
-import play.libs.Json
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
@@ -132,16 +129,13 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       auditPayload   = baseAuditPayload(c, operator) + ("comment" -> "Liability case created")
     )
 
-  def auditCaseUpdated(originalCase: Case, updatedCase: Case)(implicit hc: HeaderCarrier): Unit = {
+  def auditCaseUpdated(originalCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseUpdated,
-      //This will need to be changed to Json.obj
-      auditPayload = Map(
-        "previousCase" -> Json.toJson(originalCase),
-        "updatedCase" -> Json.toJson(updatedCase)
+      auditPayload = baseAuditPayload(originalCase, operator) + (
+        "updatedCase" -> updatedCase.toString
       )
     )
-  }
 
   def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)(
     implicit hc: HeaderCarrier
@@ -224,7 +218,8 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     )
 
   def auditManagerKeywordCreated(user: Operator, keyword: Keyword, keywordStatusAction: ChangeKeywordStatusAction)(
-    implicit hc: HeaderCarrier): Unit = {
+    implicit hc: HeaderCarrier
+  ): Unit = {
 
     val keywordAction = keywordStatusAction match {
       case ChangeKeywordStatusAction.CREATED => ("keywordCreated", ManagerKeywordCreated)
@@ -251,7 +246,8 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     )
 
   def auditManagerKeywordRenamed(user: Operator, original: Keyword, updated: Keyword)(
-    implicit hc: HeaderCarrier): Unit =
+    implicit hc: HeaderCarrier
+  ): Unit =
     sendExplicitAuditEvent(
       auditEventType = ManagerKeywordRenamed,
       auditPayload = Map(

@@ -47,7 +47,8 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
   private val correspondence_details_edit = injector.instanceOf[views.html.v2.correspondence_details_edit]
   private val correspondence_contact_edit = injector.instanceOf[views.html.v2.correspondence_contact_edit]
 
-  private val caseWithStatusOPEN = Cases.correspondenceCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
+  private val caseWithStatusOPEN =
+    Cases.correspondenceCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
 
   private def controller(c: Case) =
     new CreateCorrespondenceController(
@@ -111,7 +112,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
     "redirect to Do you want to release case page POST" in {
       given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-      .willReturn(successful(Cases.correspondenceCaseExample))
+        .willReturn(successful(Cases.correspondenceCaseExample))
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
         .willReturn(successful(Some(Cases.correspondenceCaseExample)))
       val result = await(
@@ -219,7 +220,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           .displayQuestion("reference")(newFakePOSTRequestWithCSRF(app))
       )
 
-      status(result)          shouldBe Status.OK
+      status(result) shouldBe Status.OK
 
     }
 
@@ -317,7 +318,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCorrespondenceCase())
+        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+          Cases.aCorrespondenceCase()
+        )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
           app,
@@ -340,7 +343,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       }
 
       "return back to the view if form fails to validate" in {
-        when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+          Cases.aCaseWithCompleteDecision
+        )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
           app,
@@ -385,7 +390,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCorrespondenceCase())
+        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+          Cases.aCorrespondenceCase()
+        )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
           app,
@@ -395,7 +402,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
             "email"                 -> "anemail@some.com",
             "buildingAndStreet"     -> "New building",
             "townOrCity"            -> "Old Town",
-            "agentName"             -> "Agent 007",
+            "agentName"             -> "Agent 007"
           )
         )
 
@@ -412,7 +419,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       }
 
       "return back to the view if form fails to validate" in {
-        when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+          Cases.aCaseWithCompleteDecision
+        )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
           app,
@@ -422,7 +431,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
             "email"                 -> "anemail@some.com",
             "buildingAndStreet"     -> "New building",
             "townOrCity"            -> "Old Town",
-            "agentName"             -> "Agent 007",
+            "agentName"             -> "Agent 007"
           )
         )
 

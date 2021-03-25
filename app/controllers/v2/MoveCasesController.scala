@@ -408,7 +408,7 @@ class MoveCasesController @Inject() (
       .flatten
       .map(c =>
         for {
-          updatedCase <- casesService.updateCase(c.copy(assignee = user, queueId = Some(teamId)))
+          updatedCase <- casesService.updateCase(c.copy(assignee = user, queueId = Some(teamId)), user.getOrElse(Operator(originalUserId)))
         } yield updatedCase
       )
 

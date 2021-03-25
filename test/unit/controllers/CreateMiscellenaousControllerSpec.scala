@@ -185,7 +185,9 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCorrespondenceCase())
+        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+          Cases.aCorrespondenceCase()
+        )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
           app,
@@ -210,7 +212,9 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       }
 
       "return back to the view if form fails to validate" in {
-        when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+          Cases.aCaseWithCompleteDecision
+        )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
           app,

@@ -18,13 +18,10 @@ package controllers.v2
 
 import com.google.inject.Provider
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
-
-import javax.inject.Inject
 import models.forms.CommodityCodeConstraints
 import models.forms.v2.LiabilityDetailsForm
 import models.{Case, _}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, refEq, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
@@ -39,6 +36,7 @@ import utils.{Cases, Events}
 import views.html.partials.liabilities.{attachments_details, attachments_list}
 import views.html.v2.{case_heading, liability_details_edit, liability_view, remove_attachment}
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -227,7 +225,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "post Liability details" should {
     "redirect back to controller if the form has been submitted successfully" in {
 
-      when(casesService.updateCaseWithAuditing(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        Cases.aCaseWithCompleteDecision
+      )
 
       mockLiabilityController()
       val fakeReq = newFakePOSTRequestWithCSRF(
@@ -255,7 +255,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return back to the view if form fails to validate" in {
-      when(casesService.updateCaseWithAuditing(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        Cases.aCaseWithCompleteDecision
+      )
       mockLiabilityController()
       val fakeReq = newFakePOSTRequestWithCSRF(
         app,

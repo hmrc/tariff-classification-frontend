@@ -18,8 +18,8 @@ package service
 
 import audit.AuditService
 import connector.{BindingTariffClassificationConnector, RulingConnector}
-import models._
 import models.CaseStatus.CaseStatus
+import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
@@ -30,8 +30,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import java.time.Instant
-import scala.concurrent.Future.{failed, successful}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future.{failed, successful}
 
 class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
@@ -48,9 +48,19 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   private val connector        = mock[BindingTariffClassificationConnector]
   private val rulingConnector  = mock[RulingConnector]
   private val audit            = mock[AuditService]
+  private val operator         = Operator("operator-id")
 
   private val service =
-    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, realAppConfig)
+    new CasesService(
+      audit,
+      emailService,
+      fileStoreService,
+      countriesService,
+      reportingService,
+      pdfService,
+      connector,
+      rulingConnector
+    )(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -80,7 +90,15 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Get Cases 'By All Queues'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])) willReturn successful(
+      given(
+        connector.findCasesByAllQueues(
+          any[Seq[Queue]],
+          any[Pagination],
+          any[Set[ApplicationType]],
+          any[Set[CaseStatus]],
+          any[String]
+        )(any[HeaderCarrier])
+      ) willReturn successful(
         Paged(manyCases)
       )
 
@@ -123,7 +141,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "delegate to connector" in {
       given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-      await(service.updateCase(oldCase)) shouldBe updatedCase
+      await(service.updateCase(oldCase, operator)) shouldBe updatedCase
     }
 
     "Update Case with Auditing" should {
@@ -133,7 +151,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       "delegate to connector" in {
         given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-        await(service.updateCaseWithAuditing(oldCase)) shouldBe updatedCase
+        await(service.updateCase(oldCase, operator)) shouldBe updatedCase
       }
     }
   }
@@ -221,8 +239,8 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   }
 
   "Add message into case when case is Correspondence" should {
-    val c           = Cases.aCorrespondenceCase()
-    val updatedCase = Cases.aCorrespondenceCase()
+    val c              = Cases.aCorrespondenceCase()
+    val updatedCase    = Cases.aCorrespondenceCase()
     val exampleMessage = Message("name", Instant.now(), "message")
 
     "add the given message into the case provided" in {
@@ -236,8 +254,8 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   }
 
   "Add message into case when case is Miscellaneous" should {
-    val c           = Cases.aMiscellaneousCase()
-    val updatedCase = Cases.aMiscellaneousCase()
+    val c              = Cases.aMiscellaneousCase()
+    val updatedCase    = Cases.aMiscellaneousCase()
     val exampleMessage = Message("name", Instant.now(), "message")
 
     "add the given message into the case provided" in {

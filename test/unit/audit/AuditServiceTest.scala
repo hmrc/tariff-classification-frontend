@@ -62,17 +62,19 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
   "Service 'audit case updated'" should {
     val originalCase = aLiabilityCase(withReference("ref"))
-    val updatedCase = originalCase.copy(decision = Some(
-        Decision(bindingCommodityCode = "123456",justification = "acceptable", goodsDescription = "quirky")
+    val updatedCase = originalCase.copy(decision =
+      Some(
+        Decision(bindingCommodityCode = "123456", justification = "acceptable", goodsDescription = "quirky")
       )
     )
 
     "Delegate to connector" in {
-      service.auditCaseUpdated(originalCase, updatedCase)
+      service.auditCaseUpdated(originalCase, updatedCase, operator)
 
       val payload = caseUpdatedAudit(
         previousCase = originalCase,
         updatedCase  = updatedCase,
+        operator     = operator
       )
 
       verify(connector)
@@ -506,7 +508,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
     val payload = Map(
       "operatorToUpdate" -> operatorToUpdate.id,
-      "operatorUpdating"       -> operator.id
+      "operatorUpdating" -> operator.id
     )
     verify(connector)
       .sendExplicitAudit(refEq("userUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -566,7 +568,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditManagerKeywordDeleted(operator, keyword)
 
       val payload = Map(
-        "operatorId" -> operator.id,
+        "operatorId"     -> operator.id,
         "keywordDeleted" -> keyword.name
       )
       verify(connector)
@@ -584,9 +586,9 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditManagerKeywordRenamed(operator, oldKeyword, newKeyword)
 
       val payload = Map(
-        "operatorId" -> operator.id,
+        "operatorId"      -> operator.id,
         "originalKeyword" -> oldKeyword.name,
-        "updatedKeyword" -> newKeyword.name
+        "updatedKeyword"  -> newKeyword.name
       )
 
       verify(connector)
@@ -602,10 +604,11 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       "comment"       -> comment
     )
 
-  private def caseUpdatedAudit(previousCase: Case, updatedCase: Case): Map[String, Case] =
-    Map[String, Case](
-      "previousCase" -> previousCase,
-      "updatedCase" -> updatedCase,
+  private def caseUpdatedAudit(previousCase: Case, updatedCase: Case, operator: Operator): Map[String, String] =
+    Map[String, String](
+      "caseReference" -> previousCase.reference,
+      "operatorId"    -> operator.id,
+      "updatedCase"   -> updatedCase.toString
     )
 
   private def caseChangeAudit(

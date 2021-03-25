@@ -429,7 +429,7 @@ class CasesService @Inject() (
     queue: Seq[Queue],
     pagination: Pagination,
     forTypes: Set[ApplicationType] = ApplicationType.values,
-    forStatuses: Set[CaseStatus] = CaseStatus.openStatuses,
+    forStatuses: Set[CaseStatus]   = CaseStatus.openStatuses,
     assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes, forStatuses, assignee)
@@ -437,13 +437,16 @@ class CasesService @Inject() (
   def countCasesByQueue(implicit hc: HeaderCarrier): Future[Map[(Option[String], ApplicationType), Int]] =
     for {
       countByQueue <- reportingService.queueReport(
-        QueueReport(statuses = Set(
-          PseudoCaseStatus.NEW,
-          PseudoCaseStatus.OPEN,
-          PseudoCaseStatus.REFERRED,
-          PseudoCaseStatus.SUSPENDED
-        )), NoPagination()
-      )
+                       QueueReport(statuses =
+                         Set(
+                           PseudoCaseStatus.NEW,
+                           PseudoCaseStatus.OPEN,
+                           PseudoCaseStatus.REFERRED,
+                           PseudoCaseStatus.SUSPENDED
+                         )
+                       ),
+                       NoPagination()
+                     )
 
       casesByQueue = countByQueue.results.map { resultGroup =>
         (resultGroup.team, resultGroup.caseType) -> resultGroup.count.toInt
@@ -457,15 +460,11 @@ class CasesService @Inject() (
   def getAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findAssignedCases(pagination)
 
-  def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] =
-    connector.updateCase(caseToUpdate)
-
-  def updateCaseWithAuditing(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] = {
+  def updateCase(caseToUpdate: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     for {
-      caseUpdated <- connector.updateCase(caseToUpdate)
-      _ = auditService.auditCaseUpdated(caseToUpdate, caseUpdated)
-    } yield caseUpdated
-  }
+      updatedCase <- connector.updateCase(caseToUpdate)
+      _ = auditService.auditCaseUpdated(caseToUpdate, updatedCase, operator)
+    } yield updatedCase
 
   def createCase(application: Application, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     for {

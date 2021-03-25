@@ -101,7 +101,7 @@ class RulingController @Inject() (
                 errorForm => editBTIRulingView(errorForm, c),
                 validForm =>
                   for {
-                    update <- casesService.updateCaseWithAuditing(mapper.mergeFormIntoCase(c, validForm))
+                    update <- casesService.updateCase(mapper.mergeFormIntoCase(c, validForm), request.operator)
                   } yield Redirect(
                     v2.routes.AtarController.displayAtar(update.reference).withFragment(Tab.RULING_TAB.name)
                   )
@@ -116,7 +116,7 @@ class RulingController @Inject() (
                   errorForm => editLiabilityRulingView(errorForm, c),
                   updatedDecision =>
                     for {
-                      update <- casesService.updateCaseWithAuditing(c.copy(decision = Some(updatedDecision)))
+                      update <- casesService.updateCase(c.copy(decision = Some(updatedDecision)), request.operator)
                     } yield Redirect(
                       v2.routes.LiabilityController
                         .displayLiability(update.reference)

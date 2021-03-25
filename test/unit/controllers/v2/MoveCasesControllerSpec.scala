@@ -1378,7 +1378,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1410,7 +1410,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1442,7 +1442,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1476,7 +1476,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1508,7 +1508,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1540,7 +1540,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1572,7 +1572,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1603,7 +1603,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1705,7 +1705,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1734,7 +1734,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1763,7 +1763,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1793,7 +1793,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1825,7 +1825,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1857,7 +1857,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1890,7 +1890,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
@@ -1924,7 +1924,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           )
         )
 
-      given(casesService.updateCase(any[Case])(any[HeaderCarrier])).willReturn(
+      given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
         Cases.btiCaseExample
           .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
       )
