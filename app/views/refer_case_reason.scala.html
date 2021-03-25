@@ -145,8 +145,8 @@
 
                 @confirm_or_cancel_buttons(
                     id = "refer_case",
-                    confirmText = "Continue",
-                    cancelText = "Cancel and return to case",
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel"),
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }

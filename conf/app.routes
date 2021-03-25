@@ -4,6 +4,8 @@ GET         /assets/*file                                       controllers.Asse
 
 GET         /unauthorized                                       controllers.SecurityController.unauthorized()
 
+GET         /keep-alive                                         controllers.SecurityController.keepAlive()
+
 GET         /                                                   controllers.IndexController.get()
 GET         /queues                                             controllers.Default.redirect(to = controllers.routes.MyCasesController.myCases.url)
 GET         /queues/my-cases                                    controllers.MyCasesController.myCases()

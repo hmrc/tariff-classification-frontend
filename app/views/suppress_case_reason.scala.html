@@ -50,21 +50,21 @@
 
                 @input_textarea(
                     field = form("note"),
-                    label = "Add a case note",
+                    label = messages("change_case_status.to.suppressed.note"),
                     labelClass = Some("heading-medium"),
-                    hint = Some("Give details of why you are suppressing this case. Keep the note clear and concise."),
+                    hint = Some(messages("change_case_status.to.suppressed.hint")),
                     customErrorMessage = Some(messages("error.empty.suppress.note"))
                 )
 
                 @warning(
-                    "This case cannot be reopened after it has been suppressed.",
+                    messages("change_case_status.to.suppressed.warning"),
                     containerClass = "mb-4"
                 )
 
                 @confirm_or_cancel_buttons(
                     id = "suppress_case",
-                    confirmText = "Continue",
-                    cancelText = "Cancel and return to case",
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel"),
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }

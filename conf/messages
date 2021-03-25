@@ -44,7 +44,6 @@ case.title={0} for {1}
 case.title.migrated.cases=Case {0}
 case.heading.secondary={0} case {1} for {2}
 case.heading.secondary.nosuffix={0} case {1}
-case.heading.reject_case_for=Reject case for {0}
 case.heading.case_rejected_for=Case rejected for {0}
 case.heading.ownership=Do you want to take ownership of the {0} case?
 case.details.title=Case details for the goods
@@ -113,6 +112,15 @@ change_case_status.release=Release
 change_case_status.suppress=Suppress
 change_case_status.cancelled.reason.heading=Provide details to cancel the {0} case
 change_case_status.cancelled.email.heading=Provide an email to cancel the {0} case
+change_case_status.confirm = Confirm status change
+change_case_status.continue = Continue
+change_case_status.cancel = Cancel and return to case
+change_case_status.cancel.action = Cancel this action
+change_case_status.to.suppressed.note = Add a case note
+change_case_status.to.suppressed.hint = Give details of why you are suppressing this case. Keep the note clear and concise.
+change_case_status.to.suppressed.warning = This case cannot be reopened once it has been suppressed.
+change_case_status.to.suspended.note = Add a case note
+change_case_status.to.suspended.hint = Give details of why you are suspending this case. Keep the note clear and concise.
 change_case_status.referred.title=Who are you referring this case to?
 change_case_status.referred.reason.heading=Provide details to refer the {0} case
 change_case_status.referred.email.heading=Provide an email to refer the {0} case
@@ -178,7 +186,7 @@ case.decision.constraint.goodsDescription=Item description
 case.decision.constraint.explanation=Explanation for holder
 case.decision.constraint.no-information=There is no information.
 case.decision.ruling.certificate.content=If this case is under review or appeal
-case.decision.ruling.certificate.link=view and print a PDF of the ruling (opens in a new window or tab).
+case.decision.ruling.certificate.link=download the ruling as a pdf (opens in a new window or tab).
 case.decision.ruling.certificate.title=Ruling certificate
 case.decision.ruling.review.appeal.link=Download original application as a pdf
 liability.decision.ruling.certificate.title=Liability decision
@@ -192,8 +200,6 @@ case.activity.assigned-queue=Currently in:
 case.activity.no-queue-assigned=Gateway
 case.attachment.hint.text.header=Files will open in a new window or tab.
 case.attachment.table.empty=There are no attachments for this case.
-case.attachment.edit.file.text=Edit details
-case.attachment.edit.file.hidden.text=Edit details of file {0}
 case.attachment.remove.file.text=Remove
 case.attachment.remove.file.hidden.text=Remove file {0}
 case.attachment.heading.table=Attachments
@@ -211,6 +217,7 @@ case.attachment.upload.status-confidential=CONFIDENTIAL
 case.attachment.upload.status-failed=UPLOAD FAILED
 case.attachment.upload.status-processing=PROCESSING
 case.attachment.refresh.content=Refresh page to confirm file upload
+case.attachment.remove_attachment.confirm=Confirm
 case.sample.sample-status-header=Sample status
 case.sample.change-sample-status=Change sample status
 case.sample.status.change-status-header=Change sample status
@@ -372,10 +379,8 @@ status.change.cancel.reason.error=Select a reason for cancelling this case
 release-case.submit.button=Save changes
 release-case-queue.submit.button=Save changes
 release-case.submit.choice.button=Continue
-
 release-case.submit.cancel=Cancel this action
 reassign-case.submit.button=Save changes
-
 suppress_case.form.state.required=Select yes if you have contacted the applicant
 reject_case.form.state.required=Select yes if you have contacted the applicant
 refer_case.form.state.required=Select yes if you have contacted the applicant
@@ -470,7 +475,6 @@ site.no=No
 site.yes=Yes
 site.none=None
 site.unknown=Unknown
-page.title.liability=Liability details
 page.title.trader=Applicant
 page.title.application=Item
 page.title.sample=Samples
@@ -516,7 +520,7 @@ page.title.case.completed=This case has been completed
 page.title.cancel.ruling.reason=Provide details to cancel this case
 page.title.cancel.ruling.email=Provide an email to cancel this case
 page.title.ruling.cancelled=Ruling cancelled
-page.title.remove.attachment=Remove attachment
+page.title.remove.attachment=Are you sure you want to remove the attachment from this case?
 page.title.suspend.case.error=Contact applicant before case suspension
 page.title.suppress.case.error=Contact applicant before case suppression
 page.title.reject.case.error=Contact applicant before case rejection
@@ -524,17 +528,17 @@ page.title.refer.case.error=Contact applicant before case referral
 page.title.change.appeal.status=Change appeal status
 page.title.choose.appeal.status=Choose appeal status
 page.title.choose.appeal.type=Choose appeal type
-page.title.extended.use=Extended use of this ruling
+page.title.extended.use=Do you want to extend the use of this case ruling?
 page.title.ruling.not.found=Ruling not found
 page.title.case.queues=Tariff classification case teams
 page.title.create_liability.h1=New liability information
 page.title.confirmation.h1=New case information
 page.title.create_correspondence.h1=Create correspondence case
 page.title.release_correspondence.h1=Correspondence case released to this team
-page.title.create_correspondence.confirmation=The correspondence case has been released to a queue
-page.title.create_miscellaneous.confirmation=The miscellaneous case has been released to a queue
-page.title.create_atar.confirmation=The atar case has been released to a queue
-page.title.create_liability.confirmation=The liability case has been released to a queue
+page.title.create_correspondence.confirmation=The correspondence case has been released to a team
+page.title.create_miscellaneous.confirmation=The miscellaneous case has been released to a team
+page.title.create_atar.confirmation=The atar case has been released to a team
+page.title.create_liability.confirmation=The liability case has been released to a team
 page.title.release_liability.h1=Correspondence case released to this team
 page.title.edit_liability_decision=Edit liability decision
 page.title.create_misc.h1=Create miscellaneous case
@@ -560,6 +564,7 @@ liability.create_liability.liability-status.radio.yes=Yes
 liability.create_liability.liability-status.radio.no=No
 liability.create_liability.confirm-button=Confirm and create case
 liability.create_liability.cancel-button=Cancel
+misc.create_misc.cancel-button=Cancel this action
 
 page.title.case.queues.my-cases = My cases
 page.title.case.queues.cases = {0} cases
@@ -850,7 +855,8 @@ case.v2.atar.ruling.tab_title=Ruling
 
 case.v2.atar.appeal.tab_title=Appeals
 
-case.v2.liability.page_title=Liability details
+
+case.v2.liability.page_title=Case details for the goods
 case.v2.liability.c592.entry_number=Entry number
 case.v2.liability.c592.tab_title=Details
 case.v2.liability.c592.tab_heading=Details
@@ -955,7 +961,7 @@ case.v2.liability.reopen.button=Reopen case
 
 case.v2.liability.advanced_search.button=Search cases
 
-case.v2.correspondence.page_title=Correspondence case details
+case.v2.correspondence.page_title=Case details
 
 case.v2.correspondence.case-details_title=Edit correspondence case details
 case.v2.correspondence.case-details.tab_title=Case Details
@@ -1010,12 +1016,9 @@ case.v2.correspondence.sample-details.sample-sent=Is a sample being sent?
 case.v2.correspondence.sample-details.sample-activity-title=Sample activity
 case.v2.correspondence.sample-details.sample-no-activity=No activity to show.
 
-
 case.v2.correspondence.messages-details.heading=Messages
 
 case.suspended.header=The {0} case has been suspended
-
-
 
 upload.button = Upload
 upload.files.title = Upload new files
@@ -1124,6 +1127,11 @@ common.cases.secondaryNav.assigned=Assigned to me
 common.cases.secondaryNav.referred=Referred by me
 common.cases.secondaryNav.completed=Completed by me
 
+cases.opencases.atar.title=ATaR cases
+cases.opencases.liability.title=Liability cases
+cases.opencases.correspondence.title=Correspondence cases
+cases.opencases.miscellaneous.title=Miscellaneous cases
+
 cases.opencases.atar.heading=ATaR cases
 cases.opencases.liability.heading=Liability cases
 cases.opencases.correspondence.heading=Correspondence cases
@@ -1137,6 +1145,10 @@ cases.opencases.tab_FLEX=FLEX
 cases.opencases.tab_TTA=TT-A
 cases.opencases.tab_TTB=TT-B
 cases.opencases.tab_TTC=TT-C
+
+cases.mycases.assignedToMe.title = Assigned to me
+cases.mycases.referredByMe.title = Referred by me
+cases.mycases.completedByMe.title = Completed by me
 
 applicationTab.atar=ATaR
 applicationTab.liability=Liability
@@ -1210,7 +1222,7 @@ atar.editRuling.expiryDate.emptyDate.month = Enter a month
 atar.editRuling.expiryDate.emptyDate.year = Enter a year
 atar.editRuling.expiryDate.invalidFormat = Expiry date must be a real date
 
-case.v2.miscellaneous.page_title=Miscellaneous case details
+case.v2.miscellaneous.page_title=Case details
 
 case.v2.miscellaneous.case-details.tab_title=Details
 
@@ -1240,6 +1252,8 @@ case.ownership.assign_case.back=Back to my cases
 
 case.change_status.move_back_to_team.heading=Move this case back to a team
 case.change_status.move_back_to_team.description=This case is currently assigned to the <span id="previous-queue">{0}</span> team.
+
+case.attachments.remove_attachment.heading=Are you sure you want to remove {0} from this case?
 
 notification.success.keywords.add = The keyword has been added to this case
 notification.success.keywords.remove = The keyword has been removed from this case
@@ -1485,3 +1499,5 @@ management.update-keyword.confirmation.approved.info.end= case and will be avail
 management.update-keyword.confirmation.rejected.info.end= case and will not be available to use in any future cases.
 management.update-keyword.error.no-status-selected=Choose to approve, reject or rename this keyword
 management.update-keyword.error.duplicate.keyword=This keyword has already been added to the list
+
+case.extend.heading=Do you want to extend the use of the {0} case ruling?

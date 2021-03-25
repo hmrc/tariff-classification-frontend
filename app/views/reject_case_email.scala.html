@@ -66,8 +66,8 @@ customPrimaryNavTab = NoTabSelected) {
 
                 @confirm_or_cancel_buttons(
                     id = "reject_case",
-                    confirmText = "Confirm status change",
-                    cancelText = "Cancel this action",
+                    confirmText = messages("change_case_status.confirm"),
+                    cancelText = messages("change_case_status.cancel.action"),
                     cancelHref = routes.ChangeCaseStatusController.onPageLoad(c.reference)
                 )
             }

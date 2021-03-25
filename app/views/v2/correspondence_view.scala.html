@@ -59,8 +59,10 @@
     customTitle = Some(messages("case.v2.correspondence.page_title")),
     customPrimaryNavTab = primaryNavTab
 ) {
-@case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
 
+<div class="govuk-notification-banner-width">
+    @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
+</div>
 
 <div class="form-groups">
         @case_action_buttons_partial(caseViewModel)

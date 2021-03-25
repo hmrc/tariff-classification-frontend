@@ -19,7 +19,7 @@
 @import controllers.routes
 @import models.Case
 @import models.viewmodels.NoTabSelected
-@import views.html.components.{confirm_or_cancel_buttons}
+@import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_textarea
 @import views.html.includes.main
 @import views.html.partials.case_heading
@@ -50,16 +50,16 @@
 
                 @input_textarea(
                     field = form("note"),
-                    label = "Add a note",
+                    label = messages("change_case_status.to.suspended.note"),
                     labelClass = Some("heading-medium"),
-                    hint = Some("Give details of why you are suspending this case. Keep the note clear and concise."),
+                    hint = Some(messages("change_case_status.to.suspended.hint")),
                     customErrorMessage = Some(messages("error.empty.suspend.note"))
                 )
 
                 @confirm_or_cancel_buttons(
                     id = "suspend_case",
-                    confirmText = "Continue",
-                    cancelText = "Cancel and return to case",
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel"),
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }

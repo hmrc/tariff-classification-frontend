@@ -69,7 +69,7 @@ customPrimaryNavTab = NoTabSelected) {
 
                 @input_textarea(
                     field = form("note"),
-                    label = "Add a note",
+                    label = "Add a case note",
                     labelClass = Some("heading-medium"),
                     hint = Some(messages("change_case_status.rejected.note.hint")),
                     customErrorMessage = Some(messages("error.empty.reject.note"))
@@ -82,8 +82,8 @@ customPrimaryNavTab = NoTabSelected) {
 
                 @confirm_or_cancel_buttons(
                     id = "reject_case",
-                    confirmText = "Continue",
-                    cancelText = "Cancel this action",
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel.action"),
                     cancelHref = routes.ChangeCaseStatusController.onPageLoad(c.reference)
                 )
             }

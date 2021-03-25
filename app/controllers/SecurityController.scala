@@ -34,4 +34,6 @@ class SecurityController @Inject() (
 
   def unauthorized(): Action[AnyContent] = Action.async(implicit request => successful(Ok(not_authorized())))
 
+  def keepAlive(): Action[AnyContent] = Action.async(implicit request => successful(NoContent))
+
 }
