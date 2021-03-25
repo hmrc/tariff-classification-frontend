@@ -15,19 +15,19 @@ The frontend for the internal Operational Service for reviewing & answering ATaR
 
 The easiest way to run MongoDB and Localstack for local development is to use [Docker](https://docs.docker.com/get-docker/).
 
-To run MongoDB:
+##### To run MongoDB
 
 ```
 docker run --restart unless-stopped -d -p 27017-27019:27017-27019 --name mongodb mongo:3.6.13
 ```
 
-To run Localstack:
+##### To run Localstack
 
 ```
 docker run -d --restart unless-stopped --name localstack -e SERVICES=s3 -p4572:4566 -p8080:8080 localstack/localstack
 ```
 
-##### Starting the application:
+#### Starting the application:
  
 1) Launch dependencies using `sm --start DIGITAL_TARIFF_DEPS -r`
 2) Start the backend service [binding-tariff-classification](https://github.com/hmrc/binding-tariff-classification) using `sm --start BINDING_TARIFF_CLASSIFICATION -r`
@@ -47,7 +47,7 @@ Open `http://localhost:9581/manage-tariff-classifications`.
 
 You can also run the DIGITAL_TARIFFS profile using `sm --start DIGITAL_TARIFFS -r` and then stop the Service Manager instance of this service using `sm --stop TARIFF_CLASSIFICATION_FRONTEND` before running with sbt.
 
-##### Starting With Service Manager
+#### Starting With Service Manager
 
 This application runs on port 9581
 
