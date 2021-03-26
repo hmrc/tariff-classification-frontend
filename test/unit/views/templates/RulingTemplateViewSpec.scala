@@ -102,15 +102,6 @@ class RulingTemplateViewSpec extends ViewSpec {
     }
   }
 
-  "Ruling pdf keywords" should {
-
-    val section = "section-keywords"
-
-    "contain the keywords" in {
-      assertSectionContains(section, "Keywords")
-    }
-  }
-
   private def assertSectionContains(id: String, text: String) =
     doc.getElementById(id) should containText(text)
 
