@@ -16,22 +16,27 @@
 
 package controllers.v2
 
-import com.google.inject.Provider
-import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
-
 import javax.inject.Inject
-import models.forms.CommodityCodeConstraints
+
+import com.google.inject.Provider
+import config.AppConfig
+import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
+import models._
+import models.forms._
 import models.forms.v2.LiabilityDetailsForm
-import models.{Case, _}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, refEq, eq => meq}
-import org.mockito.Mockito.{times, _}
+import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import models.viewmodels._
+import org.mockito.ArgumentMatchers._
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{PlayBodyParsers, Result}
 import play.api.test.Helpers._
+import play.api.i18n.Messages
 import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -94,7 +99,6 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private lazy val eventService             = mock[EventsService]
   private lazy val queueService             = mock[QueuesService]
   private lazy val commodityCodeService     = mock[CommodityCodeService]
-  private lazy val event                    = mock[Event]
   private lazy val liability_view           = mock[liability_view]
   private lazy val liability_details_edit   = injector.instanceOf[liability_details_edit]
   private lazy val fileStoreService         = mock[FileStoreService]
@@ -103,6 +107,15 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private val keyword1: Keyword = Keyword("keyword1")
   private val keyword2: Keyword = Keyword("keyword2")
+
+  private val initiateResponse = FileStoreInitiateResponse(
+    id              = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
 
   override def beforeEach(): Unit =
     reset(
@@ -115,19 +128,20 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private def checkLiabilityView(timesInvoked: Int) =
     verify(liability_view, times(timesInvoked)).apply(
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any()
-    )(any(), any(), any())
+      any[CaseViewModel],
+      any[Option[C592ViewModel]],
+      any[Option[RulingViewModel]],
+      any[SampleStatusTabViewModel],
+      any[Option[ActivityViewModel]],
+      any[Form[ActivityFormData]],
+      any[Option[AttachmentsTabViewModel]],
+      any[Form[String]],
+      any[FileStoreInitiateResponse],
+      any[KeywordsTabViewModel],
+      any[Form[String]],
+      any[Option[AppealTabViewModel]],
+      any[PrimaryNavigationTab]
+    )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
 
   private def mockLiabilityController(
     pagedEvent: Paged[Event]                    = pagedEvent,
@@ -147,22 +161,26 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     when(keywordsService.removeKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
       Cases.liabilityLiveCaseExample
     )
+    when(fileStoreService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn Future.successful(
+      initiateResponse
+    )
 
     when(
       liability_view.apply(
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any()
-      )(any(), any(), any())
+        any[CaseViewModel],
+        any[Option[C592ViewModel]],
+        any[Option[RulingViewModel]],
+        any[SampleStatusTabViewModel],
+        any[Option[ActivityViewModel]],
+        any[Form[ActivityFormData]],
+        any[Option[AttachmentsTabViewModel]],
+        any[Form[String]],
+        any[FileStoreInitiateResponse],
+        any[KeywordsTabViewModel],
+        any[Form[String]],
+        any[Option[AppealTabViewModel]],
+        any[PrimaryNavigationTab]
+      )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
     ) thenReturn Html("body")
   }
 

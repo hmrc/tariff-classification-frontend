@@ -57,19 +57,17 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       // Given
       val existingAttachment = mock[Attachment]
 
-      val fileUpload         = mock[FileUpload]
-      val fileUploaded       = FileStoreAttachment("id", "email", "application/pdf", 0)
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.NEW, attachments = Seq(existingAttachment))
       val caseUpdated        = aCase.copy(status = CaseStatus.SUPPRESSED)
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
       // When Then
-      await(service.suppressCase(originalCase, fileUpload, "note", operator)) shouldBe caseUpdated
+      await(service.suppressCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseSuppressed(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
@@ -87,31 +85,15 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       eventCreated.details  shouldBe CaseStatusChange(CaseStatus.NEW, CaseStatus.SUPPRESSED, Some("note"), Some("id"))
     }
 
-    "fail to update on attachment upload failure" in {
-      // Given
-      val fileUpload         = mock[FileUpload]
-      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase       = aCase.copy(status = CaseStatus.NEW)
-
-      given(fileStoreService.upload(fileUpload)).willReturn(failed(new RuntimeException("Error")))
-
-      // When Then
-      intercept[RuntimeException] {
-        await(service.suppressCase(originalCase, fileUpload, "note", operator))
-      }.getMessage shouldBe "Error"
-    }
-
     "not create event on update failure" in {
-      val fileUpload         = mock[FileUpload]
-      val fileUploaded       = FileStoreAttachment("id", "email", "application/pdf", 0)
       val operator: Operator = Operator("operator-id")
+      val attachment         = Attachment("id", operator = Some(operator))
       val caseUpdated        = aCase.copy(status = CaseStatus.SUPPRESSED)
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
-        await(service.suppressCase(caseUpdated, fileUpload, "note", operator))
+        await(service.suppressCase(caseUpdated, attachment, "note", operator))
       }
 
       verifyZeroInteractions(audit)
@@ -120,19 +102,17 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
     "succeed on event create failure" in {
       // Given
-      val fileUpload         = mock[FileUpload]
-      val fileUploaded       = FileStoreAttachment("id", "email", "application/pdf", 0)
       val operator: Operator = Operator("operator-id")
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.NEW)
       val caseUpdated        = aCase.copy(status = CaseStatus.SUPPRESSED)
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
       // When Then
-      await(service.suppressCase(originalCase, fileUpload, "note", operator)) shouldBe caseUpdated
+      await(service.suppressCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseSuppressed(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 

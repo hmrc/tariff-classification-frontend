@@ -30,7 +30,7 @@
     @back_link()
 
 <div class="govuk-notification-banner-width">
-    @case_heading(c, true, None, Some("case.extend.heading"))
+    @case_heading(c, messageKey = Some("case.extend.heading"))
 
     <p>Before you change this, <a id="change_extended_use_status-attachment_link" href="@routes.CaseController.attachmentsDetails(c.reference)">attach</a> any relevant documentation to the case.</p>
 

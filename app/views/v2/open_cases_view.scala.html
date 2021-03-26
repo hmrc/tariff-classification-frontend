@@ -27,7 +27,7 @@
 
 @(cases : CasesTabViewModel, activeSubNav : SubNavigationTab = ATaRTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("common.cases.open_cases-title")), customPrimaryNavTab = OpenCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages(s"cases.opencases.${cases.caseType.prettyName.toLowerCase}.title")), customPrimaryNavTab = OpenCasesTab) {
 
     @open_cases_secondary_navigation(activeSubNav)
     @cases_tab(cases)

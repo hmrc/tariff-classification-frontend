@@ -21,7 +21,8 @@ import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import connector.FileStoreConnector
 import models._
-import models.response.FileMetadata
+import models.request.FileStoreInitiateRequest
+import models.response._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -91,6 +92,9 @@ class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging
     } else {
       successful(None)
     }
+
+  def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
+    connector.initiate(request)
 
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileStoreAttachment] =
     connector.upload(fileUpload).map(toFileAttachment(fileUpload.content.path.toFile.length))

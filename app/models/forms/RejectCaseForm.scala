@@ -25,8 +25,9 @@ object RejectCaseForm {
 
   lazy val form: Form[CaseRejection] = Form(
     mapping(
-      "reason" -> oneOf("error.empty.reject.reason", RejectReason),
-      "note"          -> textNonEmpty("error.empty.reject.note")
+      "reason" -> oneOf("error.empty.reject.reason", RejectReason)
+        .transform[RejectReason.Value](RejectReason.withName, _.toString),
+      "note" -> textNonEmpty("error.empty.reject.note")
     )(CaseRejection.apply)(CaseRejection.unapply)
   )
 

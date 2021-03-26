@@ -19,7 +19,7 @@
 @import controllers.routes
 @import models.Case
 @import models.viewmodels.NoTabSelected
-@import views.html.components.{confirm_or_cancel_buttons}
+@import views.html.components.{confirm_or_cancel_buttons, warning}
 @import views.html.forms.components.input_textarea
 @import views.html.includes.main
 @import views.html.partials.case_heading
@@ -28,35 +28,46 @@
 
 @(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case")), customPrimaryNavTab = NoTabSelected) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case.reason")), customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
     @error_summary(form.errors)
 
-<div class="govuk-notification-banner-width">
-    @case_heading(c, true, None, Some("change_case_status.to.suspended.header"))
+    <div class="column-two-thirds pl-0">
+        @case_heading(c, messageKey = Some("change_case_status.suppressed.reason.heading"))
+    </div>
 
-
-            @helper.form(action = routes.SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
+    <div class="grid-row">
+        <div class="column-full">
+            @helper.form(
+                action = routes.SuppressCaseController.postSuppressCaseReason(c.reference),
+                'id -> "suppress-case",
+                'enctype -> "multipart/form-data",
+                'novalidate -> "novalidate"
+            ) {
                 @helper.CSRF.formField
 
                 @input_textarea(
                     field = form("note"),
-                    label = "Add a case note",
+                    label = messages("change_case_status.to.suppressed.note"),
                     labelClass = Some("heading-medium"),
-                    hint = Some("Give details of why you are suspending this case. Keep the note clear and concise."),
-                    customErrorMessage = Some(messages("error.empty.suspend.note"))
+                    hint = Some(messages("change_case_status.to.suppressed.hint")),
+                    customErrorMessage = Some(messages("error.empty.suppress.note"))
                 )
 
-                @status_change_upload(form("email"), "suspending")
+                @warning(
+                    messages("change_case_status.to.suppressed.warning"),
+                    containerClass = "mb-4"
+                )
 
                 @confirm_or_cancel_buttons(
-                    id = "suspend_case",
-                    confirmText = "Save changes",
-                    cancelText = "Cancel this action",
+                    id = "suppress_case",
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel"),
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }
-</div>
+        </div>
+    </div>
 }
