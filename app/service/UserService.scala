@@ -37,12 +37,12 @@ class UserService @Inject()(
     implicit hc: HeaderCarrier): Future[Paged[Operator]] =
     connector.getAllUsers(role, team, pagination)
 
-  def updateUser(originalOperator: Operator, operatorMakingTheChange: Operator)(
+  def updateUser(originalOperator: Operator, updatedOperator: Operator ,operatorMakingTheChange: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Operator] =
     for {
-      updated <- connector.updateUser(originalOperator)
-      _ = auditService.auditUserUpdated(originalOperator, operatorMakingTheChange)
+      updated <- connector.updateUser(updatedOperator)
+      _ = auditService.auditUserUpdated(originalOperator,updatedOperator, operatorMakingTheChange)
     } yield updated
 
   def getUser(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =

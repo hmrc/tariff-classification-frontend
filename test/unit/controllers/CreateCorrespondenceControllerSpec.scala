@@ -318,7 +318,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
           Cases.aCorrespondenceCase()
         )
 
@@ -343,7 +343,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       }
 
       "return back to the view if form fails to validate" in {
-        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
           Cases.aCaseWithCompleteDecision
         )
 
@@ -390,7 +390,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        when(casesService.updateCase(any[Case] ,any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
           Cases.aCorrespondenceCase()
         )
 
@@ -419,7 +419,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       }
 
       "return back to the view if form fails to validate" in {
-        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
           Cases.aCaseWithCompleteDecision
         )
 

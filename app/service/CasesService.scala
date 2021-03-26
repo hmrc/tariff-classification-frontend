@@ -460,10 +460,10 @@ class CasesService @Inject() (
   def getAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findAssignedCases(pagination)
 
-  def updateCase(caseToUpdate: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
+  def updateCase(originalCase: Case, caseToUpdate: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     for {
       updatedCase <- connector.updateCase(caseToUpdate)
-      _ = auditService.auditCaseUpdated(caseToUpdate, updatedCase, operator)
+      _ = auditService.auditCaseUpdated(originalCase, updatedCase, operator)
     } yield updatedCase
 
   def createCase(application: Application, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =

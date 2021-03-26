@@ -139,9 +139,9 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     val updatedCase = mock[Case]
 
     "delegate to connector" in {
-      given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
+      given(connector.updateCase(refEq(updatedCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-      await(service.updateCase(oldCase, operator)) shouldBe updatedCase
+      await(service.updateCase(oldCase,updatedCase, operator)) shouldBe updatedCase
     }
 
     "Update Case with Auditing" should {
@@ -149,9 +149,9 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       val updatedCase = mock[Case]
 
       "delegate to connector" in {
-        given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
+        given(connector.updateCase(refEq(updatedCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-        await(service.updateCase(oldCase, operator)) shouldBe updatedCase
+        await(service.updateCase(oldCase,updatedCase, operator)) shouldBe updatedCase
       }
     }
   }

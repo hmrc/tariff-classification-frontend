@@ -233,12 +233,12 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "update and redirect for permitted user" when {
       "Case is an ATaR" in {
-        given(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+        given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
         given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier]))
           .willReturn(Future.successful(Seq(attachment)))
 
         val result = await(controller(caseWithStatusOPEN).updateRulingDetails("reference")(aValidForm))
-        verify(casesService).updateCase(any[Case], any[Operator])(any[HeaderCarrier])
+        verify(casesService).updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])
         status(result) shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some(
           v2.routes.AtarController.displayAtar("reference").withFragment(Tab.RULING_TAB.name).path
@@ -252,7 +252,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           .willReturn(Future.successful(Seq(attachment)))
 
         val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
-        verify(casesService, never()).updateCase(any[Case], any[Operator])(any[HeaderCarrier])
+        verify(casesService, never()).updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])
         status(result)          shouldBe Status.OK
         contentType(result)     shouldBe Some("text/html")
         charset(result)         shouldBe Some("utf-8")
@@ -269,7 +269,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           .willReturn(Constraint[String]("error")(_ => Valid))
         val result =
           controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF(app))
-        verify(casesService, never()).updateCase(any[Case], any[Operator])(any[HeaderCarrier])
+        verify(casesService, never()).updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])
         status(result)          shouldBe Status.OK
         contentType(result)     shouldBe Some("text/html")
         charset(result)         shouldBe Some("utf-8")

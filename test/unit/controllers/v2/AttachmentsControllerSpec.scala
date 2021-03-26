@@ -135,7 +135,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val fileUpload  = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
 
       when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
       when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(updatedCase))
       when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
@@ -174,7 +174,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         val postRequest = fakeRequest.withBody(Right(aMultipartFileOfType(mimeType)))
 
         when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
         when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
           .thenReturn(successful(updatedCase))
         when(fileService.upload(any[FileUpload])(any[HeaderCarrier]))
@@ -200,7 +200,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         val postRequest = fakeRequest.withBody(Right(aMultipartFileOfType(mimeType)))
 
         when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-        when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
         when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
           .thenReturn(successful(updatedCase))
         when(fileService.upload(any[FileUpload])(any[HeaderCarrier]))
@@ -223,7 +223,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val fileUpload  = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
 
       when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
       when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(updatedCase))
       when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
@@ -252,7 +252,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       )
 
       when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
       when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(updatedCase))
       when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
@@ -280,7 +280,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       )
 
       when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
       when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(updatedCase))
       when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
@@ -308,7 +308,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       )
 
       when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
       when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(updatedCase))
       when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
@@ -336,7 +336,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       )
 
       when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.updateCase(any[Case],any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
       when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(updatedCase))
       when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
@@ -364,7 +364,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       )
 
       when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.updateCase(any[Case],any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
       when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(updatedCase))
       when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))
@@ -392,7 +392,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       )
 
       when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
-      when(casesService.updateCase(any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
+      when(casesService.updateCase(any[Case],any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(successful(updatedCase))
       when(casesService.addAttachment(any[Case], any[FileUpload], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(updatedCase))
       when(fileService.upload(refEq(fileUpload))(any[HeaderCarrier]))

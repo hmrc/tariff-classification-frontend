@@ -399,7 +399,7 @@ class MoveCasesController @Inject() (
     }
 
   private def updateCases(refs: Set[String], user: Option[Operator], teamId: String, originalUserId: String)(
-    implicit hc: HeaderCarrier
+    implicit request: AuthenticatedRequest[_]
   ) =
     for {
       casesToUpdate <- casesService.getCasesByAssignee(Operator(originalUserId), NoPagination())
@@ -408,7 +408,7 @@ class MoveCasesController @Inject() (
       .flatten
       .map(c =>
         for {
-          updatedCase <- casesService.updateCase(c.copy(assignee = user, queueId = Some(teamId)), user.getOrElse(Operator(originalUserId)))
+          updatedCase <- casesService.updateCase(c,c.copy(assignee = user, queueId = Some(teamId)), request.operator)
         } yield updatedCase
       )
 

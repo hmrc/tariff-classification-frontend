@@ -22,8 +22,12 @@ import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-
 import javax.inject.{Inject, Singleton}
+import play.api.libs.json.JsObject
+import play.api.libs.json.Json
+import utils.JsonFormatters.caseFormat
+import utils.JsonFormatters.operatorFormat
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
@@ -129,13 +133,15 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       auditPayload   = baseAuditPayload(c, operator) + ("comment" -> "Liability case created")
     )
 
-  def auditCaseUpdated(originalCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
+  def auditCaseUpdated(originalCase: Case, updatedCase: Case, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseUpdated,
-      auditPayload = baseAuditPayload(originalCase, operator) + (
-        "updatedCase" -> updatedCase.toString
+        auditPayload = Json.obj(
+          "originalCase" -> Json.toJson(originalCase),
+          "operatorUpdating"       -> operatorUpdating.id,
+          "updatedCase"  -> Json.toJson(updatedCase)
+        )
       )
-    )
 
   def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)(
     implicit hc: HeaderCarrier
@@ -202,10 +208,14 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditUserUpdated(operatorToUpdate: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
+  def auditUserUpdated(original: Operator,updatedOperator: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = UserUpdated,
-      auditPayload   = baseUserAuditPayload(operatorToUpdate, operatorUpdating)
+      auditPayload = Json.obj(
+        "originalOperator" -> Json.toJson(original),
+        "updatedOperator"  -> Json.toJson(updatedOperator),
+        "operatorUpdating"       -> operatorUpdating.id
+      )
     )
 
   def auditUserDeleted(oldOperator: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
@@ -279,6 +289,11 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     )
 
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])(
+    implicit hc: HeaderCarrier
+  ): Unit =
+    auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
+
+  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsObject)(
     implicit hc: HeaderCarrier
   ): Unit =
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
