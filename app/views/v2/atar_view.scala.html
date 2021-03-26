@@ -18,6 +18,7 @@
 @import helper.CSRF
 @import models.forms.{ActivityFormData, DecisionFormData}
 @import models.request.AuthenticatedRequest
+@import models.response.FileStoreInitiateResponse
 @import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel, MyCasesTab, PrimaryNavigationTab, OpenCasesTab, GatewayCasesTab}
 @import models.viewmodels.atar._
 @import views.html.includes.main
@@ -45,6 +46,7 @@
 
     attachmentsTab: AttachmentsTabViewModel,
     uploadForm: Form[String],
+    initiateResponse: FileStoreInitiateResponse,
 
     activityTab: ActivityViewModel,
     activityForm: Form[ActivityFormData],
@@ -143,7 +145,7 @@
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
-            @attachments_details(attachmentsTab, uploadForm)
+            @attachments_details(attachmentsTab, uploadForm, initiateResponse)
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">

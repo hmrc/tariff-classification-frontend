@@ -16,21 +16,28 @@
 
 package controllers.v2
 
+import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
 import models._
+import models.forms._
+import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import models.viewmodels._
+import models.viewmodels.correspondence._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import play.api.data.Form
 import play.api.http.Status
+import play.api.i18n.Messages
 import play.twirl.api.Html
 import service.{EventsService, FileStoreService, QueuesService}
-import utils.Cases
-import utils.Cases.{withCorrespondenceApplication, _}
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.Cases, Cases._
 import views.html.v2.correspondence_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -42,6 +49,14 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private val correspondenceView                 = mock[correspondence_view]
   private val attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment)
   private lazy val queues: List[Queue]           = List(Queue("", "", ""))
+  private val initiateResponse = FileStoreInitiateResponse(
+    id              = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
 
   override protected def beforeEach(): Unit =
     reset(
@@ -74,32 +89,41 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   "Correspondence Controller" should {
     "display Correspondence" in {
       val c = aCase(withReference("reference"), withCorrespondenceApplication)
+
       when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn (Future.successful(attachments))
+
       when(
         eventService
           .getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])
       ) thenReturn Future(pagedEvent)
+
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn Future.successful(
+        initiateResponse
+      )
+
       when(queueService.getAll) thenReturn Future(queues)
 
       when(
-        correspondenceView.apply(
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any()
-        )(any(), any(), any())
+        correspondenceView(
+          any[CaseViewModel],
+          any[CaseDetailsViewModel],
+          any[ContactDetailsTabViewModel],
+          any[MessagesTabViewModel],
+          any[Form[MessageFormData]],
+          any[SampleStatusTabViewModel],
+          any[atar.AttachmentsTabViewModel],
+          any[Form[String]],
+          any[FileStoreInitiateResponse],
+          any[ActivityViewModel],
+          any[Form[ActivityFormData]],
+          any[Seq[StoredAttachment]],
+          any[PrimaryNavigationTab]
+        )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
       ) thenReturn Html("body")
 
       val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
         .displayCorrespondence("reference")(newFakeGETRequestWithCSRF(app))
+
       status(result) shouldBe Status.OK
     }
 

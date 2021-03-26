@@ -18,9 +18,8 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import models.Permission
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, AuthenticatedDataRequest, OperatorRequest}
-import play.api.mvc.ActionFunction
-import play.api.mvc.Call
+import models.request._
+import play.api.mvc.{ActionFunction, Call}
 
 @Singleton
 class RequestActions @Inject() (
@@ -28,7 +27,8 @@ class RequestActions @Inject() (
   authenticatedAction: AuthenticatedAction,
   caseExistsActionFactory: VerifyCaseExistsActionFactory,
   mustHavePermissionActionFactory: MustHavePermissionActionFactory,
-  requireDataActionFactory: RequireDataActionFactory
+  requireDataActionFactory: RequireDataActionFactory,
+  requireCaseDataActionFactory: RequireCaseDataActionFactory
 ) {
 
   val authenticated: AuthenticatedAction = authenticatedAction
@@ -44,4 +44,7 @@ class RequestActions @Inject() (
 
   def requireData[B[A] <: OperatorRequest[A]](cacheKey: String): ActionFunction[B, AuthenticatedDataRequest] =
     requireDataActionFactory(cacheKey)
+
+  def requireCaseData[B[A] <: AuthenticatedRequest[A]](reference: String, cacheKey: String): ActionFunction[B, AuthenticatedCaseDataRequest] =
+    requireCaseDataActionFactory(reference, cacheKey)
 }

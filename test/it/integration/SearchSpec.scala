@@ -61,6 +61,14 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
             .withBody(KeywordsPayloads.pagedKeywords)
         )
       )
+      stubFor(
+        post(urlEqualTo("/file/initiate"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
+          )
+      )
 
       // When
       val response = await(ws.url(s"$baseUrl/search?reference=1").get())

@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package models.request
 
-case class CaseReferral(
-  referredTo: String,
-  reasons: List[ReferralReason.Value],
-  note: String,
-  referManually: Option[String]
+import play.api.libs.json.{ OFormat, Json }
+
+case class FileStoreInitiateRequest(
+  id: Option[String] = None,
+  successRedirect: Option[String] = None,
+  errorRedirect: Option[String] = None,
+  expectedContentType: Option[String] = None,
+  publishable: Boolean = false,
+  maxFileSize: Int
 )
+
+object FileStoreInitiateRequest {
+  implicit val format: OFormat[FileStoreInitiateRequest] = Json.format[FileStoreInitiateRequest]
+}

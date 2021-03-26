@@ -16,8 +16,10 @@
 
 package controllers.v2
 
+import java.util.UUID
+
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{RequestActions, Tab}
 import javax.inject.{Inject, Singleton}
 import models.forms._
 import models.request._
@@ -28,6 +30,7 @@ import models.{Case, CaseStatus, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -45,17 +48,23 @@ class MiscellaneousController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
+    with UpscanErrorHandling
     with I18nSupport {
 
-  def displayMiscellaneous(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
+  def displayMiscellaneous(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+    }
 
   def renderView(
+    fileId: Option[String]               = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
-    val miscellaneousCase: Case         = request.`case`
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+    val miscellaneousCase: Case = request.`case`
+    val uploadFileId            = fileId.getOrElse(UUID.randomUUID().toString)
+
     val miscellaneousViewModel          = CaseViewModel.fromCase(miscellaneousCase, request.operator)
     val caseDetailsTab                  = DetailsViewModel.fromCase(miscellaneousCase)
     val messagesTab                     = MessagesTabViewModel.fromCase(miscellaneousCase)
@@ -67,26 +76,42 @@ class MiscellaneousController @Inject() (
       miscellaneousCase.status,
       miscellaneousCase.assignee.exists(_.id == request.operator.id)
     )
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + controllers.routes.CaseController.addAttachment(miscellaneousCase.reference, uploadFileId).path
+
+    val fileUploadErrorRedirect =
+      appConfig.host + routes.MiscellaneousController
+        .displayMiscellaneous(miscellaneousCase.reference, Some(uploadFileId))
+        .withFragment(Tab.ATTACHMENTS_TAB.name)
+        .path
+
     for {
       attachmentsTab <- attachmentsTabViewModel
       activityTab    <- activityTabViewModel
       attachments    <- storedAttachments
       sampleTab      <- miscellaneousSampleTabViewModel
-
-    } yield Ok(
-      miscellaneousView(
-        miscellaneousViewModel,
-        caseDetailsTab,
-        messagesTab,
-        messageForm,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        activityTab,
-        activityForm,
-        attachments,
-        activeNavTab
-      )
+      initiateResponse <- fileService.initiate(
+                           FileStoreInitiateRequest(
+                             id              = Some(uploadFileId),
+                             successRedirect = Some(fileUploadSuccessRedirect),
+                             errorRedirect   = Some(fileUploadErrorRedirect),
+                             maxFileSize     = appConfig.fileUploadMaxSize
+                           )
+                         )
+    } yield miscellaneousView(
+      miscellaneousViewModel,
+      caseDetailsTab,
+      messagesTab,
+      messageForm,
+      sampleTab,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      activityTab,
+      activityForm,
+      attachments,
+      activeNavTab
     )
   }
 

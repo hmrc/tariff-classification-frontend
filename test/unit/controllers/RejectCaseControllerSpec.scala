@@ -16,46 +16,55 @@
 
 package controllers
 
-import models.RejectReason.RejectReason
-
-import java.io.File
-import models.{Permission, _}
-import org.mockito.ArgumentMatchers.{any, refEq}
+import connector.FakeDataCacheConnector
+import models._
+import models.request.FileStoreInitiateRequest
+import models.response._
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
-import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
-import play.api.mvc.MultipartFormData.FilePart
-import play.api.mvc.{MultipartFormData, Result}
-import play.api.test.Helpers.{redirectLocation, _}
-import service.CasesService
+import play.api.test.Helpers._
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import utils.JsonFormatters._
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
-import java.nio.file.Path
 
 class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
+  private val fileService  = mock[FileStoreService]
   private val operator     = Operator(id = "id")
 
   private val caseWithStatusNEW      = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN     = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
   private val caseWithStatusREJECTED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REJECTED)
 
-  private val largeFileSize: Long = 16485760
+  private val initiateResponse = FileStoreInitiateResponse(
+    id              = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
 
   override def afterEach(): Unit = {
     super.afterEach()
-    reset(casesService)
+    reset(casesService, fileService)
+    await(FakeDataCacheConnector.clear())
   }
 
   private def controller(c: Case) =
     new RejectCaseController(
       new SuccessfulRequestActions(playBodyParsers, operator, c = c),
       casesService,
+      fileService,
+      FakeDataCacheConnector,
       mcc,
       realAppConfig
     )
@@ -64,164 +73,205 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     new RejectCaseController(
       new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
       casesService,
+      fileService,
+      FakeDataCacheConnector,
       mcc,
       realAppConfig
     )
 
-  private def aMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-    val file     = SingletonTemporaryFileCreator.create("example-file.txt")
-    val filePart = FilePart[TemporaryFile](key = "file-input", "file.txt", contentType = Some("text/plain"), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  private def aEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-    val file     = SingletonTemporaryFileCreator.create("example-file.txt")
-    val filePart = FilePart[TemporaryFile](key = "file-input", "", contentType = Some("text/plain"), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  private def aMultipartFileOfType(mimeType: String): MultipartFormData[TemporaryFile] = {
-    val file     = SingletonTemporaryFileCreator.create("example-file")
-    val filePart = FilePart[TemporaryFile](key = "file-input", "example-file", contentType = Some(mimeType), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  private def aMultipartFileOfLargeSize: MultipartFormData[TemporaryFile] = {
-    val file      = mock[TemporaryFile]
-    val filePath  = mock[Path]
-    val innerFile = mock[File]
-    when(file.path).thenReturn(filePath)
-    when(filePath.toFile).thenReturn(innerFile)
-    when(innerFile.length()).thenReturn(largeFileSize)
-    val filePart =
-      FilePart[TemporaryFile](key = "file-input", "example-file", contentType = Some("text/plain"), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  "Reject Case" should {
+  "GET reject case reason" should {
 
     "return OK and HTML content type" in {
-
-      val result: Result =
-        await(controller(caseWithStatusOPEN).getRejectCase("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
+          .getRejectCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Provide details to reject this case")
+      bodyOf(result) should include(
+        messages("change_case_status.rejected.reason.heading", caseWithStatusOPEN.application.goodsName)
+      )
     }
 
-    "return OK when user has right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
-          .getRejectCase("reference")(newFakeGETRequestWithCSRF(app))
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty)
+          .getRejectCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
       )
 
-      status(result) shouldBe Status.OK
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
     }
 
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusNEW, Set.empty)
-          .getRejectCase("reference")(newFakeGETRequestWithCSRF(app))
-      )
-
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
-    }
   }
 
-  "Post Confirm Reject a Case" should {
-
-    "redirect to confirmation page when data filled in" in {
-      when(
-        casesService
-          .rejectCase(refEq(caseWithStatusOPEN), any[RejectReason], any[FileUpload], any[String], any[Operator])(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusREJECTED))
-
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postRejectCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(aMultipartFileWithParams(
-              "reason" -> Seq(RejectReason.DUPLICATE_APPLICATION.toString),
-              "note" -> Seq("some-note")
+  "POST reject case reason" should {
+    "redirect to reject case email page when filled correctly" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postRejectCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(
+            app,
+            Map(
+              "reason" -> RejectReason.DUPLICATE_APPLICATION.toString,
+              "note"   -> "some-note"
             )
           )
         )
       )
 
-      status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/reject/confirmation")
-    }
-
-    "return to form on missing file" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN)
-          .postRejectCase("reference")(newFakePOSTRequestWithCSRF(app).withBody(aEmptyMultipartFileWithParams()))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.RejectCaseController.getRejectCaseEmail(caseWithStatusOPEN.reference).path
       )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Provide details to reject this case")
     }
 
-    "return to form on wrong type of file" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN).postRejectCase("reference")(
-          newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfType("audio/mpeg"))
+    "display error page when reason is missing" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postRejectCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
         )
       )
 
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Provide details to reject this case")
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("error.empty.reject.reason"))
     }
 
-    "return to form on file size too large" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN)
-          .postRejectCase("reference")(newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfLargeSize))
-      )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Provide details to reject this case")
-    }
-
-    "return to form on missing form field" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN)
-          .postRejectCase("reference")(newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams()))
-      )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Provide details to reject this case")
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusOPEN, Set.empty).postRejectCase("reference")(
-          newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("note" -> Seq("some-note")))
+    "display error page when note is missing" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postRejectCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(app, Map("reason" -> RejectReason.ATAR_RULING_ALREADY_EXISTS.toString))
         )
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("error.empty.reject.note"))
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty)
+          .postRejectCaseReason(caseWithStatusNEW.reference)(
+            newFakePOSTRequestWithCSRF(
+              app,
+              Map(
+                "reason" -> RejectReason.APPLICATION_WITHDRAWN.toString,
+                "note"   -> "some-note"
+              )
+            )
+          )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
     }
   }
 
-  "View Confirm page for a rejected case" should {
+  "GET reject case email" should {
 
     "return OK and HTML content type" in {
-      val result: Result = await(
-        controller(caseWithStatusREJECTED).confirmRejectCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withFormUrlEncodedBody("state" -> "true")
+      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+        initiateResponse
+      )
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
+          .getRejectCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)        shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result) should include(
+        messages("change_case_status.rejected.email.heading", caseWithStatusOPEN.application.goodsName)
+      )
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty)
+          .getRejectCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+  }
+
+  "GET reject case" should {
+
+    "redirect to confirmation page" in {
+      val cacheKey = s"reject_case-${caseWithStatusOPEN.reference}"
+      val rejection = CaseRejection(RejectReason.APPLICATION_WITHDRAWN, "some-note")
+      val cacheMap = UserAnswers(cacheKey).set("rejection", rejection).cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
+
+      given(
+        casesService.rejectCase(
+          refEq(caseWithStatusOPEN),
+          refEq(RejectReason.APPLICATION_WITHDRAWN),
+          any[Attachment],
+          any[String],
+          any[Operator]
+        )(any[HeaderCarrier])
+      ) willReturn successful(caseWithStatusREJECTED)
+
+      val result = await(
+        controller(caseWithStatusOPEN).rejectCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.RejectCaseController.confirmRejectCase(caseWithStatusREJECTED.reference).path
+      )
+    }
+
+    "redirect to unauthorised when the user does not have any saved answers" in {
+      val result = await(
+        controller(caseWithStatusOPEN).rejectCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val cacheKey = s"reject_case-${caseWithStatusOPEN.reference}"
+      val cacheMap = UserAnswers(cacheKey).set("note", "some-note").cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty).rejectCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+  }
+
+  "GET confirm reject case" should {
+    "return OK and HTML content type" in {
+      val result = await(
+        controller(caseWithStatusREJECTED).confirmRejectCase(caseWithStatusREJECTED.reference)(
+          newFakeGETRequestWithCSRF(app)
         )
       )
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("case has been rejected")
+      bodyOf(result)        should include(messages("page.title.case.rejected"))
     }
   }
-
 }

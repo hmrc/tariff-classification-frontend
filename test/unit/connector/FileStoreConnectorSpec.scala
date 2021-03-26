@@ -17,7 +17,8 @@
 package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.response.{FileMetadata, ScanStatus}
+import models.request.FileStoreInitiateRequest
+import models.response._
 import models.{Attachment, FileUpload}
 import org.mockito.BDDMockito.given
 import play.api.http.Status
@@ -174,6 +175,33 @@ class FileStoreConnectorSpec extends ConnectorTest {
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
+  }
+
+  "Initiate" in {
+    stubFor(
+      post("/file/initiate")
+        .willReturn(
+          aResponse()
+            .withStatus(Status.ACCEPTED)
+            .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
+        )
+    )
+
+    val initiateRequest = FileStoreInitiateRequest(maxFileSize = 0)
+
+    await(connector.initiate(initiateRequest)) shouldBe FileStoreInitiateResponse(
+      id = "id",
+      upscanReference = "ref",
+      uploadRequest = UpscanFormTemplate(
+        "http://localhost:20001/upscan/upload",
+        Map("key" -> "value")
+      )
+    )
+
+    verify(
+      postRequestedFor(urlEqualTo("/file/initiate"))
+        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+    )
   }
 
   "Upload" in {

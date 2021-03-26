@@ -16,17 +16,24 @@
 
 package controllers.v2
 
+import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
 import models._
+import models.forms._
+import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import models.viewmodels._
+import models.viewmodels.miscellaneous._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
+import play.api.data.Form
 import play.api.http.Status
+import play.api.i18n.Messages
 import play.twirl.api.Html
 import service.{EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Cases
-import utils.Cases.{aCase, pagedEvent, withMiscellaneousApplication, withReference}
+import utils.Cases, Cases._
 import views.html.v2.miscellaneous_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,6 +48,14 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
   private val miscellaneousView                  = mock[miscellaneous_view]
   private val attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment)
   private lazy val queues: List[Queue]           = List(Queue("", "", ""))
+  private val initiateResponse = FileStoreInitiateResponse(
+    id              = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
 
   override protected def beforeEach(): Unit =
     reset(
@@ -74,26 +89,33 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
     "display miscellaneous case" in {
       val c = aCase(withReference("reference"), withMiscellaneousApplication)
       when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn (Future.successful(attachments))
+
       when(
         eventService
           .getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])
       ) thenReturn Future(pagedEvent)
+
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn Future.successful(
+        initiateResponse
+      )
+
       when(queueService.getAll) thenReturn Future(queues)
 
       when(
-        miscellaneousView.apply(
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any(),
-          any()
-        )(any(), any(), any())
+        miscellaneousView(
+          any[CaseViewModel],
+          any[DetailsViewModel],
+          any[MessagesTabViewModel],
+          any[Form[MessageFormData]],
+          any[SampleStatusTabViewModel],
+          any[atar.AttachmentsTabViewModel],
+          any[Form[String]],
+          any[FileStoreInitiateResponse],
+          any[ActivityViewModel],
+          any[Form[ActivityFormData]],
+          any[Seq[StoredAttachment]],
+          any[PrimaryNavigationTab]
+        )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
       ) thenReturn Html("body")
 
       val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))

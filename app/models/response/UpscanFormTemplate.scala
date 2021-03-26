@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package models.response
 
-import play.api.data.{Form, FormError}
+import play.api.libs.json.{ OFormat, Json }
 
-trait PrefixErrorsInForm[T] {
+case class UpscanFormTemplate(href: String, fields: Map[String, String])
 
-  def prefixErrorInForm(f: Form[T], error: FormError): Form[T] =
-    Form(f.mapping, f.data, error +: f.errors, f.value)
+object UpscanFormTemplate {
+  implicit val format: OFormat[UpscanFormTemplate] = Json.format[UpscanFormTemplate]
 }

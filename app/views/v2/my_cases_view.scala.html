@@ -19,7 +19,6 @@
 @import views.html.includes.main
 @import views.html.components.heading
 @import views.html.components.my_cases_tab
-@import views.html.components.primary_navigation
 @import models.viewmodels.{ApplicationTabViewModel, MyCasesTab, SubNavigationTab, AssignedToMeTab}
 
 
@@ -27,7 +26,7 @@
 
 @(myCases : ApplicationTabViewModel, activeSubNav : SubNavigationTab = AssignedToMeTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("common.cases.my_cases-title")), customPrimaryNavTab = MyCasesTab) {
+@main(bodyClasses = None, customTitle = Some(messages(myCases.headingMessageKey)), customPrimaryNavTab = MyCasesTab) {
 
     @my_cases_secondary_nav(activeSubNav)
 

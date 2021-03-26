@@ -21,7 +21,8 @@ import java.time.Instant
 
 import connector.FileStoreConnector
 import models._
-import models.response.{FileMetadata, ScanStatus}
+import models.request.FileStoreInitiateRequest
+import models.response._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
@@ -125,6 +126,27 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       await(service.getLetterOfAuthority(Cases.liabilityCaseExample)) shouldBe None
     }
   }
+
+  "Service 'initiate'" should {
+    val initiateRequest = FileStoreInitiateRequest(maxFileSize = 0)
+
+    val initiateResponse = FileStoreInitiateResponse(
+      id = "id",
+      upscanReference = "ref",
+      uploadRequest = UpscanFormTemplate(
+        "http://localhost:20001/upscan/upload",
+        Map("key" -> "value")
+      )
+    )
+
+    "delegate to connector" in {
+      given(connector.initiate(initiateRequest)).willReturn(successful(initiateResponse))
+
+      await(service.initiate(initiateRequest)) shouldBe initiateResponse
+    }
+  }
+
+
 
   "Service 'upload'" should {
 

@@ -36,6 +36,7 @@ import utils.Cases._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.twirl.api.Html
 
 class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -344,14 +345,14 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
 
       when(
-        liabilityController.renderView(any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+        liabilityController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
           any[AuthenticatedCaseRequest[_]]
         )
-      ) thenReturn Future.successful(Results.Ok("error"))
+      ) thenReturn Future.successful(Html("error"))
 
       val result: Future[Result] = controller(aLiabilityCase, Set(Permission.ADD_NOTE)).addNote(aLiabilityCase.reference)(fakeReq)
 
-      status(result)          shouldBe OK
+      status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
       verifyZeroInteractions(eventService)
@@ -362,14 +363,14 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
 
       when(
-        atarController.renderView(any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+        atarController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
           any[AuthenticatedCaseRequest[_]]
         )
-      ) thenReturn Future.successful(Results.Ok("error"))
+      ) thenReturn Future.successful(Html("error"))
 
       val result: Future[Result] = controller(anAtarCase, Set(Permission.ADD_NOTE)).addNote(anAtarCase.reference)(fakeReq)
 
-      status(result)          shouldBe OK
+      status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
       verifyZeroInteractions(eventService)
@@ -407,15 +408,15 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
 
       when(
-        liabilityController.renderView(any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+        liabilityController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
           any[AuthenticatedCaseRequest[_]]
         )
-      ) thenReturn Future.successful(Results.Ok("error"))
+      ) thenReturn Future.successful(Html("error"))
 
       val result: Future[Result] =
         controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(fakeReq)
 
-      status(result)          shouldBe OK
+      status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
       verifyZeroInteractions(keywordsService)
@@ -509,15 +510,15 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq  = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessage))
 
       when(
-        correspondenceController.renderView(any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
+        correspondenceController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
           any[AuthenticatedCaseRequest[_]]
         )
-      ) thenReturn Future.successful(Results.Ok("error"))
+      ) thenReturn Future.successful(Html("error"))
 
       val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_NOTE))
         .addMessage(anExampleCorrespondenceCase.reference)(fakeReq)
 
-      status(result)          shouldBe OK
+      status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
       verifyZeroInteractions(casesService)
