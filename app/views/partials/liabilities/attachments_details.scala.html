@@ -21,7 +21,6 @@
 @import models.request.AuthenticatedRequest
 @import models.response.FileStoreInitiateResponse
 @import models.viewmodels.AttachmentsTabViewModel
-@import uk.gov.hmrc.play.views.html.helpers
 @import views.html.components.input_file
 @import views.html.partials.{attachments_state_message, tab_heading, error_summary}
 
@@ -51,7 +50,7 @@
 )
 
 @if(showUploadAttachments) {
-    @helpers.form(
+    @helper.form(
         action = Call("POST", initiateResponse.uploadRequest.href),
         'enctype -> "multipart/form-data",
         'id -> "upload-files-form"
