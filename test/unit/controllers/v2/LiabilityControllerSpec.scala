@@ -21,15 +21,12 @@ import javax.inject.Inject
 import com.google.inject.Provider
 import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
-import models._
 import models.forms._
 import models.forms.CommodityCodeConstraints
 import models.forms.v2.LiabilityDetailsForm
 import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels._
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
 import models.{Case, _}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, _}
