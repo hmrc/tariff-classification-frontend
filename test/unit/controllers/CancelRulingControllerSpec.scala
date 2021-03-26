@@ -16,37 +16,47 @@
 
 package controllers
 
-import java.io.File
-
-import models.{Permission, _}
-import org.mockito.ArgumentMatchers.{any, refEq}
+import connector.FakeDataCacheConnector
+import models._
+import models.request.FileStoreInitiateRequest
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
-import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
-import play.api.mvc.MultipartFormData.FilePart
-import play.api.mvc.{MultipartFormData, Result}
-import play.api.test.Helpers.{redirectLocation, _}
-import service.CasesService
+import play.api.libs.Files.TemporaryFile
+import play.api.mvc.{AnyContentAsMultipartFormData, MultipartFormData}
+import play.api.test.Helpers._
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import utils.JsonFormatters._
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
-import java.nio.file.Path
 
 class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
-
   private val casesService = mock[CasesService]
+  private val fileService  = mock[FileStoreService]
 
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
   private val caseWithStatusCANCELLED = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
-  private val largeFileSize: Long = 16485760
+  private val initiateResponse = FileStoreInitiateResponse(
+    id              = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
 
   private def controller(requestCase: Case) = new CancelRulingController(
     new SuccessfulRequestActions(playBodyParsers, Cases.operatorWithPermissions, c = requestCase),
     casesService,
+    fileService,
+    FakeDataCacheConnector,
     mcc,
     realAppConfig
   )
@@ -54,171 +64,202 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private def controller(requestCase: Case, permission: Set[Permission]) = new CancelRulingController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
+    fileService,
+    FakeDataCacheConnector,
     mcc,
     realAppConfig
   )
 
   override def afterEach(): Unit = {
     super.afterEach()
-    reset(casesService)
+    reset(casesService, fileService)
+    await(FakeDataCacheConnector.clear())
   }
 
-  private def aMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-    val file     = SingletonTemporaryFileCreator.create("example-file.txt")
-    val filePart = FilePart[TemporaryFile](key = "email", "file.txt", contentType = Some("text/plain"), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  private def aEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-    val filePart = FilePart[TemporaryFile](
-      key = "email",
-      "",
-      contentType = Some("text/plain"),
-      ref         = SingletonTemporaryFileCreator.create("example-file.txt")
+  private def aMultipartBodyWithParams(params: (String, Seq[String])*): AnyContentAsMultipartFormData =
+    AnyContentAsMultipartFormData(
+      MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq.empty, badParts = Seq.empty)
     )
-    MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
-  }
 
-  private def aMultipartFileOfType(mimeType: String): MultipartFormData[TemporaryFile] = {
-    val file     = SingletonTemporaryFileCreator.create("example-file")
-    val filePart = FilePart[TemporaryFile](key = "email", "example-file", contentType = Some(mimeType), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  private def aMultipartFileOfLargeSize: MultipartFormData[TemporaryFile] = {
-    val file      = mock[TemporaryFile]
-    val filePath  = mock[Path]
-    val innerFile = mock[File]
-    when(file.path).thenReturn(filePath)
-    when(filePath.toFile).thenReturn(innerFile)
-    when(innerFile.length()).thenReturn(largeFileSize)
-    val filePart = FilePart[TemporaryFile](key = "email", "example-file", contentType = Some("text/plain"), ref = file)
-    MultipartFormData[TemporaryFile](dataParts = Map(), files = Seq(filePart), badParts = Seq.empty)
-  }
-
-  "Cancel Ruling" should {
+  "GET cancel ruling reason" should {
 
     "return OK and HTML content type" in {
-      val result: Result =
-        await(controller(caseWithStatusCOMPLETED).getCancelRuling("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(
+        controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
+          .getCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+      )
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Cancel the ruling")
+      bodyOf(result)        should include(messages("change_case_status.cancelled.reason.heading", caseWithStatusCOMPLETED.application.goodsName))
     }
 
-    "return OK when user has right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
-          .getCancelRuling("reference")(newFakeGETRequestWithCSRF(app))
-      )
-
-      status(result) shouldBe Status.OK
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(
+    "redirect to unauthorised when the user does not have right permissions" in {
+      val result = await(
         controller(caseWithStatusCOMPLETED, Set.empty)
-          .getCancelRuling("reference")(newFakeGETRequestWithCSRF(app))
+          .getCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
     }
 
   }
 
-  "Post Confirm Cancel a Ruling" should {
-
-    "redirect to confirmation page when data filled correctly" in {
-      when(
-        casesService.cancelRuling(
-          refEq(caseWithStatusCOMPLETED),
-          refEq(CancelReason.ANNULLED),
-          any[FileUpload],
-          any[String],
-          any[Operator]
-        )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusCANCELLED))
-
-      val result: Result = await(
-        controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(aMultipartFileWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))
-        )
-      )
-
-      status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/1/ruling/cancel/confirmation")
-    }
-
-    "display required field when failing to submit reason" in {
-      when(
-        casesService.cancelRuling(
-          refEq(caseWithStatusCOMPLETED),
-          refEq(CancelReason.ANNULLED),
-          any[FileUpload],
-          any[String],
-          any[Operator]
-        )(any[HeaderCarrier])
-      ).thenReturn(successful(caseWithStatusCANCELLED))
-
-      val result: Result = await(
-        controller(caseWithStatusCOMPLETED).postCancelRuling("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withBody(aMultipartFileWithParams("note" -> Seq("some-note")))
-        )
-      )
-
-      status(result)        shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Select a reason for cancelling this case")
-    }
-
-    "return to form on missing file" in {
-      val result: Result = await(
-        controller(caseWithStatusCOMPLETED)
-          .postCancelRuling("reference")(newFakePOSTRequestWithCSRF(app).withBody(aEmptyMultipartFileWithParams()))
-      )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Cancelled")
-    }
-
-    "return to form on wrong type of file" in {
-      val result: Result = await(
-        controller(caseWithStatusCOMPLETED)
-          .postCancelRuling("reference")(newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfType("audio/mpeg")))
-      )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Cancelled")
-    }
-
-    "return to form on file size too large" in {
-      val result: Result = await(
-        controller(caseWithStatusCOMPLETED)
-          .postCancelRuling("reference")(newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileOfLargeSize))
-      )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Cancelled")
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusCOMPLETED, Set.empty)
-          .postCancelRuling("reference")(
-            newFakePOSTRequestWithCSRF(app)
-              .withBody(aMultipartFileWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))
+  "POST cancel ruling reason" should {
+    "redirect to cancel ruling email page when filled correctly" in {
+      val result = await(
+        controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
+          .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(
+            newFakePOSTRequestWithCSRF(app, Map("reason" -> "ANNULLED", "note" -> "some-note"))
           )
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.CancelRulingController.getCancelRulingEmail(caseWithStatusCOMPLETED.reference).path
+      )
+    }
+
+    "display error page when reason is missing" in {
+      val result = await(
+        controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
+          .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(
+            newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
+          )
+      )
+
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("status.change.cancel.reason.error"))
+    }
+
+    "display error page when note is missing" in {
+      val result = await(
+        controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
+          .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(
+            newFakePOSTRequestWithCSRF(app, Map("reason" -> "ANNULLED"))
+          )
+      )
+
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("error.empty.cancel.note"))
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val result = await(
+        controller(caseWithStatusCOMPLETED, Set.empty)
+          .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
     }
   }
 
+  "GET cancel ruling email" should {
+
+    "return OK and HTML content type" in {
+      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+        initiateResponse
+      )
+
+      val result = await(
+        controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
+          .getCancelRulingEmail(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)        shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("change_case_status.cancelled.email.heading", caseWithStatusCOMPLETED.application.goodsName))
+    }
+
+    "redirect to unauthorised when the user does not have right permissions" in {
+      val result = await(
+        controller(caseWithStatusCOMPLETED, Set.empty)
+          .getCancelRulingEmail(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+  }
+
+  "GET cancel ruling" should {
+
+    "redirect to confirmation page" in {
+      val cacheKey = s"cancel_ruling-${caseWithStatusCOMPLETED.reference}"
+      val cacheMap = UserAnswers(cacheKey).set("cancellation", RulingCancellation("ANNULLED", "some-note")).cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
+
+      given(
+        casesService.cancelRuling(
+          refEq(caseWithStatusCOMPLETED),
+          refEq(CancelReason.ANNULLED),
+          any[Attachment],
+          any[String],
+          any[Operator]
+        )(any[HeaderCarrier])
+      ) willReturn successful(caseWithStatusCANCELLED)
+
+      val result = await(
+        controller(caseWithStatusCOMPLETED).cancelRuling(caseWithStatusCOMPLETED.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.CancelRulingController.confirmCancelRuling(caseWithStatusCOMPLETED.reference).path
+      )
+    }
+
+    "redirect to unauthorised when the user does not have any saved answers" in {
+      val result = await(
+        controller(caseWithStatusCOMPLETED).cancelRuling(caseWithStatusCOMPLETED.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val cacheKey = s"cancel_ruling-${caseWithStatusCOMPLETED.reference}"
+      val cacheMap = UserAnswers(cacheKey).set("cancellation", RulingCancellation("ANNULLED", "some-note")).cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
+
+      val result = await(
+        controller(caseWithStatusCOMPLETED, Set.empty)
+          .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(
+            newFakePOSTRequestWithCSRF(app)
+              .withBody(aMultipartBodyWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))
+          )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+  }
+
+  "GET confirm cancel ruling" should {
+    "return OK and HTML content type" in {
+      val result = await(
+        controller(caseWithStatusCANCELLED).confirmCancelRuling(caseWithStatusCANCELLED.reference)(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result)        shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include("The ruling has been cancelled")
+    }
+  }
 }

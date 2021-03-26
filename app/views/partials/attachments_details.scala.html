@@ -18,12 +18,12 @@
 @import controllers.{Tab, routes, v2}
 @import models.{Case, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
+@import models.response.FileStoreInitiateResponse
 @import models.viewmodels.atar.AttachmentsTabViewModel
-@import uk.gov.hmrc.play.views.html.helpers
 @import views.html.components.input_file
 @import views.html.partials.{attachments_list_atar, attachments_state_message, tab_heading, error_summary}
 
-@(attachments: AttachmentsTabViewModel, form : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(attachments: AttachmentsTabViewModel, form : Form[String], initiateResponse: FileStoreInitiateResponse, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @error_summary(form.errors, Some(startAtTabIndex))
 
@@ -36,9 +36,11 @@
     @attachments_list_atar("classification-team", attachments, startAtTabIndex = Some(startAtTabIndex+31))
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
-        @helpers.form(action = v2.routes.AttachmentsController.uploadAttachment(attachments.caseReference).withFragment(Tab.ATTACHMENTS_TAB.name),
+        @helper.form(
+            action = Call("POST", initiateResponse.uploadRequest.href),
             'enctype -> "multipart/form-data",
-            'id -> "upload-files-form") {
+            'id -> "upload-files-form"
+        ) {
 
             <div id="file-upload-heading">
                 <h3 class="heading-medium mt-30 mb-30">@messages("upload.files.title")</h3>
@@ -67,9 +69,13 @@
                     <li>@messages("cases.attachment.upload.typeOfFiles")</li>
                 </ul>
 
+                @for((key, value) <- initiateResponse.uploadRequest.fields) {
+                    <input type="hidden" name="@key" value="@value" />
+                }
+
                 <div class="mt-0">
                     @input_file(
-                        field = form("file-input"),
+                        field = form("file"),
                         label = messages("cases.attachment.upload.label"),
                         inputClass = Some("govuk-file-upload"),
                         accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt")

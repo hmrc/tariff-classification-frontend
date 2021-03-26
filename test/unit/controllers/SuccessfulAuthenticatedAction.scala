@@ -18,8 +18,8 @@ package controllers
 
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, DataCacheConnector, FakeDataCacheConnector, StrideAuthConnector}
-import models.request.{AuthenticatedCaseRequest, AuthenticatedDataRequest, AuthenticatedRequest, OperatorRequest}
 import models.{Case, Operator, Permission, UserAnswers}
+import models.request._
 import org.mockito.Mockito.mock
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
@@ -111,6 +111,36 @@ class MustHaveDataActionFactory(userAnswers: UserAnswers)
 
 }
 
+class HaveExistingCaseDataActionFactory(reference: String, requestCase: Case)
+    extends RequireCaseDataActionFactory(
+      casesService       = mock(classOf[CasesService]),
+      dataCacheConnector = FakeDataCacheConnector
+    )(
+      mock(classOf[MessagesApi]),
+      mock(classOf[AppConfig])
+    ) {
+
+  override def apply[B[C] <: AuthenticatedRequest[C]](
+    reference: String,
+    cacheKey: String
+  ): ActionRefiner[B, AuthenticatedCaseDataRequest] =
+    new ActionRefiner[B, AuthenticatedCaseDataRequest] {
+      override protected def refine[A](
+        request: B[A]
+      ): Future[Either[Result, AuthenticatedCaseDataRequest[A]]] =
+        FakeDataCacheConnector
+          .fetch(cacheKey)
+          .map {
+            case Some(cacheMap) =>
+              Right(new AuthenticatedCaseDataRequest(request.operator, request, requestCase, UserAnswers(cacheMap)))
+            case None =>
+              Left(Redirect(routes.SecurityController.unauthorized()))
+          }(ExecutionContext.Implicits.global)
+
+      override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
+    }
+}
+
 class SuccessfulRequestActions(
   parse: PlayBodyParsers,
   operator: Operator,
@@ -122,7 +152,8 @@ class SuccessfulRequestActions(
       new SuccessfulAuthenticatedAction(parse, operator),
       new ExistingCaseActionFactory(reference, c),
       new HaveRightPermissionsActionFactory,
-      new RequireDataActionFactory(FakeDataCacheConnector)
+      new RequireDataActionFactory(FakeDataCacheConnector),
+      new HaveExistingCaseDataActionFactory(reference, c)
     ) {}
 
 class RequestActionsWithPermissions(
@@ -145,7 +176,8 @@ class RequestActionsWithPermissions(
       ),
       new ExistingCaseActionFactory(reference, c),
       new MustHavePermissionActionFactory,
-      new RequireDataActionFactory(FakeDataCacheConnector)
+      new RequireDataActionFactory(FakeDataCacheConnector),
+      new HaveExistingCaseDataActionFactory(reference, c)
     ) {}
 
 class RequestActionsWithPermissionsAndData(
@@ -169,5 +201,6 @@ class RequestActionsWithPermissionsAndData(
       ),
       new ExistingCaseActionFactory(reference, c),
       new MustHavePermissionActionFactory,
-      new MustHaveDataActionFactory(userAnswers)
+      new MustHaveDataActionFactory(userAnswers),
+      new HaveExistingCaseDataActionFactory(reference, c)
     ) {}

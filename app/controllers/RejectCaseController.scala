@@ -16,110 +16,131 @@
 
 package controllers
 
-import config.AppConfig
-import models.forms.{AddNoteForm, RejectCaseForm}
-
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
-import models.CaseStatus._
-import models.{RejectReason, CaseRejection, Permission}
-import models.request.AuthenticatedCaseRequest
-import play.api.data.Form
-import play.api.libs.Files
-import play.api.mvc._
-import service.CasesService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import config.AppConfig
+import connector.DataCacheConnector
+import controllers.v2.UpscanErrorHandling
+import models.{Attachment, CaseRejection, Permission, UserAnswers}
+import models.forms.{RejectCaseForm, UploadAttachmentForm}
+import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
+import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc._
+import play.twirl.api.Html
+import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JsonFormatters._
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 @Singleton
 class RejectCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
+  fileService: FileStoreService,
+  dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
-    with RenderCaseAction
-    with ExtractableFile {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with UpscanErrorHandling {
 
-  override protected val config: AppConfig         = appConfig
-  override protected val caseService: CasesService = casesService
+  private val RejectionCacheKey = "rejection"
+  private def cacheKey(reference: String) =
+    s"reject_case-$reference"
 
-  def getRejectCase(reference: String): Action[AnyContent] =
+  def getRejectCaseReason(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
-      validateAndRenderView(c => successful(views.html.reject_case(c, RejectCaseForm.form)))
+      andThen verify.mustHave(Permission.REJECT_CASE)) { implicit request =>
+      Ok(views.html.reject_case_reason(request.`case`, RejectCaseForm.form))
+    }
+
+  def postRejectCaseReason(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.REJECT_CASE)).async { implicit request =>
+      RejectCaseForm.form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => successful(BadRequest(views.html.reject_case_reason(request.`case`, formWithErrors))),
+          caseRejection => {
+            val userAnswers        = UserAnswers(cacheKey(reference))
+            val updatedUserAnswers = userAnswers.set(RejectionCacheKey, caseRejection)
+            dataCacheConnector
+              .save(updatedUserAnswers.cacheMap)
+              .map(_ => Redirect(routes.RejectCaseController.getRejectCaseEmail(reference)))
+          }
+        )
+    }
+
+  def renderRejectCaseEmail(
+    fileId: Option[String]   = None,
+    uploadForm: Form[String] = UploadAttachmentForm.form
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+    val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + controllers.routes.RejectCaseController
+        .rejectCase(request.`case`.reference, uploadFileId)
+        .path
+
+    val fileUploadErrorRedirect =
+      appConfig.host + controllers.routes.RejectCaseController
+        .getRejectCaseEmail(request.`case`.reference, Some(uploadFileId))
+        .path
+
+    fileService
+      .initiate(
+        FileStoreInitiateRequest(
+          id              = Some(uploadFileId),
+          successRedirect = Some(fileUploadSuccessRedirect),
+          errorRedirect   = Some(fileUploadErrorRedirect),
+          maxFileSize     = appConfig.fileUploadMaxSize
+        )
+      )
+      .map(initiateResponse => views.html.reject_case_email(request.`case`, uploadForm, initiateResponse))
+  }
+
+  def getRejectCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REJECT_CASE))
+      .async(implicit request => handleUploadErrorAndRender(uploadForm => renderRejectCaseEmail(fileId, uploadForm)))
+
+  def rejectCase(reference: String, fileId: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.REJECT_CASE) andThen
+      verify.requireCaseData(reference, cacheKey(reference))).async { implicit request =>
+      request.userAnswers
+        .get[CaseRejection](RejectionCacheKey)
+        .map { caseRejection =>
+          for {
+            _ <- casesService
+                  .rejectCase(
+                    request.`case`,
+                    caseRejection.reason,
+                    Attachment(id = fileId, operator = Some(request.operator)),
+                    caseRejection.note,
+                    request.operator
+                  )
+
+            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+
+          } yield Redirect(routes.RejectCaseController.confirmRejectCase(reference))
+        }
+        .getOrElse {
+          successful(Redirect(routes.SecurityController.unauthorized()))
+        }
     }
 
   def confirmRejectCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      renderView(c => c.status == REJECTED, c => successful(views.html.confirm_rejected(c)))
+      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
+      Ok(views.html.confirm_rejected(request.`case`))
     }
-
-  def postRejectCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.REJECT_CASE)).async(parse.multipartFormData) {
-      implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
-        extractFile(key = "file-input")(
-          onFileValid = validFile => {
-            RejectCaseForm.form
-              .bindFromRequest()
-              .fold(
-                formWithErrors =>
-                  getCaseAndRenderView(
-                    reference,
-                    c => successful(views.html.reject_case(c, formWithErrors))
-                  ),
-                caseRejection =>
-                  validateAndRedirect(
-                    casesService
-                      .rejectCase(_, RejectReason.withName(caseRejection.reason), validFile, caseRejection.note, request.operator)
-                      .map(c => routes.RejectCaseController.confirmRejectCase(c.reference))
-                  )
-              )
-          },
-          onFileTooLarge = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.restrictionSize")
-            RejectCaseForm.form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                caseRejection => getCaseAndRenderErrors(reference, RejectCaseForm.form.fill(caseRejection), error)
-              )
-          },
-          onFileInvalidType = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.fileType")
-            RejectCaseForm.form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                note => getCaseAndRenderErrors(reference, RejectCaseForm.form.fill(note), error)
-              )
-          },
-          onFileMissing = () => {
-            val error = request2Messages(implicitly)("status.change.upload.case_reject.error.mustSelect")
-            RejectCaseForm.form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                note => getCaseAndRenderErrors(reference, RejectCaseForm.form.fill(note), error)
-              )
-
-          }
-        )
-    }
-
-  private def getCaseAndRenderErrors(reference: String, form: Form[CaseRejection], specificProblem: String)(
-    implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]
-  ): Future[Result] =
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.reject_case(c, form.withError("file-input", specificProblem)))
-    )
-
 }

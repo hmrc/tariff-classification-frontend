@@ -206,17 +206,13 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Add attachment into case" should {
     val c           = mock[Case]
     val updatedCase = mock[Case]
-    val fileUpload  = mock[FileUpload]
-    val fileStored  = mock[FileStoreAttachment]
 
     "add the given attachment into the case provided" in {
 
       given(c.attachments) willReturn Seq.empty
-      given(fileStored.id) willReturn "file-id"
-      given(fileStoreService.upload(refEq(fileUpload))(any[HeaderCarrier])) willReturn successful(fileStored)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-      val result = await(service.addAttachment(c, fileUpload, Operator("assignee")))
+      val result = await(service.addAttachment(c, "file-id", Operator("assignee")))
 
       result shouldBe updatedCase
     }

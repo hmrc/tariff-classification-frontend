@@ -28,39 +28,41 @@
 
 @(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case")), customPrimaryNavTab = NoTabSelected) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suspend.case.reason")), customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
     @error_summary(form.errors)
 
-<div class="govuk-notification-banner-width">
-    @case_heading(c, true, None, Some("change_case_status.to.suspended.header"))
+    <div class="column-two-thirds pl-0">
+        @case_heading(c, messageKey = Some("change_case_status.suspended.reason.heading"))
+    </div>
 
-
-            @helper.form(action = routes.SuspendCaseController.postSuspendCase(c.reference), 'id -> "suspend_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
+    <div class="grid-row">
+        <div class="column-full">
+            @helper.form(
+                action = routes.SuspendCaseController.postSuspendCaseReason(c.reference),
+                'id -> "suspend_case",
+                'enctype -> "multipart/form-data",
+                'novalidate -> "novalidate"
+            ) {
                 @helper.CSRF.formField
 
                 @input_textarea(
                     field = form("note"),
-
                     label = messages("change_case_status.to.suspended.note"),
-
                     labelClass = Some("heading-medium"),
                     hint = Some(messages("change_case_status.to.suspended.hint")),
                     customErrorMessage = Some(messages("error.empty.suspend.note"))
                 )
 
-                @status_change_upload(form("email"), "suspending")
-
                 @confirm_or_cancel_buttons(
                     id = "suspend_case",
-                    confirmText = messages("change_case_status.to.suspended.confirm"),
-                    cancelText = messages("change_case_status.to.suspended.cancel"),
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel"),
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }
-</div>
-
+        </div>
+    </div>
 }
-

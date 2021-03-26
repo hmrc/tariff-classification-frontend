@@ -54,10 +54,9 @@ class ChangeCaseStatusController @Inject() (
       form.bindFromRequest.fold(
         hasErrors => Ok(change_case_status(request.`case`, hasErrors)), {
           case CaseStatusRadioInput.Complete => Redirect(routes.CompleteCaseController.completeCase(reference))
-          case CaseStatusRadioInput.Refer    => Redirect(routes.ReferCaseController.getReferCase(reference))
-          case CaseStatusRadioInput.Reject   => Redirect(routes.RejectCaseController.getRejectCase(reference))
-          case CaseStatusRadioInput.Suspend =>
-            Redirect(routes.SuspendCaseController.getSuspendCase(reference))
+          case CaseStatusRadioInput.Refer    => Redirect(routes.ReferCaseController.getReferCaseReason(reference))
+          case CaseStatusRadioInput.Reject   => Redirect(routes.RejectCaseController.getRejectCaseReason(reference))
+          case CaseStatusRadioInput.Suspend  => Redirect(routes.SuspendCaseController.getSuspendCaseReason(reference))
           case CaseStatusRadioInput.MoveBackToQueue =>
             Redirect(routes.ReassignCaseController.reassignCase(reference, request.uri))
         }

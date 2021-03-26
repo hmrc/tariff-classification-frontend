@@ -176,29 +176,25 @@ class CasesService @Inject() (
     original: Case,
     referredTo: String,
     reason: Seq[ReferralReason],
-    f: FileUpload,
+    attachment: Attachment,
     note: String,
     operator: Operator
-  )(implicit hc: HeaderCarrier): Future[Case] =
+  )(implicit hc: HeaderCarrier): Future[Case] = {
+    val sample =
+      if (reason.contains(ReferralReason.REQUEST_SAMPLE))
+        Sample(Some(SampleStatus.AWAITING), Some(operator), Some(SampleReturn.TO_BE_CONFIRMED))
+      else
+        original.sample
+
     for {
-      fileStored <- fileService.upload(fileUpload = f)
-      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(
-                  original
-                    .addAttachment(attachment)
-                    .copy(
-                      status = CaseStatus.REFERRED,
-                      sample = if (reason.contains(ReferralReason.REQUEST_SAMPLE)) {
-                        Sample(Some(SampleStatus.AWAITING), Some(operator), Some(SampleReturn.TO_BE_CONFIRMED))
-                      } else {
-                        original.sample
-                      }
-                    )
+                  original.addAttachment(attachment).copy(status = CaseStatus.REFERRED, sample = sample)
                 )
       _ <- addReferStatusChangeEvent(original, updated, operator, Some(note), referredTo, reason, Some(attachment))
       _ = auditService.auditCaseReferred(original, updated, operator)
       _ = processChangedSampleStatus(original, updated, operator)
     } yield updated
+  }
 
   private def processChangedSampleStatus(original: Case, updated: Case, operator: Operator)(
     implicit hc: HeaderCarrier
@@ -208,34 +204,28 @@ class CasesService @Inject() (
       auditService.auditSampleStatusChange(original, updated, operator)
     }
 
-  def rejectCase(original: Case, reason: RejectReason, f: FileUpload, note: String, operator: Operator)(
+  def rejectCase(original: Case, reason: RejectReason, attachment: Attachment, note: String, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] =
     for {
-      fileStored <- fileService.upload(fileUpload = f)
-      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.REJECTED))
       _       <- addRejectCaseStatusChangeEvent(original, updated, operator, Some(note), Some(attachment), reason)
       _ = auditService.auditCaseRejected(original, updated, operator)
     } yield updated
 
-  def suspendCase(original: Case, fileUpload: FileUpload, note: String, operator: Operator)(
+  def suspendCase(original: Case, attachment: Attachment, note: String, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] =
     for {
-      fileStored <- fileService.upload(fileUpload)
-      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUSPENDED))
       _       <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
       _ = auditService.auditCaseSuspended(original, updated, operator)
     } yield updated
 
-  def suppressCase(original: Case, fileUpload: FileUpload, note: String, operator: Operator)(
+  def suppressCase(original: Case, attachment: Attachment, note: String, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] =
     for {
-      fileStored <- fileService.upload(fileUpload)
-      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUPPRESSED))
       _       <- addStatusChangeEvent(original, updated, operator, Some(note), Some(attachment))
       _ = auditService.auditCaseSuppressed(original, updated, operator)
@@ -379,7 +369,7 @@ class CasesService @Inject() (
     } yield caseWithPdf
   }
 
-  def cancelRuling(original: Case, reason: CancelReason, f: FileUpload, note: String, operator: Operator)(
+  def cancelRuling(original: Case, reason: CancelReason, attachment: Attachment, note: String, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Case] = {
     val updatedEndDate = LocalDate.now(appConfig.clock).atStartOfDay(appConfig.clock.getZone)
@@ -392,10 +382,6 @@ class CasesService @Inject() (
       )
 
     for {
-      // Store file
-      fileStored <- fileService.upload(fileUpload = f)
-      // Create attachment
-      attachment = Attachment(id = fileStored.id, operator = Some(operator))
       // Update the case
       updated: Case <- connector.updateCase(
                         original
@@ -473,11 +459,8 @@ class CasesService @Inject() (
       _ = auditService.auditCaseCreated(caseCreated, operator)
     } yield caseCreated
 
-  def addAttachment(c: Case, f: FileUpload, o: Operator)(implicit headerCarrier: HeaderCarrier): Future[Case] =
-    fileService.upload(f) flatMap { fileStored: FileStoreAttachment =>
-      val attachment = Attachment(id = fileStored.id, public = true, operator = Some(o))
-      connector.updateCase(c.addAttachment(attachment))
-    }
+  def addAttachment(cse: Case, fileId: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
+    connector.updateCase(cse.addAttachment(Attachment(id = fileId, public = true, operator = Some(operator))))
 
   def removeAttachment(c: Case, fileId: String)(implicit headerCarrier: HeaderCarrier): Future[Case] =
     fileService.removeAttachment(fileId) flatMap { _ =>

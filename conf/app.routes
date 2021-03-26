@@ -43,21 +43,28 @@ GET         /cases/:reference/reassign-case                     controllers.Reas
 POST        /cases/:reference/reassign-case                     controllers.ReassignCaseController.reassignCase(reference: String, origin: String)
 GET         /cases/:reference/reassign-case/confirmation        controllers.ReassignCaseController.confirmReassignCase(reference: String, origin: String)
 
-GET         /cases/:reference/refer                             controllers.ReferCaseController.getReferCase(reference: String)
-POST        /cases/:reference/refer                             controllers.ReferCaseController.postReferCase(reference: String)
+GET         /cases/:reference/refer-reason                      controllers.ReferCaseController.getReferCaseReason(reference: String)
+POST        /cases/:reference/refer-reason                      controllers.ReferCaseController.postReferCaseReason(reference: String)
+GET         /cases/:reference/refer-email                       controllers.ReferCaseController.getReferCaseEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/refer                             controllers.ReferCaseController.referCase(reference: String, fileId: String)
 GET         /cases/:reference/refer/confirmation                controllers.ReferCaseController.confirmReferCase(reference: String)
 
-GET         /cases/:reference/reject                            controllers.RejectCaseController.getRejectCase(reference: String)
-POST        /cases/:reference/reject                            controllers.RejectCaseController.postRejectCase(reference: String)
+GET         /cases/:reference/reject-reason                     controllers.RejectCaseController.getRejectCaseReason(reference: String)
+POST        /cases/:reference/reject-reason                     controllers.RejectCaseController.postRejectCaseReason(reference: String)
+GET         /cases/:reference/reject-email                      controllers.RejectCaseController.getRejectCaseEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/reject                            controllers.RejectCaseController.rejectCase(reference: String, fileId: String)
 GET         /cases/:reference/reject/confirmation               controllers.RejectCaseController.confirmRejectCase(reference: String)
 
-GET         /cases/:reference/suspend                           controllers.SuspendCaseController.getSuspendCase(reference: String)
-POST        /cases/:reference/suspend                           controllers.SuspendCaseController.postSuspendCase(reference: String)
+GET         /cases/:reference/suspend-reason                    controllers.SuspendCaseController.getSuspendCaseReason(reference: String)
+POST        /cases/:reference/suspend-reason                    controllers.SuspendCaseController.postSuspendCaseReason(reference: String)
+GET         /cases/:reference/suspend-email                     controllers.SuspendCaseController.getSuspendCaseEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/suspend                           controllers.SuspendCaseController.suspendCase(reference: String, fileId: String)
 GET         /cases/:reference/suspend/confirmation              controllers.SuspendCaseController.confirmSuspendCase(reference: String)
 
-
-GET         /cases/:reference/suppress                          controllers.SuppressCaseController.getSuppressCase(reference: String)
-POST        /cases/:reference/suppress                          controllers.SuppressCaseController.postSuppressCase(reference: String)
+GET         /cases/:reference/suppress-reason                   controllers.SuppressCaseController.getSuppressCaseReason(reference: String)
+POST        /cases/:reference/suppress-reason                   controllers.SuppressCaseController.postSuppressCaseReason(reference: String)
+GET         /cases/:reference/suppress-email                    controllers.SuppressCaseController.getSuppressCaseEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/suppress                          controllers.SuppressCaseController.suppressCase(reference: String, fileId: String)
 GET         /cases/:reference/suppress/confirmation             controllers.SuppressCaseController.confirmSuppressCase(reference: String)
 
 POST        /cases/:reference/reopen                            controllers.ReopenCaseController.confirmReopenCase(reference: String)
@@ -70,8 +77,10 @@ GET         /cases/:reference/ruling                            controllers.Case
 GET         /cases/:reference/ruling/edit                       controllers.RulingController.editRulingDetails(reference: String)
 GET         /cases/:reference/ruling/edit-validate              controllers.RulingController.validateBeforeComplete(reference: String)
 POST        /cases/:reference/ruling                            controllers.RulingController.updateRulingDetails(reference: String)
-GET         /cases/:reference/ruling/cancel                     controllers.CancelRulingController.getCancelRuling(reference: String)
-POST        /cases/:reference/ruling/cancel                     controllers.CancelRulingController.postCancelRuling(reference: String)
+GET         /cases/:reference/ruling/cancel-reason              controllers.CancelRulingController.getCancelRulingReason(reference: String)
+POST        /cases/:reference/ruling/cancel-reason              controllers.CancelRulingController.postCancelRulingReason(reference: String)
+GET         /cases/:reference/ruling/cancel-email               controllers.CancelRulingController.getCancelRulingEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/ruling/cancel                     controllers.CancelRulingController.cancelRuling(reference: String, fileId: String)
 GET         /cases/:reference/ruling/cancel/confirmation        controllers.CancelRulingController.confirmCancelRuling(reference: String)
 
 GET         /cases/:reference/activity                          controllers.CaseController.activityDetails(reference: String)
@@ -136,21 +145,21 @@ GET         /pdf/application/:reference                         controllers.PdfD
 GET         /attachment/:reference/:id                          controllers.ViewAttachmentController.get(reference: String, id: String)
 
 # v2
-GET         /cases/v2/:reference/atar                           controllers.v2.AtarController.displayAtar(reference: String)
+GET         /cases/v2/:reference/atar                           controllers.v2.AtarController.displayAtar(reference: String, fileId: Option[String] ?= None)
 
-GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String)
+GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String, fileId: Option[String] ?= None)
 
 GET         /cases/v2/:reference/liability/edit-details         controllers.v2.LiabilityController.editLiabilityDetails(reference: String)
 POST        /cases/v2/:reference/liability/edit-details         controllers.v2.LiabilityController.postLiabilityDetails(reference: String)
 
-POST        /cases/v2/:reference/attachments                    controllers.v2.AttachmentsController.uploadAttachment(reference: String)
+GET         /cases/v2/:reference/attachments                    controllers.CaseController.addAttachment(reference: String, fileId: String)
 GET         /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.removeAttachment(reference: String, fileId: String, fileName: String)
 POST        /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)
 
-GET         /cases/v2/:reference/correspondence                 controllers.v2.CorrespondenceController.displayCorrespondence(reference: String)
+GET         /cases/v2/:reference/correspondence                 controllers.v2.CorrespondenceController.displayCorrespondence(reference: String, fileId: Option[String] ?= None)
 POST        /cases/v2/:reference/correspondence                 controllers.CaseController.addMessage(reference: String)
 
-GET         /cases/v2/:reference/miscellaneous                  controllers.v2.MiscellaneousController.displayMiscellaneous(reference: String)
+GET         /cases/v2/:reference/miscellaneous                  controllers.v2.MiscellaneousController.displayMiscellaneous(reference: String, fileId: Option[String] ?= None)
 
 GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: ApplicationType)
 POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: ApplicationType)

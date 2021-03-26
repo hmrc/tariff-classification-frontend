@@ -19,6 +19,7 @@
 @import models.ApplicationType
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
+@import models.response.FileStoreInitiateResponse
 @import models.viewmodels._
 @import models.Permission
 @import views.html.partials.liabilities.advanced_search_cases
@@ -51,6 +52,7 @@
         //attachments
         attachmentsTabViewModel: Option[AttachmentsTabViewModel],
         uploadAttachmentsForm: Form[String],
+        initiateResponse: FileStoreInitiateResponse,
 
         //keywords
         keywordsTabViewModel: KeywordsTabViewModel,
@@ -165,6 +167,7 @@
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
             @attachments_details(
                 uploadAttachmentsForm,
+                initiateResponse,
                 attachmentsTabViewModel.get,
                 request.hasPermission(Permission.ADD_ATTACHMENT)
             )

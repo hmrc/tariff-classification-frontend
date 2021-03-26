@@ -28,20 +28,24 @@
 
 @(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case")), customPrimaryNavTab = NoTabSelected) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.suppress.case.reason")), customPrimaryNavTab = NoTabSelected) {
 
+    @back_link()
+
+    @error_summary(form.errors)
+
+    <div class="column-two-thirds pl-0">
+        @case_heading(c, messageKey = Some("change_case_status.suppressed.reason.heading"))
+    </div>
 
     <div class="grid-row">
         <div class="column-full">
-            <div class="mt-5">@back_link()</div>
-
-            @error_summary(form.errors)
-        </div>
-            <div class="column-two-thirds">
-            @case_heading(c, messageKey=Some("change_case_status.to.suppressed.header"))
-            </div>
-        <div class="column-full">
-            @helper.form(action = routes.SuppressCaseController.postSuppressCase(c.reference), 'id -> "suppress-case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
+            @helper.form(
+                action = routes.SuppressCaseController.postSuppressCaseReason(c.reference),
+                'id -> "suppress-case",
+                'enctype -> "multipart/form-data",
+                'novalidate -> "novalidate"
+            ) {
                 @helper.CSRF.formField
 
                 @input_textarea(
@@ -52,8 +56,6 @@
                     customErrorMessage = Some(messages("error.empty.suppress.note"))
                 )
 
-                @status_change_upload(form("email"), "suppressing")
-
                 @warning(
                     messages("change_case_status.to.suppressed.warning"),
                     containerClass = "mb-4"
@@ -61,8 +63,8 @@
 
                 @confirm_or_cancel_buttons(
                     id = "suppress_case",
-                    confirmText = messages("change_case_status.to.suppressed.confirm"),
-                    cancelText = messages("change_case_status.to.suppressed.cancel"),
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel"),
                     cancelHref = routes.CaseController.get(c.reference)
                 )
             }

@@ -32,22 +32,26 @@
 
 @(c: Case, form: Form[CaseRejection])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("case.title.reject_case_for")),
+@main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case.reason", c.application.goodsName)),
 customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 
     @error_summary(form.errors)
 
-<div class="govuk-notification-banner-width">
-    @case_heading(c, true, None, Some("case.heading.reject_case_for"))
+    <div class="column-two-thirds pl-0">
+        @case_heading(c, messageKey = Some("change_case_status.rejected.reason.heading"))
+    </div>
 
     <div class="grid-row">
         <div class="column-full">
 
-            @helper.form(action = routes.RejectCaseController.postRejectCase(c.reference),
-            'enctype -> "multipart/form-data",
-            'id -> "reject_case", 'novalidate -> "novalidate") {
+            @helper.form(
+                action = routes.RejectCaseController.postRejectCaseReason(c.reference),
+                'enctype -> "multipart/form-data",
+                'id -> "reject_case",
+                'novalidate -> "novalidate"
+            ) {
 
                 @helper.CSRF.formField
 
@@ -71,8 +75,6 @@ customPrimaryNavTab = NoTabSelected) {
                     customErrorMessage = Some(messages("error.empty.reject.note"))
                 )
 
-                @status_change_upload(form("file-input"), "rejecting")
-
                 @warning(
                     "This case cannot be reopened after it has been rejected.",
                     containerClass = "mb-4"
@@ -80,12 +82,11 @@ customPrimaryNavTab = NoTabSelected) {
 
                 @confirm_or_cancel_buttons(
                     id = "reject_case",
-                    confirmText = "Save changes",
-                    cancelText = "Cancel this action",
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel.action"),
                     cancelHref = routes.ChangeCaseStatusController.onPageLoad(c.reference)
                 )
             }
         </div>
     </div>
-</div>
 }
