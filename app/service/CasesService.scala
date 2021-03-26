@@ -356,13 +356,17 @@ class CasesService @Inject() (
         pdfService
           .generatePdf(ruling_template(completedCase, decision, getCountryName))
           .map(createRulingPdf)
-        pdfService
-          .generatePdf(cover_letter_template(completedCase, decision, getCountryName))
-          .map(createCoverLetterPdf)
       case LIABILITY =>
         pdfService
           .generatePdf(decision_template(completedCase, decision))
           .map(createLiabilityDecisionPdf)
+    }
+
+    def generateLetter: Future[FileUpload] = completedCase.application.`type` match {
+      case ATAR =>
+        pdfService
+          .generatePdf(cover_letter_template(completedCase, decision, getCountryName))
+          .map(createCoverLetterPdf)
     }
 
     for {
@@ -373,9 +377,15 @@ class CasesService @Inject() (
       pdfStored <- fileService.upload(pdfFile)
 
       pdfAttachment = Attachment(id = pdfStored.id, operator = Some(operator))
+      letter       <- generateLetter
+      letterStored <- fileService.upload(letter)
+      pdfLetterAttachment = Attachment(id = letterStored.id, operator = Some(operator))
+      caseWithPdf = completedCase.copy(decision =
+        Some(decision.copy(decisionPdf = Some(pdfAttachment), letterPdf = Some(pdfLetterAttachment)))
+      )
 
-      caseWithPdf = completedCase.copy(decision = Some(decision.copy(decisionPdf = Some(pdfAttachment))))
     } yield caseWithPdf
+
   }
 
   def cancelRuling(original: Case, reason: CancelReason, attachment: Attachment, note: String, operator: Operator)(

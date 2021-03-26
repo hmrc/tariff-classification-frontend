@@ -33,7 +33,8 @@ class PdfDownloadController @Inject() (
   fileStore: FileStoreService,
   caseService: CasesService,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
@@ -42,15 +43,46 @@ class PdfDownloadController @Inject() (
         cse.decision match {
           case Some(decision) =>
             val pdfResult = for {
-              pdf <- OptionT.fromOption[Future](decision.decisionPdf)
-              meta <- OptionT(fileStore.getFileMetadata(pdf.id))
-              url <- OptionT.fromOption[Future](meta.url)
+              pdf     <- OptionT.fromOption[Future](decision.decisionPdf)
+              meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
+              url     <- OptionT.fromOption[Future](meta.url)
               content <- OptionT(fileStore.downloadFile(url))
-            } yield Ok.streamed(content, None, Some(meta.mimeType)).withHeaders(
-              "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
-            )
+            } yield Ok
+              .streamed(content, None, Some(meta.mimeType))
+              .withHeaders(
+                "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+              )
 
-            val messages = request.messages
+            val messages     = request.messages
+            val documentType = messages("errors.document-not-found.ruling-certificate")
+            pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
+
+          case None =>
+            successful(NotFound(views.html.ruling_not_found(reference)))
+        }
+
+      case None =>
+        successful(NotFound(views.html.case_not_found(reference)))
+    }
+  }
+
+  def getLetterPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    caseService.getOne(reference).flatMap {
+      case Some(cse) =>
+        cse.decision match {
+          case Some(decision) =>
+            val pdfResult = for {
+              pdf     <- OptionT.fromOption[Future](decision.letterPdf)
+              meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
+              url     <- OptionT.fromOption[Future](meta.url)
+              content <- OptionT(fileStore.downloadFile(url))
+            } yield Ok
+              .streamed(content, None, Some(meta.mimeType))
+              .withHeaders(
+                "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+              )
+
+            val messages     = request.messages
             val documentType = messages("errors.document-not-found.ruling-certificate")
             pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
 
@@ -67,15 +99,17 @@ class PdfDownloadController @Inject() (
     caseService.getOne(reference).flatMap {
       case Some(cse) =>
         val pdfResult = for {
-          pdf <- OptionT.fromOption[Future](cse.application.asATAR.applicationPdf)
-          meta <- OptionT(fileStore.getFileMetadata(pdf.id))
-          url <- OptionT.fromOption[Future](meta.url)
+          pdf     <- OptionT.fromOption[Future](cse.application.asATAR.applicationPdf)
+          meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
+          url     <- OptionT.fromOption[Future](meta.url)
           content <- OptionT(fileStore.downloadFile(url))
-        } yield Ok.streamed(content, None, Some(meta.mimeType)).withHeaders(
-          "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
-        )
+        } yield Ok
+          .streamed(content, None, Some(meta.mimeType))
+          .withHeaders(
+            "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+          )
 
-        val messages = request.messages
+        val messages     = request.messages
         val documentType = messages("errors.document-not-found.application")
         pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
 
