@@ -41,7 +41,7 @@ import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.templates.{decision_template, ruling_template}
+import views.html.templates.{cover_letter_template, decision_template, ruling_template}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -339,6 +339,12 @@ class CasesService @Inject() (
       FileUpload(tempFile, s"ATaRRuling_${completedCase.reference}.pdf", pdf.contentType)
     }
 
+    def createCoverLetterPdf(pdf: PdfFile): FileUpload = {
+      val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
+      Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
+      FileUpload(tempFile, s"ATaRCoverLetter_${completedCase.reference}.pdf", pdf.contentType)
+    }
+
     def createLiabilityDecisionPdf(pdf: PdfFile): FileUpload = {
       val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
       Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
@@ -350,6 +356,9 @@ class CasesService @Inject() (
         pdfService
           .generatePdf(ruling_template(completedCase, decision, getCountryName))
           .map(createRulingPdf)
+        pdfService
+          .generatePdf(cover_letter_template(completedCase, decision, getCountryName))
+          .map(createCoverLetterPdf)
       case LIABILITY =>
         pdfService
           .generatePdf(decision_template(completedCase, decision))
