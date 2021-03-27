@@ -1,7 +1,7 @@
 
 # tariff-classification-frontend
 
-The frontend for the internal Operational Service for reviewing & answering ATaR applications.
+The frontend for the internal Advance Tariff Rulings Case Manager service for reviewing & answering ATaR applications.
 
 ### Running
 
@@ -42,7 +42,7 @@ sm --stop PDF_GENERATOR_SERVICE
 sm --start PDF_GENERATOR_SERVICE -r 1.20.0
 ```
 
-Use `sbt run` to boot the app.
+Use `sbt run` to boot the app or run it with Service Manager using `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`.
 
 This application runs on port 9581.
 
@@ -50,13 +50,23 @@ Open `http://localhost:9581/manage-tariff-classifications`.
 
 You can also run the `DIGITAL_TARIFFS` profile using `sm --start DIGITAL_TARIFFS -r` and then stop the Service Manager instance of this service using `sm --stop TARIFF_CLASSIFICATION_FRONTEND` before running with sbt.
 
-#### Starting With Service Manager
+### Authentication
 
-This application runs on port 9581
+The service uses the HMRC [auth-client](https://github.com/hmrc/auth-client) for authentication with STRIDE as the authentication provider. In non production environments you will be redirected to the stride-idp-stub. You can log in using the following enrolment information:
 
-Run `sm --start TARIFF_CLASSIFICATION_FRONTEND -r`
+PID: `<any string>`
 
-Open `http://localhost:9581/manage-tariff-classifications`
+to log in as a classification team officer:
+
+Roles: `classification`
+
+and as a classification team manager:
+
+Roles: `classification-manager`
+
+and as a read-only user:
+
+Roles: `classification-read-only`
 
 ### PDF Generator Service
 
