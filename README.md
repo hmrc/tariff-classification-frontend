@@ -21,10 +21,13 @@ The easiest way to run MongoDB and Localstack for local development is to use [D
 docker run --restart unless-stopped -d -p 27017-27019:27017-27019 --name mongodb mongo:3.6.13
 ```
 
-##### To run Localstack
+##### To run Localstack and create the S3 bucket
 
 ```
-docker run -d --restart unless-stopped --name localstack -e SERVICES=s3 -p4572:4566 -p8080:8080 localstack/localstack
+> docker run -d --restart unless-stopped --name localstack -e SERVICES=s3 -p4572:4566 -p8080:8080 localstack/localstack
+> docker exec -it localstack bash
+> awslocal s3 mb s3://digital-tariffs-local
+> exit
 ```
 
 #### Starting the application:
@@ -45,7 +48,7 @@ This application runs on port 9581.
 
 Open `http://localhost:9581/manage-tariff-classifications`.
 
-You can also run the DIGITAL_TARIFFS profile using `sm --start DIGITAL_TARIFFS -r` and then stop the Service Manager instance of this service using `sm --stop TARIFF_CLASSIFICATION_FRONTEND` before running with sbt.
+You can also run the `DIGITAL_TARIFFS` profile using `sm --start DIGITAL_TARIFFS -r` and then stop the Service Manager instance of this service using `sm --stop TARIFF_CLASSIFICATION_FRONTEND` before running with sbt.
 
 #### Starting With Service Manager
 
@@ -59,7 +62,7 @@ Open `http://localhost:9581/manage-tariff-classifications`
 
 This service requires the installation of some dependencies before it can be run using Service Manager. See [pdf-generator-service](https://github.com/hmrc/pdf-generator-service).
 
-Running PDF Generator Service locally on Mac OSX (currently) requires running an older version.  
+Running the pdf-generator-service locally on Mac OSX (currently) requires running an older version.  
 
 Run `sm --start PDF_GENERATOR_SERVICE -r 1.20.0`
 
