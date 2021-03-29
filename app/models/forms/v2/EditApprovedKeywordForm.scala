@@ -16,6 +16,7 @@
 
 package models.forms.v2
 
+import models.Keyword
 import models.forms.mappings.FormMappings.oneOf
 import models.forms.v2.EditKeywordAction.EditKeywordAction
 import play.api.data.Form
@@ -28,11 +29,18 @@ object EditKeywordAction extends Enumeration {
 }
 
 object EditApprovedKeywordForm {
-  def nonExistingKeyword(allKeywords: Seq[String]): Constraint[(EditKeywordAction, String)] =
+  def nonExistingKeyword(allKeywords: Seq[Keyword]): Constraint[(EditKeywordAction, String)] =
     Constraint {
       case (EditKeywordAction.DELETE, _) => Valid
-      case (EditKeywordAction.RENAME, name: String) if allKeywords.contains(name) =>
-        Invalid("management.create-keyword.error.duplicate.keyword")
+      case (EditKeywordAction.RENAME, name: String) if allKeywords.map(_.name).contains(name) => {
+
+        if (allKeywords.find(_.name == name).get.approved) {
+          Invalid("management.create-keyword.error.duplicate.keyword")
+        } else {
+          Invalid("management.create-keyword.error.rejected.keyword")
+        }
+
+      }
       case _ => Valid
     }
 
@@ -42,7 +50,7 @@ object EditApprovedKeywordForm {
     case _                                                         => Invalid("management.manage-keywords.edit-approved-keywords.empty.keyword.renamed")
   }
 
-  def formWithAuto(allKeywords: Seq[String]): Form[(EditKeywordAction, String)] = Form(
+  def formWithAuto(allKeywords: Seq[Keyword]): Form[(EditKeywordAction, String)] = Form(
     tuple(
       "action" -> oneOf("error.empty.action", EditKeywordAction)
         .transform[EditKeywordAction](EditKeywordAction.withName, _.toString),

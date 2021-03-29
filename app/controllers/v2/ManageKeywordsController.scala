@@ -219,8 +219,8 @@ class ManageKeywordsController @Inject() (
       } yield Ok(
         editApprovedKeywordsView(
           keywordName,
-          allKeywords,
-          EditApprovedKeywordForm.formWithAuto(allKeywords.results.map(_.name))
+          allKeywords.results.filter(_.approved),
+          EditApprovedKeywordForm.formWithAuto(allKeywords.results)
         )
       )
     )
@@ -231,12 +231,12 @@ class ManageKeywordsController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       keywordService.findAll(NoPagination()).flatMap { keywords =>
         EditApprovedKeywordForm
-          .formWithAuto(keywords.results.map(_.name))
+          .formWithAuto(keywords.results)
           .bindFromRequest()
           .fold(
             formWithErrors =>
               Future.successful(
-                BadRequest(editApprovedKeywordsView(keywordName, keywords, formWithErrors))
+                BadRequest(editApprovedKeywordsView(keywordName, keywords.results, formWithErrors))
               ), {
               case (EditKeywordAction.DELETE, _) =>
                 keywordService
