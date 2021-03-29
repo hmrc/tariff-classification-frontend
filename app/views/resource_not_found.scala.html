@@ -16,7 +16,7 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import controllers.routes.QueuesController
+@import controllers.routes._
 @import views.html.includes.main
 @import models.viewmodels.NoTabSelected
 
@@ -27,5 +27,5 @@
     <h2 class="heading-large">
         @messages("errors.resource-not-found.title", resource)
     </h2>
-    <a href="@QueuesController.queue("gateway")">@messages("errors.all.back")</a>
+    <a href="@OperatorDashboardController.onPageLoad()">@messages("errors.all.back")</a>
 }
