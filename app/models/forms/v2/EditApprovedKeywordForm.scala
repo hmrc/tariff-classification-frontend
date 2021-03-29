@@ -33,13 +33,11 @@ object EditApprovedKeywordForm {
     Constraint {
       case (EditKeywordAction.DELETE, _) => Valid
       case (EditKeywordAction.RENAME, name: String) if allKeywords.map(_.name).contains(name) => {
-
-        if (allKeywords.find(_.name == name).get.approved) {
+        if (allKeywords.filter(_.name == name).head.approved) {
           Invalid("management.create-keyword.error.duplicate.keyword")
         } else {
           Invalid("management.create-keyword.error.rejected.keyword")
         }
-
       }
       case _ => Valid
     }
