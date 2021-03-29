@@ -30,6 +30,10 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import utils.Cases._
+import java.time.Instant
+
+import play.api.libs.json.Json
+
 import utils.JsonFormatters.caseFormat
 import utils.JsonFormatters.operatorFormat
 import scala.concurrent.ExecutionContext
@@ -518,6 +522,24 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
     verify(connector)
       .sendExplicitAudit(refEq("userUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+  }
+
+  "Service 'audit user case moved'" in {
+    val operator       = Operator("PID")
+    val caseReferences = List("ref1", "ref2", "ref3")
+
+    service.auditUserCaseMoved(caseReferences, Some(operator), "2", "id", "managerId")
+
+    val payload = Json.obj(
+      "operatorId"       -> "id",
+      "team"             -> "2",
+      "newOperatorId"    -> operator.id,
+      "caseReferences"   -> Json.toJson(caseReferences),
+      "operatorUpdating" -> "managerId"
+    )
+
+    verify(connector)
+      .sendExplicitAudit(refEq("userCasesMoved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
   }
 
   "Service 'auditManagerKeywordCreated'" should {
