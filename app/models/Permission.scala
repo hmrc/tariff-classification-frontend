@@ -286,12 +286,14 @@ object Permission {
   case object EDIT_CORRESPONDENCE extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
+      (`case`.hasStatus(CaseStatus.NEW) && managersOrTeamMembersOnly(operator)) ||
+        (`case`.hasStatus(CaseStatus.OPEN) && managersOrAssignedTeamMembersOnly(`case`, operator))
   }
 
   case object EDIT_MISCELLANEOUS extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
+      (`case`.hasStatus(CaseStatus.NEW) && managersOrTeamMembersOnly(operator)) ||
+        (`case`.hasStatus(CaseStatus.OPEN) && managersOrAssignedTeamMembersOnly(`case`, operator))
   }
 }
