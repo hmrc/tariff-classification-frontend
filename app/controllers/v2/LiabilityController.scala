@@ -171,7 +171,7 @@ class LiabilityController @Inject() (
           errorForm => successful(Ok(liability_details_edit(request.`case`, errorForm))),
           updatedCase =>
             casesService
-              .updateCase(updatedCase)
+              .updateCase(request.`case`, updatedCase, request.operator)
               .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
         )
     }

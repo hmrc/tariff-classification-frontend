@@ -64,6 +64,7 @@ case class CaseCreated(
   override val `type`: EventType = EventType.CASE_CREATED
 }
 
+
 case class CaseStatusChange(
   override val from: CaseStatus,
   override val to: CaseStatus,

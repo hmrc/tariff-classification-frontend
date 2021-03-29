@@ -447,8 +447,11 @@ class CasesService @Inject() (
   def getAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findAssignedCases(pagination)
 
-  def updateCase(caseToUpdate: Case)(implicit hc: HeaderCarrier): Future[Case] =
-    connector.updateCase(caseToUpdate)
+  def updateCase(originalCase: Case, caseToUpdate: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
+    for {
+      updatedCase <- connector.updateCase(caseToUpdate)
+      _ = auditService.auditCaseUpdated(originalCase, updatedCase, operator)
+    } yield updatedCase
 
   def createCase(application: Application, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     for {
@@ -495,7 +498,7 @@ class CasesService @Inject() (
       assignedCases <- getCasesByAssignee(Operator(originalUserId), NoPagination())
       casesToUpdate = assignedCases.results.filter(c => refs.contains(c.reference))
       updatedCases <- casesToUpdate.toList.traverse { c =>
-                       updateCase(c.copy(assignee = user, queueId = Some(teamId)))
+                       updateCase(c, c.copy(assignee = user, queueId = Some(teamId)),Operator(operatorUpdating))
                      }
       _ = auditService.auditUserCaseMoved(updatedCases.map(_.reference), user, teamId, originalUserId, operatorUpdating)
     } yield ()

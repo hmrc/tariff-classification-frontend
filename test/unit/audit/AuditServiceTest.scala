@@ -16,6 +16,8 @@
 
 package audit
 
+import java.time.Instant
+
 import base.SpecBase
 import models.AppealStatus.AppealStatus
 import models.CancelReason.CancelReason
@@ -24,6 +26,7 @@ import models.{CaseStatus => _, _}
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import utils.Cases._
@@ -31,6 +34,8 @@ import java.time.Instant
 
 import play.api.libs.json.Json
 
+import utils.JsonFormatters.caseFormat
+import utils.JsonFormatters.operatorFormat
 import scala.concurrent.ExecutionContext
 
 class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
@@ -59,6 +64,28 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit case updated'" should {
+    val originalCase = aLiabilityCase(withReference("ref"))
+    val updatedCase = originalCase.copy(decision =
+      Some(
+        Decision(bindingCommodityCode = "123456", justification = "acceptable", goodsDescription = "quirky")
+      )
+    )
+
+    "Delegate to connector" in {
+      service.auditCaseUpdated(originalCase, updatedCase, operator)
+
+      val payload = Json.obj(
+        "originalCase" -> Json.toJson(originalCase),
+        "operatorUpdating"  -> operator.id,
+        "updatedCase"  -> Json.toJson(updatedCase)
+      )
+
+      verify(connector)
+        .sendExplicitAudit(refEq("caseUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
 
@@ -482,14 +509,17 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
   }
 
   "Service 'audit User Updated'" in {
-    val operatorToUpdate = Operator("PID")
+    val updatedOperator  = Operator("PID")
+    val operatorUpdating = Operator("PID2")
 
-    service.auditUserUpdated(operatorToUpdate, operator)
+    service.auditUserUpdated(operator, updatedOperator, operatorUpdating)
 
-    val payload = Map(
-      "operatorToUpdate" -> operatorToUpdate.id,
-      "operatorUpdating"       -> operator.id
+    val payload = Json.obj(
+      "originalOperator" -> Json.toJson(operator),
+      "updatedOperator"  -> Json.toJson(updatedOperator),
+      "operatorUpdating" -> operatorUpdating.id
     )
+
     verify(connector)
       .sendExplicitAudit(refEq("userUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
   }
@@ -566,7 +596,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditManagerKeywordDeleted(operator, keyword)
 
       val payload = Map(
-        "operatorId" -> operator.id,
+        "operatorId"     -> operator.id,
         "keywordDeleted" -> keyword.name
       )
       verify(connector)
@@ -584,9 +614,9 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditManagerKeywordRenamed(operator, oldKeyword, newKeyword)
 
       val payload = Map(
-        "operatorId" -> operator.id,
+        "operatorId"      -> operator.id,
         "originalKeyword" -> oldKeyword.name,
-        "updatedKeyword" -> newKeyword.name
+        "updatedKeyword"  -> newKeyword.name
       )
 
       verify(connector)

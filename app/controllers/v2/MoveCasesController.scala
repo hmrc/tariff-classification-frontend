@@ -404,6 +404,20 @@ class MoveCasesController @Inject() (
 
     }
 
+  private def updateCases(refs: Set[String], user: Option[Operator], teamId: String, originalUserId: String)(
+    implicit request: AuthenticatedRequest[_]
+  ) =
+    for {
+      casesToUpdate <- casesService.getCasesByAssignee(Operator(originalUserId), NoPagination())
+    } yield refs
+      .map(ref => casesToUpdate.results.find(c => c.reference == ref))
+      .flatten
+      .map(c =>
+        for {
+          updatedCase <- casesService.updateCase(c,c.copy(assignee = user, queueId = Some(teamId)), request.operator)
+        } yield updatedCase
+      )
+
   private def findChosenCasesInAssignedCases(assignedCases: Seq[Case], chosenCaseRefs: Set[String]) =
     chosenCaseRefs.map(ref => assignedCases.find(c => c.reference == ref)).flatten
 
