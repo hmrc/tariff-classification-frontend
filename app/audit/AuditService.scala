@@ -16,13 +16,14 @@
 
 package audit
 
+import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
 import models.ApplicationType.{CORRESPONDENCE, MISCELLANEOUS}
+import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 import models._
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import javax.inject.{Inject, Singleton}
-import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -209,6 +210,25 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       )
     )
 
+  def auditUserCaseMoved(
+    refs: List[String],
+    user: Option[Operator],
+    teamId: String,
+    originalUserId: String,
+    operatorUpdating: String)(implicit hc: HeaderCarrier): Unit = {
+    val operatorId: String = user.map(_.id).getOrElse("")
+    sendExplicitAuditEvent(
+      auditEventType = UserCasesMoved,
+      auditPayload = Json.obj(
+        "operatorId"       -> originalUserId,
+        "team"             -> teamId,
+        "newOperatorId"    -> operatorId,
+        "caseReferences"   -> Json.toJson(refs),
+        "operatorUpdating" -> operatorUpdating
+      )
+    )
+  }
+
   def auditManagerKeywordCreated(user: Operator, keyword: Keyword, keywordStatusAction: ChangeKeywordStatusAction)(
     implicit hc: HeaderCarrier): Unit = {
 
@@ -273,6 +293,11 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
   ): Unit =
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
 
+  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsObject)(
+    implicit hc: HeaderCarrier
+  ): Unit =
+    auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
+
   private def cancelReason: Case => String =
     _.decision flatMap (_.cancellation) map (_.reason.toString) getOrElse undefined
 
@@ -314,6 +339,7 @@ object AuditPayloadType {
   val CaseSampleSendChange   = "caseSampleSendChange"
   val UserUpdated            = "userUpdated"
   val UserDeleted            = "userDeleted"
+  val UserCasesMoved         = "userCasesMoved"
   val ManagerKeywordCreated  = "managerKeywordCreated"
   val ManagerKeywordRenamed  = "managerKeywordRenamed"
   val ManagerKeywordDeleted  = "managerKeywordDeleted"
