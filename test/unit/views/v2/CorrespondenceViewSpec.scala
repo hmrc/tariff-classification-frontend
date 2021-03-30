@@ -17,11 +17,13 @@
 package views.v2
 
 import java.time.Instant
+
 import models._
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, MessageForm, MessageFormData, UploadAttachmentForm}
+import models.forms._
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels.atar.AttachmentsTabViewModel
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, MessagesTabViewModel, SampleStatusTabViewModel}
+import models.viewmodels._
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._
@@ -32,13 +34,13 @@ import views.html.v2.correspondence_view
 class CorrespondenceViewSpec extends ViewSpec {
 
   private val sampleStatusTabViewModel = SampleStatusTabViewModel(
-      "caseReference",
-      isSampleBeingSent = false,
-      Some("a person"),
-      None,
-      "location",
-      sampleActivity = Paged.empty[Event]
-    )
+    "caseReference",
+    isSampleBeingSent = false,
+    Some(SampleSend.AGENT),
+    None,
+    "location",
+    sampleActivity = Paged.empty[Event]
+  )
 
   private val caseDetailsTab: CaseDetailsViewModel = CaseDetailsViewModel(
     "1",
@@ -54,6 +56,15 @@ class CorrespondenceViewSpec extends ViewSpec {
     "Bob",
     Seq.empty,
     Seq.empty
+  )
+
+  val initiateResponse = FileStoreInitiateResponse(
+    id = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
   )
 
   private val activityTab: ActivityViewModel =
@@ -97,6 +108,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -117,6 +129,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -137,6 +150,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -157,6 +171,7 @@ class CorrespondenceViewSpec extends ViewSpec {
               sampleStatusTabViewModel,
               attachmentsTab,
               uploadAttachmentForm,
+              initiateResponse,
               activityTab,
               activityForm,
               Seq.empty
@@ -177,6 +192,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -197,6 +213,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty
@@ -217,6 +234,7 @@ class CorrespondenceViewSpec extends ViewSpec {
           sampleStatusTabViewModel,
           attachmentsTab,
           uploadAttachmentForm,
+          initiateResponse,
           activityTab,
           activityForm,
           Seq.empty

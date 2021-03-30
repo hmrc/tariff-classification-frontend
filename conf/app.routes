@@ -4,16 +4,23 @@ GET         /assets/*file                                       controllers.Asse
 
 GET         /unauthorized                                       controllers.SecurityController.unauthorized()
 
-GET         /                                                   controllers.IndexController.get()
-GET         /queues                                             controllers.Default.redirect(to = controllers.routes.MyCasesController.myCases.url)
-GET         /queues/my-cases                                    controllers.MyCasesController.myCases()
-GET         /queues/assigned                                    controllers.AssignedCasesController.assignedCases()
-GET         /queues/assigned/:assigneeId/:tabIndex              controllers.AssignedCasesController.assignedCasesFor(assigneeId: String, tabIndex : Int)
-GET         /queues/:slug                                       controllers.QueuesController.queue(slug: String, caseType: Option[String] ?= None)
+GET         /keep-alive                                         controllers.SecurityController.keepAlive()
 
-GET         /reports                                            controllers.ReportingController.getReports
-GET         /reports/:name/:tabIndex                            controllers.ReportingController.getReportCriteria(name: String, tabIndex : Int)
-POST        /reports/:name                                      controllers.ReportingController.getReport(name: String)
+GET         /                                                   controllers.IndexController.get()
+
+GET         /manage-reports                                     controllers.ReportingController.displayManageReporting()
+
+GET         /reports/cases                                      controllers.ReportingController.caseReport(caseReport: models.reporting.CaseReport, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/cases/download                             controllers.ReportingController.downloadCaseReport(summaryReport: models.reporting.CaseReport)
+GET         /reports/summary                                    controllers.ReportingController.summaryReport(summaryReport: models.reporting.SummaryReport, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/summary/download                           controllers.ReportingController.downloadSummaryReport(summaryReport: models.reporting.SummaryReport)
+GET         /reports/queue                                      controllers.ReportingController.queueReport(queueReport: models.reporting.QueueReport, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/queue/download                             controllers.ReportingController.downloadQueueReport(queueReport: models.reporting.QueueReport)
+GET         /reports/choose-date                                controllers.ReportingController.showChangeDateFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
+POST        /reports/choose-date                                controllers.ReportingController.postChangeDateFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/choose-teams                               controllers.ReportingController.showChangeTeamsFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
+POST        /reports/choose-teams                               controllers.ReportingController.postChangeTeamsFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
+GET         /reports/:name                                      controllers.ReportingController.getReportByName(name: String)
 
 GET         /cases                                              controllers.Default.redirect(to = controllers.routes.IndexController.get.url)
 GET         /cases/:reference                                   controllers.CaseController.get(reference: String)
@@ -30,21 +37,28 @@ GET         /cases/:reference/reassign-case                     controllers.Reas
 POST        /cases/:reference/reassign-case                     controllers.ReassignCaseController.reassignCase(reference: String, origin: String)
 GET         /cases/:reference/reassign-case/confirmation        controllers.ReassignCaseController.confirmReassignCase(reference: String, origin: String)
 
-GET         /cases/:reference/refer                             controllers.ReferCaseController.getReferCase(reference: String)
-POST        /cases/:reference/refer                             controllers.ReferCaseController.postReferCase(reference: String)
+GET         /cases/:reference/refer-reason                      controllers.ReferCaseController.getReferCaseReason(reference: String)
+POST        /cases/:reference/refer-reason                      controllers.ReferCaseController.postReferCaseReason(reference: String)
+GET         /cases/:reference/refer-email                       controllers.ReferCaseController.getReferCaseEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/refer                             controllers.ReferCaseController.referCase(reference: String, fileId: String)
 GET         /cases/:reference/refer/confirmation                controllers.ReferCaseController.confirmReferCase(reference: String)
 
-GET         /cases/:reference/reject                            controllers.RejectCaseController.getRejectCase(reference: String)
-POST        /cases/:reference/reject                            controllers.RejectCaseController.postRejectCase(reference: String)
+GET         /cases/:reference/reject-reason                     controllers.RejectCaseController.getRejectCaseReason(reference: String)
+POST        /cases/:reference/reject-reason                     controllers.RejectCaseController.postRejectCaseReason(reference: String)
+GET         /cases/:reference/reject-email                      controllers.RejectCaseController.getRejectCaseEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/reject                            controllers.RejectCaseController.rejectCase(reference: String, fileId: String)
 GET         /cases/:reference/reject/confirmation               controllers.RejectCaseController.confirmRejectCase(reference: String)
 
-GET         /cases/:reference/suspend                           controllers.SuspendCaseController.getSuspendCase(reference: String)
-POST        /cases/:reference/suspend                           controllers.SuspendCaseController.postSuspendCase(reference: String)
+GET         /cases/:reference/suspend-reason                    controllers.SuspendCaseController.getSuspendCaseReason(reference: String)
+POST        /cases/:reference/suspend-reason                    controllers.SuspendCaseController.postSuspendCaseReason(reference: String)
+GET         /cases/:reference/suspend-email                     controllers.SuspendCaseController.getSuspendCaseEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/suspend                           controllers.SuspendCaseController.suspendCase(reference: String, fileId: String)
 GET         /cases/:reference/suspend/confirmation              controllers.SuspendCaseController.confirmSuspendCase(reference: String)
 
-
-GET         /cases/:reference/suppress                          controllers.SuppressCaseController.getSuppressCase(reference: String)
-POST        /cases/:reference/suppress                          controllers.SuppressCaseController.postSuppressCase(reference: String)
+GET         /cases/:reference/suppress-reason                   controllers.SuppressCaseController.getSuppressCaseReason(reference: String)
+POST        /cases/:reference/suppress-reason                   controllers.SuppressCaseController.postSuppressCaseReason(reference: String)
+GET         /cases/:reference/suppress-email                    controllers.SuppressCaseController.getSuppressCaseEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/suppress                          controllers.SuppressCaseController.suppressCase(reference: String, fileId: String)
 GET         /cases/:reference/suppress/confirmation             controllers.SuppressCaseController.confirmSuppressCase(reference: String)
 
 POST        /cases/:reference/reopen                            controllers.ReopenCaseController.confirmReopenCase(reference: String)
@@ -57,8 +71,10 @@ GET         /cases/:reference/ruling                            controllers.Case
 GET         /cases/:reference/ruling/edit                       controllers.RulingController.editRulingDetails(reference: String)
 GET         /cases/:reference/ruling/edit-validate              controllers.RulingController.validateBeforeComplete(reference: String)
 POST        /cases/:reference/ruling                            controllers.RulingController.updateRulingDetails(reference: String)
-GET         /cases/:reference/ruling/cancel                     controllers.CancelRulingController.getCancelRuling(reference: String)
-POST        /cases/:reference/ruling/cancel                     controllers.CancelRulingController.postCancelRuling(reference: String)
+GET         /cases/:reference/ruling/cancel-reason              controllers.CancelRulingController.getCancelRulingReason(reference: String)
+POST        /cases/:reference/ruling/cancel-reason              controllers.CancelRulingController.postCancelRulingReason(reference: String)
+GET         /cases/:reference/ruling/cancel-email               controllers.CancelRulingController.getCancelRulingEmail(reference: String, fileId: Option[String] ?= None)
+GET         /cases/:reference/ruling/cancel                     controllers.CancelRulingController.cancelRuling(reference: String, fileId: String)
 GET         /cases/:reference/ruling/cancel/confirmation        controllers.CancelRulingController.confirmCancelRuling(reference: String)
 
 GET         /cases/:reference/activity                          controllers.CaseController.activityDetails(reference: String)
@@ -92,6 +108,9 @@ POST        /cases/:reference/sample/status                     controllers.Samp
 GET         /cases/:reference/sample/return-status              controllers.SampleReturnController.chooseStatus(reference: String)
 POST        /cases/:reference/sample/return-status              controllers.SampleReturnController.updateStatus(reference: String)
 
+GET         /cases/:reference/sample/sample-send                controllers.SampleWhoSendingController.chooseStatus(reference: String)
+POST        /cases/:reference/sample/sample-send                controllers.SampleWhoSendingController.updateStatus(reference: String)
+
 GET         /cases/:reference/extended-use/status               controllers.ExtendedUseCaseController.chooseStatus(reference: String)
 POST        /cases/:reference/extended-use/status               controllers.ExtendedUseCaseController.updateStatus(reference: String)
 
@@ -117,24 +136,24 @@ GET         /cases/:reference/keywords/:keyword                 controllers.Case
 GET         /pdf/ruling/:reference                              controllers.PdfDownloadController.getRulingPdf(reference: String)
 GET         /pdf/application/:reference                         controllers.PdfDownloadController.applicationPdf(reference: String)
 
-GET         /attachment/:id                                     controllers.ViewAttachmentController.get(id: String)
+GET         /attachment/:reference/:id                          controllers.ViewAttachmentController.get(reference: String, id: String)
 
 # v2
-GET         /cases/v2/:reference/atar                           controllers.v2.AtarController.displayAtar(reference: String)
+GET         /cases/v2/:reference/atar                           controllers.v2.AtarController.displayAtar(reference: String, fileId: Option[String] ?= None)
 
-GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String)
+GET         /cases/v2/:reference/liability                      controllers.v2.LiabilityController.displayLiability(reference: String, fileId: Option[String] ?= None)
 
 GET         /cases/v2/:reference/liability/edit-details         controllers.v2.LiabilityController.editLiabilityDetails(reference: String)
 POST        /cases/v2/:reference/liability/edit-details         controllers.v2.LiabilityController.postLiabilityDetails(reference: String)
 
-POST        /cases/v2/:reference/attachments                    controllers.v2.AttachmentsController.uploadAttachment(reference: String)
+GET         /cases/v2/:reference/attachments                    controllers.CaseController.addAttachment(reference: String, fileId: String)
 GET         /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.removeAttachment(reference: String, fileId: String, fileName: String)
 POST        /cases/v2/:reference/attachments/remove             controllers.v2.AttachmentsController.confirmRemoveAttachment(reference: String, fileId: String, fileName: String)
 
-GET         /cases/v2/:reference/correspondence                 controllers.v2.CorrespondenceController.displayCorrespondence(reference: String)
+GET         /cases/v2/:reference/correspondence                 controllers.v2.CorrespondenceController.displayCorrespondence(reference: String, fileId: Option[String] ?= None)
 POST        /cases/v2/:reference/correspondence                 controllers.CaseController.addMessage(reference: String)
 
-GET         /cases/v2/:reference/miscellaneous                  controllers.v2.MiscellaneousController.displayMiscellaneous(reference: String)
+GET         /cases/v2/:reference/miscellaneous                  controllers.v2.MiscellaneousController.displayMiscellaneous(reference: String, fileId: Option[String] ?= None)
 
 GET        /cases/cache/:reference/:itemType                    controllers.TabCacheController.get(reference: String, itemType: ApplicationType)
 POST       /cases/cache/:reference/:itemType                    controllers.TabCacheController.post(reference: String, itemType: ApplicationType)
@@ -152,11 +171,56 @@ POST        /create-new-miscellaneous                           controllers.Crea
 
 GET         /team-miscellaneous-choice                          controllers.CreateMiscellaneousController.displayQuestion(reference: String)
 
-GET         /new-miscellaneous-confirm                           controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
+GET         /new-miscellaneous-confirm                          controllers.CreateMiscellaneousController.displayConfirmation(reference: String)
 
 GET         /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.editMiscDetails(reference: String)
 POST        /cases/v2/:reference/miscellaneous/edit-case-details       controllers.CreateMiscellaneousController.postMiscDetails(reference: String)
 
 GET         /manager-tools                                       controllers.v2.ManagerToolsController.displayManagerTools(activeSubNav: SubNavigationTab ?= ManagerToolsReportsTab)
 
+GET        /users/user/:pid/user-edit-team                       controllers.v2.ManageUserController.editUserTeamDetails(pid: String)
+POST       /users/user/:pid/user-edit-team                       controllers.v2.ManageUserController.postEditUserTeams(pid: String)
+GET        /users/manage-users                                   controllers.v2.ManageUserController.displayManageUsers()
+GET        /users/user/:pid                                      controllers.v2.ManageUserController.displayUserDetails(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET        /users/user-delete/:pid                               controllers.v2.ManageUserController.deleteUser(pid: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST       /users/user-delete/:pid                               controllers.v2.ManageUserController.confirmRemoveUser(pid: String)
+GET        /users/user-delete-done                               controllers.v2.ManageUserController.doneDeleteUser(userName: String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
 
+POST        /users/user/:pid/atar                                controllers.v2.MoveCasesController.postMoveATaRCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/liability                           controllers.v2.MoveCasesController.postMoveLiabCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/correspondence                      controllers.v2.MoveCasesController.postMoveCorrCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/user/:pid/miscellaneous                       controllers.v2.MoveCasesController.postMoveMiscCases(pid:String, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases                               controllers.v2.MoveCasesController.chooseUserOrTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases                               controllers.v2.MoveCasesController.postTeamOrUserChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-team                          controllers.v2.MoveCasesController.chooseTeamToMoveCases(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-team                          controllers.v2.MoveCasesController.postTeamChoice(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET         /users/move/move-cases-done-team                     controllers.v2.MoveCasesController.casesMovedToTeamDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-user                          controllers.v2.MoveCasesController.chooseUserToMoveCases(teamId:Option[String] ?= None, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user                          controllers.v2.MoveCasesController.postUserChoice(teamId:Option[String] ?= None, activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+GET         /users/move/move-cases-done-user                     controllers.v2.MoveCasesController.casesMovedToUserDone(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-user-choose-team              controllers.v2.MoveCasesController.chooseUserFromAnotherTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user-choose-team              controllers.v2.MoveCasesController.postChooseUserFromAnotherTeam(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET         /users/move/move-cases-user-team                     controllers.v2.MoveCasesController.chooseOneOfUsersTeams(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+POST        /users/move/move-cases-user-team                     controllers.v2.MoveCasesController.postChooseOneOfUsersTeams(activeSubNav: SubNavigationTab ?= ManagerToolsUsersTab)
+
+GET        /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.displayManageKeywords()
+POST       /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.postDisplayManageKeywords()
+
+GET        /keywords/keyword-create                              controllers.v2.ManageKeywordsController.newKeyword()
+POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()
+GET        /keywords/keyword-create-done                         controllers.v2.ManageKeywordsController.displayConfirmKeyword(saveKeyword: String)
+GET        /keywords/keyword-update-done                         controllers.v2.ManageKeywordsController.displayKeywordChangeConfirmation(keyword: String, approved: Boolean, goodsName: String)
+
+GET        /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.editApprovedKeywords(keywordName: String)
+POST       /keywords/keyword-edit                                controllers.v2.ManageKeywordsController.postEditApprovedKeywords(keywordName: String)
+
+GET        /keywords/keyword-deleted                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab ?= ManagerToolsKeywordsTab)
+GET        /keywords/keyword-renamed                             controllers.v2.ManageKeywordsController.displayConfirmationKeywordRenamed(oldKeywordName: String, newKeywordName: String)
+
+GET        /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.changeKeywordStatus(keywordName: String, reference: String)
+POST       /keywords/keyword-:reference                          controllers.v2.ManageKeywordsController.approveOrRejectKeyword(keywordName: String, reference: String)

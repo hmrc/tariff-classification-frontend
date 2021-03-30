@@ -41,10 +41,10 @@
         <div class="govuk-tabs__panel" id="@caseTab.elementId">
             @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
                 case (_, 0) => messages("cases.table.empty")
-                case (ApplicationType.ATAR, _) => atarsTable(caseTab, applicationTabViewModel.headingMessageKey)
-                case (ApplicationType.LIABILITY, _) => liabilitiesTable(caseTab, applicationTabViewModel.headingMessageKey)
-                case (ApplicationType.CORRESPONDENCE, _) => correspondenceTable(caseTab, applicationTabViewModel.headingMessageKey)
-                case (ApplicationType.MISCELLANEOUS, _) => miscellaneousTable(caseTab, applicationTabViewModel.headingMessageKey)
+                case (ApplicationType.ATAR, _) => atarsTable(caseTab, applicationTabViewModel.headingMessageKey, applicationTabViewModel.headingMessageKey)
+                case (ApplicationType.LIABILITY, _) => liabilitiesTable(caseTab, applicationTabViewModel.headingMessageKey, applicationTabViewModel.headingMessageKey)
+                case (ApplicationType.CORRESPONDENCE, _) => correspondenceTable(caseTab, applicationTabViewModel.headingMessageKey, applicationTabViewModel.headingMessageKey)
+                case (ApplicationType.MISCELLANEOUS, _) => miscellaneousTable(caseTab, applicationTabViewModel.headingMessageKey, applicationTabViewModel.headingMessageKey)
             }
     }
         </div>

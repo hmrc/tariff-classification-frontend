@@ -18,12 +18,17 @@
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
 @import models.viewmodels.HomeTab
+@import models.Role.Role
 
 @this()
-@(countCases: Map[String, Int], referredCasesByAssignee: Int)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(request.operator.role.toString), customPrimaryNavTab = HomeTab) {
+@(
+  casesByTeam: Map[(Option[String], ApplicationType), Int],
+  totalCasesAssignedToMe: Int,
+  referredCasesAssignedToMe: Int,
+  completedCasesAssignedToMe: Int
+)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@components.cases_cards(countCases, referredCasesByAssignee)
-
+@main(bodyClasses = None, customTitle = Some(messages("operator.dashboard.classification.header")), customPrimaryNavTab = HomeTab) {
+  @components.cases_cards(casesByTeam, totalCasesAssignedToMe, referredCasesAssignedToMe, completedCasesAssignedToMe)
 }

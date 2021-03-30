@@ -5,7 +5,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
 import models.{Case, Pagination}
 import utils.Cases._
-import utils.{CasePayloads, EventPayloads}
+import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 import utils.JsonFormatters._
 
 class CaseSpec extends IntegrationTest with MockitoSugar {
@@ -55,29 +55,48 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
         get(
           urlEqualTo(
             "/events?case_reference=1" +
-              "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE" +
+              "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&type=SAMPLE_SEND_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(EventPayloads.pagedSampleEvents)
-          )
+          aResponse()
+            .withStatus(OK)
+            .withBody(EventPayloads.pagedSampleEvents)
+        )
       )
       stubFor(
         get(
           urlEqualTo(
             "/events?case_reference=1" +
-              "&type=EXPERT_ADVICE_RECEIVED&type=QUEUE_CHANGE&type=APPEAL_ADDED" +
+              "&type=EXPERT_ADVICE_RECEIVED&type=CASE_REJECTED&type=QUEUE_CHANGE&type=APPEAL_ADDED" +
               "&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE" +
               "&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED" +
               "&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(EventPayloads.pagedEvents)
+        )
+      )
+      stubFor(
+        get(
+          urlEqualTo(
+            s"/keywords?page=1&page_size=${Pagination.unlimited}"
+          )
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(KeywordsPayloads.pagedKeywords)
+        )
+      )
+      stubFor(
+        post(urlEqualTo("/file/initiate"))
+          .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(EventPayloads.pagedEvents)
+              .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
           )
       )
 
@@ -146,7 +165,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       stubFor(
         get(
           urlEqualTo(
-            s"/events?case_reference=1&type=EXPERT_ADVICE_RECEIVED&type=QUEUE_CHANGE&type=APPEAL_ADDED&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE&page=1&page_size=${Pagination.unlimited}"
+            s"/events?case_reference=1&type=EXPERT_ADVICE_RECEIVED&type=CASE_REJECTED&type=QUEUE_CHANGE&type=APPEAL_ADDED&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
           aResponse()

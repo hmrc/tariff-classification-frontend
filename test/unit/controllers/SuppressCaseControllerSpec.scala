@@ -16,16 +16,17 @@
 
 package controllers
 
-import models.{Permission, _}
-import org.mockito.ArgumentMatchers.{any, refEq}
+import connector.FakeDataCacheConnector
+import models._
+import models.request.FileStoreInitiateRequest
+import models.response._
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
-import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
-import play.api.mvc.MultipartFormData.FilePart
-import play.api.mvc.{MultipartFormData, Result}
-import play.api.test.Helpers.{redirectLocation, _}
-import service.CasesService
+import play.api.test.Helpers._
+import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
@@ -35,16 +36,28 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService = mock[CasesService]
+  private val fileService  = mock[FileStoreService]
   private val operator     = Operator(id = "id")
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-  private val caseWithStatusSUPRRESSED =
+  private val caseWithStatusSUPPRESSED =
     Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUPPRESSED)
+
+  private val initiateResponse = FileStoreInitiateResponse(
+    id              = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
 
   private def controller(requestCase: Case) = new SuppressCaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
+    fileService,
+    FakeDataCacheConnector,
     mcc,
     realAppConfig
   )
@@ -52,157 +65,182 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private def controller(requestCase: Case, permission: Set[Permission]) = new SuppressCaseController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
+    fileService,
+    FakeDataCacheConnector,
     mcc,
     realAppConfig
   )
 
   override def afterEach(): Unit = {
     super.afterEach()
-    reset(casesService)
+    reset(casesService, fileService)
+    await(FakeDataCacheConnector.clear())
   }
 
-  "Suppress Case" should {
+  "GET suppress case reason" should {
 
     "return OK and HTML content type" in {
-      val result: Result =
-        await(controller(caseWithStatusNEW).getSuppressCase("reference")(newFakeGETRequestWithCSRF(app)))
-
-      status(result)        shouldBe Status.OK
-      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
-      charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Change case status to: Suppressed")
-    }
-
-    "return OK when user has right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusNEW, Set(Permission.SUPPRESS_CASE))
-          .getSuppressCase("reference")(newFakeGETRequestWithCSRF(app))
-      )
-
-      status(result) shouldBe Status.OK
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusNEW, Set.empty).getSuppressCase("reference")(newFakeGETRequestWithCSRF(app))
-      )
-
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
-    }
-
-  }
-
-  "Confirm Suppress a Case" should {
-
-    def aMultipartFileWithParams(
-      contentType: String,
-      params: (String, Seq[String])*
-    ): MultipartFormData[TemporaryFile] = {
-      val file     = SingletonTemporaryFileCreator.create("example-file.txt")
-      val filePart = FilePart[TemporaryFile](key = "email", "file.txt", contentType = Some(contentType), ref = file)
-      MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
-    }
-
-    def anEmptyMultipartFileWithParams(params: (String, Seq[String])*): MultipartFormData[TemporaryFile] = {
-      val file     = SingletonTemporaryFileCreator.create("example-file.txt")
-      val filePart = FilePart[TemporaryFile](key = "email", "", contentType = Some("text/plain"), ref = file)
-      MultipartFormData[TemporaryFile](dataParts = params.toMap, files = Seq(filePart), badParts = Seq.empty)
-    }
-
-    "redirect to confirmation" in {
-      when(
-        casesService.suppressCase(refEq(caseWithStatusNEW), any[FileUpload], refEq("some-note"), any[Operator])(
-          any[HeaderCarrier]
-        )
-      ).thenReturn(successful(caseWithStatusSUPRRESSED))
-
-      val result: Result =
-        await(
-          controller(caseWithStatusNEW).postSuppressCase("reference")(
-            newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain", "note" -> Seq("some-note")))
-          )
-        )
-
-      status(result)     shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/suppress/confirmation")
-    }
-
-    "return to form on missing file" in {
-      val result: Result =
-        await(
-          controller(caseWithStatusNEW).postSuppressCase("reference")(
-            newFakePOSTRequestWithCSRF(app).withBody(anEmptyMultipartFileWithParams())
-          )
-        )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suppressed")
-    }
-
-    "return to form on missing form field" in {
-      val result: Result =
-        await(
-          controller(caseWithStatusNEW).postSuppressCase("reference")(
-            newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))
-          )
-        )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suppressed")
-    }
-
-    "return to form on invalid file type" in {
-      val result: Result =
-        await(
-          controller(caseWithStatusNEW).postSuppressCase("reference")(
-            newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("audio/mpeg", "note" -> Seq("some-note")))
-          )
-        )
-
-      status(result) shouldBe Status.OK
-      bodyOf(result) should include("Change case status to: Suppressed")
-    }
-
-    "redirect unauthorised when does not have right permissions" in {
-      val result: Result = await(
-        controller(caseWithStatusNEW, Set.empty)
-          .postSuppressCase("reference")(
-            newFakePOSTRequestWithCSRF(app).withBody(aMultipartFileWithParams("text/plain"))
-          )
-      )
-
-      status(result)               shouldBe Status.SEE_OTHER
-      redirectLocation(result).get should include("unauthorized")
-    }
-
-  }
-
-  "View Confirm page for a suppressed case" should {
-
-    "return OK and HTML content type" in {
-      val result: Result = await(
-        controller(caseWithStatusSUPRRESSED).confirmSuppressCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
-            .withFormUrlEncodedBody("state" -> "true")
-        )
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.SUPPRESS_CASE))
+          .getSuppressCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
       )
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("This case has been suppressed")
+      bodyOf(result)        should include(messages("change_case_status.suppressed.reason.heading", caseWithStatusOPEN.application.goodsName))
     }
 
-    "redirect to a default page on validation error" in {
-      val result: Result =
-        await(controller(caseWithStatusOPEN).confirmSuppressCase("reference")(newFakePOSTRequestWithCSRF(app)))
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty)
+          .getSuppressCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
 
-      status(result)        shouldBe Status.SEE_OTHER
-      contentTypeOf(result) shouldBe None
-      charsetOf(result)     shouldBe None
-      locationOf(result)    shouldBe Some("/manage-tariff-classifications/cases/reference")
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+
+  }
+
+  "POST suppress case reason" should {
+    "redirect to suppress case email page when filled correctly" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postSuppressCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(
+            app,
+            Map("note" -> "some-note")
+          )
+        )
+      )
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.SuppressCaseController.getSuppressCaseEmail(caseWithStatusOPEN.reference).path
+      )
+    }
+
+    "display error page when note is missing" in {
+      val result = await(
+        controller(caseWithStatusOPEN).postSuppressCaseReason(caseWithStatusOPEN.reference)(
+          newFakePOSTRequestWithCSRF(app, Map.empty[String, String])
+        )
+      )
+
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("error.empty.suppress.note"))
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty).postSuppressCaseReason(caseWithStatusNEW.reference)(
+          newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
+        )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
     }
   }
 
+  "GET suppress case email" should {
+
+    "return OK and HTML content type" in {
+      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+        initiateResponse
+      )
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.SUPPRESS_CASE))
+          .getSuppressCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)        shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("change_case_status.suppressed.email.heading", caseWithStatusOPEN.application.goodsName))
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty)
+          .getSuppressCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+  }
+
+  "GET suppress case" should {
+
+    "redirect to confirmation page" in {
+      val cacheKey = s"suppress_case-${caseWithStatusOPEN.reference}"
+      val cacheMap = UserAnswers(cacheKey).set("note", "some-note").cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
+
+      given(
+        casesService.suppressCase(
+          refEq(caseWithStatusOPEN),
+          any[Attachment],
+          any[String],
+          any[Operator]
+        )(any[HeaderCarrier])
+      ) willReturn successful(caseWithStatusSUPPRESSED)
+
+      val result = await(
+        controller(caseWithStatusOPEN).suppressCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        routes.SuppressCaseController.confirmSuppressCase(caseWithStatusSUPPRESSED.reference).path
+      )
+    }
+
+    "redirect to unauthorised when the user does not have any saved answers" in {
+      val result = await(
+        controller(caseWithStatusOPEN).suppressCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+
+    "redirect to unauthorised when the user does not have the right permissions" in {
+      val cacheKey = s"suppress_case-${caseWithStatusOPEN.reference}"
+      val cacheMap = UserAnswers(cacheKey).set("note", "some-note").cacheMap
+      await(FakeDataCacheConnector.save(cacheMap))
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set.empty).suppressCase(caseWithStatusOPEN.reference, "id")(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(routes.SecurityController.unauthorized().path)
+    }
+  }
+
+  "GET confirm suppress case" should {
+    "return OK and HTML content type" in {
+      val result = await(
+        controller(caseWithStatusSUPPRESSED).confirmSuppressCase(caseWithStatusSUPPRESSED.reference)(
+          newFakeGETRequestWithCSRF(app)
+        )
+      )
+
+      status(result)        shouldBe Status.OK
+      contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
+      charsetOf(result)     shouldBe Some("utf-8")
+      bodyOf(result)        should include(messages("suppress_case.confirm.header", caseWithStatusSUPPRESSED.application.goodsName))
+    }
+  }
 }

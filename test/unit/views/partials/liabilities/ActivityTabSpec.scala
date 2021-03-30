@@ -131,7 +131,7 @@ class ActivityTabSpec extends ViewSpec {
       doc                                                  should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref", "att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
@@ -173,7 +173,7 @@ class ActivityTabSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref", "att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
@@ -220,9 +220,52 @@ class ActivityTabSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref", "att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
+      doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
+    }
+
+    "Render 'Rejection Status Change'" in {
+
+      val e = Event(
+        id = "EVENT_ID",
+        details = RejectCaseStatusChange(
+          from         = CaseStatus.OPEN,
+          to           = CaseStatus.REJECTED,
+          comment      = Some("comment"),
+          attachmentId = Some("att-id"),
+          reason       = RejectReason.APPLICATION_WITHDRAWN
+        ),
+        operator      = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp     = date
+      )
+
+      val doc = view(
+        activityTab(activityViewModel.copy(events = Paged(Seq(e))), activityForm)(
+          requestWithAddNotePermission,
+          messages,
+          appConfig
+        )
+      )
+
+      doc should containElementWithID("activity-events-row-0-operator")
+      doc.getElementById("activity-events-row-0-operator") should containText("id")
+      doc should containElementWithID("activity-events-row-0-content")
+      doc.getElementById("activity-events-row-0-content")  should containText("Status changed from open to rejected")
+      doc should containElementWithID("activity-events-row-0-comment")
+      doc.getElementById("activity-events-row-0-comment")  should containText("comment")
+      doc should containElementWithID("activity-events-row-0-reason")
+      doc.getElementById("activity-events-row-0-reason") should containText(
+        RejectReason.format(RejectReason.APPLICATION_WITHDRAWN)
+      )
+      doc should containElementWithID("activity-events-row-0-email_link")
+      doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
+        "href",
+        routes.ViewAttachmentController.get("ref", "att-id").url
+      )
+      doc should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
     }
 

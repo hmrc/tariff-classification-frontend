@@ -20,11 +20,11 @@
 
 @(completeMessage: String, emailMessage: Option[String], daysElapsed: Option[Html], viewCasesMessage: String, viewCasesTab: SubNavigationTab)(implicit messages: Messages)
 
-<div id="confirm_complete_id" class="column-two-thirds">
+<div id="confirm_complete_id" class="column-two-thirds pl-0">
     <div class="govuk-panel govuk-panel--confirmation">
-        <h2 class="heading-xlarge mt-0">@completeMessage</h2>
-        <h3 class="heading-large">@emailMessage</h3>
-        <h3 class="heading-large">@daysElapsed</h3>
+        <h1 class="govuk-panel__title">@completeMessage</h1>
+        <div class="govuk-panel__body">@emailMessage</div>
+        <div class="govuk-panel__body">@daysElapsed</div>
     </div>
     @confirmation_next_steps(viewCasesMessage, controllers.v2.routes.AllOpenCasesController.displayAllOpenCases(viewCasesTab))
 </div>

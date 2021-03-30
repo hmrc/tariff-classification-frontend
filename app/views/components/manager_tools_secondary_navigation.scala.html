@@ -16,7 +16,6 @@
 
 @import models.viewmodels.SubNavigationTab
 @import models.viewmodels.ManagerToolsUsersTab
-@import models.viewmodels.ManagerToolsTeamsTab
 @import models.viewmodels.ManagerToolsKeywordsTab
 @import models.viewmodels.ManagerToolsReportsTab
 @import controllers.v2.routes
@@ -29,37 +28,28 @@
         <li class="moj-sub-navigation__item">
             @if(selectedTab == ManagerToolsUsersTab) {
                 <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link" aria-current="page"
-                href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsUsersTab)">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
+                href="@routes.ManageUserController.displayManageUsers()">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
             } else {
                 <a id = "sub_nav_manager_tools_users_tab" class="moj-sub-navigation__link"
-                href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsUsersTab)">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
+                href="@routes.ManageUserController.displayManageUsers()">@messages("operator.dashboard.classification.manager-tools.tab-users")</a>
             }
-        </li>
-        <li class="moj-sub-navigation__item">
-        @if(selectedTab == ManagerToolsTeamsTab) {
-            <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link" aria-current="page"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsTeamsTab)">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>
-        } else {
-            <a id ="sub_nav_manager_tools_teams_tab" class="moj-sub-navigation__link"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsTeamsTab)">@messages("operator.dashboard.classification.manager-tools.tab-teams")</a>
-        }
         </li>
         <li class="moj-sub-navigation__item">
         @if(selectedTab == ManagerToolsKeywordsTab) {
             <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link" aria-current="page"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsKeywordsTab)">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
+            href="@routes.ManageKeywordsController.displayManageKeywords()">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
         } else {
             <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsKeywordsTab)">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
+            href="@routes.ManageKeywordsController.displayManageKeywords()">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
         }
         </li>
         <li class="moj-sub-navigation__item">
         @if(selectedTab == ManagerToolsReportsTab) {
             <a id ="sub_nav_manager_tools_reports_tab" class="moj-sub-navigation__link" aria-current="page"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsReportsTab)">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
+            href="@controllers.routes.ReportingController.displayManageReporting()">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
         } else {
             <a id ="sub_nav_manager_tools_reports_tab" class="moj-sub-navigation__link"
-            href="@routes.ManagerToolsController.displayManagerTools(ManagerToolsReportsTab)">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
+            href="@controllers.routes.ReportingController.displayManageReporting()">@messages("operator.dashboard.classification.manager-tools.tab-reports")</a>
         }
         </li>
     </ul>

@@ -1,0 +1,51 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.managementtools._
+@import controllers.routes.{AssignCaseController, CaseController}
+@import models.Role.Role
+
+@import play.twirl.api.TemplateMagic.defining
+@import views.html.partials.statuses.case_status
+
+@(usersTab : UsersTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+<table id="@{usersTab.tabMessageKey}-table">
+    <thead class="govuk-table__head">
+        <tr id="@{usersTab.tabMessageKey}-details" class="grid-row mb-2">
+            <th id="@{usersTab.tabMessageKey}-user" class="bold w-0" scope="col">User</th>
+            <th id="@{usersTab.tabMessageKey}-role" class="bold w-0" scope="col">Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for((result, index) <- usersTab.searchResult.zipWithIndex) {
+
+                <tr id="@{usersTab.tabMessageKey}-details-@index">
+                    <td id="@{usersTab.tabMessageKey}-user-@index">
+                        <a href="@controllers.v2.routes.ManageUserController.displayUserDetails(result.id)">@{result.name match {
+                            case Some(userName) if(!userName.trim.isEmpty) => userName
+                            case _ => result.id
+                            }}</a>
+                    </td>
+                    <td id="@{usersTab.tabMessageKey}-role-@index">@{Role.format(result.role)}</td>
+                </tr>
+
+        }
+    </tbody>
+</table>
+

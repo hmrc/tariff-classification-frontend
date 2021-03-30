@@ -18,18 +18,21 @@
 @import helper.CSRF
 @import models.forms.{ActivityFormData, DecisionFormData}
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel, MyCasesTab}
+@import models.response.FileStoreInitiateResponse
+@import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel, MyCasesTab, PrimaryNavigationTab, OpenCasesTab, GatewayCasesTab}
 @import models.viewmodels.atar._
 @import views.html.includes.main
-@import views.html.partials.{case_trader, application_details, activity_details, keywords_details, attachments_details}
+@import views.html.partials.{case_trader, application_details, activity_details, attachments_details}
 @import views.html.partials.appeal.appeal_details
 @import views.html.partials.sample.{sample_details, sample_status_events_table}
 @import views.html.partials.ruling.ruling_details
+@import views.html.partials.notification_banner
 
 @this(
     case_heading: views.html.v2.case_heading,
     case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
     advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
+    keywords_details: views.html.v2.keywords_details,
 )
 
 @(
@@ -43,6 +46,7 @@
 
     attachmentsTab: AttachmentsTabViewModel,
     uploadForm: Form[String],
+    initiateResponse: FileStoreInitiateResponse,
 
     activityTab: ActivityViewModel,
     activityForm: Form[ActivityFormData],
@@ -54,17 +58,22 @@
     rulingForm: Option[Form[DecisionFormData]],
     attachments: Seq[StoredAttachment],
 
-    appealTab: Option[AppealTabViewModel]
+    appealTab: Option[AppealTabViewModel],
+    primaryNavTab: PrimaryNavigationTab = MyCasesTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
     bodyClasses = None,
-    customTitle = Some(messages("case.v2.atar.page_title")),
-    customPrimaryNavTab = MyCasesTab
+    customTitle = Some(messages("case.details.title")),
+    customPrimaryNavTab = primaryNavTab
 ) {
 
-    @case_heading(caseViewModel.caseHeader)
-
+    @if(request.flash.get("success").getOrElse("").contains("referral")){
+        @notification_banner()(request.flash, messages)
+    }
+<div class="column-two-thirds operation-dashboard-header">
+    @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
+</div>
     <div class="form-groups">
         @case_action_buttons_partial(caseViewModel)
         @advanced_search_cases(caseViewModel)
@@ -136,7 +145,7 @@
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
-            @attachments_details(attachmentsTab, uploadForm)
+            @attachments_details(attachmentsTab, uploadForm, initiateResponse)
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">

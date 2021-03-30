@@ -35,7 +35,7 @@ class EmailServiceSpec extends ServiceSpecBase {
 
   "Email Service 'sendCompleteCaseEmail'" should {
     val aCase       = mock[Case]
-    val anOperator = Operator("1", Some("officer"))
+    val anOperator  = Operator("1", Some("officer"))
     val application = mock[BTIApplication]
     val contact     = Contact("name", "email", None)
     val template    = mock[EmailTemplate]
@@ -51,7 +51,8 @@ class EmailServiceSpec extends ServiceSpecBase {
     }
 
     "Delegate to connector" in {
-      val aDate = LocalDate.of(2021, 1, 1)
+      val aDate = LocalDate
+        .of(2021, 1, 1)
         .atStartOfDay()
         .atZone(ZoneOffset.UTC)
         .toInstant()
@@ -64,7 +65,7 @@ class EmailServiceSpec extends ServiceSpecBase {
       given(application.contact).willReturn(contact)
       given(application.goodName).willReturn("item")
 
-      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Any]]))
+      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Email[_]]]))
         .willReturn(successful((): Unit))
       given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]]))
         .willReturn(successful(template))
@@ -72,17 +73,19 @@ class EmailServiceSpec extends ServiceSpecBase {
       await(service.sendCaseCompleteEmail(aCase, anOperator))
 
       verify(connector).send(
-        refEq(CaseCompletedEmail(
-          Seq("email"),
-          CaseCompletedEmailParameters(
-            recipientName_line1 = "name",
-            reference = "ref",
-            goodsName = "item",
-            officerName = "officer",
-            dateSubmitted = "01 Jan 2021"
+        refEq(
+          CaseCompletedEmail(
+            Seq("email"),
+            CaseCompletedEmailParameters(
+              recipientName_line1 = "name",
+              reference           = "ref",
+              goodsName           = "item",
+              officerName         = "officer",
+              dateSubmitted       = "01 Jan 2021"
+            )
           )
-        ))
-      )(any[HeaderCarrier], any[Writes[Any]])
+        )
+      )(any[HeaderCarrier], any[Writes[Email[_]]])
     }
   }
 

@@ -13,7 +13,7 @@
   white-space: -pre-wrap;     /* Opera <7 */
   white-space: -o-pre-wrap;   /* Opera 7 */
   word-wrap: break-word;      /* IE */
-  word-break: break-all;
+  word-break: break-word;
 }
 
 /* liability view css added to match with the prototype */
@@ -36,6 +36,13 @@
 .govuk-notification-banner--success {
     border-color: #00703c;
     background-color: #00703c;
+}
+.govuk-notification-banner--success:focus {
+    border-color: #0b0c0c;
+    outline: 3px solid #fd0;
+    outline-offset: 0;
+    -webkit-box-shadow: inset 0 0 0 2px;
+    box-shadow: inset 0 0 0 2px;
 }
 .govuk-notification-banner {
     -webkit-font-smoothing: antialiased;
@@ -83,8 +90,27 @@
     width: 66.66667%;
 }
 @media screen and (max-width: 767px) {
-.govuk-notification-banner-width {
-    width: 100%;
-}
+    .govuk-notification-banner-width {
+        width: 100%;
+    }
 }
 /* successful notification banner END */
+/* added input file focus indication according to GDS */
+.govuk-file-upload {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    line-height: 1.25;
+    color: #0b0c0c;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.govuk-file-upload:focus {
+    margin-right: -5px;
+    margin-left: -5px;
+    padding-right: 5px;
+    padding-left: 5px;
+    outline: 3px solid #fd0;
+    -webkit-box-shadow: inset 0 0 0 4px #0b0c0c;
+    box-shadow: inset 0 0 0 4px #0b0c0c;
+}

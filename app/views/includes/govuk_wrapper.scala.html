@@ -29,7 +29,6 @@
         sidebar: Html = HtmlFormat.empty,
         contentHeader: Option[Html] = None,
         mainContent: Html = HtmlFormat.empty,
-        serviceInfoContent: Html = HtmlFormat.empty,
         scriptElem: Option[Html] = None,
         primaryNavComponent: Option[Html] = None,
         customPrimaryNavTab: PrimaryNavigationTab = HomeTab)(implicit request: Request[_], messages: Messages)
@@ -41,15 +40,15 @@
         linkElem = None,
         headScripts = None)
         <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
 
         <noscript>
-            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NDJKHWK" height="0" width="0" style="display: none;
+            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLWQQZB" height="0" width="0" style="display: none;
                 visibility: hidden"></iframe>
         </noscript>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/ga-tag-manager.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/tab_focus.js")"></script>
-
     }
 
     @headerNavLinks = {}
@@ -71,6 +70,7 @@
         <script type="text/javascript" src="@routes.Assets.at("javascripts/details.polyfill.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/govuk-frontend-3.6.0.min.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-back-link.js")"></script>
     }
 
     @footerTop = {}
@@ -79,23 +79,6 @@
     @uiLayouts.footer_links(
         accessibilityFooterUrl = Some(appConfig.accessibilityStatementUrl(request.uri))
     )
-    }
-
-    @phaseBanner = {
-    @uiLayouts.betaBanner(
-        userLoggedIn = false,
-        betaFeedbackUrl = appConfig.betaFeedbackUrl,
-        betaFeedbackUnauthenticatedUrl = appConfig.betaFeedbackUnauthenticatedUrl,
-        showFeedbackLinkInBetaBanner = true
-    )
-    }
-
-    @serviceInfo = {
-    @uiLayouts.serviceInfo(
-        betaBanner = phaseBanner,
-        includeGridWrapper = false,
-        includeHMRCBranding = false,
-        serviceInfoContent = Some(serviceInfoContent))
     }
 
     @mainContentHeader = {
@@ -116,7 +99,6 @@
         mainClass = mainClass,
         mainDataAttributes = mainDataAttributes,
         mainContentHeader = mainContentHeader,
-        serviceInfo = serviceInfo,
         getHelpForm = HtmlFormat.empty,
         sidebar = sidebar)
     }

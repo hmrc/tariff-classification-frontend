@@ -16,6 +16,8 @@
 
 package audit
 
+import java.time.Instant
+
 import base.SpecBase
 import models.AppealStatus.AppealStatus
 import models.CancelReason.CancelReason
@@ -24,11 +26,16 @@ import models.{CaseStatus => _, _}
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import utils.Cases._
-
 import java.time.Instant
+
+import play.api.libs.json.Json
+
+import utils.JsonFormatters.caseFormat
+import utils.JsonFormatters.operatorFormat
 import scala.concurrent.ExecutionContext
 
 class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
@@ -59,6 +66,29 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
         .sendExplicitAudit(refEq("caseCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
     }
   }
+
+  "Service 'audit case updated'" should {
+    val originalCase = aLiabilityCase(withReference("ref"))
+    val updatedCase = originalCase.copy(decision =
+      Some(
+        Decision(bindingCommodityCode = "123456", justification = "acceptable", goodsDescription = "quirky")
+      )
+    )
+
+    "Delegate to connector" in {
+      service.auditCaseUpdated(originalCase, updatedCase, operator)
+
+      val payload = Json.obj(
+        "originalCase" -> Json.toJson(originalCase),
+        "operatorUpdating"  -> operator.id,
+        "updatedCase"  -> Json.toJson(updatedCase)
+      )
+
+      verify(connector)
+        .sendExplicitAudit(refEq("caseUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
   "Service 'audit case assigned'" should {
 
     "Delegate to connector" in {
@@ -420,6 +450,25 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     }
   }
 
+  "Service 'audit sample send changed'" should {
+    val original = aCase(withReference("ref"))
+    val updated  = aCase(withReference("ref"), withSample(Sample(whoIsSending = Some(SampleSend.AGENT))))
+    val operator = Operator("operator-id")
+
+    "Delegate to connector" in {
+      service.auditSampleSendChange(original, updated, operator)
+
+      val payload = sampleSendChangeAudit(
+        caseReference  = "ref",
+        newSender      = "AGENT",
+        previousSender = "None",
+        operatorId     = operator.id
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("caseSampleSendChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
   "Service 'audit message'" should {
     val message = "this is my message"
     val corrCase = correspondenceCaseExample.copy(
@@ -456,6 +505,123 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseMessage"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+    }
+  }
+
+  "Service 'audit User Updated'" in {
+    val updatedOperator  = Operator("PID")
+    val operatorUpdating = Operator("PID2")
+
+    service.auditUserUpdated(operator, updatedOperator, operatorUpdating)
+
+    val payload = Json.obj(
+      "originalOperator" -> Json.toJson(operator),
+      "updatedOperator"  -> Json.toJson(updatedOperator),
+      "operatorUpdating" -> operatorUpdating.id
+    )
+
+    verify(connector)
+      .sendExplicitAudit(refEq("userUpdated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+  }
+
+  "Service 'audit user case moved'" in {
+    val operator       = Operator("PID")
+    val caseReferences = List("ref1", "ref2", "ref3")
+
+    service.auditUserCaseMoved(caseReferences, Some(operator), "2", "id", "managerId")
+
+    val payload = Json.obj(
+      "operatorId"       -> "id",
+      "team"             -> "2",
+      "newOperatorId"    -> operator.id,
+      "caseReferences"   -> Json.toJson(caseReferences),
+      "operatorUpdating" -> "managerId"
+    )
+
+    verify(connector)
+      .sendExplicitAudit(refEq("userCasesMoved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+  }
+
+  "Service 'auditManagerKeywordCreated'" should {
+
+    "audit keyword created" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.CREATED)
+
+      val payload = Map(
+        "operatorId"     -> operator.id,
+        "keywordCreated" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+
+    "audit keyword approved" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.APPROVE)
+
+      val payload = Map(
+        "operatorId"      -> operator.id,
+        "keywordApproved" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordApproved"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+
+    "audit keyword rejected" in {
+
+      val keyword = Keyword("new keyword")
+
+      service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.REJECT)
+
+      val payload = Map(
+        "operatorId"      -> operator.id,
+        "keywordRejected" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordRejected"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+  }
+
+  "Service 'auditManagerKeywordDeleted'" should {
+
+    "audit keyword deleted" in {
+      val keyword = Keyword("new keyword", true)
+
+      service.auditManagerKeywordDeleted(operator, keyword)
+
+      val payload = Map(
+        "operatorId"     -> operator.id,
+        "keywordDeleted" -> keyword.name
+      )
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordDeleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
+    }
+  }
+
+  "Service 'auditManagerKeywordRenamed'" should {
+
+    "audit keyword renamed" in {
+      val oldKeyword = Keyword("oldKeywordName", true)
+      val newKeyword = Keyword("newKeywordName", true)
+
+      service.auditManagerKeywordRenamed(operator, oldKeyword, newKeyword)
+
+      val payload = Map(
+        "operatorId"      -> operator.id,
+        "originalKeyword" -> oldKeyword.name,
+        "updatedKeyword"  -> newKeyword.name
+      )
+
+      verify(connector)
+        .sendExplicitAudit(refEq("managerKeywordRenamed"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
+
     }
   }
 
@@ -558,5 +724,18 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       "operatorId"           -> operatorId,
       "newSampleReturn"      -> newStatus,
       "previousSampleReturn" -> previousStatus
+    )
+
+  private def sampleSendChangeAudit(
+    caseReference: String,
+    newSender: String,
+    previousSender: String,
+    operatorId: String
+  ): Map[String, String] =
+    Map[String, String](
+      "caseReference"        -> caseReference,
+      "operatorId"           -> operatorId,
+      "newSampleSender"      -> newSender,
+      "previousSampleSender" -> previousSender
     )
 }

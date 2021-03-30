@@ -254,14 +254,14 @@ textarea.form-control-error,
 a.button-gray,
 button.button-gray,
 .button-gray:visited {
-    background-color: #dee0e2;
+    background-color: #f3f2f1;
     color: #0b0c0c;
 }
 .button-gray:hover,
 a.button-gray:hover,
 button.button-gray,
 .button-gray:visited:hover {
-    background-color: #c7cacc;
+    background-color: #dbdad9;
 }
 .beta-banner {
     padding-top: 10px;
@@ -311,4 +311,17 @@ button.button-gray,
 }
 .un-bold {
   font-weight: normal;
+}
+.form-hint {
+    color: #505a5f;
+}
+
+a:hover {
+    color: #003078;
+}
+a:active {
+    color: #0b0c0c;
+}
+details summary:hover {
+    color: #003078;
 }

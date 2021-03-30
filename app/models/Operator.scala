@@ -21,33 +21,56 @@ import models.Role.Role
 case class Operator(
   id: String,
   name: Option[String]         = None,
+  email: Option[String]        = None,
   role: Role                   = Role.CLASSIFICATION_OFFICER,
-  permissions: Set[Permission] = Set.empty
+  memberOfTeams: Seq[String]   = Seq.empty,
+  managerOfTeams: Seq[String]  = Seq.empty, //being a member is the same as being the manager, don't use this
+  permissions: Set[Permission] = Set.empty,
+  deleted: Boolean             = false
 ) {
 
   def manager: Boolean = role == Role.CLASSIFICATION_MANAGER
 
-  def safeName: String = name.getOrElse(s"PID $id")
+  def safeName: String = {
+    val safeN = name.getOrElse(s"PID $id")
+    if (safeN.trim.isEmpty) s"PID $id"
+    else safeN
+  }
 
   def hasPermissions(p: Set[Permission]): Boolean = p.subsetOf(permissions)
 
   def addPermissions(addedPermissions: Set[Permission]): Operator =
     this.copy(permissions = permissions ++ addedPermissions)
 
+  def withoutTeams                   = copy(memberOfTeams = Seq.empty, managerOfTeams           = Seq.empty)
+  def withTeamsFrom(other: Operator) = copy(memberOfTeams = other.memberOfTeams, managerOfTeams = other.managerOfTeams)
+
+  def getMemberTeamNames: Seq[String] = memberOfTeams.flatMap(teamId => Queues.queueById(teamId).map(_.name))
+
+  def isGateway: Boolean = memberOfTeams.contains(Queues.gateway.id)
+
+  def getFullName: String = {
+    val fullName = name.getOrElse("Unknown")
+    if (fullName.trim.isEmpty) "Unknown"
+    else fullName
+  }
+
+  def getEmail: String = {
+    val mail = email.getOrElse("Unknown")
+    if (mail.trim.isEmpty) "Unknown"
+    else mail
+  }
 }
 
 object Role extends Enumeration {
   type Role = Value
-  val CLASSIFICATION_OFFICER = Value("Classification officer")
-  val CLASSIFICATION_MANAGER = Value("Classification manager")
-  val READ_ONLY              = Value("Unknown")
+  val CLASSIFICATION_OFFICER, CLASSIFICATION_MANAGER, READ_ONLY = Value
 
   def format(roleType: Role): String =
     roleType match {
       case CLASSIFICATION_OFFICER => "Classification officer"
       case CLASSIFICATION_MANAGER => "Manager"
-      case READ_ONLY => "Unknown"
+      case READ_ONLY              => "Unknown"
 
     }
-
 }

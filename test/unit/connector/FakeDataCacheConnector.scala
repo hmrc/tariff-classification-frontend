@@ -44,4 +44,8 @@ class FakeDataCacheConnector(initialData: Map[String, CacheMap]) extends DataCac
 
     true
   }
+
+  def clear(): Future[Unit] = Future.successful {
+    cache.set(Map.empty)
+  }
 }

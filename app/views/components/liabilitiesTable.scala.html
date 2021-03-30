@@ -17,59 +17,87 @@
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.ApplicationsTab
+@import utils.Dates
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
 
-@(liabilityTab: ApplicationsTab, assignmentType: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(liabilityTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
  <table id="@{liabilityTab.tabMessageKey}-table">
-  <tbody>
+  <caption class="visually-hidden">@messages(captionMessage)</caption>
+  <thead class="govuk-table__head">
     <tr id="@{liabilityTab.tabMessageKey}-details" class="grid-row mb-2">
-     <th id="@{liabilityTab.tabMessageKey}-reference" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-reference" class="bold w-0" scope="col">
      Reference
      </th>
-     <th id="@{liabilityTab.tabMessageKey}-goods" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-goods" class="bold w-0" scope="col">
       Goods
      </th>
-     <th id="@{liabilityTab.tabMessageKey}-trader" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-trader" class="bold w-0" scope="col">
       Trader
      </th>
-     <th id="@{liabilityTab.tabMessageKey}-elapsed-days" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-type" class="bold w-0" scope="col">
+      Type
+     </th>
+     <th id="@{liabilityTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
       Elapsed days
      </th>
      @if(assignmentType == "applicationTab.referredByMe") {
-     <th id="@{liabilityTab.tabMessageKey}-refer-days" class="bold w-0">
+     <th id="@{liabilityTab.tabMessageKey}-refer-days" class="bold w-0" scope="col">
       Refer days
      </th>
      }
-     <th id="@{liabilityTab.tabMessageKey}-type" class="bold w-0">
-      Type
+     @if(assignmentType == "applicationTab.completedByMe") {
+     <th id="@{liabilityTab.tabMessageKey}-completed-date" class="bold w-0" scope="col">
+      Completed date
      </th>
-     <th id="@{liabilityTab.tabMessageKey}-status" class="bold w-0">
+     }
+     @if(assignmentType != "applicationTab.completedByMe") {
+     <th id="@{liabilityTab.tabMessageKey}-status" class="bold w-0" scope="col">
       Status
      </th>
+     }
     </tr>
-
+  </thead>
+  <tbody>
    @for((result, index) <- liabilityTab.searchResult.results.zipWithIndex) {
 
     @defining(result.application.asLiabilityOrder) { liability =>
 
      <tr id="@{liabilityTab.tabMessageKey}-details-@index">
-      <td id="@{liabilityTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+      <td id="@{liabilityTab.tabMessageKey}-reference-@index">
+       <a href="@routes.CaseController.get(result.reference)">
+        <span aria-hidden="true">@{result.reference}</span>
+        <span class="visually-hidden">case reference @{result.reference}</span>
+       </a>
+      </td>
       <td id="@{liabilityTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
       <td id="@{liabilityTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
-      <td id="@{liabilityTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-      @if(assignmentType == "applicationTab.referredByMe") {<td id="@{liabilityTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>}
       <td id="@{liabilityTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
        <span class="govuk-tag govuk-tag--pink">@{liability.status}</span>
-      }</td>
+       }</td>
+      <td id="@{liabilityTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+      @if(assignmentType == "applicationTab.referredByMe") {
+       <td id="@{liabilityTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
+      }
+      @if(assignmentType == "applicationTab.completedByMe") {
+       <td id="@{liabilityTab.tabMessageKey}-completed-date-@index">
+        @for(completedEvent <- liabilityTab.completedEvent.flatMap(_.get(result.reference))) {
+          @Dates.format(completedEvent.timestamp)
+        }
+       </td>
+      }
+      @if(assignmentType != "applicationTab.completedByMe") {
       <td id="@{liabilityTab.tabMessageKey}-status-@index">
        @case_status_tab(result, s"${liabilityTab.tabMessageKey}-status-label-$index")
        @for(referralEvent <- liabilityTab.referralEvent.flatMap(_.get(result.reference))) {
-       <span id="@{liabilityTab.tabMessageKey}-status-refer-to-@index"><p>@{referralEvent.referredTo}</p></span>
+       <span id="@{liabilityTab.tabMessageKey}-status-refer-to-@index">
+        <p>@{referralEvent.details.asInstanceOf[ReferralCaseStatusChange].referredTo}</p>
+       </span>
         }
       </td>
+      }
      </tr>
     }
 

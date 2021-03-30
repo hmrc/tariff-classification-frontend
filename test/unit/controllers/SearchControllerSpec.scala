@@ -85,7 +85,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       given(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])) willReturn Future.successful(
         None
       )
-      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
+      given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
       val result = await(controller.search(defaultTab, reference = Some("reference"), page = 2)(fakeRequest))
 
       status(result)          shouldBe Status.OK
@@ -96,7 +96,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "render the advanced search page if searching by reference but it is empty" in {
-      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
+      given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
       val result = await(controller.search(defaultTab, reference = Some(" "), page = 2)(fakeRequest))
 
       status(result)          shouldBe Status.OK
@@ -112,7 +112,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       given(fileStoreService.getAttachments(refEq(Seq.empty))(any[HeaderCarrier])) willReturn Future.successful(
         Map.empty[Case, Seq[StoredAttachment]]
       )
-      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
+      given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
 
       val result = await(controller.search(defaultTab, search = Search(), page = 2)(fakeRequest))
 
@@ -125,7 +125,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
     "render results if not empty" in {
       // Given
-      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
       val c      = aCase()
       val attachment =
         StoredAttachment(
@@ -146,11 +146,11 @@ class SearchControllerSpec extends ControllerBaseSpec {
       given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(
         Map(c -> Seq(attachment))
       )
-      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
+      given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
 
       // When
       val request = fakeRequest.withFormUrlEncodedBody(
-        "trader_name"    -> "trader",
+        "case_source"    -> "trader",
         "commodity_code" -> "00"
       )
       val result = await(controller.search(defaultTab, search = search, page = 2)(request))
@@ -164,15 +164,15 @@ class SearchControllerSpec extends ControllerBaseSpec {
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe Some("search results")
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe
         Some(
-          "/manage-tariff-classifications/search?addToSearch=false&trader_name=trader&commodity_code=00&page=2#advanced_search_keywords"
+          "/manage-tariff-classifications/search?addToSearch=false&case_source=trader&commodity_code=00&page=2#advanced_search_keywords"
         )
     }
 
     "render errors if form invalid" in {
       // Given
-      val search = Search(traderName = Some("trader"))
+      val search = Search(caseSource = Some("trader"))
 
-      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
+      given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
 
       // When
       val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "a")
@@ -189,7 +189,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
     "return OK when user has right permissions" in {
       // Given
-      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
       val c      = aCase()
       val attachment =
         StoredAttachment(
@@ -210,11 +210,11 @@ class SearchControllerSpec extends ControllerBaseSpec {
       given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(
         Map(c -> Seq(attachment))
       )
-      given(keywordsService.autoCompleteKeywords) willReturn Future.successful(Seq.empty[String])
+      given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
 
       // When
       val request = fakeRequest.withFormUrlEncodedBody(
-        "trader_name"    -> "trader",
+        "case_source"    -> "trader",
         "commodity_code" -> "00"
       )
       val result =
@@ -225,9 +225,9 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val search = Search(traderName = Some("trader"), commodityCode = Some("00"))
+      val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
       val request = fakeRequest.withFormUrlEncodedBody(
-        "trader_name"    -> "trader",
+        "case_source"    -> "trader",
         "commodity_code" -> "00"
       )
       val result = await(controller(Set.empty).search(defaultTab, search = search, page = 2)(request))

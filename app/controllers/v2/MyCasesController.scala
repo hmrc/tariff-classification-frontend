@@ -16,20 +16,23 @@
 
 package controllers.v2
 
-import cats.syntax.traverse._
+
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models.request.AuthenticatedRequest
 import models.viewmodels._
 import models._
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService}
-import uk.gov.hmrc.http.HeaderCarrier
+
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+
+import akka.stream.Materializer
 
 class MyCasesController @Inject() (
   verify: RequestActions,
@@ -39,39 +42,26 @@ class MyCasesController @Inject() (
   val myCasesView: views.html.v2.my_cases_view
 )(
   implicit val appConfig: AppConfig,
-  ec: ExecutionContext
+  mat: Materializer
 ) extends FrontendController(mcc)
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  private def getReferralEvents(
-    cases: Paged[Case]
-  )(implicit hc: HeaderCarrier): Future[Map[String, ReferralCaseStatusChange]] =
-    cases.results.toList
-      .traverse { aCase =>
-        eventsService.getFilteredEvents(aCase.reference, NoPagination(), Some(Set(EventType.CASE_REFERRAL))).map {
-          events =>
-            val eventsLatestFirst = events.results.sortBy(_.timestamp)(Event.latestFirst)
-            val latestReferralEvent = eventsLatestFirst.collectFirst {
-              case Event(_, details: ReferralCaseStatusChange, _, caseReference, _) => Map(caseReference -> details)
-              case _                                                                => Map.empty
-            }
-            latestReferralEvent.getOrElse(Map.empty)
-        }
-      }
-      .map(_.foldLeft(Map.empty[String, ReferralCaseStatusChange])(_ ++ _))
+  implicit val ec: ExecutionContext = mat.executionContext
 
   def displayMyCases(activeSubNav: SubNavigationTab = AssignedToMeTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {
           cases <- casesService.getCasesByAssignee(request.operator, NoPagination())
-          referralEventsByCase <- getReferralEvents(cases)
+          caseReferences = cases.results.map(_.reference).toSet
+          referralEventsByCase <- eventsService.findReferralEvents(caseReferences)
+          completeEventsByCase <- eventsService.findCompletionEvents(caseReferences)
           myCaseStatuses = activeSubNav match {
             case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
             case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
-            case CompletedByMeTab => ApplicationsTab.completedByMe
+            case CompletedByMeTab => ApplicationsTab.completedByMe(cases.results, completeEventsByCase)
           }
         } yield Ok(myCasesView(myCaseStatuses, activeSubNav))
     }
-
 }

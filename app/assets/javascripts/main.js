@@ -27,7 +27,17 @@ window.onload = function () {
         hasErrors.focus();
     }
 
+    var hasSuccess = document.querySelector("#govuk-notification-banner--success");
+    if(hasSuccess) {
+        hasSuccess.focus();
+    }
 
 };
 
+function keep() {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "/manage-tariff-classifications/keep-alive", true);
+    xhr.send(null);
+};
+setInterval(keep, 780000);
 

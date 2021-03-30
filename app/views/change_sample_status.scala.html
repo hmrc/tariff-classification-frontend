@@ -32,10 +32,9 @@
 
     @error_summary(form.errors)
 
-    @case_heading(c)
-
-    <h2 id="change_sample_status-heading" class="heading-large">@messages("case.sample.status.change-status-header")</h2>
+<div id="change_sample_status-heading" class="column-two-thirds pl-0 pr-0">
+    @case_heading(c, messageKey = Some("case.miscellaneous.header"))
 
     @sample_status_form(c, form("status"))
-
+</div>
 }

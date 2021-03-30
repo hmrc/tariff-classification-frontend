@@ -37,7 +37,7 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suspend").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suspend-reason").get())
 
       // Then
       response.status shouldBe OK
@@ -64,11 +64,11 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suspend").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suspend-reason").get())
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Change case status to: Suspended")
+      response.body   should include("Provide details to suspend this case")
     }
   }
 

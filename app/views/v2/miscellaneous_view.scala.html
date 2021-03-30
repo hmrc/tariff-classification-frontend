@@ -18,7 +18,8 @@
 @import helper.CSRF
 @import models.forms.{ActivityFormData, MessageFormData}
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseViewModel, ActivityViewModel, MyCasesTab, MessagesTabViewModel}
+@import models.response.FileStoreInitiateResponse
+@import models.viewmodels._
 @import models.viewmodels.atar.AttachmentsTabViewModel
 @import views.html.includes.main
 @import views.html.partials.{activity_details, messages_logged, attachments_details}
@@ -42,22 +43,28 @@
         sampleTab: SampleStatusTabViewModel,
         attachmentsTab: AttachmentsTabViewModel,
         uploadForm: Form[String],
+        initiateResponse: FileStoreInitiateResponse,
 
         activityTab: ActivityViewModel,
         activityForm: Form[ActivityFormData],
 
-        attachments: Seq[StoredAttachment]
+        attachments: Seq[StoredAttachment],
+        primaryNavTab: PrimaryNavigationTab = MyCasesTab
+
 
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
     bodyClasses = None,
     customTitle = Some(messages("case.v2.miscellaneous.page_title")),
-    customPrimaryNavTab = MyCasesTab
+    customPrimaryNavTab = primaryNavTab
 ) {
-    @case_heading(caseViewModel.caseHeader)
 
-    <div class="form-groups">
+<div class="govuk-notification-banner-width">
+    @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
+</div>
+
+<div class="form-groups">
         @case_action_buttons_partial(caseViewModel)
         @advanced_search_cases(caseViewModel)
     </div>
@@ -108,7 +115,7 @@
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
-        @attachments_details(attachmentsTab, uploadForm)
+            @attachments_details(attachmentsTab, uploadForm, initiateResponse)
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">

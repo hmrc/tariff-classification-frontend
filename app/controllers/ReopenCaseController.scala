@@ -16,14 +16,15 @@
 
 package controllers
 
-import config.AppConfig
-import models.Permission
-import models.request.AuthenticatedCaseRequest
-import play.api.mvc._
-import service.CasesService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.{Inject, Singleton}
+import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import config.AppConfig
+import models.request.AuthenticatedCaseRequest
+import models.{ApplicationType, Permission}
+import service.CasesService
+import utils.Notification._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
@@ -46,6 +47,6 @@ class ReopenCaseController @Inject() (
         casesService
           .reopenCase(request.`case`, request.operator)
           .map(updatedCase => routes.CaseController.get(updatedCase.reference))
-      )
+      ).map(result => result.flashing(success("notification.success.referral.off")))
     }
 }

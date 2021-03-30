@@ -19,39 +19,51 @@
 @import models.Case
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
-@import views.html.partials.{assignee, case_heading, back_link}
+@import views.html.partials.{assignee, case_heading, error_summary, back_link}
 @import views.html.helper.{CSRF, form}
-@import models.viewmodels.NoTabSelected
+@import models.viewmodels.{NoTabSelected, AssignedToMeTab }
+@import views.html.forms.components.input_radiogroup
+@import views.forms.components.RadioOption
 
-@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[Boolean])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("page.title.take.ownership")),
     customPrimaryNavTab = NoTabSelected) {
 
-    @back_link()
+@back_link()
 
-    @case_heading(c)
+@error_summary(form.errors)
 
-    <h2 id="assign_case-heading" class="heading-large mt-0">
-        @if(c.assignee.isDefined) {
-            <span id="assign_case-assigned_heading">@messages("case.ownership.assign_case.assigned", assignee(c.assignee.get))</span>
-        }
-        @if(c.assignee.isEmpty) {
-            <span id="assign_case-unassigned_heading">@messages("case.ownership.assign_case.unassigned")</span>
-        }
-    </h2>
 
+<div class="column-two-thirds pl-0">
+    @case_heading(c, messageKey = Some("case.heading.ownership"))
+
+    <div id="assign_case-heading">
+    @if(c.assignee.isDefined) {
+        <h2>
+            <span class="heading-large mt-0" id="assign_case-assigned_heading">@messages("case.ownership.assign_case.assigned", assignee(c.assignee.get))</span>
+        </h2>
+    }
+    </div>
     @if(c.assignee.isEmpty) {
         <p>@messages("case.ownership.assign_case.description")</p>
 
-        @form(action = routes.AssignCaseController.post(c.reference), 'class -> "form") {
-            @CSRF.formField
-            <button class="button" id="assign_case-assign_button" type="submit">
-            @messages("case.ownership.assign_case.submit")
-            </button>
-            <a class="secondary-button" id="assign_case-continue_button" href="@routes.CaseController.get(c.reference)">
-            @messages("case.ownership.assign_case.view_only")
-            </a>
+        @helper.form(action = routes.AssignCaseController.post(c.reference), 'id -> "take-ownership") {
+            @helper.CSRF.formField
+
+    @input_radiogroup(
+        field = form("state"),
+        label = Some(messages("case.heading.ownership",c.application.goodsName)),
+        labelClass= Some("visually-hidden"),
+        options = Seq(RadioOption("true", messages("case.ownership.assign_case.submit")), RadioOption("false", messages("case.ownership.assign_case.view_only"))),
+        id = "assign-case-ownership",
+        preSelect = false
+    )
+
+    <div>
+        <button class="button" id="assign_case-continue" type="submit">Continue</button>
+    </div>
+
         }
     } else {
         <p>
@@ -60,10 +72,11 @@
             </a>
         </p>
         <p>
-            <a id="assign_case-back_to_my_cases" href="@routes.MyCasesController.myCases()">
+            <a id="assign_case-back_to_my_cases" href="@controllers.v2.routes.MyCasesController.displayMyCases(activeSubNav=AssignedToMeTab)">
             @messages("case.ownership.assign_case.back")
             </a>
         </p>
     }
 
 }
+</div>

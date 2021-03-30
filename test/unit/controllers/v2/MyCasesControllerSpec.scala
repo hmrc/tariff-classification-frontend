@@ -16,6 +16,7 @@
 
 package controllers.v2
 
+import akka.stream.Materializer
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
 import models._
@@ -29,8 +30,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
 import views.html.v2.my_cases_view
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -46,7 +47,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       eventService,
       mcc,
       my_cases_view
-    )(realAppConfig, global)
+    )(realAppConfig, implicitly[Materializer])
   }
 
   "MyCasesController" should {
@@ -55,9 +56,11 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
 
-      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
-        .willReturn(Events.pagedReferredEvents)
+      given(eventService.findReferralEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.referralEventsById))
 
+      given(eventService.findCompletionEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES))).displayMyCases()(fakeRequest)
 
@@ -79,8 +82,11 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase().copy(daysElapsed = 35))))
 
-      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
-        .willReturn(Events.pagedReferredEvents)
+      given(eventService.findReferralEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.referralEventsById))
+
+      given(eventService.findCompletionEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(AssignedToMeTab)(fakeRequest))
 
@@ -93,9 +99,11 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
 
-      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
-        .willReturn(Events.pagedReferredEvents)
+      given(eventService.findReferralEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.referralEventsById))
 
+      given(eventService.findCompletionEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
@@ -108,9 +116,11 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
 
-      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
-        .willReturn(Future.successful(Paged.empty[Event]))
+      given(eventService.findReferralEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.referralEventsById))
 
+      given(eventService.findCompletionEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
@@ -123,8 +133,11 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
         willReturn(Paged(Seq(Cases.aCase(), Cases.liabilityLiveCaseExample)))
 
-      given(eventService.getFilteredEvents(any(), any(), any())(any[HeaderCarrier]))
-        .willReturn(Events.pagedReferredEvents)
+      given(eventService.findReferralEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.referralEventsById))
+
+      given(eventService.findCompletionEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
 
@@ -132,6 +145,24 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       charset(result) shouldBe Some("utf-8")
       status(result) shouldBe Status.OK
     }
+
+    "return 200 OK with the correct subNavigation tab for CompletedByMe without any details for the event" in {
+      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier])).
+        willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+
+      given(eventService.findReferralEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.referralEventsById))
+
+      given(eventService.findCompletionEvents(any())(any[HeaderCarrier]))
+        .willReturn(Future.successful(Events.completionEventsById))
+
+      val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
+
+      contentType(result) shouldBe Some("text/html")
+      charset(result) shouldBe Some("utf-8")
+      status(result) shouldBe Status.OK
+    }
+
   }
 
 }

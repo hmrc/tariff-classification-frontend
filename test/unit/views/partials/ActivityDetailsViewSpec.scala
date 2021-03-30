@@ -20,12 +20,17 @@ import java.time.{ZoneOffset, ZonedDateTime}
 
 import controllers.routes
 import models.forms.ActivityForm
+import models.request.AuthenticatedRequest
 import models.{CaseStatus, _}
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.activity_details
 import models.viewmodels.ActivityViewModel
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.{FakeHeaders, FakeRequest}
+import utils.Notification._
+import play.api.test.CSRFTokenHelper._
 
 class ActivityDetailsViewSpec extends ViewSpec {
 
@@ -214,7 +219,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc                                                  should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref", "att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
@@ -255,7 +260,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref", "att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
@@ -301,7 +306,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
-        routes.ViewAttachmentController.get("att-id").url
+        routes.ViewAttachmentController.get("ref", "att-id").url
       )
       doc                                              should containElementWithID("activity-events-row-0-date")
       doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
@@ -842,6 +847,40 @@ class ActivityDetailsViewSpec extends ViewSpec {
         // Then
         doc shouldNot containElementWithID("reassign-queue-link")
       }
+    }
+
+    "render notification banner when note was added" in {
+
+      val requestWithFlashKeywordSuccess: FakeRequest[AnyContentAsEmpty.type] =
+        FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty)
+          .withFlash(success("case.activity.note.success.text"))
+          .withCSRFToken
+          .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+      val c = aCase()
+      val e = Event(
+        id            = "EVENT_ID",
+        details       = Note("comment"),
+        operator      = Operator("id", Some("name")),
+        caseReference = "ref",
+        timestamp     = date
+      )
+
+      val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
+
+      val doc = view(
+        activity_details(activityTab, ActivityForm.form)(
+          AuthenticatedRequest(
+            authenticatedOperator.copy(permissions = Set(Permission.VIEW_CASE_ASSIGNEE)),
+            requestWithFlashKeywordSuccess
+          ),
+          messages,
+          appConfig
+        )
+      )
+
+      doc should containElementWithID("govuk-notification-banner-title")
+
     }
   }
 }

@@ -45,12 +45,15 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
 
   val operator_dashboard_classification = injector.instanceOf[views.html.operator_dashboard_classification]
 
-  val casesCounted: Map[String, Int] = Map("BTI" -> 2, "Liability" -> 3)
+  val casesCounted: Map[(Option[String], ApplicationType), Int] = Map(
+    (None, ApplicationType.ATAR) -> 2,
+    (None, ApplicationType.LIABILITY) -> 3
+  )
 
   private val casesService = mock[CasesService]
 
   override def beforeEach(): Unit =
-    when(casesService.countCasesByQueue(any[Operator])(any[HeaderCarrier])) thenReturn casesCounted
+    when(casesService.countCasesByQueue(any[HeaderCarrier])) thenReturn casesCounted
 
   given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
     .willReturn(Future.successful(Paged.empty[Case]))

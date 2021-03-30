@@ -19,7 +19,7 @@ package models.forms.v2
 import models._
 import models.forms.FormConstraints.emptyOr
 import models.forms.mappings.Constraints
-import play.api.data.Form
+import play.api.data.{Form, Forms}
 import play.api.data.Forms._
 
 object CorrespondenceContactForm extends Constraints {
@@ -46,7 +46,9 @@ object CorrespondenceContactForm extends Constraints {
         "buildingAndStreet"     -> text,
         "townOrCity"            -> text,
         "county"                -> optional(text),
-        "postCode"              -> optional(text),
+        "postCode"              -> optional(Forms.text)
+          .verifying(validPostcode("case.liability.error.postcode.valid"),
+            optionalPostCodeMaxLength("case.liability.error.postcode.length")),
         "agentName"             -> optional(text)
       )(form2Correspondence(existingCorrespondence))(correspondence2Form)
     ).fillAndValidate(existingCorrespondence)

@@ -35,7 +35,9 @@
 
 @error_summary(activityForm.errors)
 
-@notification_banner()(request.flash, messages)
+ @if(request.flash.get("success").getOrElse("").contains("note")){
+  @notification_banner()(request.flash, messages)
+ }
 
 @tab_heading("activity", messages("case.v2.liability.activity_tab.tab_title"))
 
@@ -46,7 +48,7 @@
 
   <div class="column-full">
 
-  @form(action = routes.CaseController.addNote(activityViewModel.referenceNumber), 'class -> "form") {
+  @form(action = routes.CaseController.addNote(activityViewModel.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),

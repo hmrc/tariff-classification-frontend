@@ -35,6 +35,10 @@
   font-weight: bold;
 }
 
+.mt-15 {
+  margin-top: 15px;
+}
+
 .mt-0 {
   margin-top: 0;
 }
@@ -221,6 +225,10 @@
   width: 25%;
 }
 
+.w-40p{
+  width:40px;
+}
+
 .align-right {
   text-align: right;
 }
@@ -266,9 +274,6 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
   margin: 0 auto;
 }
 
-.word-break {
-  word-break: break-all;
-}
 
 #advanced_search-reset_button {
   margin-top: 4px;
@@ -343,7 +348,7 @@ table tbody td[align="right"], table tbody th[align="right"], table thead th[ali
     font-weight: 400;
     font-size: 27px;
     line-height: 1.11111;
-    color: #6f777b;
+    color: #505a5f;
     margin-bottom: 5px;
 
     a, a:visited, a:active, a:hover {
@@ -527,4 +532,81 @@ table tbody tr th {
     padding-left: 33px;
     border-left: 4px solid #b1b4b6;
 }
+/* Add horizontal scrollbar to cases_list-table */
+#cases_list-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+#referred_list-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
 
+.remove-overflow {
+    overflow: unset;
+}
+
+@media screen and (max-width: 767px) {
+    .file-name-column-width {
+        width: 75%;
+        word-break: break-all;
+    }
+    .secondary-button {
+        margin-top: 1em;
+        padding-left: 0px;
+    }
+    #atar_tabs .grid-row {
+        margin: 0px;
+    }
+    #atar_tabs .column-one-third, #atar_tabs .column-two-thirds, #atar_tabs .column-full {
+        padding: 0px;
+    }
+    #c592_tab .grid-row {
+        margin: 0px;
+    }
+    .column-three-quarters.mt-4.float-right {
+        float: unset;
+    }
+}
+
+.operation-dashboard-header {
+    float: unset;
+    padding: 0px;
+}
+
+.mt-15 {
+    margin-top: 15px;
+}
+
+.operation-dashboard-header {
+    float: unset;
+    padding: 0px;
+}
+
+.word-break {
+    word-break: break-word;
+}
+/* tables */
+.govuk-table__head {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+.govuk-panel__body {
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   font-weight: 400;
+   font-size: 24px;
+   line-height: 1.04167;
+}
+.govuk-panel__title {
+    margin-top: 0;
+    margin-bottom: 30px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.09375;
+}

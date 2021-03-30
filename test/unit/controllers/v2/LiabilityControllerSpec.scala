@@ -16,21 +16,28 @@
 
 package controllers.v2
 
+import javax.inject.Inject
 
 import com.google.inject.Provider
+import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
-import javax.inject.Inject
+import models.forms._
 import models.forms.CommodityCodeConstraints
 import models.forms.v2.LiabilityDetailsForm
+import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import models.viewmodels._
 import models.{Case, _}
-import org.mockito.ArgumentMatchers.{any, eq => meq}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{PlayBodyParsers, Result}
 import play.api.test.Helpers._
+import play.api.i18n.Messages
 import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -93,12 +100,23 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private lazy val eventService             = mock[EventsService]
   private lazy val queueService             = mock[QueuesService]
   private lazy val commodityCodeService     = mock[CommodityCodeService]
-  private lazy val event                    = mock[Event]
   private lazy val liability_view           = mock[liability_view]
   private lazy val liability_details_edit   = injector.instanceOf[liability_details_edit]
   private lazy val fileStoreService         = mock[FileStoreService]
   private lazy val keywordsService          = mock[KeywordsService]
   private lazy val casesService             = mock[CasesService]
+
+  private val keyword1: Keyword = Keyword("keyword1")
+  private val keyword2: Keyword = Keyword("keyword2")
+
+  private val initiateResponse = FileStoreInitiateResponse(
+    id              = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
 
   override def beforeEach(): Unit =
     reset(
@@ -111,22 +129,24 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   private def checkLiabilityView(timesInvoked: Int) =
     verify(liability_view, times(timesInvoked)).apply(
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any(),
-      any()
-    )(any(), any(), any())
+      any[CaseViewModel],
+      any[Option[C592ViewModel]],
+      any[Option[RulingViewModel]],
+      any[SampleStatusTabViewModel],
+      any[Option[ActivityViewModel]],
+      any[Form[ActivityFormData]],
+      any[Option[AttachmentsTabViewModel]],
+      any[Form[String]],
+      any[FileStoreInitiateResponse],
+      any[KeywordsTabViewModel],
+      any[Form[String]],
+      any[Option[AppealTabViewModel]],
+      any[PrimaryNavigationTab]
+    )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
 
   private def mockLiabilityController(
     pagedEvent: Paged[Event]                    = pagedEvent,
-    queues: List[Queue]                          = queues,
+    queues: List[Queue]                         = queues,
     attachments: Seq[StoredAttachment]          = Seq(Cases.storedAttachment),
     letterOfAuthority: Option[StoredAttachment] = Some(Cases.letterOfAuthority)
   ): Any = {
@@ -135,28 +155,33 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
     when(fileStoreService.getAttachments(any[Case]())(any())) thenReturn (Future.successful(attachments))
     when(fileStoreService.getLetterOfAuthority(any[Case]())(any())) thenReturn (Future.successful(letterOfAuthority))
-    when(keywordsService.autoCompleteKeywords) thenReturn Future(Seq("keyword1", "keyword2"))
+    when(keywordsService.findAll) thenReturn Future(Seq(keyword1, keyword2))
     when(keywordsService.addKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
       Cases.liabilityLiveCaseExample
     )
     when(keywordsService.removeKeyword(any[Case](), any[String](), any[Operator]())(any())) thenReturn Future(
       Cases.liabilityLiveCaseExample
     )
+    when(fileStoreService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn Future.successful(
+      initiateResponse
+    )
 
     when(
       liability_view.apply(
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any(),
-        any()
-      )(any(), any(), any())
+        any[CaseViewModel],
+        any[Option[C592ViewModel]],
+        any[Option[RulingViewModel]],
+        any[SampleStatusTabViewModel],
+        any[Option[ActivityViewModel]],
+        any[Form[ActivityFormData]],
+        any[Option[AttachmentsTabViewModel]],
+        any[Form[String]],
+        any[FileStoreInitiateResponse],
+        any[KeywordsTabViewModel],
+        any[Form[String]],
+        any[Option[AppealTabViewModel]],
+        any[PrimaryNavigationTab]
+      )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
     ) thenReturn Html("body")
   }
 
@@ -221,7 +246,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "post Liability details" should {
     "redirect back to controller if the form has been submitted successfully" in {
 
-      when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        Cases.aCaseWithCompleteDecision
+      )
 
       mockLiabilityController()
       val fakeReq = newFakePOSTRequestWithCSRF(
@@ -233,9 +260,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           "goodName"             -> "item-name",
           "traderCommodityCode"  -> "",
           "officerCommodityCode" -> "",
-          "contact.contactName"          -> "contact-name",
-          "contact.contactEmail"         -> "valid@email.com",
-          "contact.contactPhone"         -> ""
+          "contact.contactName"  -> "contact-name",
+          "contact.contactEmail" -> "valid@email.com",
+          "contact.contactPhone" -> ""
         )
       )
       val result: Future[Result] =
@@ -249,7 +276,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return back to the view if form fails to validate" in {
-      when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        Cases.aCaseWithCompleteDecision
+      )
       mockLiabilityController()
       val fakeReq = newFakePOSTRequestWithCSRF(
         app,

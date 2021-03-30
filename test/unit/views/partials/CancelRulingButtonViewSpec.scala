@@ -40,7 +40,7 @@ class CancelRulingButtonViewSpec extends ViewSpec {
       doc should containElementWithID(cancelButtonId)
       doc.getElementById(cancelButtonId) should haveAttribute(
         "href",
-        "/manage-tariff-classifications/cases/1/ruling/cancel"
+        controllers.routes.CancelRulingController.getCancelRulingReason(c.reference).path
       )
     }
 

@@ -18,6 +18,7 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
+import models.CaseStatus.CaseStatus
 import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
@@ -51,7 +52,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type" in {
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])
+          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -75,7 +76,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type for ATaR tab" in {
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])
+          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -104,7 +105,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type for Liability tab" in {
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])
+          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -128,7 +129,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])
+          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -155,7 +156,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type for Miscellaneous tab" in {
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])
+          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(

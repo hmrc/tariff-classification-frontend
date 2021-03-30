@@ -74,24 +74,21 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
   "Cancel Ruling" should {
     "update case status to CANCELLED and decision end date" in {
       // Given
-      val fileUpload   = mock[FileUpload]
-      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
-
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+      val attachment = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated     = aCase.copy(status                      = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, fileUpload, "note", operator)) shouldBe caseUpdated
+      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
@@ -118,40 +115,22 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
 
     "reject case without a decision" in {
       // Given
-      val fileUpload         = mock[FileUpload]
       val operator: Operator = Operator("operator-id")
+      val attachment = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.COMPLETED, decision = None)
 
       // When Then
       intercept[IllegalArgumentException] {
-        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, fileUpload, "note", operator))
+        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
       }
 
       verifyZeroInteractions(audit)
       verifyZeroInteractions(connector)
-    }
-
-    "generate an exception on attachment upload failure" in {
-      // Given
-      val fileUpload         = mock[FileUpload]
-      val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val originalCase       = aCase.copy(status = CaseStatus.COMPLETED)
-
-      given(fileStoreService.upload(fileUpload)).willReturn(failed(new RuntimeException("Error")))
-
-      // When Then
-      intercept[RuntimeException] {
-        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, fileUpload, "note", operator))
-      }
-
-      verifyZeroInteractions(connector)
-      verifyZeroInteractions(audit)
-
     }
 
     "not create event on update failure" in {
-      val fileUpload         = mock[FileUpload]
       val operator: Operator = Operator("operator-id")
+      val attachment = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
@@ -160,7 +139,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(failed(new RuntimeException("Failed to update the Case")))
 
       intercept[RuntimeException] {
-        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, fileUpload, "note", operator))
+        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
       }
 
       verifyZeroInteractions(audit)
@@ -169,23 +148,21 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
 
     "succeed on event create failure" in {
       // Given
-      val fileUpload         = mock[FileUpload]
-      val fileUploaded       = FileStoreAttachment("id", "email", "application/pdf", 0)
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+      val attachment = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated     = aCase.copy(status                      = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException("Failed to create Event")))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       // When Then
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, fileUpload, "note", operator)) shouldBe caseUpdated
+      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
@@ -195,16 +172,14 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
 
     "succeed on ruling store notify failure" in {
       // Given
-      val fileUpload         = mock[FileUpload]
-      val fileUploaded       = FileStoreAttachment("id", "email", "application/pdf", 0)
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+      val attachment = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated     = aCase.copy(status                      = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
@@ -212,7 +187,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
 
       // When Then
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, fileUpload, "note", operator)) shouldBe caseUpdated
+      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 

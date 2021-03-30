@@ -16,21 +16,24 @@
 
 package controllers.v2
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
+
 import config.AppConfig
-import controllers.{RequestActions, v2}
+import controllers.{RequestActions, Tab, v2}
+import models.forms._
 import models.forms.v2.LiabilityDetailsForm
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import models._
+import models.request._
 import models.viewmodels._
-import models.{Case, Permission, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
@@ -49,20 +52,37 @@ class LiabilityController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
+    with UpscanErrorHandling
     with I18nSupport {
 
-  def displayLiability(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
+  def displayLiability(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+    }
 
   def renderView(
+    fileId: Option[String]               = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
-    uploadAttachmentForm: Form[String]   = UploadAttachmentForm.form,
+    uploadForm: Form[String]             = UploadAttachmentForm.form,
     keywordForm: Form[String]            = KeywordForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val liabilityCase: Case = request.`case`
-    val liabilityViewModel  = CaseViewModel.fromCase(liabilityCase, request.operator)
-    val rulingViewModel     = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
-    val appealTabViewModel  = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
+    val uploadFileId        = fileId.getOrElse(UUID.randomUUID().toString)
+
+    val liabilityViewModel = CaseViewModel.fromCase(liabilityCase, request.operator)
+    val rulingViewModel    = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
+    val appealTabViewModel = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
+    val ownCase            = liabilityCase.assignee.exists(_.id == request.operator.id)
+    val activeNavTab       = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(liabilityCase.status, ownCase)
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + controllers.routes.CaseController.addAttachment(liabilityCase.reference, uploadFileId).path
+
+    val fileUploadErrorRedirect =
+      appConfig.host + routes.LiabilityController
+        .displayLiability(liabilityCase.reference, Some(uploadFileId))
+        .withFragment(Tab.ATTACHMENTS_TAB.name)
+        .path
 
     for {
       (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
@@ -70,26 +90,32 @@ class LiabilityController @Inject() (
       sampleTab                <- getSampleTab(liabilityCase)
       c592        = Some(C592ViewModel.fromCase(liabilityCase))
       activityTab = Some(ActivityViewModel.fromCase(liabilityCase, activityEvents, queues))
-      keywordsTab <- keywordsService.autoCompleteKeywords.map(kws =>
-                      KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws)
+      keywordsTab <- keywordsService.findAll.map(kws =>
+                      KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name))
                     )
-    } yield {
-      Ok(
-        liability_view(
-          liabilityViewModel,
-          c592,
-          rulingViewModel,
-          sampleTab,
-          activityTab,
-          activityForm,
-          attachmentsTab,
-          uploadAttachmentForm,
-          keywordsTab,
-          keywordForm,
-          appealTabViewModel
-        )
-      )
-    }
+      initiateResponse <- fileService.initiate(
+                           FileStoreInitiateRequest(
+                             id              = Some(uploadFileId),
+                             successRedirect = Some(fileUploadSuccessRedirect),
+                             errorRedirect   = Some(fileUploadErrorRedirect),
+                             maxFileSize     = appConfig.fileUploadMaxSize
+                           )
+                         )
+    } yield liability_view(
+      liabilityViewModel,
+      c592,
+      rulingViewModel,
+      sampleTab,
+      activityTab,
+      activityForm,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      keywordsTab,
+      keywordForm,
+      appealTabViewModel,
+      activeNavTab
+    )
   }
 
   def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]) =
@@ -119,8 +145,18 @@ class LiabilityController @Inject() (
   def editLiabilityDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
+      val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+        request.`case`.status,
+        request.`case`.assignee.exists(_.id == request.operator.id)
+      )
       successful(
-        Ok(liability_details_edit(request.`case`, liabilityDetailsForm.liabilityDetailsForm(request.`case`)))
+        Ok(
+          liability_details_edit(
+            request.`case`,
+            liabilityDetailsForm.liabilityDetailsForm(request.`case`),
+            activeNavTab
+          )
+        )
       )
     }
 
@@ -135,7 +171,7 @@ class LiabilityController @Inject() (
           errorForm => successful(Ok(liability_details_edit(request.`case`, errorForm))),
           updatedCase =>
             casesService
-              .updateCase(updatedCase)
+              .updateCase(request.`case`, updatedCase, request.operator)
               .map(_ => Redirect(v2.routes.LiabilityController.displayLiability(reference)))
         )
     }

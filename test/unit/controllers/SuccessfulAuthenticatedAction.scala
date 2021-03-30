@@ -17,11 +17,12 @@
 package controllers
 
 import config.AppConfig
-import connector.StrideAuthConnector
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
-import models.{Case, Operator, Permission}
+import connector.{BindingTariffClassificationConnector, DataCacheConnector, FakeDataCacheConnector, StrideAuthConnector}
+import models.{Case, Operator, Permission, UserAnswers}
+import models.request._
 import org.mockito.Mockito.mock
 import play.api.i18n.MessagesApi
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment}
 import service.CasesService
@@ -41,6 +42,7 @@ class SuccessfulAuthenticatedAction(
       env           = mock(classOf[Environment]),
       authConnector = mock(classOf[StrideAuthConnector]),
       parse         = parse,
+      userConnector = mock(classOf[BindingTariffClassificationConnector]),
       cc            = mock(classOf[ControllerComponents])
     ) {
 
@@ -95,6 +97,50 @@ class HaveRightPermissionsActionFactory extends MustHavePermissionActionFactory 
     }
 }
 
+class MustHaveDataActionFactory(userAnswers: UserAnswers)
+    extends RequireDataActionFactory(dataCacheConnector = FakeDataCacheConnector) {
+  override def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
+    new ActionRefiner[B, AuthenticatedDataRequest] {
+      override protected def refine[A](
+        request: B[A]
+      ): Future[Either[Result, AuthenticatedDataRequest[A]]] =
+        successful(Right(new AuthenticatedDataRequest(request.operator, request, userAnswers)))
+
+      override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
+    }
+
+}
+
+class HaveExistingCaseDataActionFactory(reference: String, requestCase: Case)
+    extends RequireCaseDataActionFactory(
+      casesService       = mock(classOf[CasesService]),
+      dataCacheConnector = FakeDataCacheConnector
+    )(
+      mock(classOf[MessagesApi]),
+      mock(classOf[AppConfig])
+    ) {
+
+  override def apply[B[C] <: AuthenticatedRequest[C]](
+    reference: String,
+    cacheKey: String
+  ): ActionRefiner[B, AuthenticatedCaseDataRequest] =
+    new ActionRefiner[B, AuthenticatedCaseDataRequest] {
+      override protected def refine[A](
+        request: B[A]
+      ): Future[Either[Result, AuthenticatedCaseDataRequest[A]]] =
+        FakeDataCacheConnector
+          .fetch(cacheKey)
+          .map {
+            case Some(cacheMap) =>
+              Right(new AuthenticatedCaseDataRequest(request.operator, request, requestCase, UserAnswers(cacheMap)))
+            case None =>
+              Left(Redirect(routes.SecurityController.unauthorized()))
+          }(ExecutionContext.Implicits.global)
+
+      override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
+    }
+}
+
 class SuccessfulRequestActions(
   parse: PlayBodyParsers,
   operator: Operator,
@@ -105,7 +151,9 @@ class SuccessfulRequestActions(
       new SuccessfulCasePermissionsAction(operator),
       new SuccessfulAuthenticatedAction(parse, operator),
       new ExistingCaseActionFactory(reference, c),
-      new HaveRightPermissionsActionFactory
+      new HaveRightPermissionsActionFactory,
+      new RequireDataActionFactory(FakeDataCacheConnector),
+      new HaveExistingCaseDataActionFactory(reference, c)
     ) {}
 
 class RequestActionsWithPermissions(
@@ -127,5 +175,32 @@ class RequestActionsWithPermissions(
         permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
       ),
       new ExistingCaseActionFactory(reference, c),
-      new MustHavePermissionActionFactory
+      new MustHavePermissionActionFactory,
+      new RequireDataActionFactory(FakeDataCacheConnector),
+      new HaveExistingCaseDataActionFactory(reference, c)
+    ) {}
+
+class RequestActionsWithPermissionsAndData(
+  parse: PlayBodyParsers,
+  permissions: Set[Permission],
+  userAnswers: UserAnswers,
+  addViewCasePermission: Boolean = true,
+  reference: String              = "test-reference",
+  c: Case                        = Cases.btiCaseExample,
+  op: Operator                   = Operator("0", Some("name"))
+)(implicit ec: ExecutionContext)
+    extends RequestActions(
+      new SuccessfulCasePermissionsAction(
+        operator    = op,
+        permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
+      ),
+      new SuccessfulAuthenticatedAction(
+        parse,
+        operator    = op,
+        permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
+      ),
+      new ExistingCaseActionFactory(reference, c),
+      new MustHavePermissionActionFactory,
+      new MustHaveDataActionFactory(userAnswers),
+      new HaveExistingCaseDataActionFactory(reference, c)
     ) {}

@@ -16,122 +16,138 @@
 
 package controllers
 
-import config.AppConfig
-import models.forms.ReferCaseForm
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
-import models.CaseStatus._
-import models.ReferralReason.ReferralReason
-import models._
-import models.request.AuthenticatedCaseRequest
-import play.api.data.{Form, FormError}
-import play.api.libs.Files
-import play.api.mvc._
-import service.CasesService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import config.AppConfig
+import connector.DataCacheConnector
+import controllers.v2.UpscanErrorHandling
+import models._
+import models.forms.{ReferCaseForm, UploadAttachmentForm}
+import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
+import play.api.mvc._
+import play.api.data.Form
+import play.twirl.api.Html
+import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JsonFormatters._
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import play.api.i18n.I18nSupport
 
 @Singleton
 class ReferCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
+  fileService: FileStoreService,
+  dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
-    with RenderCaseAction
-    with ExtractableFile
-    with PrefixErrorsInForm[CaseReferral] {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with UpscanErrorHandling {
 
-  override protected val config: AppConfig         = appConfig
-  override protected val caseService: CasesService = casesService
+  private val ReferralCacheKey = "referral"
+  private def cacheKey(reference: String) =
+    s"refer_case-$reference"
 
-  def getReferCase(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.REFER_CASE)).async { implicit request =>
-      validateAndRenderView(c => successful(views.html.refer_case(c, ReferCaseForm.form)))
+  def getReferCaseReason(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER_CASE)) {
+      implicit request => Ok(views.html.refer_case_reason(request.`case`, ReferCaseForm.form))
+    }
+
+  def postReferCaseReason(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER_CASE))
+      .async { implicit request =>
+        ReferCaseForm.form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => successful(BadRequest(views.html.refer_case_reason(request.`case`, formWithErrors))),
+            referral => {
+              val userAnswers        = UserAnswers(cacheKey(reference))
+              val updatedUserAnswers = userAnswers.set(ReferralCacheKey, referral)
+              dataCacheConnector
+                .save(updatedUserAnswers.cacheMap)
+                .map(_ => Redirect(routes.ReferCaseController.getReferCaseEmail(reference)))
+            }
+          )
+      }
+
+  def renderReferCaseEmail(
+    fileId: Option[String]   = None,
+    uploadForm: Form[String] = UploadAttachmentForm.form
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+    val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + controllers.routes.ReferCaseController
+        .referCase(request.`case`.reference, uploadFileId)
+        .path
+
+    val fileUploadErrorRedirect =
+      appConfig.host + controllers.routes.ReferCaseController
+        .getReferCaseEmail(request.`case`.reference, Some(uploadFileId))
+        .path
+
+    fileService
+      .initiate(
+        FileStoreInitiateRequest(
+          id              = Some(uploadFileId),
+          successRedirect = Some(fileUploadSuccessRedirect),
+          errorRedirect   = Some(fileUploadErrorRedirect),
+          maxFileSize     = appConfig.fileUploadMaxSize
+        )
+      )
+      .map(initiateResponse => views.html.refer_case_email(request.`case`, uploadForm, initiateResponse))
+  }
+
+  def getReferCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER_CASE))
+      .async(implicit request => handleUploadErrorAndRender(uploadForm => renderReferCaseEmail(fileId, uploadForm)))
+
+  def referCase(reference: String, fileId: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.REFER_CASE) andThen
+      verify.requireCaseData(reference, cacheKey(reference))).async { implicit request =>
+      request.userAnswers
+        .get[CaseReferral](ReferralCacheKey)
+        .map { referral =>
+          val referredTo =
+            if (referral.referredTo.equalsIgnoreCase("Other"))
+              referral.referManually.getOrElse(referral.referredTo)
+            else
+              referral.referredTo
+
+          val referralReasons =
+            referral.reasons.filter(_ => referredTo.equalsIgnoreCase("Applicant"))
+
+          for {
+            _ <- casesService
+                  .referCase(
+                    request.`case`,
+                    referredTo,
+                    referralReasons,
+                    Attachment(id = fileId, operator = Some(request.operator)),
+                    referral.note,
+                    request.operator
+                  )
+
+            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+
+          } yield Redirect(routes.ReferCaseController.confirmReferCase(reference))
+        }
+        .getOrElse {
+          successful(Redirect(routes.SecurityController.unauthorized()))
+        }
     }
 
   def confirmReferCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      renderView(c => c.status == REFERRED, c => successful(views.html.confirm_refer_case(c)))
+      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
+      Ok(views.html.confirm_refer_case(request.`case`))
     }
-
-  def postReferCase(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.REFER_CASE)).async(parse.multipartFormData) {
-      implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
-        val myForm = (checkReasonIsSelected andThen checkedOtherCommentNotEmpty)(ReferCaseForm.form.bindFromRequest())
-
-        def failWithFormError(error: String): Future[Result] =
-          myForm.fold(
-            formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-            referral => getCaseAndRenderErrors(reference, myForm.fill(referral), error)
-          )
-
-        def whoIsReferredTo: CaseReferral => String = { c =>
-          c.referredTo match {
-            case "Other"    => c.referManually.getOrElse(c.referredTo)
-            case referredTo => referredTo
-          }
-        }
-
-        def sanityCheckReasons: CaseReferral => Seq[ReferralReason] = { c =>
-          c.referredTo match {
-            case "Applicant" => c.reasons.map(ReferralReason.withName)
-            case _           => Seq.empty
-          }
-        }
-
-        extractFile(key = "email")(
-          onFileValid = validFile => {
-            myForm.fold(
-              formWithErrors =>
-                getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, formWithErrors))),
-              referral =>
-                validateAndRedirect(
-                  casesService
-                    .referCase(
-                      _,
-                      whoIsReferredTo(referral),
-                      sanityCheckReasons(referral),
-                      validFile,
-                      referral.note,
-                      request.operator
-                    )
-                    .map(c => routes.ReferCaseController.confirmReferCase(c.reference))
-                )
-            )
-          },
-          onFileTooLarge =
-            () => failWithFormError(request2Messages(implicitly)("status.change.upload.error.restrictionSize")),
-          onFileInvalidType =
-            () => failWithFormError(request2Messages(implicitly)("status.change.upload.error.fileType")),
-          onFileMissing = () => failWithFormError(request2Messages(implicitly)("status.change.upload.error.mustSelect"))
-        )
-    }
-
-  private def checkReasonIsSelected: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
-    case f
-        if f.data
-          .get("referredTo")
-          .contains("Applicant") && (f.data.get("reasons[0]").isEmpty && f.data.get("reasons[1]").isEmpty) =>
-      prefixErrorInForm(f, FormError("reasons", "Select why you are referring this case"))
-    case f => f
-  }
-
-  private def checkedOtherCommentNotEmpty: PartialFunction[Form[CaseReferral], Form[CaseReferral]] = {
-    case f if f.data.get("referredTo").contains("Other") && f.data.getOrElse("referManually", "").isEmpty =>
-      prefixErrorInForm(f, FormError("referManually", "Enter who you are referring this case to"))
-    case f => f
-  }
-
-  private def getCaseAndRenderErrors(reference: String, form: Form[CaseReferral], specificProblem: String)(
-    implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]
-  ): Future[Result] =
-    getCaseAndRenderView(reference, c => successful(views.html.refer_case(c, form.withError("email", specificProblem))))
-
 }

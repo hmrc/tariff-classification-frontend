@@ -16,20 +16,23 @@
 
 package controllers.v2
 
+import java.util.UUID
+
 import config.AppConfig
-import controllers.RequestActions
+import controllers.{RequestActions, Tab}
 import javax.inject.{Inject, Singleton}
 import models.{Case, EventType, NoPagination}
 import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel}
+import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
 import models.viewmodels.atar._
 import models.request._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.twirl.api.Html
+import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import service.{CountriesService, EventsService, FileStoreService, KeywordsService, QueuesService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,16 +50,21 @@ class AtarController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
+    with UpscanErrorHandling
     with I18nSupport {
 
-  def displayAtar(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference)).async(implicit request => renderView())
+  def displayAtar(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+    }
 
   def renderView(
+    fileId: Option[String]               = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     keywordForm: Form[String]            = KeywordForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+    val uploadFileId   = fileId.getOrElse(UUID.randomUUID().toString)
     val atarCase: Case = request.`case`
     val atarViewModel  = CaseViewModel.fromCase(atarCase, request.operator)
     val countryNames   = countriesService.getAllCountriesById.mapValues(_.countryName)
@@ -71,6 +79,19 @@ class AtarController @Inject() (
     val activityTabViewModel    = getActivityTab(atarCase)
     val keywordsTabViewModel    = getKeywordsTab(atarCase)
     val storedAttachments       = fileService.getAttachments(atarCase)
+    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+      atarCase.status,
+      atarCase.assignee.exists(_.id == request.operator.id)
+    )
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + controllers.routes.CaseController.addAttachment(atarCase.reference, uploadFileId).path
+
+    val fileUploadErrorRedirect =
+      appConfig.host + routes.AtarController
+        .displayAtar(atarCase.reference, Some(uploadFileId))
+        .withFragment(Tab.ATTACHMENTS_TAB.name)
+        .path
 
     for {
       sampleTab      <- sampleTabViewModel
@@ -78,23 +99,32 @@ class AtarController @Inject() (
       activityTab    <- activityTabViewModel
       keywordsTab    <- keywordsTabViewModel
       attachments    <- storedAttachments
-    } yield Ok(
-      atarView(
-        atarViewModel,
-        applicantTab,
-        goodsTab,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        activityTab,
-        activityForm,
-        keywordsTab,
-        keywordForm,
-        rulingTab,
-        rulingForm,
-        attachments,
-        appealTab
-      )
+      initiateResponse <- fileService.initiate(
+                           FileStoreInitiateRequest(
+                             id              = Some(uploadFileId),
+                             successRedirect = Some(fileUploadSuccessRedirect),
+                             errorRedirect   = Some(fileUploadErrorRedirect),
+                             maxFileSize     = appConfig.fileUploadMaxSize
+                           )
+                         )
+
+    } yield atarView(
+      atarViewModel,
+      applicantTab,
+      goodsTab,
+      sampleTab,
+      attachmentsTab,
+      uploadForm,
+      initiateResponse,
+      activityTab,
+      activityForm,
+      keywordsTab,
+      keywordForm,
+      rulingTab,
+      rulingForm,
+      attachments,
+      appealTab,
+      activeNavTab
     )
   }
 
@@ -113,7 +143,7 @@ class AtarController @Inject() (
     } yield ActivityViewModel.fromCase(atarCase, events, queues)
 
   private def getKeywordsTab(atarCase: Case): Future[KeywordsTabViewModel] =
-    keywordsService.autoCompleteKeywords.map { globalKeywords =>
-      KeywordsTabViewModel.fromCase(atarCase, globalKeywords)
+    keywordsService.findAll.map { globalKeywords =>
+      KeywordsTabViewModel.fromCase(atarCase, globalKeywords.map(_.name))
     }
 }

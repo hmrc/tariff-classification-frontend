@@ -1,0 +1,68 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import controllers.routes
+@import models.reporting._
+@import models.request.AuthenticatedRequest
+@import utils.Dates
+@import views.html.partials.statuses.case_status
+
+@(
+  field: ReportField[_],
+  result: ReportResultField[_],
+  users: Map[String, Operator],
+  teams: Map[String, Queue],
+  id: String,
+  index: Int
+)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+
+@result match {
+  case StringResultField(_, data) if field == ReportField.Reference => {
+    <td id="@{id}-@{field.fieldName}-@{index}">
+      @data.map { reference =>
+        <a href="@routes.CaseController.get(reference)">
+          <span aria-hidden="true">@reference</span>
+          <span class="visually-hidden">case reference @reference</span>  
+        </a>
+      }.getOrElse(messages("reporting.result.unknown"))
+    </td>
+  }
+  case StatusResultField(_, data) => {
+    <td id="@{id}-@{field.fieldName}-@{index}">
+      @data.map { status =>
+        @pseudoCaseStatus(status, s"${id}-${field.fieldName}-status-label-$index")
+      }.getOrElse(messages("reporting.result.unknown"))
+    </td>
+  }
+  case LiabilityStatusResultField(_, data) => {
+    <td id="@{id}-@{field.fieldName}-@{index}">
+      @data.map { status =>
+        @liabilityStatus(status, s"${id}-${field.fieldName}-status-label-$index")
+      }.getOrElse(messages("reporting.result.unknown"))
+    </td>
+  }
+  case NumberResultField(_, data) if field == ReportField.TotalDays => {
+    <td id="@{id}-@{field.fieldName}-@{index}" @if(data.exists(_>=120)){class="live-red-text"}>
+        @Reports.formatField(field, result, users, teams)
+    </td>
+  }
+  case other => {
+    <td id="@{id}-@{field.fieldName}-@{index}">
+      @Reports.formatField(field, result, users, teams)
+    </td>
+  }
+}

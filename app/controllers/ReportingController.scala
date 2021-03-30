@@ -16,139 +16,247 @@
 
 package controllers
 
-import config.AppConfig
-import models.forms.InstantRangeForm
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
-import models.Permission
-import models.request.AuthenticatedRequest
+
+import akka.stream.scaladsl.Source
+import akka.stream.alpakka.csv.scaladsl.CsvFormatting
+import cats.syntax.all._
+import config.AppConfig
+import models._
+import models.forms._
+import models.reporting._
+import models.viewmodels.managementtools.ReportingTabViewModel
+import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, QueuesService, ReportingService}
+import service.{QueuesService, ReportingService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.Report.Report
-import views.{Report, SelectedReport}
+import views.html.managementtools.{caseReportView, queueReportView, reportChooseDates, reportChooseTeams, summaryReportView}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ReportingController @Inject() (
   verify: RequestActions,
   reportingService: ReportingService,
   queuesService: QueuesService,
-  casesService: CasesService,
+  usersService: UserService,
   mcc: MessagesControllerComponents,
+  val manageReportsView: views.html.managementtools.manage_reports_view,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
 
-  def getReports: Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
-      .async { implicit request =>
-        for {
-          queues           <- queuesService.getAll
-          caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-        } yield Ok(views.html.reports(queues, None, caseCountByQueue))
+  lazy val chooseDatesForm = ReportDateForm.form
+  lazy val chooseTeamsForm = ReportTeamForm.form
+
+  val DownloadPageSize               = 1000
+  val DownloadPagination: Pagination = SearchPagination(pageSize = DownloadPageSize)
+  val LocalDateFormatter             = DateTimeFormatter.ISO_LOCAL_DATE
+
+  def downloadCaseReport(report: CaseReport) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
+      val dateString = LocalDateFormatter.format(dateTime)
+      val getUsers   = usersService.getAllUsers(Seq.empty, "", NoPagination())
+      val getTeams   = queuesService.getAllById
+
+      (getUsers, getTeams).mapN {
+        case (users, teamsById) =>
+          val usersByPid = users.results.map(user => user.id -> user).toMap
+
+          val fileData = Paged
+            .stream(DownloadPagination)(reportingService.caseReport(report, _))
+            .map(Reports.formatCaseReport(report, usersByPid, teamsById))
+            .prepend(Source.single(Reports.formatHeaders(report)))
+            .via(CsvFormatting.format[List[String]]())
+
+          Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
+            .withHeaders(
+              "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
+            )
       }
-
-  def getReportCriteria(name: String, startAtTabIndex: Int): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
-      .async { implicit request =>
-        handleNotFound(name) {
-          case Report.SLA      => getSLAReportCriteria(startAtTabIndex)
-          case Report.REFERRAL => getReferralReportCriteria(startAtTabIndex)
-        }
-      }
-
-  private def getSLAReportCriteria(startAtTabIndex: Int)(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    for {
-      queues           <- queuesService.getAll
-      caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-    } yield Ok(
-      views.html.reports(
-        queues,
-        Some(
-          SelectedReport(
-            Report.SLA,
-            views.html.partials.reports.sla_report_criteria(InstantRangeForm.form, startAtTabIndex)
-          )
-        ),
-        caseCountByQueue
-      )
-    )
-
-  private def getReferralReportCriteria(
-    startAtTabIndex: Int
-  )(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    for {
-      queues           <- queuesService.getAll
-      caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-    } yield Ok(
-      views.html.reports(
-        queues,
-        Some(
-          SelectedReport(
-            Report.REFERRAL,
-            views.html.partials.reports.referral_report_criteria(InstantRangeForm.form, startAtTabIndex)
-          )
-        ),
-        caseCountByQueue
-      )
-    )
-
-  private def handleNotFound(name: String)(onFound: Report => Future[Result]): Future[Result] =
-    Report.values.find(_.toString == name) match {
-      case Some(report) => onFound(report)
-      case None         => Future.successful(Redirect(routes.ReportingController.getReports()))
     }
 
-  def getReport(name: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))
-      .async { implicit request =>
-        handleNotFound(name) {
-          case Report.SLA      => getSLAReport
-          case Report.REFERRAL => getReferralReport
-        }
+  def downloadSummaryReport(report: SummaryReport) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
+      val dateString = LocalDateFormatter.format(dateTime)
+      val getUsers   = usersService.getAllUsers(Seq.empty, "", NoPagination())
+      val getTeams   = queuesService.getAllById
+
+      (getUsers, getTeams).mapN {
+        case (users, teamsById) =>
+          val usersByPid = users.results.map(user => user.id -> user).toMap
+
+          val fileData = Paged
+            .stream(DownloadPagination)(reportingService.summaryReport(report, _))
+            .map(Reports.formatSummaryReport(report, usersByPid, teamsById))
+            .prepend(Source.single(Reports.formatHeaders(report)))
+            .via(CsvFormatting.format[List[String]]())
+
+          Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
+            .withHeaders(
+              "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
+            )
       }
+    }
 
-  private def getSLAReport(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    InstantRangeForm.form.bindFromRequest.fold(
-      formWithErrors =>
-        for {
-          queues           <- queuesService.getAll
-          caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-        } yield Ok(
-          views.html.reports(
-            queues,
-            Some(SelectedReport(Report.SLA, views.html.partials.reports.sla_report_criteria(formWithErrors))),
-            caseCountByQueue
+  def downloadQueueReport(report: QueueReport) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
+      val dateString = LocalDateFormatter.format(dateTime)
+      val getTeams   = queuesService.getAllById
+
+      getTeams.map { teamsById =>
+        val fileData = Paged
+          .stream(DownloadPagination)(reportingService.queueReport(report, _))
+          .map(Reports.formatQueueReport(teamsById))
+          .prepend(Source.single(Reports.formatHeaders(report)))
+          .via(CsvFormatting.format[List[String]]())
+
+        Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
+          .withHeaders(
+            "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
           )
-        ),
-      filter =>
-        for {
-          queues  <- queuesService.getNonGateway
-          results <- reportingService.getSLAReport(filter)
-        } yield Ok(views.html.report_sla(filter, results, queues))
-    )
+      }
+    }
 
-  private def getReferralReport(implicit request: AuthenticatedRequest[_]): Future[Result] =
-    InstantRangeForm.form.bindFromRequest.fold(
-      formWithErrors =>
-        for {
-          queues           <- queuesService.getAll
-          caseCountByQueue <- casesService.countCasesByQueue(request.operator)
-        } yield Ok(
-          views.html.reports(
-            queues,
-            Some(SelectedReport(Report.REFERRAL, views.html.partials.reports.referral_report_criteria(formWithErrors))),
-            caseCountByQueue
-          )
-        ),
-      filter =>
-        for {
-          queues  <- queuesService.getNonGateway
-          results <- reportingService.getReferralReport(filter)
-        } yield Ok(views.html.report_referral(filter, results, queues))
-    )
+  def showChangeDateFilter(report: Report, pagination: Pagination) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
+      val specificDates = report.dateRange != InstantRange.allTime
+      val currentData   = ReportDateFormData(specificDates, report.dateRange)
+      Ok(reportChooseDates(chooseDatesForm.fill(currentData), report, pagination))
+    }
 
+  def postChangeDateFilter(report: Report, pagination: Pagination) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
+      chooseDatesForm
+        .bindFromRequest()
+        .fold(
+          formWithErrors => BadRequest(reportChooseDates(formWithErrors, report, pagination)),
+          form =>
+            report match {
+              case cses: CaseReport =>
+                Redirect(
+                  controllers.routes.ReportingController
+                    .caseReport(cses.copy(dateRange = form.dateRange), pagination)
+                )
+              case summary: SummaryReport =>
+                Redirect(
+                  controllers.routes.ReportingController
+                    .summaryReport(summary.copy(dateRange = form.dateRange), pagination)
+                )
+              case queue: QueueReport =>
+                Redirect(
+                  controllers.routes.ReportingController
+                    .queueReport(queue.copy(dateRange = form.dateRange), pagination)
+                )
+
+            }
+        )
+    }
+
+  def showChangeTeamsFilter(report: Report, pagination: Pagination) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
+      Ok(reportChooseTeams(chooseTeamsForm.fill(report.teams.isEmpty), report, pagination))
+    }
+
+  def postChangeTeamsFilter(report: Report, pagination: Pagination) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
+      chooseTeamsForm
+        .bindFromRequest()
+        .fold(
+          formWithErrors => BadRequest(reportChooseTeams(formWithErrors, report, pagination)),
+          allTeams => {
+            val teams = if (allTeams) Set.empty[String] else request.operator.memberOfTeams.toSet
+            report match {
+              case cses: CaseReport =>
+                Redirect(
+                  controllers.routes.ReportingController
+                    .caseReport(cses.copy(teams = teams), pagination)
+                )
+              case summary: SummaryReport =>
+                Redirect(
+                  controllers.routes.ReportingController
+                    .summaryReport(summary.copy(teams = teams), pagination)
+                )
+              case queue: QueueReport =>
+                Redirect(
+                  controllers.routes.ReportingController
+                    .queueReport(queue.copy(teams = teams), pagination)
+                )
+            }
+          }
+        )
+    }
+
+  def caseReport(report: CaseReport, pagination: Pagination) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val getReport = reportingService.caseReport(report, pagination)
+      val getUsers  = usersService.getAllUsers(Seq.empty, "", NoPagination())
+      val getTeams  = queuesService.getAllById
+
+      for {
+        results <- getReport
+        users   <- getUsers
+        usersByPid = users.results.map(user => user.id -> user).toMap
+        teamsById <- getTeams
+      } yield Ok(caseReportView(report, pagination, results, usersByPid, teamsById))
+    }
+
+  def summaryReport(report: SummaryReport, pagination: Pagination) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val getReport = reportingService.summaryReport(report, pagination)
+      val getUsers  = usersService.getAllUsers(Seq.empty, "", NoPagination())
+      val getTeams  = queuesService.getAllById
+
+      for {
+        results <- getReport
+        users   <- getUsers
+        usersByPid = users.results.map(user => user.id -> user).toMap
+        teamsById <- getTeams
+      } yield Ok(summaryReportView(report, pagination, results, usersByPid, teamsById))
+    }
+
+  def queueReport(report: QueueReport, pagination: Pagination) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
+      val getReport = reportingService.queueReport(report, pagination)
+      val getTeams  = queuesService.getAllById
+
+      for {
+        results   <- getReport
+        teamsById <- getTeams
+      } yield Ok(queueReportView(report, pagination, results, teamsById))
+    }
+
+  def getReportByName(reportName: String) =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
+      Report.byId
+        .get(reportName)
+        .map {
+          case summary: SummaryReport =>
+            Redirect(routes.ReportingController.summaryReport(summary, SearchPagination()))
+          case cses: CaseReport =>
+            Redirect(routes.ReportingController.caseReport(cses, SearchPagination()))
+          case queue: QueueReport =>
+            Redirect(routes.ReportingController.queueReport(queue, SearchPagination()))
+        }
+        .getOrElse {
+          NotFound(views.html.report_not_found(reportName))
+        }
+    }
+
+  def displayManageReporting(activeSubNav: SubNavigationTab = ManagerToolsReportsTab): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request =>
+      Ok(
+        manageReportsView(
+          activeSubNav,
+          ReportingTabViewModel.reportingTabs()
+        )
+      )
+    )
 }

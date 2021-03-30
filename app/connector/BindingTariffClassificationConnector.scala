@@ -16,37 +16,39 @@
 
 package connector
 
+import akka.stream.Materializer
+import akka.stream.scaladsl.Source
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
-import javax.inject.Singleton
-import play.api.mvc.QueryStringBindable
-import uk.gov.hmrc.http.HeaderCarrier
 import config.AppConfig
+
+import javax.inject.Singleton
 import metrics.HasMetrics
-import models.ApplicationType
 import models.CaseStatus._
 import models.EventType.EventType
-import models._
+import models.Role.Role
+import models.reporting._
 import models.request.NewEventRequest
-import scala.concurrent.{ExecutionContext, Future}
-import utils.JsonFormatters._
+import play.api.mvc.QueryStringBindable
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import utils.JsonFormatters._
+import javax.inject.Singleton
+import models._
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BindingTariffClassificationConnector @Inject() (
   appConfig: AppConfig,
   client: AuthenticatedHttpClient,
   val metrics: Metrics
-)(implicit ec: ExecutionContext)
+)(implicit mat: Materializer)
     extends HasMetrics {
 
-  private lazy val statuses: String = Set(NEW, OPEN, REFERRED, SUSPENDED)
-    .map(_.toString)
-    .mkString(",")
+  implicit val ec: ExecutionContext = mat.executionContext
 
-  private lazy val liveStatuses: String = Set(OPEN, REFERRED, SUSPENDED)
-    .map(_.toString)
-    .mkString(",")
+  private lazy val statuses: Set[CaseStatus] = Set(NEW, OPEN, REFERRED, SUSPENDED, COMPLETED)
 
   def createCase(application: Application)(implicit hc: HeaderCarrier): Future[Case] =
     withMetricsTimerAsync("create-case") { _ =>
@@ -61,22 +63,31 @@ class BindingTariffClassificationConnector @Inject() (
     }
 
   private def buildQueryUrl(
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq,
-    statuses: String,
+    types: Set[ApplicationType] = ApplicationType.values,
+    statuses: Set[CaseStatus],
     queueIds: Seq[String],
     assigneeId: String,
     pagination: Pagination
   ): String = {
     val sortBy = "application.type,application.status,days-elapsed"
+
     val queryString =
-      s"application_type=${types.map(_.name).mkString(",")}&queue_id=${queueIds.mkString(",")}&assignee_id=$assigneeId&status=$statuses&sort_by=$sortBy&sort_direction=desc&page=${pagination.page}&page_size=${pagination.pageSize}"
+      s"application_type=${types.map(_.name).mkString(",")}" +
+        s"&queue_id=${queueIds.mkString(",")}" +
+        s"&assignee_id=$assigneeId" +
+        s"&status=${statuses.map(_.toString).mkString(",")}" +
+        s"&sort_by=$sortBy" +
+        "&sort_direction=desc" +
+        s"&page=${pagination.page}" +
+        s"&page_size=${pagination.pageSize}"
+
     s"${appConfig.bindingTariffClassificationUrl}/cases?$queryString"
   }
 
   def findCasesByQueue(
     queue: Queue,
     pagination: Pagination,
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq
+    types: Set[ApplicationType] = ApplicationType.values
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val queueId = if (queue == Queues.gateway) "none" else queue.id
@@ -93,14 +104,16 @@ class BindingTariffClassificationConnector @Inject() (
   def findCasesByAllQueues(
     queue: Seq[Queue],
     pagination: Pagination,
-    types: Seq[ApplicationType] = ApplicationType.values.toSeq
+    types: Set[ApplicationType] = ApplicationType.values,
+    statuses: Set[CaseStatus]   = CaseStatus.openStatuses,
+    assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    withMetricsTimerAsync("get-cases-by-queue") { _ =>
+    withMetricsTimerAsync("get-cases-by-all-queues") { _ =>
       val url = buildQueryUrl(
         types      = types,
         statuses   = statuses,
         queueIds   = queue.map(_.id),
-        assigneeId = "none",
+        assigneeId = assignee,
         pagination = pagination
       )
       client.GET[Paged[Case]](url)
@@ -114,7 +127,12 @@ class BindingTariffClassificationConnector @Inject() (
 
   def findAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-assigned-cases") { _ =>
-      val url = buildQueryUrl(statuses = liveStatuses, queueIds = Seq(), assigneeId = "some", pagination = pagination)
+      val url = buildQueryUrl(
+        statuses   = CaseStatus.openStatuses,
+        queueIds   = Seq(),
+        assigneeId = "some",
+        pagination = pagination
+      )
       client.GET[Paged[Case]](url)
     }
 
@@ -143,6 +161,60 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[Event]](url)
     }
 
+  private def latestEventByCase(events: Seq[Event]): Map[String, Event] =
+    events
+      .groupBy(_.caseReference)
+      .flatMap {
+        case (_, eventsForCase) =>
+          eventsForCase
+            .sortBy(_.timestamp)(Event.latestFirst)
+            .headOption
+            .map(event => event.caseReference -> event)
+            .toMap
+      }
+
+  def findReferralEvents(references: Set[String])(
+    implicit hc: HeaderCarrier
+  ): Future[Map[String, Event]] =
+    withMetricsTimerAsync("get-referral-events") { _ =>
+      val pagination = NoPagination()
+      // Conservative approximation as to how many case references we can fit into a single URL
+      val batchSize = (appConfig.maxUriLength.intValue - appConfig.bindingTariffClassificationUrl.length - 250) / 10
+      Source(references)
+        .grouped(batchSize)
+        .mapAsync(Runtime.getRuntime().availableProcessors()) { ids =>
+          val searchParam = s"case_reference=${ids.mkString(",")}&type=${EventType.CASE_REFERRAL}"
+          val url =
+            s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
+          client.GET[Paged[Event]](url)
+        }
+        .runFold(Map.empty[String, Event]) {
+          case (eventsById, nextBatch) =>
+            eventsById ++ latestEventByCase(nextBatch.results)
+        }
+    }
+
+  def findCompletionEvents(references: Set[String])(
+    implicit hc: HeaderCarrier
+  ): Future[Map[String, Event]] =
+    withMetricsTimerAsync("get-completion-events") { _ =>
+      val pagination = NoPagination()
+      // Conservative approximation as to how many case references we can fit into a single URL
+      val batchSize = (appConfig.maxUriLength.intValue - appConfig.bindingTariffClassificationUrl.length - 250) / 10
+      Source(references)
+        .grouped(batchSize)
+        .mapAsync(Runtime.getRuntime().availableProcessors()) { ids =>
+          val searchParam = s"case_reference=${ids.mkString(",")}&type=${EventType.CASE_COMPLETED}"
+          val url =
+            s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
+          client.GET[Paged[Event]](url)
+        }
+        .runFold(Map.empty[String, Event]) {
+          case (eventsById, nextBatch) =>
+            eventsById ++ latestEventByCase(nextBatch.results)
+        }
+    }
+
   def search(search: Search, sort: Sort, pagination: Pagination)(
     implicit hc: HeaderCarrier,
     qb: QueryStringBindable[String]
@@ -154,7 +226,8 @@ class BindingTariffClassificationConnector @Inject() (
       )
 
       val optParams = Seq(
-        search.traderName.map(qb.unbind("trader_name", _)),
+        search.caseDetails.map(qb.unbind("case_details", _)),
+        search.caseSource.map(qb.unbind("case_source", _)),
         search.commodityCode.map(qb.unbind("commodity_code", _)),
         search.decisionDetails.map(qb.unbind("decision_details", _)),
         search.status.map(_.map(s => qb.unbind("status", s.toString)).mkString("&")),
@@ -167,10 +240,100 @@ class BindingTariffClassificationConnector @Inject() (
       client.GET[Paged[Case]](url)
     }
 
-  def generateReport(report: CaseReport)(implicit hc: HeaderCarrier): Future[Seq[ReportResult]] =
-    withMetricsTimerAsync("generate-report") { _ =>
-      val url = s"${appConfig.bindingTariffClassificationUrl}/report?${CaseReport.bindable.unbind("", report)}"
-      client.GET[Seq[ReportResult]](url)
+  def getAllUsers(roles: Seq[Role], team: String, pagination: Pagination)(
+    implicit hc: HeaderCarrier
+  ): Future[Paged[Operator]] =
+    withMetricsTimerAsync("get-all-users") { _ =>
+      val searchParam = s"role=${roles.mkString(",")}&member_of_teams=$team"
+      val url =
+        s"${appConfig.bindingTariffClassificationUrl}/users?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
+
+      client.GET[Paged[Operator]](url = url)
     }
 
+  def updateUser(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("update-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users/${o.id}"
+      client.PUT[Operator, Operator](url = url, body = o)
+    }
+
+  def markDeleted(o: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("delete-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/mark-deleted/users/${o.id}"
+      client.PUT[Operator, Operator](url = url, body = o)
+    }
+
+  def getUserDetails(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =
+    withMetricsTimerAsync("get-user-details") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users/$id"
+      client.GET[Option[Operator]](url = url)
+    }
+
+  def createUser(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
+    withMetricsTimerAsync("create-user") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/users"
+      client.POST[NewUserRequest, Operator](url, NewUserRequest(operator))
+    }
+
+  def caseReport(report: CaseReport, pagination: Pagination)(
+    implicit hc: HeaderCarrier,
+    reportBind: QueryStringBindable[CaseReport],
+    pageBind: QueryStringBindable[Pagination]
+  ): Future[Paged[Map[String, ReportResultField[_]]]] =
+    withMetricsTimerAsync("case-report") { _ =>
+      val reportQuery = reportBind.unbind("", report)
+      val pageQuery   = pageBind.unbind("", pagination)
+      val url         = s"${appConfig.bindingTariffClassificationUrl}/report/cases?$reportQuery&$pageQuery"
+      client.GET[Paged[Map[String, ReportResultField[_]]]](url)
+    }
+
+  def summaryReport(report: SummaryReport, pagination: Pagination)(
+    implicit hc: HeaderCarrier,
+    reportBind: QueryStringBindable[SummaryReport],
+    pageBind: QueryStringBindable[Pagination]
+  ): Future[Paged[ResultGroup]] =
+    withMetricsTimerAsync("summary-report") { _ =>
+      val reportQuery = reportBind.unbind("", report)
+      val pageQuery   = pageBind.unbind("", pagination)
+      val url         = s"${appConfig.bindingTariffClassificationUrl}/report/summary?$reportQuery&$pageQuery"
+      client.GET[Paged[ResultGroup]](url)
+    }
+
+  def queueReport(report: QueueReport, pagination: Pagination)(
+    implicit hc: HeaderCarrier,
+    reportBind: QueryStringBindable[QueueReport],
+    pageBind: QueryStringBindable[Pagination]
+  ): Future[Paged[QueueResultGroup]] =
+    withMetricsTimerAsync("queue-report") { _ =>
+      val reportQuery = reportBind.unbind("", report)
+      val pageQuery   = pageBind.unbind("", pagination)
+      val url         = s"${appConfig.bindingTariffClassificationUrl}/report/queues?$reportQuery&$pageQuery"
+      client.GET[Paged[QueueResultGroup]](url)
+    }
+
+  def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
+    withMetricsTimerAsync("create-keyword") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/keyword"
+      client
+        .POST[NewKeywordRequest, Keyword](url, NewKeywordRequest(Keyword(keyword.name.toUpperCase, keyword.approved)))
+    }
+
+  def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
+    withMetricsTimerAsync("find-all-keywords") { _ =>
+      val url =
+        s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
+      client.GET[Paged[Keyword]](url)
+    }
+
+  def getCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
+    withMetricsTimerAsync("get-case-keywords") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/case-keywords"
+      client.GET[Paged[CaseKeyword]](url)
+    }
+
+  def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =
+    withMetricsTimerAsync("delete-keyword") { _ =>
+      val url = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
+      client.DELETE[Unit](url).map(_ => ())
+    }
 }

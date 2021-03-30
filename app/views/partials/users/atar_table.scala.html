@@ -1,0 +1,124 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.ApplicationsTab
+@import utils.Dates
+@import play.twirl.api.TemplateMagic.defining
+@import views.html.v2.case_status_tab
+@import views.html.forms.components.input_checkbox
+@import controllers.v2.routes.MoveCasesController
+@import views.html.partials.{error_summary}
+@import controllers.Tab
+
+@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@error_summary(form.errors)
+<h2 class="heading-large mt-0 mb-30">@messages("users.user.atar.heading")</h2>
+@helper.form(action = MoveCasesController.postMoveATaRCases(userID).withFragment(Tab.ATAR_TAB.name), 'id -> "atarCases", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
+
+<div class="form-group">
+ <button id="move-atar-cases" class="button" type="submit">Move selected cases</button>
+</div>
+@form("atarCases").errors.map { error =>
+<div class="form-group mb-0">
+ <fieldset>
+  <legend class="advanced_search--filters_heading">
+   <span class="error-message" id="error-message-@{form("atarCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+  </legend>
+ </fieldset>
+</div>
+}
+<table id="@{atarTab.tabMessageKey}-table">
+ <caption class="visually-hidden">@messages("users.user.atar.heading")</caption>
+ <thead class="govuk-table__head">
+  <tr id="@{atarTab.tabMessageKey}-details" class="grid-row mb-2">
+    <th id="@{atarTab.tabMessageKey}-select" class="bold w-0" scope="col">
+     Select
+    </th>
+    <th id="@{atarTab.tabMessageKey}-reference" class="bold w-0" scope="col">
+     Reference
+    </th>
+    <th id="@{atarTab.tabMessageKey}-goods" class="bold w-0" scope="col">
+     Goods
+    </th>
+    <th id="@{atarTab.tabMessageKey}-trader" class="bold w-0" scope="col">
+     Trader
+    </th>
+    <th id="@{atarTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
+     Elapsed days
+    </th>
+    <th id="@{atarTab.tabMessageKey}-total-days" class="bold w-0" scope="col">
+     Total days
+    </th>
+    <th id="@{atarTab.tabMessageKey}-status" class="bold w-0" scope="col">
+     Status
+    </th>
+    <th id="@{atarTab.tabMessageKey}-team" class="bold w-0" scope="col">
+     Team
+    </th>
+  </tr>
+ </thead>
+ <tbody>
+ @for((result, index) <- atarTab.searchResult.results.zipWithIndex) {
+
+ @defining(result.application.asATAR) { atar =>
+
+ <tr id="@{atarTab.tabMessageKey}-details-@index">
+  <td id="@{atarTab.tabMessageKey}-select-@index" @if(form("atarCases").hasErrors){class="form-group-error"}>
+   @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
+   <div class="form-group" >
+   <div class="multiple-choice">
+    <fieldset>
+     @defining(s"${form("atarCases").id}-$index") { id: String =>
+
+     <input
+           class="form-control"
+           type="checkbox"
+           id="@{id}"
+           name="@{form("atarCases").name}[@index]"
+           value="@{result.reference}"
+     @if(form("atarCases").hasErrors){
+     aria-describedby="error-message-@{id}-input"
+     }
+           @if(form("atarCases").value.contains(result.reference)){ checked="checked"}
+   />
+     <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+    }</fieldset>
+   </div>
+  </div>
+   }
+  </td>
+  <td id="@{atarTab.tabMessageKey}-reference-@index"><a href="@routes.CaseController.get(result.reference)">@{result.reference}</a></td>
+  <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
+  <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
+  <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{atarTab.tabMessageKey}-total-days-@index">@{Dates.daysCount(result.createdDate)}</td>
+
+    <td id="@{atarTab.tabMessageKey}-status-@index">
+     @case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
+    </td>
+    <td id="@{atarTab.tabMessageKey}-team-@index">
+     @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+    </td>
+  </tr>
+ }
+
+ }
+ </tbody>
+</table>
+}

@@ -16,22 +16,28 @@
 
 package views.v2
 
-import models.forms.{ActivityForm, ActivityFormData, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{AppealTabViewModel, KeywordsTabViewModel, CaseViewModel, SampleStatusTabViewModel}
 import models._
+import models.forms._
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import models.viewmodels._
+import models.request.AuthenticatedRequest
 import play.api.data.Form
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.{FakeHeaders, FakeRequest}
 import utils.Cases
 import utils.Cases._
+import utils.Notification._
 import views.ViewMatchers.{containElementWithID, containText}
 import views.ViewSpec
 import views.html.v2.liability_view
+import play.api.test.CSRFTokenHelper._
 
 class LiabilityViewSpec extends ViewSpec {
 
   private val sampleStatusTabViewModel = SampleStatusTabViewModel(
     "caseReference",
     isSampleBeingSent = true,
-    Some("a person"),
+    Some(SampleSend.AGENT),
     None,
     "location",
     sampleActivity = Paged.empty[Event]
@@ -42,6 +48,15 @@ class LiabilityViewSpec extends ViewSpec {
   def liabilityView: liability_view = injector.instanceOf[liability_view]
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
+
+  val initiateResponse = FileStoreInitiateResponse(
+    id = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
 
   def keywordForm: Form[String] = KeywordForm.form
 
@@ -70,6 +85,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -90,6 +106,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -110,6 +127,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -130,6 +148,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -150,6 +169,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -170,6 +190,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -190,6 +211,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -211,6 +233,7 @@ class LiabilityViewSpec extends ViewSpec {
           Cases.attachmentsTabViewModel
             .map(_.copy(attachments = Seq(Cases.storedAttachment), letter = Some(Cases.letterOfAuthority))),
           UploadAttachmentForm.form,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -231,6 +254,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -251,6 +275,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -272,6 +297,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -295,6 +321,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -317,6 +344,7 @@ class LiabilityViewSpec extends ViewSpec {
           activityForm,
           None,
           uploadAttachmentForm,
+          initiateResponse,
           emptyKeywordsTabViewModel,
           keywordForm,
           appealTabViewModel
@@ -324,6 +352,43 @@ class LiabilityViewSpec extends ViewSpec {
       )
 
       doc shouldNot containElementWithID("appeal_tab")
+    }
+
+    "render notification banner when note was added" in {
+
+      val requestWithFlashKeywordSuccess: FakeRequest[AnyContentAsEmpty.type] =
+        FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty)
+          .withFlash(success("case.activity.note.success.text"))
+          .withCSRFToken
+          .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+      val doc = view(
+        liabilityView(
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          None,
+          None,
+          sampleStatusTabViewModel,
+          Cases.activityTabViewModel,
+          activityForm,
+          None,
+          uploadAttachmentForm,
+          initiateResponse,
+          emptyKeywordsTabViewModel,
+          keywordForm,
+          appealTabViewModel
+        )(
+          AuthenticatedRequest(
+            authenticatedOperator,
+            requestWithFlashKeywordSuccess
+          ),
+          messages,
+          appConfig
+        )
+      )
+
+      doc should containElementWithID("govuk-notification-banner-title")
+
     }
   }
 }

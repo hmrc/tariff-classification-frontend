@@ -31,7 +31,9 @@
 
     @error_summary(activityForm.errors, Some(startAtTabIndex))
 
-    @notification_banner()(request.flash, messages)
+    @if(request.flash.get("success").getOrElse("").contains("note")){
+        @notification_banner()(request.flash, messages)
+    }
 
     @tab_heading("activity", messages("case.menu.activity"))
 
@@ -50,7 +52,7 @@
                     customErrorMessage = Some(messages("error.empty.note"))
                 )
                 <div class="form-group">
-                    <button tabindex="@{startAtTabIndex+11}" id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
+                    <button id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
                 </div>
             }
             </div>

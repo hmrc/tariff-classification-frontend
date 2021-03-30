@@ -17,11 +17,18 @@
 package audit
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import models.AppealStatus.AppealStatus
 import models.ApplicationType.{CORRESPONDENCE, MISCELLANEOUS}
+import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 import models._
+import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
+import javax.inject.{Inject, Singleton}
+import play.api.libs.json.JsObject
+import play.api.libs.json.Json
+import utils.JsonFormatters.caseFormat
+import utils.JsonFormatters.operatorFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -128,6 +135,16 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       auditPayload   = baseAuditPayload(c, operator) + ("comment" -> "Liability case created")
     )
 
+  def auditCaseUpdated(originalCase: Case, updatedCase: Case, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = CaseUpdated,
+        auditPayload = Json.obj(
+          "originalCase" -> Json.toJson(originalCase),
+          "operatorUpdating"       -> operatorUpdating.id,
+          "updatedCase"  -> Json.toJson(updatedCase)
+        )
+      )
+
   def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Unit =
@@ -158,6 +175,15 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       )
     )
 
+  def auditSampleSendChange(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = CaseSampleSendChange,
+      auditPayload = baseAuditPayload(updatedCase, operator) + (
+        "newSampleSender"      -> sampleSend(updatedCase),
+        "previousSampleSender" -> sampleSend(oldCase)
+      )
+    )
+
   def auditCaseExtendedUseChange(oldCase: Case, updatedCase: Case, operator: Operator)(
     implicit hc: HeaderCarrier
   ): Unit =
@@ -183,6 +209,85 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       )
     )
   }
+
+  def auditUserUpdated(original: Operator,updatedOperator: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = UserUpdated,
+      auditPayload = Json.obj(
+        "originalOperator" -> Json.toJson(original),
+        "updatedOperator"  -> Json.toJson(updatedOperator),
+        "operatorUpdating"       -> operatorUpdating.id
+      )
+    )
+
+  def auditUserDeleted(oldOperator: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = UserDeleted,
+      auditPayload = Map(
+        "operatorUpdating" -> operatorUpdating.id,
+        "operatorId"       -> oldOperator.id
+      )
+    )
+
+  def auditUserCaseMoved(
+    refs: List[String],
+    user: Option[Operator],
+    teamId: String,
+    originalUserId: String,
+    operatorUpdating: String)(implicit hc: HeaderCarrier): Unit = {
+    val operatorId: String = user.map(_.id).getOrElse("")
+    sendExplicitAuditEvent(
+      auditEventType = UserCasesMoved,
+      auditPayload = Json.obj(
+        "operatorId"       -> originalUserId,
+        "team"             -> teamId,
+        "newOperatorId"    -> operatorId,
+        "caseReferences"   -> Json.toJson(refs),
+        "operatorUpdating" -> operatorUpdating
+      )
+    )
+  }
+
+  def auditManagerKeywordCreated(user: Operator, keyword: Keyword, keywordStatusAction: ChangeKeywordStatusAction)(
+    implicit hc: HeaderCarrier
+  ): Unit = {
+
+    val keywordAction = keywordStatusAction match {
+      case ChangeKeywordStatusAction.CREATED => ("keywordCreated", ManagerKeywordCreated)
+      case ChangeKeywordStatusAction.APPROVE => ("keywordApproved", ManagerKeywordApproved)
+      case ChangeKeywordStatusAction.REJECT  => ("keywordRejected", ManagerKeywordRejected)
+    }
+
+    sendExplicitAuditEvent(
+      auditEventType = keywordAction._2,
+      auditPayload = Map(
+        "operatorId"           -> user.id,
+        s"${keywordAction._1}" -> keyword.name
+      )
+    )
+  }
+
+  def auditManagerKeywordDeleted(user: Operator, keyword: Keyword)(implicit hc: HeaderCarrier): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = ManagerKeywordDeleted,
+      auditPayload = Map(
+        "operatorId"     -> user.id,
+        "keywordDeleted" -> keyword.name
+      )
+    )
+
+  def auditManagerKeywordRenamed(user: Operator, original: Keyword, updated: Keyword)(
+    implicit hc: HeaderCarrier
+  ): Unit =
+    sendExplicitAuditEvent(
+      auditEventType = ManagerKeywordRenamed,
+      auditPayload = Map(
+        "operatorId"      -> user.id,
+        "originalKeyword" -> original.name,
+        "updatedKeyword"  -> updated.name
+      )
+    )
+
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] =
     baseAuditPayload(updatedCase, operator) + (
       "newStatus"      -> updatedCase.status.toString,
@@ -198,7 +303,18 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       "operatorId"    -> operator.id
     )
 
+  private def baseUserAuditPayload(operatorToUpdate: Operator, operatorUpdating: Operator): Map[String, String] =
+    Map(
+      "operatorToUpdate" -> operatorToUpdate.id,
+      "operatorUpdating" -> operatorUpdating.id
+    )
+
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])(
+    implicit hc: HeaderCarrier
+  ): Unit =
+    auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
+
+  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsObject)(
     implicit hc: HeaderCarrier
   ): Unit =
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
@@ -214,11 +330,15 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
 
   private def sampleReturn: Case => String =
     _.sample.returnStatus map (_.toString) getOrElse undefined
+
+  private def sampleSend: Case => String =
+    _.sample.whoIsSending map (_.toString) getOrElse undefined
 }
 
 object AuditPayloadType {
 
   val CaseCreated            = "caseCreated"
+  val CaseUpdated            = "caseUpdated"
   val CaseReleased           = "caseReleased"
   val CaseAssigned           = "caseAssigned"
   val CaseCompleted          = "caseCompleted"
@@ -238,5 +358,14 @@ object AuditPayloadType {
   val CaseMessage            = "caseMessage"
   val CaseSampleStatusChange = "caseSampleStatusChange"
   val CaseSampleReturnChange = "caseSampleReturnChange"
+  val CaseSampleSendChange   = "caseSampleSendChange"
+  val UserUpdated            = "userUpdated"
+  val UserDeleted            = "userDeleted"
+  val UserCasesMoved         = "userCasesMoved"
+  val ManagerKeywordCreated  = "managerKeywordCreated"
+  val ManagerKeywordRenamed  = "managerKeywordRenamed"
+  val ManagerKeywordDeleted  = "managerKeywordDeleted"
+  val ManagerKeywordApproved = "managerKeywordApproved"
+  val ManagerKeywordRejected = "managerKeywordRejected"
 
 }

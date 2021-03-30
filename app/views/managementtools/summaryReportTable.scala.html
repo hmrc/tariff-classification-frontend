@@ -1,0 +1,73 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.reporting._
+@import models.request.AuthenticatedRequest
+@import views.html.partials.pagination
+
+@(
+  report: SummaryReport,
+  options: Pagination,
+  results: Paged[ResultGroup],
+  users: Map[String, Operator],
+  teams: Map[String, Queue],
+  id: String
+)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+
+<table id="@{id}-table">
+  <thead class="govuk-table__head">
+    <tr id="@{id}-details" class="grid-row mb-2">
+      @for(groupBy <- report.groupBy.toSeq) {
+        <th scope="col" id="@{id}-@{groupBy.fieldName}" class="bold w-0" scope="col">
+          @messages(s"reporting.field.${groupBy.fieldName}")
+        </th>
+      }
+      <th scope="col" id="@{id}-count" class="bold w-0" scope="col">
+        @messages(s"reporting.field.count")
+      </th>
+      @for((field, index) <- report.maxFields.zipWithIndex) {
+        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0" scope="col">
+          @messages(s"reporting.field.${field.fieldName}")
+        </th>
+      }
+    </tr>
+  </thead>
+
+  <tbody>
+    @for((resultGroup, rowIndex) <- results.results.zipWithIndex) {
+      <tr>
+        @report.groupBy.zipWith(resultGroup.groupKey) { case (groupBy, groupKey) =>
+          @reportField(groupBy, groupKey, users, teams, id, rowIndex)
+        }.toSeq
+        <td id="@{id}-count-@{rowIndex}">
+          @{resultGroup.count}
+        </td>
+        @for(field <- resultGroup.maxFields) {
+          @reportNumberField(field, id, rowIndex)
+        }
+      </tr>
+    }
+  </tbody>
+</table>
+
+@pagination(
+  id = s"${id}-pagination_bottom",
+  pager = results,
+  containerClass = Some("mt-2 mb-1"),
+  linksClass = Some("mt-2"),
+  onChange = page => controllers.routes.ReportingController.summaryReport(report, options.withPage(page))
+)

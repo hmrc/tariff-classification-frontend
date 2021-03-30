@@ -29,9 +29,8 @@
 @main(bodyClasses = None, customTitle = Some(messages("page.title.extended.use")), customPrimaryNavTab = NoTabSelected) {
     @back_link()
 
-    @case_heading(c)
-
-    <h2 id="change_extended_use_status-heading" class="heading-large">Extended use of this ruling</h2>
+<div class="govuk-notification-banner-width">
+    @case_heading(c, messageKey = Some("case.extend.heading"))
 
     <p>Before you change this, <a id="change_extended_use_status-attachment_link" href="@routes.CaseController.attachmentsDetails(c.reference)">attach</a> any relevant documentation to the case.</p>
 
@@ -40,12 +39,15 @@
         @input_radiogroup(
             field = form("state"),
             options = Seq(RadioOption("true", "Yes"), RadioOption("false", "No")),
-            id = "review_status_form"
+            id = "review_status_form",
+            label = Some(messages("case.extend.heading", c.application.goodsName)),
+            labelClass = Some ("visually-hidden")
         )
-        <div>
-            <button id="change_extended_use_status-submit" class="button" type="submit">Save</button>
-            <a id="change_extended_use_status-cancel" class="secondary-button" href="@routes.AppealCaseController.appealDetails(c.reference)">Cancel</a>
+        <div class="confirm-cancel-alignment">
+            <button id="change_extended_use_status-submit" class="button" type="submit">Save changes</button>
+            <a id="change_extended_use_status-cancel" class="secondary-button" href="@routes.AppealCaseController.appealDetails(c.reference)">Cancel this action</a>
         </div>
     }
+</div>
 
 }

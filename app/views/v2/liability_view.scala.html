@@ -19,10 +19,12 @@
 @import models.ApplicationType
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
+@import models.response.FileStoreInitiateResponse
 @import models.viewmodels._
 @import models.Permission
 @import views.html.partials.liabilities.advanced_search_cases
 @import views.html.helper.CSRF
+@import views.html.partials.notification_banner
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -50,19 +52,28 @@
         //attachments
         attachmentsTabViewModel: Option[AttachmentsTabViewModel],
         uploadAttachmentsForm: Form[String],
+        initiateResponse: FileStoreInitiateResponse,
 
         //keywords
         keywordsTabViewModel: KeywordsTabViewModel,
         keywordForm: Form[String],
 
         //appeal
-        appealTabViewModel: Option[AppealTabViewModel]
+        appealTabViewModel: Option[AppealTabViewModel],
+        primaryNavTab: PrimaryNavigationTab = MyCasesTab
+
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("case.v2.liability.page_title")),
-    customPrimaryNavTab = MyCasesTab) {
+    customPrimaryNavTab = primaryNavTab) {
 
-    @case_heading(caseViewModel.caseHeader)
+    @if(request.flash.get("success").getOrElse("").contains("referral")){
+        @notification_banner()(request.flash, messages)
+    }
+
+    <div class="govuk-notification-banner-width">
+        @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
+    </div>
 
     <div class="form-groups">
         @case_action_buttons_partial(caseViewModel)
@@ -156,6 +167,7 @@
             <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="attachments_tab">
             @attachments_details(
                 uploadAttachmentsForm,
+                initiateResponse,
                 attachmentsTabViewModel.get,
                 request.hasPermission(Permission.ADD_ATTACHMENT)
             )

@@ -25,44 +25,54 @@
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.referred")),
-    customPrimaryNavTab = NoTabSelected) {
+@customHeading = @{
+    if(c.application.isCorrespondence) {
+        Some(messages("page.title.case_correspondence.referred"))
+    }   else if(c.application.isMisc) {
+        Some(messages("page.title.case_miscellaneous.referred"))
+    } else if(c.application.isBTI) {
+        Some(messages("page.title.case_atar.referred"))
+    } else {
+    Some(messages("page.title.case_liability.referred"))
+    }
+}
 
-    @case_heading(c)
+@main(bodyClasses = None, customTitle = customHeading,
+    customPrimaryNavTab = NoTabSelected) {
 
     <div class="grid-row">
         <div class="column-full">
             @if(c.application.`type` == ApplicationType.ATAR) {
                 @success_panel(
-                    messages("case.referred.confirm_referred"),
+                    messages("case.referred.confirm_referred", c.application.goodsName),
                     None,
                     Some(days_elapsed_paused(c)),
-                    "View ATaR cases",
+                    "Back to open ATaR cases",
                     ATaRTab
                 )
             } else if (c.application.`type` == ApplicationType.LIABILITY) {
             @success_panel(
-                messages("case.referred.confirm_referred"),
+                messages("case.referred.confirm_referred", c.application.goodsName),
                 None,
                 Some(days_elapsed_paused(c)),
-                "View liability cases",
+                "Back to open Liability cases",
                 LiabilitiesTab
             )
 
             } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
             @success_panel(
-                messages("case.referred.confirm_referred"),
+                messages("case.referred.confirm_referred", c.application.goodsName),
                 None,
                 Some(days_elapsed_paused(c)),
-                "View correspondence cases",
+                "Back to open Correspondence cases",
                 CorrespondenceTab
             )
             } else {
             @success_panel(
-                messages("case.referred.confirm_referred"),
+                messages("case.referred.confirm_referred", c.application.goodsName),
                 None,
                 Some(days_elapsed_paused(c)),
-                "View miscellaneous cases",
+                "Back to open Miscellaneous cases",
                 MiscellaneousTab
             )
             }

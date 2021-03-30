@@ -79,7 +79,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Release this case for classification")
+      bodyOf(result)        should include("Choose a team to release this case to")
     }
 
     "return OK when user has right permissions" in {
@@ -141,7 +141,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Release this case for classification")
+      bodyOf(result)        should include("Choose a team to release this case to")
     }
 
     "redirect to confirmation when user has right permissions" in {
@@ -179,7 +179,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         await(controller(caseWithQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF(app)))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("This case has been released")
+      bodyOf(result) should include("case has been released")
     }
 
     "return resource not found when the queue is not found" in {

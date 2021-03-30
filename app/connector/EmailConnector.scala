@@ -37,10 +37,10 @@ class EmailConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends HasMetrics {
 
-  def send[E >: Email[Any]](e: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] =
+  def send(e: Email[_])(implicit hc: HeaderCarrier, writes: Writes[Email[_]]): Future[Unit] =
     withMetricsTimerAsync("send-email") { _ =>
       val url = s"${configuration.emailUrl}/hmrc/email"
-      client.POST[E, Unit](url = url, body = e)
+      client.POST[Email[_], Unit](url = url, body = e)
     }
 
   def generate[T](e: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] =

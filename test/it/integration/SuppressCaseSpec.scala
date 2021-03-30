@@ -35,11 +35,11 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suppress").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suppress-reason").get())
 
       // Then
       response.status shouldBe OK
-      response.body   should include("Change case status to: Suppressed")
+      response.body   should include("Provide details to suppress this case")
     }
 
     "redirect on auth failure" in {
@@ -47,7 +47,7 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suppress").get())
+      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/suppress-reason").get())
 
       // Then
       response.status shouldBe OK

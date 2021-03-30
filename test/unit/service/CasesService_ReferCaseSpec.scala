@@ -45,7 +45,16 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
   private val aCase            = Cases.btiCaseExample
 
   private val service =
-    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, realAppConfig)
+    new CasesService(
+      audit,
+      emailService,
+      fileStoreService,
+      countriesService,
+      reportingService,
+      pdfService,
+      connector,
+      rulingConnector
+    )(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -55,14 +64,11 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
   "Refer a Case" should {
     "update case status to REFERRED" in {
       // Given
-      val fileUpload   = mock[FileUpload]
-      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
-
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.OPEN)
       val caseUpdated        = aCase.copy(status = CaseStatus.REFERRED)
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
@@ -70,7 +76,7 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
       //referCase(original: Case, referredTo : String, reason: Seq[ReferralReason], f: FileUpload, note: String, operator: Operator)
       // When Then
       await(
-        service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), fileUpload, "note", operator)
+        service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), attachment, "note", operator)
       ) shouldBe caseUpdated
 
       verify(audit).auditCaseReferred(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -97,18 +103,15 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
     }
 
     "not create event on update failure" in {
-      val fileUpload   = mock[FileUpload]
-      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
-
       val operator: Operator = Operator("operator-id")
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.OPEN)
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(
-          service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), fileUpload, "note", operator)
+          service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), attachment, "note", operator)
         )
       }
 
@@ -118,21 +121,18 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
 
     "succeed on event create failure" in {
       // Given
-      val fileUpload   = mock[FileUpload]
-      val fileUploaded = FileStoreAttachment("id", "email", "application/pdf", 0)
-
       val operator: Operator = Operator("operator-id")
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.OPEN)
       val caseUpdated        = aCase.copy(status = CaseStatus.REFERRED)
 
-      given(fileStoreService.upload(fileUpload)).willReturn(successful(fileUploaded))
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
       // When Then
       await(
-        service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), fileUpload, "note", operator)
+        service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), attachment, "note", operator)
       ) shouldBe caseUpdated
 
       verify(audit).auditCaseReferred(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])

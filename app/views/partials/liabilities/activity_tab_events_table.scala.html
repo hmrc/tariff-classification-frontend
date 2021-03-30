@@ -24,10 +24,11 @@
 
 @(activityViewModel: ActivityViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
+<h3 class="heading-medium mt-30 mb-30" aria-hidden="true">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
 
 <table id="activity-events">
-    <thead>
+    <caption class="visually-hidden">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</caption>
+    <thead class="govuk-table__head">
         <tr>
             <th scope="col">Identifier</th>
             <th scope="col">Description</th>
@@ -59,6 +60,9 @@
                         }
                         case EventType.CASE_REFERRAL => {
                             activity_case_referral(index, event)
+                        }
+                        case EventType.CASE_REJECTED => {
+                            activity_case_rejection(index, event)
                         }
                         case EventType.CASE_COMPLETED => {
                             activity_case_completed(index, event)

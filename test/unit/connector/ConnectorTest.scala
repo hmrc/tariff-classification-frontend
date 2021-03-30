@@ -42,6 +42,7 @@ trait ConnectorTest extends SpecBase with WiremockTestServer with ResourceFiles 
   override def beforeAll(): Unit = {
     super.beforeAll()
 
+    when(mockAppConfig.maxUriLength) thenReturn 2048
     when(mockAppConfig.fileStoreUrl) thenReturn getUrl
     when(mockAppConfig.bindingTariffClassificationUrl) thenReturn getUrl
     when(mockAppConfig.rulingUrl) thenReturn getUrl

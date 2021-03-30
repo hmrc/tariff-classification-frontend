@@ -17,51 +17,23 @@
 package service
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
+
 import connector.BindingTariffClassificationConnector
-import models.CaseStatus.{NEW, OPEN, REFERRED, SUSPENDED}
 import models._
+import models.reporting._
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 @Singleton
 class ReportingService @Inject() (connector: BindingTariffClassificationConnector) {
 
-  def getSLAReport(decisionStartDate: InstantRange)(implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
-    val report = CaseReport(
-      filter = CaseReportFilter(
-        decisionStartDate = Some(decisionStartDate),
-        applicationType   = Some(Set("BTI"))
-      ),
-      group = Set(CaseReportGroup.QUEUE),
-      field = CaseReportField.ACTIVE_DAYS_ELAPSED
-    )
+  def caseReport(report: CaseReport, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Map[String, ReportResultField[_]]]] =
+    connector.caseReport(report, pagination)
 
-    connector.generateReport(report)
-  }
+  def summaryReport(report: SummaryReport, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[ResultGroup]] =
+    connector.summaryReport(report, pagination)
 
-  def getQueueReport(implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
-    val statuses = Set(NEW, OPEN, REFERRED, SUSPENDED).map(_.toString)
-
-    val report = CaseReport(
-      filter = CaseReportFilter(status = Some(statuses), assigneeId = Some("none")),
-      group  = Set(CaseReportGroup.QUEUE, CaseReportGroup.APPLICATION_TYPE),
-      field  = CaseReportField.ACTIVE_DAYS_ELAPSED
-    )
-    connector.generateReport(report)
-  }
-
-  def getReferralReport(referralDate: InstantRange)(implicit hc: HeaderCarrier): Future[Seq[ReportResult]] = {
-    val report = CaseReport(
-      filter = CaseReportFilter(
-        referralDate    = Some(referralDate),
-        applicationType = Some(Set("BTI"))
-      ),
-      group = Set(CaseReportGroup.QUEUE),
-      field = CaseReportField.REFERRED_DAYS_ELAPSED
-    )
-
-    connector.generateReport(report)
-  }
-
+  def queueReport(report: QueueReport, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[QueueResultGroup]] =
+    connector.queueReport(report, pagination)
 }

@@ -25,12 +25,12 @@
 @(activity: ActivityViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <table id="activity-events">
-    <thead>
+    <caption class="visually-hidden">Activity log</caption>
+    <thead class="govuk-table__head">
         <tr>
             <th scope="col">Identifier</th>
             <th scope="col">Description</th>
             <th scope="col">Date</th>
-
         </tr>
     </thead>
     <tbody>
@@ -60,6 +60,9 @@
                         }
                         case EventType.CASE_COMPLETED => {
                             activity_case_completed(index, event, startAtTabIndex + (index*2))
+                        }
+                        case EventType.CASE_REJECTED => {
+                            activity_case_rejection(index, event, startAtTabIndex + (index*2))
                         }
                         case EventType.APPEAL_ADDED => {
                             val body = event.details.asInstanceOf[AppealAdded]

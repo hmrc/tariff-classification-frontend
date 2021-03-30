@@ -51,12 +51,13 @@ class CaseController @Inject() (
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
     implicit request =>
       request.`case`.application.`type` match {
-        case ApplicationType.ATAR      => Redirect(v2.routes.AtarController.displayAtar(reference))
-        case ApplicationType.LIABILITY => Redirect(v2.routes.LiabilityController.displayLiability(reference))
+        case ApplicationType.ATAR => Redirect(v2.routes.AtarController.displayAtar(reference)).flashing(request2flash)
+        case ApplicationType.LIABILITY =>
+          Redirect(v2.routes.LiabilityController.displayLiability(reference)).flashing(request2flash)
         case ApplicationType.CORRESPONDENCE =>
-          Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference))
+          Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)).flashing(request2flash)
         case ApplicationType.MISCELLANEOUS =>
-          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference))
+          Redirect(v2.routes.MiscellaneousController.displayMiscellaneous(reference)).flashing(request2flash)
       }
   }
 
@@ -111,8 +112,10 @@ class CaseController @Inject() (
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
           Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.KEYWORDS_TAB.name))
+            .flashing(request2flash)
         case ApplicationType.LIABILITY =>
           Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.KEYWORDS_TAB.name))
+            .flashing(request2flash)
       }
     }
 
@@ -138,7 +141,7 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE))
       .async { implicit request =>
         def onError: Form[ActivityFormData] => Future[Result] = errorForm => {
-          request.`case`.application.`type` match {
+          val renderView = request.`case`.application.`type` match {
             case ApplicationType.ATAR =>
               atarController.renderView(activityForm = errorForm)
             case ApplicationType.LIABILITY =>
@@ -148,6 +151,8 @@ class CaseController @Inject() (
             case ApplicationType.MISCELLANEOUS =>
               miscellaneousController.renderView(activityForm = errorForm)
           }
+
+          renderView.map(BadRequest(_))
         }
 
         def onSuccess: ActivityFormData => Future[Result] = validForm => {
@@ -166,12 +171,14 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE))
       .async { implicit request =>
         def onError: Form[MessageFormData] => Future[Result] = errorForm => {
-          request.`case`.application.`type` match {
+          val renderView = request.`case`.application.`type` match {
             case ApplicationType.CORRESPONDENCE =>
               correspondenceController.renderView(messageForm = errorForm)
             case ApplicationType.MISCELLANEOUS =>
               miscellaneousController.renderView(messageForm = errorForm)
           }
+
+          renderView.map(BadRequest(_))
         }
 
         def onSuccess: MessageFormData => Future[Result] = validForm => {
@@ -191,18 +198,23 @@ class CaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.KEYWORDS))
       .async { implicit request =>
         def onError: Form[String] => Future[Result] = (errorForm: Form[String]) => {
-          request.`case`.application.`type` match {
+          val renderView = request.`case`.application.`type` match {
             case ApplicationType.ATAR =>
               atarController.renderView(keywordForm = errorForm)
             case ApplicationType.LIABILITY =>
               liabilityController.renderView(keywordForm = errorForm)
           }
+
+          renderView.map(BadRequest(_))
         }
 
         def onSuccess: String => Future[Result] = validForm => {
           keywordsService
             .addKeyword(request.`case`, validForm, request.operator)
-            .map(_ => Redirect(routes.CaseController.keywordsDetails(reference)))
+            .map(_ =>
+              Redirect(routes.CaseController.keywordsDetails(reference))
+                .flashing(success("notification.success.keywords.add"))
+            )
         }
 
         KeywordForm.form.bindFromRequest.fold(onError, onSuccess)
@@ -213,6 +225,14 @@ class CaseController @Inject() (
       .async { implicit request: AuthenticatedCaseRequest[AnyContent] =>
         keywordsService.removeKeyword(request.`case`, keyword, request.operator) map { _ =>
           Redirect(routes.CaseController.keywordsDetails(reference))
+            .flashing(success("notification.success.keywords.remove"))
         }
       }
+
+  def addAttachment(reference: String, fileId: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
+      caseService
+        .addAttachment(request.`case`, fileId, request.operator)
+        .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
+    }
 }

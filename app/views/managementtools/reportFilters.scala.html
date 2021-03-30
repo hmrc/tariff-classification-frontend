@@ -1,0 +1,73 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import controllers.routes
+@import models.Pagination
+@import models.reporting.Report
+@import utils.Dates
+
+@(
+  report: Report,
+  options: Pagination,
+  teams: Map[String, Queue]
+)(implicit messages: Messages)
+
+@teamNames = {
+  @{
+    report.teams.toList.sorted.flatMap { team =>
+      teams.get(team).map(_.name)
+    }.mkString(", ")
+  }
+}
+
+<dl class="govuk-check-your-answers cya-questions-long mb-3">
+  <div class="grid-row">
+    <dt class="cya-question" id="report_chosen_dates">
+        @if(report.dateRange == InstantRange.allTime) {
+          @messages("reporting.view_report.date_range.all_time")
+        } else {
+          @messages(
+            "reporting.view_report.date_range",
+            Dates.format(report.dateRange.min),
+            Dates.format(report.dateRange.max)
+          )
+        }
+    </dt>
+    <dd class="cya-answer" id="report_change_dates">
+      <a href="@routes.ReportingController.showChangeDateFilter(report, options)">
+        @messages("reporting.view_report.filter.change")
+      </a>
+    </dd>
+  </div>
+
+  <div class="grid-row">
+    <dt class="cya-question" id="report_chosen_teams">
+      @if(report.teams.isEmpty) {
+        @messages("reporting.view_report.teams.all_teams")
+      } else {
+        @messages(
+          "reporting.view_report.teams",
+          teamNames
+        )
+      }
+    </dt>
+    <dd class="cya-answer" id="report_change_teams">
+      <a href="@routes.ReportingController.showChangeTeamsFilter(report, options)">
+        @messages("reporting.view_report.filter.change")
+      </a>
+    </dd>
+  </div>
+</dl>

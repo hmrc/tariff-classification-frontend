@@ -25,21 +25,27 @@
 
 @tab_heading("appeal", messages("case.menu.appeal"))
 
-<p>If this ruling is reviewed or appealed, update the status here.</p>
-
 <table id="appeal_details">
+    <caption class="mb-2">@messages("case.v2.liability.appeals.tab_paragraph")</caption>
+    <thead class="govuk-table__head">
+        <tr class="visually-hidden">
+            <th class="w-40" scope="col">Review or a level of appeal</th>
+            <th class="w-40" scope="col">Appeal status</th>
+            <th class="w-40" scope="col">Change</th>
+        </tr>
+    </thead>
     <tbody>
         @for((appeal: Appeal, index: Int) <- appealTab.appeals.zipWithIndex) {
             <tr id="appeal_details-@{index}" class="grid-row mb-2">
-                <th id="appeal_details-@{index}-type" class="bold w-40">
+                <td id="appeal_details-@{index}-type" class="bold w-40">
                     @AppealType.format(appeal.`type`) status
-                </th>
+                </td>
                 <td id="appeal_details-@{index}-status" class=" w-30">
                     @AppealStatus.format(appeal.`type`, appeal.status)
                 </td>
                 <td class="w-30">
                     @if(request.hasPermission(Permission.APPEAL_CASE)) {
-                        <a tabindex="@{startTabIndex+1+index}" id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTab.caseReference, appeal.id)">Change</a>
+                        <a id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTab.caseReference, appeal.id)">Change</a>
                     }
                 </td>
             </tr>
@@ -48,7 +54,7 @@
 </table>
 
 @if(request.hasPermission(Permission.APPEAL_CASE)) {
-    <a tabindex="@{startTabIndex+50}" id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTab.caseReference)">Add a review or appeal</a>
+    <a id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTab.caseReference)">Add a review or appeal</a>
 }
 
 @if(appealTab.caseStatus == CaseStatus.CANCELLED) {

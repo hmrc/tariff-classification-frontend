@@ -24,7 +24,9 @@ import models.CancelReason.CancelReason
 import models.CaseStatus.CaseStatus
 import models.EventType.EventType
 import models.ReferralReason.ReferralReason
+import models.RejectReason.RejectReason
 import models.SampleReturn.SampleReturn
+import models.SampleSend.SampleSend
 import models.SampleStatus.SampleStatus
 
 case class Event(
@@ -62,6 +64,7 @@ case class CaseCreated(
   override val `type`: EventType = EventType.CASE_CREATED
 }
 
+
 case class CaseStatusChange(
   override val from: CaseStatus,
   override val to: CaseStatus,
@@ -70,6 +73,17 @@ case class CaseStatusChange(
 ) extends FieldChange[CaseStatus]
     with OptionalAttachment {
   override val `type`: EventType.Value = EventType.CASE_STATUS_CHANGE
+}
+
+case class RejectCaseStatusChange(
+  override val from: CaseStatus,
+  override val to: CaseStatus,
+  override val comment: Option[String]      = None,
+  override val attachmentId: Option[String] = None,
+  reason: RejectReason
+) extends FieldChange[CaseStatus]
+  with OptionalAttachment {
+  override val `type`: EventType.Value = EventType.CASE_REJECTED
 }
 
 case class CancellationCaseStatusChange(
@@ -177,6 +191,14 @@ case class SampleReturnChange(
   override val `type`: EventType.Value = EventType.SAMPLE_RETURN_CHANGE
 }
 
+case class SampleSendChange(
+  override val from: Option[SampleSend],
+  override val to: Option[SampleSend],
+  override val comment: Option[String] = None
+) extends FieldChange[Option[SampleSend]] {
+  override val `type`: EventType.Value = EventType.SAMPLE_SEND_CHANGE
+}
+
 case class ExpertAdviceReceived(
   comment: String
 ) extends Details {
@@ -187,6 +209,7 @@ object EventType extends Enumeration {
   type EventType = Value
   val CASE_STATUS_CHANGE         = Value
   val CASE_REFERRAL              = Value
+  val CASE_REJECTED              = Value
   val CASE_CANCELLATION          = Value
   val CASE_COMPLETED             = Value
   val APPEAL_STATUS_CHANGE       = Value
@@ -197,9 +220,10 @@ object EventType extends Enumeration {
   val NOTE                       = Value
   val SAMPLE_STATUS_CHANGE       = Value
   val SAMPLE_RETURN_CHANGE       = Value
+  val SAMPLE_SEND_CHANGE         = Value
   val CASE_CREATED               = Value
   val EXPERT_ADVICE_RECEIVED     = Value
 
-  def sampleEvents: Set[EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE)
+  def sampleEvents: Set[EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)
   def nonSampleEvents: Set[EventType.Value] = EventType.values.diff(sampleEvents)
 }

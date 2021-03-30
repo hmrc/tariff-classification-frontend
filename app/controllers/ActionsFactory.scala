@@ -17,15 +17,16 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import config.AppConfig
+import connector.DataCacheConnector
+import models.{Case, Permission, UserAnswers}
+import models.request._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
-import play.api.mvc.{ActionFilter, ActionRefiner, Result}
+import play.api.mvc.{ActionFilter, ActionRefiner, Call, Result}
+import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import config.AppConfig
-import models.{Case, Permission}
-import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest, OperatorRequest}
-import service.CasesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -102,6 +103,62 @@ class MustHavePermissionActionFactory {
           case r if permissions.foldLeft[Boolean](false)(_ || r.hasPermission(_)) => successful(None)
           case _                                                                  => successful(Some(Redirect(routes.SecurityController.unauthorized())))
         }
+
+      override protected def executionContext: ExecutionContext = global
+    }
+}
+
+@Singleton
+class RequireDataActionFactory @Inject() (
+  dataCacheConnector: DataCacheConnector
+) {
+  def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
+    new ActionRefiner[B, AuthenticatedDataRequest] {
+      override protected def refine[A](
+        request: B[A]
+      ): Future[Either[Result, AuthenticatedDataRequest[A]]] =
+        dataCacheConnector.fetch(cacheKey).map {
+          case Some(cacheMap) => Right(new AuthenticatedDataRequest(request.operator, request, UserAnswers(cacheMap)))
+          case None           => Left(Redirect(routes.SecurityController.unauthorized()))
+        }
+
+      override protected def executionContext: ExecutionContext = global
+    }
+}
+
+@Singleton
+class RequireCaseDataActionFactory @Inject() (
+  casesService: CasesService,
+  dataCacheConnector: DataCacheConnector
+)(
+  implicit
+  val messagesApi: MessagesApi,
+  appConfig: AppConfig
+) extends I18nSupport {
+  def apply[B[C] <: AuthenticatedRequest[C]](
+    reference: String,
+    cacheKey: String
+  ): ActionRefiner[B, AuthenticatedCaseDataRequest] =
+    new ActionRefiner[B, AuthenticatedCaseDataRequest] {
+      override protected def refine[A](
+        request: B[A]
+      ): Future[Either[Result, AuthenticatedCaseDataRequest[A]]] = {
+        implicit val hc: HeaderCarrier =
+          HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+        implicit val authenticatedRequest: AuthenticatedRequest[_] = request
+
+        casesService.getOne(reference).flatMap {
+          case Some(cse) =>
+            dataCacheConnector.fetch(cacheKey).map {
+              case Some(cacheMap) =>
+                Right(new AuthenticatedCaseDataRequest(request.operator, request, cse, UserAnswers(cacheMap)))
+              case None =>
+                Left(Redirect(routes.SecurityController.unauthorized()))
+            }
+          case None =>
+            successful(Left(NotFound(views.html.case_not_found(reference))))
+        }
+      }
 
       override protected def executionContext: ExecutionContext = global
     }

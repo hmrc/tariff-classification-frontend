@@ -18,6 +18,7 @@ package service
 
 import audit.AuditService
 import connector.{BindingTariffClassificationConnector, RulingConnector}
+import models.CaseStatus.CaseStatus
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -29,8 +30,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import java.time.Instant
-import scala.concurrent.Future.{failed, successful}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future.{failed, successful}
 
 class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
@@ -47,9 +48,19 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   private val connector        = mock[BindingTariffClassificationConnector]
   private val rulingConnector  = mock[RulingConnector]
   private val audit            = mock[AuditService]
+  private val operator         = Operator("operator-id")
 
   private val service =
-    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, realAppConfig)
+    new CasesService(
+      audit,
+      emailService,
+      fileStoreService,
+      countriesService,
+      reportingService,
+      pdfService,
+      connector,
+      rulingConnector
+    )(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -58,7 +69,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Get Cases 'By Queue'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByQueue(any[Queue], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
+      given(connector.findCasesByQueue(any[Queue], any[Pagination], any[Set[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
         Paged(manyCases)
       )
 
@@ -67,23 +78,31 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
     "retrieve connector cases with type restriction" in {
       given(
-        connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Seq(ApplicationType.LIABILITY)))(
+        connector.findCasesByQueue(any[Queue], any[Pagination], refEq(Set(ApplicationType.LIABILITY)))(
           any[HeaderCarrier]
         )
       ) willReturn successful(Paged(manyCases))
 
-      await(service.getCasesByQueue(queue, pagination, Seq(ApplicationType.LIABILITY))) shouldBe Paged(manyCases)
+      await(service.getCasesByQueue(queue, pagination, Set(ApplicationType.LIABILITY))) shouldBe Paged(manyCases)
     }
 
   }
 
   "Get Cases 'By All Queues'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Seq[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
+      given(
+        connector.findCasesByAllQueues(
+          any[Seq[Queue]],
+          any[Pagination],
+          any[Set[ApplicationType]],
+          any[Set[CaseStatus]],
+          any[String]
+        )(any[HeaderCarrier])
+      ) willReturn successful(
         Paged(manyCases)
       )
 
-      await(service.getCasesByAllQueues(Seq(queue), pagination)) shouldBe Paged(manyCases)
+      await(service.getCasesByAllQueues(Seq(queue), pagination, assignee = "none")) shouldBe Paged(manyCases)
     }
   }
 
@@ -120,9 +139,20 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     val updatedCase = mock[Case]
 
     "delegate to connector" in {
-      given(connector.updateCase(refEq(oldCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
+      given(connector.updateCase(refEq(updatedCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-      await(service.updateCase(oldCase)) shouldBe updatedCase
+      await(service.updateCase(oldCase,updatedCase, operator)) shouldBe updatedCase
+    }
+
+    "Update Case with Auditing" should {
+      val oldCase     = mock[Case]
+      val updatedCase = mock[Case]
+
+      "delegate to connector" in {
+        given(connector.updateCase(refEq(updatedCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
+
+        await(service.updateCase(oldCase,updatedCase, operator)) shouldBe updatedCase
+      }
     }
   }
 
@@ -176,17 +206,13 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Add attachment into case" should {
     val c           = mock[Case]
     val updatedCase = mock[Case]
-    val fileUpload  = mock[FileUpload]
-    val fileStored  = mock[FileStoreAttachment]
 
     "add the given attachment into the case provided" in {
 
       given(c.attachments) willReturn Seq.empty
-      given(fileStored.id) willReturn "file-id"
-      given(fileStoreService.upload(refEq(fileUpload))(any[HeaderCarrier])) willReturn successful(fileStored)
       given(connector.updateCase(any[Case])(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-      val result = await(service.addAttachment(c, fileUpload, Operator("assignee")))
+      val result = await(service.addAttachment(c, "file-id", Operator("assignee")))
 
       result shouldBe updatedCase
     }
@@ -209,8 +235,8 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   }
 
   "Add message into case when case is Correspondence" should {
-    val c           = Cases.aCorrespondenceCase()
-    val updatedCase = Cases.aCorrespondenceCase()
+    val c              = Cases.aCorrespondenceCase()
+    val updatedCase    = Cases.aCorrespondenceCase()
     val exampleMessage = Message("name", Instant.now(), "message")
 
     "add the given message into the case provided" in {
@@ -224,8 +250,8 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   }
 
   "Add message into case when case is Miscellaneous" should {
-    val c           = Cases.aMiscellaneousCase()
-    val updatedCase = Cases.aMiscellaneousCase()
+    val c              = Cases.aMiscellaneousCase()
+    val updatedCase    = Cases.aMiscellaneousCase()
     val exampleMessage = Message("name", Instant.now(), "message")
 
     "add the given message into the case provided" in {

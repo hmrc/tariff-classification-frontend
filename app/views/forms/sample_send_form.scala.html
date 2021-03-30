@@ -1,0 +1,42 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.AppConfig
+@import models.request.AuthenticatedRequest
+@import controllers.{Tab, routes}
+@import models.{Case, SampleSend}
+@import views.forms.components.RadioOption
+@import views.html.forms.components.input_radiogroup
+
+@(c: Case, field: Field)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+
+@helper.form(action = routes.SampleWhoSendingController.updateStatus(c.reference), 'id -> "sample_return_form", 'novalidate -> "novalidate") {
+    @helper.CSRF.formField
+    @input_radiogroup(
+        field = field,
+        options = SampleSend.values.toList.sorted.map(s => RadioOption(s.toString, SampleSend.format(Some(s)))),
+        id = "sample_return_form",
+        preSelect = false,
+        label = Some(messages("case.application.returning-samples.header", c.application.goodsName)),
+        labelClass = Some ("visually-hidden")
+    )
+    <div class="confirm-cancel-alignment">
+        <button id="sample_return_form-submit" class="button" type="submit">@messages("case.sample.return.change-return-confirm")</button>
+        <a id="sample_return_form-cancel" class="mt-15" href="@routes.CaseController.sampleDetails(c.reference)">@messages("case.sample.return.change-return-cancel")</a>
+    </div>
+}
+

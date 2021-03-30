@@ -40,6 +40,7 @@ object Permission {
     VIEW_CASES,
     VIEW_CASE_ASSIGNEE,
     VIEW_REPORTS,
+    MANAGE_USERS,
     CREATE_CASES,
     ASSIGN_CASE,
     RELEASE_CASE,
@@ -60,7 +61,6 @@ object Permission {
     EXTENDED_USE,
     MOVE_CASE_BACK_TO_QUEUE,
     EDIT_SAMPLE,
-    EDIT_ATTACHMENT_DETAIL,
     EDIT_CORRESPONDENCE,
     EDIT_MISCELLANEOUS
   )
@@ -146,6 +146,12 @@ object Permission {
       managersOnly(operator)
   }
 
+  case object MANAGE_USERS extends GlobalPermission {
+    override def name: String = nameOf(this)
+    override def appliesTo(operator: Operator): Boolean =
+      managersOnly(operator)
+  }
+
   case object CREATE_CASES extends GlobalPermission {
     override def name: String = nameOf(this)
     override def appliesTo(operator: Operator): Boolean =
@@ -205,7 +211,7 @@ object Permission {
   case object REMOVE_ATTACHMENTS extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
+      managersOrTeamMembersOnly(operator)
   }
 
   case object CANCEL_CASE extends CasePermission {
@@ -228,16 +234,10 @@ object Permission {
       managersOrTeamMembersOnly(operator)
   }
 
-  case object EDIT_ATTACHMENT_DETAIL extends CasePermission {
-    override def name: String = nameOf(this)
-    override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
-  }
-
   case object KEYWORDS extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
-      managersOrAssignedTeamMembersOnly(`case`, operator)
+      managersOrAssignedTeamMembersOnly(`case`, operator) && !(`case`.status == CaseStatus.COMPLETED || `case`.status == CaseStatus.REJECTED)
   }
 
   case object EDIT_LIABILITY extends CasePermission {
