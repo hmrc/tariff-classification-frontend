@@ -182,7 +182,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to done page when user selects `yes`" in {
-      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier]))
+      when(userService.updateUser(any[Operator], any[Operator], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(Operator("1", deleted = true)))
 
       val result: Result = await(
@@ -199,7 +199,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     "redirect to not found with complete form" in {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
-      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier]))
+      when(userService.updateUser(any[Operator], any[Operator], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(Operator("1", deleted = true)))
 
       val result: Result = await(
@@ -216,7 +216,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     "redirect to not found with error form" in {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
-      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier]))
+      when(userService.updateUser(any[Operator], any[Operator], any[Operator])(any[HeaderCarrier]))
         .thenReturn(successful(Operator("1", deleted = true)))
 
       val result: Result = await(
@@ -298,7 +298,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
     "redirect to displayUser after user presses 'save changes' button" in {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Cases.operatorWithPermissions))
-      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+      when(userService.updateUser(any[Operator], any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
         Cases.operatorWithPermissions
       )
 
@@ -324,7 +324,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     "return to the view if form fails to validate" in {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Cases.operatorWithPermissions))
 
-      when(userService.updateUser(any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+      when(userService.updateUser(any[Operator], any[Operator], any[Operator])(any[HeaderCarrier])) thenReturn Future(
         Cases.operatorWithPermissions
       )
 

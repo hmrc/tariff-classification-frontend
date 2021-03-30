@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import models.request.AuthenticatedRequest
-@import views.html.partials.{create_liability_button, nav_search}
-@()(implicit request: AuthenticatedRequest[_], messages: Messages)
+package models.response
 
-@nav_search()
+import play.api.libs.json.{ OFormat, Json }
 
-@create_liability_button()
+case class UpscanFormTemplate(href: String, fields: Map[String, String])
 
+object UpscanFormTemplate {
+  implicit val format: OFormat[UpscanFormTemplate] = Json.format[UpscanFormTemplate]
+}

@@ -98,6 +98,14 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
             .withBody(KeywordsPayloads.pagedKeywords)
         )
       )
+      stubFor(
+        post(urlEqualTo("/file/initiate"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
+          )
+      )
 
       // When
       val response: WSResponse =

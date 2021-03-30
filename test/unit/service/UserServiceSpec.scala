@@ -48,9 +48,9 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     val manager     = mock[Operator]
 
     "delegate to connector" in {
-      given(connector.updateUser(refEq(oldUser))(any[HeaderCarrier])) willReturn successful(updatedUser)
+      given(connector.updateUser(refEq(updatedUser))(any[HeaderCarrier])) willReturn successful(updatedUser)
 
-      await(service.updateUser(oldUser, manager)) shouldBe updatedUser
+      await(service.updateUser(oldUser,updatedUser, manager)) shouldBe updatedUser
     }
   }
 

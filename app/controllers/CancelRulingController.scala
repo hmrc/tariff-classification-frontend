@@ -16,119 +16,130 @@
 
 package controllers
 
-import config.AppConfig
-import models.forms.CancelRulingForm
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
-import models.CaseStatus.CANCELLED
-import models.request.AuthenticatedCaseRequest
-import models.{CancelReason, Permission, RulingCancellation}
-import play.api.data.Form
-import play.api.libs.Files
-import play.api.mvc._
-import service.CasesService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import config.AppConfig
+import connector.DataCacheConnector
+import controllers.v2.UpscanErrorHandling
+import models.forms.{CancelRulingForm, UploadAttachmentForm}
+import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
+import models.{Attachment, CancelReason, Permission, RulingCancellation, UserAnswers}
+import play.api.data.Form
+import play.api.mvc._
+import play.twirl.api.Html
+import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.JsonFormatters._
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import play.api.i18n.I18nSupport
 
 @Singleton
 class CancelRulingController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
+  fileService: FileStoreService,
+  dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
-    with RenderCaseAction
-    with ExtractableFile {
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with UpscanErrorHandling {
 
-  override protected val config: AppConfig         = appConfig
-  override protected val caseService: CasesService = casesService
+  private val CancellationCacheKey = "cancellation"
+  private def cacheKey(reference: String) =
+    s"cancel_ruling-$reference"
 
-  private def cancelRuling(f: Form[RulingCancellation], caseRef: String)(
-    implicit request: AuthenticatedCaseRequest[_]
-  ): Future[Result] =
-    getCaseAndRenderView(caseRef, c => successful(views.html.cancel_ruling(c, f)))
+  def getCancelRulingReason(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.CANCEL_CASE)) {
+      implicit request => Ok(views.html.cancel_ruling_reason(request.`case`, CancelRulingForm.form))
+    }
 
-  def getCancelRuling(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.CANCEL_CASE)).async { implicit request =>
-      cancelRuling(CancelRulingForm.form, reference)
+  def postCancelRulingReason(reference: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.CANCEL_CASE))
+      .async { implicit request =>
+        CancelRulingForm.form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => successful(BadRequest(views.html.cancel_ruling_reason(request.`case`, formWithErrors))),
+            cancellation => {
+              val userAnswers        = UserAnswers(cacheKey(reference))
+              val updatedUserAnswers = userAnswers.set(CancellationCacheKey, cancellation)
+              dataCacheConnector
+                .save(updatedUserAnswers.cacheMap)
+                .map(_ => Redirect(routes.CancelRulingController.getCancelRulingEmail(reference)))
+            }
+          )
+      }
+
+  def renderCancelRulingEmail(
+    fileId: Option[String]   = None,
+    uploadForm: Form[String] = UploadAttachmentForm.form
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+    val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
+
+    val fileUploadSuccessRedirect =
+      appConfig.host + controllers.routes.CancelRulingController
+        .cancelRuling(request.`case`.reference, uploadFileId)
+        .path
+
+    val fileUploadErrorRedirect =
+      appConfig.host + controllers.routes.CancelRulingController
+        .getCancelRulingEmail(request.`case`.reference, Some(uploadFileId))
+        .path
+
+    fileService
+      .initiate(
+        FileStoreInitiateRequest(
+          id              = Some(uploadFileId),
+          successRedirect = Some(fileUploadSuccessRedirect),
+          errorRedirect   = Some(fileUploadErrorRedirect),
+          maxFileSize     = appConfig.fileUploadMaxSize
+        )
+      )
+      .map(initiateResponse => views.html.cancel_ruling_email(request.`case`, uploadForm, initiateResponse))
+  }
+
+  def getCancelRulingEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.CANCEL_CASE))
+      .async { implicit request =>
+        handleUploadErrorAndRender(uploadForm => renderCancelRulingEmail(fileId, uploadForm))
+      }
+
+  def cancelRuling(reference: String, fileId: String): Action[AnyContent] =
+    (verify.authenticated andThen
+      verify.casePermissions(reference) andThen
+      verify.mustHave(Permission.CANCEL_CASE) andThen
+      verify.requireCaseData(reference, cacheKey(reference))).async { implicit request =>
+      request.userAnswers
+        .get[RulingCancellation](CancellationCacheKey)
+        .map { rulingCancellation =>
+          for {
+            _ <- casesService
+                  .cancelRuling(
+                    request.`case`,
+                    CancelReason.withName(rulingCancellation.cancelReason),
+                    Attachment(id = fileId, operator = Some(request.operator)),
+                    rulingCancellation.note,
+                    request.operator
+                  )
+
+            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+
+          } yield Redirect(routes.CancelRulingController.confirmCancelRuling(reference))
+        }
+        .getOrElse {
+          successful(Redirect(routes.SecurityController.unauthorized()))
+        }
     }
 
   def confirmCancelRuling(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      renderView(c => c.status == CANCELLED, c => successful(views.html.confirm_cancel_ruling(c)))
+      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
+      Ok(views.html.confirm_cancel_ruling(request.`case`))
     }
-
-  def postCancelRuling(reference: String): Action[MultipartFormData[Files.TemporaryFile]] =
-    (verify.authenticated andThen
-      verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.CANCEL_CASE)).async(parse.multipartFormData) {
-      implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]] =>
-        extractFile(key = "email")(
-          onFileValid = validFile => {
-            CancelRulingForm.form
-              .bindFromRequest()
-              .fold(
-                formWithErrors =>
-                  getCaseAndRenderView(reference, c => successful(views.html.cancel_ruling(c, formWithErrors))),
-                rulingCancellation =>
-                  validateAndRedirect(
-                    casesService
-                      .cancelRuling(
-                        _,
-                        CancelReason.withName(rulingCancellation.cancelReason),
-                        validFile,
-                        rulingCancellation.note,
-                        request.operator
-                      )
-                      .map(c => routes.CancelRulingController.confirmCancelRuling(c.reference))
-                  )
-              )
-          },
-          onFileTooLarge = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.restrictionSize")
-            CancelRulingForm.form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                rulingCancellation =>
-                  getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(rulingCancellation), error)
-              )
-          },
-          onFileInvalidType = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.fileType")
-            CancelRulingForm.form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                rulingCancellation =>
-                  getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(rulingCancellation), error)
-              )
-          },
-          onFileMissing = () => {
-            val error = request2Messages(implicitly)("status.change.upload.error.mustSelect")
-            CancelRulingForm.form
-              .bindFromRequest()
-              .fold(
-                formWithErrors => getCaseAndRenderErrors(reference, formWithErrors, error),
-                rulingCancellation =>
-                  getCaseAndRenderErrors(reference, CancelRulingForm.form.fill(rulingCancellation), error)
-              )
-
-          }
-        )
-    }
-
-  private def getCaseAndRenderErrors(reference: String, form: Form[RulingCancellation], specificProblem: String)(
-    implicit request: AuthenticatedCaseRequest[MultipartFormData[Files.TemporaryFile]]
-  ): Future[Result] =
-    getCaseAndRenderView(
-      reference,
-      c => successful(views.html.cancel_ruling(c, form.withError("email", specificProblem)))
-    )
-
 }

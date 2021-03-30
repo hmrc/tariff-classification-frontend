@@ -63,8 +63,7 @@ object CorrespondenceDetailsForm extends Constraints {
       )
   }
 
-  private def correspondence2Form(existingCase: Case): Option[
-    (
+  private def correspondence2Form(existingCase: Case): Option[(
       String,
       String,
       Option[String],

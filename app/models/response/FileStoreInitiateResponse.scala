@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import controllers.routes.{MyCasesController, QueuesController}
-@()(implicit messages: Messages)
+package models.response
 
-  <h2 class="heading-medium mt-0">Next steps</h2>
-  <p>Go to <a id="my-cases-link" href="@MyCasesController.myCases()">@messages("cases.menu.my-cases")</a> or <a id="gateway-cases-link" href="@QueuesController.queue("gateway")">@messages("cases.menu.gateway-cases")</a>.</p>
+import play.api.libs.json.{ OFormat, Json }
+
+case class FileStoreInitiateResponse(id: String, upscanReference: String, uploadRequest: UpscanFormTemplate)
+
+object FileStoreInitiateResponse {
+  implicit val format: OFormat[FileStoreInitiateResponse] = Json.format[FileStoreInitiateResponse]
+}

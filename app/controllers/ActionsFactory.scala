@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 import config.AppConfig
 import connector.DataCacheConnector
 import models.{Case, Permission, UserAnswers}
-import models.request.{AuthenticatedCaseRequest, AuthenticatedDataRequest, AuthenticatedRequest, OperatorRequest}
+import models.request._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, ActionRefiner, Call, Result}
@@ -31,7 +31,6 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
-import org.bouncycastle.asn1.cms.AuthenticatedData
 
 @Singleton
 class CheckCasePermissionsAction extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
@@ -122,6 +121,44 @@ class RequireDataActionFactory @Inject() (
           case Some(cacheMap) => Right(new AuthenticatedDataRequest(request.operator, request, UserAnswers(cacheMap)))
           case None           => Left(Redirect(routes.SecurityController.unauthorized()))
         }
+
+      override protected def executionContext: ExecutionContext = global
+    }
+}
+
+@Singleton
+class RequireCaseDataActionFactory @Inject() (
+  casesService: CasesService,
+  dataCacheConnector: DataCacheConnector
+)(
+  implicit
+  val messagesApi: MessagesApi,
+  appConfig: AppConfig
+) extends I18nSupport {
+  def apply[B[C] <: AuthenticatedRequest[C]](
+    reference: String,
+    cacheKey: String
+  ): ActionRefiner[B, AuthenticatedCaseDataRequest] =
+    new ActionRefiner[B, AuthenticatedCaseDataRequest] {
+      override protected def refine[A](
+        request: B[A]
+      ): Future[Either[Result, AuthenticatedCaseDataRequest[A]]] = {
+        implicit val hc: HeaderCarrier =
+          HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+        implicit val authenticatedRequest: AuthenticatedRequest[_] = request
+
+        casesService.getOne(reference).flatMap {
+          case Some(cse) =>
+            dataCacheConnector.fetch(cacheKey).map {
+              case Some(cacheMap) =>
+                Right(new AuthenticatedCaseDataRequest(request.operator, request, cse, UserAnswers(cacheMap)))
+              case None =>
+                Left(Redirect(routes.SecurityController.unauthorized()))
+            }
+          case None =>
+            successful(Left(NotFound(views.html.case_not_found(reference))))
+        }
+      }
 
       override protected def executionContext: ExecutionContext = global
     }

@@ -121,7 +121,7 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
         )
 
         status(result)               shouldBe Status.SEE_OTHER
-        redirectLocation(result).get shouldBe SuppressCaseController.getSuppressCase("reference").url
+        redirectLocation(result).get shouldBe SuppressCaseController.getSuppressCaseReason("reference").url
       }
 
       "redirect to change case status page when form has errors" in {

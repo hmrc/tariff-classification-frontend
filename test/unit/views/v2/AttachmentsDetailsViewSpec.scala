@@ -18,6 +18,7 @@ package views.v2
 
 import models.forms.UploadAttachmentForm
 import models.viewmodels.AttachmentsTabViewModel
+import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.{Permission, StoredAttachment}
 import play.twirl.api.HtmlFormat
 import utils.Cases
@@ -28,9 +29,19 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
 
   lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
 
+  val initiateResponse = FileStoreInitiateResponse(
+    id = "id",
+    upscanReference = "ref",
+    uploadRequest = UpscanFormTemplate(
+      "http://localhost:20001/upscan/upload",
+      Map("key" -> "value")
+    )
+  )
+
   def notRenderAttachmentsDetails: HtmlFormat.Appendable =
     attachments_details(
       UploadAttachmentForm.form,
+      initiateResponse,
       AttachmentsTabViewModel("ref", Seq(), None),
       showUploadAttachments = false
     )
@@ -38,6 +49,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
   def renderAttachmentsDetails: HtmlFormat.Appendable =
     attachments_details(
       UploadAttachmentForm.form,
+      initiateResponse,
       AttachmentsTabViewModel("ref", Seq(), None),
       showUploadAttachments = true
     )
@@ -47,6 +59,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
   def renderAttachmentsDetailsWithAttachments: HtmlFormat.Appendable =
     attachments_details(
       UploadAttachmentForm.form,
+      initiateResponse,
       AttachmentsTabViewModel("ref", Seq(attachment), None),
       showUploadAttachments = true
     )(requestWithPermissions(Permission.REMOVE_ATTACHMENTS), messages, appConfig)

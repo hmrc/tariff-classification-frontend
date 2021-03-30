@@ -28,7 +28,7 @@
 
 @this()
 
-@(keywordName: String, globalKeywords: Paged[Keyword], form: Form[(EditKeywordAction, String)])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(keywordName: String, globalKeywords: Seq[Keyword], form: Form[(EditKeywordAction, String)])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.edit-approved-keywords.title"))) {
 
@@ -61,7 +61,7 @@
                             hint = Some(messages("management.manage-keywords.edit-approved-keywords.hint")),
                             formControlClass = Some("w-100"),
                             labelClass = Some("un-bold"),
-                            autoCompleteOptions = globalKeywords.results.map(_.name),
+                            autoCompleteOptions = globalKeywords.map(_.name),
                             placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
                         )
                         )

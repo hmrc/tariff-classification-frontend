@@ -189,9 +189,10 @@ class ManageUserController @Inject() (
         updatedMemberOfTeams =>
           userService
             .getUser(pid)
-            .map(user =>
-              userService.updateUser(user.get.copy(memberOfTeams = updatedMemberOfTeams.toSeq), request.operator)
-            )
+            .map{
+              case Some(user) => userService.updateUser(user, user.copy(memberOfTeams = updatedMemberOfTeams.toSeq), request.operator)
+              case _ => NotFound(views.html.user_not_found(pid))
+            }
             .map(_ => Redirect(routes.ManageUserController.displayUserDetails(pid)))
       )
     }

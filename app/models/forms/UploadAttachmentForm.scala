@@ -22,7 +22,7 @@ import play.api.data.Forms._
 object UploadAttachmentForm {
   val form: Form[String] = Form(
     mapping(
-      "file-input" -> text
+      "file" -> text
     )(identity)(Some(_))
   )
 }

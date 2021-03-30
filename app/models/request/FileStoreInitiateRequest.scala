@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package models.request
 
-import play.api.data.{Form, FormError}
+import play.api.libs.json.{ OFormat, Json }
 
-trait PrefixErrorsInForm[T] {
+case class FileStoreInitiateRequest(
+  id: Option[String] = None,
+  successRedirect: Option[String] = None,
+  errorRedirect: Option[String] = None,
+  expectedContentType: Option[String] = None,
+  publishable: Boolean = false,
+  maxFileSize: Int
+)
 
-  def prefixErrorInForm(f: Form[T], error: FormError): Form[T] =
-    Form(f.mapping, f.data, error +: f.errors, f.value)
+object FileStoreInitiateRequest {
+  implicit val format: OFormat[FileStoreInitiateRequest] = Json.format[FileStoreInitiateRequest]
 }
