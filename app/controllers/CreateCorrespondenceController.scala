@@ -143,7 +143,7 @@ class CreateCorrespondenceController @Inject() (
           errorForm => successful(Ok(correspondence_details_edit(request.`case`, errorForm))),
           updatedCase =>
             casesService
-              .updateCase(updatedCase)
+              .updateCase(request.`case`, updatedCase, request.operator)
               .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)))
         )
     }
@@ -172,7 +172,7 @@ class CreateCorrespondenceController @Inject() (
           errorForm => successful(Ok(correspondence_contact_edit(request.`case`, errorForm))),
           updatedCase =>
             casesService
-              .updateCase(updatedCase)
+              .updateCase(request.`case`, updatedCase, request.operator)
               .map(_ =>
                 Redirect(
                   v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.CONTACT_TAB.name)

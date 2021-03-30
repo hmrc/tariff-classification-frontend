@@ -270,11 +270,12 @@ class MoveCasesController @Inject() (
             request.userAnswers
               .get[String](ChosenUserPID)
               .map(pid =>
-                updateCases(
+                casesService.updateCases(
                   request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set.empty),
                   Some(Operator(pid)),
                   team,
-                  request.userAnswers.get[String](OriginalUserPID).get
+                  request.userAnswers.get[String](OriginalUserPID).get,
+                  request.operator.id
                 )
               )
             for {
@@ -333,7 +334,12 @@ class MoveCasesController @Inject() (
               queues <- queueService.getNonGateway
             } yield Ok(chooseTeamPage(caseNumber, errors, queues)),
           team => {
-            val updatedCases = updateCases(caseRefs, None, team, request.userAnswers.get[String](OriginalUserPID).get)
+            val updatedCases = casesService.updateCases(
+              caseRefs,
+              None,
+              team,
+              request.userAnswers.get[String](OriginalUserPID).get,
+              request.operator.id)
             for {
               _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())
@@ -399,7 +405,7 @@ class MoveCasesController @Inject() (
     }
 
   private def updateCases(refs: Set[String], user: Option[Operator], teamId: String, originalUserId: String)(
-    implicit hc: HeaderCarrier
+    implicit request: AuthenticatedRequest[_]
   ) =
     for {
       casesToUpdate <- casesService.getCasesByAssignee(Operator(originalUserId), NoPagination())
@@ -408,7 +414,7 @@ class MoveCasesController @Inject() (
       .flatten
       .map(c =>
         for {
-          updatedCase <- casesService.updateCase(c.copy(assignee = user, queueId = Some(teamId)))
+          updatedCase <- casesService.updateCase(c,c.copy(assignee = user, queueId = Some(teamId)), request.operator)
         } yield updatedCase
       )
 
@@ -460,11 +466,12 @@ class MoveCasesController @Inject() (
       case Some(u) => {
         val userAnswersWithNewUser = request.userAnswers.set(ChosenUserPID, pid)
         if (u.memberOfTeams.filterNot(_ == Queues.gateway.id).size == 1) {
-          val updatedCases = updateCases(
+          val updatedCases = casesService.updateCases(
             caseRefs,
             Some(u),
             u.memberOfTeams.head,
-            request.userAnswers.get[String](OriginalUserPID).get
+            request.userAnswers.get[String](OriginalUserPID).get,
+            request.operator.id
           )
           for {
             _ <- dataCacheConnector.save(
