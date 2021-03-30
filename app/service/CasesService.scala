@@ -42,7 +42,7 @@ import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.templates.{decision_template, ruling_template}
+import views.html.templates.{cover_letter_template, decision_template, ruling_template}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -340,6 +340,12 @@ class CasesService @Inject() (
       FileUpload(tempFile, s"ATaRRuling_${completedCase.reference}.pdf", pdf.contentType)
     }
 
+    def createCoverLetterPdf(pdf: PdfFile): FileUpload = {
+      val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
+      Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
+      FileUpload(tempFile, s"ATaRCoverLetter_${completedCase.reference}.pdf", pdf.contentType)
+    }
+
     def createLiabilityDecisionPdf(pdf: PdfFile): FileUpload = {
       val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
       Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
@@ -357,17 +363,44 @@ class CasesService @Inject() (
           .map(createLiabilityDecisionPdf)
     }
 
-    for {
-      // Generate the decision PDF
-      pdfFile <- generatePdf
+    def generateLetter: Future[FileUpload] = completedCase.application.`type` match {
+      case ATAR =>
+        pdfService
+          .generatePdf(cover_letter_template(completedCase, decision, getCountryName))
+          .map(createCoverLetterPdf)
+    }
 
-      // Upload the decision PDF to the filestore
-      pdfStored <- fileService.upload(pdfFile)
+    if (completedCase.application.`type` == ATAR) {
+      for {
+        // Generate the decision PDF
+        pdfFile <- generatePdf
 
-      pdfAttachment = Attachment(id = pdfStored.id, operator = Some(operator))
+        // Upload the decision PDF to the filestore
+        pdfStored <- fileService.upload(pdfFile)
 
-      caseWithPdf = completedCase.copy(decision = Some(decision.copy(decisionPdf = Some(pdfAttachment))))
-    } yield caseWithPdf
+        pdfAttachment = Attachment(id = pdfStored.id, operator = Some(operator))
+        letter       <- generateLetter
+        letterStored <- fileService.upload(letter)
+        pdfLetterAttachment = Attachment(id = letterStored.id, operator = Some(operator))
+        caseWithPdf = completedCase.copy(decision =
+          Some(decision.copy(decisionPdf = Some(pdfAttachment), letterPdf = Some(pdfLetterAttachment)))
+        )
+
+      } yield caseWithPdf
+    } else {
+      for {
+        // Generate the decision PDF
+        pdfFile <- generatePdf
+
+        // Upload the decision PDF to the filestore
+        pdfStored <- fileService.upload(pdfFile)
+
+        pdfAttachment = Attachment(id               = pdfStored.id, operator = Some(operator))
+        caseWithPdf   = completedCase.copy(decision = Some(decision.copy(decisionPdf = Some(pdfAttachment))))
+
+      } yield caseWithPdf
+    }
+
   }
 
   def cancelRuling(original: Case, reason: CancelReason, attachment: Attachment, note: String, operator: Operator)(
@@ -491,14 +524,15 @@ class CasesService @Inject() (
     user: Option[Operator],
     teamId: String,
     originalUserId: String,
-    operatorUpdating: String)(
+    operatorUpdating: String
+  )(
     implicit hc: HeaderCarrier
   ) =
     for {
       assignedCases <- getCasesByAssignee(Operator(originalUserId), NoPagination())
       casesToUpdate = assignedCases.results.filter(c => refs.contains(c.reference))
       updatedCases <- casesToUpdate.toList.traverse { c =>
-                       updateCase(c, c.copy(assignee = user, queueId = Some(teamId)),Operator(operatorUpdating))
+                       updateCase(c, c.copy(assignee = user, queueId = Some(teamId)), Operator(operatorUpdating))
                      }
       _ = auditService.auditUserCaseMoved(updatedCases.map(_.reference), user, teamId, originalUserId, operatorUpdating)
     } yield ()
