@@ -53,6 +53,7 @@ object Permission {
     REMOVE_ATTACHMENTS,
     CANCEL_CASE,
     ADD_NOTE,
+    ADD_MESSAGE,
     ADD_ATTACHMENT,
     KEYWORDS,
     EDIT_LIABILITY,
@@ -291,6 +292,13 @@ object Permission {
   }
 
   case object EDIT_MISCELLANEOUS extends CasePermission {
+    override def name: String = nameOf(this)
+    override def appliesTo(`case`: Case, operator: Operator): Boolean =
+      (`case`.hasStatus(CaseStatus.NEW) && managersOrTeamMembersOnly(operator)) ||
+        (`case`.hasStatus(CaseStatus.OPEN) && managersOrAssignedTeamMembersOnly(`case`, operator))
+  }
+
+  case object ADD_MESSAGE extends CasePermission {
     override def name: String = nameOf(this)
     override def appliesTo(`case`: Case, operator: Operator): Boolean =
       (`case`.hasStatus(CaseStatus.NEW) && managersOrTeamMembersOnly(operator)) ||
