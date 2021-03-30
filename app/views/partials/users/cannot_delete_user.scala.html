@@ -20,7 +20,7 @@
 @import models.Operator
 @import views.html.includes.main
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
-@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
+@import models.viewmodels.{NoTabSelected, ApplicationTabViewModel}
 @import controllers.v2.routes
 @import views.html.partials.{back_link}
 
@@ -29,16 +29,14 @@ delete_user_heading: views.html.partials.users.delete_user_heading,
 )
 
 @(
-user: Operator,
-activeSubNav : SubNavigationTab = ManagerToolsUsersTab
+user: Operator
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
 bodyClasses = None,
 customTitle = Some(messages("users.user.delete.casesMustBeMoved", user.safeName)),
-customPrimaryNavTab = ManagerToolsTab
+customPrimaryNavTab = NoTabSelected
 ) {
-@manager_tools_secondary_navigation(activeSubNav)
 <div class="column-two-thirds mt-5">
 
  @back_link()

@@ -31,16 +31,14 @@ class MoveCasesChooseUserViewSpec extends ViewSpec {
 
   "Choose user" should {
     "render successfully with one case" in {
-      val doc = view(chooseUser(1, operators, chooseUserForm, None, ManagerToolsUsersTab))
+      val doc = view(chooseUser(1, operators, chooseUserForm, None))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containText(messages("users.move_cases.choose_user.header.single"))
     }
 
     "render successfully with multiple cases" in {
-      val doc = view(chooseUser(5, operators, chooseUserForm, None, ManagerToolsUsersTab))
+      val doc = view(chooseUser(5, operators, chooseUserForm, None))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containText(messages("users.move_cases.choose_user.header", 5))
 
     }

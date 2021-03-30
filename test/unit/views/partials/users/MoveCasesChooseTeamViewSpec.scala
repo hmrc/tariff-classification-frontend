@@ -31,16 +31,14 @@ class MoveCasesChooseTeamViewSpec extends ViewSpec {
 
   "Choose team" should {
     "render successfully with one case" in {
-      val doc = view(chooseTeam(1, chooseTeamForm, Queues.allDynamicQueues, ManagerToolsUsersTab))
+      val doc = view(chooseTeam(1, chooseTeamForm, Queues.allDynamicQueues))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containText(messages("users.move_cases.choose_team.header.single"))
     }
 
     "render successfully with multiple cases" in {
-      val doc = view(chooseTeam(5, chooseTeamForm, Queues.allDynamicQueues, ManagerToolsUsersTab))
+      val doc = view(chooseTeam(5, chooseTeamForm, Queues.allDynamicQueues))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containText(messages("users.move_cases.choose_team.header", 5))
 
     }

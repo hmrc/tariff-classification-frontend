@@ -23,10 +23,9 @@
 
 @this()
 
-@(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, keyword: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(keyword: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.create-keyword.new-keyword-done"))) {
-    @manager_tools_secondary_navigation(activeSubNav)
 
     <div class="grid-row">
         <div id="confirm_keyword_done_id" class="column-two-thirds">

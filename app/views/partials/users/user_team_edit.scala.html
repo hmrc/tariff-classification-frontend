@@ -23,16 +23,14 @@
 @import views.html.includes.main
 @import views.html.partials.error_summary
 @import views.html.partials.back_link
-@import models.viewmodels.SubNavigationTab
 @import views.html.components.manager_tools_secondary_navigation
-@import models.viewmodels.ManagerToolsTab
+@import models.viewmodels.NoTabSelected
 
 @this()
 
 @(
         userDetails: Operator,
-        form: Form[Set[String]],
-        activeSubNav: SubNavigationTab
+        form: Form[Set[String]]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 
@@ -43,8 +41,7 @@
         case None => s"PID: [${userDetails.id}]"
     }
 }
-@main(bodyClasses = None, customTitle = Some(messages("users.user.edit_user.title")), customPrimaryNavTab = ManagerToolsTab) {
-    @manager_tools_secondary_navigation(activeSubNav)
+@main(bodyClasses = None, customTitle = Some(messages("users.user.edit_user.title")), customPrimaryNavTab = NoTabSelected) {
 
     @back_link()
 

@@ -38,9 +38,8 @@ class UserTeamEditViewSpec extends ViewSpec {
 
   "User Team Edit" should {
     "render successfully" in {
-      val doc = view(userTeamEdit(operator, userEditForm, ManagerToolsUsersTab))
+      val doc = view(userTeamEdit(operator, userEditForm))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containElementWithID("user-team-edit-heading")
       doc should containElementWithID("cancel_edit_user_teams-button")
     }
