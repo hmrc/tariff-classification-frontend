@@ -20,7 +20,7 @@
 @import models.Operator
 @import views.html.includes.main
 @import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
-@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
+@import models.viewmodels.{NoTabSelected, ApplicationTabViewModel}
 @import controllers.v2.routes
 @import views.html.partials.{back_link}
 
@@ -28,17 +28,14 @@
 )
 
 @(
-user: String,
-activeSubNav : SubNavigationTab = ManagerToolsUsersTab
+user: String
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
 bodyClasses = None,
 customTitle = Some(messages("users.user.delete.done", user)),
-customPrimaryNavTab = ManagerToolsTab
+customPrimaryNavTab = NoTabSelected
 ) {
-@manager_tools_secondary_navigation(activeSubNav)
-
 <div id="confirm_complete_id" class="column-two-thirds mt-30">
  <div class="govuk-panel govuk-panel--confirmation" data-gtm-vis-recent-on-screen-8267218_2337="228" data-gtm-vis-first-on-screen-8267218_2337="228" data-gtm-vis-total-visible-time-8267218_2337="100" data-gtm-vis-has-fired-8267218_2337="1">
   <h1 class="heading-xlarge mt-0">@messages("users.user.delete.done", user)</h1>

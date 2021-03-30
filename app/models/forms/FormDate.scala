@@ -114,10 +114,6 @@ object FormDate {
 
   def optionalDate(): Mapping[Option[Instant]] = {
 
-    val emptyDay = "atar.editRuling.expiryDate.emptyDate.day"
-    val emptyMonth = "atar.editRuling.expiryDate.emptyDate.month"
-    val emptyYear = "atar.editRuling.expiryDate.emptyDate.year"
-
     mapping(
     "day"             -> text,
     "month"           -> text,

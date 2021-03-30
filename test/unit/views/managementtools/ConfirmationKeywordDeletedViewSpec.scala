@@ -31,8 +31,7 @@ class ConfirmationKeywordDeletedViewSpec extends ViewSpec {
 
       val doc = view(
         confirmKeywordDeletedView(
-          ManagerToolsKeywordsTab
-        )
+          )
       )
       doc should containText(messages("management.manage-keywords.edit-approved-keywords.deleted"))
       doc should containElementWithID("confirm_keyword_deleted")
@@ -45,8 +44,7 @@ class ConfirmationKeywordDeletedViewSpec extends ViewSpec {
 
       val doc = view(
         confirmKeywordDeletedView(
-          ManagerToolsKeywordsTab
-        )
+          )
       )
       doc should containText(messages("management.create-keyword.new-keyword-done.next"))
       doc.getElementById("manage-all-keywords-link") should containText(

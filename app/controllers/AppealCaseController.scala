@@ -17,16 +17,16 @@
 package controllers
 
 import config.AppConfig
-import models.forms.AppealForm
-import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models._
+import models.forms.AppealForm
 import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -49,7 +49,9 @@ class AppealCaseController @Inject() (
         case ApplicationType.ATAR =>
           successful(Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.APPEALS_TAB.name)))
         case ApplicationType.LIABILITY => {
-          successful(Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.APPEALS_TAB.name)))
+          successful(
+            Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.APPEALS_TAB.name))
+          )
         }
       }
     }
@@ -98,7 +100,7 @@ class AppealCaseController @Inject() (
         c =>
           c.findAppeal(appealId) match {
             case Some(appeal) => successful(Ok(views.html.appeal_change_status(c, appeal, statusForm)))
-            case None => successful(Redirect(routes.AppealCaseController.appealDetails(reference)))
+            case None         => successful(Redirect(routes.AppealCaseController.appealDetails(reference)))
           }
       )
     }

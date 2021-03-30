@@ -21,14 +21,15 @@ import javax.inject.Inject
 import com.google.inject.Provider
 import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
-import models._
 import models.forms._
+import models.forms.CommodityCodeConstraints
 import models.forms.v2.LiabilityDetailsForm
 import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels._
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
+import models.{Case, _}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
 import play.api.data.Form
@@ -245,7 +246,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "post Liability details" should {
     "redirect back to controller if the form has been submitted successfully" in {
 
-      when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        Cases.aCaseWithCompleteDecision
+      )
 
       mockLiabilityController()
       val fakeReq = newFakePOSTRequestWithCSRF(
@@ -273,7 +276,9 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return back to the view if form fails to validate" in {
-      when(casesService.updateCase(any[Case])(any[HeaderCarrier])) thenReturn Future(Cases.aCaseWithCompleteDecision)
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        Cases.aCaseWithCompleteDecision
+      )
       mockLiabilityController()
       val fakeReq = newFakePOSTRequestWithCSRF(
         app,

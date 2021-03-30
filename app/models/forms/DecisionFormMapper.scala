@@ -16,10 +16,9 @@
 
 package models.forms
 
-import java.time.Instant
+import models.{Case, Decision}
 
 import javax.inject.Singleton
-import models.{Case, Decision}
 
 @Singleton
 class DecisionFormMapper {
@@ -50,7 +49,7 @@ class DecisionFormMapper {
         c.attachments.filter(_.shouldPublishToRulings).map(_.id),
         d.explanation.getOrElse(""),
         d.effectiveEndDate,
-        explicitEndDate = if(d.effectiveEndDate.isDefined) true else false
+        explicitEndDate = if (d.effectiveEndDate.isDefined) true else false
       )
     }
 

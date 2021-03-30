@@ -7,12 +7,6 @@ GET         /unauthorized                                       controllers.Secu
 GET         /keep-alive                                         controllers.SecurityController.keepAlive()
 
 GET         /                                                   controllers.IndexController.get()
-GET         /queues                                             controllers.Default.redirect(to = controllers.routes.MyCasesController.myCases.url)
-GET         /queues/my-cases                                    controllers.MyCasesController.myCases()
-GET         /queues/assigned                                    controllers.AssignedCasesController.assignedCases()
-GET         /queues/assigned/:assigneeId/:tabIndex              controllers.AssignedCasesController.assignedCasesFor(assigneeId: String, tabIndex : Int)
-GET         /queues/:slug                                       controllers.QueuesController.queue(slug: String, caseType: Option[String] ?= None)
-
 
 GET         /manage-reports                                     controllers.ReportingController.displayManageReporting()
 
@@ -140,6 +134,7 @@ POST        /cases/v2/:reference/correspondence/edit-trader-details     controll
 GET         /cases/:reference/keywords/:keyword                 controllers.CaseController.removeKeyword(reference: String, keyword: String)
 
 GET         /pdf/ruling/:reference                              controllers.PdfDownloadController.getRulingPdf(reference: String)
+GET         /pdf/letter/:reference                              controllers.PdfDownloadController.getLetterPdf(reference: String)
 GET         /pdf/application/:reference                         controllers.PdfDownloadController.applicationPdf(reference: String)
 
 GET         /attachment/:reference/:id                          controllers.ViewAttachmentController.get(reference: String, id: String)

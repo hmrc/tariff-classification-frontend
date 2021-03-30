@@ -18,19 +18,19 @@ package controllers
 
 import config.AppConfig
 import models.forms.CorrespondenceForm
-import javax.inject.{Inject, Singleton}
-import models.{Case, CorrespondenceApplication, Permission}
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc._
-import play.api.data.Forms._
 import models.forms.mappings.FormMappings.fieldNonEmpty
 import models.forms.v2.{CorrespondenceContactForm, CorrespondenceDetailsForm}
-import service.{CasesService, QueuesService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.http.HeaderCarrier
 import models.request.AuthenticatedRequest
+import models.{Case, CorrespondenceApplication, Permission}
+import play.api.data.Form
+import play.api.data.Forms._
+import play.api.i18n.I18nSupport
+import play.api.mvc._
+import service.{CasesService, QueuesService}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -143,7 +143,7 @@ class CreateCorrespondenceController @Inject() (
           errorForm => successful(Ok(correspondence_details_edit(request.`case`, errorForm))),
           updatedCase =>
             casesService
-              .updateCase(updatedCase)
+              .updateCase(request.`case`, updatedCase, request.operator)
               .map(_ => Redirect(v2.routes.CorrespondenceController.displayCorrespondence(reference)))
         )
     }
@@ -172,7 +172,7 @@ class CreateCorrespondenceController @Inject() (
           errorForm => successful(Ok(correspondence_contact_edit(request.`case`, errorForm))),
           updatedCase =>
             casesService
-              .updateCase(updatedCase)
+              .updateCase(request.`case`, updatedCase, request.operator)
               .map(_ =>
                 Redirect(
                   v2.routes.CorrespondenceController.displayCorrespondence(reference).withFragment(Tab.CONTACT_TAB.name)

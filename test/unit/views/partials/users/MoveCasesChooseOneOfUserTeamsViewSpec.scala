@@ -31,9 +31,8 @@ class MoveCasesChooseOneOfUserTeamsViewSpec extends ViewSpec {
 
   "Choose one of user teams" should {
     "render successfully" in {
-      val doc = view(chooseTeam("name", 1, 3, chooseTeamForm, Queues.allDynamicQueues, ManagerToolsUsersTab))
+      val doc = view(chooseTeam("name", 1, 3, chooseTeamForm, Queues.allDynamicQueues))
 
-      doc should containElementWithID("manager-tools-cases-sub-nav")
       doc should containElementWithID("move-to-user-team")
     }
   }

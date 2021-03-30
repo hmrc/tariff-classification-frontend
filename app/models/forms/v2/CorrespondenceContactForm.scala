@@ -26,8 +26,7 @@ object CorrespondenceContactForm extends Constraints {
 
   def correspondenceContactForm(existingCorrespondence: Case): Form[Case] =
     Form[Case](
-      mapping[
-        Case,
+      mapping[Case,
         Option[String],
         String,
         String,
@@ -89,8 +88,7 @@ object CorrespondenceContactForm extends Constraints {
       )
   }
 
-  private def correspondence2Form(existingCase: Case): Option[
-    (
+  private def correspondence2Form(existingCase: Case): Option[(
       Option[String],
       String,
       String,

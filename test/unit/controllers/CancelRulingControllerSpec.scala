@@ -259,7 +259,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("The ruling has been cancelled")
+      bodyOf(result)        should include("This ruling has been cancelled")
     }
   }
 }

@@ -36,7 +36,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class ManageKeywordsController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
@@ -53,7 +52,8 @@ class ManageKeywordsController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
-    with I18nSupport with Logging {
+    with I18nSupport
+    with Logging {
   val keywordForm: Form[String]             = KeywordForm.form
   val changeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
 
@@ -105,7 +105,6 @@ class ManageKeywordsController @Inject() (
         keywords <- keywordService.findAll(NoPagination())
       } yield Ok(
         newKeywordView(
-          activeSubNav,
           keywords.results,
           KeywordForm.formWithAuto(keywords.results.map(_.name))
         )
@@ -124,18 +123,17 @@ class ManageKeywordsController @Inject() (
               Future.successful(
                 BadRequest(
                   newKeywordView(
-                    activeSubNav,
                     keywords.results,
                     formWithErrors
                   )
                 )
-            ),
+              ),
             keyword =>
               keywordService
                 .createKeyword(Keyword(keyword.toUpperCase, true), request.operator, ChangeKeywordStatusAction.CREATED)
                 .map { saveKeyword: Keyword =>
                   Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
-              }
+                }
           )
       }
     }
@@ -154,7 +152,8 @@ class ManageKeywordsController @Inject() (
                       c,
                       formWithErrors
                     )
-                  )),
+                  )
+                ),
               action =>
                 ChangeKeywordStatusAction.format(action) match {
                   case ChangeKeywordStatusAction.APPROVE =>
@@ -162,7 +161,8 @@ class ManageKeywordsController @Inject() (
                       .createKeyword(
                         Keyword(keywordName, approved = true),
                         request.operator,
-                        ChangeKeywordStatusAction.APPROVE)
+                        ChangeKeywordStatusAction.APPROVE
+                      )
                       .map { savedKeyword: Keyword =>
                         Redirect(
                           controllers.v2.routes.ManageKeywordsController
@@ -186,7 +186,7 @@ class ManageKeywordsController @Inject() (
                             )
                         )
                       }
-              }
+                }
             )
           }
           case _ => successful(Ok(views.html.case_not_found(reference)))
@@ -195,11 +195,11 @@ class ManageKeywordsController @Inject() (
 
   def displayConfirmKeyword(
     saveKeyword: String,
-    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(
-      implicit request =>
-        Ok(
-          keywordCreatedConfirm(activeSubNav, saveKeyword)
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
+  ): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
+      Ok(
+        keywordCreatedConfirm(saveKeyword)
       )
     )
 
@@ -207,10 +207,9 @@ class ManageKeywordsController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       casesService.getOne(reference).flatMap {
         case Some(c: Case) => Future.successful(Ok(changeKeywordStatusView(keywordName, c, changeKeywordStatusForm)))
-        case _ => Future.successful(Ok(views.html.case_not_found(reference)))
+        case _             => Future.successful(Ok(views.html.case_not_found(reference)))
       }
     )
-
 
   def editApprovedKeywords(keywordName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
@@ -219,8 +218,8 @@ class ManageKeywordsController @Inject() (
       } yield Ok(
         editApprovedKeywordsView(
           keywordName,
-          allKeywords,
-          EditApprovedKeywordForm.formWithAuto(allKeywords.results.map(_.name))
+          allKeywords.results.filter(_.approved),
+          EditApprovedKeywordForm.formWithAuto(allKeywords.results)
         )
       )
     )
@@ -231,12 +230,12 @@ class ManageKeywordsController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       keywordService.findAll(NoPagination()).flatMap { keywords =>
         EditApprovedKeywordForm
-          .formWithAuto(keywords.results.map(_.name))
+          .formWithAuto(keywords.results)
           .bindFromRequest()
           .fold(
             formWithErrors =>
               Future.successful(
-                BadRequest(editApprovedKeywordsView(keywordName, keywords, formWithErrors))
+                BadRequest(editApprovedKeywordsView(keywordName, keywords.results, formWithErrors))
               ), {
               case (EditKeywordAction.DELETE, _) =>
                 keywordService
@@ -245,13 +244,14 @@ class ManageKeywordsController @Inject() (
                     Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmationKeywordDeleted())
                   )
               case (EditKeywordAction.RENAME, keywordToRename) =>
-                keywordService.renameKeyword(Keyword(keywordName, true), Keyword(keywordToRename, true), request.operator).map {
-                  updatedKeyword: Keyword =>
+                keywordService
+                  .renameKeyword(Keyword(keywordName, true), Keyword(keywordToRename, true), request.operator)
+                  .map { updatedKeyword: Keyword =>
                     Redirect(
                       routes.ManageKeywordsController
                         .displayConfirmationKeywordRenamed(keywordName, updatedKeyword.name)
                     )
-                }
+                  }
             }
           )
       }
@@ -260,7 +260,7 @@ class ManageKeywordsController @Inject() (
   def displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
-        confirmKeywordDeletedView(activeSubNav)
+        confirmKeywordDeletedView()
       )
     )
 
@@ -271,15 +271,11 @@ class ManageKeywordsController @Inject() (
       )
     )
 
-  def displayKeywordChangeConfirmation(
-    keyword: String,
-    approved: Boolean,
-    goodsName: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)){
-      implicit request =>
-        Ok(
-          keywordChangeConfirm(keyword, approved, goodsName)
-        )
+  def displayKeywordChangeConfirmation(keyword: String, approved: Boolean, goodsName: String): Action[AnyContent] =
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)) { implicit request =>
+      Ok(
+        keywordChangeConfirm(keyword, approved, goodsName)
+      )
     }
 
 }

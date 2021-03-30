@@ -16,18 +16,15 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{ManagerToolsKeywordsTab, SubNavigationTab}
 @import views.html.components.{heading, input_accessible_auto_complete, manager_tools_secondary_navigation}
 @import views.html.includes.main
 @import views.html.partials.{back_link, error_summary}
 
 @this()
 
-@(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab, allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(bodyClasses = None, customTitle = Some(messages("management.create-keyword-title"))) {
-
-    @manager_tools_secondary_navigation(activeSubNav)
 
     @back_link()
 

@@ -17,15 +17,15 @@
 package controllers
 
 import config.AppConfig
-import models.forms.ReleaseCaseForm
-import javax.inject.{Inject, Singleton}
-import models.request.AuthenticatedCaseRequest
 import models._
+import models.forms.ReleaseCaseForm
+import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
