@@ -48,7 +48,10 @@ class ManageKeywordsService @Inject()(auditService: AuditService, connector: Bin
   def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword, user: Operator)(
     implicit hc: HeaderCarrier): Future[Keyword] =
     for {
-      keywordRenamed <- connector.deleteKeyword(keywordToDelete).flatMap(_ => connector.createKeyword(keywordToAdd))
+      keywordRenamed <- connector
+                         .deleteKeyword(keywordToDelete)
+                         .flatMap(_ => connector.createKeyword(keywordToDelete.copy(approved = false)))
+                         .flatMap(_ => connector.createKeyword(keywordToAdd))
       _ = auditService.auditManagerKeywordRenamed(user, keywordToDelete, keywordRenamed)
     } yield keywordRenamed
 }

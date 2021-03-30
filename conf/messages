@@ -1458,6 +1458,7 @@ management.create-keyword.new-keyword-done.next=Next steps
 management.create-keyword.new-keyword-done.link=Go back to manage all keywords
 management.create-keyword.error.empty.keyword=Enter a new keyword
 management.create-keyword.error.duplicate.keyword=This keyword has already been added to the list
+management.create-keyword.error.rejected.keyword=This keyword has already been rejected
 
 management.manage-keywords.change-keyword-status.heading.radio=Choose keyword action
 management.manage-keywords.change-keyword-status.radio.approve=Approve
