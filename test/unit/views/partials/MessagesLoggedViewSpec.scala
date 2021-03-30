@@ -29,13 +29,13 @@ import views.html.partials
 
 class MessagesLoggedViewSpec extends ViewSpec {
 
-  private val date = ZonedDateTime.of(
-    2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
+  private val date = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
 
   private val exampleMessages = List(Message("name", date, "message"), Message("name2", date, "message2"))
 
   private val messagesTab: MessagesTabViewModel = MessagesTabViewModel("reference", exampleMessages)
-  val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
+  val requestWithAddNotePermission              = requestWithPermissions(Permission.ADD_NOTE)
+  val requestWithAddMsgPermission               = requestWithPermissions(Permission.ADD_MESSAGE)
 
   "case is Correspondence" when {
     "Messages Details" should {
@@ -63,7 +63,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val doc =
           view(
-            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddMsgPermission, messages, appConfig)
           )
 
         // Then
@@ -125,7 +125,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val doc =
           view(
-            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddMsgPermission, messages, appConfig)
           )
 
         doc should containElementWithID("add-note-submit")

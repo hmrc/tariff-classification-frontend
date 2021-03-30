@@ -168,7 +168,7 @@ class CaseController @Inject() (
       }
 
   def addMessage(reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_NOTE))
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ADD_MESSAGE))
       .async { implicit request =>
         def onError: Form[MessageFormData] => Future[Result] = errorForm => {
           val renderView = request.`case`.application.`type` match {

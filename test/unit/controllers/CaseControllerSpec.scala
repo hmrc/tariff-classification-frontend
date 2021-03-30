@@ -322,7 +322,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   "Case addNote" should {
     val aLiabilityCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
-    val anAtarCase = Cases.btiCaseExample.copy(assignee = Some(Cases.operatorWithAddAttachment))
+    val anAtarCase     = Cases.btiCaseExample.copy(assignee       = Some(Cases.operatorWithAddAttachment))
 
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
@@ -333,8 +333,9 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         )
       ) thenReturn Future(event)
 
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
-      val result: Future[Result] = controller(aLiabilityCase, Set(Permission.ADD_NOTE)).addNote(aLiabilityCase.reference)(fakeReq)
+      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val result: Future[Result] =
+        controller(aLiabilityCase, Set(Permission.ADD_NOTE)).addNote(aLiabilityCase.reference)(fakeReq)
 
       status(result)     shouldBe SEE_OTHER
       locationOf(result) shouldBe Some(routes.CaseController.activityDetails(aLiabilityCase.reference).path)
@@ -345,12 +346,14 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
 
       when(
-        liabilityController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
-          any[AuthenticatedCaseRequest[_]]
-        )
+        liabilityController
+          .renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+            any[AuthenticatedCaseRequest[_]]
+          )
       ) thenReturn Future.successful(Html("error"))
 
-      val result: Future[Result] = controller(aLiabilityCase, Set(Permission.ADD_NOTE)).addNote(aLiabilityCase.reference)(fakeReq)
+      val result: Future[Result] =
+        controller(aLiabilityCase, Set(Permission.ADD_NOTE)).addNote(aLiabilityCase.reference)(fakeReq)
 
       status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
@@ -363,12 +366,14 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
 
       when(
-        atarController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
-          any[AuthenticatedCaseRequest[_]]
-        )
+        atarController
+          .renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+            any[AuthenticatedCaseRequest[_]]
+          )
       ) thenReturn Future.successful(Html("error"))
 
-      val result: Future[Result] = controller(anAtarCase, Set(Permission.ADD_NOTE)).addNote(anAtarCase.reference)(fakeReq)
+      val result: Future[Result] =
+        controller(anAtarCase, Set(Permission.ADD_NOTE)).addNote(anAtarCase.reference)(fakeReq)
 
       status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
@@ -408,9 +413,10 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
 
       when(
-        liabilityController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
-          any[AuthenticatedCaseRequest[_]]
-        )
+        liabilityController
+          .renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
+            any[AuthenticatedCaseRequest[_]]
+          )
       ) thenReturn Future.successful(Html("error"))
 
       val result: Future[Result] =
@@ -480,7 +486,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       ) thenReturn Future(updatedCorrespondenceCase)
 
       val fakeReq = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("message" -> aMessage.message)
-      val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_NOTE))
+      val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_MESSAGE))
         .addMessage(anExampleCorrespondenceCase.reference)(fakeReq)
 
       status(result) shouldBe SEE_OTHER
@@ -496,7 +502,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       ) thenReturn Future(updatedMiscellaneousCase)
 
       val fakeReq = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("message" -> aMessage.message)
-      val result: Future[Result] = controller(anExampleMiscellaneousCase, Set(Permission.ADD_NOTE))
+      val result: Future[Result] = controller(anExampleMiscellaneousCase, Set(Permission.ADD_MESSAGE))
         .addMessage(anExampleMiscellaneousCase.reference)(fakeReq)
 
       status(result) shouldBe SEE_OTHER
@@ -510,12 +516,13 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq  = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessage))
 
       when(
-        correspondenceController.renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
-          any[AuthenticatedCaseRequest[_]]
-        )
+        correspondenceController
+          .renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
+            any[AuthenticatedCaseRequest[_]]
+          )
       ) thenReturn Future.successful(Html("error"))
 
-      val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_NOTE))
+      val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_MESSAGE))
         .addMessage(anExampleCorrespondenceCase.reference)(fakeReq)
 
       status(result)          shouldBe BAD_REQUEST
