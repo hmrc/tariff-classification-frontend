@@ -35,8 +35,7 @@ class LiabilityDetailsForm @Inject() (
 
   def liabilityDetailsForm(existingLiability: Case): Form[Case] =
     Form[Case](
-      mapping[
-        Case,
+      mapping[Case,
         Option[Instant],
         String,
         Option[String],
@@ -208,8 +207,7 @@ class LiabilityDetailsForm @Inject() (
       )
   }
 
-  private def liability2Form(existingCase: Case): Option[
-    (
+  private def liability2Form(existingCase: Case): Option[(
       Option[Instant],
       String,
       Option[String],
@@ -273,8 +271,7 @@ class LiabilityDetailsForm @Inject() (
   //TODO: As part of the follow-up ticket regarding complete form validation, add tests
   def liabilityDetailsCompleteForm(existingLiability: Case): Form[Case] =
     Form[Case](
-      mapping[
-        Case,
+      mapping[Case,
         Option[Instant],
         String,
         Option[String],

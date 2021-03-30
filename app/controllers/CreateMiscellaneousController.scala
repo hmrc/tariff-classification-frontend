@@ -17,24 +17,23 @@
 package controllers
 
 import config.AppConfig
-import javax.inject.Inject
 import models.forms.mappings.FormMappings.fieldNonEmpty
-import models.{Case, MiscApplication, Permission}
 import models.forms.v2.{MiscDetailsForm, MiscellaneousForm}
 import models.request.AuthenticatedRequest
 import models.viewmodels.CaseViewModel
+import models.{Case, MiscApplication, Permission}
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.I18nSupport
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, _}
 import service.{CasesService, QueuesService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class CreateMiscellaneousController @Inject() (
   verify: RequestActions,
