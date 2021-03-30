@@ -370,22 +370,36 @@ class CasesService @Inject() (
           .map(createCoverLetterPdf)
     }
 
-    for {
-      // Generate the decision PDF
-      pdfFile <- generatePdf
+    if (completedCase.application.`type` == ATAR) {
+      for {
+        // Generate the decision PDF
+        pdfFile <- generatePdf
 
-      // Upload the decision PDF to the filestore
-      pdfStored <- fileService.upload(pdfFile)
+        // Upload the decision PDF to the filestore
+        pdfStored <- fileService.upload(pdfFile)
 
-      pdfAttachment = Attachment(id = pdfStored.id, operator = Some(operator))
-      letter       <- generateLetter
-      letterStored <- fileService.upload(letter)
-      pdfLetterAttachment = Attachment(id = letterStored.id, operator = Some(operator))
-      caseWithPdf = completedCase.copy(decision =
-        Some(decision.copy(decisionPdf = Some(pdfAttachment), letterPdf = Some(pdfLetterAttachment)))
-      )
+        pdfAttachment = Attachment(id = pdfStored.id, operator = Some(operator))
+        letter       <- generateLetter
+        letterStored <- fileService.upload(letter)
+        pdfLetterAttachment = Attachment(id = letterStored.id, operator = Some(operator))
+        caseWithPdf = completedCase.copy(decision =
+          Some(decision.copy(decisionPdf = Some(pdfAttachment), letterPdf = Some(pdfLetterAttachment)))
+        )
 
-    } yield caseWithPdf
+      } yield caseWithPdf
+    } else {
+      for {
+        // Generate the decision PDF
+        pdfFile <- generatePdf
+
+        // Upload the decision PDF to the filestore
+        pdfStored <- fileService.upload(pdfFile)
+
+        pdfAttachment = Attachment(id               = pdfStored.id, operator = Some(operator))
+        caseWithPdf   = completedCase.copy(decision = Some(decision.copy(decisionPdf = Some(pdfAttachment))))
+
+      } yield caseWithPdf
+    }
 
   }
 
@@ -510,14 +524,15 @@ class CasesService @Inject() (
     user: Option[Operator],
     teamId: String,
     originalUserId: String,
-    operatorUpdating: String)(
+    operatorUpdating: String
+  )(
     implicit hc: HeaderCarrier
   ) =
     for {
       assignedCases <- getCasesByAssignee(Operator(originalUserId), NoPagination())
       casesToUpdate = assignedCases.results.filter(c => refs.contains(c.reference))
       updatedCases <- casesToUpdate.toList.traverse { c =>
-                       updateCase(c, c.copy(assignee = user, queueId = Some(teamId)),Operator(operatorUpdating))
+                       updateCase(c, c.copy(assignee = user, queueId = Some(teamId)), Operator(operatorUpdating))
                      }
       _ = auditService.auditUserCaseMoved(updatedCases.map(_.reference), user, teamId, originalUserId, operatorUpdating)
     } yield ()
