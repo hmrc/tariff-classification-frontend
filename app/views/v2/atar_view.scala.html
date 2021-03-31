@@ -111,21 +111,17 @@
                 </a>
             </li>
 
-            @if(caseViewModel.showRulingAndKeywordsTabs) {
-                <li class="govuk-tabs__list-item">
-                    <a class="govuk-tabs__tab" href="#keywords_tab">
-                        @messages("case.v2.atar.keywords.tab_title")
-                    </a>
-                </li>
-            }
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#keywords_tab">
+                    @messages("case.v2.atar.keywords.tab_title")
+                </a>
+            </li>
 
-            @if(caseViewModel.showRulingAndKeywordsTabs) {
-                <li class="govuk-tabs__list-item">
-                    <a class="govuk-tabs__tab" href="#ruling_tab">
-                        @messages("case.v2.atar.ruling.tab_title")
-                    </a>
-                </li>
-            }
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#ruling_tab">
+                    @messages("case.v2.atar.ruling.tab_title")
+                </a>
+            </li>
 
             @appealTab.map { _ =>
                 <li class="govuk-tabs__list-item">
