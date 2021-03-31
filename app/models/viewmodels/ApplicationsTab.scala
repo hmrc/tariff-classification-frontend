@@ -185,13 +185,29 @@ object ApplicationsTab {
 
   def casesByTypes(cases: Seq[Case]): ApplicationTabViewModel = {
 
-    val atars = cases.filter(_.application.isBTI)
+    val atars = cases
+      .filter(_.application.isBTI)
+      .sortBy(aCase => (aCase.status.toString, aCase.daysElapsed, aCase.reference))(
+        Ordering.Tuple3(Ordering.String.reverse, Ordering.Long.reverse, Ordering.String)
+      )
 
-    val liabilities = cases.filter(_.application.isLiabilityOrder)
+    val liabilities = cases
+      .filter(_.application.isLiabilityOrder)
+      .sortBy(aCase => (aCase.status.toString, aCase.daysElapsed, aCase.reference))(
+        Ordering.Tuple3(Ordering.String.reverse, Ordering.Long.reverse, Ordering.String)
+      )
 
-    val correspondence = cases.filter(_.application.isCorrespondence)
+    val correspondence = cases
+      .filter(_.application.isCorrespondence)
+      .sortBy(aCase => (aCase.status.toString, aCase.daysElapsed, aCase.reference))(
+        Ordering.Tuple3(Ordering.String.reverse, Ordering.Long.reverse, Ordering.String)
+      )
 
-    val miscellaneous = cases.filter(_.application.isMisc)
+    val miscellaneous = cases
+      .filter(_.application.isMisc)
+      .sortBy(aCase => (aCase.status.toString, aCase.daysElapsed, aCase.reference))(
+        Ordering.Tuple3(Ordering.String.reverse, Ordering.Long.reverse, Ordering.String)
+      )
 
     ApplicationTabViewModel(
       "applicationTab.userCases",
