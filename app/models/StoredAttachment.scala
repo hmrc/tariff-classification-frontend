@@ -27,8 +27,8 @@ case class StoredAttachment(
   public: Boolean,
   operator: Option[Operator],
   url: Option[String],
-  fileName: String,
-  mimeType: String,
+  fileName: Option[String],
+  mimeType: Option[String],
   scanStatus: Option[ScanStatus],
   timestamp: Instant,
   description: Option[String],
@@ -37,9 +37,9 @@ case class StoredAttachment(
 
   def isImage: Boolean =
     mimeType match {
-      case "image/png"  => true
-      case "image/jpeg" => true
-      case "image/gif"  => true
+      case Some("image/png")  => true
+      case Some("image/jpeg") => true
+      case Some("image/gif")  => true
       case _            => false
     }
 

@@ -58,7 +58,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   private val liabilityCaseWithDecision = Cases.liabilityCaseExample.copy(decision = Some(decision))
 
   private val pdfUrl      = "http://localhost:4572/digital-tariffs-local/id"
-  private val pdfMetadata = FileMetadata("id", "some.pdf", "application/pdf", Some(pdfUrl))
+  private val pdfMetadata = FileMetadata("id", Some("some.pdf"), Some("application/pdf"), Some(pdfUrl))
 
   private val controller = new PdfDownloadController(
     new SuccessfulAuthenticatedAction(playBodyParsers, operator),
@@ -108,7 +108,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)                        shouldBe OK
       contentAsString(result)               shouldBe "Some content"
       contentType(result)                   shouldBe Some("application/pdf")
-      header("Content-Disposition", result) shouldBe (Some("attachment; filename=some.pdf"))
+      header("Content-Disposition", result) shouldBe Some("attachment; filename=some.pdf")
     }
 
     "error when case not found" in {

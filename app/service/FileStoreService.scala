@@ -35,10 +35,12 @@ class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging
 
   def getFileMetadata(id: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] = connector.get(id)
 
-  def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] =
+  def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
+    logger.error(s"Published file c :" + c.attachments)
     getAttachments(Seq(c))
       .map(group => group.getOrElse(c, Seq.empty))
       .map(_.sortBy(_.timestamp))
+  }
 
   def getAttachments(cases: Seq[Case])(implicit hc: HeaderCarrier): Future[Map[Case, Seq[StoredAttachment]]] = {
     val caseByFileId: Map[String, Case] =
@@ -106,7 +108,7 @@ class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging
     connector.delete(fileId)
 
   private def toFileAttachment(size: Long): FileMetadata => FileStoreAttachment = { r =>
-    FileStoreAttachment(r.id, r.fileName, r.mimeType, size)
+    FileStoreAttachment(r.id, r.fileName.getOrElse(""), r.mimeType.getOrElse(""), size)
   }
 
 }

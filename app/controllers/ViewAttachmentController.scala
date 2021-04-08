@@ -47,7 +47,7 @@ class ViewAttachmentController @Inject() (
             url     <- OptionT.fromOption[Future](fileSubmitted.url)
             content <- OptionT(fileService.downloadFile(url))
           } yield Ok
-            .streamed(content, None, Some(fileSubmitted.mimeType))
+            .streamed(content, None, fileSubmitted.mimeType)
             .withHeaders(
               "Content-Disposition" -> s"filename=${fileSubmitted.fileName}"
             )

@@ -106,7 +106,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
     "render upload form and some elements in attachments table check remove attachment button" in {
       val doc = view(renderAttachmentsDetailsWithAttachments)
       val expectedMsg = messages("case.attachment.remove.file.text") + " " +
-        messages("case.attachment.remove.file.hidden.text", attachment.fileName)
+        messages("case.attachment.remove.file.hidden.text", attachment.fileName.get)
 
       doc.getElementById(s"all-row-0-remove").text().trim shouldBe expectedMsg
     }

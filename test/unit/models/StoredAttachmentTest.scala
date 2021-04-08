@@ -84,8 +84,8 @@ class StoredAttachmentTest extends ModelsBaseSpec {
 
   private def someMetadataWithType(t: String) = FileMetadata(
     id         = "id",
-    fileName   = "name",
-    mimeType   = t,
+    fileName   = Some("name"),
+    mimeType   = Some(t),
     url        = Some("url"),
     scanStatus = Some(ScanStatus.READY)
   )
