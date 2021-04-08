@@ -48,7 +48,7 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
   "render scan failed" in {
     // Given
-    val fileMetadata = Some(FileMetadata("id", "filename", "mimetype", None, Some(ScanStatus.FAILED)))
+    val fileMetadata = Some(FileMetadata("id", Some("filename"), Some("mimetype"), None, Some(ScanStatus.FAILED)))
 
     // When
     val doc = view(
@@ -68,7 +68,7 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
   "render still processing" in {
     // Given
-    val fileMetadata = Some(FileMetadata("id", "filename", "mimetype", None, None))
+    val fileMetadata = Some(FileMetadata("id", Some("filename"), Some("mimetype"), None, None))
 
     // When
     val doc = view(

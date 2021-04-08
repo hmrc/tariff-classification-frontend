@@ -19,6 +19,8 @@ package models.request
 import play.api.libs.json.{ OFormat, Json }
 
 case class FileStoreInitiateRequest(
+  fileName: Option[String] = None,
+  mimeType: Option[String] = None,
   id: Option[String] = None,
   successRedirect: Option[String] = None,
   errorRedirect: Option[String] = None,

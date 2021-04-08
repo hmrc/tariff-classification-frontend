@@ -20,8 +20,8 @@ import models.response.ScanStatus.ScanStatus
 
 case class FileMetadata(
                          id: String,
-                         fileName: String,
-                         mimeType: String,
+                         fileName: Option[String],
+                         mimeType: Option[String],
                          url: Option[String]            = None,
                          scanStatus: Option[ScanStatus] = None
                        )

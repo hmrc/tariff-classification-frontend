@@ -22,16 +22,19 @@ import akka.util.ByteString
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
+
 import javax.inject.Singleton
 import metrics.HasMetrics
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
+import play.api.Logger
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
 import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.{ExecutionContext, Future}
 import utils.JsonFormatters.fileMetaDataFormat
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -79,6 +82,9 @@ class FileStoreConnector @Inject() (
 
   def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
     withMetricsTimerAsync("initiate-file-upload") { _ =>
+
+      Logger.error(s"\n\n initiate-file-upload :" + request + "\n\n")
+
       http
         .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](s"${appConfig.fileStoreUrl}/file/initiate", request)
     }

@@ -52,8 +52,8 @@ class StoredAttachmentTest extends ModelsBaseSpec {
         operator               = None,
         timestamp              = attachment.timestamp,
         url                    = metadata.url,
-        fileName               = metadata.fileName,
-        mimeType               = metadata.mimeType,
+        fileName               = metadata.fileName.getOrElse("New Attachment"),
+        mimeType               = metadata.mimeType.getOrElse("FileType"),
         scanStatus             = metadata.scanStatus,
         description            = Some("test description"),
         shouldPublishToRulings = attachment.shouldPublishToRulings
@@ -84,8 +84,8 @@ class StoredAttachmentTest extends ModelsBaseSpec {
 
   private def someMetadataWithType(t: String) = FileMetadata(
     id         = "id",
-    fileName   = "name",
-    mimeType   = t,
+    fileName   = Some("name"),
+    mimeType   = Some(t),
     url        = Some("url"),
     scanStatus = Some(ScanStatus.READY)
   )

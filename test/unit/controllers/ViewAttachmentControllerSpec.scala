@@ -68,9 +68,9 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private def givenFileContent(url: String, fileContent: Array[Byte]) =
     given(fileService.downloadFile(refEq(url))(any[HeaderCarrier])) willReturn Future.successful(Some(Source.single(ByteString(fileContent))))
 
-  private val fileReady      = FileMetadata("id", "file", "type", Some("url"), Some(ScanStatus.READY))
-  private val fileFailed     = FileMetadata("id", "file", "type", None, Some(ScanStatus.FAILED))
-  private val fileProcessing = FileMetadata("id", "file", "type", None, None)
+  private val fileReady      = FileMetadata("id", Some("file"), Some("type"), Some("url"), Some(ScanStatus.READY))
+  private val fileFailed     = FileMetadata("id", Some("file"), Some("type"), None, Some(ScanStatus.FAILED))
+  private val fileProcessing = FileMetadata("id", Some("file"), Some("type"), None, None)
 
   "View Attachment 'GET" should {
 

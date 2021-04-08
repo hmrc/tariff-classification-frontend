@@ -65,8 +65,8 @@ class FileStoreConnectorSpec extends ConnectorTest {
       await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
           id         = attachmentId,
-          fileName   = "name",
-          mimeType   = "text/plain",
+          fileName   = Some("name"),
+          mimeType   = Some("text/plain"),
           url        = None,
           scanStatus = None
         )
@@ -94,8 +94,8 @@ class FileStoreConnectorSpec extends ConnectorTest {
       await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
           id         = attachmentId,
-          fileName   = "name",
-          mimeType   = "text/plain",
+          fileName   = Some("name"),
+          mimeType   = Some("text/plain"),
           url        = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
@@ -132,8 +132,8 @@ class FileStoreConnectorSpec extends ConnectorTest {
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
         FileMetadata(
           id         = "id",
-          fileName   = "name",
-          mimeType   = "text/plain",
+          fileName   = Some("name"),
+          mimeType   = Some("text/plain"),
           url        = None,
           scanStatus = None
         )
@@ -163,8 +163,8 @@ class FileStoreConnectorSpec extends ConnectorTest {
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
         FileMetadata(
           id         = "id",
-          fileName   = "name",
-          mimeType   = "text/plain",
+          fileName   = Some("name"),
+          mimeType   = Some("text/plain"),
           url        = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
@@ -226,8 +226,8 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     result shouldBe FileMetadata(
       id       = "id",
-      fileName = "file-name.txt",
-      mimeType = "text/plain"
+      fileName = Some("file-name.txt"),
+      mimeType = Some("text/plain")
     )
   }
 

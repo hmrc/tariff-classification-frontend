@@ -48,9 +48,9 @@ class PdfDownloadController @Inject() (
               url     <- OptionT.fromOption[Future](meta.url)
               content <- OptionT(fileStore.downloadFile(url))
             } yield Ok
-              .streamed(content, None, Some(meta.mimeType))
+              .streamed(content, None, meta.mimeType)
               .withHeaders(
-                "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+                "Content-Disposition" -> s"attachment; filename=${meta.fileName.getOrElse("New Attachment")}"
               )
 
             val messages     = request.messages
@@ -77,9 +77,9 @@ class PdfDownloadController @Inject() (
               url     <- OptionT.fromOption[Future](meta.url)
               content <- OptionT(fileStore.downloadFile(url))
             } yield Ok
-              .streamed(content, None, Some(meta.mimeType))
+              .streamed(content, None, meta.mimeType)
               .withHeaders(
-                "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+                "Content-Disposition" -> s"attachment; filename=${meta.fileName.getOrElse("New Attachment")}"
               )
 
             val messages     = request.messages
@@ -104,9 +104,9 @@ class PdfDownloadController @Inject() (
           url     <- OptionT.fromOption[Future](meta.url)
           content <- OptionT(fileStore.downloadFile(url))
         } yield Ok
-          .streamed(content, None, Some(meta.mimeType))
+          .streamed(content, None, meta.mimeType)
           .withHeaders(
-            "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+            "Content-Disposition" -> s"attachment; filename=${meta.fileName.getOrElse("New Attachment")}"
           )
 
         val messages     = request.messages

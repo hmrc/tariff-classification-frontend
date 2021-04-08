@@ -17,15 +17,16 @@
 package controllers.v2
 
 import java.util.UUID
-
 import config.AppConfig
 import controllers.{RequestActions, Tab}
+
 import javax.inject.{Inject, Singleton}
 import models.{Case, EventType, NoPagination}
 import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, UploadAttachmentForm}
 import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
 import models.viewmodels.atar._
 import models.request._
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -64,6 +65,9 @@ class AtarController @Inject() (
     keywordForm: Form[String]            = KeywordForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+
+    Logger.error(s"\n\n fileId :" + fileId + "\n\n")
+
     val uploadFileId   = fileId.getOrElse(UUID.randomUUID().toString)
     val atarCase: Case = request.`case`
     val atarViewModel  = CaseViewModel.fromCase(atarCase, request.operator)

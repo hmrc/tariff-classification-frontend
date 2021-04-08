@@ -73,8 +73,8 @@ object StoredAttachment {
       operator    = attachment.operator,
       timestamp   = attachment.timestamp,
       url         = metadata.url,
-      fileName    = metadata.fileName,
-      mimeType    = metadata.mimeType,
+      fileName    = metadata.fileName.getOrElse("New Attachment"),
+      mimeType    = metadata.mimeType.getOrElse("FileType"),
       scanStatus  = metadata.scanStatus,
       description = attachment.description,
       shouldPublishToRulings = attachment.shouldPublishToRulings
