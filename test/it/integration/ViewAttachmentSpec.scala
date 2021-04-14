@@ -15,7 +15,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
   private val cse     = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
   private val caseRef = 123456
-  private val fileMetadata = Json.toJson(FileMetadata("id", "file.txt", "text/plain", Some(s"$wireMockUrl/$caseRef/file.txt"))).toString()
+  private val fileMetadata = Json.toJson(FileMetadata("id", Some("file.txt"), Some("text/plain"), Some(s"$wireMockUrl/$caseRef/file.txt"))).toString()
 
   "View Attachment" should {
 

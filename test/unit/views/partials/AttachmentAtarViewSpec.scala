@@ -29,7 +29,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
   "Attachment" should {
 
     "Render Pending attachment" in {
-      val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = None)
+      val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = None)
 
       // When
       val doc = view(attachment_atar(reference, "MODULE", stored))
@@ -40,7 +40,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
     }
 
     "Render Quarantined attachment" in {
-      val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.FAILED))
+      val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.FAILED))
 
       // When
       val doc = view(attachment_atar(reference, "MODULE", stored))
@@ -52,7 +52,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
 
     "Render Safe attachment without URL" in {
       val stored =
-        Cases.storedAttachment.copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = None)
+        Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = None)
 
       // When
       val doc = view(attachment_atar(reference, "MODULE", stored))
@@ -64,7 +64,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
 
     "Render Safe attachment" in {
       val stored = Cases.storedAttachment
-        .copy(id = "FILE_ID", fileName = "name", scanStatus = Some(ScanStatus.READY), url = Some("url"))
+        .copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = Some("url"))
 
       // When
       val doc = view(attachment_atar(reference, "MODULE", stored))

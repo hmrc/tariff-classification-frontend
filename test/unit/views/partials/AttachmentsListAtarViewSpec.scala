@@ -16,15 +16,15 @@
 
 package views.partials
 
+import models.Operator
 import models.response.ScanStatus
-import models.{Operator, Permission}
+import models.viewmodels.atar.AttachmentsTabViewModel
 import utils.Cases
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.attachments_list_atar
 
 import java.time.{ZoneOffset, ZonedDateTime}
-import models.viewmodels.atar.AttachmentsTabViewModel
 
 class AttachmentsListAtarViewSpec extends ViewSpec {
 
@@ -44,7 +44,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
     "Render attachments" in {
       val attachment = Cases.storedAttachment.copy(
         id         = "FILE_ID",
-        fileName   = "name",
+        fileName   = Some("name"),
         url        = Some("url"),
         scanStatus = Some(ScanStatus.READY),
         timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
@@ -66,7 +66,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
     "Render 'Added by'" in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
-        fileName = "name",
+        fileName = Some("name"),
         operator = Some(Operator("id", Some("operator name")))
       )
 
@@ -85,13 +85,13 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
     "Render 'Added by' with unknown operator and with the applicant name" in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
-        fileName = "fileName_attachment",
+        fileName = Some("fileName_attachment"),
         operator = None
       )
 
       val attachment_trader = Cases.storedAttachment.copy(
         id       = "FILE_ID",
-        fileName = "fileName"
+        fileName = Some("fileName")
       )
 
       val c = Cases.btiCaseExample
@@ -115,7 +115,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
     "Render 'Added by' with unknown operator name" in {
       val attachment = Cases.storedAttachment.copy(
         id       = "FILE_ID",
-        fileName = "name",
+        fileName = Some("name"),
         operator = Some(Operator("id", None))
       )
 
@@ -134,7 +134,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Status should display PUBLISHED if the file is public" in {
       val attachment = Cases.storedAttachment
-        .copy(id = "FILE_ID", public = true, fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+        .copy(id = "FILE_ID", public = true, fileName = Some("name"), url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       val c = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
@@ -148,7 +148,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Status should display CONFIDENTIAL if the file is not public" in {
       val attachment = Cases.storedAttachment
-        .copy(id = "FILE_ID", public = false, fileName = "name", url = Some("url"), scanStatus = Some(ScanStatus.READY))
+        .copy(id = "FILE_ID", public = false, fileName = Some("name"), url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       val c = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
@@ -166,7 +166,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
         .copy(
           id         = "FILE_ID",
           public     = false,
-          fileName   = "name",
+          fileName   = Some("name"),
           url        = Some("url"),
           scanStatus = Some(ScanStatus.FAILED)
         )

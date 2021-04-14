@@ -16,14 +16,13 @@
 
 package views.partials
 
-import java.time.{ZoneOffset, ZonedDateTime}
-
 import models.response.ScanStatus
-import models.{Operator, Permission}
 import utils.Cases
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.attachments_edit_list
+
+import java.time.{ZoneOffset, ZonedDateTime}
 
 class AttachmentsEditListViewSpec extends ViewSpec {
 
@@ -41,7 +40,7 @@ class AttachmentsEditListViewSpec extends ViewSpec {
     "Render attachments" in {
       val attachment = Cases.storedAttachment.copy(
         id         = "FILE_ID",
-        fileName   = "name",
+        fileName   = Some("name"),
         url        = Some("url"),
         scanStatus = Some(ScanStatus.READY),
         timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant

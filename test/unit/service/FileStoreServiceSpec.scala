@@ -160,7 +160,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       given(path.toFile) willReturn file
       given(file.length()) willReturn 1
 
-      val metadata = FileMetadata(id = "id", fileName = "name", mimeType = "mimetype")
+      val metadata = FileMetadata(id = "id", fileName = Some("name"), mimeType = Some("mimetype"))
       given(connector.upload(upload)) willReturn Future.successful(metadata)
 
       await(service.upload(upload)) shouldBe FileStoreAttachment("id", "name", "mimetype", 1)
@@ -206,8 +206,8 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       public                 = true,
       operator               = None,
       url                    = Some(s"url-$id"),
-      fileName               = s"name-$id",
-      mimeType               = s"type-$id",
+      fileName               = Some(s"name-$id"),
+      mimeType               = Some(s"type-$id"),
       scanStatus             = Some(ScanStatus.READY),
       timestamp              = Instant.EPOCH,
       description            = Some("test description"),
@@ -262,8 +262,8 @@ class FileStoreServiceSpec extends ServiceSpecBase {
   private def someMetadataWithId(id: String): FileMetadata =
     FileMetadata(
       id         = id,
-      fileName   = s"name-$id",
-      mimeType   = s"type-$id",
+      fileName   = Some(s"name-$id"),
+      mimeType   = Some(s"type-$id"),
       url        = Some(s"url-$id"),
       scanStatus = Some(ScanStatus.READY)
     )

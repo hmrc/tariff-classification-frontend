@@ -48,8 +48,8 @@ class AdvancedSearchResultImagesViewSpec extends ViewSpec {
       )
 
       val storedAttachments = Seq(
-        Cases.storedAttachment.copy(id = "FILE_ID_1", mimeType = "image/png"),
-        Cases.storedAttachment.copy(id = "FILE_ID_2", mimeType = "image/png")
+        Cases.storedAttachment.copy(id = "FILE_ID_1", mimeType = Some("image/png")),
+        Cases.storedAttachment.copy(id = "FILE_ID_2", mimeType = Some("image/png"))
       )
       val searchResult = SearchResult(c, storedAttachments)
 

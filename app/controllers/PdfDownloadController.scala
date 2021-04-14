@@ -46,11 +46,12 @@ class PdfDownloadController @Inject() (
               pdf     <- OptionT.fromOption[Future](decision.decisionPdf)
               meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
               url     <- OptionT.fromOption[Future](meta.url)
+              fileName <- OptionT.fromOption[Future](meta.fileName)
               content <- OptionT(fileStore.downloadFile(url))
             } yield Ok
-              .streamed(content, None, Some(meta.mimeType))
+              .streamed(content, None, meta.mimeType)
               .withHeaders(
-                "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+                "Content-Disposition" -> s"attachment; filename=$fileName"
               )
 
             val messages     = request.messages
@@ -75,11 +76,12 @@ class PdfDownloadController @Inject() (
               pdf     <- OptionT.fromOption[Future](decision.letterPdf)
               meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
               url     <- OptionT.fromOption[Future](meta.url)
+              fileName <- OptionT.fromOption[Future](meta.fileName)
               content <- OptionT(fileStore.downloadFile(url))
             } yield Ok
-              .streamed(content, None, Some(meta.mimeType))
+              .streamed(content, None, meta.mimeType)
               .withHeaders(
-                "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+                "Content-Disposition" -> s"attachment; filename=$fileName"
               )
 
             val messages     = request.messages
@@ -102,11 +104,12 @@ class PdfDownloadController @Inject() (
           pdf     <- OptionT.fromOption[Future](cse.application.asATAR.applicationPdf)
           meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
           url     <- OptionT.fromOption[Future](meta.url)
+          fileName <- OptionT.fromOption[Future](meta.fileName)
           content <- OptionT(fileStore.downloadFile(url))
         } yield Ok
-          .streamed(content, None, Some(meta.mimeType))
+          .streamed(content, None, meta.mimeType)
           .withHeaders(
-            "Content-Disposition" -> s"attachment; filename=${meta.fileName}"
+            "Content-Disposition" -> s"attachment; filename=$fileName"
           )
 
         val messages     = request.messages
