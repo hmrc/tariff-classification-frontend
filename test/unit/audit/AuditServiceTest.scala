@@ -16,8 +16,6 @@
 
 package audit
 
-import java.time.Instant
-
 import base.SpecBase
 import models.AppealStatus.AppealStatus
 import models.CancelReason.CancelReason
@@ -30,12 +28,9 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
 import utils.Cases._
+import utils.JsonFormatters.{caseFormat, operatorFormat}
+
 import java.time.Instant
-
-import play.api.libs.json.Json
-
-import utils.JsonFormatters.caseFormat
-import utils.JsonFormatters.operatorFormat
 import scala.concurrent.ExecutionContext
 
 class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
