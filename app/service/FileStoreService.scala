@@ -36,7 +36,6 @@ class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging
   def getFileMetadata(id: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] = connector.get(id)
 
   def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
-    logger.error(s"Published file c :" + c.attachments)
     getAttachments(Seq(c))
       .map(group => group.getOrElse(c, Seq.empty))
       .map(_.sortBy(_.timestamp))
