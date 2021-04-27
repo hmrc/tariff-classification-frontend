@@ -1,14 +1,12 @@
 import play.sbt.PlayScala
 import play.sbt.routes.RoutesKeys
-import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "tariff-classification-frontend"
 
 lazy val plugins: Seq[Plugins] =
-  Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
 
 lazy val microservice = (project in file("."))
   .enablePlugins(plugins: _*)
@@ -87,7 +85,6 @@ lazy val microservice = (project in file("."))
     parallelExecution in IntegrationTest := false
   )
   .settings(
-    resolvers += Resolver.bintrayRepo("hmrc", "releases"),
     resolvers += Resolver.jcenterRepo
   )
   .settings(scalaModuleInfo := scalaModuleInfo.value map {
