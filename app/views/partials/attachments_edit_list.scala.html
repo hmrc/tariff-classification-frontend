@@ -23,7 +23,7 @@
 @(id: String,
   attachments: Seq[StoredAttachment],
   showRemoval: Boolean = false,
-  caseRef: Option[String] = None,
+  caseRef: String = "",
   startAtTabIndex : Option[Int] = None
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
@@ -39,7 +39,7 @@
     <tr id="@{id}-row-@{index}" class="border-bottom row-alignment">
         <td>
             <div id="@{id}-row-@{index}-title" class="file-name-column-width w-75 pl-0">
-                @attachment(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
             </div>
         </td>
         <td>
