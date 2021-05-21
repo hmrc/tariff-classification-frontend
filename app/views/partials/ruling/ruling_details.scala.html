@@ -168,6 +168,7 @@
 @attachments_list(
     "attachments",
     files.filter(_.shouldPublishToRulings),
+    caseRef = ruling.caseReference,
     startAtTabIndex = Some(startAtTabIndex+2)
 )
 

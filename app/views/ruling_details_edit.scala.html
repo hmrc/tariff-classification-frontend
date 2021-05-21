@@ -168,9 +168,10 @@
                                     There are no attachments for this case.</span>
                             } else {
                                 <span class="body-text">
-                                    All files selected will be published on the 'Search for Advance Tariff Rulings' website.</span>
+                                    All files selected will be published on the 'Search for Advance Tariff Rulings' website.
+                                </span>
 
-                            @attachments_edit_list("attachments", attachments)
+                            @attachments_edit_list("attachments", attachments, caseRef = c.reference)
                             }
                         }
                         </legend>

@@ -23,8 +23,9 @@
 @(id: String,
   attachments: Seq[StoredAttachment],
   showUploadedBy: Boolean = false,
-  showSelect: Boolean = false, showRemoval: Boolean = false,
-  caseRef: Option[String] = None,
+  showSelect: Boolean = false,
+  showRemoval: Boolean = false,
+  caseRef: String,
   startAtTabIndex : Option[Int] = None
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
@@ -45,7 +46,7 @@
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                         <tr id="@{id}-row-@{index}">
                             <td id="@{id}-row-@{index}-title" >
-                                @attachment(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                                @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
                             </td>
 
                             @if(showUploadedBy) {
@@ -81,10 +82,10 @@
                             </td>
 
                             @if(showRemoval &&
-                                caseRef.isDefined &&
+                                caseRef.nonEmpty &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove">
-                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href='@v2.routes.AttachmentsController.removeAttachment(caseRef.get, file.id, file.fileName.getOrElse("New Attachment"))'>
+                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href='@v2.routes.AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
                                         <span aria-hidden="true">@messages("case.attachment.remove.file.text")</span>
                                         <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName.getOrElse("New Attachment"))</span>
                                     </a>

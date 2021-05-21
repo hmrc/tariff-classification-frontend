@@ -26,11 +26,13 @@ import java.time.{ZoneOffset, ZonedDateTime}
 
 class AttachmentsEditListViewSpec extends ViewSpec {
 
+  private val caseRef:String = "600000004"
+
   "Attachments Edit List" should {
 
     "Render Nothing given no attachments" in {
       // When
-      val doc = view(attachments_edit_list("MODULE", Seq.empty))
+      val doc = view(attachments_edit_list("MODULE", Seq.empty, caseRef = caseRef))
 
       // Then
       doc shouldNot containElementWithID("MODULE-div")
@@ -47,7 +49,7 @@ class AttachmentsEditListViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_edit_list("MODULE", Seq(attachment)))
+      val doc = view(attachments_edit_list("MODULE", Seq(attachment), caseRef = caseRef))
 
       // Then
       doc                                      should containElementWithID("MODULE-div")

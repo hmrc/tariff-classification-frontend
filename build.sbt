@@ -6,7 +6,7 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 val appName = "tariff-classification-frontend"
 
 lazy val plugins: Seq[Plugins] =
-  Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  Seq(PlayScala, SbtDistributablesPlugin)
 
 lazy val microservice = (project in file("."))
   .enablePlugins(plugins: _*)

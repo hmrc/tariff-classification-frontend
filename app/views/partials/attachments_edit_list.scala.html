@@ -23,7 +23,7 @@
 @(id: String,
   attachments: Seq[StoredAttachment],
   showRemoval: Boolean = false,
-  caseRef: Option[String] = None,
+  caseRef: String,
   startAtTabIndex : Option[Int] = None
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
@@ -32,14 +32,14 @@
 <table id="@{id}-div" aria-label="Files to attach to the ruling">
     <tr class="border-bottom row-alignment">
         <th scope="col" class="file-name-column-width bold-small w-75 pl-0">File</th>
-        <th scope="col" lass="bold-small w-25 p-0" id="header-select" >Publish</th>
+        <th scope="col" class="bold-small w-25 p-0" id="header-select" >Publish</th>
         <th scope="col" class="bold-small p-0 attachment-table-date">Date</th>
     </tr>
     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
     <tr id="@{id}-row-@{index}" class="border-bottom row-alignment">
         <td>
             <div id="@{id}-row-@{index}-title" class="file-name-column-width w-75 pl-0">
-                @attachment(s"$id-row-$index", file, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
             </div>
         </td>
         <td>
