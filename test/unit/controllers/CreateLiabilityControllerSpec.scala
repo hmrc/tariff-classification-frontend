@@ -28,8 +28,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.create_liability
 
-import scala.concurrent.Future._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future._
+import play.api.data.FormBinding.Implicits.formBinding
 
 class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 
@@ -76,7 +77,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
       "form is invalid" in {
         val request   = newFakePOSTRequestWithCSRF(app)
         val result    = await(controller(Set(Permission.CREATE_CASES)).post()(request))
-        lazy val form = LiabilityForm.newLiabilityForm.bindFromRequest()(request)
+        lazy val form = LiabilityForm.newLiabilityForm.bindFromRequest()(request, formBinding)
 
         status(result)      shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")

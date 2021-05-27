@@ -46,7 +46,7 @@
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                         <tr id="@{id}-row-@{index}">
                             <td id="@{id}-row-@{index}-title" class="word-break">
-                                @attachment(s"$id-row-$index", file)
+                                @attachment(s"$id-row-$index", file, caseRef)
                                 <span class="refresh-content">@messages("case.attachment.refresh.content")</span>
                             </td>
 

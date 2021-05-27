@@ -27,11 +27,13 @@ import views.html.partials.attachments_list
 
 class AttachmentsListViewSpec extends ViewSpec {
 
+  private val caseRef:String = "600000004"
+
   "Attachments List" should {
 
     "Render Nothing given no attachments" in {
       // When
-      val doc = view(attachments_list("MODULE", Seq.empty))
+      val doc = view(attachments_list("MODULE", Seq.empty, caseRef = caseRef))
 
       // Then
       doc shouldNot containElementWithID("MODULE-table")
@@ -48,7 +50,7 @@ class AttachmentsListViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment)))
+      val doc = view(attachments_list("MODULE", Seq(attachment), caseRef = caseRef))
 
       // Then
       doc                                      should containElementWithID("MODULE-table")
@@ -64,7 +66,7 @@ class AttachmentsListViewSpec extends ViewSpec {
         .copy(id = "FILE_ID", fileName = Some("name"), url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment)))
+      val doc = view(attachments_list("MODULE", Seq(attachment), caseRef = caseRef))
 
       // Then
       doc shouldNot containElementWithID("MODULE-header-uploaded_by")
@@ -79,7 +81,7 @@ class AttachmentsListViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
+      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true, caseRef = caseRef))
 
       // Then
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
@@ -95,7 +97,7 @@ class AttachmentsListViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
+      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true, caseRef = caseRef))
 
       // Then
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
@@ -111,7 +113,7 @@ class AttachmentsListViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true))
+      val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true, caseRef = caseRef))
 
       // Then
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
@@ -128,7 +130,7 @@ class AttachmentsListViewSpec extends ViewSpec {
 
       // When
       val doc = view(
-        attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = Some("case-ref"))(
+        attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = caseRef)(
           requestWithPermissions(Permission.REMOVE_ATTACHMENTS),
           messages
         )
@@ -147,7 +149,7 @@ class AttachmentsListViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = Some("case-ref")))
+      val doc = view(attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = caseRef))
 
       // Then
       doc shouldNot containElementWithID("MODULE-row-0-remove")

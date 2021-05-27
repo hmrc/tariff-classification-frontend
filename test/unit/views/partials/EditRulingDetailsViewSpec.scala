@@ -222,7 +222,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       // Then
       doc                                          should containElementWithID("attachments-row-0-file")
       doc.getElementById("attachments-row-0-file") should haveTag("a")
-      doc.getElementById("attachments-row-0-file") should haveAttribute("href", "url")
+      doc.getElementById("attachments-row-0-file") should haveAttribute("href", s"/manage-tariff-classifications/attachment/${c.reference}/FILE_ID")
       doc.getElementById("attachments-row-0-file") should containText("file.txt")
     }
 

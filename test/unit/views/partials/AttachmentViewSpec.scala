@@ -24,13 +24,15 @@ import views.html.partials.attachment
 
 class AttachmentViewSpec extends ViewSpec {
 
+  private val caseRef = "600000004"
+
   "Attachment" should {
 
     "Render Pending attachment" in {
       val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = None)
 
       // When
-      val doc = view(attachment("MODULE", stored))
+      val doc = view(attachment("MODULE", stored, caseRef))
 
       // Then
       doc                                      should containElementWithID("MODULE-file")
@@ -43,7 +45,7 @@ class AttachmentViewSpec extends ViewSpec {
       val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.FAILED))
 
       // When
-      val doc = view(attachment("MODULE", stored))
+      val doc = view(attachment("MODULE", stored, caseRef))
 
       // Then
       doc                                      should containElementWithID("MODULE-file")
@@ -57,7 +59,7 @@ class AttachmentViewSpec extends ViewSpec {
         Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = None)
 
       // When
-      val doc = view(attachment("MODULE", stored))
+      val doc = view(attachment("MODULE", stored, caseRef))
 
       // Then
       doc                                      should containElementWithID("MODULE-file")
@@ -71,7 +73,7 @@ class AttachmentViewSpec extends ViewSpec {
         .copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = Some("url"))
 
       // When
-      val doc = view(attachment("MODULE", stored))
+      val doc = view(attachment("MODULE", stored, caseRef))
 
       // Then
       doc should containElementWithID("MODULE-file")
@@ -79,7 +81,7 @@ class AttachmentViewSpec extends ViewSpec {
 
       val anchor = doc.getElementById("MODULE-file")
       anchor should haveChild("a").containingText("name")
-      anchor should haveChild("a").withAttribute("href", "url")
+      anchor should haveChild("a").withAttribute("href", s"/manage-tariff-classifications/attachment/$caseRef/FILE_ID")
     }
 
   }
