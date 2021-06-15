@@ -22,20 +22,24 @@ import models.request.FileStoreInitiateRequest
 import models.response._
 import models.{Attachment, FileUpload}
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.libs.Files.SingletonTemporaryFileCreator
 
 class FileStoreConnectorSpec extends ConnectorTest {
 
-  private val config = fakeApplication.injector.instanceOf[AppConfig]
+  private val config = fakeApplication().injector.instanceOf[AppConfig]
+
   given(mockAppConfig.maxUriLength) willReturn 2048L
   given(mockAppConfig.fileStoreUrl) willReturn wireMockUrl
-  given(mockAppConfig.apiToken).willReturn(config.apiToken)
+
   private val attachmentId = "id"
   private val connector    = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
 
+
   "Connector 'GET' one" should {
     "handle 404" in {
+      when(mockAppConfig.apiToken) thenReturn config.apiToken
       val att = mock[Attachment]
       given(att.id) willReturn attachmentId
 

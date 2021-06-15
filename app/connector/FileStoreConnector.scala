@@ -65,7 +65,7 @@ class FileStoreConnector @Inject() (
         Source(attachments.map(_.id).toList)
           .grouped(BatchSize)
           .mapAsyncUnordered(Runtime.getRuntime().availableProcessors()) { ids =>
-            http.GET[Seq[FileMetadata]](makeQuery(ids))
+            http.GET[Seq[FileMetadata]](makeQuery(ids), headers = http.addAuth)
           }
           .runFold(Seq.empty[FileMetadata]) {
             case (acc, next) => acc ++ next
@@ -75,13 +75,13 @@ class FileStoreConnector @Inject() (
 
   def get(attachmentId: String)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata-by-id") { _ =>
-      http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId")
+      http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId", headers = http.addAuth)
     }
 
   def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
     withMetricsTimerAsync("initiate-file-upload") { _ =>
       http
-        .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](s"${appConfig.fileStoreUrl}/file/initiate", request)
+        .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](s"${appConfig.fileStoreUrl}/file/initiate", request, headers = http.addAuth)
     }
 
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileMetadata] =
@@ -97,7 +97,7 @@ class FileStoreConnector @Inject() (
 
       ws.url(s"${appConfig.fileStoreUrl}/file")
         .withHttpHeaders(http.addAuth(hc): _*)
-        .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
+       // .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .post(Source(List(filePart, dataPart)))
         .flatMap { response =>
           Future.fromTry {
@@ -111,7 +111,7 @@ class FileStoreConnector @Inject() (
       val fileStoreResponse = ws
         .url(url)
         .withHttpHeaders(http.addAuth(hc): _*)
-        .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
+        //.withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .get()
 
       fileStoreResponse.flatMap { response =>
@@ -125,6 +125,6 @@ class FileStoreConnector @Inject() (
     }
 
   def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
-    withMetricsTimerAsync("delete-file")(_ => http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId"))
+    withMetricsTimerAsync("delete-file")(_ => http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId", headers = http.addAuth))
 
 }
