@@ -31,7 +31,8 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
+
 import scala.concurrent.{ExecutionContext, Future}
 import utils.JsonFormatters.fileMetaDataFormat
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -95,7 +96,7 @@ class FileStoreConnector @Inject() (
       )
 
       ws.url(s"${appConfig.fileStoreUrl}/file")
-        .withHttpHeaders(hc.headers: _*)
+        .withHttpHeaders(http.addAuth(hc): _*)
         .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .post(Source(List(filePart, dataPart)))
         .flatMap { response =>
@@ -109,7 +110,7 @@ class FileStoreConnector @Inject() (
     withMetricsTimerAsync("download-file") { _ =>
       val fileStoreResponse = ws
         .url(url)
-        .withHttpHeaders(hc.headers: _*)
+        .withHttpHeaders(http.addAuth(hc): _*)
         .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .get()
 
