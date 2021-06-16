@@ -46,4 +46,36 @@ class AuthenticatedHttpClient @Inject() (
       case _      => Seq(headerName -> config.apiToken)
     }
   }
+
+  override def doGet(
+    url: String,
+    headers: Seq[(String, String)]
+  )(implicit ec: ExecutionContext): Future[HttpResponse] =
+    super.doGet(url, headers)
+
+  override def doPost[A](
+    url: String,
+    body: A,
+    headers: Seq[(String, String)]
+  )(implicit writes: Writes[A], ec: ExecutionContext): Future[HttpResponse] =
+    super.doPost(url, body, headers)(writes, ec)
+
+  override def doEmptyPost[A](
+    url: String,
+    headers: Seq[(String, String)]
+  )(implicit ec: ExecutionContext): Future[HttpResponse] =
+    super.doEmptyPost(url, headers)
+
+  override def doPut[A](
+    url: String,
+    body: A,
+    headers: Seq[(String, String)]
+  )(implicit rds: Writes[A], ec: ExecutionContext): Future[HttpResponse] =
+    super.doPut(url, body, headers)
+
+  override def doDelete(
+    url: String,
+    headers: Seq[(String, String)]
+  )(implicit ec: ExecutionContext): Future[HttpResponse] =
+    super.doDelete(url, headers)
 }

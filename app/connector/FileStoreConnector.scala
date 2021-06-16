@@ -97,7 +97,6 @@ class FileStoreConnector @Inject() (
 
       ws.url(s"${appConfig.fileStoreUrl}/file")
         .withHttpHeaders(http.addAuth(hc): _*)
-       // .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .post(Source(List(filePart, dataPart)))
         .flatMap { response =>
           Future.fromTry {
@@ -111,7 +110,6 @@ class FileStoreConnector @Inject() (
       val fileStoreResponse = ws
         .url(url)
         .withHttpHeaders(http.addAuth(hc): _*)
-        //.withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
         .get()
 
       fileStoreResponse.flatMap { response =>
