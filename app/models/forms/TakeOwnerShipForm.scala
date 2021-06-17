@@ -16,7 +16,6 @@
 
 package models.forms
 
-import models.forms.MandatoryBooleanForm
 import play.api.data.Form
 
 object  TakeOwnerShipForm {

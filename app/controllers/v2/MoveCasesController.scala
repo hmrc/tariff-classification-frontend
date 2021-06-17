@@ -21,7 +21,7 @@ import config.AppConfig
 import connector.DataCacheConnector
 import controllers.RequestActions
 import models._
-import models.forms.v2.{MoveCasesForm, TeamOrUser, TeamOrUserForm, TeamToMoveCaseForm, UserToMoveCaseForm}
+import models.forms.v2._
 import models.request.{AuthenticatedDataRequest, AuthenticatedRequest}
 import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
 import play.api.Logging
@@ -29,12 +29,11 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, QueuesService, UserService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HeaderCarrier
-
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 class MoveCasesController @Inject() (
   verify: RequestActions,
@@ -197,7 +196,7 @@ class MoveCasesController @Inject() (
           userPid =>
             userPid match {
               case "OTHER" => successful(Redirect(routes.MoveCasesController.chooseUserFromAnotherTeam()))
-              case _       => moveToUser(userPid, caseRefs)
+              case _       => moveToUser(userPid)
             }
         )
     }
@@ -333,17 +332,10 @@ class MoveCasesController @Inject() (
             for {
               queues <- queueService.getNonGateway
             } yield Ok(chooseTeamPage(caseNumber, errors, queues)),
-          team => {
-            val updatedCases = casesService.updateCases(
-              caseRefs,
-              None,
-              team,
-              request.userAnswers.get[String](OriginalUserPID).get,
-              request.operator.id)
+          team =>
             for {
               _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())
-          }
         )
     }
 
@@ -404,22 +396,8 @@ class MoveCasesController @Inject() (
 
     }
 
-  private def updateCases(refs: Set[String], user: Option[Operator], teamId: String, originalUserId: String)(
-    implicit request: AuthenticatedRequest[_]
-  ) =
-    for {
-      casesToUpdate <- casesService.getCasesByAssignee(Operator(originalUserId), NoPagination())
-    } yield refs
-      .map(ref => casesToUpdate.results.find(c => c.reference == ref))
-      .flatten
-      .map(c =>
-        for {
-          updatedCase <- casesService.updateCase(c,c.copy(assignee = user, queueId = Some(teamId)), request.operator)
-        } yield updatedCase
-      )
-
   private def findChosenCasesInAssignedCases(assignedCases: Seq[Case], chosenCaseRefs: Set[String]) =
-    chosenCaseRefs.map(ref => assignedCases.find(c => c.reference == ref)).flatten
+    chosenCaseRefs.flatMap(ref => assignedCases.find(c => c.reference == ref))
 
   private def redirectBasedOnCaseStatus(chosenCases: Set[Case]) =
     if (chosenCases.exists(c =>
@@ -459,20 +437,12 @@ class MoveCasesController @Inject() (
       .getOrElse(NotFound(views.html.user_not_found(pid)))
 
   private def moveToUser(
-    pid: String,
-    caseRefs: Set[String]
+    pid: String
   )(implicit hc: HeaderCarrier, request: AuthenticatedDataRequest[_]) =
     userService.getUser(pid).flatMap {
       case Some(u) => {
         val userAnswersWithNewUser = request.userAnswers.set(ChosenUserPID, pid)
         if (u.memberOfTeams.filterNot(_ == Queues.gateway.id).size == 1) {
-          val updatedCases = casesService.updateCases(
-            caseRefs,
-            Some(u),
-            u.memberOfTeams.head,
-            request.userAnswers.get[String](OriginalUserPID).get,
-            request.operator.id
-          )
           for {
             _ <- dataCacheConnector.save(
                   userAnswersWithNewUser

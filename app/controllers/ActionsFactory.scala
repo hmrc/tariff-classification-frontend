@@ -16,21 +16,21 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
 import config.AppConfig
 import connector.DataCacheConnector
-import models.{Case, Permission, UserAnswers}
+import javax.inject.{Inject, Singleton}
 import models.request._
+import models.{Case, Permission, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
-import play.api.mvc.{ActionFilter, ActionRefiner, Call, Result}
+import play.api.mvc.{ActionFilter, ActionRefiner, Result}
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckCasePermissionsAction extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
@@ -63,7 +63,7 @@ class VerifyCaseExistsActionFactory @Inject() (casesService: CasesService)(
         request: AuthenticatedRequest[A]
       ): Future[Either[Result, AuthenticatedCaseRequest[A]]] = {
         implicit val hc: HeaderCarrier =
-          HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+          HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         implicit val r: AuthenticatedRequest[A] = request
 
         casesService.getOne(reference).flatMap {
@@ -144,7 +144,7 @@ class RequireCaseDataActionFactory @Inject() (
         request: B[A]
       ): Future[Either[Result, AuthenticatedCaseDataRequest[A]]] = {
         implicit val hc: HeaderCarrier =
-          HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+          HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         implicit val authenticatedRequest: AuthenticatedRequest[_] = request
 
         casesService.getOne(reference).flatMap {

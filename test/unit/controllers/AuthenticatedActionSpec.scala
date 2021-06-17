@@ -322,7 +322,7 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
   }
 
   private def action: AuthenticatedAction =
-    new AuthenticatedAction(appConfig, playBodyParsers, config, environment, connector, userConnector, controllerComponents)
+    new AuthenticatedAction(appConfig, playBodyParsers, config, environment, connector, userConnector)
 
   private def theAuthenticatedRequest(): AuthenticatedRequest[AnyContent] = {
     val captor: ArgumentCaptor[AuthenticatedRequest[AnyContent]] =

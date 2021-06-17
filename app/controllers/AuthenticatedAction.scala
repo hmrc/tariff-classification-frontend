@@ -29,7 +29,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{~}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.HeaderCarrierConverter
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,8 +41,7 @@ class AuthenticatedAction @Inject() (
   override val config: Configuration,
   override val env: Environment,
   override val authConnector: StrideAuthConnector,
-  userConnector: BindingTariffClassificationConnector,
-  cc: ControllerComponents
+  userConnector: BindingTariffClassificationConnector
 )(override implicit val executionContext: ExecutionContext)
     extends ActionBuilder[AuthenticatedRequest, AnyContent]
     with AuthorisedFunctions
@@ -62,9 +61,9 @@ class AuthenticatedAction @Inject() (
   private val predicate = if (checkEnrolment) checkedPredicate else uncheckedPredicate
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(
-      request.headers,
-      Some(request.session)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(
+      request,
+      request.session
     )
 
     authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.email and Retrievals.allEnrolments) {

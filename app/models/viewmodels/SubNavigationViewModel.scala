@@ -46,7 +46,7 @@ object SubNavigationTab {
               .getOrElse(
                 Left("Invalid subnavigation tab")
               )
-          case Left(value) => Left("Invalid subnavigation tab")
+          case Left(_) => Left("Invalid subnavigation tab")
         }
 
       override def unbind(key: String, value: SubNavigationTab): String = stringBindable.unbind(key, value.id)

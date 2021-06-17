@@ -17,9 +17,9 @@
 package controllers
 
 import config.AppConfig
-import connector.{BindingTariffClassificationConnector, DataCacheConnector, FakeDataCacheConnector, StrideAuthConnector}
-import models.{Case, Operator, Permission, UserAnswers}
+import connector.{BindingTariffClassificationConnector, FakeDataCacheConnector, StrideAuthConnector}
 import models.request._
+import models.{Case, Operator, Permission, UserAnswers}
 import org.mockito.Mockito.mock
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
@@ -42,8 +42,7 @@ class SuccessfulAuthenticatedAction(
       env           = mock(classOf[Environment]),
       authConnector = mock(classOf[StrideAuthConnector]),
       parse         = parse,
-      userConnector = mock(classOf[BindingTariffClassificationConnector]),
-      cc            = mock(classOf[ControllerComponents])
+      userConnector = mock(classOf[BindingTariffClassificationConnector])
     ) {
 
   override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] =

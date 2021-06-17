@@ -16,7 +16,6 @@
 
 package models
 
-import cats.data.EitherT
 import cats.syntax.all._
 import play.api.mvc.QueryStringBindable
 

@@ -16,8 +16,8 @@
 
 package connector
 
-import akka.stream.{IOResult, Materializer}
 import akka.stream.scaladsl.{FileIO, Source}
+import akka.stream.{IOResult, Materializer}
 import akka.util.ByteString
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
@@ -27,16 +27,15 @@ import metrics.HasMetrics
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsResult, Json}
 import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
-import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import utils.JsonFormatters.fileMetaDataFormat
 
 import scala.concurrent.{ExecutionContext, Future}
-import utils.JsonFormatters.fileMetaDataFormat
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import play.api.libs.json.JsResult
 
 @Singleton
 class FileStoreConnector @Inject() (

@@ -16,6 +16,9 @@
 
 package controllers
 
+import java.time.Instant
+
+import models.forms.v2.LiabilityDetailsForm
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.{Permission, _}
 import org.mockito.ArgumentMatchers.{any, refEq}
@@ -28,9 +31,6 @@ import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, CommodityCodeService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
-import java.time.Instant
-
-import models.forms.v2.LiabilityDetailsForm
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
@@ -40,9 +40,9 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val casesService         = mock[CasesService]
   private val operator             = Operator(id = "id")
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig))
+  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints())
   private val liabilityDetailsForm =
-    new LiabilityDetailsForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig), realAppConfig)
+    new LiabilityDetailsForm(new CommodityCodeConstraints(), realAppConfig)
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",

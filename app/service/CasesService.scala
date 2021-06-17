@@ -585,7 +585,7 @@ class CasesService @Inject() (
     updated: Case,
     operator: Operator,
     comment: Option[String],
-    attachment: Option[Attachment] = None,
+    attachment: Option[Attachment],
     reason: RejectReason
   )(implicit hc: HeaderCarrier): Future[Unit] = {
     val details = RejectCaseStatusChange(

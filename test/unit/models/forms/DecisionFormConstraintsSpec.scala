@@ -16,7 +16,6 @@
 
 package models.forms
 
-import config.AppConfig
 import models.{CommodityCode, ModelsBaseSpec}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -26,7 +25,7 @@ import service.CommodityCodeService
 class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints(commodityCodeService, mock[AppConfig]))
+  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints())
   private val commodityCodeValidLengthErrorMessage = "decision_form.error.bindingCommodityCode.valid.length"
   private val commodityCodeValidNumberTypeErrorMessage = "decision_form.error.bindingCommodityCode.valid.number"
   private val commodityCodeValidEvenDigitsErrorMessage = "decision_form.error.bindingCommodityCode.valid.evenDigits"

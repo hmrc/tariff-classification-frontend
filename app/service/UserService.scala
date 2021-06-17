@@ -17,20 +17,19 @@
 package service
 
 import audit.AuditService
-import config.AppConfig
 import connector.BindingTariffClassificationConnector
+import javax.inject.Inject
+import models.Role.Role
 import models.{Operator, Paged, Pagination}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
-import javax.inject.Inject
-import models.Role.Role
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class UserService @Inject()(
   auditService: AuditService,
   connector: BindingTariffClassificationConnector
-)(implicit ec: ExecutionContext, appConfig: AppConfig)
+)(implicit ec: ExecutionContext)
     extends Logging {
 
   def getAllUsers(role: Seq[Role], team: String, pagination: Pagination)(

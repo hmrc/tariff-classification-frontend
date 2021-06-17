@@ -45,10 +45,10 @@ class ReassignCaseController @Inject() (
   def showAvailableQueues(reference: String, origin: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
-      reassignToQueue(form, reference, origin)
+      reassignToQueue(form, origin)
     }
 
-  private def reassignToQueue(f: Form[String], caseRef: String, origin: String)(
+  private def reassignToQueue(f: Form[String], origin: String)(
     implicit request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
     validateAndRenderView(c =>
@@ -62,7 +62,7 @@ class ReassignCaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.MOVE_CASE_BACK_TO_QUEUE)).async { implicit request =>
       def onInvalidForm(formWithErrors: Form[String]): Future[Result] =
-        reassignToQueue(formWithErrors, reference, origin)
+        reassignToQueue(formWithErrors, origin)
 
       def onValidForm(queueSlug: String): Future[Result] =
         queueService.getOneBySlug(queueSlug) flatMap {

@@ -16,16 +16,14 @@
 
 package models.forms
 
-import config.AppConfig
 import models.ModelsBaseSpec
 import play.api.data.validation.{Invalid, Valid}
-import service.CommodityCodeService
 
 class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
 
   "commodityCodeNonEmpty" should {
     "return invalid when there is no commodity code supplied" in {
-      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+      val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val result = commodityCodeConstraint.commodityCodeNonEmpty.apply("")
 
@@ -33,7 +31,7 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
     }
 
     "return valid when there is a commodity code supplied" in {
-      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+      val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val result = commodityCodeConstraint.commodityCodeNonEmpty.apply("000000000")
 
@@ -43,7 +41,7 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
 
   "commodityCodeLengthValid" should {
     "return invalid when commodity code is not between 6 and 22 digits long" in {
-      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+      val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val resultShort = commodityCodeConstraint.commodityCodeLengthValid.apply("12345")
       val resultLong = commodityCodeConstraint.commodityCodeLengthValid.apply("12345678901234567890123")
@@ -55,7 +53,7 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
 
   "commodityCodeLengthValid" should {
     "return valid when commodity code is between 6 and 22 digits long" in {
-      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+      val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val resultShort = commodityCodeConstraint.commodityCodeLengthValid.apply("123456")
       val resultLong = commodityCodeConstraint.commodityCodeLengthValid.apply("1234567890123456789012")
@@ -67,7 +65,7 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
 
   "commodityCodeNumbersValid" should {
     "return invalid when commodity code is not a number" in {
-      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+      val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val result = commodityCodeConstraint.commodityCodeNumbersValid.apply("12a45")
 
@@ -77,7 +75,7 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
 
   "commodityCodeNumbersValid" should {
     "return valid when commodity code is a number" in {
-      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+      val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val result = commodityCodeConstraint.commodityCodeNumbersValid.apply("12345")
 
@@ -87,7 +85,7 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
 
   "commodityCodeEvenDigitsValid" should {
     "return invalid when commodity code length is not even" in {
-      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+      val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val result = commodityCodeConstraint.commodityCodeEvenDigitsValid.apply("12345")
 
@@ -97,7 +95,7 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
 
   "commodityCodeEvenDigitsValid" should {
     "return valid when commodity code length is even" in {
-      val commodityCodeConstraint = new CommodityCodeConstraints(mock[CommodityCodeService], mock[AppConfig])
+      val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val result = commodityCodeConstraint.commodityCodeEvenDigitsValid.apply("123456")
 
