@@ -22,15 +22,13 @@ import config.AppConfig
 import models._
 import models.forms.CommodityCodeConstraints
 import org.joda.time.{DateTime, DateTimeZone}
-import service.CommodityCodeService
 import utils.Cases
 
 class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 
   private val appConfig            = mock[AppConfig]
-  private val commodityCodeService = mock[CommodityCodeService]
   private val liabilityDetailsForm =
-    new LiabilityDetailsForm(new CommodityCodeConstraints(commodityCodeService, appConfig), appConfig)
+    new LiabilityDetailsForm(new CommodityCodeConstraints(), appConfig)
 
   private val emptyLiabilityOrder = LiabilityOrder(
     Contact(name = "", email = "", Some("")),

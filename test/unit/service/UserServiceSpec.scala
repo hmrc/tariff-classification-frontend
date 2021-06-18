@@ -18,8 +18,8 @@ package service
 
 import audit.AuditService
 import connector.BindingTariffClassificationConnector
-import models.{NoPagination, Operator, Paged, Pagination}
 import models.Role.Role
+import models.{NoPagination, Operator, Paged, Pagination}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.reset
@@ -35,7 +35,7 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   private val connector = mock[BindingTariffClassificationConnector]
   private val audit     = mock[AuditService]
 
-  private val service = new UserService(audit, connector)(global, realAppConfig)
+  private val service = new UserService(audit, connector)(global)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

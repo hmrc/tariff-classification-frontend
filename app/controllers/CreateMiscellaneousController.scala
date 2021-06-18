@@ -17,20 +17,18 @@
 package controllers
 
 import config.AppConfig
-import models.forms.mappings.FormMappings.fieldNonEmpty
+import javax.inject.Inject
 import models.forms.v2.{MiscDetailsForm, MiscellaneousForm}
 import models.request.AuthenticatedRequest
 import models.viewmodels.CaseViewModel
 import models.{Case, MiscApplication, Permission}
 import play.api.data.Form
-import play.api.data.Forms.mapping
 import play.api.i18n.I18nSupport
 import play.api.mvc.{MessagesControllerComponents, _}
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -48,11 +46,6 @@ class CreateMiscellaneousController @Inject() (
     with I18nSupport {
 
   private val form: Form[MiscApplication] = MiscellaneousForm.newMiscForm
-  private val formTeamChoice: Form[String] = Form(
-    mapping(
-      "choice" -> fieldNonEmpty("error.empty.team")
-    )(identity)(Some(_))
-  )
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
     implicit request => Future.successful(Ok(views.html.v2.create_misc(form)))
@@ -75,11 +68,10 @@ class CreateMiscellaneousController @Inject() (
       .async(implicit request => getCaseAndRenderChoiceView(reference))
 
   private def getCaseAndRenderChoiceView(
-    reference: String,
-    form: Form[String] = formTeamChoice
+    reference: String
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
-      case Some(c: Case) => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
+      case Some(_: Case) => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
       case _             => successful(Ok(views.html.case_not_found(reference)))
     }
 

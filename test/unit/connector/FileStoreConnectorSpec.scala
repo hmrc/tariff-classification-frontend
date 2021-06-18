@@ -17,22 +17,29 @@
 package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import config.AppConfig
 import models.request.FileStoreInitiateRequest
 import models.response._
 import models.{Attachment, FileUpload}
 import org.mockito.BDDMockito.given
+import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.libs.Files.SingletonTemporaryFileCreator
 
 class FileStoreConnectorSpec extends ConnectorTest {
 
+  private val config = fakeApplication().injector.instanceOf[AppConfig]
+
   given(mockAppConfig.maxUriLength) willReturn 2048L
   given(mockAppConfig.fileStoreUrl) willReturn wireMockUrl
+
   private val attachmentId = "id"
   private val connector    = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
 
+
   "Connector 'GET' one" should {
     "handle 404" in {
+      when(mockAppConfig.apiToken) thenReturn config.apiToken
       val att = mock[Attachment]
       given(att.id) willReturn attachmentId
 
@@ -45,7 +52,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       verify(
         getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
-          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+          .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
     }
 
@@ -74,7 +81,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       verify(
         getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
-          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+          .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
     }
 
@@ -103,7 +110,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       verify(
         getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
-          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+          .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
     }
   }
@@ -141,7 +148,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       verify(
         getRequestedFor(urlEqualTo("/file?id=id1&id=id2"))
-          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+          .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
     }
 
@@ -172,7 +179,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       verify(
         getRequestedFor(urlEqualTo("/file?id=id1&id=id2"))
-          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+          .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
     }
   }
@@ -200,7 +207,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     verify(
       postRequestedFor(urlEqualTo("/file/initiate"))
-        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+        .withHeader("X-Api-Token", equalTo(config.apiToken))
     )
   }
 
@@ -219,7 +226,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     verify(
       postRequestedFor(urlEqualTo("/file"))
-        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+        .withHeader("X-Api-Token", equalTo(config.apiToken))
         .withRequestBody(containing("file"))
         .withRequestBody(containing("publish"))
     )
@@ -244,7 +251,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     verify(
       deleteRequestedFor(urlEqualTo("/file/fileId"))
-        .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+        .withHeader("X-Api-Token", equalTo(config.apiToken))
     )
   }
 

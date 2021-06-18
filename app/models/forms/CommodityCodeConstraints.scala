@@ -17,13 +17,11 @@
 package models.forms
 
 import javax.inject.{Inject, Singleton}
-import play.api.data.validation.{Constraint, Invalid, Valid}
-import config.AppConfig
-import service.CommodityCodeService
 import models.forms.mappings.Constraints
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 @Singleton
-class CommodityCodeConstraints @Inject() (commodityCodeService: CommodityCodeService, appConfig: AppConfig) extends Constraints {
+class CommodityCodeConstraints @Inject()() extends Constraints {
 
   val commodityCodeNonEmpty: Constraint[String] =
     customNonEmpty("decision_form.error.bindingCommodityCode.required")

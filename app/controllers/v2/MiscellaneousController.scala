@@ -25,11 +25,11 @@ import models.forms._
 import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.miscellaneous.DetailsViewModel
-import models.viewmodels.{ActivityViewModel, CaseViewModel, GatewayCasesTab, MessagesTabViewModel, MyCasesTab, OpenCasesTab, PrimaryNavigationViewModel, SampleStatusTabViewModel}
-import models.{Case, CaseStatus, EventType, NoPagination}
+import models.viewmodels.{AttachmentsTabViewModel => _, _}
+import models.{Case, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier

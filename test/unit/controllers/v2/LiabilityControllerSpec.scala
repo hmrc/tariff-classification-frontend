@@ -16,13 +16,11 @@
 
 package controllers.v2
 
-import javax.inject.Inject
-
 import com.google.inject.Provider
 import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
-import models.forms._
-import models.forms.CommodityCodeConstraints
+import javax.inject.Inject
+import models.forms.{CommodityCodeConstraints, _}
 import models.forms.v2.LiabilityDetailsForm
 import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
@@ -33,11 +31,11 @@ import org.mockito.Mockito.{times, _}
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{PlayBodyParsers, Result}
 import play.api.test.Helpers._
-import play.api.i18n.Messages
 import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -199,7 +197,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       fileStoreService,
       keywordsService,
       mcc,
-      new LiabilityDetailsForm(new CommodityCodeConstraints(commodityCodeService, realAppConfig), realAppConfig),
+      new LiabilityDetailsForm(new CommodityCodeConstraints(), realAppConfig),
       liability_view,
       liability_details_edit,
       realAppConfig

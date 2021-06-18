@@ -26,9 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
-import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 

@@ -17,7 +17,6 @@
 package models.forms.v2
 
 import models._
-import models.forms.FormConstraints.{emptyOr, entryNumberIsNumbersAndLettersOnly}
 import models.forms.mappings.Constraints
 import models.forms.mappings.FormMappings._
 import play.api.data.Form

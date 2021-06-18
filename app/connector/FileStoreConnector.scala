@@ -16,8 +16,8 @@
 
 package connector
 
-import akka.stream.{IOResult, Materializer}
 import akka.stream.scaladsl.{FileIO, Source}
+import akka.stream.{IOResult, Materializer}
 import akka.util.ByteString
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
@@ -27,15 +27,15 @@ import metrics.HasMetrics
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsResult, Json}
 import play.api.libs.ws.WSClient
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
 import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.{ExecutionContext, Future}
-import utils.JsonFormatters.fileMetaDataFormat
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import play.api.libs.json.JsResult
+import utils.JsonFormatters.fileMetaDataFormat
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FileStoreConnector @Inject() (
@@ -64,7 +64,7 @@ class FileStoreConnector @Inject() (
         Source(attachments.map(_.id).toList)
           .grouped(BatchSize)
           .mapAsyncUnordered(Runtime.getRuntime().availableProcessors()) { ids =>
-            http.GET[Seq[FileMetadata]](makeQuery(ids))
+            http.GET[Seq[FileMetadata]](makeQuery(ids), headers = http.addAuth)
           }
           .runFold(Seq.empty[FileMetadata]) {
             case (acc, next) => acc ++ next
@@ -74,13 +74,13 @@ class FileStoreConnector @Inject() (
 
   def get(attachmentId: String)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata-by-id") { _ =>
-      http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId")
+      http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId", headers = http.addAuth)
     }
 
   def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
     withMetricsTimerAsync("initiate-file-upload") { _ =>
       http
-        .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](s"${appConfig.fileStoreUrl}/file/initiate", request)
+        .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](s"${appConfig.fileStoreUrl}/file/initiate", request, headers = http.addAuth)
     }
 
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileMetadata] =
@@ -95,8 +95,7 @@ class FileStoreConnector @Inject() (
       )
 
       ws.url(s"${appConfig.fileStoreUrl}/file")
-        .withHttpHeaders(hc.headers: _*)
-        .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
+        .withHttpHeaders(http.addAuth(hc): _*)
         .post(Source(List(filePart, dataPart)))
         .flatMap { response =>
           Future.fromTry {
@@ -109,8 +108,7 @@ class FileStoreConnector @Inject() (
     withMetricsTimerAsync("download-file") { _ =>
       val fileStoreResponse = ws
         .url(url)
-        .withHttpHeaders(hc.headers: _*)
-        .withHttpHeaders("X-Api-Token" -> appConfig.apiToken)
+        .withHttpHeaders(http.addAuth(hc): _*)
         .get()
 
       fileStoreResponse.flatMap { response =>
@@ -124,6 +122,6 @@ class FileStoreConnector @Inject() (
     }
 
   def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
-    withMetricsTimerAsync("delete-file")(_ => http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId"))
+    withMetricsTimerAsync("delete-file")(_ => http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId", headers = http.addAuth))
 
 }

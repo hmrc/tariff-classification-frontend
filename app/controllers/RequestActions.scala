@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import models.Permission
 import models.request._
-import play.api.mvc.{ActionFunction, Call}
+import play.api.mvc.ActionFunction
 
 @Singleton
 class RequestActions @Inject() (

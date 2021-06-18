@@ -16,19 +16,16 @@
 
 package service
 
-import javax.inject.{Inject, Singleton}
-
 import akka.stream.Materializer
 import audit.AuditService
 import com.github.blemale.scaffeine.Scaffeine
+import config.AppConfig
 import connector.BindingTariffClassificationConnector
+import javax.inject.{Inject, Singleton}
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
-import config.AppConfig
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class KeywordsService @Inject() (

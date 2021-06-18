@@ -16,24 +16,23 @@
 
 package controllers.v2
 
-import java.util.UUID
-
 import config.AppConfig
 import controllers.{RequestActions, Tab}
-import javax.inject.{Inject, Singleton}
-import models.{Case, EventType, NoPagination}
-import models.forms.{ActivityForm, ActivityFormData, DecisionForm, KeywordForm, UploadAttachmentForm}
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
-import models.viewmodels.atar._
+import models.forms._
 import models.request._
+import models.viewmodels.atar._
+import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
+import models.{Case, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

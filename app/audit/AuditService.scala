@@ -24,11 +24,7 @@ import models._
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
-import javax.inject.{Inject, Singleton}
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
-import utils.JsonFormatters.caseFormat
-import utils.JsonFormatters.operatorFormat
+import utils.JsonFormatters.{caseFormat, operatorFormat}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -301,12 +297,6 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     Map(
       "caseReference" -> c.reference,
       "operatorId"    -> operator.id
-    )
-
-  private def baseUserAuditPayload(operatorToUpdate: Operator, operatorUpdating: Operator): Map[String, String] =
-    Map(
-      "operatorToUpdate" -> operatorToUpdate.id,
-      "operatorUpdating" -> operatorUpdating.id
     )
 
   private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])(

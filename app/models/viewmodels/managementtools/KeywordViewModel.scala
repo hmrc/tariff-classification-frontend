@@ -16,8 +16,8 @@
 
 package models.viewmodels.managementtools
 
+import models.ApplicationType
 import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus}
 
 case class KeywordViewModel(
   reference: String,
