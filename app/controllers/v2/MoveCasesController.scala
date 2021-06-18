@@ -196,7 +196,7 @@ class MoveCasesController @Inject() (
           userPid =>
             userPid match {
               case "OTHER" => successful(Redirect(routes.MoveCasesController.chooseUserFromAnotherTeam()))
-              case _       => moveToUser(userPid)
+              case _       => moveToUser(userPid, caseRefs)
             }
         )
     }
@@ -332,10 +332,17 @@ class MoveCasesController @Inject() (
             for {
               queues <- queueService.getNonGateway
             } yield Ok(chooseTeamPage(caseNumber, errors, queues)),
-          team =>
+          team => {
+            casesService.updateCases(
+              caseRefs,
+              None,
+              team,
+              request.userAnswers.get[String](OriginalUserPID).get,
+              request.operator.id)
             for {
               _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())
+          }
         )
     }
 
@@ -397,7 +404,7 @@ class MoveCasesController @Inject() (
     }
 
   private def findChosenCasesInAssignedCases(assignedCases: Seq[Case], chosenCaseRefs: Set[String]) =
-    chosenCaseRefs.flatMap(ref => assignedCases.find(c => c.reference == ref))
+    chosenCaseRefs.map(ref => assignedCases.find(c => c.reference == ref)).flatten
 
   private def redirectBasedOnCaseStatus(chosenCases: Set[Case]) =
     if (chosenCases.exists(c =>
@@ -437,12 +444,20 @@ class MoveCasesController @Inject() (
       .getOrElse(NotFound(views.html.user_not_found(pid)))
 
   private def moveToUser(
-    pid: String
+    pid: String,
+    caseRefs: Set[String]
   )(implicit hc: HeaderCarrier, request: AuthenticatedDataRequest[_]) =
     userService.getUser(pid).flatMap {
       case Some(u) => {
         val userAnswersWithNewUser = request.userAnswers.set(ChosenUserPID, pid)
         if (u.memberOfTeams.filterNot(_ == Queues.gateway.id).size == 1) {
+          casesService.updateCases(
+            caseRefs,
+            Some(u),
+            u.memberOfTeams.head,
+            request.userAnswers.get[String](OriginalUserPID).get,
+            request.operator.id
+          )
           for {
             _ <- dataCacheConnector.save(
                   userAnswersWithNewUser
