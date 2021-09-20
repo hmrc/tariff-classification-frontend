@@ -35,6 +35,7 @@ import scala.concurrent.Future.successful
 class SampleWhoSendingController @Inject()(
   override val verify: RequestActions,
   override val caseService: CasesService,
+  val change_sample_send: views.html.change_sample_send,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
@@ -51,7 +52,7 @@ class SampleWhoSendingController @Inject()(
     notFilledForm: Form[Option[SampleSend]],
     options: Option[String] = None
   )(implicit request: AuthenticatedRequest[_]): Html =
-    views.html.change_sample_send(c, notFilledForm)
+    change_sample_send(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen

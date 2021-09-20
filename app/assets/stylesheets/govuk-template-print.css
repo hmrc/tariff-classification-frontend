@@ -72,7 +72,7 @@ select {
 
 /* hide the unnecessary page elements */
 body footer,
-.visuallyhidden,
+.govuk-visually-hidden,
 #global-cookie-message,
 #skiplink-container {
   display: none !important; }

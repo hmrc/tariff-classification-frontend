@@ -74,7 +74,7 @@ class InputNumberViewSpec extends ViewSpec {
 
       // Then
       doc should containElementWithID("error-message-field-input")
-      doc.getElementsByClass("visually-hidden").text() mustBe errorPrefix
+      doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
     }
   }
 

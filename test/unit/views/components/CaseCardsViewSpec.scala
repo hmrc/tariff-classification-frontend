@@ -28,7 +28,7 @@ class CaseCardsViewSpec extends ViewSpec {
     "display the name of the operator if present" in {
       val doc = view(cases_cards(Map.empty, 2, 0, 0)(operatorRequestWithName, messages, appConfig))
 
-      doc.getElementsByClass("heading-xlarge").text() should include(
+      doc.getElementsByClass("govuk-heading-xl").text() should include(
         "Case dashboard"
       )
     }
@@ -37,7 +37,7 @@ class CaseCardsViewSpec extends ViewSpec {
 
       val doc = view(cases_cards(casesByTeam = Map.empty, 2, 0, 0)(operatorRequestWithName, messages, appConfig))
 
-      doc.getElementsByClass("heading-xlarge").text() should include(
+      doc.getElementsByClass("govuk-heading-xl").text() should include(
         "Case dashboard"
       )
     }
@@ -47,7 +47,7 @@ class CaseCardsViewSpec extends ViewSpec {
       val doc =
         view(cases_cards(Map.empty, 2, 0, 0)(authenticatedManagerFakeRequest, messages, appConfig))
 
-      doc.getElementsByClass("heading-xlarge").text() should include(
+      doc.getElementsByClass("govuk-heading-xl").text() should include(
         "Case dashboard"
       )
     }

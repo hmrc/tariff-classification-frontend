@@ -27,6 +27,7 @@ import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import views.html.resource_not_found
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,7 +40,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   private val operator     = Operator(id = "id")
   private val releaseCaseView = injector.instanceOf[views.html.release_case]
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
-
+  private val resourceNotFound = injector.instanceOf[resource_not_found]
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
@@ -55,6 +56,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     mcc,
     releaseCaseView,
     confirmation_case_creation,
+    resourceNotFound,
     realAppConfig
   )
 
@@ -65,6 +67,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     mcc,
     releaseCaseView,
     confirmation_case_creation,
+    resourceNotFound,
     realAppConfig
   )
 

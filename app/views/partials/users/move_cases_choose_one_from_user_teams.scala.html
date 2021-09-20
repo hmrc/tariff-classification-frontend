@@ -1,77 +1,72 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
-@import helper.CSRF
+@import controllers.v2.routes
 @import models.request.AuthenticatedRequest
-@import models.Operator
-@import models.viewmodels.atar._
-@import views.html.includes.main
-@import views.html.partials.{back_link, error_summary}
-@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
+@import models.viewmodels.NoTabSelected
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
-@import models.viewmodels.{NoTabSelected, ApplicationTabViewModel}
-@import controllers.v2.routes
+@import views.html.includes.main
+@import views.html.partials.{back_link, error_summary}
 
 @this(
-move_cases_heading: views.html.partials.users.move_cases_heading,
-user_details: views.html.partials.users.user_details
+        user_details: views.html.partials.users.user_details,
+        main: main,
+        backLink: back_link
 )
 
+
 @(
-userName: String,
-numberOfTeams:Integer,
-numberOfCases:Integer,
-form: Form[String],
-queues: Seq[Queue]
+        userName: String,
+        numberOfTeams:Integer,
+        numberOfCases:Integer,
+        form: Form[String],
+        queues: Seq[Queue]
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-bodyClasses = None,
-customTitle = if(numberOfCases == 1){
-Some(messages("users.move_cases.choose_user.choose_team.single", userName, numberOfTeams))
-}else{
-Some(messages("users.move_cases.choose_user.choose_team", userName, numberOfTeams, numberOfCases))
-},
-customPrimaryNavTab = NoTabSelected
-) {
-
-<div class="column-two-thirds mt-5">
-    @back_link()
-    @error_summary(form.errors)
-    @if(numberOfCases == 1){
-    @move_cases_heading(messages("users.move_cases.choose_user.choose_team.single", userName, numberOfTeams))
-    }else{
-    @move_cases_heading(messages("users.move_cases.choose_user.choose_team", userName, numberOfTeams, numberOfCases))
-}
-    @helper.form(action = routes.MoveCasesController.postChooseOneOfUsersTeams(), 'id -> "move-to-user-team", 'novalidate -> "novalidate") {
-    @helper.CSRF.formField
-
-    @input_radiogroup(
-    field = form("team"),
-    options = queues.map(q => RadioOption(q.id, q.slug.toUpperCase)).toSeq,
-    id = "move-to-user-team"
-    )
-    <div>
-        <button class="button" id="move-cases-button" type="submit">Continue</button>
-    </div>
+@heading = @{
+    if(numberOfCases == 1) {
+        messages("users.move_cases.choose_user.choose_team.single", userName, numberOfTeams)
+    } else {
+        messages("users.move_cases.choose_user.choose_team", userName, numberOfTeams, numberOfCases)
     }
+}
 
-</div>
+@main(
+    pageTitle = heading,
+    customPrimaryNavTab = NoTabSelected,
+    backLink = Some(backLink())
+) {
+    @error_summary(form.errors)
 
+    @helper.form(action = routes.MoveCasesController.postChooseOneOfUsersTeams(), 'id -> "move-to-user-team", 'novalidate -> "novalidate") {
+        @helper.CSRF.formField
+
+        @input_radiogroup(
+            field = form("team"),
+            options = queues.map(q => RadioOption(q.id, q.slug.toUpperCase)).toSeq,
+            id = "move-to-user-team",
+            legendAsPageHeading = true,
+            label = Some(heading),
+            headingCaption = Some("Move selected cases")
+        )
+        <div>
+            <button class="govuk-button" id="move-cases-button" type="submit">Continue</button>
+        </div>
+    }
 }
 

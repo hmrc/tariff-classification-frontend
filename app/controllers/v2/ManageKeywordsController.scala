@@ -49,6 +49,7 @@ class ManageKeywordsController @Inject() (
   val editApprovedKeywordsView: views.html.managementtools.edit_approved_keywords,
   val confirmKeywordDeletedView: views.html.managementtools.confirmation_keyword_deleted,
   val confirmKeywordRenamedView: views.html.managementtools.confirmation_keyword_renamed,
+  val case_not_found: views.html.case_not_found,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -189,7 +190,7 @@ class ManageKeywordsController @Inject() (
                 }
             )
           }
-          case _ => successful(Ok(views.html.case_not_found(reference)))
+          case _ => successful(Ok(case_not_found(reference)))
         }
     }
 
@@ -207,7 +208,7 @@ class ManageKeywordsController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       casesService.getOne(reference).flatMap {
         case Some(c: Case) => Future.successful(Ok(changeKeywordStatusView(keywordName, c, changeKeywordStatusForm)))
-        case _             => Future.successful(Ok(views.html.case_not_found(reference)))
+        case _             => Future.successful(Ok(case_not_found(reference)))
       }
     )
 

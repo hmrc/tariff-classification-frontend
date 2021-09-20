@@ -1,106 +1,65 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
-@import views.html.includes.govuk_template
-@import views.html.partials.notification_banner
-@import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 
-@import models.viewmodels.{PrimaryNavigationTab, HomeTab}
+@this(
+        config: AppConfig,
+        govukLayout: GovukLayout,
+        hmrcHead: HmrcHead,
+        hmrcStandardHeader: HmrcStandardHeader,
+        hmrcStandardFooter: HmrcStandardFooter,
+        hmrcScripts: HmrcScripts,
+        hmrcLanguageSelect: HmrcLanguageSelect,
+        hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
+        twoThirdsMainContent: TwoThirdsMainContent
+)
 
-@(appConfig: AppConfig,
-        title: String,
-        mainClass: Option[String] = None,
-        mainDataAttributes: Option[Html] = None,
-        bodyClasses: Option[String] = None,
-        sidebar: Html = HtmlFormat.empty,
-        contentHeader: Option[Html] = None,
-        mainContent: Html = HtmlFormat.empty,
-        scriptElem: Option[Html] = None,
-        primaryNavComponent: Option[Html] = None,
-        customPrimaryNavTab: PrimaryNavigationTab = HomeTab)(implicit request: Request[_], messages: Messages)
-
-    @import uk.gov.hmrc.play.views.html.{helpers => uiHelpers, layouts => uiLayouts}
-
-    @head = {
-    @uiLayouts.head(
-        linkElem = None,
-        headScripts = None)
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-
-        <noscript>
-            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLWQQZB" height="0" width="0" style="display: none;
-                visibility: hidden"></iframe>
-        </noscript>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/ga-tag-manager.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/tab_focus.js")"></script>
-    }
-
-    @headerNavLinks = {}
-
-    @insideHeader = {
-    @messages("site.service_name")
-    }
-
-    @afterHeader = {}
+@(
+        pageTitle: String,
+        optCustomLayout: Option[Html => Html] = None,
+        head: Option[Html] = None,
+        beforeContentBlock: Option[Html] = None,
+        endOfBodyJS: Option[Html] = None,
+)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 
-    @bodyEnd = {
-    @uiLayouts.footer(
-        analyticsToken = Some(appConfig.analyticsToken),
-        analyticsHost = appConfig.analyticsHost,
-        ssoUrl = None,
-        scriptElem = scriptElem,
-        gaCalls = None)
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/details.polyfill.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/govuk-frontend-3.6.0.min.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-back-link.js")"></script>
-    }
+@content = {
+    <div id="content">
+        <div class="content__body">
+        @contentBlock
+        </div>
+    </div>
 
-    @footerTop = {}
+    @endOfBodyJS.getOrElse({})
+}
 
-    @footerLinks = {
-    @uiLayouts.footer_links(
-        accessibilityFooterUrl = Some(appConfig.accessibilityStatementUrl(request.uri))
-    )
-    }
-
-    @mainContentHeader = {
-    @if(contentHeader.isDefined) {
-        @uiLayouts.main_content_header(contentHeader = contentHeader.get)
-    }
-    @primaryNavComponent
-
-    }
-
-    @getHelpForm = @{
-        uiHelpers.reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)
-    }
-
-    @content = {
-    @uiLayouts.main_content(
-        article = mainContent,
-        mainClass = mainClass,
-        mainDataAttributes = mainDataAttributes,
-        mainContentHeader = mainContentHeader,
-        getHelpForm = HtmlFormat.empty,
-        sidebar = sidebar)
-    }
-
-    @govuk_template(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(footerLinks), true)(content)
+@govukLayout(
+    pageTitle = Some(pageTitle),
+    headBlock = Some(hmrcHead(head)),
+    headerBlock = Some(hmrcStandardHeader(
+        serviceUrl = None,
+        serviceName = Some(messages("service.name")),
+        displayHmrcBanner = false
+    )),
+    beforeContentBlock = beforeContentBlock,
+    scriptsBlock = Some(hmrcScripts()),
+    footerBlock = Some(hmrcStandardFooter()),
+    mainContentLayout = Some(optCustomLayout.getOrElse(twoThirdsMainContent(_)))
+)(content)

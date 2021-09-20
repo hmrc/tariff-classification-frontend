@@ -17,15 +17,20 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import controllers.routes._
-@import views.html.includes.main
+
 @import models.viewmodels.NoTabSelected
+@import views.html.includes.main
+
+@this(
+    main: main
+)
 
 @(resource: String = "Resource")(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customPrimaryNavTab = NoTabSelected) {
+@main(pageTitle = messages("service.name"), customPrimaryNavTab = NoTabSelected) {
 
-    <h2 class="heading-large">
+    <h1 class="govuk-heading-xl">
         @messages("errors.resource-not-found.title", resource)
-    </h2>
-    <a href="@OperatorDashboardController.onPageLoad()">@messages("errors.all.back")</a>
+    </h1>
+    <a href="@OperatorDashboardController.onPageLoad()" class="govuk-link">@messages("errors.all.back")</a>
 }

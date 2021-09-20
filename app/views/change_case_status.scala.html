@@ -1,57 +1,61 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
-@import models.request.AuthenticatedRequest
 @import controllers.routes
-@import models.{Case, CaseStatusRadioInput}
+@import models.request.AuthenticatedRequest
 @import models.viewmodels.NoTabSelected
-@import views.html.includes.main
+@import models.{Case, CaseStatusRadioInput}
 @import views.html.components.{confirm_or_cancel_buttons, input_radio}
-@import views.html.components.input_radio
-@import views.html.partials.{case_heading, error_summary, back_link}
+@import views.html.includes.main
+@import views.html.partials.{case_heading, back_link, error_summary}
+
+@this(
+        main: main,
+        backLink: back_link
+)
+
 
 @(c: Case, form: Form[_])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @main(bodyClasses = None, customTitle = Some(messages("change_case_status_title")), customPrimaryNavTab = NoTabSelected) {
+@main(
+    pageTitle = messages("change_case_status_title"),
+    customPrimaryNavTab = NoTabSelected,
+    backLink = Some(backLink())
+) {
+    @error_summary(form.errors)
 
-    @back_link()
+    @case_heading(c, messageKey = Some("change_case_status_legend"))
 
-        @error_summary(form.errors)
+    @helper.form(action = routes.ChangeCaseStatusController.onSubmit(c.reference), 'novalidate -> "novalidate") {
 
-    <div class="column-two-thirds pl-0">
-        @case_heading(c, messageKey = Some("change_case_status_legend"))
+        @helper.CSRF.formField
 
-        @helper.form(action = routes.ChangeCaseStatusController.onSubmit(c.reference), 'novalidate -> "novalidate") {
+        @input_radio(
+            field = form("caseStatus"),
+            legend = messages("change_case_status_legend", c.application.goodsName),
+            inputs = CaseStatusRadioInput.changeCaseStatusOptionsFor(c.application.`type`),
+            legendClass = Some("govuk-visually-hidden")
+        )
 
-            @helper.CSRF.formField
-
-            @input_radio(
-                field = form("caseStatus"),
-                legend = messages("change_case_status_legend", c.application.goodsName),
-                legendClass= Some("visually-hidden"),
-                inputs = CaseStatusRadioInput.changeCaseStatusOptionsFor(c.application.`type`)
-            )
-
-            @confirm_or_cancel_buttons(
-                id = "change_case_status",
-                confirmText = "Continue",
-                cancelText = "Cancel this action",
-                cancelHref = routes.CaseController.get(c.reference)
-            )
-        }
-    </div>
+        @confirm_or_cancel_buttons(
+            id = "change_case_status",
+            confirmText = "Continue",
+            cancelText = "Cancel this action",
+            cancelHref = routes.CaseController.get(c.reference)
+        )
     }
+}

@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
 @import controllers.routes
@@ -23,68 +23,67 @@
 
 @(appealTab: AppealTabViewModel, startTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@tab_heading("appeal", messages("case.menu.appeal"))
+    @tab_heading("appeal", messages("case.menu.appeal"))
 
-<table id="appeal_details">
-    <caption class="mb-2">@messages("case.v2.liability.appeals.tab_paragraph")</caption>
-    <thead class="govuk-table__head">
-        <tr class="visually-hidden">
-            <th class="w-40" scope="col">Review or a level of appeal</th>
-            <th class="w-40" scope="col">Appeal status</th>
-            <th class="w-40" scope="col">Change</th>
-        </tr>
-    </thead>
-    <tbody>
+    <p class=govuk-body>@messages("case.v2.liability.appeals.tab_paragraph")</p>
+
+    <table id="appeal_details" class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-visually-hidden">
+                <th class="govuk-table__header" scope="col">Review or a level of appeal</th>
+                <th class="govuk-table__header" scope="col">Appeal status</th>
+                <th class="govuk-table__header" scope="col">Change</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
         @for((appeal: Appeal, index: Int) <- appealTab.appeals.zipWithIndex) {
-            <tr id="appeal_details-@{index}" class="grid-row mb-2">
-                <td id="appeal_details-@{index}-type" class="bold w-40">
+            <tr id="appeal_details-@{index}"  class="govuk-table__row">
+                <td id="appeal_details-@{index}-type" class="govuk-table__cell">
                     @AppealType.format(appeal.`type`) status
                 </td>
-                <td id="appeal_details-@{index}-status" class=" w-30">
-                    @AppealStatus.format(appeal.`type`, appeal.status)
+                <td id="appeal_details-@{index}-status" class="govuk-table__cell">
+                @AppealStatus.format(appeal.`type`, appeal.status)
                 </td>
-                <td class="w-30">
-                    @if(request.hasPermission(Permission.APPEAL_CASE)) {
-                        <a id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTab.caseReference, appeal.id)">Change</a>
-                    }
+                <td class="govuk-table__cell">
+                @if(request.hasPermission(Permission.APPEAL_CASE)) {
+                    <a id="appeal_details-@{index}-change-status" class="govuk-link" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTab.caseReference, appeal.id)">Change</a>
+                }
                 </td>
             </tr>
         }
-    </tbody>
-</table>
-
-@if(request.hasPermission(Permission.APPEAL_CASE)) {
-    <a id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTab.caseReference)">Add a review or appeal</a>
-}
-
-@if(appealTab.caseStatus == CaseStatus.CANCELLED) {
-    <div id="appeal_details-extended_use" class="mt-5">
-    <p>This ruling has been cancelled.</p>
-    <p>If the holder applies for a period of extended use of the ruling, update the status here.</p>
-
-    <table>
-        <tbody>
-            <tr>
-                <th class="bold w-40">Application for extended use</th>
-                <td id="appeal_details-extended_use_status" class="w-30">
-                    @if(appealTab.applicationForExtendedUse) {
-                        Yes
-                    } else {
-                        No
-                    }
-                </td>
-                <td class="w-30">
-                    @if(request.hasPermission(Permission.EXTENDED_USE)) {
-                        <a tabindex="@{startTabIndex+51}" id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(appealTab.caseReference)">
-                            Change
-                        </a>
-                    }
-                </td>
-            </tr>
         </tbody>
     </table>
-    </div>
- }
+
+    @if(request.hasPermission(Permission.APPEAL_CASE)) {
+        <a id="appeal_details-add_new" class="govuk-button" role="button" href="@routes.AppealCaseController.chooseType(appealTab.caseReference)">Add a review or appeal</a>
+    }
+
+    @if(appealTab.caseStatus == CaseStatus.CANCELLED) {
+        <div id="appeal_details-extended_use" class="govuk-form-group">
+            <p class="govuk-body">This ruling has been cancelled.</p>
+            <p class="govuk-body">If the holder applies for a period of extended use of the ruling, update the status here.</p>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Application for extended use
+                    </dt>
+                    <dd class="govuk-summary-list__value" id="appeal_details-extended_use_status">
+                    @if(appealTab.applicationForExtendedUse){ Yes } else{ No }
+                    </dd>
+                    <dd class="govuk-summary-list__actions" id="appeal_details-extended_use_change">
+                    @if(request.hasPermission(Permission.EXTENDED_USE)) {
+                        @if(request.hasPermission(Permission.EXTENDED_USE)) {
+                            <a tabindex="@{startTabIndex+51}" class="govuk-link" id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(appealTab.caseReference)">
+                                Change
+                            </a>
+                        }
+                    }
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    }
 
 
 

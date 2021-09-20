@@ -15,32 +15,31 @@
  *@
 
 @import config.AppConfig
-@import models.request.AuthenticatedRequest
-@import models.Case
 @import controllers.v2.routes.MyCasesController
-@import views.html.includes.main
-@import views.html.partials.{days_elapsed_paused, case_heading, back_link}
+@import models.Case
+@import models.request.AuthenticatedRequest
 @import models.viewmodels.NoTabSelected
-@import controllers.routes._
+@import views.html.includes.main
+@import views.html.partials.days_elapsed_paused
 @import views.html.v2.confirmation_next_steps
+
+@this(
+    main: main
+)
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.suspended")),
-    customPrimaryNavTab = NoTabSelected) {
-
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <div class="govuk-panel govuk-panel--confirmation">
-            <h1 class="heading-large mt-0">@messages("case.suspended.header", c.application.goodsName)</h1>
-            @days_elapsed_paused(c)
-            </div>
-
-            @confirmation_next_steps(
-                linkText = messages("back.my_cases"),
-                backHref = MyCasesController.displayMyCases()
-            )
-        </div>
+@main(
+    pageTitle = messages("page.title.case.suspended"),
+    customPrimaryNavTab = NoTabSelected
+) {
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">@messages("case.suspended.header", c.application.goodsName)</h1>
+        @days_elapsed_paused(c)
     </div>
 
+    @confirmation_next_steps(
+        linkText = messages("back.my_cases"),
+        backHref = MyCasesController.displayMyCases()
+    )
 }

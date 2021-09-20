@@ -41,6 +41,7 @@ class SearchController @Inject() (
   keywordsService: KeywordsService,
   fileStoreService: FileStoreService,
   mcc: MessagesControllerComponents,
+  val advanced_search: html.advanced_search,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -57,7 +58,7 @@ class SearchController @Inject() (
       val focus: SearchTab = if (addToSearch.contains(true)) SearchTab.SEARCH_BOX else selectedTab
       def defaultAction: Future[Result] =
         keywordsService.findAll.map { keywords: Seq[Keyword] =>
-          Results.Ok(html.advanced_search(SearchForm.form, None, keywords.map(_.name), focus))
+          Results.Ok(advanced_search(SearchForm.form, None, keywords.map(_.name), focus))
         }
 
       if (reference.isDefined) {
@@ -79,14 +80,14 @@ class SearchController @Inject() (
         keywordsService.findAll.flatMap { keywords =>
           SearchForm.form.bindFromRequest.fold(
             formWithErrors =>
-              Future.successful(Results.Ok(html.advanced_search(formWithErrors, None, keywords.map(_.name), focus))),
+              Future.successful(Results.Ok(advanced_search(formWithErrors, None, keywords.map(_.name), focus))),
             data =>
               for {
                 cases: Paged[Case]                            <- casesService.search(search, sort, SearchPagination(page))
                 attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
                 results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
               } yield Results
-                .Ok(html.advanced_search(SearchForm.form.fill(data), Some(results), keywords.map(_.name), focus))
+                .Ok(advanced_search(SearchForm.form.fill(data), Some(results), keywords.map(_.name), focus))
                 .addingToSession(
                   (backToSearchResultsLinkLabel, "search results"),
                   (

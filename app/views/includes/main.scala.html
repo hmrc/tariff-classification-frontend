@@ -1,55 +1,61 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.{NoTabSelected, PrimaryNavigationTab}
 @import views.html.includes.govuk_wrapper
-@import models.viewmodels.PrimaryNavigationTab
-@import models.viewmodels.NoTabSelected
+@import config.AppConfig
 
-@(sidebarLinks: Option[Html] = None,
-  contentHeader: Option[Html] = None,
-  bodyClasses: Option[String] = None,
-  mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None,
-  customTitle: Option[String] = None,
-  customPrimaryNavTab: PrimaryNavigationTab = NoTabSelected)(mainContent: Html)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
-
-@import uk.gov.hmrc.play.views.html.layouts
-
-@primaryNavComponent = {
-  @if(request.hasPermission(Permission.VIEW_MY_CASES)) {
-      @components.primary_navigation(customPrimaryNavTab)
-  }
-}
-@sidebar = {
-    @if(sidebarLinks.isDefined) {
-        @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
-    }
-}
-
-
-@govuk_wrapper(appConfig = appConfig,
-               title = customTitle.getOrElse(messages("site.service_name")) + " - " + messages("site.title.suffix"),
-               mainClass = mainClass,
-               bodyClasses = bodyClasses,
-               sidebar = sidebar,
-               contentHeader = contentHeader,
-               mainContent = layouts.article(mainContent),
-               scriptElem = scriptElem,
-               primaryNavComponent = Some(primaryNavComponent),
-               customPrimaryNavTab = customPrimaryNavTab
+@this(
+        config: AppConfig,
+        govukWrapper: govuk_wrapper,
+        primary_navigation: components.primary_navigation
 )
+
+@(
+        pageTitle: String,
+        backLink: Option[Html] = None,
+        optCustomLayout: Option[Html => Html] = None,
+        additionalJS: Option[Html] = None,
+        additionalCSS: Option[Html] = None,
+        endOfBodyJS: Option[Html] = None,
+        customPrimaryNavTab: PrimaryNavigationTab = NoTabSelected,
+        subNavigationTab: Option[Html] = None
+)(contentBlock: Html)(implicit request: AuthenticatedRequest[_], messages: Messages)
+
+@head = {
+@additionalJS.getOrElse({})
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/newMain.css")">
+@additionalCSS.getOrElse({})
+}
+
+@beforeContentBlock = {
+  <div>
+    @if(request.hasPermission(Permission.VIEW_MY_CASES)) {
+      @primary_navigation(customPrimaryNavTab)
+      @subNavigationTab.getOrElse({})
+    }
+    @{backLink.getOrElse({})}
+  </div>
+}
+
+@govukWrapper(
+  s"$pageTitle - ${messages("site.title.suffix")}",
+  optCustomLayout,
+  Some(head),
+  Some(beforeContentBlock),
+  endOfBodyJS,
+)(contentBlock)

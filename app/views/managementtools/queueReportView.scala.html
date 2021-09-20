@@ -21,7 +21,14 @@
 @import models.viewmodels.ManagerToolsReportsTab
 @import models.viewmodels.SubNavigationTab
 @import views.html.components.manager_tools_secondary_navigation
+
+@import views.html.managementtools._
 @import views.html.includes.main
+
+@this(
+    main: main
+)
+
 
 @(
   report: QueueReport,
@@ -30,9 +37,11 @@
   teams: Map[String, Queue]
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
-@main(bodyClasses = None, customTitle = Some(messages("reporting.view_report.title")), customPrimaryNavTab = ManagerToolsTab) {
-
-  @manager_tools_secondary_navigation(ManagerToolsReportsTab)
+@main(
+    pageTitle = messages("reporting.view_report.title"),
+    customPrimaryNavTab = ManagerToolsTab,
+    subNavigationTab = Some(manager_tools_secondary_navigation(ManagerToolsReportsTab))
+) {
 
   @reportHeading(report.name, messages("reporting.view_report.heading"))
 

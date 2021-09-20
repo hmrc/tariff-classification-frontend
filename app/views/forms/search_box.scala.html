@@ -17,9 +17,9 @@
 @(label: String = "page.title.searchByCaseReference", containerClass: String = "")(implicit messages: Messages)
 
 @helper.form(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
-    <label for="search_box-input" class="form-label">@{messages(label)}</label>
+    <label for="search_box-input" class="govuk-label">@{messages(label)}</label>
     <div class="search_box @containerClass">
-        <input id="search_box-input" class="form-control" name="reference" value="" type="text">
+        <input id="search_box-input" class="govuk-input govuk-!-width-one-third" name="reference" value="" type="text">
         <button aria-label="search for case reference" id="search_box-button" type="submit"></button>
     </div>
 }

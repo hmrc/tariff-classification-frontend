@@ -24,13 +24,15 @@
 
 @if(validStatus.contains(ruling.caseStatus) && ruling.decision.isDefined) {
     <div id="ruling-certificate">
-        <h3 class="heading-medium  mt-1">@messages("case.decision.ruling.certificate.title")</h3>
-        @messages("case.decision.ruling.certificate.content")
-        <ul class="list list-bullet">
-            <li>        <a id="ruling-certificate-link" target="_blank" href="@PdfDownloadController.getRulingPdf(ruling.caseReference)"> @messages("case.decision.ruling.certificate.link") </a>
+        <h3 class="govuk-heading-m">@messages("case.decision.ruling.certificate.title")</h3>
+        <p class="govuk-body">@messages("case.decision.ruling.certificate.content")</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                <a class="govuk-link" id="ruling-certificate-link" target="_blank" href="@PdfDownloadController.getRulingPdf(ruling.caseReference)">@messages("case.decision.ruling.certificate.link")</a>
             </li>
-            <li>        <a id="cover-letter-link" target="_blank" href="@PdfDownloadController.getLetterPdf(ruling.caseReference)"> @messages("case.decision.ruling.letter.link") </a>
+            <li>
+                <a class="govuk-link" id="cover-letter-link" target="_blank" href="@PdfDownloadController.getLetterPdf(ruling.caseReference)">@messages("case.decision.ruling.letter.link")</a>
             </li>
         </ul>
-         </div>
+    </div>
 }

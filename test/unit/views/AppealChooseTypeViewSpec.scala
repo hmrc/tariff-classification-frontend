@@ -20,16 +20,18 @@ import models.AppealType
 import models.forms.AppealForm
 import utils.Cases
 import views.ViewMatchers._
-import views.html.appeal_choose_type
+import views.html.{appeal_choose_type, change_case_status}
 
 class AppealChooseTypeViewSpec extends ViewSpec {
+
+  val appealChooseTypeView = app.injector.instanceOf[appeal_choose_type]
 
   "Appeal Choose Type" should {
 
     "Render value for each AppealType" in {
       // When
       val c   = Cases.btiCaseWithExpiredRuling
-      val doc = view(appeal_choose_type(c, AppealForm.appealTypeForm))
+      val doc = view(appealChooseTypeView(c, AppealForm.appealTypeForm))
 
       // Then
 

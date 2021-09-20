@@ -28,6 +28,7 @@ import play.api.test.Helpers._
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
+import views.html.change_sample_send
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,10 +37,12 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
+  private val changeSampleSend = app.injector.instanceOf[change_sample_send]
 
   private def controller(requestCase: Case) = new SampleWhoSendingController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
+    changeSampleSend,
     mcc,
     realAppConfig
   )
@@ -47,6 +50,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleWhoSendingController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
+    changeSampleSend,
     mcc,
     realAppConfig
   )

@@ -45,6 +45,12 @@ class ReportingController @Inject() (
   usersService: UserService,
   mcc: MessagesControllerComponents,
   val manageReportsView: views.html.managementtools.manage_reports_view,
+  val summaryReportView: views.html.managementtools.summaryReportView,
+  val queueReportView: views.html.managementtools.queueReportView,
+  val caseReportView: views.html.managementtools.caseReportView,
+  val reportChooseDates: views.html.managementtools.reportChooseDates,
+  val reportChooseTeams: views.html.managementtools.reportChooseTeams,
+  val report_not_found: views.html.report_not_found,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -246,7 +252,7 @@ class ReportingController @Inject() (
             Redirect(routes.ReportingController.queueReport(queue, SearchPagination()))
         }
         .getOrElse {
-          NotFound(views.html.report_not_found(reportName))
+          NotFound(report_not_found(reportName))
         }
     }
 

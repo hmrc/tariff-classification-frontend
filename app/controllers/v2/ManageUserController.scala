@@ -16,26 +16,22 @@
 
 package controllers.v2
 
-import javax.inject.Inject
-
 import akka.stream.Materializer
 import config.AppConfig
 import controllers.RequestActions
 import models._
-import models.forms.v2.{RemoveUserForm, UserEditTeamForm}
-import models.forms.v2.UserEditTeamForm
-import models.forms.v2.MoveCasesForm
+import models.forms.v2.{MoveCasesForm, RemoveUserForm, UserEditTeamForm}
 import models.request.AuthenticatedRequest
 import models.viewmodels.managementtools.UsersTabViewModel
-import models.viewmodels.{ManagerToolsUsersTab, SubNavigationTab, _}
+import models.viewmodels._
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, UserService}
-import views.html.partials.assignee
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,7 +45,8 @@ class ManageUserController @Inject() (
   val manageUsersView: views.html.managementtools.manage_users_view,
   val cannotDeleteUser: views.html.partials.users.cannot_delete_user,
   val confirmDeleteUser: views.html.partials.users.confirm_delete_user,
-  val doneDeleteUserPage: views.html.partials.users.done_delete_user
+  val doneDeleteUserPage: views.html.partials.users.done_delete_user,
+  val user_not_found: views.html.user_not_found
 )(
   implicit
   val appConfig: AppConfig,
@@ -95,7 +92,7 @@ class ManageUserController @Inject() (
 
           } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
         }
-        case _ => Future(NotFound(views.html.user_not_found(request.operator.id)))
+        case _ => Future(NotFound(user_not_found(request.operator.id)))
       }
     }
 
@@ -110,7 +107,7 @@ class ManageUserController @Inject() (
           .map(user =>
             Ok(viewUser(user, userCaseTabs, moveATaRCasesForm, moveLiabCasesForm, moveCorrCasesForm, moveMiscCasesForm))
           )
-          .getOrElse(NotFound(views.html.user_not_found(pid)))
+          .getOrElse(NotFound(user_not_found(pid)))
     }
 
   def deleteUser(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
@@ -127,7 +124,7 @@ class ManageUserController @Inject() (
               case (_, _)                   => Ok(confirmDeleteUser(user.get, removeUserForm))
             }
           } else {
-            NotFound(views.html.user_not_found(pid))
+            NotFound(user_not_found(pid))
           }
 
         }
@@ -145,7 +142,7 @@ class ManageUserController @Inject() (
               user <- userService.getUser(pid)
             } yield user
               .map(u => Ok(confirmDeleteUser(u, errors)))
-              .getOrElse(NotFound(views.html.user_not_found(pid))), {
+              .getOrElse(NotFound(user_not_found(pid))), {
             case true =>
               for {
                 user <- userService.getUser(pid)
@@ -155,7 +152,7 @@ class ManageUserController @Inject() (
                     userService.markDeleted(u, request.operator)
                     Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(u.safeName))
                   }
-                  .getOrElse(NotFound(views.html.user_not_found(pid)))
+                  .getOrElse(NotFound(user_not_found(pid)))
               }
             case _ =>
               successful(
@@ -178,7 +175,7 @@ class ManageUserController @Inject() (
           .map {
             case Some(userDetails) =>
               Ok(user_team_edit(userDetails, userEditTeamForm.fill(userDetails.memberOfTeams.toSet)))
-            case _ => NotFound(views.html.user_not_found(pid))
+            case _ => NotFound(user_not_found(pid))
           }
     }
 
@@ -191,7 +188,7 @@ class ManageUserController @Inject() (
             .getUser(pid)
             .map{
               case Some(user) => userService.updateUser(user, user.copy(memberOfTeams = updatedMemberOfTeams.toSeq), request.operator)
-              case _ => NotFound(views.html.user_not_found(pid))
+              case _ => NotFound(user_not_found(pid))
             }
             .map(_ => Redirect(routes.ManageUserController.displayUserDetails(pid)))
       )

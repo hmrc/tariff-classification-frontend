@@ -25,6 +25,7 @@ import play.api.test.Helpers._
 import service.CasesService
 import utils.Cases
 import play.api.mvc.request.RequestTarget
+import views.html.change_case_status
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -32,7 +33,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
-
+  private val changeCaseStatus = injector.instanceOf[change_case_status]
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
 
   private def controller(c: Case) =
@@ -40,6 +41,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       new SuccessfulRequestActions(playBodyParsers, operator, c = c),
       casesService,
       mcc,
+      changeCaseStatus,
       realAppConfig
     )
 
@@ -48,6 +50,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
       new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
       casesService,
       mcc,
+      changeCaseStatus,
       realAppConfig
     )
 

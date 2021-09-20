@@ -23,12 +23,14 @@
 
 @if(ruling.caseStatus == CaseStatus.COMPLETED && !ruling.caseHasExpiredRuling) {
 
-    <h3 class="heading-medium mt-1">Cancel this ruling</h3>
+    <h3 class="govuk-heading-m">Cancel this ruling</h3>
 
-    <p>This ruling may be cancelled if the binding commodity code changes or expires, or if the applicant provided incorrect information.</p>
-    <p>If the binding commodity code has changed, you may need to issue a revised ruling.</p>
+    <p class="govuk-body">This ruling may be cancelled if the binding commodity code changes or expires, or if the applicant provided incorrect information.</p>
+    <p class="govuk-body">If the binding commodity code has changed, you may need to issue a revised ruling.</p>
 
-    <a id="cancel-ruling-button" class="button" role="button" href="@CancelRulingController.getCancelRulingReason(ruling.caseReference)">
+    <p class="govuk-body">
+        <a id="cancel-ruling-button" class="govuk-button" role="button" href="@CancelRulingController.getCancelRulingReason(ruling.caseReference)">
         Cancel this ruling
-    </a>
+        </a>
+    </p>
 }

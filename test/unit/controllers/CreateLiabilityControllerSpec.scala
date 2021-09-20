@@ -35,10 +35,12 @@ import play.api.data.FormBinding.Implicits.formBinding
 class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 
   private val casesService = mock[CasesService]
+  private val createLiability = injector.instanceOf[create_liability]
 
   private def controller(permission: Set[Permission]) = new CreateLiabilityController(
     new RequestActionsWithPermissions(playBodyParsers, permission),
     casesService,
+    createLiability,
     mcc,
     realAppConfig
   )
@@ -57,7 +59,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-      contentAsString(result) shouldBe create_liability(LiabilityForm.newLiabilityForm)(
+      contentAsString(result) shouldBe createLiability(LiabilityForm.newLiabilityForm)(
         AuthenticatedRequest(Operator("0", Some("name")), request),
         messages,
         realAppConfig
@@ -82,7 +84,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
         status(result)      shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
         charset(result)     shouldBe Some("utf-8")
-        contentAsString(result) shouldBe create_liability(form)(
+        contentAsString(result) shouldBe createLiability(form)(
           AuthenticatedRequest(Operator("0", Some("name")), request),
           messages,
           realAppConfig
