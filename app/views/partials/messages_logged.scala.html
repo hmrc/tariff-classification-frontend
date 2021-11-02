@@ -1,27 +1,27 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import helper._
 @import config.AppConfig
-@import controllers.routes.{CaseController}
+@import controllers.routes.CaseController
 @import controllers.Tab
 @import models.request.AuthenticatedRequest
-@import models.{Permission}
+@import models.Permission
 @import views.html.forms.components.input_textarea
-@import views.html.partials.{tab_heading}
+@import views.html.partials.tab_heading
 @import views.html.partials.error_summary
 @import utils.Dates
 
@@ -31,56 +31,50 @@
 
 @(messagesLogged: MessagesTabViewModel, messageForm: Form[MessageFormData], startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@error_summary(messageForm.errors, Some(startAtTabIndex))
+    @error_summary(messageForm.errors, Some(startAtTabIndex))
 
-@tab_heading("messages", messages("case.menu.messages"))
+    @tab_heading("messages", messages("case.menu.messages"))
 
-@if(request.hasPermission(Permission.ADD_MESSAGE)) {
-    <div class="grid-row">
-
-        <div class="column-full">
+    @if(request.hasPermission(Permission.ADD_MESSAGE)) {
 
         @form(action = CaseController.addMessage(messagesLogged.caseReference).withFragment(Tab.MESSAGES_TAB.name), 'class -> "form") {
             @CSRF.formField
             @input_textarea(
                 field = messageForm("message"),
-                label = "",
+                label = "Add new message",
                 hint = Some("Copy and paste emails into this box, including the sender and recipient."),
                 tabIndex = Some(startAtTabIndex + 10),
                 customErrorMessage = Some(messages("error.empty.message"))
             )
-            <div class="form-group">
-                <button id="add-note-submit" class="button" type="submit">Add message to log</button>
+            <div class="govuk-form-group">
+                <button id="add-note-submit" class="govuk-button" type="submit">Add message to log</button>
             </div>
         }
-        </div>
-    </div>
-}
+    }
 
-<table id="messages-logged">
-    <caption class="visually-hidden">Log messages</caption>
-    <thead class="govuk-table__head">
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Date</th>
-            <th scope="col">Description</th>
-
-        </tr>
-    </thead>
-    <tbody>
-    @for((message: Message, index: Int) <- messagesLogged.messages.sortWith{
+    <table id="messages-logged" class="govuk-table">
+        <caption class="govuk-table__caption govuk-visually-hidden">Log messages</caption>
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Name</th>
+                <th scope="col" class="govuk-table__header">Date</th>
+                <th scope="col" class="govuk-table__header">Description</th>
+            </tr>
+        </thead>
+        <tbody  class="govuk-table__body">
+        @for((message: Message, index: Int) <- messagesLogged.messages.sortWith{
             case (msg1, msg2) => msg1.date.isAfter(msg2.date)
         }.zipWithIndex) {
-        <tr id="messages-events-row-@{index}">
-            <td id="messages-events-row-@{index}-name" class="messages-cell">@message.name</td>
+            <tr id="messages-events-row-@{index}" class="govuk-table__row">
+                <td id="messages-events-row-@{index}-name" class="govuk-table__cell">@message.name</td>
 
-            <td id="messages-events-row-@{index}-date" class="messages-cell-date">@Dates.format(message.date)</td>
+                <td id="messages-events-row-@{index}-date" class="govuk-table__cell">@Dates.format(message.date)</td>
 
-            <td id="messages-events-row-@{index}-message" class="messages-cell-desc">
-                <span id={s"messages-events-row-${index}-message"} class="pre-wrap">@message.message</span>
-            </td>
-        </tr>
-    }
-    </tbody>
+                <td id="messages-events-row-@{index}-message" class="govuk-table__cell">
+                    <span id={s"messages-events-row-${index}-message"} class="pre-wrap">@message.message</span>
+                </td>
+            </tr>
+        }
+        </tbody>
 
-</table>
+    </table>

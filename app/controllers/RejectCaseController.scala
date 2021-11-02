@@ -43,6 +43,9 @@ class RejectCaseController @Inject() (
   fileService: FileStoreService,
   dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
+  val reject_case_reason: views.html.reject_case_reason,
+  val reject_case_email: views.html.reject_case_email,
+  val confirm_rejected: views.html.confirm_rejected,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -57,7 +60,7 @@ class RejectCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.REJECT_CASE)) { implicit request =>
-      Ok(views.html.reject_case_reason(request.`case`, RejectCaseForm.form))
+      Ok(reject_case_reason(request.`case`, RejectCaseForm.form))
     }
 
   def postRejectCaseReason(reference: String): Action[AnyContent] =
@@ -67,7 +70,7 @@ class RejectCaseController @Inject() (
       RejectCaseForm.form
         .bindFromRequest()
         .fold(
-          formWithErrors => successful(BadRequest(views.html.reject_case_reason(request.`case`, formWithErrors))),
+          formWithErrors => successful(BadRequest(reject_case_reason(request.`case`, formWithErrors))),
           caseRejection => {
             val userAnswers        = UserAnswers(cacheKey(reference))
             val updatedUserAnswers = userAnswers.set(RejectionCacheKey, caseRejection)
@@ -103,7 +106,7 @@ class RejectCaseController @Inject() (
           maxFileSize     = appConfig.fileUploadMaxSize
         )
       )
-      .map(initiateResponse => views.html.reject_case_email(request.`case`, uploadForm, initiateResponse))
+      .map(initiateResponse => reject_case_email(request.`case`, uploadForm, initiateResponse))
   }
 
   def getRejectCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
@@ -141,6 +144,6 @@ class RejectCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(views.html.confirm_rejected(request.`case`))
+      Ok(confirm_rejected(request.`case`))
     }
 }

@@ -23,29 +23,28 @@
 
 @(manageKeywordsTab: ManageKeywordsTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<table id="@{manageKeywordsTab.tabMessageKey}-table">
+<table id="@{manageKeywordsTab.tabMessageKey}-table" class="govuk-table">
     <thead class="govuk-table__head">
-        <tr id="@{manageKeywordsTab.tabMessageKey}-details" class="grid-row mb-2">
-            <th id="@{manageKeywordsTab.tabMessageKey}-keyword" class="bold w-40" scope="col">Keyword</th>
-            <th id="@{manageKeywordsTab.tabMessageKey}-user-name" class="bold w-0" scope="col">User</th>
-            <th id="@{manageKeywordsTab.tabMessageKey}-goods-id" class="bold w-0" scope="col">Goods</th>
-            <th id="@{manageKeywordsTab.tabMessageKey}-type-id" class="bold w-0" scope="col">Case type</th>
-            <th id="@{manageKeywordsTab.tabMessageKey}-status-id" class="bold w-0" scope="col">Case status</th>
+        <tr id="@{manageKeywordsTab.tabMessageKey}-details" class="govuk-table__row">
+            <th id="@{manageKeywordsTab.tabMessageKey}-keyword" class="govuk-table__header" scope="col">Keyword</th>
+            <th id="@{manageKeywordsTab.tabMessageKey}-user-name" class="govuk-table__header" scope="col">User</th>
+            <th id="@{manageKeywordsTab.tabMessageKey}-goods-id" class="govuk-table__header" scope="col">Goods</th>
+            <th id="@{manageKeywordsTab.tabMessageKey}-type-id" class="govuk-table__header" scope="col">Case type</th>
+            <th id="@{manageKeywordsTab.tabMessageKey}-status-id" class="govuk-table__header" scope="col">Case status</th>
         </tr>
     </thead>
-    <tbody>
-    @for((result, index) <- manageKeywordsTab.searchResult.results.zipWithIndex) {
-        <tr id="@{manageKeywordsTab.tabMessageKey}-details-@index">
-            <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index" class="word-break">
-                <a href="@ManageKeywordsController.changeKeywordStatus(result.keyword, result.reference)">@{result.keyword.trim.toUpperCase}</a>
-            </td>
-            <td id="@{manageKeywordsTab.tabMessageKey}-user-name-@index">@result.name</td>
-            <td id="@{manageKeywordsTab.tabMessageKey}-goods-id-@index">@result.goods</td>
-            <td id="@{manageKeywordsTab.tabMessageKey}-type-id-@index">@result.caseType.prettyName</td>
-            <td id="@{manageKeywordsTab.tabMessageKey}-status-id-@index">@case_status_keywords_view(result.status, s"${manageKeywordsTab.tabMessageKey}-status-label-$index")</td>
-        </tr>
-    }
-
+    <tbody class="govuk-table__body">
+        @for((result, index) <- manageKeywordsTab.searchResult.results.zipWithIndex) {
+            <tr id="@{manageKeywordsTab.tabMessageKey}-details-@index" class="govuk-table__row">
+                <td id="@{manageKeywordsTab.tabMessageKey}-keyword-@index" class="govuk-table__cell word-break">
+                    <a href="@ManageKeywordsController.changeKeywordStatus(result.keyword, result.reference)">@{result.keyword.trim.toUpperCase}</a>
+                </td>
+                <td id="@{manageKeywordsTab.tabMessageKey}-user-name-@index" class="govuk-table__cell">@result.name</td>
+                <td id="@{manageKeywordsTab.tabMessageKey}-goods-id-@index" class="govuk-table__cell">@result.goods</td>
+                <td id="@{manageKeywordsTab.tabMessageKey}-type-id-@index" class="govuk-table__cell">@result.caseType.prettyName</td>
+                <td id="@{manageKeywordsTab.tabMessageKey}-status-id-@index" class="govuk-table__cell">@case_status_keywords_view(result.status, s"${manageKeywordsTab.tabMessageKey}-status-label-$index")</td>
+            </tr>
+        }
     </tbody>
 </table>
 

@@ -35,6 +35,7 @@ class ViewAttachmentController @Inject() (
   verify: RequestActions,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
+  val view_attachment_unavailable: views.html.view_attachment_unavailable,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -51,10 +52,10 @@ class ViewAttachmentController @Inject() (
             .withHeaders(
               "Content-Disposition" -> s"filename=${fileSubmitted.fileName}"
             )
-          fileStoreResponse.getOrElse(NotFound(views.html.view_attachment_unavailable(meta)))
+          fileStoreResponse.getOrElse(NotFound(view_attachment_unavailable(meta)))
 
         case None =>
-          Future.successful(NotFound(views.html.view_attachment_unavailable(None)))
+          Future.successful(NotFound(view_attachment_unavailable(None)))
       }
     }
 }

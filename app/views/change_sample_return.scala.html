@@ -1,39 +1,45 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
-@import models.request.AuthenticatedRequest
 @import models.Case
+@import models.SampleReturn.SampleReturn
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.NoTabSelected
 @import views.html.forms.sample_return_form
 @import views.html.includes.main
-@import views.html.partials.{case_heading, error_summary, back_link}
-@import models.SampleReturn.SampleReturn
-@import models.viewmodels.NoTabSelected
+@import views.html.partials.{case_heading, back_link, error_summary}
+
+@this(
+        main: main,
+        backLink: back_link
+)
+
 
 @(c: Case, form: Form[Option[SampleReturn]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.change.sample.return")),
-    customPrimaryNavTab = NoTabSelected) {
-
-    @back_link()
+@main(
+    pageTitle = messages("page.title.change.sample.return"),
+    customPrimaryNavTab = NoTabSelected,
+    backLink = Some(backLink())
+) {
 
     @error_summary(form.errors)
-    <div class="column-two-thirds pl-0">
-        @case_heading(c, messageKey = Some("case.application.returning-samples.header"))
 
-        @sample_return_form(c, form("return"))
-    </div>
+    @case_heading(c, messageKey = Some("case.application.returning-samples.header"))
+
+    @sample_return_form(c, form("return"))
 }

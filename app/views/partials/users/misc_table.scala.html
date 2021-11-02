@@ -29,44 +29,44 @@
 @(miscTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 @error_summary(form.errors)
 
-<h2 class="heading-large mt-0 mb-30">@messages("users.user.correspondence.heading")</h2>
+<h2 class="govuk-heading-l">@messages("users.user.correspondence.heading")</h2>
 @helper.form(action = MoveCasesController.postMoveMiscCases(userID).withFragment(Tab.MISCELLANEOUS_TAB.name), 'id -> "miscCases", 'novalidate -> "novalidate") {
 @helper.CSRF.formField
-<div class="form-group">
- <button id="move-misc-cases" class="button" type="submit">Move selected cases</button>
+<div class="govuk-form-group">
+ <button id="move-misc-cases" class="govuk-button" type="submit">Move selected cases</button>
 </div>
 @form("miscCases").errors.map { error =>
-<div class="form-group mb-0">
- <fieldset>
+<div class="govuk-form-group">
+ <fieldset class="govuk-fieldset">
   <legend class="advanced_search--filters_heading">
-   <span class="error-message" id="error-message-@{form("miscCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+   <span class="error-message" id="error-message-@{form("miscCases").id}-input"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
   </legend>
  </fieldset>
 </div>
 }
-<table id="@{miscTab.tabMessageKey}-table">
- <caption class="visually hidden">@messages("users.user.correspondence.heading")</caption>
+<table id="@{miscTab.tabMessageKey}-table" class="govuk-table">
+ <caption class="govuk-visually-hidden">@messages("users.user.correspondence.heading")</caption>
  <thead class="govuk-table__head">
-  <tr id="@{miscTab.tabMessageKey}-details" class="grid-row mb-2">
-    <th id="@{miscTab.tabMessageKey}-select" class="bold w-0" scope="col">
+  <tr id="@{miscTab.tabMessageKey}-details" class="govuk-table__row">
+    <th id="@{miscTab.tabMessageKey}-select" class="govuk-table__header" scope="col">
      Select
     </th>
-    <th id="@{miscTab.tabMessageKey}-reference" class="bold w-0" scope="col">
+    <th id="@{miscTab.tabMessageKey}-reference" class="govuk-table__header" scope="col">
      Reference
     </th>
-    <th id="@{miscTab.tabMessageKey}-subject" class="bold w-0" scope="col">
+    <th id="@{miscTab.tabMessageKey}-subject" class="govuk-table__header" scope="col">
      Subject
     </th>
-    <th id="@{miscTab.tabMessageKey}-trader" class="bold w-0" scope="col">
+    <th id="@{miscTab.tabMessageKey}-trader" class="govuk-table__header" scope="col">
      Trader
     </th>
-    <th id="@{miscTab.tabMessageKey}-type" class="bold w-0" scope="col">
+    <th id="@{miscTab.tabMessageKey}-type" class="govuk-table__header" scope="col">
      type
     </th>
-    <th id="@{miscTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
+    <th id="@{miscTab.tabMessageKey}-elapsed-days" class="govuk-table__header" scope="col">
      Elapsed days
     </th>
-    <th id="@{miscTab.tabMessageKey}-team" class="bold w-0" scope="col">
+    <th id="@{miscTab.tabMessageKey}-team" class="govuk-table__header" scope="col">
      Team
     </th>
   </tr>
@@ -76,41 +76,33 @@
 
  @defining(result.application.asMisc) { misc =>
 
- <tr id="@{miscTab.tabMessageKey}-details-@index">
-  <td id="@{miscTab.tabMessageKey}-select-@index" @if(form("miscCases").hasErrors){class="form-group-error"}>
+ <tr id="@{miscTab.tabMessageKey}-details-@index" class="govuk-table__row  @if(form("miscCases").hasErrors){govuk-form-group--error}">
+  <td id="@{miscTab.tabMessageKey}-select-@index" class="govuk-table__cell">
    @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
-   <div class="form-group">
     <div class="multiple-choice">
-     <fieldset>
+     <fieldset class="govuk-fieldset">
       @defining(s"${form("miscCases").id}-$index") { id: String =>
-      <input
-              class="form-control"
-              type="checkbox"
-              id="@{id}"
-      name="@{form("miscCases").name}[@index]"
-      value="@{result.reference}"
-      @if(form("miscCases").hasErrors){
-      aria-describedby="error-message-@{id}-input"
-      }
-      @if(form("miscCases").value.contains(result.reference)){ checked="checked"}
-      />
-      <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+          <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+              <div class="govuk-checkboxes__item">
+                  <input class="govuk-checkboxes__input" id="@{id}" name="@{form("miscCases").name}[@index]" type="checkbox" value="@{result.reference}" @if(form("miscCases").hasErrors){aria-describedby="error-message-@{form("miscCases").id}-input"} @if(form("miscCases").value.contains(result.reference)){checked="checked"}>
+                  <label for="@{id}" class="govuk-label govuk-checkboxes__label"><span class="govuk-visually-hidden">@result.reference</span></label>
+              </div>
+          </div>
      }</fieldset>
     </div>
-   </div>
    }
   </td>
-  <td id="@{miscTab.tabMessageKey}-reference-@index">
+  <td id="@{miscTab.tabMessageKey}-reference-@index" class="govuk-table__cell">
       <a href="@routes.CaseController.get(result.reference)">
           <span aria-hidden="true">@{result.reference}</span>
-          <span class="visually-hidden">case reference @{result.reference}</span>
+          <span class="govuk-visually-hidden">case reference @{result.reference}</span>
       </a>
   </td>
-  <td id="@{miscTab.tabMessageKey}-summary-@index">@{misc.name}</td>
-  <td id="@{miscTab.tabMessageKey}-trader-@index">@{misc.contactName}</td>
-  <td id="@{miscTab.tabMessageKey}-type-@index">@{MiscCaseType.format(misc.caseType)}</td>
-  <td id="@{miscTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
-  <td id="@{miscTab.tabMessageKey}-team-@index">
+  <td id="@{miscTab.tabMessageKey}-summary-@index" class="govuk-table__cell">@{misc.name}</td>
+  <td id="@{miscTab.tabMessageKey}-trader-@index" class="govuk-table__cell">@{misc.contactName}</td>
+  <td id="@{miscTab.tabMessageKey}-type-@index" class="govuk-table__cell">@{MiscCaseType.format(misc.caseType)}</td>
+  <td id="@{miscTab.tabMessageKey}-elapsed-days-@index"  class="govuk-table__cell @if(result.isCaseOverdue){live-red-text}">@{result.daysElapsed}</td>
+  <td id="@{miscTab.tabMessageKey}-team-@index" class="govuk-table__cell">
    @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
   </td>
  </tr>

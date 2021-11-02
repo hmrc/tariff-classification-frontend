@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
@@ -25,76 +25,76 @@
 @tab_heading("correspondence", messages("case.v2.correspondence.contact-details.heading"))
 
 @if(request.hasPermission(Permission.EDIT_CORRESPONDENCE)) {
-<div id="edit-contact-details" class="grid-row mb-2">
-            <span class="column-one-third">
-                <a id="edit-contact-details-link" href="@controllers.routes.CreateCorrespondenceController.editCorrespondenceContact(contactDetails.caseReference)">
+    <div id="edit-contact-details" class="govuk-form-group">
+        <p class="govuk-body">
+            <a id="edit-contact-details-link" class="govuk-link" href="@controllers.routes.CreateCorrespondenceController.editCorrespondenceContact(contactDetails.caseReference)">
                 @messages("case.v2.correspondence.contact-details_title")
-                </a>
-            </span>
-</div>
+            </a>
+        </p>
+    </div>
 }
 
-<dl class="govuk-check-your-answers cya-questions-short">
+<dl class="govuk-summary-list">
 
-    <div id="contact-details-correspondence-starter" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.contact-details.case_source")
+    <div id="contact-details-correspondence-starter" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @messages("case.v2.correspondence.contact-details.case_source")
         </dt>
-        <dd class="cya-answer" id="correspondence-starter">
+        <dd class="govuk-summary-list__value" id="correspondence-starter">
             <span class="pre-wrap">@contactDetails.caseSource</span>
         </dd>
     </div>
 
-    <div id="contact-details-contact-name" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.contact-details.contact_name")
+    <div id="contact-details-contact-name" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @messages("case.v2.correspondence.contact-details.contact_name")
         </dt>
-        <dd class="cya-answer" id="contact-name">
+        <dd class="govuk-summary-list__value" id="contact-name">
             <span class="pre-wrap">@contactDetails.contact.name</span>
         </dd>
     </div>
 
-    <div id="contact-details-contact-email" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.contact-details.contact_email")
+    <div id="contact-details-contact-email" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @messages("case.v2.correspondence.contact-details.contact_email")
         </dt>
-        <dd class="cya-answer" id="contact-email">
+        <dd class="govuk-summary-list__value" id="contact-email">
             <span class="pre-wrap">@contactDetails.contact.email</span>
         </dd>
     </div>
 
-    <div id="contact-details-contact-phone" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.contact-details.contact_telephone")
+    <div id="contact-details-contact-phone" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @messages("case.v2.correspondence.contact-details.contact_telephone")
         </dt>
-        <dd class="cya-answer" id="contact-phone">
-        @{contactDetails.contact.phone}
+        <dd class="govuk-summary-list__value" id="contact-phone">
+            @{contactDetails.contact.phone}
         </dd>
     </div>
 
-    <div id="contact-details-contact-fax" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.contact-details.contact_fax")
+    <div id="contact-details-contact-fax" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @messages("case.v2.correspondence.contact-details.contact_fax")
         </dt>
-        <dd class="cya-answer" id="contact-fax">
+        <dd class="govuk-summary-list__value" id="contact-fax">
             <span class="pre-wrap">@contactDetails.fax</span>
         </dd>
     </div>
 
-    <div id="contact-details-agent-name" class="grid-row">
-        <dt class="cya-question">
+    <div id="contact-details-agent-name" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
             @messages("case.v2.correspondence.contact-details.agent_name")
         </dt>
-        <dd class="cya-answer" id="agent-name">
+        <dd class="govuk-summary-list__value" id="agent-name">
             <span class="pre-wrap">@contactDetails.agentName</span>
         </dd>
     </div>
 
-    <div id="contact-details-contact-address" class="grid-row">
-        <dt class="cya-question">
-        @messages("case.v2.correspondence.contact-details.contact_address")
+    <div id="contact-details-contact-address" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            @messages("case.v2.correspondence.contact-details.contact_address")
         </dt>
-        <dd class="cya-answer" id="contact-address">
+        <dd class="govuk-summary-list__value" id="contact-address">
             <span class="pre-wrap">@contactDetails.address.buildingAndStreet</span> @if(contactDetails.address.buildingAndStreet.nonEmpty) {<br>}
             <span class="pre-wrap">@contactDetails.address.townOrCity</span> @if(contactDetails.address.townOrCity.nonEmpty) {<br>}
             <span class="pre-wrap">@contactDetails.address.county</span> @if(contactDetails.address.county.nonEmpty) {<br>}

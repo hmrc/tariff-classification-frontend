@@ -36,6 +36,9 @@ class AppealCaseController @Inject() (
   verify: RequestActions,
   override val caseService: CasesService,
   override implicit val config: AppConfig,
+  val appeal_choose_status: views.html.appeal_choose_status,
+  val appeal_choose_type: views.html.appeal_choose_type,
+  val appeal_change_status: views.html.appeal_change_status,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -61,7 +64,7 @@ class AppealCaseController @Inject() (
       andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
       getCaseAndRenderView(
         reference,
-        c => successful(views.html.appeal_choose_type(c, typeForm))
+        c => successful(appeal_choose_type(c, typeForm))
       )
     }
 
@@ -74,7 +77,7 @@ class AppealCaseController @Inject() (
           typeForm
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(Ok(views.html.appeal_choose_type(`case`, formWithErrors))),
+              formWithErrors => Future.successful(Ok(appeal_choose_type(`case`, formWithErrors))),
               appealType =>
                 Future
                   .successful(Redirect(routes.AppealCaseController.chooseStatus(`case`.reference, appealType.toString)))
@@ -88,7 +91,7 @@ class AppealCaseController @Inject() (
       val appealTypeFound = AppealType.withName(appealType)
       getCaseAndRenderView(
         reference,
-        c => successful(views.html.appeal_choose_status(c, appealTypeFound, statusForm))
+        c => successful(appeal_choose_status(c, appealTypeFound, statusForm))
       )
     }
 
@@ -99,7 +102,7 @@ class AppealCaseController @Inject() (
         reference,
         c =>
           c.findAppeal(appealId) match {
-            case Some(appeal) => successful(Ok(views.html.appeal_change_status(c, appeal, statusForm)))
+            case Some(appeal) => successful(Ok(appeal_change_status(c, appeal, statusForm)))
             case None         => successful(Redirect(routes.AppealCaseController.appealDetails(reference)))
           }
       )
@@ -116,7 +119,7 @@ class AppealCaseController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors =>
-                successful(Ok(views.html.appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
+                successful(Ok(appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
               appealStatus =>
                 caseService
                   .addAppeal(`case`, appealTypeFound, appealStatus, request.operator)
@@ -136,7 +139,7 @@ class AppealCaseController @Inject() (
               statusForm
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => successful(Ok(views.html.appeal_change_status(`case`, appeal, formWithErrors))),
+                  formWithErrors => successful(Ok(appeal_change_status(`case`, appeal, formWithErrors))),
                   appealStatus =>
                     caseService
                       .updateAppealStatus(`case`, appeal, appealStatus, request.operator)

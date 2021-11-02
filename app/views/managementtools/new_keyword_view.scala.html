@@ -16,24 +16,36 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import views.html.components.{heading, input_accessible_auto_complete, manager_tools_secondary_navigation}
+@import views.html.components.input_accessible_auto_complete
 @import views.html.includes.main
 @import views.html.partials.{back_link, error_summary}
 
-@this()
+@this(
+    govukLayouWrapper: main,
+    backLink: back_link
+)
+
 
 @(allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("management.create-keyword-title"))) {
+@additionalCSS = {
+    <link rel="stylesheet" href='@routes.Assets.at("stylesheets/autocomplete.css")'/>)
+}
 
-    @back_link()
+@additionalJS = {
+    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
+}
 
+@govukLayouWrapper(
+    pageTitle = messages("management.create-keyword-title"),
+    backLink = Some(backLink()),
+    additionalJS = Some(additionalJS),
+    additionalCSS = Some(additionalCSS)
+) {
     @error_summary(newKeywordForm.errors)
 
-    <div>
-        <div class="caption-xl mt-40">@messages("management.create-keyword.caption")</div>
-        @heading(messages("management.create-keyword.heading"), "heading-xlarge mt-0")
-    </div>
+    <span class="govuk-caption-xl">@messages("management.create-keyword.caption")</span>
+    <h1 class="govuk-heading-xl">@messages("management.create-keyword.heading")</h1>
 
     @helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), 'id -> "create_new_keyword-form", 'novalidate -> "novalidate") {
 
@@ -49,7 +61,7 @@
             placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
         )
 
-        <button id="save_new_keyword-button" class="button left" type="submit" name="saveKeyword" value="true">
+        <button id="save_new_keyword-button" class="govuk-button" type="submit" name="saveKeyword" value="true">
             @messages("management.create-keyword.save-button")
         </button>
     }

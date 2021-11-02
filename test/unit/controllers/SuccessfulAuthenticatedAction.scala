@@ -27,6 +27,7 @@ import play.api.mvc._
 import play.api.{Configuration, Environment}
 import service.CasesService
 import utils.Cases
+import views.html.case_not_found
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,7 +61,8 @@ class SuccessfulCasePermissionsAction(
 class ExistingCaseActionFactory(reference: String, requestCase: Case)
     extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService]))(
       mock(classOf[MessagesApi]),
-      mock(classOf[AppConfig])
+      mock(classOf[AppConfig]),
+      case_not_found = mock(classOf[case_not_found])
     ) {
 
   override def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
@@ -113,7 +115,8 @@ class MustHaveDataActionFactory(userAnswers: UserAnswers)
 class HaveExistingCaseDataActionFactory(reference: String, requestCase: Case)
     extends RequireCaseDataActionFactory(
       casesService       = mock(classOf[CasesService]),
-      dataCacheConnector = FakeDataCacheConnector
+      dataCacheConnector = FakeDataCacheConnector,
+      case_not_found = mock(classOf[case_not_found])
     )(
       mock(classOf[MessagesApi]),
       mock(classOf[AppConfig])

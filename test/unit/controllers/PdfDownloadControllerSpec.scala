@@ -32,12 +32,17 @@ import models.response.FileMetadata
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import org.scalatest.BeforeAndAfterEach
+import views.html.{case_not_found, document_not_found, ruling_not_found}
 
 class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val caseService = mock[CasesService]
   private val fileService = mock[FileStoreService]
   private val operator    = Operator(id = "id")
+
+  private val caseNotFound = injector.instanceOf[case_not_found]
+  private val rulingNotFound = injector.instanceOf[ruling_not_found]
+  private val documentNotFound = injector.instanceOf[document_not_found]
 
   override protected def beforeEach(): Unit =
     reset(
@@ -65,7 +70,10 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     mcc,
     fileService,
     caseService,
-    realAppConfig
+    realAppConfig,
+    caseNotFound,
+    rulingNotFound,
+    documentNotFound
   )
 
   private def givenCompletedCase(): Unit =

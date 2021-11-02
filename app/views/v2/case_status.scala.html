@@ -24,21 +24,21 @@
 
 <div id="case-status-section">
     @caseStatus.liabilityTypeTag.map { tag =>
-        <span class="visuallyhidden">liability type</span>
+        <span class="govuk-visually-hidden">liability type</span>
         <span id = "case-status-liability-status" class="govuk-tag govuk-tag--@{tag.colour}">
             @{tag.status}
         </span>
     }
 
     @caseStatus.caseStatusTag.map { tag =>
-        <span class="visuallyhidden">case status</span>
+        <span class="govuk-visually-hidden">case status</span>
         <span id ="case-status" class="govuk-tag govuk-tag--@{tag.colour}">
             @{tag.status}
         </span>
     }
 
     @caseStatus.appealStatusTag.map { tag =>
-        <span class="visuallyhidden">appeal status</span>
+        <span class="govuk-visually-hidden">appeal status</span>
         <span id ="appeal-status" class="govuk-tag govuk-tag--@{tag.colour}">
             @{tag.status}
         </span>

@@ -87,10 +87,11 @@ trait HasMetrics {
 
         // Clean up timer according to server response
         result.foreach { result =>
-          if (isFailureStatus(result.header.status))
+          if (isFailureStatus(result.header.status)) {
             timer.completeWithFailure()
-          else
+          } else {
             timer.completeWithSuccess()
+          }
         }
 
         // Clean up timer for unhandled exceptions

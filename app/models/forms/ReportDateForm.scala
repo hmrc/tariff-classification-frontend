@@ -51,9 +51,9 @@ object ReportDateForm {
   }
 
   private val instant2FormDate: Instant => DateForm = { date =>
-    if (date == Instant.MIN || date == Instant.MAX)
+    if (date == Instant.MIN || date == Instant.MAX) {
       DateForm("", "", "")
-    else {
+    } else {
       val offsetDate = date.atOffset(ZoneOffset.UTC).toLocalDate
       DateForm(
         offsetDate.getDayOfMonth.toString,
@@ -94,13 +94,14 @@ object ReportDateForm {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], InstantRange] =
       of[Boolean].binder.bind(specificDatesKey, data).flatMap { specificDates =>
-        if (specificDates)
+        if (specificDates) {
           mapping(
             min(dateRangeKey) -> date,
             max(dateRangeKey) -> endDateInclusive
           )(InstantRange.apply)(InstantRange.unapply).bind(data)
-        else
+        } else {
           Right(InstantRange.allTime)
+        }
       }
     override def unbind(key: String, value: InstantRange): Map[String, String] =
       mapping(

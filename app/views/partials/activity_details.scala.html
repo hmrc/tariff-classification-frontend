@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import helper._
 @import config.AppConfig
@@ -38,51 +38,44 @@
     @tab_heading("activity", messages("case.menu.activity"))
 
     @if(request.hasPermission(Permission.ADD_NOTE)) {
-        <div class="grid-row">
-
-            <div class="column-full">
-
-            @form(action = CaseController.addNote(activity.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
-                @CSRF.formField
-                @input_textarea(
-                    field = activityForm("note"),
-                    label = "Add case note",
-                    hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
-                    tabIndex = Some(startAtTabIndex+10),
-                    customErrorMessage = Some(messages("error.empty.note"))
-                )
-                <div class="form-group">
-                    <button id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
-                </div>
-            }
+        @form(action = CaseController.addNote(activity.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
+            @CSRF.formField
+            @input_textarea(
+                field = activityForm("note"),
+                label = "Add case note",
+                hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
+                tabIndex = Some(startAtTabIndex+10),
+                customErrorMessage = Some(messages("error.empty.note"))
+            )
+            <div class="govuk-form-group">
+                <button id="add-note-submit" class="govuk-button" type="submit">Add note to activity timeline</button>
             </div>
-        </div>
+        }
     }
 
     @activity_details_events_table(activity, startAtTabIndex+15)
 
-    <div class="grid-row mt-2">
-        @if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){
-            <div class="column-full">
-                @activity.assignee.map { assignedTo =>
-                    <span id="activity-events-assignee-label">
-                        @messages("case.activity.assigned-to")
-                    </span>
-                    <span id="activity-events-assignee">
-                        @assignee(assignedTo, true)
-                    </span>
-                }.getOrElse {
-                    <span id="activity-events-assigned-queue-label">
-                        @messages("case.activity.assigned-queue")
-                    </span>
-                    <span id="activity-events-assigned-queue">
-                    @activity.queueId.map { queueId =>
-                        @activity.queueName
-                    }.getOrElse {
-                        @messages("case.activity.no-queue-assigned")
-                    }
-                    </span>
-                }
-            </div>
+    <div class="govuk-body">
+    @if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){
+        @activity.assignee.map { assignedTo =>
+        <span id="activity-events-assignee-label">
+            @messages("case.activity.assigned-to")
+        </span>
+        <span id="activity-events-assignee">
+        @assignee(assignedTo, true)
+        </span>
+        }.getOrElse {
+            <span id="activity-events-assigned-queue-label">
+            @messages("case.activity.assigned-queue")
+            </span>
+            <span id="activity-events-assigned-queue">
+            @activity.queueId.map { queueId =>
+                @activity.queueName
+            }.getOrElse {
+                @messages("case.activity.no-queue-assigned")
+            }
+            </span>
         }
+    }
     </div>
+
