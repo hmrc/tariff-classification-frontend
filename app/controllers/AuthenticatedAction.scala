@@ -86,11 +86,10 @@ class AuthenticatedAction @Inject() (
             case None =>
               userConnector.createUser(userFromAuth)
             case Some(existingUser) =>
-              if (existingUser.withoutTeams != userFromAuth) {
+              if (existingUser.withoutTeams != userFromAuth)
                 userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
-              } else {
+              else
                 Future.successful(existingUser)
-              }
           }
 
           permittedUser = updatedUser.copy(permissions = Permission.applyingTo(updatedUser))

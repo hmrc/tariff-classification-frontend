@@ -30,7 +30,6 @@ import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.Cases._
-import views.html.ruling_details_edit
 import views.html.v2.edit_liability_ruling
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -48,7 +47,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private lazy val editLiabilityView   = injector.instanceOf[edit_liability_ruling]
   private val liability_details_edit   = injector.instanceOf[views.html.v2.liability_details_edit]
-  private val rulingDetailsEdit = injector.instanceOf[ruling_details_edit]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -71,7 +69,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     mcc,
     editLiabilityView,
     liability_details_edit,
-    rulingDetailsEdit,
     realAppConfig
   )
 
@@ -85,7 +82,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     mcc,
     editLiabilityView,
     liability_details_edit,
-    rulingDetailsEdit,
     realAppConfig
   )
 

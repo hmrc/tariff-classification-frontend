@@ -1,88 +1,79 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
-
+@import views.html.includes.main
 @import views.html.partials.error_summary
 @import views.html.components.manager_tools_secondary_navigation
 @import views.html.components.input_accessible_auto_complete
 @import models.forms.v2.EditKeywordAction
 @import models.forms.v2.EditKeywordAction.EditKeywordAction
-@import views.html.includes.main
 @import views.html.partials.back_link
 
-@this(
-        main: main,
-        backLink: back_link
-)
+@this()
 
 @(keywordName: String, globalKeywords: Seq[Keyword], form: Form[(EditKeywordAction, String)])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@additionalCSS = {
-    <link rel="stylesheet" href='@routes.Assets.at("stylesheets/autocomplete.css")'/>
-}
+    @main(bodyClasses = None, customTitle = Some(messages("management.change-keywords.edit-approved-keywords.title"))) {
 
-@additionalJS = {
-    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
-}
+        @back_link()
 
-@main(
-    pageTitle = messages("management.change-keywords.edit-approved-keywords.title"),
-    backLink = Some(backLink()),
-    additionalCSS = Some(additionalCSS),
-    additionalJS = Some(additionalJS)
-) {
-    @error_summary(form.errors)
+        @error_summary(form.errors)
 
-    <span class="govuk-caption-xl">
-        <span class="govuk-visually-hidden">This section is </span>
-        @messages("management.create-keyword.caption")
-    </span>
-    <h1 id="keyword-edit-heading" class="govuk-heading-xl">@keywordName</h1>
 
-    @helper.form(action = controllers.v2.routes.ManageKeywordsController.postEditApprovedKeywords(keywordName), 'id -> "edit-keyword-form", 'novalidate -> "novalidate") {
-
-        @helper.CSRF.formField
-
-        @* TODO NEED TO REWRITE RADIOS (summary doesn't link correctly) and fix the optional box*@
-        @input_radiogroup(
-            field = form("action"),
-            label = Some(messages("management.change-keywords.edit-approved-keywords.radio")),
-            options = Seq(
-                RadioOption(EditKeywordAction.DELETE.toString, messages("management.change-keywords.edit-approved-keywords.radio.delete")),
-                RadioOption(EditKeywordAction.RENAME.toString, "Rename", Some("rename-keyword"),
-                    Some(input_accessible_auto_complete(
-                        field = form("keywordName"),
-                        label = Some(messages("management.manage-keywords.edit-approved-keywords.label")),
-                        hint = Some(messages("management.manage-keywords.edit-approved-keywords.hint")),
-                        autoCompleteOptions = globalKeywords.map(_.name),
-                        placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
-                    )
-                    )
-                )
-            ),
-            id = "change-keyword-status",
-            customGroupId = Some("keyword-status")
-        )
-
-        <div>
-            <button class="govuk-button" id="keyword-continue" type="submit">Continue</button>
+        <div class="edit-approved-keyword-title mt-40">
+            <span class="heading-secondary"><span class="visuallyhidden">
+                This section is </span>
+            </span><div class="caption-xl mt-40">@messages("management.create-keyword.caption")</div>
+            <h1 id="keyword-edit-heading" class="heading-large mt-0 mb-0">@keywordName</h1>
         </div>
+
+        @helper.form(action = controllers.v2.routes.ManageKeywordsController.postEditApprovedKeywords(keywordName), 'id -> "edit-keyword-form", 'novalidate -> "novalidate") {
+
+            @helper.CSRF.formField
+
+            @input_radiogroup(
+                field = form("action"),
+                label = Some(messages("management.change-keywords.edit-approved-keywords.radio")),
+                labelClass = Some("heading-large"),
+                options = Seq(
+                    RadioOption(EditKeywordAction.DELETE.toString, messages("management.change-keywords.edit-approved-keywords.radio.delete")),
+                    RadioOption(EditKeywordAction.RENAME.toString, "Rename", Some("rename-keyword"),
+                        Some(input_accessible_auto_complete(
+                            field = form("keywordName"),
+                            label = Some(messages("management.manage-keywords.edit-approved-keywords.label")),
+                            hint = Some(messages("management.manage-keywords.edit-approved-keywords.hint")),
+                            formControlClass = Some("w-100"),
+                            labelClass = Some("un-bold"),
+                            autoCompleteOptions = globalKeywords.map(_.name),
+                            placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
+                        )
+                        )
+                    )
+                ),
+                id = "change-keyword-status",
+                customGroupId = Some("keyword-status")
+            )
+
+            <div>
+                <button class="button" id="keyword-continue" type="submit">Continue</button>
+            </div>
+
+        }
     }
-}

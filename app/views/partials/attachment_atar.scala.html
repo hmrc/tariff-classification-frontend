@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import models.StoredAttachment
 @import models.response.ScanStatus
@@ -20,12 +20,13 @@
 
 
 @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
-    <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } class="govuk-link" id="@{id}-file" href="@routes.ViewAttachmentController.get(reference, file.id)" target="_blank">
-        <span class="" aria-hidden="true">@name.getOrElse(file.fileName)</span>
-        <span class="govuk-visually-hidden">view attached file @name.getOrElse(file.fileName)</span>
-    </a>
+
+            <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } id="@{id}-file" href="@routes.ViewAttachmentController.get(reference, file.id)" target="_blank">
+                   <span class="pre-wrap" aria-hidden="true">@name.getOrElse(file.fileName)</span>
+                   <span class="visually-hidden">view attached file @name.getOrElse(file.fileName)</span>
+            </a>
 } else {
     <div>
-        <span id="@{id}-file">@name.getOrElse(file.fileName)</span>
+        <span id="@{id}-file"><span class="pre-wrap">@name.getOrElse(file.fileName)</span></span>
     </div>
 }

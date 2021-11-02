@@ -1,60 +1,53 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import controllers.Tab
 @import controllers.v2.routes.LiabilityController
 @import helper._
+@import models.{Case, LiabilityOrder}
 @import models.request.AuthenticatedRequest
 @import models.viewmodels._
-@import models.{Case, LiabilityOrder}
 @import views.html.components.confirm_or_cancel_buttons
-@import views.html.forms.components._
 @import views.html.includes.main
-@import views.html.partials.{case_heading, back_link, error_summary}
+@import views.html.forms.components._
+@import views.html.partials.{error_summary, case_heading, back_link}
 
-@this(
-        main: main,
-        backLink: back_link
-)
-
+@this()
 
 @(c: Case, form : Form[Case], primaryNavTab : PrimaryNavigationTab = NoTabSelected)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("case.liability.edit.title"),
-    customPrimaryNavTab = NoTabSelected,
-    backLink = Some(backLink())
-) {
+@main(bodyClasses = None, customTitle = Some(messages("case.liability.edit.title")), customPrimaryNavTab = NoTabSelected) {
 
+    @back_link()
     @error_summary(form.errors)
 
-    <div class="govuk-form-group">
+    <div class="column-two-thirds operation-dashboard-header">
     @case_heading(
         c,
         messageKey = Some("case.v2.liability.c592.edit_details.heading"))
     </div>
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
-        <div class="govuk-form-group">
+        <div class="form-group">
 
             @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form", 'novalidate -> "novalidate") {
 
                 @CSRF.formField
 
-                <h3 class="govuk-heading-m">@messages("case.v2.liability.c592.details_edit.information")</h3>
+                <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.details_edit.information")</h3>
 
                 @input_text(
                     field = form("goodName"),
@@ -101,7 +94,7 @@
 
                 @repayment_input_checkbox(formData = form )
 
-                <h3 class="govuk-heading-m">@messages("case.v2.liability.c592.trader_information")</h3>
+                <h3 class="heading-medium mt-0">@messages("case.v2.liability.c592.trader_information")</h3>
 
                 @input_text(
                     field = form("traderName"),
@@ -124,7 +117,7 @@
                     labelClass= Some("un-bold")
                 )
 
-                <h3 class="govuk-heading-m">@messages("case.v2.liability.c592.trader_address")</h3>
+                <h3 class="heading-medium mb-1">@messages("case.v2.liability.c592.trader_address")</h3>
 
                 @input_text(
                     field = form("traderBuildingAndStreet"),
@@ -173,7 +166,7 @@
 
                 }
 
-                <h3 class="govuk-heading-m">@messages("case.liability.edit.commodity-code.information")</h3>
+                <h3 class="heading-medium mb-1">@messages("case.liability.edit.commodity-code.information")</h3>
 
                 @input_text(
                     field = form("traderCommodityCode"),
@@ -189,7 +182,7 @@
                     disableAutoComplete = true
                 )
 
-                <h3 class="govuk-heading-m">@messages("case.liability.edit.contact.information")</h3>
+                <h3 class="heading-medium mb-1">@messages("case.liability.edit.contact.information")</h3>
 
                 @input_text(
                     field = form("contact.contactName"),

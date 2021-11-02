@@ -112,13 +112,12 @@ class FileStoreConnector @Inject() (
         .get()
 
       fileStoreResponse.flatMap { response =>
-        if (response.status / 100 == 2) {
+        if (response.status / 100 == 2)
           Future.successful(Some(response.bodyAsSource))
-        } else if (response.status / 100 > 4) {
+        else if (response.status / 100 > 4)
           Future.failed(new RuntimeException(s"Unable to retrieve file $url from filestore"))
-        } else {
+        else
           Future.successful(None)
-        }
       }
     }
 

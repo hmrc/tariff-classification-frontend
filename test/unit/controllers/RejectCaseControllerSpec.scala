@@ -30,7 +30,6 @@ import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.JsonFormatters._
-import views.html.{confirm_rejected, reject_case_email, reject_case_reason}
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,10 +39,6 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   private val casesService = mock[CasesService]
   private val fileService  = mock[FileStoreService]
   private val operator     = Operator(id = "id")
-
-  private val rejectCaseReason = injector.instanceOf[reject_case_reason]
-  private val rejectCaseEmail = injector.instanceOf[reject_case_email]
-  private val confirmRejected = injector.instanceOf[confirm_rejected]
 
   private val caseWithStatusNEW      = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN     = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
@@ -71,9 +66,6 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       fileService,
       FakeDataCacheConnector,
       mcc,
-      rejectCaseReason,
-      rejectCaseEmail,
-      confirmRejected,
       realAppConfig
     )
 
@@ -84,9 +76,6 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       fileService,
       FakeDataCacheConnector,
       mcc,
-      rejectCaseReason,
-      rejectCaseEmail,
-      confirmRejected,
       realAppConfig
     )
 

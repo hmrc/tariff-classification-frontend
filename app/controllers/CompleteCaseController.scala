@@ -37,8 +37,6 @@ class CompleteCaseController @Inject() (
   decisionForm: DecisionForm,
   liabilityDetailsForm: LiabilityDetailsForm,
   mcc: MessagesControllerComponents,
-  val confirm_complete_case: views.html.confirm_complete_case,
-  val complete_case: views.html.complete_case,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -53,7 +51,7 @@ class CompleteCaseController @Inject() (
         validateAndRespond(c =>
           c.application.`type` match {
             case ApplicationType.ATAR =>
-              successful(Ok(complete_case(c, completeCaseForm)))
+              successful(Ok(views.html.complete_case(c, completeCaseForm)))
 
             case ApplicationType.LIABILITY | ApplicationType.CORRESPONDENCE | ApplicationType.MISCELLANEOUS =>
               casesService
@@ -69,7 +67,7 @@ class CompleteCaseController @Inject() (
         completeCaseForm
           .bindFromRequest()
           .fold(
-            errors => validateAndRespond(c => successful(Ok(complete_case(c, errors)))), {
+            errors => validateAndRespond(c => successful(Ok(views.html.complete_case(c, errors)))), {
               case true =>
                 validateAndRedirect(
                   casesService
@@ -86,7 +84,7 @@ class CompleteCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      renderView(c => c.status == CaseStatus.COMPLETED, c => successful(confirm_complete_case(c)))
+      renderView(c => c.status == CaseStatus.COMPLETED, c => successful(views.html.confirm_complete_case(c)))
     }
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = hasValidDecision(c)

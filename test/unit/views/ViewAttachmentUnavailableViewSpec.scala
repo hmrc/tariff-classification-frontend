@@ -20,11 +20,8 @@ import models.Operator
 import models.request.AuthenticatedRequest
 import models.response.{FileMetadata, ScanStatus}
 import views.ViewMatchers._
-import html.view_attachment_unavailable
 
 class ViewAttachmentUnavailableViewSpec extends ViewSpec {
-
-  val viewAttachmentUnavailableView = app.injector.instanceOf[view_attachment_unavailable]
 
   "View Attachment Unavailable View" should {
 
@@ -34,7 +31,7 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
       // When
       val doc = view(
-        viewAttachmentUnavailableView(fileMetadata)(
+        html.view_attachment_unavailable(fileMetadata)(
           AuthenticatedRequest(Operator("0", Some("name")), request),
           messages,
           appConfig
@@ -55,7 +52,7 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
     // When
     val doc = view(
-      viewAttachmentUnavailableView(fileMetadata)(
+      html.view_attachment_unavailable(fileMetadata)(
         AuthenticatedRequest(Operator("0", Some("name")), request),
         messages,
         appConfig
@@ -75,7 +72,7 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
     // When
     val doc = view(
-      viewAttachmentUnavailableView(fileMetadata)(
+      html.view_attachment_unavailable(fileMetadata)(
         AuthenticatedRequest(Operator("0", Some("name")), request),
         messages,
         appConfig

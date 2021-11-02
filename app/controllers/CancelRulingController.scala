@@ -43,9 +43,6 @@ class CancelRulingController @Inject() (
   fileService: FileStoreService,
   dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
-  val cancel_ruling_reason: views.html.cancel_ruling_reason,
-  val cancel_ruling_email: views.html.cancel_ruling_email,
-  val confirm_cancel_ruling: views.html.confirm_cancel_ruling,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -58,7 +55,7 @@ class CancelRulingController @Inject() (
 
   def getCancelRulingReason(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.CANCEL_CASE)) {
-      implicit request => Ok(cancel_ruling_reason(request.`case`, CancelRulingForm.form))
+      implicit request => Ok(views.html.cancel_ruling_reason(request.`case`, CancelRulingForm.form))
     }
 
   def postCancelRulingReason(reference: String): Action[AnyContent] =
@@ -67,7 +64,7 @@ class CancelRulingController @Inject() (
         CancelRulingForm.form
           .bindFromRequest()
           .fold(
-            formWithErrors => successful(BadRequest(cancel_ruling_reason(request.`case`, formWithErrors))),
+            formWithErrors => successful(BadRequest(views.html.cancel_ruling_reason(request.`case`, formWithErrors))),
             cancellation => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(CancellationCacheKey, cancellation)
@@ -103,7 +100,7 @@ class CancelRulingController @Inject() (
           maxFileSize     = appConfig.fileUploadMaxSize
         )
       )
-      .map(initiateResponse => cancel_ruling_email(request.`case`, uploadForm, initiateResponse))
+      .map(initiateResponse => views.html.cancel_ruling_email(request.`case`, uploadForm, initiateResponse))
   }
 
   def getCancelRulingEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
@@ -143,6 +140,6 @@ class CancelRulingController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(confirm_cancel_ruling(request.`case`))
+      Ok(views.html.confirm_cancel_ruling(request.`case`))
     }
 }

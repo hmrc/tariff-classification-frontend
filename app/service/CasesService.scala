@@ -182,11 +182,10 @@ class CasesService @Inject() (
     operator: Operator
   )(implicit hc: HeaderCarrier): Future[Case] = {
     val sample =
-      if (reason.contains(ReferralReason.REQUEST_SAMPLE)) {
+      if (reason.contains(ReferralReason.REQUEST_SAMPLE))
         Sample(Some(SampleStatus.AWAITING), Some(operator), Some(SampleReturn.TO_BE_CONFIRMED))
-      } else {
+      else
         original.sample
-      }
 
     for {
       updated <- connector.updateCase(
@@ -281,9 +280,9 @@ class CasesService @Inject() (
     }
 
     def sendCaseCompleteEmail(updated: Case): Future[Option[String]] =
-      if (!updated.application.isBTI) {
+      if (!updated.application.isBTI)
         Future.successful(None)
-      } else {
+      else
         emailService
           .sendCaseCompleteEmail(updated, operator)
           .map { email: EmailTemplate =>
@@ -293,7 +292,6 @@ class CasesService @Inject() (
             logger.error("Failed to send email", t)
             Some("Attempted to send an email to the applicant which failed")
         }
-      }
 
     val completedCase = setCaseCompleted(original)
 

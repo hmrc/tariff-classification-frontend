@@ -29,7 +29,6 @@ import play.api.test.Helpers._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.{confirm_supressed_case, confirm_suspended, suppress_case_email, suppress_case_reason, suspend_case_email, suspend_case_reason}
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,9 +38,6 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val casesService = mock[CasesService]
   private val fileService  = mock[FileStoreService]
   private val operator     = Operator(id = "id")
-  private val suppressCaseReason = app.injector.instanceOf[suppress_case_reason]
-  private val suppressCaseEmail = app.injector.instanceOf[suppress_case_email]
-  private val confirmSuppressedCase = app.injector.instanceOf[confirm_supressed_case]
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
@@ -63,9 +59,6 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     fileService,
     FakeDataCacheConnector,
     mcc,
-    suppressCaseReason,
-    suppressCaseEmail,
-    confirmSuppressedCase,
     realAppConfig
   )
 
@@ -75,9 +68,6 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     fileService,
     FakeDataCacheConnector,
     mcc,
-    suppressCaseReason,
-    suppressCaseEmail,
-    confirmSuppressedCase,
     realAppConfig
   )
 

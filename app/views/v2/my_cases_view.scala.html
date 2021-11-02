@@ -1,44 +1,38 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
-
+@import views.html.includes.main
 @import views.html.components.heading
 @import views.html.components.my_cases_tab
 @import models.viewmodels.{ApplicationTabViewModel, MyCasesTab, SubNavigationTab, AssignedToMeTab}
-@import views.html.includes.main
-@import views.html.layouts.full_main_content_layout
 
-@this(
-        main: main,
-        fullMainContent: full_main_content_layout,
-        my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation
-)
+
+@this(my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation)
 
 @(myCases : ApplicationTabViewModel, activeSubNav : SubNavigationTab = AssignedToMeTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
- pageTitle = messages(myCases.headingMessageKey),
- customPrimaryNavTab = MyCasesTab,
- subNavigationTab = Some(my_cases_secondary_nav(activeSubNav)),
- optCustomLayout = Some(fullMainContent(_))
-) {
+@main(bodyClasses = None, customTitle = Some(messages(myCases.headingMessageKey)), customPrimaryNavTab = MyCasesTab) {
 
- @heading(messages(myCases.headingMessageKey))
+    @my_cases_secondary_nav(activeSubNav)
 
- @my_cases_tab(myCases)
+    @* the heading component *@
+    @heading(messages(myCases.headingMessageKey))
+
+    @my_cases_tab(myCases)
+
 }

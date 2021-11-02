@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
@@ -22,28 +22,20 @@
 @import views.SearchTab.SearchTab
 @import views.forms.components.CheckOption
 @import views.html.forms.components.{input_checkbox_group, input_text}
-
+@import views.html.includes.main
 @import views.html.partials._
 @import views.partials.SearchResult
 @import models.viewmodels.NoTabSelected
-@import views.html.includes.main
-@import views.html.layouts.full_main_content_layout
-
-@this(
-        main: main,
-        fullMainContent: full_main_content_layout
-)
-
 
 @(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
     form.value.flatMap(_.status).exists(_.contains(status))
 }
-
 @formHasApplicationType(status: ApplicationType) = @{
     form.value.flatMap(_.applicationType).exists(_.contains(status))
 }
+
 
 @useSelectedTab() = @{
     selectedTab match {
@@ -52,29 +44,15 @@
     }
 }
 
-@additionalCSS = {
-    <link rel="stylesheet" href='@routes.Assets.at("stylesheets/autocomplete.css")'/>
-    <link rel="stylesheet" href='@routes.Assets.at("stylesheets/advanced-search.css")'/>
-    @*<link rel="stylesheet" href='@routes.Assets.at("stylesheets/search.css")'/>*@
-}
+@main(bodyClasses = None, customTitle = Some(messages("page.title.advanced.search")),
+    customPrimaryNavTab = NoTabSelected) {
 
-@additionalJS = {
-    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
-}
 
-@main(
-    pageTitle = messages("page.title.advanced.search"),
-    customPrimaryNavTab = NoTabSelected,
-    optCustomLayout = Some(fullMainContent(_)),
-    additionalJS = Some(additionalJS),
-    additionalCSS = Some(additionalCSS)
-) {
 
     @error_summary(form.errors)
 
-    <h1 id="advanced_search-heading" class="govuk-heading-xl">Advanced search</h1>
-    <p class="govuk-body">To narrow your search, enter multiple search terms.<p>
+    <h1 id="advanced_search-heading" class="heading-xlarge mb-3">Advanced search</h1>
+    <p>To narrow your search, enter multiple search terms.<p>
 
     @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search-results_and_filters"),
         'id -> "advanced_search-form", 'novalidate -> "novalidate") {
@@ -82,36 +60,36 @@
             field = form("case_details"),
             label = "Case details",
             hint = Some("Search the goods name or case description"),
-            inputClass = Some("govuk-!-width-three-quarters")
+            formControlClass = Some("w-75")
         )
 
         @input_text(
             field = form("commodity_code"),
             label = "Commodity code",
             hint = Some("Search by 2 digits or more"),
-            inputClass = Some("govuk-!-width-three-quarters")
+            formControlClass = Some("w-75")
         )
 
         @input_text(
-            field = form("case_source"),
-            label = "Case source",
-            hint= Some("Search the trader name, case source or case contact"),
-            inputClass = Some("govuk-!-width-three-quarters")
+        field = form("case_source"),
+        label = "Case source",
+        hint= Some("Search the trader name, case source or case contact"),
+        formControlClass = Some("w-75")
         )
 
         @input_text(
             field = form("decision_details"),
             label = "Ruling details",
             hint = Some("Search the goods description, justification or commercial denomination"),
-            inputClass = Some("govuk-!-width-three-quarters")
+            formControlClass = Some("w-75")
         )
 
         @advanced_search_keywords(form, keywords)
 
-        <div class="govuk-button-group">
-            <button id="advanced_search-search_button" class="govuk-button" type="submit" name="addToSearch" value="false">Search</button>
-            <a id="advanced_search-reset_button" class="govuk-button govuk-button--secondary" href="@controllers.routes.SearchController.search()">New search</a>
-        </div>
+        <button id="advanced_search-search_button" class="button" type="submit" name="addToSearch" value="false">
+            Search</button>
+        <a id="advanced_search-reset_button" class="secondary-button" href="@controllers.routes.SearchController.search()">
+            New search</a>
 
         @if(results.isEmpty) {
             @*
@@ -125,12 +103,12 @@
         }
 
         @if(results.isDefined && !form.hasErrors) {
-            <div id="advanced_search-results_and_filters">
+            <div id="advanced_search-results_and_filters" class="mt-3">
 
-                <h2 class="govuk-heading-l">Search results</h2>
+                <h2 class="heading-large">Search results</h2>
 
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">
+                <div class="grid-row">
+                    <div class="column-one-quarter">
 
                         <div class="advanced_search--filters_container">
                             <div class="advanced_search--filters">
@@ -144,8 +122,7 @@
                                     ),
                                     legend = Some("Apply filters"),
                                     submitOnChange = true,
-                                    divClass = Some("advanced_search--filters-checkbox"),
-                                    legendClass = Some("govuk-fieldset__legend--m")
+                                    divClass = Some("advanced_search--filters-checkbox")
                                 )
 
                                 @input_checkbox_group(
@@ -169,14 +146,17 @@
                         </div>
                     </div>
 
+
                     @defining(results.get) { searchResults: Paged[SearchResult] =>
-                        <div class="govuk-grid-column-three-quarters">
+                        <div class="column-three-quarters">
 
                             @pagination(
                                 id = "advanced_search-pagination_top",
                                 singularName = "case",
                                 pluralName = "cases",
                                 pager = searchResults,
+                                containerClass = Some("mb-2"),
+                                linksClass = Some("mb-2"),
                                 onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
                             )
 
@@ -191,10 +171,13 @@
                                 singularName = "case",
                                 pluralName = "cases",
                                 pager = searchResults,
+                                containerClass = Some("mt-2 mb-1"),
+                                linksClass = Some("mt-2"),
                                 onChange = page => controllers.routes.SearchController.search(selectedTab, search = form.get, page = page).withFragment("advanced_search_keywords")
                             )
 
-                            <a class="govuk-link" href="#advanced_search-results_and_filters">Back to top</a>
+                            <a href="#advanced_search-results_and_filters">Back to top</a>
+
                         </div>
                     }
                 </div>

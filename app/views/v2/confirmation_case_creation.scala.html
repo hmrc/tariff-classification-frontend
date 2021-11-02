@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import controllers.routes
@@ -20,7 +20,7 @@
 @import models.{BTIApplication, Case, Queue}
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
-
+@import views.html.includes.main
 @import models.LiabilityOrder
 @import models.request.AuthenticatedRequest
 @import views.html.components.confirm_or_cancel_buttons
@@ -29,52 +29,49 @@
 @import views.html.partials.{error_summary}
 @import models.viewmodels.CaseHeaderViewModel
 @import views.html.v2.{case_heading, confirmation_next_steps}
-@import views.html.includes.main
 
-@this(
-        main: main,
-        case_heading: views.html.v2.case_heading
-)
-
+@this(case_heading: views.html.v2.case_heading)
 @(c: Case, queueName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
 
 @customHeading = @{
     if(c.application.isCorrespondence) {
-        messages("page.title.create_correspondence.confirmation")
+        Some(messages("page.title.create_correspondence.confirmation"))
     }   else if(c.application.isMisc) {
-        messages("page.title.create_miscellaneous.confirmation")
+        Some(messages("page.title.create_miscellaneous.confirmation"))
     } else if(c.application.isBTI) {
-        messages("page.title.create_atar.confirmation")
+        Some(messages("page.title.create_atar.confirmation"))
     } else {
-        messages("page.title.create_liability.confirmation")
+        Some(messages("page.title.create_liability.confirmation"))
     }
 }
 
-@main(
-    pageTitle = customHeading
-) {
-    <div class="govuk-panel govuk-panel--confirmation">
-    @if(c.application.isCorrespondence|| c.application.isMisc){
-        @if(!queueName.isEmpty && c.application.isCorrespondence) {
-            <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.goodsName, queueName)</h1>
-            <div class="govuk-panel__body">The case status is now </br><strong>OPEN</strong></div>
-        }else if(queueName.isEmpty){
-        <h1 class="govuk-panel__title">@messages("create_case.dynamic_message", c.application.getType)</h1>
+@main(bodyClasses = None, customTitle = customHeading) {
+<div class="grid-row column-two-thirds">
+
+<div class="govuk-panel govuk-panel--confirmation">
+ @if(c.application.isCorrespondence|| c.application.isMisc){
+    @if(!queueName.isEmpty && c.application.isCorrespondence) {
+       <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.goodsName, queueName)</h1>
+       <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
+    }else if(queueName.isEmpty){
+    <h1 class="govuk-panel__title">@messages("create_case.dynamic_message", c.application.getType)</h1>
         <div class="govuk-panel__body">@messages("create_case.message")</div>
-        }
-        @if(!queueName.isEmpty && c.application.isMisc) {
-            <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.goodsName, queueName)</h1>
-            <div class="govuk-panel__body">The case status is now </br><strong>OPEN</strong></div>
-        }
-    }else{
-        <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message.atar", c.application.goodsName, queueName)</h1>
-        <div class="govuk-panel__body">The case status is now </br><strong>OPEN</strong></div>
-
     }
-    </div>
+    @if(!queueName.isEmpty && c.application.isMisc) {
+      <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message", c.application.goodsName, queueName)</h1>
+    <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
+    }
+ }else{
+   <h1 class="govuk-panel__title">@messages("release_case.released_dynamic_message.atar", c.application.goodsName, queueName)</h1>
+   <div class="govuk-panel__body">The case status is now </br><span class="bold">OPEN</span></div>
 
-    @confirmation_next_steps(
-        linkText = messages("back.gateway"),
-        backHref = GatewayCasesController.displayGatewayCases()
+ }
+</div>
+
+@confirmation_next_steps(
+    linkText = messages("back.gateway"),
+    backHref = GatewayCasesController.displayGatewayCases()
     )
 }
+</div>

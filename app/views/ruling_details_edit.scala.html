@@ -1,194 +1,193 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
+@import controllers.Tab
 @import config.AppConfig
 @import helper._
+@import models.{BTIApplication, Case, StoredAttachment}
 @import models.forms.DecisionFormData
 @import models.request.AuthenticatedRequest
 @import models.response.ScanStatus
-@import models.viewmodels.NoTabSelected
-@import models.{BTIApplication, Case, StoredAttachment}
-@import views.html.forms.components.{edit_ruling_input_checkbox, input_text, input_textarea}
 @import views.html.includes.main
-@import views.html.layouts.full_main_content_layout
-@import views.html.partials.{attachments_edit_list, case_heading, back_link, error_summary}
+@import views.html.forms.components.{input_text, input_textarea, edit_ruling_input_checkbox}
+@import views.html.partials.{attachments_edit_list, back_link, case_heading, tab_heading}
+@import views.html.partials.error_summary
 @import utils.Dates
 
-@this(
-        main: main,
-        backLink: back_link,
-        fullMainContent: full_main_content_layout
-)
-
-
+@import models.viewmodels.NoTabSelected
 @(c: Case, files: Seq[StoredAttachment], decisionForm: Form[DecisionFormData], startAtTabIndex: Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("page.title.edit.ruling"),
-    customPrimaryNavTab = NoTabSelected,
-    backLink = Some(backLink()),
-    optCustomLayout = Some(fullMainContent(_))
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.edit.ruling")), customPrimaryNavTab = NoTabSelected) {
     @defining(c.application.asATAR) { btiApp: BTIApplication =>
+
+        @back_link()
 
         @error_summary(decisionForm.errors)
 
-        @case_heading( c, messageKey = Some("case.decision.edit-ruling-details.heading"))
-
-        <div class="govuk-form-group">
-
-            <h2 class="govuk-heading-m">@messages("case.decision.information-applicant")</h2>
-
-            <dl class="govuk-summary-list govuk-summary-list--no-border">
-                <div class="govuk-summary-list__row">
-                    <dt id="application_submittedDate" class="govuk-summary-list__key">
-                        @messages("pdf.ruling.section.date.submitted")
-                    </dt>
-                    <dd class="govuk-summary-list__value" id="application_submittedDateValue">
-                        @Dates.format(c.createdDate)
-                    </dd>
-                </div>
-
-
-                <div class="govuk-summary-list__row">
-                    <dt id="application_envisagedCommodityCode" class="govuk-summary-list__key">
-                        @messages("case.application.suggested-commodity-code")
-                    </dt>
-                    <dd class="govuk-summary-list__value" id="envisagedCommodityCodeValue">
-                        @btiApp.envisagedCommodityCode.getOrElse("")
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt id="application_goodDescription" class="govuk-summary-list__key">
-                        @messages("case.application.suggested-goods-description-edit-ruling")
-                    </dt>
-                    <dd class="govuk-summary-list__value" id="application_goodDescriptionValue">
-                        @btiApp.goodDescription
-                    </dd>
-                </div>
-            </dl>
+        <div class="column-two-thirds operation-dashboard-header">
+            @case_heading( c, messageKey = Some("case.decision.edit-ruling-details.heading"))
         </div>
 
-        <hr/>
+        <div class="form-group">
 
-        <h2 class="govuk-heading-m">@messages("case.decision.ruling-details")</h2>
+            <h2 class="heading-medium mb-1">@messages("case.decision.information-applicant")</h2>
 
-        <dl class="govuk-summary-list govuk-summary-list--no-border">
-            <div class="govuk-summary-list__row">
-                <div id="start-date-id" class="govuk-summary-list__key">
-                    Start date
-                </div>
-                <div class="govuk-summary-list__value" id="start-date-id-text">
-                    Start date will be set when case is completed.
-                </div>
-            </div>
-
-            <div class="govuk-summary-list__row">
-                <div id="end-date-id" class="govuk-summary-list__key">
-                    Expiry date
-                </div>
-                <div class="govuk-summary-list__value" id="end-date-id-text">
-                    Expiry date will be set 3 years from start date unless otherwise specified.
-                </div>
-            </div>
-        </dl>
-
-        @form(action = controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
-
-            @CSRF.formField
-            <dl class="govuk-summary-list govuk-summary-list--no-border">
-                <div class="govuk-summary-list__row">
-                    <div class="govuk-summary-list__key"></div>
-                    <div class="govuk-summary-list__value">
-                        @edit_ruling_input_checkbox(formData = decisionForm )
+            <div class="text-grey">
+                <div class="grid-row">
+                    <div id="application_submittedDate" class="column-one-third">
+                        @messages("pdf.ruling.section.date.submitted")
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="application_submittedDateValue">@{Dates.format(c.createdDate)}</p>
                     </div>
                 </div>
-            </dl>
-            @input_text(
-                field = decisionForm("bindingCommodityCode"),
-                label = messages("case.decision.commodity-code"),
-                disableAutoComplete = true
-            )
 
-            @input_textarea(
-                field = decisionForm("goodsDescription"),
-                label = messages("case.decision.goods-description")
-            )
+                <div class="grid-row">
+                    <div id="application_envisagedCommodityCode" class="column-one-third">
+                        <p>@messages("case.application.suggested-commodity-code")</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="envisagedCommodityCodeValue">@{
+                            btiApp.envisagedCommodityCode.getOrElse("")
+                        }</p>
+                    </div>
+                </div>
+                <div class="grid-row">
+                    <div id="application_goodDescription" class="column-one-third">
+                        <p>@messages("case.application.suggested-goods-description-edit-ruling")</p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p id="application_goodDescriptionValue">@{
+                            btiApp.goodDescription
+                        }</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-0"/>
 
-            @input_textarea(
-                field = decisionForm("justification"),
-                label = messages("case.decision.justification")
-            )
+            <h2 class="heading-medium mt-0">@messages("case.decision.ruling-details")</h2>
 
-            <h2 class="govuk-heading-m">@messages("case.menu.ruling-not-published-information")</h2>
+            <div class="grid-row">
+                <div id="start-date-id" class="column-one-third">
+                    <p>Start date</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="start-date-id-text">Start date will be set when case is completed.</p>
+                </div>
+            </div>
 
-            @input_textarea(
-                field = decisionForm("methodCommercialDenomination"),
-                label = messages("case.decision.method-commercial-denomination-edit-ruling")
-            )
+            <div class="grid-row">
+                <div id="end-date-id" class="column-one-third">
+                    <p>Expiry date</p>
+                </div>
+                <div class="column-two-thirds">
+                    <p id="end-date-id-text">Expiry date will be set 3 years from start date unless otherwise specified.</p>
 
-            @input_textarea(
-                field = decisionForm("methodSearch"),
-                label = messages("case.decision.method-search")
-            )
+                </div>
+            </div>
 
-            @input_textarea(
-                field = decisionForm("methodExclusion"),
-                label = messages("case.decision.method-exclusion")
-            )
+            @form(action = controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
 
+                @CSRF.formField
 
-            <div class="govuk-form-group">
-                <h2 class="govuk-heading-m">@messages("case.decision.holder.information")</h2>
+                <div class="grid-row">
+                    <div class="column-one-third">
+                        <p></p>
+                    </div>
+                    <div class="column-two-thirds">
+                        <p>@edit_ruling_input_checkbox(formData = decisionForm )
+                        </p>
+                    </div>
+                </div>
+
+                @input_text(
+                    field = decisionForm("bindingCommodityCode"),
+                    label = messages("case.decision.commodity-code"),
+                    disableAutoComplete = true
+                )
 
                 @input_textarea(
+                    field = decisionForm("goodsDescription"),
+                    label = messages("case.decision.goods-description")
+                )
+
+                @input_textarea(
+                    field = decisionForm("justification"),
+                    label = messages("case.decision.justification")
+                )
+
+                <h2 class="heading-medium mb-2">@messages("case.menu.ruling-not-published-information")</h2>
+
+                @input_textarea(
+                    field = decisionForm("methodCommercialDenomination"),
+                    label = messages("case.decision.method-commercial-denomination-edit-ruling")
+                )
+
+                @input_textarea(
+                    field = decisionForm("methodSearch"),
+                    label = messages("case.decision.method-search")
+                )
+
+                @input_textarea(
+                    field = decisionForm("methodExclusion"),
+                    label = messages("case.decision.method-exclusion")
+                )
+
+
+                <div class="form-group">
+                    <h2 class="heading-medium">@messages("case.decision.holder.information")</h2>
+
+                    @input_textarea(
                     field = decisionForm("explanation"),
                     label = messages("case.decision.explanation.label"),
                     hint = Some(messages("case.decision.explanation.hint"))
-                )
+                    )
 
-            </div>
+                </div>
 
-            <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                        <h2 class="govuk-fieldset__heading">@messages("case.decision.attachments")</h2>
-                    </legend>
-                    @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { attachments: Seq[StoredAttachment] =>
-                        @if(attachments.isEmpty) {
-                            <span id="edit-ruling-no_attachments" class="govuk-body">There are no attachments for this case.</span>
-                        } else {
-                            <span class="govuk-body">All files selected will be published on the 'Search for Advance Tariff Rulings' website.</span>
+                <div class="form-group">
+                    <fieldset>
+                        <legend class="w-100 remove-overflow">
+                        <h2 class="heading-medium">@messages("case.decision.attachments")</h2>
+                        @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { attachments: Seq[StoredAttachment] =>
+                            @if(attachments.isEmpty) {
+                                <span id="edit-ruling-no_attachments" class="body-text mb-0">
+                                    There are no attachments for this case.</span>
+                            } else {
+                                <span class="body-text">
+                                    All files selected will be published on the 'Search for Advance Tariff Rulings' website.
+                                </span>
 
                             @attachments_edit_list("attachments", attachments, caseRef = c.reference)
+                            }
                         }
-                    }
-                </fieldset>
-            </div>
+                        </legend>
+                    </fieldset>
+                </div>
 
-            <div class="govuk-form-group">
-                <button id="submit" class="govuk-button" type="submit">@messages("case.sample.status.change-status-confirm")</button>
-                <p class="govuk-body">
-                    <a href="@controllers.routes.CaseController.rulingDetails(c.reference)" class="govuk-link" id="cancel-button">
-                    @messages("case.v2.liability.c592.details_edit.cancel_button")
-                    </a>
-                </p>
-            </div>
-        }
-    </div>
+                <div class="form-group">
+                    <button id="submit" class="button" type="submit">@messages("case.sample.status.change-status-confirm")</button>
+                </div>
+
+                <div class="form-group">
+                    <a href="@controllers.routes.CaseController.rulingDetails(c.reference)" class="secondary-button pl-0-important" id="cancel-button">
+                        @messages("case.v2.liability.c592.details_edit.cancel_button")</a>
+                </div>
+
+            }
+        </div>
     }
 }

@@ -15,71 +15,78 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes
 @import models.request.AuthenticatedRequest
+@import controllers.routes
+
+@import models.{Case, RejectReason, CaseRejection}
 @import models.viewmodels.NoTabSelected
-@import models.{Case, CaseRejection, RejectReason}
 @import views.forms.components.RadioOption
 @import views.html.components.{confirm_or_cancel_buttons, warning}
-@import views.html.forms.components.{input_radiogroup, input_textarea}
-@import views.html.includes.main
-@import views.html.partials.{case_heading, back_link, error_summary}
+@import views.html.forms.components.{input_textarea, input_radiogroup}
 
-@this(
-        main: main,
-        backLink: back_link
-)
+@import views.html.includes.main
+@import views.html.partials.case_heading
+@import views.html.partials.statuses.status_change_upload
+@import views.html.partials.{error_summary, back_link}
+
 
 @(c: Case, form: Form[CaseRejection])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("page.title.reject.case.reason", c.application.goodsName),
-    customPrimaryNavTab = NoTabSelected,
-    backLink = Some(backLink())
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.reject.case.reason", c.application.goodsName)),
+customPrimaryNavTab = NoTabSelected) {
+
+    @back_link()
+
     @error_summary(form.errors)
 
-    @case_heading(c, messageKey = Some("change_case_status.rejected.reason.heading"))
+    <div class="column-two-thirds pl-0">
+        @case_heading(c, messageKey = Some("change_case_status.rejected.reason.heading"))
+    </div>
 
-    @helper.form(
-        action = routes.RejectCaseController.postRejectCaseReason(c.reference),
-        'enctype -> "multipart/form-data",
-        'id -> "reject_case",
-        'novalidate -> "novalidate"
-    ) {
+    <div class="grid-row">
+        <div class="column-full">
 
-        @helper.CSRF.formField
+            @helper.form(
+                action = routes.RejectCaseController.postRejectCaseReason(c.reference),
+                'enctype -> "multipart/form-data",
+                'id -> "reject_case",
+                'novalidate -> "novalidate"
+            ) {
 
-        @input_radiogroup(
-            field = form("reason"),
-            options = RejectReason.values.toSeq.sorted.map(
-                reason => RadioOption(reason.toString, RejectReason.format(reason))
-            ),
-            label = Some(messages("change_case_status.rejected.title")),
-            labelClass = Some("heading-medium"),
-            id = "reason",
-            customErrorMessage = Some(messages("error.empty.reject.reason")),
-            customGroupId = Some("reason")
-        )
+                @helper.CSRF.formField
 
-        @input_textarea(
-            field = form("note"),
-            label = "Add a case note",
-            labelClass = Some("heading-medium"),
-            hint = Some(messages("change_case_status.rejected.note.hint")),
-            customErrorMessage = Some(messages("error.empty.reject.note"))
-        )
+                @input_radiogroup(
+                    field = form("reason"),
+                    options = RejectReason.values.toSeq.sorted.map(
+                                reason => RadioOption(reason.toString, RejectReason.format(reason))
+                    ),
+                    label = Some(messages("change_case_status.rejected.title")),
+                    labelClass = Some("heading-medium"),
+                    id = "reason",
+                    customErrorMessage = Some(messages("error.empty.reject.reason")),
+                    customGroupId = Some("reason")
+                )
 
-        @warning(
-            "This case cannot be reopened after it has been rejected.",
-            containerClass = "govuk-form-group"
-        )
+                @input_textarea(
+                    field = form("note"),
+                    label = "Add a case note",
+                    labelClass = Some("heading-medium"),
+                    hint = Some(messages("change_case_status.rejected.note.hint")),
+                    customErrorMessage = Some(messages("error.empty.reject.note"))
+                )
 
-        @confirm_or_cancel_buttons(
-            id = "reject_case",
-            confirmText = messages("change_case_status.continue"),
-            cancelText = messages("change_case_status.cancel.action"),
-            cancelHref = routes.ChangeCaseStatusController.onPageLoad(c.reference)
-        )
-    }
+                @warning(
+                    "This case cannot be reopened after it has been rejected.",
+                    containerClass = "mb-4"
+                )
+
+                @confirm_or_cancel_buttons(
+                    id = "reject_case",
+                    confirmText = messages("change_case_status.continue"),
+                    cancelText = messages("change_case_status.cancel.action"),
+                    cancelHref = routes.ChangeCaseStatusController.onPageLoad(c.reference)
+                )
+            }
+        </div>
+    </div>
 }

@@ -17,50 +17,36 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import views.html.forms.search_box
-
+@import views.html.includes.main
 @import models.Permission
 @import models.viewmodels.NoTabSelected
-@import views.html.includes.main
-
-@this(
-    main: main
-)
-
 @()(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@additionalCSS = {
-    <link rel="stylesheet" href='@routes.Assets.at("stylesheets/search.css")'/>
-}
+@main(bodyClasses = None, customPrimaryNavTab = NoTabSelected) {
 
-@main(
-    pageTitle = messages("service.name"),
-    customPrimaryNavTab = NoTabSelected,
-    additionalCSS = Some(additionalCSS)
-) {
+    <h1 id="read_only_home-heading" class="heading-xlarge">Find and view a case</h1>
 
-    <h1 id="read_only_home-heading" class="govuk-heading-xl">Find and view a case</h1>
-
-    <div id="read_only_home-search" class="govuk-form-group">
+    <div id="read_only_home-search" class="form-group">
         @if(request.hasPermission(Permission.SEARCH)) {
             @search_box(
-                label = messages("find.and.view.case.label")
+                label = messages("find.and.view.case.label"),
+                containerClass = "w-30"
             )
         }
-    </div>
-    <div class="govuk-form-group">
+
         @if(request.hasPermission(Permission.ADVANCED_SEARCH)) {
-            <div class="govuk-body">
+            <div class="mt-30">
                 <span>To search by company name, commodity code, ruling details, or keywords use the </span>
-                <a href="@controllers.routes.SearchController.search()" class="govuk-link">advanced search</a><span>.</span>
+                <a href="@controllers.routes.SearchController.search()">advanced search</a><span>.</span>
             </div>
         }
     </div>
 
-    <h2 class="govuk-heading-m">What you can do in the case view</h2>
+    <h2 class="heading-medium">What you can do in the case view</h2>
 
-    <p class="govuk-body">You'll be able to:</p>
+    <p>You'll be able to:</p>
 
-    <ul class="govuk-list govuk-list--bullet">
+    <ul class="list list-bullet">
         <li>view the full case</li>
         <li>view and print a copy of the ruling</li>
         <li>view and print a copy of the original application</li>

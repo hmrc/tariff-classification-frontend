@@ -24,12 +24,11 @@ import views.html.release_or_suppress
 class ReleaseOrSuppressViewSpec extends ViewSpec {
 
   val form = new CaseStatusRadioInputFormProvider()()
-  val releaseOrSuppressView: release_or_suppress = app.injector.instanceOf[release_or_suppress]
 
   "Release or Suppress view" should {
     "contain a case heading" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(releaseOrSuppressView(c, form))
+      val doc = view(release_or_suppress(c, form))
 
       doc                                should containElementWithID("case-heading")
       doc.getElementById("case-heading") should containText(c.status.toString)
@@ -37,14 +36,14 @@ class ReleaseOrSuppressViewSpec extends ViewSpec {
     }
     "contain case details" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(releaseOrSuppressView(c, form))
+      val doc = view(release_or_suppress(c, form))
 
       doc should containElementWithID("case-reference")
     }
 
     "contain correct radio button options" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(releaseOrSuppressView(c, form))
+      val doc = view(release_or_suppress(c, form))
 
       doc shouldNot containText(messages("change_case_status.complete"))
       doc shouldNot containText(messages("change_case_status.refer"))
@@ -58,14 +57,14 @@ class ReleaseOrSuppressViewSpec extends ViewSpec {
 
     "contain legend with the correct text" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(releaseOrSuppressView(c, form))
+      val doc = view(release_or_suppress(c, form))
 
       doc should containText(messages("action_this_case_status_legend"))
     }
 
     "contain correct cancel link" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(releaseOrSuppressView(c, form))
+      val doc = view(release_or_suppress(c, form))
 
       doc.getElementById("change_case_status-cancel_button") should haveAttribute(
         "href",

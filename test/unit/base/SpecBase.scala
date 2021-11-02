@@ -20,6 +20,7 @@ import akka.stream.Materializer
 import config.AppConfig
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.Injector
 import play.api.inject.bind
@@ -33,7 +34,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import utils.{TestMetrics, UnitSpec}
 import com.kenshoo.play.metrics.Metrics
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.PlayBodyParsers
 
 trait SpecBase

@@ -23,13 +23,13 @@ import config.AppConfig
 import models.forms.CaseStatusRadioInputFormProvider
 import models.{CaseStatusRadioInput, Permission}
 import service.CasesService
+import views.html.release_or_suppress
 
 import scala.concurrent.Future.successful
 
 class ReleaseOrSuppressCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
-  val release_or_suppress: views.html.release_or_suppress,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)

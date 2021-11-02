@@ -22,21 +22,23 @@
         useTabIndex : Option[Int] = None
 )(implicit messages: Messages)
 
-<div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}">
-    <label class="govuk-label" for="@{field.id}">
-        @label
+<div class="form-group @if(field.hasErrors){form-group-error}">
+    <label class="form-label" for="@{field.id}">
+        <span>@label</span>
+        @field.errors.map { error =>
+            <span class="error-message" id="error-message-@{field.id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)</span>
+        }
     </label>
-    @field.errors.map { error =>
-        <span class="govuk-error-message" id="error-message-@{field.id}-input"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)</span>
-    }
-    <input
-    type="file"
-    class="govuk-file-upload @if(field.hasErrors) {govuk-file-upload--error }"
-    id="@{field.id}"
-    name="@{field.name}"
-    @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
-    @if(accept.isDefined) { accept="@{accept.get}" }
-    @if(field.hasErrors){  aria-describedby="error-message-@{field.id}-input" }
-    />
+    <div class="form-control-wrapper">
+        <input
+        type="file"
+        class="@inputClass"
+        id="@{field.id}"
+        name="@{field.name}"
+        @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
+        @if(accept.isDefined) { accept="@{accept.get}" }
+        @if(field.hasErrors){  aria-describedby="error-message-@{field.id}-input" }
+        />
+    </div>
 </div>
 

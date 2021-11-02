@@ -36,7 +36,7 @@ object SampleStatus extends Enumeration {
       case _                           => "none"
     }
 
-    if (initialCaps){ text.capitalize } else { text }
+    if (initialCaps) text.capitalize else text
   }
 
 }

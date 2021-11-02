@@ -19,6 +19,6 @@
 @(caseReference: String)
 
 <div class="confirm-cancel-alignment">
- <button id="appeal_choose_status-submit" class="govuk-button" type="submit">Confirm status</button>
- <p class="govuk-body"><a id="appeal_choose_status-cancel" class="govuk-link" href="@routes.AppealCaseController.appealDetails(caseReference)">Cancel changes</a></p>
+ <button id="appeal_choose_status-submit" class="button" type="submit">Confirm status</button>
+ <a id="appeal_choose_status-cancel" href="@routes.AppealCaseController.appealDetails(caseReference)">Cancel changes</a>
 </div>

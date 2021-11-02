@@ -1,48 +1,49 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
-@import controllers.v2.routes
+@import helper.CSRF
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.NoTabSelected
+@import models.Operator
 @import views.html.includes.main
+@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
+@import models.viewmodels.{NoTabSelected, ApplicationTabViewModel}
+@import controllers.v2.routes
+@import views.html.partials.{back_link}
 
 @this(
-        main: main
 )
 
-
 @(
-        user: String
+user: String
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
- pageTitle = messages("users.user.delete.done", user),
- customPrimaryNavTab = NoTabSelected
+bodyClasses = None,
+customTitle = Some(messages("users.user.delete.done", user)),
+customPrimaryNavTab = NoTabSelected
 ) {
-
- <div class="govuk-form-group">
-  <div class="govuk-panel govuk-panel--confirmation" data-gtm-vis-recent-on-screen-8267218_2337="228" data-gtm-vis-first-on-screen-8267218_2337="228" data-gtm-vis-total-visible-time-8267218_2337="100" data-gtm-vis-has-fired-8267218_2337="1">
-   <h1 class="govuk-panel__title">
-    @messages("users.user.delete.done", user)
-   </h1>
-  </div>
-
-  <h3 class="govuk-heading-l">Next steps</h3>
-  <p class="govuk-body"><a id="back-manage-users-link" class="govuk-link" href="@routes.ManageUserController.displayManageUsers">Go back to manage users</a></p>
+<div id="confirm_complete_id" class="column-two-thirds mt-30">
+ <div class="govuk-panel govuk-panel--confirmation" data-gtm-vis-recent-on-screen-8267218_2337="228" data-gtm-vis-first-on-screen-8267218_2337="228" data-gtm-vis-total-visible-time-8267218_2337="100" data-gtm-vis-has-fired-8267218_2337="1">
+  <h1 class="heading-xlarge mt-0">@messages("users.user.delete.done", user)</h1>
  </div>
+
+ <h3 class="heading-large mt-0 mb-2 pt-20">Next steps</h3>
+ <p class="govuk-body"><a id="back-manage-users-link" href="@routes.ManageUserController.displayManageUsers">Go back to manage users</a></p>
+
+</div>
 }
 

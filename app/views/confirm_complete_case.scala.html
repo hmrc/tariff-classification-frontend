@@ -1,67 +1,65 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
-@import controllers.v2.routes.AllOpenCasesController
-@import models.Case
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
+@import models.Case
+@import controllers.v2.routes.AllOpenCasesController
 @import views.html.includes.main
+@import views.html.partials.{back_link, case_heading}
+@import models.ApplicationType
+@import models.viewmodels.{NoTabSelected, CorrespondenceTab, LiabilitiesTab, ATaRTab, MiscellaneousTab}
 @import views.html.v2.confirmation_next_steps
 @import utils.Dates
-
-@this(
-        main: main
-)
-
-
+@import views.html.components.success_panel
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 
 @callToRedirect =@{
-    if(c.application.isCorrespondence) {
-        AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)
-    } else if(c.application.isMisc) {
-        AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)
-    } else if(c.application.isBTI){
-        AllOpenCasesController.displayAllOpenCases(ATaRTab)
-    }else {
-        AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)
-    }
+if(c.application.isCorrespondence) {
+AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)
+} else if(c.application.isMisc) {
+AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)
+} else if(c.application.isBTI){
+AllOpenCasesController.displayAllOpenCases(ATaRTab)
+}else {
+AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)
+}
 }
 
-@main(
-    pageTitle = messages("page.title.case.completed")
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.completed"))) {
+<div class="grid-row column-two-thirds" id="confirm_complete_id">
 
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">@messages("complete_case.completed.header", c.application.goodsName, c.application.getType)</h1>
         @if(c.application.isLiabilityOrder|| c.application.isBTI){
 
 
-            @c.decision.map(_.effectiveEndDate.map(
-                date => Html(messages("complete_case.completed.subheader", Dates.format(date)))
-            )
-            )
+        @c.decision.map(_.effectiveEndDate.map(
+        date => Html(messages("complete_case.completed.subheader", Dates.format(date)))
+        )
+        )
         }
+
     </div>
 
 
     @confirmation_next_steps(
-        linkText = messages("back.open_cases.caseType", c.application.getType),
-        backHref = callToRedirect
+    linkText = messages("back.open_cases.caseType", c.application.getType),
+    backHref = callToRedirect
     )
-}
+    }
+</div>

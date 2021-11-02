@@ -194,7 +194,7 @@ class MyCasesViewSpec extends ViewSpec {
     }
 
     "contain my_cases_secondary_navigation" in {
-      val doc = view(myCasesView(assignedToMeCasesTab)(authenticatedManagerFakeRequest, messages, appConfig))
+      val doc = view(myCasesView(assignedToMeCasesTab))
 
       doc should containElementWithID("my-cases-sub-nav")
     }
@@ -242,7 +242,7 @@ class MyCasesViewSpec extends ViewSpec {
     // Referred By Me Sub Menu
 
     "contain my_cases_secondary_navigation for Referred by me" in {
-      val doc = view(myCasesView(referredByMeCasesTab)(authenticatedManagerFakeRequest, messages, appConfig))
+      val doc = view(myCasesView(referredByMeCasesTab))
 
       doc should containElementWithID("my-cases-sub-nav")
     }
@@ -326,7 +326,8 @@ class MyCasesViewSpec extends ViewSpec {
     // Completed by me Sub Menu
 
     "contain my_cases_secondary_navigation for Completed by me" in {
-      val doc = view(myCasesView(completedByMeCasesTab)(authenticatedManagerFakeRequest, messages, appConfig))
+      val doc = view(myCasesView(completedByMeCasesTab))
+
       doc should containElementWithID("my-cases-sub-nav")
     }
 

@@ -32,10 +32,7 @@ class PdfDownloadController @Inject() (
   mcc: MessagesControllerComponents,
   fileStore: FileStoreService,
   caseService: CasesService,
-  implicit val appConfig: AppConfig,
-  val case_not_found: views.html.case_not_found,
-  val ruling_not_found: views.html.ruling_not_found,
-  val document_not_found: views.html.document_not_found
+  implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
@@ -59,14 +56,14 @@ class PdfDownloadController @Inject() (
 
             val messages     = request.messages
             val documentType = messages("errors.document-not-found.ruling-certificate")
-            pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
+            pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
 
           case None =>
-            successful(NotFound(ruling_not_found(reference)))
+            successful(NotFound(views.html.ruling_not_found(reference)))
         }
 
       case None =>
-        successful(NotFound(case_not_found(reference)))
+        successful(NotFound(views.html.case_not_found(reference)))
     }
   }
 
@@ -89,14 +86,14 @@ class PdfDownloadController @Inject() (
 
             val messages     = request.messages
             val documentType = messages("errors.document-not-found.ruling-certificate")
-            pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
+            pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
 
           case None =>
-            successful(NotFound(ruling_not_found(reference)))
+            successful(NotFound(views.html.ruling_not_found(reference)))
         }
 
       case None =>
-        successful(NotFound(case_not_found(reference)))
+        successful(NotFound(views.html.case_not_found(reference)))
     }
   }
 
@@ -117,10 +114,10 @@ class PdfDownloadController @Inject() (
 
         val messages     = request.messages
         val documentType = messages("errors.document-not-found.application")
-        pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
+        pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
 
       case None =>
-        successful(NotFound(case_not_found(reference)))
+        successful(NotFound(views.html.case_not_found(reference)))
     }
   }
 }

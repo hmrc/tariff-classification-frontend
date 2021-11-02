@@ -32,12 +32,11 @@
         id = "sample_return_form",
         preSelect = false,
         label = Some(messages("case.application.returning-samples.header", c.application.goodsName)),
-        labelClass = Some ("govuk-visually-hidden")
+        labelClass = Some ("visually-hidden")
     )
-    <div class="govuk-button-group">
-        <button id="sample_return_form-submit" class="govuk-button" type="submit">@messages("case.sample.return.change-return-confirm")</button>
+    <div class="confirm-cancel-alignment">
+        <button id="sample_return_form-submit" class="button" type="submit">@messages("case.sample.return.change-return-confirm")</button>
+        <a id="sample_return_form-cancel" class="mt-15" href="@routes.CaseController.sampleDetails(c.reference)">@messages("case.sample.return.change-return-cancel")</a>
     </div>
-    <a id="sample_return_form-cancel" class="govuk-link" href="@routes.CaseController.sampleDetails(c.reference)">@messages("case.sample.return.change-return-cancel")</a>
-
 }
 

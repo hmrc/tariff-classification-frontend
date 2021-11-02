@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
@@ -27,95 +27,105 @@
 @import controllers.Tab
 
 @(liabTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
- @error_summary(form.errors)
+@error_summary(form.errors)
 
- <h2 class="govuk-heading-l">@messages("users.user.liability.heading")</h2>
- @helper.form(action = MoveCasesController.postMoveLiabCases(userID).withFragment(Tab.LIABILITY_TAB.name), 'id -> "liabilityCases", 'novalidate -> "novalidate") {
-  @helper.CSRF.formField
-  <div class="govuk-form-group">
-   <button id="move-liab-cases" class="govuk-button" type="submit">Move selected cases</button>
-  </div>
-  @form("liabilityCases").errors.map { error =>
-   <div class="govuk-form-group">
-    <fieldset class="govuk-fieldset">
-     <legend class="advanced_search--filters_heading">
-      <span class="govuk-error-message" id="error-message-@{form("liabilityCases").id}-input"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
-     </legend>
-    </fieldset>
-   </div>
-  }
-  <table id="@{liabTab.tabMessageKey}-table" class="govuk-table">
-   <caption class="govuk-visually-hidden">@messages("users.user.liability.heading")</caption>
-   <thead class="govuk-table__head">
-    <tr id="@{liabTab.tabMessageKey}-details" class="govuk-table__row">
-     <th id="@{liabTab.tabMessageKey}-select" class="govuk-table__header" scope="col">
-      Select
-     </th>
-     <th id="@{liabTab.tabMessageKey}-reference" class="govuk-table__header" scope="col">
-      Reference
-     </th>
-     <th id="@{liabTab.tabMessageKey}-goods" class="govuk-table__header" scope="col">
-      Goods
-     </th>
-     <th id="@{liabTab.tabMessageKey}-trader" class="govuk-table__header" scope="col">
-      Trader
-     </th>
-     <th id="@{liabTab.tabMessageKey}-elapsed-days" class="govuk-table__header" scope="col">
-      Elapsed days
-     </th>
-     <th id="@{liabTab.tabMessageKey}-type" class="govuk-table__header" scope="col">
-      Type
-     </th>
-     <th id="@{liabTab.tabMessageKey}-status" class="govuk-table__header" scope="col">
-      Status
-     </th>
-     <th id="@{liabTab.tabMessageKey}-team" class="govuk-table__header" scope="col">
-      Team
-     </th>
-    </tr>
-   </thead>
-   <tbody>
-   @for((result, index) <- liabTab.searchResult.results.zipWithIndex) {
+<h2 class="heading-large mt-0 mb-30">@messages("users.user.liability.heading")</h2>
+@helper.form(action = MoveCasesController.postMoveLiabCases(userID).withFragment(Tab.LIABILITY_TAB.name), 'id -> "liabilityCases", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
+<div class="form-group">
+ <button id="move-liab-cases" class="button" type="submit">Move selected cases</button>
+</div>
+@form("liabilityCases").errors.map { error =>
+<div class="form-group mb-0">
+ <fieldset>
+  <legend class="advanced_search--filters_heading">
+   <span class="error-message" id="error-message-@{form("liabilityCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+  </legend>
+ </fieldset>
+</div>
+}
+<table id="@{liabTab.tabMessageKey}-table">
+ <caption class="visually-hidden">@messages("users.user.liability.heading")</caption>
+ <thead class="govuk-table__head">
+  <tr id="@{liabTab.tabMessageKey}-details" class="grid-row mb-2">
+    <th id="@{liabTab.tabMessageKey}-select" class="bold w-0" scope="col">
+     Select
+    </th>
+    <th id="@{liabTab.tabMessageKey}-reference" class="bold w-0" scope="col">
+     Reference
+    </th>
+    <th id="@{liabTab.tabMessageKey}-goods" class="bold w-0" scope="col">
+     Goods
+    </th>
+    <th id="@{liabTab.tabMessageKey}-trader" class="bold w-0" scope="col">
+     Trader
+    </th>
+    <th id="@{liabTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
+     Elapsed days
+    </th>
+    <th id="@{liabTab.tabMessageKey}-type" class="bold w-0" scope="col">
+     Type
+    </th>
+    <th id="@{liabTab.tabMessageKey}-status" class="bold w-0" scope="col">
+     Status
+    </th>
+    <th id="@{liabTab.tabMessageKey}-team" class="bold w-0" scope="col">
+     Team
+    </th>
+  </tr>
+ </thead>
+ <tbody>
+ @for((result, index) <- liabTab.searchResult.results.zipWithIndex) {
 
-    @defining(result.application.asLiabilityOrder) { liab =>
+ @defining(result.application.asLiabilityOrder) { liab =>
 
-     <tr id="@{liabTab.tabMessageKey}-details-@index" class="govuk-table__row @if(form("liabilityCases").hasErrors){govuk-form-group--error}">
-      <td id="@{liabTab.tabMessageKey}-select-@index" class="govuk-table__cell">
-      @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
-        <fieldset class="govuk-fieldset">
-        @defining(s"${form("liabilityCases").id}-$index") { id: String =>
-         <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-          <div class="govuk-checkboxes__item">
-           <input class="govuk-checkboxes__input" id="@{id}" name="@{form("liabilityCases").name}[@index]" type="checkbox" value="@{result.reference}" @if(form("liabilityCases").hasErrors){aria-describedby="error-message-@{form("liabilityCases").id}-input"} @if(form("liabilityCases").value.contains(result.reference)){checked="checked"}>
-           <label for="@{id}" class="govuk-label govuk-checkboxes__label"><span class="govuk-visually-hidden">@result.reference</span></label>
-          </div>
-         </div>
-        }
-        </fieldset>
+ <tr id="@{liabTab.tabMessageKey}-details-@index">
+  <td id="@{liabTab.tabMessageKey}-select-@index" @if(form("liabilityCases").hasErrors){class="form-group-error"}>
+   @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
+   <div class="form-group">
+    <div class="multiple-choice">
+     <fieldset>
+      @defining(s"${form("liabilityCases").id}-$index") { id: String =>
+      <input
+              class="form-control"
+              type="checkbox"
+              id="@{id}"
+      name="@{form("liabilityCases").name}[@index]"
+      value="@{result.reference}"
+      @if(form("liabilityCases").hasErrors){
+      aria-describedby="error-message-@{id}-input"
       }
-      </td>
-      <td id="@{liabTab.tabMessageKey}-reference-@index" class="govuk-table__cell">
-       <a href="@routes.CaseController.get(result.reference)">
-        <span aria-hidden="true">@{result.reference}</span>
-        <span class="govuk-visually-hidden">case reference @{result.reference}</span>
-       </a>
-      </td>
-      <td id="@{liabTab.tabMessageKey}-goods-@index" class="govuk-table__cell">@{liab.goodName}</td>
-      <td id="@{liabTab.tabMessageKey}-trader-@index" class="govuk-table__cell">@{liab.traderName}</td>
-      <td id="@{liabTab.tabMessageKey}-elapsed-days-@index"  class="govuk-table__cell @if(result.isCaseOverdue){live-red-text}">@{result.daysElapsed}</td>
-      <td id="@{liabTab.tabMessageKey}-type-@index" class="govuk-table__cell"> @if(liab.isLiveLiabilityOrder) {
-       <span class="govuk-tag govuk-tag--pink">@{liab.status}</span>
-      }</td>
-
-      <td id="@{liabTab.tabMessageKey}-status-@index" class="govuk-table__cell">
-      @case_status_tab(result, s"${liabTab.tabMessageKey}-status-label-$index")
-      </td>
-      <td id="@{liabTab.tabMessageKey}-team-@index" class="govuk-table__cell">
-      @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
-      </td>
-     </tr>
-    }
+      @if(form("liabilityCases").value.contains(result.reference)){ checked="checked"}
+      />
+      <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+     }</fieldset>
+    </div>
+   </div>
    }
-   </tbody>
-  </table>
+  </td>
+  <td id="@{liabTab.tabMessageKey}-reference-@index">
+   <a href="@routes.CaseController.get(result.reference)">
+    <span aria-hidden="true">@{result.reference}</span>
+    <span class="visually-hidden">case reference @{result.reference}</span>
+   </a>
+  </td>
+  <td id="@{liabTab.tabMessageKey}-goods-@index">@{liab.goodName}</td>
+  <td id="@{liabTab.tabMessageKey}-trader-@index">@{liab.traderName}</td>
+  <td id="@{liabTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{liabTab.tabMessageKey}-type-@index"> @if(liab.isLiveLiabilityOrder) {
+   <span class="govuk-tag govuk-tag--pink">@{liab.status}</span>
+   }</td>
+
+   <td id="@{liabTab.tabMessageKey}-status-@index">
+    @case_status_tab(result, s"${liabTab.tabMessageKey}-status-label-$index")
+   </td>
+   <td id="@{liabTab.tabMessageKey}-team-@index">
+    @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+   </td>
+ </tr>
  }
+
+ }
+ </tbody>
+</table>
+}

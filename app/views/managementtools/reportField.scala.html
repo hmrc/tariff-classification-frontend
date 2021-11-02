@@ -21,8 +21,6 @@
 @import utils.Dates
 @import views.html.partials.statuses.case_status
 
-@import views.html.managementtools.pseudoCaseStatus
-@import views.html.managementtools.liabilityStatus
 @(
   field: ReportField[_],
   result: ReportResultField[_],
@@ -34,37 +32,36 @@
 
 @result match {
   case StringResultField(_, data) if field == ReportField.Reference => {
-    <td id="@{id}-@{field.fieldName}-@{index}" class="govuk-table__cell">
+    <td id="@{id}-@{field.fieldName}-@{index}">
       @data.map { reference =>
-        <a href="@routes.CaseController.get(reference)" class="govuk-link">
+        <a href="@routes.CaseController.get(reference)">
           <span aria-hidden="true">@reference</span>
-          <span class="govuk-visually-hidden">case reference @reference</span>
+          <span class="visually-hidden">case reference @reference</span>  
         </a>
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
   case StatusResultField(_, data) => {
-    <td id="@{id}-@{field.fieldName}-@{index}" scope="row" class="govuk-table__cell">
+    <td id="@{id}-@{field.fieldName}-@{index}">
       @data.map { status =>
         @pseudoCaseStatus(status, s"${id}-${field.fieldName}-status-label-$index")
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
   case LiabilityStatusResultField(_, data) => {
-    <td id="@{id}-@{field.fieldName}-@{index}" scope="row" class="govuk-table__cell">
+    <td id="@{id}-@{field.fieldName}-@{index}">
       @data.map { status =>
         @liabilityStatus(status, s"${id}-${field.fieldName}-status-label-$index")
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
   case NumberResultField(_, data) if field == ReportField.TotalDays => {
-      @*TODO CHECK RED TEXT CLASS*@
-    <td id="@{id}-@{field.fieldName}-@{index}" scope="row" class="govuk-table__cell @if(data.exists(_>=120)){live-red-text}">
+    <td id="@{id}-@{field.fieldName}-@{index}" @if(data.exists(_>=120)){class="live-red-text"}>
         @Reports.formatField(field, result, users, teams)
     </td>
   }
   case other => {
-    <td id="@{id}-@{field.fieldName}-@{index}" scope="row" class="govuk-table__cell">
+    <td id="@{id}-@{field.fieldName}-@{index}">
       @Reports.formatField(field, result, users, teams)
     </td>
   }

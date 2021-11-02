@@ -24,36 +24,36 @@
 @(results: Paged[SearchResult], startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(results.isEmpty) {
-    <p id="advanced_search_results-empty" class="govuk-body">No results found</p>
+    <p id="advanced_search_results-empty" class="mt-1">No results found</p>
 }else{
     <div id="advanced_search_results-table" class="search-results_table">
-        <table class="govuk-table">
+        <table>
             <thead class="govuk-table__head">
                 <tr>
-                    <th scope="col" class="govuk-table__header">Reference</th>
-                    <th scope="col" class="govuk-table__header">Trader</th>
-                    <th scope="col" class="govuk-table__header">Expiry date</th>
-                    <th scope="col" class="govuk-table__header">Status</th>
-                    <th scope="col" class="govuk-table__header">Commodity code</th>
+                    <th scope="col">Reference</th>
+                    <th scope="col">Trader</th>
+                    <th scope="col">Expiry date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Commodity code</th>
                 </tr>
             </thead>
-            <tbody class="govuk-table__body">
+            <tbody>
                 @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {
-                    <tr class="govuk-table__row">
-                        <td id="advanced_search_results-row-@{index}-reference" class="govuk-table__cell">
-                            <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.get(result.c.reference)" class="govuk-link">@result.c.reference</a>
+                    <tr>
+                        <td id="advanced_search_results-row-@{index}-reference">
+                            <a id="advanced_search_results-row-@{index}-reference" href="@routes.CaseController.get(result.c.reference)">@result.c.reference</a>
                         </td>
-                        <td id="advanced_search_results-row-@{index}-business_name" class="govuk-table__cell">
+                        <td id="advanced_search_results-row-@{index}-business_name">
                             @result.c.application.businessName
                         </td>
-                        <td id="advanced_search_results-row-@{index}-ruling_end" class="govuk-table__cell">
+                        <td id="advanced_search_results-row-@{index}-ruling_end">
                             @result.c.decision.flatMap(_.effectiveEndDate).map(Dates.format).getOrElse("")
                         </td>
-                        <td  id="advanced_search_results-row-@{index}-statuses" class="govuk-table__cell">
+                        <td  id="advanced_search_results-row-@{index}-statuses">
                            @case_status(result.c, s"advanced_search_results-row-${index}-status")
                            @appeal_status(result.c, s"advanced_search_results-row-${index}-appeal_status")
                         </td>
-                         <td id="advanced_search_results-row-@{index}-decision_code" class="govuk-table__cell">
+                         <td  id="advanced_search_results-row-@{index}-decision_code">
                              @result.c.decision.map(_.bindingCommodityCode).getOrElse("")
                          </td>
                     </tr>

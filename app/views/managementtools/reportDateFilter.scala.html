@@ -28,18 +28,18 @@
   monthField = form("dateRange.min.month"),
   yearField = form("dateRange.min.year"),
   dateField = form("dateRange.min"),
-  labelClass = Some("govuk-heading-s"),
+  labelClass = Some("heading-small"),
   legend = messages("reporting.choose_date.start_date"),
   hint = Some(messages("reporting.choose_date.example_date")),
   startAtTabIndex = Some(startAtTabIndex)
 )
-    
+
 @input_date(
   dayField = form("dateRange.max.day"),
   monthField = form("dateRange.max.month"),
   yearField = form("dateRange.max.year"),
   dateField = form("dateRange.max"),
-  labelClass = Some("govuk-heading-s"),
+  labelClass = Some("heading-small"),
   legend = messages("reporting.choose_date.end_date"),
   hint = Some(messages("reporting.choose_date.example_date")),
   startAtTabIndex = Some(startAtTabIndex+4)

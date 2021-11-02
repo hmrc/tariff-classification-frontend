@@ -24,26 +24,26 @@
 
 @(activityViewModel: ActivityViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<h3 class="govuk-heading-m" aria-hidden="true">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
+<h3 class="heading-medium mt-30 mb-30" aria-hidden="true">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
 
-<table id="activity-events" class="govuk-table">
-    <caption class="govuk-visually-hidden">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</caption>
+<table id="activity-events">
+    <caption class="visually-hidden">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</caption>
     <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Identifier</th>
-            <th scope="col" class="govuk-table__header">Description</th>
-            <th scope="col" class="govuk-table__header">Date</th>
+        <tr>
+            <th scope="col">Identifier</th>
+            <th scope="col">Description</th>
+            <th scope="col">Date</th>
 
         </tr>
     </thead>
-    <tbody class="govuk-table__body">
+    <tbody>
         @for((event: Event, index: Int) <- activityViewModel.events.results.zipWithIndex) {
-            <tr id="activity-events-row-@{index}" class="govuk-table__row">
-                <td id="activity-events-row-@{index}-operator" class="govuk-table__cell">
+            <tr id="activity-events-row-@{index}">
+                <td id="activity-events-row-@{index}-operator" class="activity-cell">
                     @event.operator.id
                 </td>
 
-                <td id="activity-events-row-@{index}-content" class="govuk-table__cell">
+                <td id="activity-events-row-@{index}-content" class="activity-cell-desc">
                 @{
                     event.details.`type` match {
                         case EventType.NOTE => {
@@ -153,7 +153,7 @@
                 }
                 </td>
 
-                <td id="activity-events-row-@{index}-date" class="govuk-table__cell">@Dates.format(event.timestamp)</td>
+                <td id="activity-events-row-@{index}-date" class="activity-cell-date">@Dates.format(event.timestamp)</td>
             </tr>
         }
     </tbody>

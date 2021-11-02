@@ -1,0 +1,33 @@
+@import "partials/_govuk-helpers.scss";
+
+@import "layout";
+@import "side_nav";
+@import "header";
+@import "tabs";
+@import "activity";
+@import "colours";
+@import "search";
+@import "autocomplete";
+@import "partials/autocomplete";
+@import "casestatus";
+
+// AF 4.11 WCAG 2.1 updates
+@import "partials/_palette";
+@import "partials/_focus";
+
+@import "partials/_tabs";
+@import "partials/_primary-navigation";
+@import "partials/_sub-navigation";
+@import 'partials/_tags';
+@import "partials/_cards";
+@import "partials/_task-status";
+
+
+span.extra-bold {
+  font-weight: 800;
+}
+
+#appeal_details {
+  margin-bottom: 30px;
+}
+

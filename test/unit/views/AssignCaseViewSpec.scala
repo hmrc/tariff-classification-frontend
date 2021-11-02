@@ -21,13 +21,11 @@ import models.Operator
 import models.forms.TakeOwnerShipForm
 import utils.Cases._
 import views.ViewMatchers._
-import views.html.{assign_case, change_case_status}
+import views.html.assign_case
 
 class AssignCaseViewSpec extends ViewSpec {
 
   val form = TakeOwnerShipForm.form
-
-  val assignCaseView = app.injector.instanceOf[assign_case]
 
   "Assign Case" should {
 
@@ -38,7 +36,7 @@ class AssignCaseViewSpec extends ViewSpec {
         withoutAssignee()
       )
       // When
-      val doc = view(assignCaseView(c, form))
+      val doc = view(assign_case(c, form))
 
       // Then
       doc shouldNot containElementWithID("assign_case-assigned_heading")
@@ -57,7 +55,7 @@ class AssignCaseViewSpec extends ViewSpec {
       )
 
       // When
-      val doc = view(assignCaseView(c, form))
+      val doc = view(assign_case(c, form))
 
       // Then
       doc should containElementWithID("assign_case-assigned_heading")

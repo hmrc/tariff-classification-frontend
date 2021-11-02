@@ -14,11 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
-@import models.viewmodels.managementtools._
+@import views.html.partials.create_case_button
+@import views.html.managementtools.{usersByTeamTable, assignedUsersTable, noTeamUsersTable}
 @import views.html.components.heading
-@import views.html.managementtools.{assignedUsersTable, noTeamUsersTable, usersByTeamTable}
+@import models.request.AuthenticatedRequest
+@import config.AppConfig
+@import models.viewmodels.managementtools._
 
 @(users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
@@ -27,11 +28,11 @@
 <div id="manage-users-tabs" class="govuk-tabs" data-module="govuk-tabs">
     <ul class="govuk-tabs__list">
         @for(usersByQueueTab <- users.usersByQueueTabs) {
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#@usersByQueueTab.elementId">
-                    @usersByQueueTab.tabMessageKey (@usersByQueueTab.searchResult.size)
-                </a>
-            </li>
+        <li class="govuk-tabs__list-item">
+            <a class="govuk-tabs__tab" href="#@usersByQueueTab.elementId">
+                @usersByQueueTab.tabMessageKey (@usersByQueueTab.searchResult.size)
+            </a>
+        </li>
         }
         <li class="govuk-tabs__list-item">
             <a class="govuk-tabs__tab" href="#@users.assignedUsersTab.elementId">
@@ -46,31 +47,30 @@
     </ul>
 
    @for(usersByQueueTab <- users.usersByQueueTabs) {
-       @* TODO raise table size with design team *@
         <div class="govuk-tabs__panel" id="@usersByQueueTab.elementId">
-            <h2 class="govuk-heading-l">@messages("management.manage-users.tabSubHeading", usersByQueueTab.tabMessageKey)</h2>
-                @{usersByQueueTab.searchResult.size match {
-                    case 0 => <p class="govuk-body">No users in this team</p>
-                    case _ => usersByTeamTable(usersByQueueTab, usersCount)
-                }
+            <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading", usersByQueueTab.tabMessageKey)</h2>
+            @{usersByQueueTab.searchResult.size match {
+                case 0 => "No users in this team"
+                case _ => usersByTeamTable(usersByQueueTab, usersCount)
             }
+    }
         </div>
     }
     <div class="govuk-tabs__panel" id="@users.assignedUsersTab.elementId">
-        <h2 class="govuk-heading-l">@messages("management.manage-users.tabSubHeading.assigned.h2")</h2>
-            @{users.assignedUsersTab.searchResult.size match {
-                case 0 => <p class="govuk-body">No users in this team</p>
-                case _ => assignedUsersTable(users.assignedUsersTab, usersCount)
-                }
-            }
+        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading.assigned.h2")</h2>
+        @{users.assignedUsersTab.searchResult.size match {
+        case 0 => "No users in this team"
+        case _ => assignedUsersTable(users.assignedUsersTab, usersCount)
+        }
+        }
     </div>
 
     <div class="govuk-tabs__panel" id="@users.unassignedUsersTab.elementId">
-        <h2 class="govuk-heading-l">@messages("management.manage-users.tabSubHeading.unassigned.h2")</h2>
-            @{users.unassignedUsersTab.searchResult.size match {
-                    case 0 => <p class="govuk-body">No users in this team</p>
-                    case _ => noTeamUsersTable(users.unassignedUsersTab)
-                }
-            }
+        <h2 class="heading-large mt-0">@messages("management.manage-users.tabSubHeading.unassigned.h2")</h2>
+        @{users.unassignedUsersTab.searchResult.size match {
+        case 0 => "No users in this team"
+        case _ => noTeamUsersTable(users.unassignedUsersTab)
+        }
+        }
     </div>
 </div>

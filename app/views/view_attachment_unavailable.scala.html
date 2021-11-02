@@ -1,48 +1,41 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-
+@import views.html.includes.main
 @import models.response.{ScanStatus, FileMetadata}
 @import models.viewmodels.MyCasesTab
-@import views.html.includes.main
-
-@this(
-        main: main
-)
 
 @(fileSubmitted: Option[FileMetadata])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
- pageTitle = messages("view.attachment.unavailable.title"),
- customPrimaryNavTab = MyCasesTab
-) {
- <h1 class="govuk-heading-xl" id="attachment-heading">@messages("view.attachment.unavailable.heading")</h1>
+@main(bodyClasses = None, customTitle = Some(messages("view.attachment.unavailable.title")),
+ customPrimaryNavTab = MyCasesTab) {
+ <h1 class="heading-xlarge mb-3" id="attachment-heading">@messages("view.attachment.unavailable.heading")</h1>
 
  @if(fileSubmitted.flatMap(_.scanStatus).contains(ScanStatus.FAILED)) {
-  <p id="attachment-scan_failed" class="govuk-body">@messages("view.attachment.unavailable.content.failedToProcess")</p>
+  <p id="attachment-scan_failed">@messages("view.attachment.unavailable.content.failedToProcess")</p>
  }
 
  @if(fileSubmitted.exists(_.scanStatus.isEmpty)) {
-  <p id="attachment-processing" class="govuk-body">@messages("view.attachment.unavailable.content.stillProcessing")</p>
+  <p id="attachment-processing">@messages("view.attachment.unavailable.content.stillProcessing")</p>
  }
 
  @if(fileSubmitted.isEmpty) {
-  <p id="attachment-not_found" class="govuk-body">@messages("view.attachment.unavailable.content.doesNotExist")</p>
+  <p id="attachment-not_found">@messages("view.attachment.unavailable.content.doesNotExist")</p>
  }
 
 }

@@ -24,79 +24,72 @@
 
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.ManagerToolsTab
-@import uk.gov.hmrc.play.views.html.helpers.FormWithCSRF
-
-@this(
-    formWithCSRF: FormWithCSRF
-)
-
-
 @(selectedTab: PrimaryNavigationTab = HomeTab)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <div class="moj-primary-navigation">
-    <div class="moj-primary-navigation__container govuk-!-margin-right-2 govuk-!-margin-left-2">
+    <div class="moj-primary-navigation__container">
         <div class="moj-primary-navigation__nav">
             <nav class="moj-primary-navigation" aria-label="Primary navigation">
                 <ul class="moj-primary-navigation__list">
                     <li class="moj-primary-navigation__item">
                         @if(selectedTab == HomeTab) {
-                        <a id ="primary_nav_home_tab" class="moj-primary-navigation__link govuk-link"  aria-current="page" href="@controllers.routes.OperatorDashboardController.onPageLoad">Home</a>
+                        <a id ="primary_nav_home_tab" class="moj-primary-navigation__link"  aria-current="page" href="@controllers.routes.OperatorDashboardController.onPageLoad">Home</a>
                         } else {
-                        <a id ="primary_nav_home_tab" class="moj-primary-navigation__link govuk-link"  href="@controllers.routes.OperatorDashboardController.onPageLoad">Home</a>
+                        <a id ="primary_nav_home_tab" class="moj-primary-navigation__link"  href="@controllers.routes.OperatorDashboardController.onPageLoad">Home</a>
                         }
                     </li>
                   @if(request.operator.manager){
                       <li class="moj-primary-navigation__item">
                       @if(selectedTab == ManagerToolsTab) {
-                          <a id="primary_nav_manager_tools_tab" class="moj-primary-navigation__link govuk-link" aria-current="page" href="@routes.ManageUserController.displayManageUsers()">
+                          <a id="primary_nav_manager_tools_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.ManageUserController.displayManageUsers()">
                               @messages("operator.dashboard.classification.manager-tools")</a>
                       } else {
-                          <a id="primary_nav_manager_tools_tab" class="moj-primary-navigation__link govuk-link" href="@routes.ManageUserController.displayManageUsers()">
+                          <a id="primary_nav_manager_tools_tab" class="moj-primary-navigation__link" href="@routes.ManageUserController.displayManageUsers()">
                               @messages("operator.dashboard.classification.manager-tools")</a>
                       }
                       </li>
                       <li class="moj-primary-navigation__item">
                       @if(selectedTab == OpenCasesTab) {
-                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link govuk-link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases()">Open cases</a>
+                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases()">Open cases</a>
                       } else {
-                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link govuk-link" href="@routes.AllOpenCasesController.displayAllOpenCases()">Open cases</a>
+                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases()">Open cases</a>
                       }
                       </li>
                       <li class="moj-primary-navigation__item">
                       @if(selectedTab == MyCasesTab) {
-                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link govuk-link" aria-current="page" href="@routes.MyCasesController.displayMyCases()">
+                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases()">
                               My cases</a>
                       } else {
-                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link govuk-link" href="@routes.MyCasesController.displayMyCases()">
+                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" href="@routes.MyCasesController.displayMyCases()">
                               My cases</a>
                       }
                       </li>
                   } else {
                       <li class="moj-primary-navigation__item">
                       @if(selectedTab == MyCasesTab) {
-                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link govuk-link" aria-current="page" href="@routes.MyCasesController.displayMyCases()">
+                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.MyCasesController.displayMyCases()">
                               My cases</a>
                       } else {
-                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link govuk-link" href="@routes.MyCasesController.displayMyCases()">
+                          <a id="primary_nav_my_cases_tab" class="moj-primary-navigation__link" href="@routes.MyCasesController.displayMyCases()">
                               My cases</a>
                       }
                       </li>
 
                       <li class="moj-primary-navigation__item">
                       @if(selectedTab == OpenCasesTab) {
-                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link govuk-link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases()">
+                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases()">
                               Open cases</a>
                       } else {
-                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link govuk-link" href="@routes.AllOpenCasesController.displayAllOpenCases()">
+                          <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link" href="@routes.AllOpenCasesController.displayAllOpenCases()">
                               Open cases</a>
                       }
                       </li>
                       <li class="moj-primary-navigation__item">
                       @if(selectedTab == GatewayCasesTab) {
-                          <a id = "primary_nav_gateway_cases_tab" class="moj-primary-navigation__link govuk-link" aria-current="page" href="@routes.GatewayCasesController.displayGatewayCases()">
+                          <a id = "primary_nav_gateway_cases_tab" class="moj-primary-navigation__link" aria-current="page" href="@routes.GatewayCasesController.displayGatewayCases()">
                               Gateway cases</a>
                       } else {
-                          <a id = "primary_nav_gateway_cases_tab" class="moj-primary-navigation__link govuk-link" href="@routes.GatewayCasesController.displayGatewayCases()">
+                          <a id = "primary_nav_gateway_cases_tab" class="moj-primary-navigation__link" href="@routes.GatewayCasesController.displayGatewayCases()">
                               Gateway cases</a>
                       }
                       </li>
@@ -106,12 +99,12 @@
         </div>
         <div class="moj-primary-navigation__search">
             <div class="moj-search moj-search--ondark moj-search--inline">
-                @formWithCSRF(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
+                @helpers.form(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
                 <label class="govuk-label moj-search__label govuk-visually-hidden" for="case_search_box-input">Search cases</label>
                 <div class="govuk-form-group">
-                    <input id="case_search_box-input" class="govuk-input" name="reference" value="" type="text">
+                    <input id="case_search_box-input" class="form-control" name="reference" value="" type="text">
                 </div>
-                <button id="search__button" class="govuk-button moj-search__button" data-module="govuk-button" type="submit">Search cases</button>
+                <button id="search__button" class="button moj-search__button" data-module="govuk-button" type="submit">Search cases</button>
                 }
             </div>
         </div>

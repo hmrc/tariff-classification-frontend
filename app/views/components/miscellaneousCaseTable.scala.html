@@ -22,47 +22,47 @@
 @import views.html.v2.case_status_tab
 @(caseTab : CasesTab, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
- <table id="@{caseTab.tabMessageKey}-table" class="govuk-table">
-  <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">@messages(captionMessage)</caption>
+ <table id="@{caseTab.tabMessageKey}-table">
+  <caption class="visually-hidden">@messages(captionMessage)</caption>
    <thead class="govuk-table__head">
-    <tr id="@{caseTab.tabMessageKey}-details" class="govuk-table__row">
-     <th id="@{caseTab.tabMessageKey}-reference" class="govuk-table__header" scope="col">
+    <tr id="@{caseTab.tabMessageKey}-details" class="grid-row mb-2">
+     <th id="@{caseTab.tabMessageKey}-reference" class="bold w-0" scope="col">
      Reference
      </th>
-     <th id="@{caseTab.tabMessageKey}-subject" class="govuk-table__header" scope="col">
+     <th id="@{caseTab.tabMessageKey}-subject" class="bold w-0" scope="col">
       Subject
      </th>
-     <th id="@{caseTab.tabMessageKey}-contact" class="govuk-table__header" scope="col">
+     <th id="@{caseTab.tabMessageKey}-contact" class="bold w-0" scope="col">
       Contact
      </th>
-     <th id="@{caseTab.tabMessageKey}-elapsed-days" class="govuk-table__header" scope="col">
+     <th id="@{caseTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
       Days elapsed
      </th>
-     <th id="@{caseTab.tabMessageKey}-type" class="govuk-table__header" scope="col">
+     <th id="@{caseTab.tabMessageKey}-type" class="bold w-0" scope="col">
       Type
      </th>
     </tr>
    </thead>
-  <tbody class="govuk-body">
+  <tbody>
    @for((result, index) <- caseTab.searchResult.results.zipWithIndex) {
 
     @defining(result.application.asMisc) { misc =>
 
-     <tr id="@{caseTab.tabMessageKey}-details-@index" class="govuk-table__row">
-      <td id="@{caseTab.tabMessageKey}-reference-@index" class="govuk-table__cell">
+     <tr id="@{caseTab.tabMessageKey}-details-@index">
+      <td id="@{caseTab.tabMessageKey}-reference-@index">
       @if(result.queueId.isDefined && !result.assignee.map(_.id).contains(request.operator.id)) {
-       <a href="@routes.AssignCaseController.get(result.reference)" class="govuk-link">
+       <a href="@routes.AssignCaseController.get(result.reference)">
         <span aria-hidden="true">@result.reference</span>
-        <span class="govuk-visually-hidden">case reference @result.reference</span>
+        <span class="visually-hidden">case reference @result.reference</span>
        </a>
       } else {
-       <span class="govuk-visually-hidden">case reference @result.reference</span>
-       <a href="@routes.CaseController.get(result.reference)" class="govuk-link">@result.reference</a></td>
+       <span class="visually-hidden">case reference @result.reference</span>
+       <a href="@routes.CaseController.get(result.reference)">@result.reference</a></td>
       }
-      <td id="@{caseTab.tabMessageKey}-subject-@index" class="govuk-table__cell pre-wrap">@{misc.name}</td>
-      <td id="@{caseTab.tabMessageKey}-contact-@index" class="govuk-table__cell pre-wrap">@{misc.contactName}</td>
-      <td id="@{caseTab.tabMessageKey}-elapsed-days-@index" class="govuk-table__cell">@{result.daysElapsed}</td>
-      <td id="@{caseTab.tabMessageKey}-type-@index" class="govuk-table__cell">@{MiscCaseType.format(misc.caseType)}</td>
+      <td id="@{caseTab.tabMessageKey}-subject-@index" class="pre-wrap">@{misc.name}</td>
+      <td id="@{caseTab.tabMessageKey}-contact-@index" class="pre-wrap">@{misc.contactName}</td>
+      <td id="@{caseTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
+      <td id="@{caseTab.tabMessageKey}-type-@index">@{MiscCaseType.format(misc.caseType)}</td>
     </tr>
     }
    }

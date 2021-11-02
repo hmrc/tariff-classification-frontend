@@ -1,23 +1,23 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.Case
-
+@import views.html.includes.main
 @import views.html.partials._
 @import models.viewmodels.NoTabSelected
 @import views.html.partials.statuses.{appeal_status, case_status}
@@ -26,54 +26,54 @@
 @import models.viewmodels.CompletedByMeTab
 @import utils.Dates
 @import java.time.Instant
-@import views.html.includes.main
-
-@this(
-        main: main
-)
-
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("page.title.ruling.cancelled"),
-    customPrimaryNavTab = NoTabSelected
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.ruling.cancelled")),
+    customPrimaryNavTab = NoTabSelected) {
+
+<div class="grid-row column-two-thirds">
+
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">
-        @messages("ruling.cancelled.header", c.application.goodsName)
+            @messages("ruling.cancelled.header", c.application.goodsName)
         </h1>
         <div class="govuk-panel__body">
-        @Html(messages("ruling.cancelled.sub-header", c.decision.map(_.cancellation.map(r=>CancelReason.format(r.reason)).getOrElse("")).getOrElse("")))
+            @Html(messages("ruling.cancelled.sub-header", c.decision.map(_.cancellation.map(r=>CancelReason.format(r.reason)).getOrElse("")).getOrElse("")))
         </div>
 
     </div>
 
-    @if(c.application.isBTI) {
+    <div class="grid-row">
+        <div id="confirm_cancel_id" class="column-full">
+            @if(c.application.isBTI) {
 
-        <p class="govuk-body">@Html(messages("ruling.cancelled.status", case_status(c, "case-status")))</p>
+                <p class="govuk-body">@Html(messages("ruling.cancelled.status", case_status(c, "case-status")))</p>
 
-        <p class="govuk-body">@messages("ruling.cancelled.information", Dates.format(Instant.now()))</p>
+            <p class="govuk-body">@messages("ruling.cancelled.information", Dates.format(Instant.now()))</p>
 
-    } else {
-        <h2 class="govuk-heading-l">The liability decision has been cancelled </h2>
-    }
+            } else {
+                <h2 class="heading-large mt-0">The liability decision has been cancelled </h2>
+            }
 
-    <h2 class="govuk-heading-m">Next steps</h2>
+            <h2 class="heading-medium mt-0 mb-2 pt-20">Next steps</h2>
 
-    <p class="govuk-body">
-        <a id="back-home-link" href="@OperatorDashboardController.onPageLoad()" class="govuk-link">
-        @messages("back.home")
-        </a>
-    </p>
-    <p class="govuk-body">
-        <a id="" class="" href="@MyCasesController.displayMyCases()" class="govuk-link">
-        @messages("case.ownership.assign_case.back")
-        </a>
-    </p>
-    <p class="govuk-body">
-        <a id="my-completed-cases-id"  class="govuk-link" href="@MyCasesController.displayMyCases(CompletedByMeTab)">
-        @messages("back.to.my_case.completed-by-me")
-        </a>
-    </p>
+            <p class="govuk-body">
+                <a id="back-home-link" href="@OperatorDashboardController.onPageLoad()">
+                    @messages("back.home")
+                </a>
+            </p>
+            <p class="govuk-body">
+                <a id="" class="" href="@MyCasesController.displayMyCases()">
+                    @messages("case.ownership.assign_case.back")
+                </a>
+            </p>
+            <p class="govuk-body">
+                <a id="my-completed-cases-id" class="link-text" href="@MyCasesController.displayMyCases(CompletedByMeTab)">
+                    @messages("back.to.my_case.completed-by-me")
+                </a>
+            </p>
+        </div>
+    </div>
 }
+</div>

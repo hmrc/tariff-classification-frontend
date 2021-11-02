@@ -28,7 +28,7 @@ class OperatorDashboardClassificationViewSpec extends ViewSpec {
   val totalCasesAssignedToMe            = 5
   val casesReferredByMe                 = 3
   val casesCompletedByMe                = 3
-  val operator_dashboard_classification = app.injector.instanceOf[operator_dashboard_classification]
+  val operator_dashboard_classification = new operator_dashboard_classification()
 
   val messageKeyPrefix                 = "accessibility"
   val expectTimeoutDialog              = false
@@ -55,7 +55,7 @@ class OperatorDashboardClassificationViewSpec extends ViewSpec {
 
     "contain operator name" in {
       val doc = asDocument(view())
-      doc.getElementsByClass("govuk-heading-xl").text() shouldBe "Case dashboard"
+      doc.getElementsByClass("heading-xlarge").text() shouldBe "Case dashboard"
     }
   }
 

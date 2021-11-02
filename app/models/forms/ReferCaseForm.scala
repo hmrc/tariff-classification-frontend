@@ -37,11 +37,10 @@ object ReferCaseForm {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
       of[String].binder.bind("referredTo", data).flatMap { referredTo =>
-        if (referredTo.equalsIgnoreCase("Other")) {
+        if (referredTo.equalsIgnoreCase("Other"))
           mandatoryMapping(key).bind(data)
-        } else {
+        else
           optionalMapping(key).bind(data)
-        }
       }
 
     override def unbind(key: String, value: Option[String]): Map[String, String] =
@@ -60,11 +59,10 @@ object ReferCaseForm {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], List[ReferralReason.Value]] =
       of[String].binder.bind("referredTo", data).flatMap { referredTo =>
-        if (referredTo.equalsIgnoreCase("Applicant")) {
+        if (referredTo.equalsIgnoreCase("Applicant"))
           mandatoryMapping(key).bind(data)
-        } else {
+        else
           optionalMapping(key).bind(data)
-        }
       }
 
     override def unbind(key: String, value: List[ReferralReason.Value]): Map[String, String] =

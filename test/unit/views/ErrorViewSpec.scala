@@ -17,18 +17,15 @@
 package views
 
 import views.ViewMatchers._
-import views.html.error_template
 
 class ErrorViewSpec extends ViewSpec {
 
   "Error View" should {
 
-    val errorTemplateView = app.injector.instanceOf[error_template]
-
     "render empty list of cases" in {
 
       // When
-      val doc = view(errorTemplateView("Title", "Heading", "Message"))
+      val doc = view(html.error_template("Title", "Heading", "Message"))
 
       // Then
       doc should containText("Title")

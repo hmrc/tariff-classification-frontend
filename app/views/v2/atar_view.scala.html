@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import helper.CSRF
@@ -21,76 +21,60 @@
 @import models.response.FileStoreInitiateResponse
 @import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel, MyCasesTab, PrimaryNavigationTab, OpenCasesTab, GatewayCasesTab}
 @import models.viewmodels.atar._
-
+@import views.html.includes.main
 @import views.html.partials.{case_trader, application_details, activity_details, attachments_details}
 @import views.html.partials.appeal.appeal_details
 @import views.html.partials.sample.{sample_details, sample_status_events_table}
 @import views.html.partials.ruling.ruling_details
 @import views.html.partials.notification_banner
-@import views.html.layouts.full_main_content_layout
-@import views.html.includes.main
 
 @this(
-        main: main,
-        fullMainContent: full_main_content_layout,
-        case_heading: views.html.v2.case_heading,
-        case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
-        advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
-        keywords_details: views.html.v2.keywords_details,
+    case_heading: views.html.v2.case_heading,
+    case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
+    advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
+    keywords_details: views.html.v2.keywords_details,
 )
 
 @(
-        caseViewModel: CaseViewModel,
+    caseViewModel: CaseViewModel,
 
-        applicantTab: ApplicantTabViewModel,
+    applicantTab: ApplicantTabViewModel,
 
-        goodsTab: GoodsTabViewModel,
+    goodsTab: GoodsTabViewModel,
 
-        sampleTab: SampleTabViewModel,
+    sampleTab: SampleTabViewModel,
 
-        attachmentsTab: AttachmentsTabViewModel,
-        uploadForm: Form[String],
-        initiateResponse: FileStoreInitiateResponse,
+    attachmentsTab: AttachmentsTabViewModel,
+    uploadForm: Form[String],
+    initiateResponse: FileStoreInitiateResponse,
 
-        activityTab: ActivityViewModel,
-        activityForm: Form[ActivityFormData],
+    activityTab: ActivityViewModel,
+    activityForm: Form[ActivityFormData],
 
-        keywordsTab: KeywordsTabViewModel,
-        keywordForm: Form[String],
+    keywordsTab: KeywordsTabViewModel,
+    keywordForm: Form[String],
 
-        rulingTab: RulingTabViewModel,
-        rulingForm: Option[Form[DecisionFormData]],
-        attachments: Seq[StoredAttachment],
+    rulingTab: RulingTabViewModel,
+    rulingForm: Option[Form[DecisionFormData]],
+    attachments: Seq[StoredAttachment],
 
-        appealTab: Option[AppealTabViewModel],
-        primaryNavTab: PrimaryNavigationTab = MyCasesTab
+    appealTab: Option[AppealTabViewModel],
+    primaryNavTab: PrimaryNavigationTab = MyCasesTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@additionalCSS = {
-    <link rel="stylesheet" href='@routes.Assets.at("stylesheets/autocomplete.css")'/>
-}
-
-@additionalJS = {
-    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/tab_focus.js")" type="text/javascript"></script>
-
-}
-
 @main(
-    pageTitle = messages("case.details.title"),
-    optCustomLayout = Some(fullMainContent(_)),
-    customPrimaryNavTab = primaryNavTab,
-    additionalJS = Some(additionalJS),
-    additionalCSS = Some(additionalCSS)
+    bodyClasses = None,
+    customTitle = Some(messages("case.details.title")),
+    customPrimaryNavTab = primaryNavTab
 ) {
 
     @if(request.flash.get("success").getOrElse("").contains("referral")){
         @notification_banner()(request.flash, messages)
     }
-    <div class="column-two-thirds operation-dashboard-header">
+<div class="column-two-thirds operation-dashboard-header">
     @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
-    </div>
-    <div class="govuk-button-group">
+</div>
+    <div class="form-groups">
         @case_action_buttons_partial(caseViewModel)
         @advanced_search_cases(caseViewModel)
     </div>
@@ -99,43 +83,43 @@
         <ul class="govuk-tabs__list">
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#applicant_tab">
-                @messages("case.v2.atar.applicant.tab_title")
+                    @messages("case.v2.atar.applicant.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#goods_tab">
-                @messages("case.v2.atar.goods.tab_title")
+                    @messages("case.v2.atar.goods.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#sample_status_tab">
-                @messages("case.v2.atar.sample.tab_title")
+                    @messages("case.v2.atar.sample.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#attachments_tab">
-                @messages("case.v2.atar.attachments.tab_title")
+                    @messages("case.v2.atar.attachments.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#activity_tab">
-                @messages("case.v2.atar.activity.tab_title")
+                    @messages("case.v2.atar.activity.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#keywords_tab">
-                @messages("case.v2.atar.keywords.tab_title")
+                    @messages("case.v2.atar.keywords.tab_title")
                 </a>
             </li>
 
             <li class="govuk-tabs__list-item">
                 <a class="govuk-tabs__tab" href="#ruling_tab">
-                @messages("case.v2.atar.ruling.tab_title")
+                    @messages("case.v2.atar.ruling.tab_title")
                 </a>
             </li>
 
@@ -185,7 +169,7 @@
 }
 
 <script>
-        let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.ATAR).url";
-        let csrfToken = "@CSRF.getToken.value";
-        window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
+    let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.ATAR).url";
+    let csrfToken = "@CSRF.getToken.value";
+    window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
 </script>

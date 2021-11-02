@@ -17,6 +17,7 @@
 package controllers
 
 import java.time.Instant
+
 import models.forms.v2.LiabilityDetailsForm
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.{Permission, _}
@@ -30,7 +31,6 @@ import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, CommodityCodeService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
-import views.html.{complete_case, confirm_complete_case}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
@@ -43,9 +43,6 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val decisionForm         = new DecisionForm(new CommodityCodeConstraints())
   private val liabilityDetailsForm =
     new LiabilityDetailsForm(new CommodityCodeConstraints(), realAppConfig)
-
-  private val confirmCompleteCase = injector.instanceOf[confirm_complete_case]
-  private val completeCase = injector.instanceOf[complete_case]
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
@@ -78,8 +75,6 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       decisionForm,
       liabilityDetailsForm,
       mcc,
-      confirmCompleteCase,
-      completeCase,
       realAppConfig
     )
 
@@ -90,8 +85,6 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       decisionForm,
       liabilityDetailsForm,
       mcc,
-      confirmCompleteCase,
-      completeCase,
       realAppConfig
     )
 

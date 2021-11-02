@@ -18,25 +18,19 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.managementtools._
+@import views.html.includes.main
 @import views.html.components.manager_tools_secondary_navigation
 @import models.viewmodels.ManagerToolsTab
 @import models.viewmodels.SubNavigationTab
 @import models.viewmodels.ManagerToolsReportsTab
-@import views.html.includes.main
-@import views.html.layouts.full_main_content_layout
 
-@this(
-        main: main,
-        fullMainContent: full_main_content_layout
-)
+
+@this()
 
 @(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
- pageTitle = messages("management.manage-users-title"),
- customPrimaryNavTab = ManagerToolsTab,
- optCustomLayout = Some(fullMainContent(_)),
- subNavigationTab = Some(manager_tools_secondary_navigation(activeSubNav))
-) {
+@main(bodyClasses = None, customTitle = Some(messages("management.manage-users-title")), customPrimaryNavTab = ManagerToolsTab) {
+    @manager_tools_secondary_navigation(activeSubNav)
+
     @users_tab(users, usersCount)
 }

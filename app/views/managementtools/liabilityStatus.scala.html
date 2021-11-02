@@ -22,13 +22,13 @@
 
 @status match {
   case LiabilityStatus.LIVE => {
-    <span class="govuk-visually-hidden">liability status</span>
+    <span class="visuallyhidden">liability status</span>
     <span id="@id" class="govuk-tag govuk-tag--red">
       @status
     </span>
   }
   case status => {
-    <span class="govuk-visually-hidden">liability status</span>
+    <span class="visuallyhidden">liability status</span>
     <span id="@id" class="govuk-tag govuk-tag--green">
       NON LIVE
     </span>

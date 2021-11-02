@@ -28,7 +28,6 @@ import play.api.test.Helpers._
 import service.{CasesService, EventsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
-import views.html.{change_correspondence_sending_sample, change_liablity_sending_sample, change_sample_status}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,29 +37,18 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val casesService  = mock[CasesService]
   private val operator      = Operator(id = "id")
 
-
-  private val changeLiabilitySendingSample = app.injector.instanceOf[change_liablity_sending_sample]
-  private val changeSampleStatus = app.injector.instanceOf[change_sample_status]
-  private val changeCorrespondenceSendingSample = app.injector.instanceOf[change_correspondence_sending_sample]
-
   private def controller(requestCase: Case) = new SampleController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     mcc,
-    realAppConfig,
-    changeLiabilitySendingSample,
-    changeSampleStatus,
-    changeCorrespondenceSendingSample
+    realAppConfig
   )
 
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
     mcc,
-    realAppConfig,
-    changeLiabilitySendingSample,
-    changeSampleStatus,
-    changeCorrespondenceSendingSample
+    realAppConfig
   )
 
   override def afterEach(): Unit = {
@@ -78,7 +66,7 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
-      bodyOf(result) should include("<h1 class=\"govuk-heading-xl\" id=\"heading\">")
+      bodyOf(result) should include("change_sample_status-heading")
     }
 
     "return OK when user has right permissions" in {

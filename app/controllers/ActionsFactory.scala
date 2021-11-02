@@ -54,8 +54,7 @@ class CheckCasePermissionsAction extends ActionRefiner[AuthenticatedCaseRequest,
 @Singleton
 class VerifyCaseExistsActionFactory @Inject() (casesService: CasesService)(
   implicit val messagesApi: MessagesApi,
-  appConfig: AppConfig,
-  val case_not_found: views.html.case_not_found
+  appConfig: AppConfig
 ) extends I18nSupport {
 
   def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
@@ -75,7 +74,7 @@ class VerifyCaseExistsActionFactory @Inject() (casesService: CasesService)(
               )
             )
 
-          case _ => successful(Left(NotFound(case_not_found(reference))))
+          case _ => successful(Left(NotFound(views.html.case_not_found(reference))))
         }
       }
 
@@ -130,8 +129,7 @@ class RequireDataActionFactory @Inject() (
 @Singleton
 class RequireCaseDataActionFactory @Inject() (
   casesService: CasesService,
-  dataCacheConnector: DataCacheConnector,
-  val case_not_found: views.html.case_not_found
+  dataCacheConnector: DataCacheConnector
 )(
   implicit
   val messagesApi: MessagesApi,
@@ -158,7 +156,7 @@ class RequireCaseDataActionFactory @Inject() (
                 Left(Redirect(routes.SecurityController.unauthorized()))
             }
           case None =>
-            successful(Left(NotFound(case_not_found(reference))))
+            successful(Left(NotFound(views.html.case_not_found(reference))))
         }
       }
 

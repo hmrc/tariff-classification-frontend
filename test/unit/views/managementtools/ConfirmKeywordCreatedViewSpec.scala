@@ -37,8 +37,9 @@ class ConfirmKeywordCreatedViewSpec extends ViewSpec {
         )
       )
       doc                                           should containText(messages("management.create-keyword.new-keyword-done"))
-      doc.getElementById("main-content") should containText(keyword.toUpperCase)
-      doc.getElementById("main-content") should containText(
+      doc                                           should containElementWithID("confirm_keyword_done_id")
+      doc.getElementById("confirm_keyword_done_id") should containText(keyword.toUpperCase)
+      doc.getElementById("confirm_keyword_done_id") should containText(
         messages("management.create-keyword.new-keyword-done.caption")
       )
     }

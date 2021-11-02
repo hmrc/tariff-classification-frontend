@@ -1,47 +1,54 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
-@import controllers.v2.routes
-@import models.Operator
+@import helper.CSRF
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.NoTabSelected
+@import models.Operator
 @import views.html.includes.main
-@import views.html.partials.back_link
+@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
+@import models.viewmodels.{NoTabSelected, ApplicationTabViewModel}
+@import controllers.v2.routes
+@import views.html.partials.{back_link}
 
 @this(
-        main: main,
-        backLink: back_link
+delete_user_heading: views.html.partials.users.delete_user_heading,
 )
 
 @(
-        user: Operator
+user: Operator
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
- pageTitle = messages("users.user.delete.casesMustBeMoved", user.safeName),
- customPrimaryNavTab = NoTabSelected,
- backLink = Some(backLink())
+bodyClasses = None,
+customTitle = Some(messages("users.user.delete.casesMustBeMoved", user.safeName)),
+customPrimaryNavTab = NoTabSelected
 ) {
+<div class="column-two-thirds mt-5">
 
-  <span class="govuk-caption-xl">@messages("users.user.delete.header", user.safeName)</span>
-  <h1 class="govuk-heading-xl">@messages("users.user.delete.casesMustBeMoved", user.safeName)</h1>
+ @back_link()
 
-  <p id="cases-must-be-moved" class="govuk-body">@messages("users.user.delete.casesMustBeMoved.message")</p>
+ @delete_user_heading(user.safeName, false)
 
-  <a href="@routes.ManageUserController.displayUserDetails(user.id)" id="move-cases" class="govuk-button">Go back and move cases</a>
+ <p id="cases-must-be-moved">@messages("users.user.delete.casesMustBeMoved.message")</p>
+
+ <div class="form-group">
+  <a href="@routes.ManageUserController.displayUserDetails(user.id)" id="move-cases" class="button">Go back and move cases</a>
+ </div>
+</div>
+
 }
 
