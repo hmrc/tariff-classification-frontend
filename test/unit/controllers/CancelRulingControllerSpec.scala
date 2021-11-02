@@ -32,6 +32,7 @@ import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.JsonFormatters._
+import views.html.{cancel_ruling_email, cancel_ruling_reason, confirm_cancel_ruling}
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,6 +40,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val casesService = mock[CasesService]
   private val fileService  = mock[FileStoreService]
+
+  private val cancelRulingReason = injector.instanceOf[cancel_ruling_reason]
+  private val cancelRulingEmail = injector.instanceOf[cancel_ruling_email]
+  private val confirmCancelRuling = injector.instanceOf[confirm_cancel_ruling]
 
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
   private val caseWithStatusCANCELLED = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
@@ -58,6 +63,9 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     fileService,
     FakeDataCacheConnector,
     mcc,
+    cancelRulingReason,
+    cancelRulingEmail,
+    confirmCancelRuling,
     realAppConfig
   )
 
@@ -67,6 +75,9 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     fileService,
     FakeDataCacheConnector,
     mcc,
+    cancelRulingReason,
+    cancelRulingEmail,
+    confirmCancelRuling,
     realAppConfig
   )
 

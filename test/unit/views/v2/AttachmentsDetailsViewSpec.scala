@@ -38,6 +38,8 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
     )
   )
 
+  def attachments_details: attachments_details = injector.instanceOf[attachments_details]
+
   def notRenderAttachmentsDetails: HtmlFormat.Appendable =
     attachments_details(
       UploadAttachmentForm.form,
@@ -54,8 +56,6 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
       showUploadAttachments = true
     )
 
-  def attachments_details: attachments_details = injector.instanceOf[attachments_details]
-
   def renderAttachmentsDetailsWithAttachments: HtmlFormat.Appendable =
     attachments_details(
       UploadAttachmentForm.form,
@@ -68,14 +68,13 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
 
     "render tab title" in {
       val doc = view(notRenderAttachmentsDetails)
-
       doc.getElementsByTag("h2").text() shouldBe messages("case.menu.attachments")
     }
 
     "render hint under tab title" in {
       val doc = view(notRenderAttachmentsDetails)
 
-      doc.getElementsByClass("form-hint").text() shouldBe messages("case.attachment.hint.text.header")
+      doc.getElementsByClass("govuk-hint").text() shouldBe messages("case.attachment.hint.text.header")
     }
 
     "not render upload form" in {

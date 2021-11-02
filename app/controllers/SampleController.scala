@@ -37,7 +37,10 @@ class SampleController @Inject()(
   override val verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
-  override implicit val config: AppConfig
+  override implicit val config: AppConfig,
+  val change_liablity_sending_sample: views.html.change_liablity_sending_sample,
+  val change_sample_status: views.html.change_sample_status,
+  val change_correspondence_sending_sample: views.html.change_correspondence_sending_sample
 ) extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleStatus]] {
 
@@ -52,21 +55,24 @@ class SampleController @Inject()(
   ): Html =
     c.application.`type` match {
       case ApplicationType.LIABILITY =>
-        if (options.contains("liability"))
-          views.html.change_liablity_sending_sample(c, notFilledForm)
-        else
-          views.html.change_sample_status(c, notFilledForm)
+        if (options.contains("liability")) {
+          change_liablity_sending_sample(c, notFilledForm)
+        } else {
+          change_sample_status(c, notFilledForm)
+        }
       case ApplicationType.CORRESPONDENCE =>
-        if (options.contains("correspondence"))
-          views.html.change_correspondence_sending_sample(c, notFilledForm)
-        else
-          views.html.change_sample_status(c, notFilledForm)
+        if (options.contains("correspondence")) {
+          change_correspondence_sending_sample(c, notFilledForm)
+        } else {
+          change_sample_status(c, notFilledForm)
+        }
       case ApplicationType.MISCELLANEOUS =>
-        if (options.contains("correspondence"))
-          views.html.change_correspondence_sending_sample(c, notFilledForm)
-        else
-          views.html.change_sample_status(c, notFilledForm)
-      case _ => views.html.change_sample_status(c, notFilledForm)
+        if (options.contains("correspondence")) {
+          change_correspondence_sending_sample(c, notFilledForm)
+        } else {
+          change_sample_status(c, notFilledForm)
+        }
+      case _ => change_sample_status(c, notFilledForm)
     }
 
   override def chooseStatus(reference: String, options: Option[String]): Action[AnyContent] =
@@ -83,6 +89,7 @@ class SampleController @Inject()(
   ): Future[Case] =
     caseService.updateSampleStatus(c, status, operator)
 
-  override protected def onSuccessRedirect(reference: String): Call =
+  override protected def onSuccessRedirect(reference: String): Call = {
     controllers.routes.CaseController.sampleDetails(reference)
+  }
 }

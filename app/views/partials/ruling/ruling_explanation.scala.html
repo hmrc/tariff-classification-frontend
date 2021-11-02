@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import controllers.routes.{PdfDownloadController, RulingController}
 @import config.AppConfig
@@ -24,52 +24,47 @@
 
 @(d: Option[Decision], useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@d.map { d =>
+    @d.map { d =>
 
-<div class="grid-row">
-    <div class="column-full">
-        <h3 class="heading-medium">@messages("case.decision.holder.information")</h3>
-    </div>
-</div>
-<dl class="govuk-check-your-answers cya-questions-short">
+        <h3 class="govuk-heading-m">@messages("case.decision.holder.information")</h3>
 
-        <div class="grid-row" id="information-for-holder">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row" id="information-for-holder">
             @if(d.explanation.exists(_.trim.nonEmpty)) {
-            <dt class="cya-question">
+                <dt class="govuk-summary-list__key">
                 @messages("case.decision.explanation.label")
-            </dt>
-            <dd class="cya-answer">
-                <p class="mt-0">Commodity code for your goods:
-                    <span id="binding-commodity-code">
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    <p>Commodity code for your goods:
+                        <span id="binding-commodity-code">
                         @{
                             d.bindingCommodityCode match {
                                 case "" => messages("case.decision.explanation.commodityCode")
                                 case _ => d.bindingCommodityCode
                             }
                         }
-                    </span>
-                </p>
+                        </span>
+                    </p>
 
-                <p id="holder_explanationValue" class="pre-wrap">@d.explanation</p>
+                    <p id="holder_explanationValue" class="pre-wrap">@d.explanation</p>
 
-                <p>
-                    I have made this decision under section 24 of The Taxation (Cross-border Trade) Act 2018
-                    by HM Revenue & Customs.
-                </p>
+                    <p>
+                        I have made this decision under section 24 of The Taxation (Cross-border Trade) Act 2018
+                        by HM Revenue & Customs.
+                    </p>
 
-                <p>
-                    Get more information about classification in the guide
-                    <a href="https://www.gov.uk/guidance/apply-for-an-advance-tariff-ruling-that-can-be-used-from-1-january-2021">
-                        Apply for an Advance Tariff Ruling that can be used from 1 January 2021.
-                    </a>
-                </p>
-            </dd>
+                    <p>
+                        Get more information about classification in the guide
+                        <a class="govuk-link" href="https://www.gov.uk/guidance/apply-for-an-advance-tariff-ruling-that-can-be-used-from-1-january-2021">
+                            Apply for an Advance Tariff Ruling that can be used from 1 January 2021.
+                        </a>
+                    </p>
+                </dd>
             } else {
-                    <dt class="column-full">
+                <dt class="govuk-summary-list__value">
                     @messages("case.decision.constraint.no-information")
-                    </dt>
-                }
-
-        </div>
-</dl>
-}
+                </dt>
+            }
+            </div>
+        </dl>
+    }

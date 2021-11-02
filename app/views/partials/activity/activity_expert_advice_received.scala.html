@@ -21,7 +21,7 @@
 @(index: Int, event: Event)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @content(body: ExpertAdviceReceived) = {
- <p>
+ <p class="govuk-body">
   <span id="activity-events-row-@index-comment" class="pre-wrap">@body.comment</span>
  </p>
 }

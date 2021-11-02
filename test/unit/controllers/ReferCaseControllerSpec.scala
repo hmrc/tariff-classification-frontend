@@ -32,6 +32,7 @@ import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.JsonFormatters._
+import views.html.{confirm_refer_case, refer_case_email, refer_case_reason}
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -40,6 +41,10 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val casesService = mock[CasesService]
   private val fileService  = mock[FileStoreService]
   private val operator     = Operator(id = "id")
+
+  private val referCaseReason = injector.instanceOf[refer_case_reason]
+  private val referCaseEmail = injector.instanceOf[refer_case_email]
+  private val confirmReferCase = injector.instanceOf[confirm_refer_case]
 
   private val caseWithStatusNEW      = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN     = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
@@ -67,6 +72,9 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       fileService,
       FakeDataCacheConnector,
       mcc,
+      referCaseReason,
+      referCaseEmail,
+      confirmReferCase,
       realAppConfig
     )
 
@@ -77,6 +85,9 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       fileService,
       FakeDataCacheConnector,
       mcc,
+      referCaseReason,
+      referCaseEmail,
+      confirmReferCase,
       realAppConfig
     )
 

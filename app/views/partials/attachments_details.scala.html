@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
 @import controllers.{Tab, routes, v2}
@@ -29,7 +29,7 @@
 
     @tab_heading("attachments", messages("case.menu.attachments"))
 
-    <h3 class="heading-medium mt-30 mb-30" aria-hidden="true">@messages("page.title.case.attachments")</h3>
+    <h3 class="govuk-heading-m" aria-hidden="true">@messages("page.title.case.attachments")</h3>
 
     @attachments_state_message(attachments = attachments.allAttachments, autoRefresh = true, displayStateMessage = false)
 
@@ -42,18 +42,16 @@
             'id -> "upload-files-form"
         ) {
 
-            <div id="file-upload-heading">
-                <h3 class="heading-medium mt-30 mb-30">@messages("upload.files.title")</h3>
-            </div>
+            <h3 class="govuk-heading-m">@messages("upload.files.title")</h3>
 
-            <div class="form-group">
-                <p>@messages("upload.files.before")</p>
-                <details role="group" class="mb-2">
-                    <summary role="button">
-                        <span id="release-suppress-help-title">@messages("email.attach.save")</span>
+            <div class="govuk-form-group">
+                <p class="govuk-body">@messages("upload.files.before")</p>
+                <details role="group" class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span id="release-suppress-help-title" class="govuk-details__summary-text">@messages("email.attach.save")</span>
                     </summary>
-                    <div id="release-suppress-help-body" class="panel panel-border">
-                        <ol class="list list-number">
+                    <div id="release-suppress-help-body" class="govuk-details__text">
+                        <ol class="govuk-list govuk-list--number">
                             <li>@messages("email.attach.save.bullet1")</li>
                             <li>@messages("email.attach.save.bullet2")</li>
                             <li>@messages("email.attach.save.bullet3")</li>
@@ -63,8 +61,8 @@
                     </div>
                 </details>
 
-                <p>@messages("cases.attachment.upload.title")</p>
-                <ul class="list list-bullet">
+                <p class="govuk-body">@messages("cases.attachment.upload.title")</p>
+                <ul class="govuk-list govuk-list--bullet">
                     <li>@messages("cases.attachment.upload.restrictionSize")</li>
                     <li>@messages("cases.attachment.upload.typeOfFiles")</li>
                 </ul>
@@ -73,18 +71,16 @@
                     <input type="hidden" name="@key" value="@value" />
                 }
 
-                <div class="mt-0">
-                    @input_file(
-                        field = form("file"),
-                        label = messages("cases.attachment.upload.label"),
-                        inputClass = Some("govuk-file-upload"),
-                        accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt")
-                    )
-                </div>
+                @input_file(
+                    field = form("file"),
+                    label = messages("cases.attachment.upload.label"),
+                    inputClass = Some("govuk-file-upload"),
+                    accept = Some(".pdf,.doc,.docx,.png,.jpeg,.jpg,.txt")
+                )
             </div>
 
             <div class="section">
-                <button id="upload-file-button" class="button">@messages("upload.button")</button>
+                <button id="upload-file-button" class="govuk-button">@messages("upload.button")</button>
             </div>
         }
     }

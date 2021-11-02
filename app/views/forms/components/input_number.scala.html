@@ -24,19 +24,19 @@
         minLength: Option[Int] = None
 )(implicit messages: Messages)
 
-<div class="form-group @if(field.hasErrors){form-group-error}">
-    <label class="form-label" for="@{field.id}">
+<div class="govuk-form-group @if(field.hasErrors){form-group-error}">
+    <label class="govuk-label" for="@{field.id}">
         <span class="bold @if(labelClass.nonEmpty){@labelClass}">@label</span>
-        @if(hint.nonEmpty){
-            <span class="form-hint">@hint</span>
-        }
-        @field.errors.map { error =>
-            <span class="error-message" id="error-message-@{field.id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)</span>
-        }
     </label>
+    @if(hint.nonEmpty){
+        <span class="govuk-hint">@hint</span>
+    }
+    @field.errors.map { error =>
+        <span class="govuk-error-message" id="error-message-@{field.id}-input"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)</span>
+    }
     <div class="form-control-wrapper">
         <input
-        class="form-control @inputClass"
+        class="govuk-input @inputClass"
         type="number"
         id="@{field.id}"
         name="@{field.name}"

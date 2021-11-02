@@ -23,15 +23,15 @@
 
 @content(body: CompletedCaseStatusChange) = {
  @if(body.comment.isDefined) {
-  <p>
-   <span class="bold">Note:</span>
+  <p class="govuk-body">
+   <span class="govuk-!-font-weight-bold">Note:</span>
    <span id="activity-events-row-@index-comment" class="pre-wrap">@body.comment</span>
   </p>
  }
 
  @if(body.email.isDefined) {
-  <p class="bold">Email sent to applicant:</p>
-  <p id="activity-events-row-@index-email" class="pre-wrap">@body.email</p>
+  <p class="govuk-!-font-weight-bold">Email sent to applicant:</p>
+  <p id="activity-events-row-@index-email" class="govuk-body pre-wrap">@body.email</p>
  }
 }
 

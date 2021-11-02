@@ -36,6 +36,7 @@ class ExtendedUseCaseController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
+  val change_extended_use_status: views.html.change_extended_use_status,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
     with StatusChangeAction[Boolean] {
@@ -49,8 +50,7 @@ class ExtendedUseCaseController @Inject() (
 
   override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean], options: Option[String] = None)(
     implicit request: AuthenticatedRequest[_]
-  ): Html =
-    views.html.change_extended_use_status(c, preFilledForm)
+  ): Html = change_extended_use_status(c, preFilledForm)
 
   override protected def update(c: Case, status: Boolean, operator: Operator)(
     implicit hc: HeaderCarrier

@@ -31,6 +31,7 @@ class ChangeCaseStatusController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
+  val change_case_status: views.html.change_case_status,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {

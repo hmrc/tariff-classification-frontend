@@ -17,11 +17,15 @@
 @import config.AppConfig
 @import models.reporting._
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.ManagerToolsTab
-@import models.viewmodels.ManagerToolsReportsTab
-@import models.viewmodels.SubNavigationTab
+@import models.viewmodels.{ManagerToolsReportsTab, ManagerToolsTab}
 @import views.html.components.manager_tools_secondary_navigation
 @import views.html.includes.main
+@import views.html.managementtools._
+
+@this(
+    main: main
+)
+
 
 @(
   report: SummaryReport,
@@ -31,9 +35,16 @@
   teams: Map[String, Queue]
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
-@main(bodyClasses = None, customTitle = Some(messages("reporting.view_report.title")), customPrimaryNavTab = ManagerToolsTab) {
+@additionalCSS = {
+    <link rel="stylesheet" href='@routes.Assets.at("stylesheets/layout.css")'/>
+}
 
-  @manager_tools_secondary_navigation(ManagerToolsReportsTab)
+@main(
+    pageTitle = messages("reporting.view_report.title"),
+    customPrimaryNavTab = ManagerToolsTab,
+    subNavigationTab = Some(manager_tools_secondary_navigation(ManagerToolsReportsTab)),
+    additionalCSS = Some(additionalCSS)
+) {
 
   @reportHeading(report.name, messages("reporting.view_report.heading"))
 

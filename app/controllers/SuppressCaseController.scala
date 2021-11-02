@@ -42,6 +42,9 @@ class SuppressCaseController @Inject() (
   fileService: FileStoreService,
   dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
+  val suppress_case_reason: views.html.suppress_case_reason,
+  val suppress_case_email: views.html.suppress_case_email,
+  val confirm_supressed_case: views.html.confirm_supressed_case,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -55,7 +58,7 @@ class SuppressCaseController @Inject() (
   def getSuppressCaseReason(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.SUPPRESS_CASE)) { implicit request =>
-      Ok(views.html.suppress_case_reason(request.`case`, AddNoteForm.getForm("suppress")))
+      Ok(suppress_case_reason(request.`case`, AddNoteForm.getForm("suppress")))
     }
 
   def postSuppressCaseReason(reference: String): Action[AnyContent] =
@@ -65,7 +68,7 @@ class SuppressCaseController @Inject() (
           .getForm("suppress")
           .bindFromRequest()
           .fold(
-            formWithErrors => successful(BadRequest(views.html.suppress_case_reason(request.`case`, formWithErrors))),
+            formWithErrors => successful(BadRequest(suppress_case_reason(request.`case`, formWithErrors))),
             note => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(NoteCacheKey, note)
@@ -101,7 +104,7 @@ class SuppressCaseController @Inject() (
           maxFileSize     = appConfig.fileUploadMaxSize
         )
       )
-      .map(initiateResponse => views.html.suppress_case_email(request.`case`, uploadForm, initiateResponse))
+      .map(initiateResponse => suppress_case_email(request.`case`, uploadForm, initiateResponse))
   }
 
   def getSuppressCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
@@ -138,6 +141,6 @@ class SuppressCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(views.html.confirm_supressed_case(request.`case`))
+      Ok(confirm_supressed_case(request.`case`))
     }
 }

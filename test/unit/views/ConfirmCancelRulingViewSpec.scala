@@ -17,19 +17,21 @@
 package views
 
 import utils.Cases
-import views.html.confirm_cancel_ruling
+import views.html.{confirm_cancel_ruling, confirm_complete_case}
 
 class ConfirmCancelRulingViewSpec extends ViewSpec {
+
+  val confirmCancelRulingView = app.injector.instanceOf[confirm_cancel_ruling]
 
   "Confirm Cancel page" should {
 
     "Render text for BTI" in {
       // When
       val c   = Cases.btiCaseWithExpiredRuling
-      val doc = view(confirm_cancel_ruling(c))
+      val doc = view(confirmCancelRulingView(c))
       lazy val expected =
         "This ruling has been removed from the Search for Advance Tariff Rulings website"
-      lazy val actual = doc.getElementById("confirm_cancel_id").text()
+      lazy val actual = doc.getElementById("main-content").text()
 
       // Then
       actual should include(expected)
@@ -38,9 +40,9 @@ class ConfirmCancelRulingViewSpec extends ViewSpec {
     "Render text for Liability" in {
       // When
       val c             = Cases.aLiabilityCase()
-      val doc           = view(confirm_cancel_ruling(c))
+      val doc           = view(confirmCancelRulingView(c))
       lazy val expected = "The liability decision has been cancelled"
-      lazy val actual   = doc.getElementById("confirm_cancel_id").text()
+      lazy val actual   = doc.getElementById("main-content").text()
 
       // Then
       actual should include(expected)

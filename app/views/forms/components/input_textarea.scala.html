@@ -27,21 +27,21 @@ tabIndex : Option[Int] = None,
 customErrorMessage : Option[String] = None
 )(implicit messages: Messages)
 
-<div class="form-group @if(field.hasErrors){form-group-error}">
-    <label class="form-label" for="@{field.id}">
+<div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}">
+    <label class="govuk-label" for="@{field.id}">
         <span class="@labelClass">@label</span>
     </label>
 
     @hint.map { hint =>
-        <span class="form-hint" id="@{field.id}-hint">@hint</span>
+        <span class="govuk-hint" id="@{field.id}-hint">@hint</span>
     }
 
     @field.errors.map { error =>
-        <span class="error-message" id="@{field.id}-error"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+        <span class="govuk-error-message" id="@{field.id}-error"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
     }
 
     <textarea
-            class="form-control w-100 @inputClass"
+            class="govuk-textarea @inputClass @if(field.hasErrors){govuk-input--error}"
             id="@{field.id}"
             name="@{field.id}"
             @if(field.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{field.id}-hint}@if(field.hasErrors && hint.nonEmpty){ }@if(field.hasErrors){@{field.id}-error}"}

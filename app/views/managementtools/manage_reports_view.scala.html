@@ -14,24 +14,27 @@
  * limitations under the License.
  *@
 
-@import views.html.managementtools.{users_tab}
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
+@import models.viewmodels.{ManagerToolsReportsTab, ManagerToolsTab, SubNavigationTab}
 @import models.viewmodels.managementtools._
+@import views.html.components.manager_tools_secondary_navigation
 @import views.html.includes.main
-@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
-@import models.viewmodels.{ManagerToolsTab}
-@import models.viewmodels.SubNavigationTab
-@import models.viewmodels.ManagerToolsReportsTab
+@import views.html.layouts.full_main_content_layout
+@import views.html.managementtools.reports_tab
 
-
-@this()
+@this(
+        main: main,
+        fullMainContent: full_main_content_layout
+)
 
 @(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, reportingViewModel: ReportingTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("reporting.manage_reports.title")), customPrimaryNavTab = ManagerToolsTab) {
-    @manager_tools_secondary_navigation(activeSubNav)
-
+@main(
+ pageTitle = messages("reporting.manage_reports.title"),
+ optCustomLayout = Some(fullMainContent(_)),
+ customPrimaryNavTab = ManagerToolsTab,
+ subNavigationTab = Some(manager_tools_secondary_navigation(activeSubNav))
+) {
     @reports_tab(reportingViewModel)
-
 }

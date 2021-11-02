@@ -24,18 +24,24 @@
 @import views.forms.components.RadioOption
 @import views.html.components.manager_tools_secondary_navigation
 @import views.html.forms.components.input_radiogroup
-@import views.html.includes.main
+
 @import views.html.partials.error_summary
+@import views.html.includes.main
+@import views.html.managementtools.reportDateFilter
+@import views.html.managementtools.reportHeading
+
+@this(
+    main: main
+)
+
 
 @(form: Form[ReportDateFormData], report: Report, pagination: Pagination)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
-    bodyClasses = None,
-    customTitle = Some(messages("reporting.choose_date.title")),
-    customPrimaryNavTab = ManagerToolsTab
+    pageTitle = messages("reporting.choose_date.title"),
+    customPrimaryNavTab = ManagerToolsTab,
+    subNavigationTab = Some(manager_tools_secondary_navigation(ManagerToolsReportsTab))
 ) {
-
-  @manager_tools_secondary_navigation(ManagerToolsReportsTab)
 
   @error_summary(form.errors)
 
@@ -64,8 +70,8 @@
       )
     )
 
-    <button class="button" id="choose-date-submit" type="submit">
-      @messages("reporting.choose_date.submit")
+    <button class="govuk-button" id="choose-date-submit" type="submit">
+        @messages("reporting.choose_date.submit")
     </button>
   }
 }

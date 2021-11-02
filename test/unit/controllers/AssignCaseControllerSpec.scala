@@ -26,6 +26,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
+import views.html.assign_case
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -34,6 +35,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   private val casesService = mock[CasesService]
   private val operator     = Operator("id")
+  private val assignCase = injector.instanceOf[assign_case]
 
   override def afterEach(): Unit = {
     super.afterEach()
@@ -44,6 +46,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     mcc,
+    assignCase,
     realAppConfig
   )
 
@@ -51,6 +54,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     new RequestActionsWithPermissions(playBodyParsers, permissions = permissions, c = requestCase),
     casesService,
     mcc,
+    assignCase,
     realAppConfig
   )
 

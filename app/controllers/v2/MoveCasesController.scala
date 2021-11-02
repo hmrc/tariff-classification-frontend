@@ -48,7 +48,9 @@ class MoveCasesController @Inject() (
   val chooseUserPage: views.html.partials.users.move_cases_choose_user,
   val chooseUserTeamPage: views.html.partials.users.move_cases_choose_one_from_user_teams,
   val doneMoveCasesPage: views.html.partials.users.done_move_cases,
-  val viewUser: views.html.partials.users.view_user
+  val viewUser: views.html.partials.users.view_user,
+  val user_not_found: views.html.user_not_found,
+  val resource_not_found: views.html.resource_not_found
 )(
   implicit val appConfig: AppConfig,
   implicit val ec: ExecutionContext
@@ -226,7 +228,7 @@ class MoveCasesController @Inject() (
                   )
                 )
               )
-              .getOrElse(NotFound(views.html.user_not_found(pid)))
+              .getOrElse(NotFound(user_not_found(pid)))
           }
         )
         .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
@@ -261,10 +263,10 @@ class MoveCasesController @Inject() (
                         )
                       )
                     )
-                    .getOrElse(NotFound(views.html.user_not_found("")))
+                    .getOrElse(NotFound(user_not_found("")))
                 }
               )
-              .getOrElse(successful(NotFound(views.html.user_not_found("")))),
+              .getOrElse(successful(NotFound(user_not_found("")))),
           team => {
             request.userAnswers
               .get[String](ChosenUserPID)
@@ -361,8 +363,8 @@ class MoveCasesController @Inject() (
                 team <- queueService.getOneById(teamID)
               } yield (user, team) match {
                 case (Some(u), Some(t)) => Ok(doneMoveCasesPage(u.safeName, t.slug.toUpperCase))
-                case (None, _)          => NotFound(views.html.user_not_found(originalPID))
-                case (_, None)          => NotFound(views.html.resource_not_found(s"Queue " + teamID))
+                case (None, _)          => NotFound(user_not_found(originalPID))
+                case (_, None)          => NotFound(resource_not_found(s"Queue " + teamID))
               }
             )
             .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
@@ -390,9 +392,9 @@ class MoveCasesController @Inject() (
                   } yield (originalUser, newUser, team) match {
                     case (Some(ou), Some(nu), Some(t)) =>
                       Ok(doneMoveCasesPage(ou.safeName, t.slug.toUpperCase, Some(nu.safeName)))
-                    case (None, _, _) => NotFound(views.html.user_not_found(originalPID))
-                    case (_, None, _) => NotFound(views.html.user_not_found(chosenPID))
-                    case (_, _, None) => NotFound(views.html.resource_not_found(s"Queue " + teamID))
+                    case (None, _, _) => NotFound(user_not_found(originalPID))
+                    case (_, None, _) => NotFound(user_not_found(chosenPID))
+                    case (_, _, None) => NotFound(resource_not_found(s"Queue " + teamID))
                   }
                 )
                 .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
@@ -441,7 +443,7 @@ class MoveCasesController @Inject() (
       userCaseTabs = ApplicationsTab.casesByTypes(cases.results)
     } yield userTab
       .map(user => Ok(viewUser(user, userCaseTabs, atarForm, liabForm, corrForm, miscForm)))
-      .getOrElse(NotFound(views.html.user_not_found(pid)))
+      .getOrElse(NotFound(user_not_found(pid)))
 
   private def moveToUser(
     pid: String,
@@ -471,7 +473,7 @@ class MoveCasesController @Inject() (
           } yield Redirect(routes.MoveCasesController.chooseOneOfUsersTeams())
         }
       }
-      case _ => successful(NotFound(views.html.user_not_found(pid)))
+      case _ => successful(NotFound(user_not_found(pid)))
     }
 
 }

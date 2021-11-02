@@ -16,7 +16,7 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import views.html.includes.main
+
 @import controllers.v2.routes
 @import controllers.v2.routes.{AllOpenCasesController, ManageUserController, ManageKeywordsController}
 @import models.viewmodels._
@@ -29,57 +29,59 @@
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 <div id="dashboard-view" class="centered-content">
-    <div class="operation-dashboard-header column-two-thirds">
-        <span class="caption-xl mt-40">@request.operator.name.getOrElse("")</span>
-        <h1 class="heading-xlarge mt-0 mb-0">@messages("operator.dashboard.classification.header")</h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">@request.operator.name.getOrElse("")</span>
+            <h1 class="govuk-heading-xl">@messages("operator.dashboard.classification.header")</h1>
+        </div>
     </div>
     @if(request.operator.manager) {
-        <h2 class="heading-medium">@messages("cases.menu.manager_tools")</h2>
-        <div class="flex-container govuk-grid-row">
+        <h2 class="govuk-heading-m">@messages("cases.menu.manager_tools")</h2>
+        <div class="flex-container govuk-body">
             <a id="manager-tools-users-id" class="link-text" href="@ManageUserController.displayManageUsers">
                 <div class="card">
-                    <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.users")</h3>
-                    <p class="card-body card-action">
+                    <h3 class="card-heading govuk-!-font-size-19">@messages("page.title.manager_tools.users")</h3>
+                    <p class="card-body">
                         @messages("operator.dashboard.classification.manager-tools.users.p")
                     </p>
                 </div>
             </a>
             <a id="manager-tools-keywords-id" class="link-text" href="@ManageKeywordsController.displayManageKeywords">
                 <div class="card">
-                    <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.keywords")</h3>
-                    <p class="card-body card-action">
+                    <h3 class="card-heading govuk-!-font-size-19">@messages("page.title.manager_tools.keywords")</h3>
+                    <p class="card-body">
                         @messages("operator.dashboard.classification.manager-tools.keywords.p")
                     </p>
                 </div>
             </a>
             <a id="manager-tools-reports-id" class="link-text" href="@controllers.routes.ReportingController.displayManageReporting()">
                 <div class="card">
-                    <h3 class="card-heading govuk-heading-s">@messages("page.title.manager_tools.reports")</h3>
-                    <p class="card-body card-action">
+                    <h3 class="card-heading govuk-!-font-size-19">@messages("page.title.manager_tools.reports")</h3>
+                    <p class="card-body">
                         @messages("operator.dashboard.classification.manager-tools.reports.p")
                     </p>
                 </div>
             </a>
         </div>
 
-    <h2 class="heading-medium mt-0">@messages("operator.dashboard.classification.all-open-cases")</h2>
-    <div class="flex-container govuk-grid-row">
+    <h2 class="govuk-heading-m ">@messages("operator.dashboard.classification.all-open-cases")</h2>
+    <div class="flex-container govuk-body">
         <a id="bti-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(ATaRTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.all-open-cases.atar")</h3>
                 <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.list-all")</p>
             </div>
         </a>
         <a id="liability-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">@messages("case.menu.liability")</h3>
+                <h3 class="card-heading govuk-!-font-size-19">@messages("case.menu.liability")</h3>
                 <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.liability")</p>
             </div>
         </a>
         <a id="corres-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.all-open-cases.correspondence")</h3>
                 <p class="card-body">
                     @messages("operator.dashboard.classification.all-open-cases.correspondence.list")</p>
@@ -87,18 +89,18 @@
         </a>
         <a id="misc-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.all-open-cases.Miscellaneous")</h3>
                 <p class="card-body">
                     @messages("operator.dashboard.classification.all-open-cases.miscellaneous.list")</p>
             </div>
         </a>
     </div>
-    <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
-    <div class="flex-container govuk-grid-row">
+    <h2 class="govuk-heading-m">@messages("cases.menu.my-cases")</h2>
+    <div class="flex-container govuk-body">
         <a id="my-cases-id" class="link-text" href="my-cases">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
+                <h3 class="card-heading govuk-!-font-size-19">@messages("operator.dashboard.classification.my-cases")</h3>
                 <p class="card-body">
                     @if(totalCasesAssignedToMe == 1) {
                         @messages("operator.dashboard.classification.my-cases.progress.singular")
@@ -110,7 +112,7 @@
         </a>
         <a id="my-referred-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.my-cases.referredByMe")</h3>
                 <p class="card-body">
                     @if(referredCasesAssignedToMe == 1) {
@@ -125,7 +127,7 @@
         </a>
         <a id="my-completed-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.my-cases.completedByMe")</h3>
                 <p class="card-body">
                     @if(completedCasesAssignedToMe == 1) {
@@ -145,11 +147,11 @@
 
     </div>
     }else{
-    <h2 class="heading-medium">@messages("cases.menu.my-cases")</h2>
-    <div class="flex-container govuk-grid-row">
+    <h2 class="govuk-heading-m">@messages("cases.menu.my-cases")</h2>
+    <div class="flex-container govuk-body">
         <a id="my-cases-id" class="link-text" href="my-cases">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">@messages("operator.dashboard.classification.my-cases")</h3>
+                <h3 class="card-heading govuk-!-font-size-19">@messages("operator.dashboard.classification.my-cases")</h3>
                 <p class="card-body">
                     @if(totalCasesAssignedToMe == 1) {
                     @messages("operator.dashboard.classification.my-cases.progress.singular")
@@ -161,7 +163,7 @@
         </a>
         <a id="my-referred-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(ReferredByMeTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.my-cases.referredByMe")</h3>
                 <p class="card-body">
                     @if(referredCasesAssignedToMe == 1) {
@@ -176,7 +178,7 @@
         </a>
         <a id="my-completed-cases-id" class="link-text" href="@routes.MyCasesController.displayMyCases(CompletedByMeTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.my-cases.completedByMe")</h3>
                 <p class="card-body">
                     @if(completedCasesAssignedToMe == 1) {
@@ -195,24 +197,24 @@
         </a>
 
     </div>
-    <h2 class="heading-medium mt-0">@messages("operator.dashboard.classification.all-open-cases")</h2>
-    <div class="flex-container govuk-grid-row">
+    <h2 class="govuk-heading-m ">@messages("operator.dashboard.classification.all-open-cases")</h2>
+    <div class="flex-container govuk-body">
         <a id="bti-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(ATaRTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.all-open-cases.atar")</h3>
                 <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.list-all")</p>
             </div>
         </a>
         <a id="liability-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(LiabilitiesTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">@messages("case.menu.liability")</h3>
+                <h3 class="card-heading govuk-!-font-size-19">@messages("case.menu.liability")</h3>
                 <p class="card-body">@messages("operator.dashboard.classification.all-open-cases.liability")</p>
             </div>
         </a>
         <a id="corres-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(CorrespondenceTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.all-open-cases.correspondence")</h3>
                 <p class="card-body">
                     @messages("operator.dashboard.classification.all-open-cases.correspondence.list")</p>
@@ -220,7 +222,7 @@
         </a>
         <a id="misc-cases-id" class="link-text" href="@AllOpenCasesController.displayAllOpenCases(MiscellaneousTab)">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">
+                <h3 class="card-heading govuk-!-font-size-19">
                     @messages("operator.dashboard.classification.all-open-cases.Miscellaneous")</h3>
                 <p class="card-body">
                     @messages("operator.dashboard.classification.all-open-cases.miscellaneous.list")</p>
@@ -228,11 +230,11 @@
         </a>
     </div>
     }
-    <h2 class="heading-medium mt-0">@messages("cases.menu.gateway-cases")</h2>
-    <div class="flex-container govuk-grid-row">
+    <h2 class="govuk-heading-m ">@messages("cases.menu.gateway-cases")</h2>
+    <div class="flex-container govuk-body">
         <a id="gateway-cases-id" class="link-text" href="gateway-cases">
             <div class="card">
-                <h3 class="card-heading govuk-heading-s">@messages("page.title.case.queues.gateway")</h3>
+                <h3 class="card-heading govuk-!-font-size-19">@messages("page.title.case.queues.gateway")</h3>
                 <p class="card-body">
                     @defining(
                     casesByTeam.getOrElse((None, ApplicationType.ATAR), 0) +
