@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
@@ -22,57 +22,55 @@
 @import views.html.v2.case_status_tab
 @(caseTab : CasesTab, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
- <table id="@{caseTab.tabMessageKey}-table">
-  <caption class="visually-hidden">@messages(captionMessage)</caption>
-  <thead class="govuk-table__head">
-    <tr id="@{caseTab.tabMessageKey}-details" class="grid-row mb-2">
-     <th id="@{caseTab.tabMessageKey}-reference" class="bold w-0" scope="col">
-     Reference
-     </th>
-     <th id="@{caseTab.tabMessageKey}-goods" class="bold w-0" scope="col">
-      Goods
-     </th>
-     <th id="@{caseTab.tabMessageKey}-trader" class="bold w-0" scope="col">
-      Trader
-     </th>
-     <th id="@{caseTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
-      Elapsed days
-     </th>
-     <th id="@{caseTab.tabMessageKey}-type" class="bold w-0" scope="col">
-      Type
-     </th>
-     <th id="@{caseTab.tabMessageKey}-status" class="bold w-0" scope="col">
-      Status
-     </th>
-    </tr>
-  </thead>
-  <tbody>
-   @for((result, index) <- caseTab.searchResult.results.zipWithIndex) {
+<table id="@{caseTab.tabMessageKey}-table" class="govuk-table">
+ <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">@messages(captionMessage)</caption>
+ <thead class="govuk-table__head">
+  <tr id="@{caseTab.tabMessageKey}-details" class="govuk-table__row">
+   <th id="@{caseTab.tabMessageKey}-reference" class="govuk-table__header" scope="col">
+    Reference
+   </th>
+   <th id="@{caseTab.tabMessageKey}-goods" class="govuk-table__header" scope="col">
+    Goods
+   </th>
+   <th id="@{caseTab.tabMessageKey}-trader" class="govuk-table__header" scope="col">
+    Trader
+   </th>
+   <th id="@{caseTab.tabMessageKey}-elapsed-days" class="govuk-table__header" scope="col">
+    Elapsed days
+   </th>
+   <th id="@{caseTab.tabMessageKey}-type" class="govuk-table__header" scope="col">
+    Type
+   </th>
+   <th id="@{caseTab.tabMessageKey}-status" class="govuk-table__header" scope="col">
+    Status
+   </th>
+  </tr>
+ </thead>
+ <tbody class="govuk-table__body">
+ @for((result, index) <- caseTab.searchResult.results.zipWithIndex) {
 
-    @defining(result.application.asLiabilityOrder) { liability =>
+  @defining(result.application.asLiabilityOrder) { liability =>
 
-     <tr id="@{caseTab.tabMessageKey}-details-@index">
-      <td id="@{caseTab.tabMessageKey}-reference-@index">
-       @if(result.queueId.isDefined && !result.assignee.map(_.id).contains(request.operator.id)) {
-        <a href="@routes.AssignCaseController.get(result.reference)">
-         <span aria-hidden="true">@result.reference</span>
-         <span class="visually-hidden">case reference @result.reference</span>
-        </a>
-       }else {
-        <span class="visually-hidden">case reference @result.reference</span>
-        <a href="@routes.CaseController.get(result.reference)">@result.reference</a>
-       }
-      </td>
-      <td id="@{caseTab.tabMessageKey}-goods-@index" class="pre-wrap">@{liability.goodName}</td>
-      <td id="@{caseTab.tabMessageKey}-trader-@index" class="pre-wrap">@{liability.traderName}</td>
-      <td id="@{caseTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
-      <td id="@{caseTab.tabMessageKey}-type-@index"> @if(liability.isLiveLiabilityOrder) {
-       <span class="govuk-tag govuk-tag--pink">@{liability.status}</span>
-      }</td>
-      <td id="@{caseTab.tabMessageKey}-status-@index">@case_status_tab(result, s"${caseTab.tabMessageKey}-status-label-$index")
-      </td>
-     </tr>
+   <tr id="@{caseTab.tabMessageKey}-details-@index" class="govuk-table__row">
+    <td id="@{caseTab.tabMessageKey}-reference-@index" class="govuk-table__cell">
+    @if(result.queueId.isDefined && !result.assignee.map(_.id).contains(request.operator.id)) {
+     <a href="@routes.AssignCaseController.get(result.reference)" class="govuk-link">
+      <span aria-hidden="true">@result.reference</span>
+      <span class="govuk-visually-hidden">case reference @result.reference</span>
+     </a>
+    }else {
+     <span class="govuk-visually-hidden">case reference @result.reference</span>
+     <a href="@routes.CaseController.get(result.reference)" class="govuk-link">@result.reference</a>
     }
-   }
-  </tbody>
- </table>
+    </td>
+    <td id="@{caseTab.tabMessageKey}-goods-@index" class="govuk-table__cell pre-wrap">@{liability.goodName}</td>
+    <td id="@{caseTab.tabMessageKey}-trader-@index" class="govuk-table__cell pre-wrap">@{liability.traderName}</td>
+    <td id="@{caseTab.tabMessageKey}-elapsed-days-@index" class="govuk-table__cell" @if(result.isCaseOverdue) {style="color:red"}>@{result.daysElapsed}</td>
+    <td id="@{caseTab.tabMessageKey}-type-@index" class="govuk-table__cell">@if(liability.isLiveLiabilityOrder){<span class="govuk-tag govuk-tag--pink">@{liability.status}</span>}</td>
+    <td id="@{caseTab.tabMessageKey}-status-@index" class="govuk-table__cell">@case_status_tab(result, s"${caseTab.tabMessageKey}-status-label-$index")
+    </td>
+   </tr>
+  }
+ }
+ </tbody>
+</table>

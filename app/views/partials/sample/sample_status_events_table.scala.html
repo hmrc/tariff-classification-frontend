@@ -24,29 +24,20 @@
 @(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(sample.sampleActivity.nonEmpty) {
-    <h3 class="heading-medium" id="sample-status-events-heading">Sample activity</h3>
-
-    <table id="sample-status-events">
+    <h3 class="govuk-heading-m" id="sample-status-events-heading">Sample activity</h3>
+    <table id="sample-status-events" class="govuk-table">
         <thead class="govuk-table__head">
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-                <th scope="col">Date</th>
-
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Name</th>
+                <th scope="col" class="govuk-table__header">Description</th>
+                <th scope="col" class="govuk-table__header">Date</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="govuk-table__body">
         @for((event: Event, index: Int) <- sample.sampleActivity.results.zipWithIndex) {
-            <tr id="sample-status-events-row-@{
-                index
-            }">
-                <td id="sample-status-events-row-@{
-                    index
-                }-operator" class="sample-status-cell">@event.operator.name.getOrElse("Unknown")</td>
-
-                <td id="sample-status-events-row-@{
-                    index
-                }-content" class="sample-status-cell-desc">
+            <tr id="sample-status-events-row-@{index}" class="govuk-table__row">
+                <td id="sample-status-events-row-@{index}-operator" class="govuk-table__cell">@event.operator.name.getOrElse("Unknown")</td>
+                <td id="sample-status-events-row-@{index}-content" class="govuk-table__cell">
                 @{
                     event.details.`type` match {
                         case EventType.SAMPLE_STATUS_CHANGE => {
@@ -73,14 +64,9 @@
                     }
                 }
                 </td>
-
-                <td id="sample-status-events-row-@{
-                    index
-                }-date" class="sample-status-cell-date">@Dates.format(event.timestamp)</td>
+                <td id="sample-status-events-row-@{index}-date" class="govuk-table__cell">@Dates.format(event.timestamp)</td>
             </tr>
         }
-
         </tbody>
-
     </table>
 }

@@ -18,21 +18,25 @@ package controllers
 
 import cats.data.OptionT
 import config.AppConfig
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.{case_not_found, document_not_found, ruling_not_found}
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 class PdfDownloadController @Inject() (
   authenticatedAction: AuthenticatedAction,
   mcc: MessagesControllerComponents,
   fileStore: FileStoreService,
   caseService: CasesService,
-  implicit val appConfig: AppConfig
+  implicit val appConfig: AppConfig,
+  val case_not_found: case_not_found,
+  val ruling_not_found: ruling_not_found,
+  val document_not_found: document_not_found
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
@@ -56,14 +60,14 @@ class PdfDownloadController @Inject() (
 
             val messages     = request.messages
             val documentType = messages("errors.document-not-found.ruling-certificate")
-            pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
+            pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
 
           case None =>
-            successful(NotFound(views.html.ruling_not_found(reference)))
+            successful(NotFound(ruling_not_found(reference)))
         }
 
       case None =>
-        successful(NotFound(views.html.case_not_found(reference)))
+        successful(NotFound(case_not_found(reference)))
     }
   }
 
@@ -86,14 +90,14 @@ class PdfDownloadController @Inject() (
 
             val messages     = request.messages
             val documentType = messages("errors.document-not-found.ruling-certificate")
-            pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
+            pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
 
           case None =>
-            successful(NotFound(views.html.ruling_not_found(reference)))
+            successful(NotFound(ruling_not_found(reference)))
         }
 
       case None =>
-        successful(NotFound(views.html.case_not_found(reference)))
+        successful(NotFound(case_not_found(reference)))
     }
   }
 
@@ -114,10 +118,10 @@ class PdfDownloadController @Inject() (
 
         val messages     = request.messages
         val documentType = messages("errors.document-not-found.application")
-        pdfResult.getOrElse(NotFound(views.html.document_not_found(documentType, reference)))
+        pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
 
       case None =>
-        successful(NotFound(views.html.case_not_found(reference)))
+        successful(NotFound(case_not_found(reference)))
     }
   }
 }

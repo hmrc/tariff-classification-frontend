@@ -16,20 +16,21 @@
 
 package controllers
 
-import javax.inject.Inject
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import config.AppConfig
 import models.forms.CaseStatusRadioInputFormProvider
 import models.{CaseStatusRadioInput, Permission}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.release_or_suppress
 
+import javax.inject.Inject
 import scala.concurrent.Future.successful
 
 class ReleaseOrSuppressCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
+  val release_or_suppress: release_or_suppress,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)

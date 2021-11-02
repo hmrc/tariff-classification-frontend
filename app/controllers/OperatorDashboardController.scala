@@ -17,21 +17,22 @@
 package controllers
 
 import config.AppConfig
-import javax.inject.Inject
-import models.request.AuthenticatedRequest
 import models._
+import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.operator_dashboard_classification
 
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class OperatorDashboardController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
-  operator_dashboard_classification: views.html.operator_dashboard_classification,
+  operator_dashboard_classification: operator_dashboard_classification,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {

@@ -35,6 +35,7 @@ import service.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.managementtools._
 import utils.Cases
+import views.html.case_not_found
 import views.html.managementtools.{change_keyword_status_view, confirm_keyword_created, confirm_keyword_status, manage_keywords_view, new_keyword_view}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -62,6 +63,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private lazy val keywordService = mock[ManageKeywordsService]
   private lazy val keywordChangeConfirm    = injector.instanceOf[confirm_keyword_status]
   private lazy val changeKeywordStatusView = injector.instanceOf[change_keyword_status_view]
+  private lazy val caseNotFound = injector.instanceOf[case_not_found]
   private val casesService = mock[CasesService]
   val form: Form[String] = ChangeKeywordStatusForm.form
 
@@ -83,6 +85,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     edit_approved_keyword_view,
     confirmation_keyword_deleted_view,
     confirmation_keyword_renamed_view,
+    caseNotFound,
     realAppConfig
   )
 

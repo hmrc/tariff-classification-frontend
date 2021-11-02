@@ -31,46 +31,46 @@
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(attachments.nonEmpty){
-        <table id="@{id}-table">
-            <caption class="visually-hidden">@messages("case.menu.attachments")</caption>
+        <table id="@{id}-table" class="govuk-table">
+            <caption class="govuk-visually-hidden">@messages("case.menu.attachments")</caption>
             <thead class="govuk-table__head">
-                <tr>
-                    <th scope="col">File name</th>
-                    @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col">Uploaded by</th>}
-                    <th id="@{id}-header-details" scope="col">Details</th>
-                    <th class="attachment-table-date" scope="col">Date</th>
-                    <th><span class="visuallyhidden">attachment action</span></th>
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">File name</th>
+                    @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col" class="govuk-table__header">Uploaded by</th>}
+                    <th id="@{id}-header-details" scope="col" class="govuk-table__header">Details</th>
+                    <th scope="col" class="govuk-table__header">Date</th>
+                    <th class="govuk-table__header"><span class="govuk-visually-hidden">attachment action</span></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="govuk-table__body">
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
-                        <tr id="@{id}-row-@{index}">
-                            <td id="@{id}-row-@{index}-title" class="word-break">
+                        <tr id="@{id}-row-@{index}" class="govuk-table__row">
+                            <td id="@{id}-row-@{index}-title" class="govuk-table__cell word-break">
                                 @attachment(s"$id-row-$index", file, caseRef)
                                 <span class="refresh-content">@messages("case.attachment.refresh.content")</span>
                             </td>
 
                             @if(showUploadedBy) {
-                                <td id="@{id}-row-@{index}-uploaded_by">
+                                <td id="@{id}-row-@{index}-uploaded_by" class="govuk-table__cell">
                                     @file.nameOfOperator @file.delimiterBetweenNameAndRole @file.roleOfOperator
                                 </td>
                             }
 
-                            <td id="@{id}-row-@{index}-details" class="w-15">
+                            <td id="@{id}-row-@{index}-details" class="govuk-table__cell">
                                 @file.description
                             </td>
 
-                            <td id="@{id}-row-@{index}-date" class="w-15">
+                            <td id="@{id}-row-@{index}-date" class="govuk-table__cell">
                                 @file.formattedDate
                             </td>
 
                             @if(showRemoval &&
                                 !caseRef.isEmpty &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
-                                <td id="@{id}-row-@{index}-remove">
-                                    <a id="@{id}-row-@{index}-remove-link" href='@AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
+                                <td id="@{id}-row-@{index}-remove" class="govuk-table__cell">
+                                    <a id="@{id}-row-@{index}-remove-link" class="govuk-link" href='@AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
                                         <span aria-hidden="true">@messages("case.attachment.remove.file.text")</span>
-                                        <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName.getOrElse("New Attachment"))</span>
+                                        <span class="govuk-visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName.getOrElse("New Attachment"))</span>
                                     </a>
                                 </td>
                             }
@@ -79,5 +79,5 @@
             </tbody>
         </table>
     }else {
-        <p id="@{id}-empty-table"> @messages("case.attachment.table.empty") </p>
+        <p id="@{id}-empty-table" class="govuk-body"> @messages("case.attachment.table.empty") </p>
     }

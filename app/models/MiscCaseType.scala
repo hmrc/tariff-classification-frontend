@@ -36,4 +36,3 @@ object MiscCaseType extends Enumeration {
     case OTHER => "Other"
   }
 }
-

@@ -17,29 +17,28 @@
 package controllers.v2
 
 
+import akka.stream.Materializer
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
+import models._
 import models.request.AuthenticatedRequest
 import models.viewmodels._
-import models._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.{CasesService, EventsService}
-
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.my_cases_view
 
 import scala.concurrent.ExecutionContext
-
-import akka.stream.Materializer
 
 class MyCasesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   eventsService: EventsService,
   mcc: MessagesControllerComponents,
-  val myCasesView: views.html.v2.my_cases_view
+  val myCasesView: my_cases_view
 )(
   implicit val appConfig: AppConfig,
   mat: Materializer

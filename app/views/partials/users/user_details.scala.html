@@ -23,49 +23,48 @@
 
 @(userDetails: Operator)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<h2 class="heading-large mt-0 mb-30">@messages("users.user.details.heading")</h2>
+<h2 class="govuk-heading-l">@messages("users.user.details.heading")</h2>
 
 
-<dl class="govuk-check-your-answers cya-questions-long">
-
- <div class="grid-row">
-  <dt class="cya-question">
+<dl class="govuk-summary-list">
+ <div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">
    @messages("users.user.details.name")
   </dt>
-  <dd class="cya-answer" id="user-full-name">
+  <dd class="govuk-summary-list__value" id="user-full-name">
    @userDetails.getFullName
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
  </div>
 
- <div class="grid-row">
-  <dt class="cya-question">
+ <div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">
    @messages("users.user.details.email")
   </dt>
-  <dd class="cya-answer" id="user-email">
+  <dd class="govuk-summary-list__value" id="user-email">
    @userDetails.getEmail
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
  </div>
 
- <div class="grid-row">
-  <dt class="cya-question">
+ <div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">
    @messages("users.user.details.pid")
   </dt>
-  <dd class="cya-answer" id="user-pid">
+  <dd class="govuk-summary-list__value" id="user-pid">
    @userDetails.id
   </dd>
   <dd class="govuk-summary-list__actions">
   </dd>
  </div>
 
- <div class="grid-row">
-  <dt class="cya-question">
+ <div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">
    @messages("users.user.details.role")
   </dt>
-  <dd class="cya-answer" id="user-role">
+  <dd class="govuk-summary-list__value" id="user-role">
    @{(userDetails.role, userDetails.isGateway) match {
    case (Role.CLASSIFICATION_OFFICER, true) => "Classification and Gateway"
    case (Role.CLASSIFICATION_OFFICER, false) => "Classification"
@@ -85,11 +84,11 @@
   </dd>
  </div>
 
- <div class="grid-row">
-  <dt class="cya-question">
+ <div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">
    @messages("users.user.details.team")
   </dt>
-  <dd class="cya-answer" id="user-team">
+  <dd class="govuk-summary-list__value" id="user-team">
    @if(userDetails.memberOfTeams.isEmpty){
     None
    }else{
@@ -97,7 +96,7 @@
   </dd>
   <dd class="govuk-summary-list__actions">
    <a class="govuk-link" href="@ManageUserController.editUserTeamDetails(userDetails.id)">
-    Change<span class="visually-hidden"> assigned team</span>
+    Change<span class="govuk-visually-hidden"> assigned team</span>
    </a>
   </dd>
  </div>

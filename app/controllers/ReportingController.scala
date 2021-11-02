@@ -16,12 +16,8 @@
 
 package controllers
 
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import javax.inject.{Inject, Singleton}
-
-import akka.stream.scaladsl.Source
 import akka.stream.alpakka.csv.scaladsl.CsvFormatting
+import akka.stream.scaladsl.Source
 import cats.syntax.all._
 import config.AppConfig
 import models._
@@ -33,8 +29,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{QueuesService, ReportingService, UserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.managementtools.{caseReportView, queueReportView, reportChooseDates, reportChooseTeams, summaryReportView}
+import views.html.managementtools._
+import views.html.report_not_found
 
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -44,7 +44,13 @@ class ReportingController @Inject() (
   queuesService: QueuesService,
   usersService: UserService,
   mcc: MessagesControllerComponents,
-  val manageReportsView: views.html.managementtools.manage_reports_view,
+  val manageReportsView: manage_reports_view,
+  val summaryReportView: summaryReportView,
+  val queueReportView: queueReportView,
+  val caseReportView: caseReportView,
+  val reportChooseDates: reportChooseDates,
+  val reportChooseTeams: reportChooseTeams,
+  val report_not_found: report_not_found,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -246,7 +252,7 @@ class ReportingController @Inject() (
             Redirect(routes.ReportingController.queueReport(queue, SearchPagination()))
         }
         .getOrElse {
-          NotFound(views.html.report_not_found(reportName))
+          NotFound(report_not_found(reportName))
         }
     }
 

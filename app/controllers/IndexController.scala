@@ -31,6 +31,7 @@ import javax.inject.{Inject, Singleton}
 class IndexController @Inject() (
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
+  val read_only_home: read_only_home,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {

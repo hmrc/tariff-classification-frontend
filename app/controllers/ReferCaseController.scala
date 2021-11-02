@@ -16,25 +16,25 @@
 
 package controllers
 
-import java.util.UUID
-import javax.inject.{Inject, Singleton}
-
 import config.AppConfig
 import connector.DataCacheConnector
 import controllers.v2.UpscanErrorHandling
 import models._
 import models.forms.{ReferCaseForm, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
-import play.api.mvc._
 import play.api.data.Form
+import play.api.i18n.I18nSupport
+import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
+import views.html.{confirm_refer_case, refer_case_email, refer_case_reason}
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
-import play.api.i18n.I18nSupport
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReferCaseController @Inject() (
@@ -43,6 +43,9 @@ class ReferCaseController @Inject() (
   fileService: FileStoreService,
   dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
+  val refer_case_reason: refer_case_reason,
+  val refer_case_email: refer_case_email,
+  val confirm_refer_case: confirm_refer_case,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -55,16 +58,19 @@ class ReferCaseController @Inject() (
 
   def getReferCaseReason(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER_CASE)) {
-      implicit request => Ok(views.html.refer_case_reason(request.`case`, ReferCaseForm.form))
+      implicit request => Ok(refer_case_reason(request.`case`, ReferCaseForm.form))
     }
 
+  //TODO Form binding needs reworking, currently optional fields generate multiple errors for the refferTo field
   def postReferCaseReason(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER_CASE))
       .async { implicit request =>
         ReferCaseForm.form
           .bindFromRequest()
           .fold(
-            formWithErrors => successful(BadRequest(views.html.refer_case_reason(request.`case`, formWithErrors))),
+            formWithErrors => {
+              successful(BadRequest(refer_case_reason(request.`case`, formWithErrors)))
+            } ,
             referral => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(ReferralCacheKey, referral)
@@ -100,7 +106,7 @@ class ReferCaseController @Inject() (
           maxFileSize     = appConfig.fileUploadMaxSize
         )
       )
-      .map(initiateResponse => views.html.refer_case_email(request.`case`, uploadForm, initiateResponse))
+      .map(initiateResponse => refer_case_email(request.`case`, uploadForm, initiateResponse))
   }
 
   def getReferCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
@@ -116,10 +122,11 @@ class ReferCaseController @Inject() (
         .get[CaseReferral](ReferralCacheKey)
         .map { referral =>
           val referredTo =
-            if (referral.referredTo.equalsIgnoreCase("Other"))
+            if (referral.referredTo.equalsIgnoreCase("Other")) {
               referral.referManually.getOrElse(referral.referredTo)
-            else
+            } else {
               referral.referredTo
+            }
 
           val referralReasons =
             referral.reasons.filter(_ => referredTo.equalsIgnoreCase("Applicant"))
@@ -148,6 +155,6 @@ class ReferCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(views.html.confirm_refer_case(request.`case`))
+      Ok(confirm_refer_case(request.`case`))
     }
 }

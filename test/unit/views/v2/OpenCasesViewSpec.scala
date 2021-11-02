@@ -87,6 +87,7 @@ class OpenCasesViewSpec extends ViewSpec {
           Seq(Cases.btiCaseExample, Cases.btiCaseExample)
         )
       )
+      (authenticatedManagerFakeRequest, messages, appConfig)
     )
 
     doc should containElementWithID("open-cases-sub-nav")
@@ -134,7 +135,7 @@ class OpenCasesViewSpec extends ViewSpec {
           Queues.allLiabilityQueues,
           Seq(Cases.liabilityCaseExample, Cases.liabilityCaseExample)
         )
-      )
+      )(authenticatedManagerFakeRequest, messages, appConfig)
     )
 
     doc should containElementWithID("open-cases-sub-nav")
@@ -181,7 +182,7 @@ class OpenCasesViewSpec extends ViewSpec {
           Queues.allCorresMiscQueues,
           Seq(Cases.correspondenceCaseExample, Cases.correspondenceCaseExample)
         )
-      )
+      )(authenticatedManagerFakeRequest, messages, appConfig)
     )
 
     doc should containElementWithID("open-cases-sub-nav")
@@ -228,7 +229,7 @@ class OpenCasesViewSpec extends ViewSpec {
           Queues.allCorresMiscQueues,
           Seq(Cases.miscellaneousCaseExample, Cases.miscellaneousCaseExample)
         )
-      )
+      )(authenticatedManagerFakeRequest, messages, appConfig)
     )
 
     doc should containElementWithID("open-cases-sub-nav")

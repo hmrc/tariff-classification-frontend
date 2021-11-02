@@ -18,13 +18,13 @@ package controllers
 
 import cats.syntax.all._
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import javax.inject.{Inject, Singleton}
 import models.ApplicationType
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.TabCacheService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

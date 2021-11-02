@@ -27,57 +27,60 @@
 
 @c592_information(rulingViewModel.commodityCodeEnteredByTraderOrAgent, rulingViewModel.commodityCodeSuggestedByOfficer)
 
-<hr>
-
 @*liability ruling*@
-<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.section")</h3>
+    <div class="govuk-form-group">
+<h3 class="govuk-heading-m">@messages("case.v2.liability.ruling.section")</h3>
 @if(rulingViewModel.showEditRuling) {
-    <div id="ruling_edit_details" class="govuk-!-margin-bottom-4">
-        <a href="@RulingController.editRulingDetails(rulingViewModel.caseReference)">@messages("case.v2.liability.ruling.edit.details")</a>
+    <div id="ruling_edit_details" class="govuk-form-group">
+        <p class="govuk-body">
+            <a href="@RulingController.editRulingDetails(rulingViewModel.caseReference)" class="govuk-link">@messages("case.v2.liability.ruling.edit.details")</a>
+        </p>
     </div>
 }
-<dl class="dl-mb-2 dl-mt-2">
-    <div class="grid-row">
-        <dt id="ruling_bindingCommodityCode" class="column-one-third">
+    </div>
+
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt id="ruling_bindingCommodityCode" class="govuk-summary-list__key">
         @messages("case.v2.liability.ruling.commodity_code")
         </dt>
-        <dd class="column-two-thirds">
+        <dd class="govuk-summary-list__value">
             <span id="ruling_bindingCommodityCodeValue">@rulingViewModel.commodityCode</span>
         </dd>
     </div>
 
-    <div class="grid-row">
-        <dt id="ruling_itemDescription" class="column-one-third">
+    <div class="govuk-summary-list__row">
+        <dt id="ruling_itemDescription" class="govuk-summary-list__key">
         @messages("case.v2.liability.ruling.item_description")
         </dt>
-        <dd class="column-two-thirds">
+        <dd class="govuk-summary-list__value">
             <span id="ruling_itemDescriptionValue" class="pre-wrap">@rulingViewModel.itemDescription</span>
         </dd>
     </div>
 
-    <div class="grid-row">
-        <dt id="ruling_justification" class="column-one-third">
+    <div class="govuk-summary-list__row">
+        <dt id="ruling_justification" class="govuk-summary-list__key">
         @messages("case.v2.liability.ruling.justification")
         </dt>
-        <dd class="column-two-thirds">
+        <dd class="govuk-summary-list__value">
             <span id="ruling_justificationValue" class="pre-wrap">@rulingViewModel.justification</span>
         </dd>
     </div>
 
-    <div class="grid-row">
-        <dt id="ruling_searches" class="column-one-third">
+    <div class="govuk-summary-list__row">
+        <dt id="ruling_searches" class="govuk-summary-list__key">
         @messages("case.v2.liability.ruling.searches")
         </dt>
-        <dd class="column-two-thirds">
+        <dd class="govuk-summary-list__value">
             <span id="ruling_searchesValue" class="pre-wrap">@rulingViewModel.methodSearch</span>
         </dd>
     </div>
 
-    <div class="grid-row">
-        <dt id="ruling_exclusions" class="column-one-third">
+    <div class="govuk-summary-list__row">
+        <dt id="ruling_exclusions" class="govuk-summary-list__key">
         @messages("case.v2.liability.ruling.exclusions")
         </dt>
-        <dd class="column-two-thirds">
+        <dd class="govuk-summary-list__value">
             <span id="ruling_exclusionsValue" class="pre-wrap">@rulingViewModel.methodExclusion</span>
         </dd>
     </div>

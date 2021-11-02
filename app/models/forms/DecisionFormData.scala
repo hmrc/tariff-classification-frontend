@@ -17,32 +17,31 @@
 package models.forms
 
 import java.time.Instant
-
 import javax.inject.Inject
 import play.api.data.Form
 import play.api.data.Forms._
-import uk.gov.hmrc.play.mappers.StopOnFirstFail
 import models.forms.FormConstraints._
 import models.forms.mappings.Constraints
 import models.Decision
+import models.constraints.StopOnFirstFail
 
 case class DecisionFormData(
-  bindingCommodityCode: String         = "",
-  goodsDescription: String             = "",
-  methodSearch: String                 = "",
-  justification: String                = "",
-  methodCommercialDenomination: String = "",
-  methodExclusion: String              = "",
-  attachments: Seq[String]             = Seq.empty,
-  explanation: String                  = "",
-  expiryDate: Option[Instant]          = None,
-  explicitEndDate: Boolean             = false
-)
+                             bindingCommodityCode: String         = "",
+                             goodsDescription: String             = "",
+                             methodSearch: String                 = "",
+                             justification: String                = "",
+                             methodCommercialDenomination: String = "",
+                             methodExclusion: String              = "",
+                             attachments: Seq[String]             = Seq.empty,
+                             explanation: String                  = "",
+                             expiryDate: Option[Instant]          = None,
+                             explicitEndDate: Boolean             = false
+                           )
 
 class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
 
   def btiForm(): Form[DecisionFormData] = {
-   Form[DecisionFormData](
+    Form[DecisionFormData](
       mapping(
         "bindingCommodityCode" -> text.verifying(
           emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
@@ -128,12 +127,10 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
     Form[Decision](
       mapping(
         "bindingCommodityCode" -> text.verifying(
-          StopOnFirstFail(
-            commodityCodeConstraints.commodityCodeNonEmpty,
-            commodityCodeConstraints.commodityCodeLengthValid,
-            commodityCodeConstraints.commodityCodeNumbersValid,
-            commodityCodeConstraints.commodityCodeEvenDigitsValid
-          )
+          commodityCodeConstraints.commodityCodeNonEmpty,
+          commodityCodeConstraints.commodityCodeLengthValid,
+          commodityCodeConstraints.commodityCodeNumbersValid,
+          commodityCodeConstraints.commodityCodeEvenDigitsValid
         ),
         "goodsDescription"     -> text.verifying(customNonEmpty("Enter a goods description")),
         "methodSearch"         -> text.verifying(customNonEmpty("Enter the searches performed")),

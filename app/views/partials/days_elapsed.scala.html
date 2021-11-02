@@ -20,4 +20,4 @@
 
 @(daysElapsed: Long, id: String = "days-elapsed")(implicit appConfig: AppConfig)
 
- <span id="@id" @if(daysElapsed >= appConfig.activeDaysElapsedSlaLimit) {class="extra-bold"}>@daysElapsed</span>
+<span id="@id" @if(daysElapsed >= appConfig.activeDaysElapsedSlaLimit) {class="extra-bold"}>@daysElapsed</span>

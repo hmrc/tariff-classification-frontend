@@ -18,7 +18,6 @@ package controllers
 
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
-import javax.inject.{Inject, Singleton}
 import models.request.AuthenticatedRequest
 import models.{Operator, Permission, Role}
 import play.api.mvc.Results._
@@ -26,12 +25,13 @@ import play.api.mvc._
 import play.api.{Configuration, Environment, Logging}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{~}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -86,10 +86,11 @@ class AuthenticatedAction @Inject() (
             case None =>
               userConnector.createUser(userFromAuth)
             case Some(existingUser) =>
-              if (existingUser.withoutTeams != userFromAuth)
+              if (existingUser.withoutTeams != userFromAuth) {
                 userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
-              else
+              } else {
                 Future.successful(existingUser)
+              }
           }
 
           permittedUser = updatedUser.copy(permissions = Permission.applyingTo(updatedUser))

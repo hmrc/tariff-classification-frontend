@@ -1,46 +1,63 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
 @import models.reporting._
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.ManagerToolsTab
-@import models.viewmodels.ManagerToolsReportsTab
-@import models.viewmodels.SubNavigationTab
-@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
+@import models.viewmodels.{ManagerToolsReportsTab, ManagerToolsTab}
+@import views.html.components.manager_tools_secondary_navigation
 @import views.html.includes.main
+@import views.html.layouts.full_main_content_layout
+@import views.html.managementtools._
+
+@this(
+        main: main,
+        fullMainContent: full_main_content_layout
+)
 
 @(
-  report: CaseReport,
-  pagination: Pagination,
-  results: Paged[Map[String, ReportResultField[_]]],
-  users: Map[String, Operator],
-  teams: Map[String, Queue]
+        report: CaseReport,
+        pagination: Pagination,
+        results: Paged[Map[String, ReportResultField[_]]],
+        users: Map[String, Operator],
+        teams: Map[String, Queue]
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
-@main(bodyClasses = None, customTitle = Some(messages("reporting.view_report.title")), customPrimaryNavTab = ManagerToolsTab) {
+    @additionalCSS = {
+        <link rel="stylesheet" href='@routes.Assets.at("stylesheets/layout.css")'/>
+    }
 
-  @manager_tools_secondary_navigation(ManagerToolsReportsTab)
+    @main(
+        pageTitle = messages("reporting.view_report.title"),
+        customPrimaryNavTab = ManagerToolsTab,
+        subNavigationTab = Some(manager_tools_secondary_navigation(ManagerToolsReportsTab)),
+        optCustomLayout = Some(fullMainContent(_)),
+        additionalCSS = Some(additionalCSS)
+    ) {
 
-  @reportHeading(report.name, messages("reporting.view_report.heading"))
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @reportHeading(report.name, messages("reporting.view_report.heading"))
 
-  @reportFilters(report, pagination, teams)
+                @reportFilters(report, pagination, teams)
 
-  @reportButtons(report, "case-report")
+                @reportButtons(report, "case-report")
+            </div>
+        </div>
 
-  @caseReportTable(report, pagination, results, users, teams, "case-report")
+        @caseReportTable(report, pagination, results, users, teams, "case-report")
 
-}
+    }

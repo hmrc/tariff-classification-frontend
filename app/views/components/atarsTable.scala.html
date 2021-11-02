@@ -21,35 +21,36 @@
 
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.v2.case_status_tab
+
 @(atarTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
- <table id="@{atarTab.tabMessageKey}-table">
-  <caption class="visually-hidden">@messages(captionMessage)</caption>
+ <table id="@{atarTab.tabMessageKey}-table" class="govuk-table">
+  <caption class="govuk-visually-hidden govuk-table__caption">@messages(captionMessage)</caption>
   <thead class="govuk-table__head">
-    <tr id="@{atarTab.tabMessageKey}-details" class="grid-row mb-2">
-     <th id="@{atarTab.tabMessageKey}-reference" class="bold w-0" scope="col">
+    <tr id="@{atarTab.tabMessageKey}-details" class="govuk-table__row">
+     <th id="@{atarTab.tabMessageKey}-reference" class="govuk-table__header" scope="col">
      Reference
      </th>
-     <th id="@{atarTab.tabMessageKey}-goods" class="bold w-0" scope="col">
+     <th id="@{atarTab.tabMessageKey}-goods" class="govuk-table__header" scope="col">
       Goods
      </th>
-     <th id="@{atarTab.tabMessageKey}-trader" class="bold w-0" scope="col">
+     <th id="@{atarTab.tabMessageKey}-trader" class="govuk-table__header" scope="col">
       Trader
      </th>
-     <th id="@{atarTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
+     <th id="@{atarTab.tabMessageKey}-elapsed-days" class="govuk-table__header"" scope="col">
       Elapsed days
      </th>
      @if(assignmentType == "applicationTab.completedByMe") {
-     <th id="@{atarTab.tabMessageKey}-completed-date" class="bold w-0" scope="col">
+     <th id="@{atarTab.tabMessageKey}-completed-date" class="govuk-table__header" scope="col">
       Completed date
      </th>
      }
      @if(assignmentType == "applicationTab.referredByMe") {
-     <th id="@{atarTab.tabMessageKey}-refer-days" class="bold w-0" scope="col">
+     <th id="@{atarTab.tabMessageKey}-refer-days" class="govuk-table__header" scope="col">
       Refer days
      </th>
       }
-     <th id="@{atarTab.tabMessageKey}-status" class="bold w-0" scope="col">
+     <th id="@{atarTab.tabMessageKey}-status" class="govuk-table__header" scope="col">
       Status
      </th>
     </tr>
@@ -59,27 +60,27 @@
 
     @defining(result.application.asATAR) { atar =>
 
-     <tr id="@{atarTab.tabMessageKey}-details-@index">
-      <td id="@{atarTab.tabMessageKey}-reference-@index">
-       <a href="@routes.CaseController.get(result.reference)">
+     <tr id="@{atarTab.tabMessageKey}-details-@index" class="govuk-table__row">
+      <td id="@{atarTab.tabMessageKey}-reference-@index" class="govuk-table__cell">
+       <a href="@routes.CaseController.get(result.reference)" class="govuk-link">
         <span aria-hidden="true">@{result.reference}</span>
-        <span class="visually-hidden">case reference @{result.reference}</span>
+        <span class="govuk-visually-hidden">case reference @{result.reference}</span>
        </a>
       </td>
-      <td id="@{atarTab.tabMessageKey}-goods-@index">@{atar.goodName}</td>
-      <td id="@{atarTab.tabMessageKey}-trader-@index">@{atar.holder.businessName}</td>
-      <td id="@{atarTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+      <td id="@{atarTab.tabMessageKey}-goods-@index" class="govuk-table__cell">@{atar.goodName}</td>
+      <td id="@{atarTab.tabMessageKey}-trader-@index" class="govuk-table__cell">@{atar.holder.businessName}</td>
+      <td id="@{atarTab.tabMessageKey}-elapsed-days-@index"  class="govuk-table__cell @if(result.isCaseOverdue){live-red-text}">@{result.daysElapsed}</td>
       @if(assignmentType == "applicationTab.referredByMe") {
-       <td id="@{atarTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
+       <td id="@{atarTab.tabMessageKey}-refer-days-@index" class="govuk-table__cell">@{result.referredDaysElapsed}</td>
       }
       @if(assignmentType == "applicationTab.completedByMe") {
-       <td id="@{atarTab.tabMessageKey}-completed-date-@index">
+       <td id="@{atarTab.tabMessageKey}-completed-date-@index" class="govuk-table__cell">
         @for(completedEvent <- atarTab.completedEvent.flatMap(_.get(result.reference))) {
          @Dates.format(completedEvent.timestamp)
         }
        </td>
       }
-      <td id="@{atarTab.tabMessageKey}-status-@index">
+      <td id="@{atarTab.tabMessageKey}-status-@index" class="govuk-table__cell">
        @case_status_tab(result, s"${atarTab.tabMessageKey}-status-label-$index")
        @for(referralEvent <- atarTab.referralEvent.flatMap(_.get(result.reference))) {
         <span id="@{atarTab.tabMessageKey}-status-refer-to-@index"><p>@{referralEvent.details.asInstanceOf[ReferralCaseStatusChange].referredTo}</p></span>
@@ -91,4 +92,3 @@
    }
   </tbody>
  </table>
-

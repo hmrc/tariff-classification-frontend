@@ -82,7 +82,7 @@ class CaseHeadingViewSpec extends ViewSpec {
         caseHeading(caseHeaderViewModelWithoutGoodsName)
       )
 
-      doc should containElementWithClass("heading-xlarge case-title")
+      doc should containElementWithClass("govuk-heading-xl")
 
       doc should containText("Case 1")
     }

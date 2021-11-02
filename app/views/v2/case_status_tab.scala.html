@@ -21,28 +21,25 @@
 
 @c.status match {
     case CaseStatus.OPEN => {
-        <span class="visually-hidden">case status</span>
+        <span class="govuk-visually-hidden">case status</span>
         <span id="@id-status" class="govuk-tag govuk-tag--blue">@c.status</span>
     }
     case CaseStatus.NEW => {
-        <span class="visually-hidden">case status</span>
+        <span class="govuk-visually-hidden">case status</span>
         <span id="@id-status" class="govuk-tag govuk-tag--green">@c.status</span>
     }
     case CaseStatus.REFERRED | CaseStatus.SUSPENDED => {
-        <span class="visually-hidden">case status</span>
+        <span class="govuk-visually-hidden">case status</span>
         <span id="@id-status" class="govuk-tag govuk-tag--yellow">@{c.status}</span>
     }
 
     case status => {
-        <span class="visuallyhidden">case status</span>
+        <span class="govuk-visually-hidden">case status</span>
         <span id="@id-status" class="govuk-tag govuk-tag--green">@c.status</span>
     }
 
 }
 @if(c.isCaseOverdue) {
-    <span class="visually-hidden">case status</span>
+    <span class="govuk-visually-hidden">case status</span>
     <span id="@id-overdue" class="govuk-tag govuk-tag--red">OVERDUE</span>
 }
-
-
-

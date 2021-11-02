@@ -21,5 +21,5 @@ import play.api.data.Form
 object  TakeOwnerShipForm {
 
   val form: Form[Boolean] = MandatoryBooleanForm.form("take-ownership")
-  
+
 }

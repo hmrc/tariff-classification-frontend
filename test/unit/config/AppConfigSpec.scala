@@ -24,10 +24,6 @@ class AppConfigSpec extends SpecBase {
 
   "Config" should {
 
-    "Build assets prefix" in {
-      realAppConfig.assetsPrefix shouldBe "http://localhost:9032/assets/4.11.0"
-    }
-
     "Build analytics token" in {
       realAppConfig.analyticsToken shouldBe "N/A"
     }

@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import controllers.v2.routes.MyCasesController
 @import controllers.v2.routes.AllOpenCasesController
@@ -20,7 +20,7 @@
 @import config.AppConfig
 @import models.{Case, Queue}
 @import models.request.AuthenticatedRequest
-@import views.html.includes.main
+
 @import views.html.partials._
 @import models.viewmodels.NoTabSelected
 @import controllers.routes._
@@ -28,6 +28,12 @@
 
 
 @import scala.util.matching.Regex
+@import views.html.includes.main
+
+@this(
+        main: main
+)
+
 
 @(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
@@ -55,21 +61,18 @@
     }
 }
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.case.moved")),
-    customPrimaryNavTab = NoTabSelected) {
+@main(
+    pageTitle = messages("page.title.case.moved"),
+    customPrimaryNavTab = NoTabSelected
+) {
 
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <div class="govuk-panel govuk-panel--confirmation">
-                <h1 class="govuk-panel__title">@messages("case.reassign.header", c.application.goodsName, queue.name)</h1>
-                <div class="govuk-panel__body">The case status is still </br><span class="bold">@c.status</span></div>
-            </div>
-
-            @confirmation_next_steps(
-                linkText = backToCaseLinkText,
-                backHref = backToCase
-            )
-
-        </div>
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">@messages("case.reassign.header", c.application.goodsName, queue.name)</h1>
+        <div class="govuk-panel__body">The case status is still </br><span class="bold">@c.status</span></div>
     </div>
+
+    @confirmation_next_steps(
+        linkText = backToCaseLinkText,
+        backHref = backToCase
+    )
 }

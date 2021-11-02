@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
@@ -24,86 +24,85 @@
 
 @(correspondenceTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
- <table id="@{correspondenceTab.tabMessageKey}-table">
-  <caption class="visually-hidden">@messages(captionMessage)</caption>
-  <thead class="govuk-table__head">
-    <tr id="@{correspondenceTab.tabMessageKey}-details" class="grid-row mb-2">
-     <th id="@{correspondenceTab.tabMessageKey}-reference" class="bold w-0" scope="col">
+<table id="@{correspondenceTab.tabMessageKey}-table" class="govuk-table">
+ <caption class="govuk-visually-hidden govuk-table__caption">@messages(captionMessage)</caption>
+ <thead class="govuk-table__head">
+  <tr id="@{correspondenceTab.tabMessageKey}-details" class="govuk-table__row">
+   <th id="@{correspondenceTab.tabMessageKey}-reference" class="govuk-table__header" scope="col">
      Reference
-     </th>
-     <th id="@{correspondenceTab.tabMessageKey}-subject" class="bold w-0" scope="col">
+   </th>
+   <th id="@{correspondenceTab.tabMessageKey}-subject" class="govuk-table__header" scope="col">
       Subject
-     </th>
-     <th id="@{correspondenceTab.tabMessageKey}-source" class="bold w-0" scope="col">
+   </th>
+   <th id="@{correspondenceTab.tabMessageKey}-source" class="govuk-table__header" scope="col">
       Case source
-     </th>
-     @if(assignmentType != "applicationTab.referredByMe") {
-     <th id="@{correspondenceTab.tabMessageKey}-contact-email" class="bold w-0" scope="col">
-      Contact email
-     </th>
-     }
-     <th id="@{correspondenceTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
+   </th>
+   @if(assignmentType != "applicationTab.referredByMe") {
+    <th id="@{correspondenceTab.tabMessageKey}-contact-email" class="govuk-table__header" scope="col">
+     Contact email
+    </th>
+   }
+   <th id="@{correspondenceTab.tabMessageKey}-elapsed-days" class="govuk-table__header" scope="col">
       Elapsed days
-     </th>
-     @if(assignmentType == "applicationTab.completedByMe") {
-     <th id="@{correspondenceTab.tabMessageKey}-completed-date" class="bold w-0" scope="col">
-      Completed date
-     </th>
-     }
-     @if(assignmentType == "applicationTab.referredByMe") {
-     <th id="@{correspondenceTab.tabMessageKey}-refer-days" class="bold w-0" scope="col">
-      Refer days
-     </th>}
-     @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway") {
-     <th id="@{correspondenceTab.tabMessageKey}-status" class="bold w-0" scope="col">
-      Status
-     </th>
-     }
-    </tr>
-  </thead>
-  <tbody>
-   @for((result, index) <- correspondenceTab.searchResult.results.zipWithIndex) {
+   </th>
+   @if(assignmentType == "applicationTab.completedByMe") {
+    <th id="@{correspondenceTab.tabMessageKey}-completed-date" class="govuk-table__header" scope="col">
+     Completed date
+    </th>
+   }
+   @if(assignmentType == "applicationTab.referredByMe") {
+    <th id="@{correspondenceTab.tabMessageKey}-refer-days" class="govuk-table__header" scope="col">
+     Refer days
+    </th>}
+   @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway") {
+    <th id="@{correspondenceTab.tabMessageKey}-status" class="govuk-table__header" scope="col">
+     Status
+    </th>
+   }
+  </tr>
+ </thead>
+ <tbody class="govuk-table__body">
+ @for((result, index) <- correspondenceTab.searchResult.results.zipWithIndex) {
 
-    @defining(result.application.asCorrespondence) { correspondence =>
+  @defining(result.application.asCorrespondence) { correspondence =>
 
-     <tr id="@{correspondenceTab.tabMessageKey}-details-@index">
-      <td id="@{correspondenceTab.tabMessageKey}-reference-@index">
-       <a href="@routes.CaseController.get(result.reference)">
-        <span aria-hidden="true">@{result.reference}</span>
-        <span class="visually-hidden">case reference @{result.reference}</span>
-       </a>
-      </td>
-      <td id="@{correspondenceTab.tabMessageKey}-subject-@index" class="pre-wrap">@{correspondence.summary}</td>
-      <td id="@{correspondenceTab.tabMessageKey}-source-@index" class="pre-wrap">@{correspondence.correspondenceStarter}</td>
-      @if(assignmentType != "applicationTab.referredByMe") {
-      <td id="@{correspondenceTab.tabMessageKey}-contact-email-@index" class="pre-wrap">@{correspondence.contact.email}</td>
-      }
-      <td id="@{correspondenceTab.tabMessageKey}-elapsed-days-@index">@{result.daysElapsed}</td>
-      @if(assignmentType == "applicationTab.completedByMe") {
-      <td id="@{correspondenceTab.tabMessageKey}-completed-date-@index">
-        @for(completedEvent <- correspondenceTab.completedEvent.flatMap(_.get(result.reference))) {
-          @Dates.format(completedEvent.timestamp)
-        }
-      </td>
-      }
-      @if(assignmentType == "applicationTab.referredByMe") {
-      <td id="@{correspondenceTab.tabMessageKey}-refer-days-@index">@{result.referredDaysElapsed}</td>
-      }
-      @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway") {
-      <td id="@{correspondenceTab.tabMessageKey}-status-@index">
-       @case_status_tab(result, s"${correspondenceTab.tabMessageKey}-status-label-$index")
-       @for(referralEvent <- correspondenceTab.referralEvent.flatMap(_.get(result.reference))) {
+   <tr id="@{correspondenceTab.tabMessageKey}-details-@index" class="govuk-table__row">
+    <td id="@{correspondenceTab.tabMessageKey}-reference-@index" class="govuk-table__cell">
+     <a href="@routes.CaseController.get(result.reference)" class="govuk-link">
+      <span aria-hidden="true">@{result.reference}</span>
+      <span class="govuk-visually-hidden">case reference @{result.reference}</span>
+     </a>
+    </td>
+    <td id="@{correspondenceTab.tabMessageKey}-subject-@index" class="govuk-table__cell">@{correspondence.summary}</td>
+    <td id="@{correspondenceTab.tabMessageKey}-source-@index" class="govuk-table__cell">@{correspondence.correspondenceStarter}</td>
+    @if(assignmentType != "applicationTab.referredByMe") {
+     <td id="@{correspondenceTab.tabMessageKey}-contact-email-@index" class="govuk-table__cell">@{correspondence.contact.email}</td>
+    }
+    <td id="@{correspondenceTab.tabMessageKey}-elapsed-days-@index" class="govuk-table__cell">@{result.daysElapsed}</td>
+    @if(assignmentType == "applicationTab.completedByMe") {
+     <td id="@{correspondenceTab.tabMessageKey}-completed-date-@index" class="govuk-table__cell">
+     @for(completedEvent <- correspondenceTab.completedEvent.flatMap(_.get(result.reference))) {
+      @Dates.format(completedEvent.timestamp)
+     }
+     </td>
+    }
+    @if(assignmentType == "applicationTab.referredByMe") {
+     <td id="@{correspondenceTab.tabMessageKey}-refer-days-@index" class="govuk-table__cell">@{result.referredDaysElapsed}</td>
+    }
+    @if(assignmentType == "applicationTab.referredByMe" || assignmentType == "applicationTab.gateway") {
+     <td id="@{correspondenceTab.tabMessageKey}-status-@index" class="govuk-table__cell">
+      @case_status_tab(result, s"${correspondenceTab.tabMessageKey}-status-label-$index")
+      @for(referralEvent <- correspondenceTab.referralEvent.flatMap(_.get(result.reference))) {
        <span id="@{correspondenceTab.tabMessageKey}-status-refer-to-@index">
         <p>@{referralEvent.details.asInstanceOf[ReferralCaseStatusChange].referredTo}</p>
        </span>
-        }
-      </td>
       }
-
-     </tr>
-}
-
+     </td>
     }
-  </tbody>
- </table>
 
+   </tr>
+  }
+
+ }
+ </tbody>
+</table>

@@ -27,6 +27,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.ruling_details_edit
+import views.html.v2.{edit_liability_ruling, liability_details_edit}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,8 +43,9 @@ class RulingController @Inject() (
   decisionForm: DecisionForm,
   liabilityDetailsForm: LiabilityDetailsForm,
   mcc: MessagesControllerComponents,
-  val editRulingView: views.html.v2.edit_liability_ruling,
-  val liability_details_edit: views.html.v2.liability_details_edit,
+  val editRulingView: edit_liability_ruling,
+  val liability_details_edit: liability_details_edit,
+  val ruling_details_edit: ruling_details_edit,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -130,7 +133,7 @@ class RulingController @Inject() (
   ): Future[Result] =
     fileStoreService
       .getAttachments(c)
-      .map(views.html.ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
+      .map(ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
       .map(Ok(_))
 
   private def editLiabilityRulingView(f: Form[Decision], c: Case)(

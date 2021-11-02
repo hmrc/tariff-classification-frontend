@@ -37,11 +37,11 @@ class ConfirmDeleteUserViewSpec extends ViewSpec {
           form
         )
       )
-      doc should containElementWithID("delete-user-heading")
+      doc should containElementWithTag("h1")
       doc should containElementWithID("remove-user")
       doc should containElementWithID("remove-user-button")
-      doc should containElementWithClass("icon icon-important")
-      doc should containElementWithClass("bold-small")
+      doc should containElementWithClass("govuk-warning-text")
+      doc should containElementWithTag("strong")
     }
   }
 }

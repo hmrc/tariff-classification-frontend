@@ -26,6 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.gateway_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -33,7 +34,7 @@ class GatewayCasesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
-  val gatewayCasesView: views.html.v2.gateway_cases_view,
+  val gatewayCasesView: gateway_cases_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {

@@ -18,23 +18,22 @@
 
 @(traderCommodityCode: String, officerCommodityCode: String, textClass:Option[String] = None)(implicit messages: Messages)
 
-<h3 class="heading-medium mt-30 mb-30">@messages("case.v2.liability.ruling.info.from.c592")</h3>
-<dl class="dl-mb-2 @textClass.getOrElse("")">
-
- <div id="ruling_code_by_trader" class="grid-row">
-  <dt class="column-two-thirds">
+<h3 class="govuk-heading-m">@messages("case.v2.liability.ruling.info.from.c592")</h3>
+<dl class="govuk-summary-list">
+ <div id="ruling_code_by_trader" class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">
    @messages("case.v2.liability.ruling.info.from.c592.code.by.trader")
   </dt>
-  <dd class="column-one-third">
+  <dd class="govuk-summary-list__value">
    <span id="ruling_commodityCodeEnteredByTraderOrAgent">@traderCommodityCode</span>
   </dd>
  </div>
 
- <div id="ruling_code_suggested" class="grid-row">
-  <dt class="column-two-thirds">
+ <div id="ruling_code_suggested" class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">
    @messages("case.v2.liability.ruling.info.from.c592.code.suggested")
   </dt>
-  <dd class="column-one-third">
+  <dd class="govuk-summary-list__value">
    <span id="ruling_commodityCodeSuggestedByOfficer" class="pre-wrap">@officerCommodityCode</span>
   </dd>
  </div>

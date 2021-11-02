@@ -40,8 +40,8 @@ class NewKeywordViewSpec extends ViewSpec {
         )
       )
       doc                                        should containText(messages("management.create-keyword.caption"))
-      doc                                        should containElementWithID("common-cases-heading")
-      doc.getElementById("common-cases-heading") should containText(messages("management.create-keyword.heading"))
+      doc.getElementsByTag("h1").first() should containText(messages("management.create-keyword.heading"))
+
     }
 
     "contain a label and hint text" in {

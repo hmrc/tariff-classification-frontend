@@ -24,11 +24,12 @@ import views.html.change_case_status
 class ChangeCaseStatusViewSpec extends ViewSpec {
 
   val form = new CaseStatusRadioInputFormProvider()()
+  val changeCaseStatusView = app.injector.instanceOf[change_case_status]
 
   "ChangeCaseStatusViewSpec" should {
     "contain a case heading" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(change_case_status(c, form))
+      val doc = view(changeCaseStatusView(c, form))
 
       doc                                should containElementWithID("case-heading")
       doc.getElementById("case-heading") should containText(c.status.toString)
@@ -36,14 +37,14 @@ class ChangeCaseStatusViewSpec extends ViewSpec {
     }
     "contain case details" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(change_case_status(c, form))
+      val doc = view(changeCaseStatusView(c, form))
 
       doc should containElementWithID("case-reference")
     }
 
     "contain correct radio button options" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(change_case_status(c, form))
+      val doc = view(changeCaseStatusView(c, form))
 
       doc should containText(messages("change_case_status.complete"))
       doc should containText(messages("change_case_status.refer"))
@@ -57,14 +58,14 @@ class ChangeCaseStatusViewSpec extends ViewSpec {
 
     "contain legend with the correct text" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(change_case_status(c, form))
+      val doc = view(changeCaseStatusView(c, form))
 
       doc should containText(messages("change_case_status_legend", "Laptop"))
     }
 
     "contain correct cancel link" in {
       val c   = aCase(withReference("reference"), withBTIApplication)
-      val doc = view(change_case_status(c, form))
+      val doc = view(changeCaseStatusView(c, form))
 
       doc.getElementById("change_case_status-cancel_button") should haveAttribute(
         "href",

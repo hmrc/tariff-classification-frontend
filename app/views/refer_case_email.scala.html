@@ -1,69 +1,64 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
-@import models.request.AuthenticatedRequest
 @import controllers.routes
-@import models.{Case, CaseReferral}
+@import models.Case
+@import models.request.AuthenticatedRequest
 @import models.response.FileStoreInitiateResponse
-@import models.viewmodels.MyCasesTab
+@import views.html.components.confirm_or_cancel_buttons
 @import views.html.includes.main
-@import views.html.partials.{case_heading}
-@import views.html.components.{confirm_or_cancel_buttons}
-@import views.html.forms.components.{input_textarea, input_radiogroup, input_checkbox_group, input_text}
+@import views.html.partials.{case_heading, back_link, error_summary}
 @import views.html.partials.statuses.status_change_upload
-@import views.forms.components.RadioOption
-@import views.html.partials.{error_summary, back_link}
+
+@this(
+        main: main,
+        backLink: back_link
+)
+
 
 @(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("page.title.refer.case.email"))) {
-
-    @back_link()
+@main(
+    pageTitle = messages("page.title.refer.case.email"),
+    backLink = Some(backLink())
+) {
 
     @error_summary(uploadForm.errors)
 
-    <div class="column-two-thirds pl-0">
-        @case_heading( c, messageKey = Some("change_case_status.referred.email.heading"))
-    </div>
+    @case_heading( c, messageKey = Some("change_case_status.referred.email.heading"))
 
-    <div class="grid-row">
-        <div class="column-full">
+    @helper.form(
+        action = Call("POST", initiateResponse.uploadRequest.href),
+        'id -> "refer_case",
+        'enctype -> "multipart/form-data",
+        'novalidate -> "novalidate"
+    ) {
 
-            @helper.form(
-                action = Call("POST", initiateResponse.uploadRequest.href),
-                'id -> "refer_case",
-                'enctype -> "multipart/form-data",
-                'novalidate -> "novalidate"
-            ) {
+        @for((key, value) <- initiateResponse.uploadRequest.fields) {
+            <input type="hidden" name="@key" value="@value" />
+        }
 
-                @for((key, value) <- initiateResponse.uploadRequest.fields) {
-                    <input type="hidden" name="@key" value="@value" />
-                }
+        @status_change_upload(uploadForm("file"), "referring")
 
-                @status_change_upload(uploadForm("file"), "referring")
-
-                @confirm_or_cancel_buttons(
-                    id = "refer_case",
-                    confirmText = messages("change_case_status.confirm"),
-                    cancelText = messages("change_case_status.cancel"),
-                    cancelHref = routes.CaseController.get(c.reference)
-                )
-            }
-
-        </div>
-    </div>
+        @confirm_or_cancel_buttons(
+            id = "refer_case",
+            confirmText = messages("change_case_status.confirm"),
+            cancelText = messages("change_case_status.cancel"),
+            cancelHref = routes.CaseController.get(c.reference)
+        )
+    }
 }

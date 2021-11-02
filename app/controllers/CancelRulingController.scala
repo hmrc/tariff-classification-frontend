@@ -16,25 +16,25 @@
 
 package controllers
 
-import java.util.UUID
-import javax.inject.{Inject, Singleton}
-
 import config.AppConfig
 import connector.DataCacheConnector
 import controllers.v2.UpscanErrorHandling
+import models._
 import models.forms.{CancelRulingForm, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
-import models.{Attachment, CancelReason, Permission, RulingCancellation, UserAnswers}
 import play.api.data.Form
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
+import views.html.{cancel_ruling_email, cancel_ruling_reason, confirm_cancel_ruling}
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
-import play.api.i18n.I18nSupport
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CancelRulingController @Inject() (
@@ -43,6 +43,9 @@ class CancelRulingController @Inject() (
   fileService: FileStoreService,
   dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
+  val cancel_ruling_reason: cancel_ruling_reason,
+  val cancel_ruling_email: cancel_ruling_email,
+  val confirm_cancel_ruling: confirm_cancel_ruling,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -55,7 +58,7 @@ class CancelRulingController @Inject() (
 
   def getCancelRulingReason(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.CANCEL_CASE)) {
-      implicit request => Ok(views.html.cancel_ruling_reason(request.`case`, CancelRulingForm.form))
+      implicit request => Ok(cancel_ruling_reason(request.`case`, CancelRulingForm.form))
     }
 
   def postCancelRulingReason(reference: String): Action[AnyContent] =
@@ -64,7 +67,7 @@ class CancelRulingController @Inject() (
         CancelRulingForm.form
           .bindFromRequest()
           .fold(
-            formWithErrors => successful(BadRequest(views.html.cancel_ruling_reason(request.`case`, formWithErrors))),
+            formWithErrors => successful(BadRequest(cancel_ruling_reason(request.`case`, formWithErrors))),
             cancellation => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(CancellationCacheKey, cancellation)
@@ -100,7 +103,7 @@ class CancelRulingController @Inject() (
           maxFileSize     = appConfig.fileUploadMaxSize
         )
       )
-      .map(initiateResponse => views.html.cancel_ruling_email(request.`case`, uploadForm, initiateResponse))
+      .map(initiateResponse => cancel_ruling_email(request.`case`, uploadForm, initiateResponse))
   }
 
   def getCancelRulingEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
@@ -140,6 +143,6 @@ class CancelRulingController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(views.html.confirm_cancel_ruling(request.`case`))
+      Ok(confirm_cancel_ruling(request.`case`))
     }
 }

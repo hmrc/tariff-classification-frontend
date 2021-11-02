@@ -27,6 +27,7 @@ import service.{CasesService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.SearchTab
+import views.html.advanced_search
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,7 +38,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
   private val fileStoreService = mock[FileStoreService]
   private val keywordsService  = mock[KeywordsService]
   private val operator         = Operator(id = "id")
-
+  private val advancedSearch = app.injector.instanceOf[advanced_search]
   private val defaultTab = SearchTab.DETAILS
 
   private def controller = new SearchController(
@@ -46,6 +47,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
     keywordsService,
     fileStoreService,
     mcc,
+    advancedSearch,
     realAppConfig
   )
 
@@ -56,6 +58,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       keywordsService,
       fileStoreService,
       mcc,
+      advancedSearch,
       realAppConfig
     )
 
