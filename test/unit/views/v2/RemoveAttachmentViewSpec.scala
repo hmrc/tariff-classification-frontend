@@ -53,20 +53,20 @@ class RemoveAttachmentViewSpec extends ViewSpec {
     "render without errors" in {
       val doc = view(renderWithoutError)
 
-      doc.getElementsByTag("govuk-list govuk-error-summary__list").size() shouldBe 0
+      doc.getElementsByTag("error-summary").size() shouldBe 0
     }
 
     "render with errors" in {
       val doc = view(renderWithError)
 
-      doc.getElementsByClass("govuk-list govuk-error-summary__list").size() shouldBe 1
+      doc.getElementsByClass("error-summary").size() shouldBe 1
     }
 
     "render without errors check question" in {
       val doc = view(renderWithoutError)
 
       doc
-        .getElementsByClass("govuk-heading-xl")
+        .getElementsByClass("heading-xlarge case-title")
         .text()
         .trim shouldBe "Are you sure you want to remove name test from this case?"
     }

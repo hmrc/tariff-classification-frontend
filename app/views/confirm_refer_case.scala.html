@@ -1,84 +1,83 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.Case
-
+@import views.html.includes.main
 @import views.html.partials.{days_elapsed_paused, case_heading}
 @import models.viewmodels.{NoTabSelected, CorrespondenceTab, LiabilitiesTab, ATaRTab, MiscellaneousTab}
 
 @import views.html.components.success_panel
-@import views.html.includes.main
-
-@this(
-    main: main
-)
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @customHeading = @{
-        if(c.application.isCorrespondence) {
-            messages("page.title.case_correspondence.referred")
-        }   else if(c.application.isMisc) {
-            messages("page.title.case_miscellaneous.referred")
-        } else if(c.application.isBTI) {
-            messages("page.title.case_atar.referred")
-        } else {
-            messages("page.title.case_liability.referred")
-        }
+@customHeading = @{
+    if(c.application.isCorrespondence) {
+        Some(messages("page.title.case_correspondence.referred"))
+    }   else if(c.application.isMisc) {
+        Some(messages("page.title.case_miscellaneous.referred"))
+    } else if(c.application.isBTI) {
+        Some(messages("page.title.case_atar.referred"))
+    } else {
+    Some(messages("page.title.case_liability.referred"))
     }
+}
 
-    @main(
-        pageTitle = customHeading,
-        customPrimaryNavTab = NoTabSelected
-) {
-        @if(c.application.`type` == ApplicationType.ATAR) {
+@main(bodyClasses = None, customTitle = customHeading,
+    customPrimaryNavTab = NoTabSelected) {
+
+    <div class="grid-row">
+        <div class="column-full">
+            @if(c.application.`type` == ApplicationType.ATAR) {
+                @success_panel(
+                    messages("case.referred.confirm_referred", c.application.goodsName),
+                    None,
+                    Some(days_elapsed_paused(c)),
+                    "Back to open ATaR cases",
+                    ATaRTab
+                )
+            } else if (c.application.`type` == ApplicationType.LIABILITY) {
             @success_panel(
                 messages("case.referred.confirm_referred", c.application.goodsName),
                 None,
                 Some(days_elapsed_paused(c)),
-                "Back to open ATaR cases",
-                ATaRTab
+                "Back to open Liability cases",
+                LiabilitiesTab
             )
-        } else if (c.application.`type` == ApplicationType.LIABILITY) {
-        @success_panel(
-            messages("case.referred.confirm_referred", c.application.goodsName),
-            None,
-            Some(days_elapsed_paused(c)),
-            "Back to open Liability cases",
-            LiabilitiesTab
-        )
 
-        } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
-        @success_panel(
-            messages("case.referred.confirm_referred", c.application.goodsName),
-            None,
-            Some(days_elapsed_paused(c)),
-            "Back to open Correspondence cases",
-            CorrespondenceTab
-        )
-        } else {
-        @success_panel(
-            messages("case.referred.confirm_referred", c.application.goodsName),
-            None,
-            Some(days_elapsed_paused(c)),
-            "Back to open Miscellaneous cases",
-            MiscellaneousTab
-        )
-        }
+            } else if (c.application.`type` == ApplicationType.CORRESPONDENCE) {
+            @success_panel(
+                messages("case.referred.confirm_referred", c.application.goodsName),
+                None,
+                Some(days_elapsed_paused(c)),
+                "Back to open Correspondence cases",
+                CorrespondenceTab
+            )
+            } else {
+            @success_panel(
+                messages("case.referred.confirm_referred", c.application.goodsName),
+                None,
+                Some(days_elapsed_paused(c)),
+                "Back to open Miscellaneous cases",
+                MiscellaneousTab
+            )
+            }
 
-    }
+        </div>
+    </div>
+
+}

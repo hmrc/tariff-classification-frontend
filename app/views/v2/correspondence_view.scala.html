@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import helper.CSRF
@@ -21,17 +21,13 @@
 @import models.response.FileStoreInitiateResponse
 @import models.viewmodels._
 @import models.viewmodels.atar.AttachmentsTabViewModel
-
+@import views.html.includes.main
 @import views.html.partials.{activity_details, messages_logged, attachments_details, correspondence_case_details, correspondence_contact_details}
 @import models.viewmodels.correspondence.CaseDetailsViewModel
 @import models.viewmodels.correspondence.ContactDetailsTabViewModel
 @import models.viewmodels.SampleStatusTabViewModel
-@import views.html.includes.main
-@import views.html.layouts.full_main_content_layout
 
 @this(
-        main: main,
-        fullMainContent: full_main_content_layout,
         case_heading: views.html.v2.case_heading,
         case_action_buttons_partial: views.html.partials.liabilities.case_action_buttons_partial,
         advanced_search_cases: views.html.partials.liabilities.advanced_search_cases,
@@ -58,22 +54,17 @@
 
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@additionalJS = {
-    <script src="@routes.Assets.at("javascripts/tab_focus.js")" type="text/javascript"></script>
-}
-
 @main(
-    pageTitle = messages("case.v2.correspondence.page_title"),
-    customPrimaryNavTab = primaryNavTab,
-    optCustomLayout = Some(fullMainContent(_)),
-    additionalJS = Some(additionalJS)
+    bodyClasses = None,
+    customTitle = Some(messages("case.v2.correspondence.page_title")),
+    customPrimaryNavTab = primaryNavTab
 ) {
 
-    <div class="govuk-notification-banner-width">
+<div class="govuk-notification-banner-width">
     @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
-    </div>
+</div>
 
-    <div class="govuk-button-group">
+<div class="form-groups">
         @case_action_buttons_partial(caseViewModel)
         @advanced_search_cases(caseViewModel)
     </div>
@@ -138,7 +129,7 @@
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="activity_tab">
-            @activity_details(activityTab, activityForm)
+        @activity_details(activityTab, activityForm)
         </div>
 
     </div>

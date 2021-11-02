@@ -16,36 +16,33 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-
+@import views.html.includes.main
 @import models.viewmodels.ManagerToolsKeywordsTab
 @import models.viewmodels.SubNavigationTab
 @import views.html.components.manager_tools_secondary_navigation
-@import views.html.includes.main
 
-@this(
-    main: main
-)
-
+@this()
 
 @(keyword: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle =  messages("management.create-keyword.new-keyword-done")
-) {
-    <div class="govuk-form-group">
-        <div class="govuk-panel govuk-panel--confirmation">
-            <h1 class="govuk-panel__title">@messages("management.create-keyword.new-keyword-done")</h1>
-            <div class="govuk-panel__body">
-                <strong>@keyword.toUpperCase</strong><br>
-                @messages("management.create-keyword.new-keyword-done.caption")
+@main(bodyClasses = None, customTitle = Some(messages("management.create-keyword.new-keyword-done"))) {
+
+    <div class="grid-row">
+        <div id="confirm_keyword_done_id" class="column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h2 class="heading-xlarge mt-0">@messages("management.create-keyword.new-keyword-done")</h2>
+                <h3 class="heading-large mt-0">@keyword.toUpperCase</h3>
+                <h3 class="heading-large mt-0 un-bold">@messages("management.create-keyword.new-keyword-done.caption")</h3>
             </div>
+            <h3 class="heading-medium mt-0">@messages("management.create-keyword.new-keyword-done.next")</h3>
+            <p>
+                <a id="manage-all-keywords-link" href="@controllers.v2.routes.ManageKeywordsController.displayManageKeywords()">
+                @messages("management.create-keyword.new-keyword-done.link")
+                </a>
+            </p>
+
         </div>
+
     </div>
-    <h2 class="govuk-heading-m">@messages("management.create-keyword.new-keyword-done.next")</h2>
-    <p class="govuk-body">
-        <a id="manage-all-keywords-link" class="govuk-link" href="@controllers.v2.routes.ManageKeywordsController.displayManageKeywords()">
-            @messages("management.create-keyword.new-keyword-done.link")
-        </a>
-    </p>
 
 }

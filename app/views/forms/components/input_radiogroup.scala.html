@@ -29,81 +29,66 @@
         customGroupId : Option[String] = None,
         contentHtml : Option[Html] = None,
         customOtherOptions: Seq[RadioOption] = Seq(),
-        ariaDescribedBy: Option[String] = None,
-        legendAsPageHeading: Boolean = false,
-        headingCaption: Option[String] = None
+        ariaDescribedBy: Option[String] = None
 )(implicit messages: Messages)
 
-<div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}" @{customGroupId.map(x => s"id=$x").getOrElse(s"id=${field.id}")}>
+<div class="form-group @if(field.hasErrors){form-group-error}"
+    @{customGroupId.map(x => s"id=$x").getOrElse(s"id=${field.id}")}>
+    <fieldset @{ariaDescribedBy.map(aria => s"aria-describedby=$aria")}>
 
-    <fieldset @{ariaDescribedBy.map(aria => s"aria-describedby=$aria")} class="govuk-fieldset">
-
-        @if(legendAsPageHeading) {
-            <legend class="govuk-fieldset__legend @if(legendAsPageHeading){govuk-fieldset__legend--xl}">
-                @if(headingCaption.isDefined){
-                    <span class="govuk-caption-xl">@headingCaption.get</span>
-                }
-                <h1 class="govuk-fieldset__heading">
-                    @label
-                </h1>
-            </legend>
-        } else {
-            <legend class="govuk-fieldset__legend">
+            <legend>
                 <span class="@labelClass">@label</span>
+                @if(hint.nonEmpty){
+                    <span class="form-hint mb-2" id="@{field.id}-hint">@hint</span>
+                }
+                @field.errors.map { error =>
+                    <span class="error-message" id="error-message-@{field.id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+                }
             </legend>
-        }
-        @if(hint.nonEmpty){
-            <span class="govuk-hint" id="@{field.id}-hint">@hint</span>
-        }
-
-        @field.errors.headOption.map { error =>
-            <span class="govuk-error-message" id="error-message-@{field.id}-input">
-                <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))
-            </span>
-        }
-
         @contentHtml.map {content => @content}
 
         @if(allowNone) {
-            <div class="govuk-radios">
-                <div class="govuk-radios__item">
-                    <input id="@id-none" type="radio" name="@{field.name}" class="govuk-radios__input" value="" @if((field.value.isEmpty || field.value.contains("")) && preSelect){checked="checked"}>
-                    <label id="@id-none-label" class="govuk-label govuk-radios__label" for="@id-none">None</label>
-                </div>
+            <div class="multiple-choice">
+                <input id="@id-none" type="radio" name="@{field.name}" value="" @if((field.value.isEmpty || field.value.contains("")) && preSelect){checked="checked"}>
+                <label id="@id-none-label" for="@id-none">None</label>
             </div>
         }
 
-        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
-            @for(option: RadioOption <- options) {
-                @defining(option.value.replace(" ", "_")) { optionId: String =>
-                    <div class="govuk-radios__item">
-                        <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(option.customHtml.isDefined){data-aria-controls="@{option.dataTarget.get}"} class="govuk-radios__input" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
-                        <label id="@id-@optionId-label" class="govuk-label govuk-radios__label" for="@id-@optionId">@option.label</label>
-                    </div>
+        @for(option: RadioOption <- options) {
+            @defining(option.value.replace(" ", "_")) { optionId: String =>
+                <div class="multiple-choice" @{option.dataTarget.map(dt => s"data-target=$dt").getOrElse("")}>
+                    <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
+                    <label id="@id-@optionId-label" for="@id-@optionId">@option.label</label>
+                </div>
                     @if(option.customHtml.isDefined) {
-                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@{option.dataTarget.get}" aria-hidden="false">
-                            @option.customHtml.get
-                        </div>
-                    }
-                }
-            }
-        </div>
-
-        @if(customOtherOptions.nonEmpty){
-            <div class="govuk-radios__divider">or</div>
-            @for(option: RadioOption <- customOtherOptions) {
-                @defining(option.value.replace(" ", "_")) { optionId: String =>
-                    <div class="govuk-radios__item">
-                        <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(option.customHtml.isDefined){data-aria-controls="@{option.dataTarget.get}"} class="govuk-radios__input" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
-                        <label id="@id-@optionId-label" class="govuk-label govuk-radios__label" for="@id-@optionId">@option.label</label>
-                    </div>
-                    @if(option.customHtml.isDefined) {
-                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="@{option.dataTarget.get}" aria-hidden="false">
+                        <div class="form-group panel panel-border-narrow js-hidden" id="@{option.dataTarget.get}" aria-hidden="false">
                         @option.customHtml.get
                         </div>
                     }
-                }
+
             }
         }
+
+        @if(customOtherOptions.nonEmpty){
+                <div class="column-full pl-0">
+                    <p class="w-40p mb-1 text-center">or</p>
+                </div>
+            @for(option: RadioOption <- customOtherOptions) {
+            @defining(option.value.replace(" ", "_")) { optionId: String =>
+                <div class="multiple-choice" @{option.dataTarget.map(dt => s"data-target=$dt").getOrElse("")}>
+                    <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
+                    <label id="@id-@optionId-label" for="@id-@optionId">@option.label</label>
+                </div>
+                @if(option.customHtml.isDefined) {
+                <div class="form-group panel panel-border-narrow js-hidden" id="@{option.dataTarget.get}" aria-hidden="false">
+                    @option.customHtml.get
+                </div>
+                }
+
+            }
+            }
+
+        }
+
     </fieldset>
 </div>

@@ -28,8 +28,6 @@ import play.api.test.Helpers._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.{case_not_found, resource_not_found}
-import views.html.v2.create_misc
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -45,9 +43,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
   private val releaseCaseView            = injector.instanceOf[views.html.release_case]
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
   private val misc_details_edit          = injector.instanceOf[views.html.v2.misc_details_edit]
-  private val createMisc                 = injector.instanceOf[create_misc]
-  private val caseNotFound               = injector.instanceOf[case_not_found]
-  private val resourceNotFound           = injector.instanceOf[resource_not_found]
 
   private val caseWithStatusOPEN =
     Cases.miscellaneousCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
@@ -61,9 +56,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       releaseCaseView,
       confirmation_case_creation,
       misc_details_edit,
-      createMisc,
-      caseNotFound,
-      resourceNotFound,
       realAppConfig
     )
 
@@ -76,9 +68,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       releaseCaseView,
       confirmation_case_creation,
       misc_details_edit,
-      createMisc,
-      caseNotFound,
-      resourceNotFound,
       realAppConfig
     )
 

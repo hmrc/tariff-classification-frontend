@@ -36,14 +36,18 @@
   }
 }
 
-<div id="@{id}-buttons" class="govuk-form-group">
+<div id="@{id}-buttons" class="form-groups">
 
-    <a id="@{id}-print-button" class="govuk-button govuk-button--secondary govuk-!-margin-right-2" href="javascript:window.print()">
+  <div class="form-group">
+    <a id="@{id}-print-button" class="button button-gray" href="javascript:window.print()">
       @messages("reporting.view_report.print")
     </a>
+  </div>
 
-    <a id="@{id}-download-button" class="govuk-button govuk-button--secondary" href="@downloadLink">
+  <div class="form-group">
+    <a id="@{id}-download-button" class="button button-gray" href="@downloadLink">
       @messages("reporting.view_report.download")
     </a>
+  </div>
 
 </div>

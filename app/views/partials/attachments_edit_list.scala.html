@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import controllers.{Tab, routes, v2}
 @import models.{Case, Permission, StoredAttachment}
@@ -21,58 +21,55 @@
 @import views.html.partials.attachment
 
 @(id: String,
-        attachments: Seq[StoredAttachment],
-        showRemoval: Boolean = false,
-        caseRef: String,
-        startAtTabIndex : Option[Int] = None
+  attachments: Seq[StoredAttachment],
+  showRemoval: Boolean = false,
+  caseRef: String,
+  startAtTabIndex : Option[Int] = None
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-    @if(attachments.nonEmpty){
+@if(attachments.nonEmpty){
 
-        <table id="@{id}-div" aria-label="Files to attach to the ruling" class="govuk-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">File</th>
-                    <th scope="col" class="govuk-table__header" >Publish</th>
-                    <th scope="col" class="govuk-table__header">Date</th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-            @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
-                <tr id="@{id}-row-@{index}" class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                        <div id="@{id}-row-@{index}-title">
-                            @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
-                        </div>
-                    </td>
-                    <td class="govuk-table__cell">
-                        @if(file.public) {
-                            <div class="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
-                                    id="attachments[@{index}]"
-                                    class="govuk-checkboxes__input"
-                                    name="attachments[@{index}]"
-                                    type="checkbox"
-                                    value="@file.id"
-                                    aria-label="publish @file.fileName on GOV.UK"
-                                    @if(file.public && file.shouldPublishToRulings){ checked="checked" }/>
-                                    <label for="attachments[@{index}]" class="govuk-label govuk-checkboxes__label"><div class="govuk-visually-hidden">publish</div></label>
-                                </div>
-                            </div>
-                        }
-                    </td>
-                    <td class="govuk-table__cell">
-                        <div id="@{id}-row-@{index}-date" class="p-0">
-                        @Dates.format(file.timestamp)
-                        </div>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
-
-
-    }else {
-        <p id="@{id}-empty-div" class="govuk-body"> @messages("case.attachment.div.empty") </p>
+<table id="@{id}-div" aria-label="Files to attach to the ruling">
+    <tr class="border-bottom row-alignment">
+        <th scope="col" class="file-name-column-width bold-small w-75 pl-0">File</th>
+        <th scope="col" class="bold-small w-25 p-0" id="header-select" >Publish</th>
+        <th scope="col" class="bold-small p-0 attachment-table-date">Date</th>
+    </tr>
+    @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
+    <tr id="@{id}-row-@{index}" class="border-bottom row-alignment">
+        <td>
+            <div id="@{id}-row-@{index}-title" class="file-name-column-width w-75 pl-0">
+                @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+            </div>
+        </td>
+        <td>
+            <div class="w-25 p-0">
+                @if(file.public) {
+                <div class="form-group">
+                    <div class="multiple-choice">
+                        <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
+                               id="attachments[@{index}]"
+                               name="attachments[@{index}]"
+                               type="checkbox"
+                               value="@file.id"
+                               aria-label="publish @file.fileName on GOV.UK"
+                               @if(file.public && file.shouldPublishToRulings){ checked="checked" }/>
+                        <label for="attachments[@{index}]"><div class="hide-label">publish</div></label>
+                    </div>
+                </div>
+                }
+            </div>
+        </td>
+        <td>
+            <div id="@{id}-row-@{index}-date" class="p-0">
+                @Dates.format(file.timestamp)
+            </div>
+        </td>
+    </tr>
     }
+</table>
+
+
+}else {
+<p id="@{id}-empty-div"> @messages("case.attachment.div.empty") </p>
+}

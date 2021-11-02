@@ -17,6 +17,7 @@
 package controllers
 
 import java.time.Instant
+
 import cats.data.NonEmptySeq
 import models._
 import models.reporting._
@@ -28,8 +29,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.managementtools.{caseReportView, manage_reports_view, queueReportView, reportChooseDates, reportChooseTeams, summaryReportView}
-import views.html.report_not_found
+import views.html.managementtools.manage_reports_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,13 +41,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val usersService             = mock[UserService]
   private val operator                 = mock[Operator]
   private lazy val manage_reports_view = injector.instanceOf[manage_reports_view]
-
-  private val summaryReportView = injector.instanceOf[summaryReportView]
-  private val queueReportView = injector.instanceOf[queueReportView]
-  private val caseReportView = injector.instanceOf[caseReportView]
-  private val reportChooseDates = injector.instanceOf[reportChooseDates]
-  private val reportChooseTeams = injector.instanceOf[reportChooseTeams]
-  private val reportNotFound = injector.instanceOf[report_not_found]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -66,12 +59,6 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       usersService,
       mcc,
       manage_reports_view,
-      summaryReportView,
-      queueReportView,
-      caseReportView,
-      reportChooseDates,
-      reportChooseTeams,
-      reportNotFound,
       realAppConfig
     )
 

@@ -23,8 +23,8 @@
 )(implicit messages: Messages)
 
 @if(caseViewModel.showAdvancedSearchButton) {
-    <div class="govuk-form-group">
-        <a role="button" class="govuk-button govuk-button--secondary"
+    <div class="form-group">
+        <a role="button" class="button button-gray"
         id="advanced-search-button" href="@controllers.routes.SearchController.search()"
         target="_blank">
             @messages("case.v2.liability.advanced_search.button")

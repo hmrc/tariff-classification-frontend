@@ -43,7 +43,6 @@ class RulingController @Inject() (
   mcc: MessagesControllerComponents,
   val editRulingView: views.html.v2.edit_liability_ruling,
   val liability_details_edit: views.html.v2.liability_details_edit,
-  val ruling_details_edit: views.html.ruling_details_edit,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -131,7 +130,7 @@ class RulingController @Inject() (
   ): Future[Result] =
     fileStoreService
       .getAttachments(c)
-      .map(ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
+      .map(views.html.ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
       .map(Ok(_))
 
   private def editLiabilityRulingView(f: Form[Decision], c: Case)(

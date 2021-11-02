@@ -15,52 +15,47 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import controllers.routes
 @import models.AppealType.AppealType
-@import models.request.AuthenticatedRequest
-@import models.viewmodels.NoTabSelected
 @import models.{AppealType, Case}
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
 @import views.html.includes.main
-@import views.html.partials.{case_heading, back_link, error_summary}
-
-@this(
-        main: main,
-        backLink: back_link
-)
+@import views.html.partials.{case_heading, error_summary, back_link}
+@import models.viewmodels.NoTabSelected
 
 @(c: Case, form: Form[AppealType])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
- pageTitle = messages("page.title.choose.appeal.type"),
- customPrimaryNavTab = NoTabSelected,
- backLink = Some(backLink())
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.type")), customPrimaryNavTab = NoTabSelected) {
 
- @error_summary(form.errors)
+  @back_link()
 
- @case_heading(c)
+  @error_summary(form.errors)
 
- <h2 id="appeal_choose_type-heading" class="govuk-heading-l">Choose review or a level of appeal</h2>
+  @case_heading(c)
 
- @helper.form(action = routes.AppealCaseController.confirmType(c.reference), 'id -> "appeal_type_form", 'novalidate -> "novalidate") {
-  @helper.CSRF.formField
-  @input_radiogroup(
-   field = form("type"),
-   options = Seq(
-    AppealType.ADR,
-    AppealType.REVIEW,
-    AppealType.APPEAL_TIER_1,
-    AppealType.APPEAL_TIER_2,
-    AppealType.COURT_OF_APPEALS,
-    AppealType.SUPREME_COURT
-   ).map(s => RadioOption(s.toString, AppealType.format(s))),
-   id = "appeal_type"
-  )
+  <h2 id="appeal_choose_type-heading" class="heading-large">Choose review or a level of appeal</h2>
 
-   <button id="appeal_choose_type-submit" class="govuk-button" type="submit">Add to case</button>
-   <p class="govuk-body"><a id="appeal_choose_type-cancel" class="govuk-link" href="@routes.AppealCaseController.appealDetails(c.reference)">Cancel changes</a></p>
- }
+  @helper.form(action = routes.AppealCaseController.confirmType(c.reference), 'id -> "appeal_type_form", 'novalidate -> "novalidate") {
+   @helper.CSRF.formField
+   @input_radiogroup(
+    field = form("type"),
+    options = Seq(
+     AppealType.ADR,
+     AppealType.REVIEW,
+     AppealType.APPEAL_TIER_1,
+     AppealType.APPEAL_TIER_2,
+     AppealType.COURT_OF_APPEALS,
+     AppealType.SUPREME_COURT
+    ).map(s => RadioOption(s.toString, AppealType.format(s))),
+    id = "appeal_type"
+   )
+
+   <div class="confirm-cancel-alignment">
+    <button id="appeal_choose_type-submit" class="button" type="submit">Add to case</button>
+    <a id="appeal_choose_type-cancel" href="@routes.AppealCaseController.appealDetails(c.reference)">Cancel changes</a>
+   </div>
+  }
 
 }

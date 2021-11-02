@@ -19,30 +19,21 @@
 @import controllers.routes
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
-
+@import views.html.includes.main
 @import models.LiabilityOrder
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_text
 @import models.LiabilityStatus
 @import views.html.partials.error_summary
 @import models.viewmodels.NoTabSelected
-@import views.html.includes.main
-
-@this(
-    main: main
-)
-
 
 @(form: Form[LiabilityOrder])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("page.title.create_liability.h1"),
-    customPrimaryNavTab = NoTabSelected
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.create_liability.h1")), customPrimaryNavTab = NoTabSelected) {
 
     @error_summary(form.errors)
 
-    <h1 id="create_liability-heading" class="govuk-heading-xl">@messages("page.title.create_liability.h1")</h1>
+    <h1 id="create_liability-heading" class="heading-xlarge">@messages("page.title.create_liability.h1")</h1>
 
     @helper.form(action = routes.CreateLiabilityController.post(), 'id -> "create_liability-form", 'novalidate -> "novalidate") {
         @helper.CSRF.formField
@@ -50,18 +41,23 @@
         @input_text(
             field = form("item-name"),
             label = messages("liability.create_liability.item-name.heading"),
-            hint = Some(messages("liability.create_liability.item-name.heading.hint"))
+            labelClass = Some("heading-large"),
+            hint = Some(messages("liability.create_liability.item-name.heading.hint")),
+            formControlClass = Some("w-50")
         )
 
         @input_text(
             field = form("trader-name"),
             label = messages("liability.create_liability.trader-name.heading"),
-            hint = Some(messages("liability.create_liability.trader-name.heading.hint"))
+            labelClass = Some("heading-large"),
+            hint = Some(messages("liability.create_liability.trader-name.heading.hint")),
+            formControlClass = Some("w-50")
         )
 
         @input_radiogroup(
             field = form("liability-status"),
             label = Some(messages("liability.create_liability.liability-status.heading")),
+            labelClass = Some("heading-large"),
             options = Seq(
                 RadioOption(LiabilityStatus.LIVE.toString, messages("liability.create_liability.liability-status.radio.yes")),
                 RadioOption(LiabilityStatus.NON_LIVE.toString, messages("liability.create_liability.liability-status.radio.no"))

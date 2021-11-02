@@ -254,14 +254,14 @@ input[type="search"]::-webkit-search-decoration {
   visibility: hidden; }
 
 /* Hide only visually, but have it available for screenreaders */
-.govuk-visually-hidden {
+.visuallyhidden {
   position: absolute;
   left: -9999em;
   /*
-   * Extends the .govuk-visually-hidden class to allow the element to be
+   * Extends the .visuallyhidden class to allow the element to be
    * focusable when navigated to via the keyboard
    */ }
-  .govuk-visually-hidden.focusable:active, .govuk-visually-hidden.focusable:focus {
+  .visuallyhidden.focusable:active, .visuallyhidden.focusable:focus {
     clip: auto;
     height: auto;
     margin: 0;

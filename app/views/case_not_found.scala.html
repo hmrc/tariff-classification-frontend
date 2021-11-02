@@ -17,25 +17,17 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import controllers.routes.IndexController
-
-@import models.viewmodels.MyCasesTab
 @import views.html.includes.main
-
-@this(
-    main: main
-)
+@import models.viewmodels.MyCasesTab
 
 @(reference: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("page.title.case.not.found"),
-    customPrimaryNavTab = MyCasesTab
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.case.not.found")), customPrimaryNavTab = MyCasesTab) {
     <div id="case-not-found-section">
-        <h1 class="govuk-heading-xl">
+        <h1 class="heading-large">
             @messages("errors.case-not-found.title")
         </h1>
-        <p class="govuk-body">@messages("errors.case-not-found.message", reference)</p>
-        <p class="govuk-body"><a href="@IndexController.get()" class="govuk-link">@messages("errors.all.back")</a></p>
+        <p>@messages("errors.case-not-found.message", reference)</p>
+        <a href="@IndexController.get()">@messages("errors.all.back")</a>
     </div>
 }

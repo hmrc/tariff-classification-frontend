@@ -22,15 +22,14 @@
         hint: Option[String] = None,
         labelClass: Option[String] = None,
         submitOnChange: Boolean = false,
-        data_target: Option[String] = None,
-        conditionalInputHtml: Option[Html] = None
+        data_target: Option[String] = None
 )(implicit messages: Messages)
 
-<div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}">
+<div class="form-group @if(field.hasErrors){form-group-error}">
 
-    <div class="govuk-checkboxes__item" @if(data_target.isDefined){data-target="@data_target.get"}>
+    <div class="multiple-choice" @if(data_target.isDefined){data-target="@data_target.get"}>
         <input
-        class="govuk-checkboxes__input @inputClass"
+        class="form-control @inputClass"
         type="checkbox"
         id="@{field.id}"
         name="@{field.name}"
@@ -43,18 +42,13 @@
         }
         @if(field.value.contains(s"$value")){
             checked="checked"
-        }
-        @if(data_target.isDefined) {
-            data-aria-controls="@data_target.get"
-        }
-        />
-        <label class="govuk-label govuk-checkboxes__label" for="@{field.id}">
+        }/>
+        <label class="form-label" for="@{field.id}">
             <span class="@if(labelClass.nonEmpty){@labelClass}">@label</span>
             @if(hint.nonEmpty){
-                <span class="govuk-hint">@hint</span>
+                <span class="form-hint">@hint</span>
             }
         </label>
     </div>
-    @conditionalInputHtml.getOrElse({})
 </div>
 

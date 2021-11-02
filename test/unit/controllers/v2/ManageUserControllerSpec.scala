@@ -47,7 +47,6 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
   private lazy val confirm_delete_user = injector.instanceOf[confirm_delete_user]
   private lazy val done_delete_user    = injector.instanceOf[done_delete_user]
   private lazy val manage_users_view   = injector.instanceOf[manage_users_view]
-  private val userNotFound       = injector.instanceOf[views.html.user_not_found]
 
   private def controller(permission: Set[Permission]) =
     new ManageUserController(
@@ -60,8 +59,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       manage_users_view,
       cannot_delete_user,
       confirm_delete_user,
-      done_delete_user,
-      userNotFound
+      done_delete_user
     )(realAppConfig, injector.instanceOf[Materializer])
 
   "displayUserDetails" should {

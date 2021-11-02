@@ -30,50 +30,80 @@
         formControlUnBold: Boolean = false
 )(implicit messages: Messages)
 
-<div id="@{dateField.id}" class="govuk-form-group @formGroupClass @if(dateField.hasErrors) {govuk-form-group--error}">
-    <fieldset class="govuk-fieldset" id="@fieldsetId" @if(dateField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
-        <legend class="govuk-fieldset__legend @labelClass">
+<div id="@{dateField.id}" class="form-group @formGroupClass @if(dateField.hasErrors) {form-group-error}">
+    <fieldset class="inline" id="@fieldsetId" @if(dateField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
+        <legend class="@labelClass">
             @legend
         </legend>
 
         @if(hint.nonEmpty){
-            <span class="govuk-hint" id="@{dateField.id}-hint">@hint</span>
+            <span class="form-hint" id="@{dateField.id}-hint">@hint</span>
         }
 
         @if(dateField.hasErrors) {
-            <span class="govuk-error-message" id="error-message-date-input">
+            <span class="error-message" id="error-message-date-input">
                 @dateField.errors.map { error =>
-                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
+                    <span class="error-message" id="error-message-@{error.key}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)</span>
                 }
             </span>
         }
 
-        <div class="govuk-date-input">
-            <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
-                    <label class="govuk-label govuk-date-input__label" for="@{dayField.id}">
-                        Day
-                    </label>
-                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @if(dayField.hasErrors){govuk-input--error}" id="@{dayField.id}" name="@{dayField.name}" type="text" value="@{dayField.value}" pattern="[0-9]*" inputmode="numeric" autocomplete="off">
+        <div class="form-date">
+            <div class="form-group form-group-day">
+                <label class="form-label" for="@{dayField.id}">
+                    <span class= @{if(formControlUnBold) "un-bold" else "bold"}>Day</span>
+                </label>
+                <div class="form-control-wrapper @formControlClass">
+                    <input
+                    class="form-control"
+                    type="number"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    autocomplete="off"
+                    id="@{dayField.id}"
+                    name="@{dayField.name}"
+                    value="@{dayField.value}"
+                    />
                 </div>
             </div>
-            <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
-                    <label class="govuk-label govuk-date-input__label" for="@{monthField.id}">
-                        Month
-                    </label>
-                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @if(monthField.hasErrors){govuk-input--error}" id="@{monthField.id}" name="@{monthField.name}" type="text" value="@{monthField.value}" pattern="[0-9]*" inputmode="numeric" autocomplete="off">
+
+            <div class="form-group form-group-month">
+                <label class="form-label" for="@{monthField.id}">
+                    <span class= @{if(formControlUnBold) "un-bold" else "bold"}>Month</span>
+                </label>
+                <div class="form-control-wrapper @formControlClass">
+                    <input
+                    class="form-control"
+                    type="number"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    autocomplete="off"
+                    id="@{monthField.id}"
+                    name="@{monthField.name}"
+                    value="@{monthField.value}"
+                    />
                 </div>
             </div>
-            <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
-                    <label class="govuk-label govuk-date-input__label" for="@{yearField.id}">
-                        Year
-                    </label>
-                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 @if(yearField.hasErrors){govuk-input--error}" id="@{yearField.id}" name="@{yearField.name}" type="text" value="@{yearField.value}" pattern="[0-9]*" inputmode="numeric" autocomplete="off">
+
+            <div class="form-group form-group-year">
+                <label class="form-label" for="@{yearField.id}">
+                    <span class= @{if(formControlUnBold) "un-bold" else "bold"}>Year</span>
+                </label>
+                <div class="form-control-wrapper @formControlClass">
+                    <input
+                    class="form-control"
+                    type="number"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    autocomplete="off"
+                    id="@{yearField.id}"
+                    name="@{yearField.name}"
+                    value="@{yearField.value}"
+                    />
                 </div>
             </div>
         </div>
+
     </fieldset>
 </div>
 

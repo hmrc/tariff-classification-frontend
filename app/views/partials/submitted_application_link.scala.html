@@ -19,6 +19,6 @@
 
 @(caseReference: String, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
-<p class="govuk-body">
- <a  id="submitted-application-link" class="govuk-link" target="_blank" href="@PdfDownloadController.applicationPdf(caseReference)"> @messages("case.decision.ruling.review.appeal.link") </a>
-</p>
+<div id="submitted-application" class="mb-3">
+   <a  id="submitted-application-link" target="_blank" href="@PdfDownloadController.applicationPdf(caseReference)"> @messages("case.decision.ruling.review.appeal.link") </a>
+</div>

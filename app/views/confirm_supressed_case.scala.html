@@ -1,46 +1,46 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import controllers.v2.routes.GatewayCasesController
 @import models.Case
-
+@import views.html.includes.main
 @import views.html.partials._
 @import models.viewmodels.NoTabSelected
 @import views.html.v2.confirmation_next_steps
-@import views.html.includes.main
 
-@this(
-        main: main
-)
 
 
 @(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("case.suppress.title")
-) {
+@main(bodyClasses = None, customTitle = Some(messages("case.suppress.title"))) {
+<div class="grid-row column-two-thirds">
+
     <div class="govuk-panel govuk-panel--confirmation">
+
         <h1 class="govuk-panel__title">@messages("suppress_case.confirm.header", c.application.goodsName)</h1>
         <div class="govuk-panel__body">@Html(messages("case_status.confirm.subheader", "Suppressed"))</div>
+
+
     </div>
 
     @confirmation_next_steps(
-        linkText = messages("back.gateway"),
-        backHref = GatewayCasesController.displayGatewayCases()
+    linkText = messages("back.gateway"),
+    backHref = GatewayCasesController.displayGatewayCases()
     )
-}
+    }
+</div>

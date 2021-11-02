@@ -35,31 +35,31 @@
   }
 }
 
-<table id="@{id}-table" class="govuk-table">
+<table id="@{id}-table">
   <thead class="govuk-table__head">
-    <tr id="@{id}-details" class="govuk-table__row">
-      <th scope="col" id="@{id}-assigned_team" class="govuk-table__header" scope="col">
+    <tr id="@{id}-details" class="grid-row mb-2">
+      <th scope="col" id="@{id}-assigned_team" class="bold w-0" scope="col">
         @messages(s"reporting.field.assigned_team")
       </th>
-      <th scope="col" id="@{id}-case_type" class="govuk-table__header" scope="col">
+      <th scope="col" id="@{id}-case_type" class="bold w-0" scope="col">
         @messages(s"reporting.field.case_type")
       </th>
-      <th scope="col" id="@{id}-count" class="govuk-table__header" scope="col">
+      <th scope="col" id="@{id}-count" class="bold w-0" scope="col">
         @messages(s"reporting.field.count")
       </th>
     </tr>
   </thead>
 
-  <tbody class="govuk-table__body">
+  <tbody>
     @for((resultGroup, rowIndex) <- results.results.zipWithIndex) {
-      <tr class="govuk-table__row">
-        <td id="@{id}-assigned_team-@{rowIndex}" class="govuk-table__cell">
+      <tr>
+        <td id="@{id}-assigned_team-@{rowIndex}">
           @{resultGroup.team.map(teamForId).getOrElse(messages("reporting.team.unassigned"))}
         </td>
-        <td id="@{id}-case_type-@{rowIndex}" class="govuk-table__cell">
+        <td id="@{id}-case_type-@{rowIndex}">
           @{resultGroup.caseType.prettyName}
         </td>
-        <td id="@{id}-count-@{rowIndex}" class="govuk-table__cell">
+        <td id="@{id}-count-@{rowIndex}">
           @{resultGroup.count}
         </td>
       </tr>

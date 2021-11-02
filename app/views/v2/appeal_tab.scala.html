@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import models.viewmodels.AppealTabViewModel
@@ -25,60 +25,64 @@
 
 @tab_heading("appeal", messages("case.menu.appeal"))
 
+
 @defining(appealTabViewModel.appeals) { appeals: Seq[Appeal] =>
- <table id="appeal_details" class="govuk-table">
-  <caption class="govuk-table__caption">@messages("case.v2.liability.appeals.tab_paragraph")</caption>
-  <thead class="govuk-table__head">
-   <tr class="govuk-visually-hidden">
-    <th class="govuk-table__header" scope="col">Review or a level of appeal</th>
-    <th class="govuk-table__header" scope="col">Appeal status</th>
-    <th class="govuk-table__header" scope="col">Change</th>
-   </tr>
+ <table id="appeal_details">
+  <caption class="mb-2">@messages("case.v2.liability.appeals.tab_paragraph")</caption>
+  <thead>
+  <tr class="visually-hidden">
+   <th class="w-40" scope="col">Review or a level of appeal</th>
+   <th class="w-40" scope="col">Appeal status</th>
+   <th class="w-40" scope="col">Change</th>
+  </tr>
   </thead>
-  <tbody class="govuk-table__body">
-  @for((appeal: Appeal, index: Int) <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id).zipWithIndex) {
-   <tr id="appeal_details-@{index}" class="govuk-table__row">
-    <th id="appeal_details-@{index}-type" class="govuk-table__header">
-     @AppealType.format(appeal.`type`) status
-    </th>
-    <td id="appeal_details-@{index}-status" class="govuk-table__cell">
-    @AppealStatus.format(appeal.`type`, appeal.status)
-    </td>
-    <td class="govuk-table__cell">
-    @if(request.hasPermission(Permission.APPEAL_CASE)) {
-     <a id="appeal_details-@{index}-change-status" class="govuk-link" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTabViewModel.caseReference, appeal.id)">Change</a>
-    }
-    </td>
-   </tr>
-  }
+  <tbody>
+   @for((appeal: Appeal, index: Int) <- appeals.sortWith((a, b) => a.`type`.id < b.`type`.id).zipWithIndex) {
+    <tr id="appeal_details-@{index}" class="grid-row mb-2">
+     <th id="appeal_details-@{index}-type" class="bold w-40">
+      @AppealType.format(appeal.`type`) status
+     </th>
+     <td id="appeal_details-@{index}-status" class=" w-30">
+     @AppealStatus.format(appeal.`type`, appeal.status)
+     </td>
+     <td class="w-30">
+     @if(request.hasPermission(Permission.APPEAL_CASE)) {
+      <a id="appeal_details-@{index}-change-status" aria-label="Change status of @AppealType.format(appeal.`type`) " href="@routes.AppealCaseController.changeStatus(appealTabViewModel.caseReference, appeal.id)">Change</a>
+     }
+     </td>
+    </tr>
+   }
   </tbody>
  </table>
 }
 
 @if(request.hasPermission(Permission.APPEAL_CASE)) {
- <a id="appeal_details-add_new" class="govuk-button" role="button" href="@routes.AppealCaseController.chooseType(appealTabViewModel.caseReference)">@messages("case.v2.liability.appeal_tab.add_review_or_appeal")</a>
+ <a id="appeal_details-add_new" class="button" role="button" href="@routes.AppealCaseController.chooseType(appealTabViewModel.caseReference)">@messages("case.v2.liability.appeal_tab.add_review_or_appeal")</a>
 }
 
 @if(appealTabViewModel.applicationForExtendedUseButton.isDefined) {
  <div id="appeal_details-extended_use" class="mt-5">
   <p>@messages("case.v2.liability.appeal_details-extended_use.canceled.paragraph")</p>
   <p>@messages("case.v2.liability.appeal_details-extended_use.paragraph")</p>
-  <dl class="govuk-summary-list">
-   <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
-    @messages("case.v2.liability.appeal_tab.application_for_extended_use")
-    </dt>
-    <dd class="govuk-summary-list__value" id="appeal_details-extended_use_status">
-    @appealTabViewModel.applicationForExtendedUseButton.getOrElse("")
-    </dd>
-    <dd class="govuk-summary-list__actions">
-    @if(request.hasPermission(Permission.EXTENDED_USE)) {
-     <a id="appeal_details-extended_use-change" class="govuk-link" href="@routes.ExtendedUseCaseController.chooseStatus(appealTabViewModel.caseReference)">
-      Change
-     </a>
-    }
-    </dd>
-   </div>
-  </dl>
+
+  <table>
+   <tbody>
+
+    <tr>
+     <th class="bold w-40">@messages("case.v2.liability.appeal_tab.application_for_extended_use")</th>
+     <td id="appeal_details-extended_use_status" class="w-30">
+     @appealTabViewModel.applicationForExtendedUseButton.getOrElse("")
+     </td>
+     <td class="w-30">
+     @if(request.hasPermission(Permission.EXTENDED_USE)) {
+      <a id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(appealTabViewModel.caseReference)">
+       Change
+      </a>
+     }
+     </td>
+    </tr>
+
+   </tbody>
+  </table>
  </div>
 }

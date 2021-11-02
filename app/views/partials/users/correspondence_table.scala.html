@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
@@ -27,88 +27,95 @@
 @import controllers.Tab
 
 @(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
- @error_summary(form.errors)
- <h2 class="govuk-heading-l">@messages("users.user.correspondence.heading")</h2>
- @helper.form(action = MoveCasesController.postMoveCorrCases(userID).withFragment(Tab.CORRESPONDENCE_TAB.name), 'id -> "corrCases", 'novalidate -> "novalidate") {
-  @helper.CSRF.formField
-  <div class="govuk-form-group">
-   <button id="move-corr-cases" class="govuk-button" type="submit">Move selected cases</button>
-  </div>
-  @form("corrCases").errors.map { error =>
-   <div class="govuk-form-group">
-    <fieldset class="govuk-fieldset">
-     <legend class="advanced_search--filters_heading">
-      <span class="govuk-error-message" id="error-message-@{form("corrCases").id}-input"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
-     </legend>
-    </fieldset>
-   </div>
-  }
-  <table id="@{corresTab.tabMessageKey}-table" class="govuk-table">
-   <caption class="govuk-visually-hidden">@messages("users.user.correspondence.heading")</caption>
-   <thead class="govuk-table__head">
-    <tr id="@{corresTab.tabMessageKey}-details" class="govuk-table__row">
-     <th id="@{corresTab.tabMessageKey}-select" class="govuk-table__header" scope="col">
-      Select
-     </th>
-     <th id="@{corresTab.tabMessageKey}-reference" class="govuk-table__header" scope="col">
-      Reference
-     </th>
-     <th id="@{corresTab.tabMessageKey}-subject" class="govuk-table__header" scope="col">
-      Subject
-     </th>
-     <th id="@{corresTab.tabMessageKey}-trader" class="govuk-table__header" scope="col">
-      Trader
-     </th>
-     <th id="@{corresTab.tabMessageKey}-contact" class="govuk-table__header" scope="col">
-      Contact
-     </th>
-     <th id="@{corresTab.tabMessageKey}-elapsed-days" class="govuk-table__header" scope="col">
-      Elapsed days
-     </th>
-     <th id="@{corresTab.tabMessageKey}-team" class="govuk-table__header" scope="col">
-      Team
-     </th>
-    </tr>
-   </thead>
-   <tbody>
-   @for((result, index) <- corresTab.searchResult.results.zipWithIndex) {
+@error_summary(form.errors)
+<h2 class="heading-large mt-0 mb-30">@messages("users.user.correspondence.heading")</h2>
+@helper.form(action = MoveCasesController.postMoveCorrCases(userID).withFragment(Tab.CORRESPONDENCE_TAB.name), 'id -> "corrCases", 'novalidate -> "novalidate") {
+@helper.CSRF.formField
+<div class="form-group">
+ <button id="move-corr-cases" class="button" type="submit">Move selected cases</button>
+</div>
+@form("corrCases").errors.map { error =>
+<div class="form-group mb-0">
+<fieldset>
+<legend class="advanced_search--filters_heading">
+ <span class="error-message" id="error-message-@{form("corrCases").id}-input"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message)</span>
+</legend>
+</fieldset>
+</div>
+}
+<table id="@{corresTab.tabMessageKey}-table">
+ <caption class="visually-hidden">@messages("users.user.correspondence.heading")</caption>
+ <thead class="govuk-table__head">
+ <tr id="@{corresTab.tabMessageKey}-details" class="grid-row mb-2">
+  <th id="@{corresTab.tabMessageKey}-select" class="bold w-0" scope="col">
+   Select
+  </th>
+  <th id="@{corresTab.tabMessageKey}-reference" class="bold w-0" scope="col">
+   Reference
+  </th>
+  <th id="@{corresTab.tabMessageKey}-subject" class="bold w-0" scope="col">
+   Subject
+  </th>
+  <th id="@{corresTab.tabMessageKey}-trader" class="bold w-0" scope="col">
+   Trader
+  </th>
+  <th id="@{corresTab.tabMessageKey}-contact" class="bold w-0" scope="col">
+   Contact
+  </th>
+  <th id="@{corresTab.tabMessageKey}-elapsed-days" class="bold w-0" scope="col">
+   Elapsed days
+  </th>
+  <th id="@{corresTab.tabMessageKey}-team" class="bold w-0" scope="col">
+   Team
+  </th>
+ </tr>
+ </thead>
+ <tbody>
+ @for((result, index) <- corresTab.searchResult.results.zipWithIndex) {
 
-    @defining(result.application.asCorrespondence) { corres =>
+ @defining(result.application.asCorrespondence) { corres =>
 
-     <tr id="@{corresTab.tabMessageKey}-details-@index" class="govuk-table__row @if(form("corrCases").hasErrors){govuk-form-group--error}">
-      <td id="@{corresTab.tabMessageKey}-select-@index" class="govuk-table__cell">
-      @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
-        <div class="multiple-choice">
-         <fieldset class="govuk-fieldset">
-          @defining(s"${form("corrCases").id}-$index") { id: String =>
-           <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-             <input class="govuk-checkboxes__input" id="@{id}" name="@{form("corrCases").name}[@index]" type="checkbox" value="@{result.reference}" @if(form("corrCases").hasErrors){aria-describedby="error-message-@{form("corrCases").id}-input"} @if(form("corrCases").value.contains(result.reference)){checked="checked"}>
-             <label for="@{id}" class="govuk-label govuk-checkboxes__label"><span class="govuk-visually-hidden">@result.reference</span></label>
-            </div>
-           </div>
-          }
-         </fieldset>
-        </div>
+ <tr id="@{corresTab.tabMessageKey}-details-@index">
+  <td id="@{corresTab.tabMessageKey}-select-@index" @if(form("corrCases").hasErrors){class="form-group-error"}>
+   @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
+   <div class="form-group ">
+    <div class="multiple-choice">
+     <fieldset>
+      @defining(s"${form("corrCases").id}-$index") { id: String =>
+      <input
+              class="form-control"
+              type="checkbox"
+              id="@{id}"
+              name="@{form("corrCases").name}[@index]"
+              value="@{result.reference}"
+      @if(form("corrCases").hasErrors){
+      aria-describedby="error-message-@{id}-input"
       }
-      </td>
-      <td id="@{corresTab.tabMessageKey}-reference-@index" class="govuk-table__cell">
-       <a href="@routes.CaseController.get(result.reference)" class="govuk-link">
-        <span aria-hidden="true">@{result.reference}</span>
-        <span class="govuk-visually-hidden">case reference @{result.reference}</span>
-       </a>
-      </td>
-      <td id="@{corresTab.tabMessageKey}-summary-@index" class="govuk-table__cell">@{corres.summary}</td>
-      <td id="@{corresTab.tabMessageKey}-trader-@index" class="govuk-table__cell">@{corres.correspondenceStarter}</td>
-      <td id="@{corresTab.tabMessageKey}-contact-@index" class="govuk-table__cell">@{corres.contact.email}</td>
-      <td id="@{corresTab.tabMessageKey}-elapsed-days-@index" class="govuk-table__cell @if(result.isCaseOverdue){live-red-text}">@{result.daysElapsed}</td>
-      <td id="@{corresTab.tabMessageKey}-team-@index" class="govuk-table__cell">
-      @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
-      </td>
-     </tr>
-    }
-
+              @if(form("corrCases").value.contains(result.reference)){ checked="checked"}
+      />
+      <label for="@{id}"><span class="visually-hidden">@result.reference</span></label>
+     }</fieldset>
+    </div>
+   </div>
    }
-   </tbody>
-  </table>
+  </td>
+  <td id="@{corresTab.tabMessageKey}-reference-@index">
+   <a href="@routes.CaseController.get(result.reference)">
+    <span aria-hidden="true">@{result.reference}</span>
+    <span class="visually-hidden">case reference @{result.reference}</span>
+   </a>
+  </td>
+  <td id="@{corresTab.tabMessageKey}-summary-@index">@{corres.summary}</td>
+  <td id="@{corresTab.tabMessageKey}-trader-@index">@{corres.correspondenceStarter}</td>
+  <td id="@{corresTab.tabMessageKey}-contact-@index">@{corres.contact.email}</td>
+  <td id="@{corresTab.tabMessageKey}-elapsed-days-@index" @if(result.isCaseOverdue) {class="live-red-text"}>@{result.daysElapsed}</td>
+  <td id="@{corresTab.tabMessageKey}-team-@index">
+   @{result.queueId.map(qId => Queues.queueById(qId).map(q=>q.name))}
+  </td>
+ </tr>
  }
+
+ }
+ </tbody>
+</table>
+}

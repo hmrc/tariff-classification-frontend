@@ -143,7 +143,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
       lazy val emptyForm = Map[String, String]()
       val formWithError  = form.bind(emptyForm).apply("field")
       val doc            = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
+      doc.getElementsByClass("visually-hidden").text() mustBe errorPrefix
     }
   }
 

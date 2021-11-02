@@ -27,19 +27,17 @@ class CreateLiabilityViewSpec extends ViewSpec {
 
   private lazy val liabilityOrder: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm
 
-  val createLiabilityView = injector.instanceOf[create_liability]
-
-  private lazy val doc = view(createLiabilityView(liabilityOrder))
+  private lazy val doc = view(create_liability(liabilityOrder))
 
   def getElementByAttributeValue(html: Document): String =
-    html.getElementsByAttributeValue("class", "govuk-list govuk-error-summary__list").text
+    html.getElementsByAttributeValue("class", "error-summary-list").text
 
   def liabilityOrderWithErrors(errorKey: String, errorValue: String): Document = {
 
     val liabilityOrderWithErrors: Form[LiabilityOrder] =
       LiabilityForm.newLiabilityForm.copy(errors = Seq(FormError.apply(errorKey, errorValue)))
 
-    view(createLiabilityView(liabilityOrderWithErrors))
+    view(create_liability(liabilityOrderWithErrors))
 
   }
 
@@ -111,7 +109,8 @@ class CreateLiabilityViewSpec extends ViewSpec {
       val expectedErrorMessage = messages(errorValue)
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
-      docWithErrors                             should containElementWithClass("govuk-error-summary")
+
+      docWithErrors                             should containElementWithClass("error-summary-list")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }
@@ -124,7 +123,7 @@ class CreateLiabilityViewSpec extends ViewSpec {
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
 
-      docWithErrors                             should containElementWithClass("govuk-error-summary")
+      docWithErrors                             should containElementWithClass("error-summary-list")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }
@@ -137,7 +136,7 @@ class CreateLiabilityViewSpec extends ViewSpec {
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
 
-      docWithErrors                             should containElementWithClass("govuk-error-summary")
+      docWithErrors                             should containElementWithClass("error-summary-list")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }

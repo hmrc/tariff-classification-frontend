@@ -18,7 +18,6 @@
 @import models.reporting._
 @import models.request.AuthenticatedRequest
 @import views.html.partials.pagination
-@import views.html.managementtools.reportField
 
 @(
   report: SummaryReport,
@@ -29,31 +28,32 @@
   id: String
 )(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
-<table id="@{id}-table"class="govuk-table">
+<table id="@{id}-table">
   <thead class="govuk-table__head">
-    <tr id="@{id}-details" class="govuk-table__row">
+    <tr id="@{id}-details" class="grid-row mb-2">
       @for(groupBy <- report.groupBy.toSeq) {
-        <th scope="col" id="@{id}-@{groupBy.fieldName}" class="govuk-table__header" scope="col">
+        <th scope="col" id="@{id}-@{groupBy.fieldName}" class="bold w-0" scope="col">
           @messages(s"reporting.field.${groupBy.fieldName}")
         </th>
       }
-      <th scope="col" id="@{id}-count" class="govuk-table__header" scope="col">
+      <th scope="col" id="@{id}-count" class="bold w-0" scope="col">
         @messages(s"reporting.field.count")
       </th>
       @for((field, index) <- report.maxFields.zipWithIndex) {
-        <th scope="col" id="@{id}-@{field.fieldName}" class="govuk-table__header" scope="col">
+        <th scope="col" id="@{id}-@{field.fieldName}" class="bold w-0" scope="col">
           @messages(s"reporting.field.${field.fieldName}")
         </th>
       }
     </tr>
   </thead>
-  <tbody class="govuk-table__body">
+
+  <tbody>
     @for((resultGroup, rowIndex) <- results.results.zipWithIndex) {
-      <tr class="govuk-table__row">
+      <tr>
         @report.groupBy.zipWith(resultGroup.groupKey) { case (groupBy, groupKey) =>
           @reportField(groupBy, groupKey, users, teams, id, rowIndex)
         }.toSeq
-        <td id="@{id}-count-@{rowIndex}" class="govuk-table__cell">
+        <td id="@{id}-count-@{rowIndex}">
           @{resultGroup.count}
         </td>
         @for(field <- resultGroup.maxFields) {
@@ -67,5 +67,7 @@
 @pagination(
   id = s"${id}-pagination_bottom",
   pager = results,
+  containerClass = Some("mt-2 mb-1"),
+  linksClass = Some("mt-2"),
   onChange = page => controllers.routes.ReportingController.summaryReport(report, options.withPage(page))
 )

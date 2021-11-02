@@ -18,37 +18,31 @@
 @import controllers.Tab
 @import controllers.routes.CreateCorrespondenceController
 @import helper._
+@import models.{Case, CorrespondenceApplication}
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{CaseHeaderViewModel, NoTabSelected}
-@import models.{Case, CorrespondenceApplication}
 @import views.html.components.confirm_or_cancel_buttons
-@import views.html.forms.components._
 @import views.html.includes.main
-@import views.html.partials.{back_link, error_summary}
+@import views.html.forms.components._
+@import views.html.partials.{error_summary, back_link}
 
-@this(
-        case_heading: views.html.v2.case_heading,
-        main: main,
-        backLink: back_link
-)
-
+@this(case_heading: views.html.v2.case_heading)
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("case.v2.correspondence.case-contact-edit-title"),
-    customPrimaryNavTab = NoTabSelected,
-    backLink = Some(backLink())
-) {
-
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.correspondence.case-contact-edit-title")), customPrimaryNavTab = NoTabSelected) {
+<div class="grid-row">
+    <div class="column-two-thirds">
+<div class="mt-5">@back_link()</div>
     @error_summary(form.errors)
 
     @case_heading(CaseHeaderViewModel.fromCase(c), messageKey = Some("case.v2.correspondence.case-contact-edit-header"))
-
-    <h3 id="contact-details-section-header" class="govuk-heading-m">@messages("case.v2.correspondence.case-contact-edit-heading2")</h3>
+    </div>
+    <div class="column-full">
+    <h3 id="contact-details-section-header" class="heading-medium">@messages("case.v2.correspondence.case-contact-edit-heading2")</h3>
 
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
-        <div class="govuk-form-group">
+        <div class="form-group">
 
             @helper.form(action = CreateCorrespondenceController.postCorrespondenceContact(c.reference), 'class -> "form" , 'id -> "contact-details-edit-form", 'novalidate -> "novalidate") {
 
@@ -57,63 +51,73 @@
                 @input_text(
                     field = form("correspondenceStarter"),
                     label = messages("case.v2.correspondence.case-details-edit-case-source"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("name"),
                     label = messages("case.v2.correspondence.case-details-edit-name"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("email"),
                     label = messages("case.v2.correspondence.case-details-edit-email"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("phone"),
                     label = messages("case.v2.correspondence.case-details-edit-phone"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("fax"),
                     label = messages("case.v2.correspondence.case-details-edit-fax"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("agentName"),
                     label = messages("case.v2.correspondence.case-details-edit-agent-name"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
-            <h3 id="contact-address-section-header" class="govuk-heading-m">@messages("case.v2.correspondence.case-contact-edit-heading3")</h3>
+            <h3 id="contact-address-section-header" class="heading-medium">@messages("case.v2.correspondence.case-contact-edit-heading3")</h3>
 
 
                 @input_text(
                     field = form("buildingAndStreet"),
                     label = messages("case.v2.correspondence.case-details-edit-building-and-street"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("townOrCity"),
                     label = messages("case.v2.correspondence.case-details-edit-town-or-city"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("county"),
                     label = messages("case.v2.correspondence.case-details-edit-county"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
                 @input_text(
                     field = form("postCode"),
                     label = messages("case.v2.correspondence.case-details-edit-postCode"),
+                    inputClass = Some("width-one-half"),
                     disableAutoComplete = true
                 )
 
@@ -126,4 +130,6 @@
             }
         </div>
     }
+    </div>
+</div>
 }

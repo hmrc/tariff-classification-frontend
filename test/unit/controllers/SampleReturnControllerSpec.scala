@@ -28,7 +28,6 @@ import play.api.test.Helpers._
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
-import views.html.change_sample_return
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,11 +36,10 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
-  private val changeSampleReturn = app.injector.instanceOf[change_sample_return]
+
   private def controller(requestCase: Case) = new SampleReturnController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
-    changeSampleReturn,
     mcc,
     realAppConfig
   )
@@ -49,7 +47,6 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private def controller(requestCase: Case, permission: Set[Permission]) = new SampleReturnController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
-    changeSampleReturn,
     mcc,
     realAppConfig
   )

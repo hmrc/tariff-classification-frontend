@@ -30,24 +30,27 @@
         placeholder:Option[String] = None
 )(implicit messages: Messages)
 
-<div class="govuk-form-group @inputClass.getOrElse("") @if(field.hasErrors){govuk-form-group--error}">
+<div class="form-group @if(field.hasErrors){form-group-error}">
     @if(label.nonEmpty){
-        <label class="govuk-label" for="@{field.id}">
+        <label class="form-label" for="@{field.id}">
             <span class="@if(labelClass.nonEmpty){@labelClass}">@label</span>
         </label>
     }
-    @if(hint.nonEmpty){
-        <span class="govuk-hint" id="@{field.id}-hint">@hint</span>
-    }
-    @field.errors.map { error =>
-        <span class="govuk-error-message" id="@{field.id}-error">
-            <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))
-        </span>
-    }
-    <div id="keyword-search-wrapper" class="autocomplete-wrapper govuk-body">
 
-    </div>
+    @if(hint.nonEmpty){
+        <span class="form-hint" id="@{field.id}-hint">@hint</span>
+    }
+
+    @field.errors.map { error =>
+        <span class="error-message" id="@{field.id}-error"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+    }
+
+    <div id="keyword-search-wrapper" class="autocomplete-wrapper"></div>
+
+
 </div>
+
+<script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
 
 <script type="text/javascript">
       element = document.querySelector('#keyword-search-wrapper')
@@ -60,7 +63,7 @@
         source: @Html(Json.toJson(autoCompleteOptions.map{_.replace("'", "&apos;")}).toString),
         placeholder: @Html(Json.toJson(placeholder.getOrElse("")).toString)
       })
-</script>
+    </script>
 
 
 

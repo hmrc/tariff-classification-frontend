@@ -29,7 +29,6 @@ import play.api.test.Helpers._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.{confirm_suspended, suspend_case_email, suspend_case_reason}
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,9 +38,6 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   private val casesService = mock[CasesService]
   private val fileService  = mock[FileStoreService]
   private val operator     = Operator(id = "id")
-  private val suspendCaseReason = app.injector.instanceOf[suspend_case_reason]
-  private val suspendCaseEmail = app.injector.instanceOf[suspend_case_email]
-  private val confirmSuspended = app.injector.instanceOf[confirm_suspended]
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
@@ -63,9 +59,6 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     fileService,
     FakeDataCacheConnector,
     mcc,
-    suspendCaseReason,
-    suspendCaseEmail,
-    confirmSuspended,
     realAppConfig
   )
 
@@ -75,9 +68,6 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     fileService,
     FakeDataCacheConnector,
     mcc,
-    suspendCaseReason,
-    suspendCaseEmail,
-    confirmSuspended,
     realAppConfig
   )
 

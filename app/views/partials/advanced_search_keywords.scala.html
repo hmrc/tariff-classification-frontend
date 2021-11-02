@@ -1,80 +1,90 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import models.Search
 @import views.html.components.input_accessible_auto_complete
 @import models.ReusableTabIndexer
 @(f: Form[Search], keywords: Seq[String], tabIndexer: ReusableTabIndexer = ReusableTabIndexer())(implicit messages: Messages)
 
-    @moveUnAddedKeywordToTable(form: Form[Search]) = @{
-        form.data.get("keyword[0]").filter(_.nonEmpty).map { keyword =>
-            val indexes: Seq[Int] = RepeatedMapping.indexes("keyword", form.data)
-            val maxIndex: Int = indexes.max
-            val value = form.data("keyword[0]")
-            val updatedData = form.data
-                    .+("keyword[0]" -> "")
-                    .+(s"keyword[${maxIndex+1}]" -> value)
-            form.copy(data = updatedData)
-        } getOrElse form
-    }
+@moveUnAddedKeywordToTable(form: Form[Search]) = @{
+    form.data.get("keyword[0]").filter(_.nonEmpty).map { keyword =>
+        val indexes: Seq[Int] = RepeatedMapping.indexes("keyword", form.data)
+        val maxIndex: Int = indexes.max
+        val value = form.data("keyword[0]")
+        val updatedData = form.data
+            .+("keyword[0]" -> "")
+            .+(s"keyword[${maxIndex+1}]" -> value)
+        form.copy(data = updatedData)
+    } getOrElse form
+}
 
-    @keywordsAdded(form: Form[Search]) = @{
-        RepeatedMapping.indexes("keyword", form.data)
-                .map(index => form.data(s"keyword[$index]"))
-    }
+@keywordsAdded(form: Form[Search]) = @{
+    RepeatedMapping.indexes("keyword", form.data)
+            .map(index => form.data(s"keyword[$index]"))
+}
 
-    <p class="govuk-body">Add a keyword to your search</p>
+ <div><p class="mb-1">Add a keyword to your search</p></div>
 
-    <div class="govuk-form-group boxed boxed-content">
+ <div class="boxed boxed-content mb-3 ">
     @defining(moveUnAddedKeywordToTable(f)) { form: Form[Search] =>
         <div id="advanced_search_keywords">
-            <div>
-                <label class="govuk-label" for="keyword_0">Search keyword</label>
-                <span class="govuk-hint">Add keywords to narrow your search, remove keywords to broaden results</span>
+            <div class="display-inline w-75">
+                <label class="form-label" for="keyword_0">
+                    <span>Search keyword</span>
+                </label>
+                <span class="form-hint">Add keywords to narrow your search, remove keywords to broaden results</span>
             </div>
-            <div class="left display-inline govuk-!-width-three-quarters">
+            <div class="w-75 left display-inline">
                 @input_accessible_auto_complete(
                     field = form("keyword[0]"),
-                    inputClass = None,//Some("govuk-!-width-three-quarters"),
+                    formControlClass = Some("w-100"),
                     autoCompleteOptions = keywords.diff(keywordsAdded(form))
                 )
             </div>
-            <button id="advanced_search-add_keyword" class="govuk-button left ml-1" type="submit" name="addToSearch" value="true">
+            <button id="advanced_search-add_keyword" class="button left ml-1" type="submit" name="addToSearch" value="true">
                 Add to search
             </button>
         </div>
 
     @defining(RepeatedMapping.indexes("keyword", form.data).map(idx => (idx, form.data(s"keyword[$idx]"))).filterNot(_._1 == 0)) { keywords =>
         @if(keywords.nonEmpty) {
-            <dl id="advanced_search_keywords-list" class="govuk-summary-list">
-            @for((index: Int, keyword: String) <- keywords) {
-                <div class="govuk-summary-list__row" id="advanced_search_keywords-list-row-@{index}">
-                    <dd class="govuk-summary-list__value">
-                    @defining(form(s"keyword[$index]")) { field: Field =>
-                        <span id="advanced_search_keywords-list-row-@{index}-label">@keyword</span>
-                        <input id="advanced_search_keywords-list-row-@{index}-input" name="@{field.name}" type="hidden" value="@keyword"/>
-                    }
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a tabindex="@{tabIndexer.nextTabIndex()}" id="advanced_search_keywords-list-row-@{index}-remove_button" type="link" class="govuk-link" onclick="advancedSearch.removeKeyword(@index)" href="#">Remove <span class="govuk-visually-hidden">@keyword</span></a>
-                    </dd>
-                </div>
-            }
-            </dl>
+            <table id="advanced_search_keywords-table" class="mb-30">
+                <tbody id="advanced_search_keywords-table-table_body">
+                @for((index: Int, keyword: String) <- keywords) {
+                    @* Make sure any content changes in this table are also reflected in search.js *@
+                    <tr id="advanced_search_keywords-table-row-@{index}">
+                        <td>
+                        @defining(form(s"keyword[$index]")) { field: Field =>
+                            <span id="advanced_search_keywords-table-row-@{index}-label">@keyword</span>
+                            <input id="advanced_search_keywords-table-row-@{index}-input" name="@{field.name}" type="hidden" value="@keyword"/>
+                        }
+                        </td>
+
+                        <td align="right">
+                            <button tabindex="@{tabIndexer.nextTabIndex()}" id="advanced_search_keywords-table-row-@{index}-remove_button" type="button" class="button-link" onclick="advancedSearch.removeKeyword(@index)">Remove</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
         }
     }
-    </div>
+</div>
+
 }
+
+<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+

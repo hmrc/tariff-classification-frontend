@@ -24,7 +24,6 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import service.CasesService
 import utils.Cases
-import views.html.release_or_suppress
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -32,7 +31,6 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
 
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
-  private val releaseOrSuppress = app.injector.instanceOf[release_or_suppress]
 
   private val caseBTIWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseLiabilityWithStatusNEW =
@@ -42,7 +40,6 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
     new ReleaseOrSuppressCaseController(
       new SuccessfulRequestActions(playBodyParsers, operator, c = c),
       casesService,
-      releaseOrSuppress,
       mcc,
       realAppConfig
     )
@@ -51,7 +48,6 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
     new ReleaseOrSuppressCaseController(
       new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
       casesService,
-      releaseOrSuppress,
       mcc,
       realAppConfig
     )

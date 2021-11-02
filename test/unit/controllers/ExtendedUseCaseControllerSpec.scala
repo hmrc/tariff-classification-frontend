@@ -27,7 +27,6 @@ import play.api.test.Helpers._
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
-import views.html.change_extended_use_status
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,13 +36,10 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
 
-  private val changeExtendedUseStatus = injector.instanceOf[change_extended_use_status]
-
   private def controller(requestCase: Case) = new ExtendedUseCaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     mcc,
-    changeExtendedUseStatus,
     realAppConfig
   )
 
@@ -51,7 +47,6 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
     mcc,
-    changeExtendedUseStatus,
     realAppConfig
   )
 

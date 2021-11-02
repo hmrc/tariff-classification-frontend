@@ -33,8 +33,7 @@ class CannotDeleteUserViewSpec extends ViewSpec {
           userWithNoNameAndNoTeam
         )
       )
-      doc should containElementWithTag("h1")
-      doc should containElementWithClass("govuk-caption-xl")
+      doc should containElementWithID("delete-user-heading")
       doc should containElementWithID("cases-must-be-moved")
       doc should containElementWithID("move-cases")
     }

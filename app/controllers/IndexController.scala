@@ -23,6 +23,7 @@ import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.read_only_home
 
 import javax.inject.{Inject, Singleton}
 
@@ -30,7 +31,6 @@ import javax.inject.{Inject, Singleton}
 class IndexController @Inject() (
   authenticate: AuthenticatedAction,
   mcc: MessagesControllerComponents,
-  val read_only_home: views.html.read_only_home,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {

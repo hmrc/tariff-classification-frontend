@@ -17,25 +17,17 @@
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import controllers.routes.IndexController
-
-@import models.viewmodels.NoTabSelected
 @import views.html.includes.main
-
-@this(
-    main: main
-)
+@import models.viewmodels.NoTabSelected
 
 @(reference: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("page.title.ruling.not.found"),
-    customPrimaryNavTab = NoTabSelected
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.ruling.not.found")), customPrimaryNavTab = NoTabSelected) {
     <div id="case-not-found-section">
-        <h2 class="govuk-heading-xl">
+        <h2 class="heading-large">
             @messages("errors.ruling-not-found.title")
         </h2>
-        <p class="govuk-body">@messages("errors.ruling-not-found.message", reference)</p>
-        <a href="@IndexController.get()" class="govuk-link">@messages("errors.all.back")</a>
+        <p>@messages("errors.ruling-not-found.message", reference)</p>
+        <a href="@IndexController.get()">@messages("errors.all.back")</a>
     </div>
 }

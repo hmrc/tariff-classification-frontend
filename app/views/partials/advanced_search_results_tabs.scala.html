@@ -24,24 +24,24 @@
 @(results: Paged[SearchResult], selectedTab : SearchTab, onChange: SearchTab => Call)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 
-        <div class="govuk-tabs">
-            <ul class="govuk-tabs__list" role="tablist">
-                <li class="govuk-tabs__list-item @if(selectedTab == DETAILS){govuk-tabs__list-item--selected}" role="tab">
+        <div class="tabs">
+            <ul class="tabs__list" role="tablist">
+                <li class="tabs__list-item" role="tab">
                     @if(selectedTab == DETAILS){
-                        <span class="govuk-tabs__tab" id="tab-details" aria-selected="true">Details</span>
+                        <span class="tabs__tab" id="tab-details" aria-selected="true">Details</span>
                     }else{
-                        <a id="tab-details" class="govuk-tabs__tab" href="@onChange(DETAILS)">Details</a>
+                        <a id="tab-details" class="tabs__tab" href="@onChange(DETAILS)">Details</a>
                     }
                 </li>
-                <li class="govuk-tabs__list-item @if(selectedTab == IMAGES){govuk-tabs__list-item--selected}" role="tab">
+                <li class="tabs__list-item" role="tab">
                     @if(selectedTab == IMAGES){
-                        <span class="govuk-tabs__tab" id="tab-images" aria-selected="true">Images</span>
+                        <span class="tabs__tab" id="tab-images" aria-selected="true">Images</span>
                     }else{
-                        <a class="govuk-tabs__tab" id="tab-images" href="@onChange(IMAGES)">Images</a>
+                        <a class="tabs__tab" id="tab-images" href="@onChange(IMAGES)">Images</a>
                     }
                 </li>
             </ul>
-            <div class="govuk-tabs__panel">
+            <div class="tabs__panel">
                 <div class="tabs__panel__content" id="content-tab-@selectedTab">
                     @if(selectedTab == DETAILS) {
                         @advanced_search_results_table(results)

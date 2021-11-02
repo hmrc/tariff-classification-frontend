@@ -37,7 +37,6 @@ import scala.concurrent.Future.successful
 class SampleReturnController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
-  val change_sample_return: views.html.change_sample_return,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
@@ -54,7 +53,7 @@ class SampleReturnController @Inject() (
     notFilledForm: Form[Option[SampleReturn]],
     options: Option[String] = None
   )(implicit request: AuthenticatedRequest[_]): Html =
-    change_sample_return(c, notFilledForm)
+    views.html.change_sample_return(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen

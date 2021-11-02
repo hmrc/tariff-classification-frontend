@@ -23,9 +23,9 @@
 @(results: Paged[SearchResult])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @if(results.results.flatMap(_.attachments).isEmpty) {
-    <p id="advanced_search_results-empty" class="govuk-body">No images found</p>
+    <p id="advanced_search_results-empty" class="mt-1">No images found</p>
 }else{
-    <div class="govuk-grid-row" id="advanced_search_images-results">
+    <div class="grid-row" id="advanced_search_images-results">
         @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {
             @defining(result.attachments.filter(att => att.scanStatus.contains(ScanStatus.READY) && att.url.isDefined && att.isImage)) { attachments: Seq[StoredAttachment] =>
                 @if(attachments.nonEmpty) {

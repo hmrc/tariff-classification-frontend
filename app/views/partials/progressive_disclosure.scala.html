@@ -17,18 +17,18 @@
 @(id: String, summary: String, body: Option[Html] = None, open: Boolean = false, useTabIndex: Option[Int] = None)
 
 @if(body.isDefined) {
-    <details role="group" class="govuk-details" @if(open){open} >
-        <summary role="button" class="govuk-details__summary">
-            <span id="@{id}-title" class="govuk-details__summary-text">
+    <details role="group" @if(open){open} >
+        <summary role="button" >
+            <span id="@{id}-title">
                 @summary
             </span>
         </summary>
-        <div id="@{id}-body" class="govuk-details__text">
+        <div id="@{id}-body">
             @{body.get}
         </div>
     </details>
 } else {
-    <div id="@{id}-title" class="govuk-body">
+    <div id="@{id}-title">
         @summary
     </div>
 }

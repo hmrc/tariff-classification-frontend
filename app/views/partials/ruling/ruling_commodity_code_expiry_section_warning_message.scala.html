@@ -16,6 +16,7 @@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
+@import models.{Case, CaseStatus, CommodityCode}
 @import models.viewmodels.atar.RulingTabViewModel
 @import utils.Dates
 @(ruling: RulingTabViewModel, clazz: String = "")(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -24,7 +25,7 @@
     <div id="ruling_commodity_code_expiry_section" class="@clazz">
         <div class="notice">
             <i class="icon icon-important">
-                <span class="govuk-visually-hidden">Warning</span>
+                <span class="visually-hidden">Warning</span>
             </i>
             <strong id="ruling_commodity_code_expiry_section-warning" class="bold-small">
                 <span>Commodity code @bindingCommodityCode </span>

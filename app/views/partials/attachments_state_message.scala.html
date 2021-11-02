@@ -21,8 +21,8 @@
 
 @if(displayStateMessage) {
     @if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
-        <div class="govuk-inset-text">
-            <p id="attachment-state-message" class="govuk-body">At least one file has failed to process, a virus may have been detected.</p>
+        <div class="panel panel-border-wide">
+            <p id="attachment-state-message">At least one file has failed to process, a virus may have been detected.</p>
         </div>
     }
 }

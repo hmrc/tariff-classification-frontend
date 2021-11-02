@@ -15,28 +15,25 @@
  *@
 
 @import config.AppConfig
+@import models.request.AuthenticatedRequest
 @import controllers.routes
 @import models.AppealStatus.AppealStatus
 @import models.AppealType.AppealType
 @import models.Case
-@import models.request.AuthenticatedRequest
-@import models.viewmodels.NoTabSelected
 @import views.html.includes.main
-@import views.html.partials.appeal.{appeal_status_choice, appeal_status_heading, appeal_status_submit}
-@import views.html.partials.{case_heading, back_link, error_summary}
-
-@this(
-    main: main,
-        backLink: back_link
-)
+@import views.html.partials.{case_heading, back_link}
+@import views.html.partials.appeal.appeal_status_choice
+@import views.html.partials.appeal.appeal_status_heading
+@import views.html.partials.appeal.appeal_status_submit
+@import views.html.partials.error_summary
+@import models.viewmodels.NoTabSelected
 
 @(c: Case, appealType: AppealType, form: Form[AppealStatus])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("page.title.choose.appeal.status"),
-    customPrimaryNavTab = NoTabSelected,
-    backLink = Some(backLink())
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.choose.appeal.status")), customPrimaryNavTab = NoTabSelected) {
+
+    @back_link()
+
     @error_summary(form.errors)
 
     @case_heading(c)

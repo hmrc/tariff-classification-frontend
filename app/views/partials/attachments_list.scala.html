@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import controllers.v2
-@import models.{Permission, StoredAttachment}
+@import controllers.{routes, v2}
+@import models.{Case, Permission, StoredAttachment}
 @import models.request.AuthenticatedRequest
 @import utils.Dates
 @import views.html.partials.attachment
@@ -31,36 +31,36 @@
 
     @if(attachments.nonEmpty){
 
-        <table id="@{id}-table" class="govuk-table">
-            <caption class="govuk-visually-hidden govuk-table__caption">@messages("case.menu.attachments")</caption>
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__header">
-                    <th scope="col" class="govuk-table__header">File</th>
-                    @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col"  class="govuk-table__header">Uploaded by</th>}
-                    @if(showSelect) {<th id="@{id}-header-select" scope="col"  class="govuk-table__header">Publish</th>}
-                    <th class="govuk-table__header" scope="col">Date</th>
-                    <th class="govuk-table__header"><span class="govuk-visually-hidden">attachment action</span></th>
+        <table id="@{id}-table">
+            <caption class="visually-hidden">@messages("case.menu.attachments")</caption>
+            <thead>
+                <tr>
+                    <th scope="col">File</th>
+                    @if(showUploadedBy) {<th id="@{id}-header-uploaded_by" scope="col">Uploaded by</th>}
+                    @if(showSelect) {<th id="@{id}-header-select" scope="col">Publish</th>}
+                    <th class="attachment-table-date" scope="col">Date</th>
+                    <th><span class="visuallyhidden">attachment action</span></th>
                 </tr>
             </thead>
-            <tbody class="govuk-table__body">
+            <tbody>
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
-                        <tr id="@{id}-row-@{index}" class="govuk-table__row">
-                            <td id="@{id}-row-@{index}-title" class="govuk-table__cell">
+                        <tr id="@{id}-row-@{index}">
+                            <td id="@{id}-row-@{index}-title" >
                                 @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
                             </td>
 
                             @if(showUploadedBy) {
-                                <td id="@{id}-row-@{index}-uploaded_by" class="govuk-table__cell">
+                                <td id="@{id}-row-@{index}-uploaded_by">
                                     @file.operator.flatMap(_.name).getOrElse("Unknown")
                                 </td>
                             }
 
                             @if(showSelect) {
-                                <td class="govuk-table__cell">
-                                    <div class=govuk-form-group">
+                                <td>
+                                    <div class="form-group">
                                         <fieldset>
-                                            @* TODO FIX *@
                                             <div class="multiple-choice">
+
                                                 <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
                                                         id="attachments[@{index}]"
                                                         name="attachments[@{index}]"
@@ -68,24 +68,26 @@
                                                         value="@file.id"
                                                         aria-label='publish @{file.fileName.getOrElse("New Attachment")} on GOV.UK'
                                                         @if(file.public) {checked="checked"}/>
+
                                                 <label for="attachments[@{index}]"></label>
                                             </div>
                                         </fieldset>
                                     </div>
                                 </td>
+
                             }
 
-                            <td id="@{id}-row-@{index}-date" class="govuk-table__cell">
+                            <td id="@{id}-row-@{index}-date" class="w-15">
                                 @Dates.format(file.timestamp)
                             </td>
 
                             @if(showRemoval &&
                                 caseRef.nonEmpty &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
-                                <td id="@{id}-row-@{index}-remove"  class="govuk-table__cell">
-                                    <a class="govuk-link" @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href='@v2.routes.AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
+                                <td id="@{id}-row-@{index}-remove">
+                                    <a @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href='@v2.routes.AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
                                         <span aria-hidden="true">@messages("case.attachment.remove.file.text")</span>
-                                        <span class="govuk-visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName.getOrElse("New Attachment"))</span>
+                                        <span class="visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName.getOrElse("New Attachment"))</span>
                                     </a>
                                 </td>
                             }
@@ -94,5 +96,8 @@
             </tbody>
         </table>
     }else {
-        <p class="govuk-body" id="@{id}-empty-table"> @messages("case.attachment.table.empty") </p>
+    <div class="grid-row">
+        <dt class="column-full" id="@{id}-empty-table"> @messages("case.attachment.table.empty") </dt>
+
+    </div>
     }

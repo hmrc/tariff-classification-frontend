@@ -80,6 +80,7 @@
 
   }
 
+
   .card-action {
     border-top: 0;
     padding: 12px;
@@ -165,11 +166,6 @@
     }
   }
 }
-
-* {
-  box-sizing: border-box;
-}
-
 .flex-container {
     display: -ms-flexbox;
     display: -webkit-flex;
@@ -185,7 +181,6 @@
 .flex-container .link-text {
     text-decoration: none;
     display: block;
-
 }
 .flex-container .link-text:hover {
     color: #fff;

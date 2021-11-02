@@ -1,50 +1,45 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
+@import controllers.Tab
 @import controllers.routes.CreateCorrespondenceController
 @import helper._
+@import models.{Case, CorrespondenceApplication}
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{CaseHeaderViewModel, NoTabSelected}
-@import models.{Case, CorrespondenceApplication}
 @import views.html.components.confirm_or_cancel_buttons
-@import views.html.forms.components._
 @import views.html.includes.main
-@import views.html.partials.{back_link, error_summary}
+@import views.html.forms.components._
+@import views.html.partials.{error_summary, back_link}
 
-@this(
-        case_heading: views.html.v2.case_heading,
-        main: main,
-        backLink: back_link
-)
-
+@this(case_heading: views.html.v2.case_heading)
 
 @(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("case.v2.correspondence.case-details-edit-title"),
-    customPrimaryNavTab = NoTabSelected,
-    backLink = Some(backLink())
-) {
-    @error_summary(form.errors)
-
+@main(bodyClasses = None, customTitle = Some(messages("case.v2.correspondence.case-details-edit-title")), customPrimaryNavTab = NoTabSelected) {
+<div class="grid-row">
+    <div class="column-two-thirds">
+<div class="mt-5">@back_link()</div>
+        @error_summary(form.errors)
     @case_heading(CaseHeaderViewModel.fromCase(c), messageKey = Some("case.v2.correspondence.case-details-edit-header"))
-
+    </div>
+    <div class="column-full">
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
-        <div class="govuk-form-group">
+        <div class="form-group">
 
             @helper.form(action = CreateCorrespondenceController.postCorrespondenceDetails(c.reference), 'class -> "form" , 'id -> "correspondence-details-edit-form", 'novalidate -> "novalidate") {
 
@@ -86,4 +81,6 @@
             }
         </div>
     }
+    </div>
+</div>
 }

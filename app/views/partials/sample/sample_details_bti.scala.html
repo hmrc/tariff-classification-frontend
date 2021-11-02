@@ -1,18 +1,18 @@
 @*
-* Copyright 2021 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.AppConfig
 @import controllers.routes
@@ -21,66 +21,66 @@
 @import models.viewmodels.atar.SampleTabViewModel
 @import views.html.partials._
 
-@import views.html.partials.sample.sample_status
 @(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @tab_heading("application", messages("case.menu.sample-details"))
+@tab_heading("application", messages("case.menu.sample-details"))
 
-    <dl class="govuk-summary-list">
-        <h3 class="govuk-heading-m" id="trader-submitted-heading">@messages("case.application.sample-info-from-applicant")</h3>
+<dl class="dl-mb-2">
 
-        <div id="app-details-sending-samples-answer" class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
+    <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.sample-info-from-applicant")</h3>
+
+    <div id="app-details-sending-samples-answer" class="grid-row">
+        <dt class="column-one-third">
             @messages("case.application.provide-samples")
-            </dt>
-            <dd class="govuk-summary-list__value">
+        </dt>
+        <dd class="column-two-thirds">
             @if(sample.sampleToBeProvided) {
                 @messages("answer.yes")
             } else {
                 @messages("answer.no")
             }
-            </dd>
-        </div>
+        </dd>
+    </div>
 
-        @if(sample.sampleToBeProvided){
-            <div id="app-details-returning-samples" class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
+    @if(sample.sampleToBeProvided){
+        <div id="app-details-returning-samples" class="grid-row">
+            <dt class="column-one-third">
                 @messages("case.application.returning-samples")
-                </dt>
-                <dd class="govuk-summary-list__value">
+            </dt>
+            <dd class="column-two-thirds">
                 @if(sample.sampleToBeReturned) {
                     @messages("answer.yes")
                 } else {
                     @messages("answer.no")
                 }
-                </dd>
-            </div>
-        }
+            </dd>
+        </div>
+    }
 
-        @sample.sampleRequestedBy.map { sampleRequestedBy =>
-            <h3 class="govuk-heading-m" id="sample-requested-heading">@messages("case.sample.request.heading")</h3>
+    @sample.sampleRequestedBy.map { sampleRequestedBy =>
+        <h3 class="heading-medium" id="sample-requested-heading">@messages("case.sample.request.heading")</h3>
 
-            <div id="sample-requested-by" class="govuk-summary-list__row">
-                <dt id="sample-requested-by-value" class="govuk-summary-list__key">
+        <div id="sample-requested-by" class="grid-row">
+            <dt id="sample-requested-by-value" class="column-one-third">
                 @messages("case.sample.request.operator", sampleRequestedBy)
-                </dt>
-            </div>
-            <div id="sample-requested-return" class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
+            </dt>
+        </div>
+        <div id="sample-requested-return" class="grid-row">
+            <dt class="column-one-third">
                 @messages("case.sample.request.return")
-                </dt>
-                <dd id="sample-requested-return-value" class="govuk-summary-list__key">
+            </dt>
+            <dd id="sample-requested-return-value" class="column-one-third">
                 @sample.sampleReturnStatus
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="@routes.SampleReturnController.updateStatus(sample.caseReference)" class="govuk-link">@messages("case.sample.request.change")</a>
-                </dd>
-            </div>
-        }
+            </dd>
+            <dd class="column-one-third">
+                <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="@routes.SampleReturnController.updateStatus(sample.caseReference)">@messages("case.sample.request.change")</a>
+            </dd>
+        </div>
+    }
 
-        @if(sample.sampleToBeProvided || sample.sampleRequestedBy.nonEmpty) {
-            @sample_status(sample, startAtTabIndex)
-        }
+    @if(sample.sampleToBeProvided || sample.sampleRequestedBy.nonEmpty) {
+        @sample_status(sample, startAtTabIndex)
+    }
 
-    </dl>
+</dl>
 

@@ -17,17 +17,17 @@
 @import config.AppConfig
 @import views.html.includes.govuk_wrapper
 
-@this(
- govukWrapper: govuk_wrapper
-)
+@import models.viewmodels.NoTabSelected
 
 @(resource: String = "Resource")(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@govukWrapper(
- pageTitle = messages("not_authorised.title") + " - " + messages("site.title.suffix")
-) {
- <h1 class="govuk-heading-xl">@messages("not_authorised.heading")</h1>
-
- <p class="govuk-body">@messages("not_authorised.paragraph1")</p>
- <p class="govuk-body">@messages("not_authorised.paragraph2")</p>
+@contentHeader = {
+  <h1 class="heading-large">@messages("not_authorised.heading")</h1>
 }
+
+@mainContent = {
+  <p>@messages("not_authorised.paragraph1")</p>
+  <p>@messages("not_authorised.paragraph2")</p>
+}
+
+@govuk_wrapper(appConfig = appConfig, title = messages("not_authorised.title") + " - " + messages("site.title.suffix"), contentHeader = Some(contentHeader), mainContent = mainContent)

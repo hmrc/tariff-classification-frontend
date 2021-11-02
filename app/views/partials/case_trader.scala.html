@@ -22,31 +22,31 @@
 
 @tab_heading("trader", "Applicant")
 
-<dl class="govuk-summary-list">
-    <h3 class="govuk-heading-m" id="trader-submitted-heading">@messages("case.application.holder.section_heading")</h3>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
+<dl class="govuk-check-your-answers cya-questions-short">
+    <h3 class="heading-medium" id="trader-submitted-heading">@messages("case.application.holder.section_heading")</h3>
+    <div class="grid-row">
+        <dt class="cya-question">
             @messages("case.application.holder.eori-number")
         </dt>
-        <dd class="govuk-summary-list__value">
+        <dd class="cya-answer">
             @applicant.eoriDetails.eori
         </dd>
     </div>
 
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
+    <div class="grid-row">
+        <dt class="cya-question">
             @messages("case.application.holder.trader-name")
         </dt>
-        <dd class="govuk-summary-list__value">
+        <dd class="cya-answer">
             @applicant.eoriDetails.businessName
         </dd>
     </div>
 
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
+    <div class="grid-row">
+        <dt class="cya-question">
             @messages("case.application.holder.address")
         </dt>
-        <dd class="govuk-summary-list__value">
+        <dd class="cya-answer">
         <span class="pre-wrap">@applicant.eoriDetails.addressLine1</span> @if(!applicant.eoriDetails.addressLine1.isEmpty) {<br>}
             <span class="pre-wrap">@applicant.eoriDetails.addressLine2</span> @if(!applicant.eoriDetails.addressLine2.isEmpty) {<br>}
             <span class="pre-wrap">@applicant.eoriDetails.addressLine3</span> @if(!applicant.eoriDetails.addressLine3.isEmpty) {<br>}
@@ -60,33 +60,33 @@
 @contact_details(applicant, Some(startAtTabIndex+1))
 
     @applicant.agentDetails.map { agentDetails =>
-        <h3 class="govuk-heading-m" id="agent-details-heading">@messages("case.application.agent.agent-details-heading")</h3>
+        <h3 class="heading-medium" id="agent-details-heading">@messages("case.application.agent.agent-details-heading")</h3>
 
-        <dl class="govuk-summary-list">
+        <dl class="govuk-check-your-answers cya-questions-short">
 
-            <div id="agent-details-eori" class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
+            <div id="agent-details-eori" class="grid-row">
+                <dt class="cya-question">
                 @messages("case.application.holder.eori-number")
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="cya-answer">
                 @agentDetails.eoriDetails.eori
                 </dd>
             </div>
 
-            <div id="agent-details-name" class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
+            <div id="agent-details-name" class="grid-row">
+                <dt class="cya-question">
                 @messages("case.application.agent.agent-name")
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="cya-answer">
                 @agentDetails.eoriDetails.businessName
                 </dd>
             </div>
 
-            <div id="agent-details-address" class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
+            <div id="agent-details-address" class="grid-row">
+                <dt class="cya-question">
                 @messages("case.application.agent.agent-address")
                 </dt>
-                <dd class="govuk-summary-list__value">
+                <dd class="cya-answer">
                     <span class="pre-wrap">@agentDetails.eoriDetails.businessName</span>
                     <span class="pre-wrap">@agentDetails.eoriDetails.addressLine1</span> @if(agentDetails.eoriDetails.addressLine1.nonEmpty) {<br>}
                     <span class="pre-wrap">@agentDetails.eoriDetails.addressLine2</span> @if(agentDetails.eoriDetails.addressLine2.nonEmpty) {<br>}

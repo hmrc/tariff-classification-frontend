@@ -25,7 +25,6 @@ compositeMode: Boolean = false)(implicit messages: Messages, appConfig: AppConfi
 <head>
     <style>
                 body {
-                    font-family: "GDS Transport",arial,sans-serif;
                     width: auto;
                     height: auto;
                     margin: 0;
@@ -353,6 +352,7 @@ compositeMode: Boolean = false)(implicit messages: Messages, appConfig: AppConfi
     text-align: right;
 }
 .govuk-caption-xl {
+    font-family: "GDS Transport",arial,sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 400;
@@ -390,7 +390,7 @@ border: 1px solid #00703C;
             </div>
             <div class="column-two-thirds">
                 <h2 class="margin-top-small no-margin-bottom print-header__heading">
-                    <strong>@messages("pdf.ruling.title")</strong>
+                    @messages("pdf.ruling.title")
                 </h2>
             </div>
         </div>

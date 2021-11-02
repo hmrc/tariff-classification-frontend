@@ -26,6 +26,6 @@
         </a>
     </div>
     <figcaption class="search-results--thumbnail_text">
-        <a @if(useTabIndex.isDefined){ tabindex="@useTabIndex" } aria-label="View case @caseReference" id="search-images-@id-text" href="@routes.CaseController.rulingDetails(caseReference)" class="govuk-link">@caseReference</a>
+        <a @if(useTabIndex.isDefined){ tabindex="@useTabIndex" } aria-label="View case @caseReference" id="search-images-@id-text" href="@routes.CaseController.rulingDetails(caseReference)">@caseReference</a>
     </figcaption>
 </figure>

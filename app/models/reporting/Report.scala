@@ -369,13 +369,12 @@ object Report {
   implicit val reportQueryStringBindable: QueryStringBindable[Report] =
     new QueryStringBindable[Report] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Report]] =
-        if (params.contains(groupByKey) || params.contains(maxFieldsKey) || params.contains(includeCasesKey)) {
+        if (params.contains(groupByKey) || params.contains(maxFieldsKey) || params.contains(includeCasesKey))
           SummaryReport.summaryReportQueryStringBindable.bind(key, params)
-        } else if (params.contains(fieldsKey)) {
+        else if (params.contains(fieldsKey))
           CaseReport.caseReportQueryStringBindable.bind(key, params)
-        } else {
+        else
           QueueReport.queueReportQueryStringBindable.bind(key, params)
-        }
 
       override def unbind(key: String, value: Report): String = value match {
         case cse: CaseReport =>

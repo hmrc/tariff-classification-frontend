@@ -28,10 +28,10 @@
 <div id="case-heading" class="case-heading mt-5 mb-4">
 
     <div>
-        <div id="case-reference" class="govuk-caption-xl">
+        <div id="case-reference" class="case-reference">
             @messages("case.heading.secondary.nosuffix", caseHeader.caseType.prettyName, caseHeader.referenceNumber)
         </div>
-        <h1 class="govuk-heading-xl">
+        <h1 class="heading-xlarge case-title">
             @if(caseHeader.isMigrated && caseHeader.goodsName.isEmpty){
             @messages("case.title.migrated.cases", caseHeader.referenceNumber)
             } else if(messageKey.isDefined){
@@ -41,11 +41,11 @@
             }
         </h1>
         @caseHeader.businessName.map { businessName =>
-        <h2 class="govuk-heading-m">@businessName</h2>
+        <h2 class="bold mb-1">@businessName</h2>
         }
     </div>
 
-    <div id="case-status-section" class="govuk-body">
+    <div id="case-status-section">
         @caseStatus(caseHeader.caseStatus)
     </div>
 </div>

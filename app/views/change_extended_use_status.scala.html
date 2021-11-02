@@ -15,32 +15,24 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes
-@import models.Case
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.NoTabSelected
+@import controllers.{Tab, routes}
+@import models.Case
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
 @import views.html.includes.main
 @import views.html.partials.{case_heading, back_link}
-
-@this(
-    main: main,
-    backLink: back_link
-)
+@import models.viewmodels.NoTabSelected
 
 @(c: Case, form: Form[Boolean])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
-    pageTitle = messages("page.title.extended.use"),
-    customPrimaryNavTab = NoTabSelected,
-    backLink = Some(backLink())
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.extended.use")), customPrimaryNavTab = NoTabSelected) {
+    @back_link()
 
 <div class="govuk-notification-banner-width">
     @case_heading(c, messageKey = Some("case.extend.heading"))
 
-    <p class="govuk-body">Before you change this, <a id="change_extended_use_status-attachment_link" class="govuk-link" href="@routes.CaseController.attachmentsDetails(c.reference)">attach</a> any relevant documentation to the case.</p>
+    <p>Before you change this, <a id="change_extended_use_status-attachment_link" href="@routes.CaseController.attachmentsDetails(c.reference)">attach</a> any relevant documentation to the case.</p>
 
     @helper.form(action = routes.ExtendedUseCaseController.updateStatus(c.reference), 'id -> "extended_use_form", 'novalidate -> "novalidate") {
         @helper.CSRF.formField
@@ -49,13 +41,11 @@
             options = Seq(RadioOption("true", "Yes"), RadioOption("false", "No")),
             id = "review_status_form",
             label = Some(messages("case.extend.heading", c.application.goodsName)),
-            labelClass = Some ("govuk-visually-hidden")
+            labelClass = Some ("visually-hidden")
         )
-        <div class="govuk-form-group">
-            <button id="change_extended_use_status-submit" class="govuk-button" type="submit">Save changes</button>
-            <p class="govuk-body">
-                <a id="change_extended_use_status-cancel" class="govuk-link" href="@routes.AppealCaseController.appealDetails(c.reference)">Cancel this action</a>
-            </p>
+        <div class="confirm-cancel-alignment">
+            <button id="change_extended_use_status-submit" class="button" type="submit">Save changes</button>
+            <a id="change_extended_use_status-cancel" class="secondary-button" href="@routes.AppealCaseController.appealDetails(c.reference)">Cancel this action</a>
         </div>
     }
 </div>

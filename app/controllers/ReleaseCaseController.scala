@@ -38,7 +38,6 @@ class ReleaseCaseController @Inject() (
   mcc: MessagesControllerComponents,
   val releaseCaseView: views.html.release_case,
   val confirmation_case_creation: views.html.v2.confirmation_case_creation,
-  val resource_not_found: views.html.resource_not_found,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -59,7 +58,7 @@ class ReleaseCaseController @Inject() (
 
       def onValidForm(queueSlug: String): Future[Result] =
         queueService.getOneBySlug(queueSlug) flatMap {
-          case None => successful(Ok(resource_not_found(s"Queue $queueSlug")))
+          case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
           case Some(q: Queue) =>
             validateAndRedirect(casesService.releaseCase(_, q, request.operator).map { _ =>
               routes.ReleaseCaseController.confirmReleaseCase(reference)
@@ -82,7 +81,7 @@ class ReleaseCaseController @Inject() (
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
       def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) =
-        successful(resource_not_found(s"Case Queue"))
+        successful(views.html.resource_not_found(s"Case Queue"))
 
       renderView(
         c => c.status == CaseStatus.OPEN,

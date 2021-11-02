@@ -15,36 +15,39 @@
  *@
 
 @import config.AppConfig
-@import controllers.routes
-@import models.Decision
 @import models.request.AuthenticatedRequest
-@import models.viewmodels.{CaseHeaderViewModel, NoTabSelected}
-@import views.html.components.confirm_or_cancel_buttons
-@import views.html.forms.components.{input_text, input_textarea}
+@import controllers.routes
+@import controllers.Tab
+@import models.viewmodels.CaseHeaderViewModel
 @import views.html.includes.main
-@import views.html.partials.{c592_information, back_link, error_summary}
+@import views.html.components.confirm_or_cancel_buttons
+@import views.html.forms.components.input_text
+@import models.Decision
+@import views.html.forms.components.input_textarea
+@import views.html.partials.{back_link, error_summary}
+@import views.html.partials.c592_information
+@import models.viewmodels.NoTabSelected
 
 @this(
-        case_heading: views.html.v2.case_heading,
- main: main,
-        backLink: back_link
+        case_heading: views.html.v2.case_heading
 )
-
 
 @(caseHeaderViewModel: CaseHeaderViewModel, form: Form[Decision], traderCommodityCode: String, officerCommodityCode: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(
- pageTitle = messages("page.title.edit_liability_decision"),
- customPrimaryNavTab = NoTabSelected,
- backLink = Some(backLink())
-) {
+@main(bodyClasses = None, customTitle = Some(messages("page.title.edit_liability_decision")), customPrimaryNavTab = NoTabSelected) {
 
+<div class="grid-row">
+ <div class="column-two-thirds">
+
+ <div class="mt-5">@back_link()</div>
  @error_summary(form.errors)
 
  @case_heading( caseHeaderViewModel, messageKey = Some("case.decision.edit-ruling-details.heading"))
-
+ </div>
  <div class="column-full">
-  @c592_information(traderCommodityCode, officerCommodityCode, Some("text-grey"))
+ @c592_information(traderCommodityCode, officerCommodityCode, Some("text-grey"))
+
+ <hr>
 
  @helper.form(action = routes.RulingController.updateRulingDetails(caseHeaderViewModel.referenceNumber), 'id -> "edit_liability_decision-form") {
   @helper.CSRF.formField
@@ -82,4 +85,7 @@
    cancelHref = controllers.routes.CaseController.rulingDetails(caseHeaderViewModel.referenceNumber)
   )
  }
+
+ </div>
+</div>
 }
