@@ -21,16 +21,16 @@
 
 @(c: Case, displayBackLink: Boolean = true, messageKey: Option[String] = None, customPrefix: Option[String] = None)(implicit messages: Messages, request: Request[_])
 
-<div id="case-heading" class="case-heading mt-5 mb-4">
+<div id="case-heading" class="govuk-form-group">
 
     <div>
-        <div id="case-reference" class="case-reference">
+        <div id="case-reference" class="govuk-caption-xl">
             @messages("case.heading.secondary.nosuffix", c.application.`type`.prettyName, c.reference)
         </div>
     </div>
 
     @if(customPrefix.isDefined){
-        <h1 class="heading-xlarge case-title" id="heading">
+        <h1 class="govuk-heading-xl" id="heading">
             @customPrefix.map { customPrefix =>
                 @messages(customPrefix, c.application.goodsName)
             }.getOrElse {
@@ -38,7 +38,7 @@
             }
         </h1>
     } else {
-        <h1 class="heading-xlarge case-title" id="heading">
+        <h1 class="govuk-heading-xl" id="heading">
             @if(messageKey.isDefined){
                 @messages(messageKey.get, c.application.goodsName)
             }else{
@@ -46,7 +46,7 @@
             }
         </h1>
         @c.application.businessName.map { businessName =>
-            <h2 class="bold mb-1">@c.application.businessName</h2>
+            <h2 class="govuk-heading-m">@c.application.businessName</h2>
         }
     }
 
@@ -54,5 +54,4 @@
         @case_status(c, "case-status")
         @appeal_status(c, "appeal-status")
     </div>
-
 </div>

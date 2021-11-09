@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppConfig
+
 import javax.inject.Inject
 import models.forms.v2.{MiscDetailsForm, MiscellaneousForm}
 import models.request.AuthenticatedRequest
@@ -28,6 +29,8 @@ import play.api.mvc.{MessagesControllerComponents, _}
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.{case_not_found, release_case, resource_not_found}
+import views.html.v2.{confirmation_case_creation, create_misc, misc_details_edit}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -38,9 +41,12 @@ class CreateMiscellaneousController @Inject() (
   casesService: CasesService,
   queueService: QueuesService,
   mcc: MessagesControllerComponents,
-  val releaseCaseView: views.html.release_case,
-  val confirmation_case_creation: views.html.v2.confirmation_case_creation,
-  val misc_details_edit: views.html.v2.misc_details_edit,
+  val releaseCaseView: release_case,
+  val confirmation_case_creation: confirmation_case_creation,
+  val misc_details_edit: misc_details_edit,
+  val create_misc: create_misc,
+  val case_not_found: case_not_found,
+  val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -48,13 +54,13 @@ class CreateMiscellaneousController @Inject() (
   private val form: Form[MiscApplication] = MiscellaneousForm.newMiscForm
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request => Future.successful(Ok(views.html.v2.create_misc(form)))
+    implicit request => Future.successful(Ok(create_misc(form)))
   }
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
     implicit request =>
       form.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(views.html.v2.create_misc(formWithErrors))),
+        formWithErrors => Future.successful(Ok(create_misc(formWithErrors))),
         miscApp =>
           casesService.createCase(miscApp, request.operator).map { caseCreated: Case =>
             Redirect(routes.CreateMiscellaneousController.displayQuestion(caseCreated.reference))
@@ -72,7 +78,7 @@ class CreateMiscellaneousController @Inject() (
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(_: Case) => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
-      case _             => successful(Ok(views.html.case_not_found(reference)))
+      case _             => successful(Ok(case_not_found(reference)))
     }
 
   def displayConfirmation(reference: String) =
@@ -84,13 +90,13 @@ class CreateMiscellaneousController @Inject() (
               .map(id =>
                 queueService.getOneById(id) flatMap {
                   case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
-                  case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
+                  case None        => Future.successful(Ok(resource_not_found(s"Case Queue")))
                 }
               )
               .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
 
           }
-          case _ => successful(Ok(views.html.case_not_found(reference)))
+          case _ => successful(Ok(case_not_found(reference)))
         }
     }
 

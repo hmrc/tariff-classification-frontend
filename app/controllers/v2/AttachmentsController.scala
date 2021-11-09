@@ -16,8 +16,6 @@
 
 package controllers.v2
 
-import javax.inject.{Inject, Singleton}
-
 import akka.stream.Materializer
 import config.AppConfig
 import controllers.{RenderCaseAction, RequestActions}
@@ -29,16 +27,18 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.remove_attachment
 
-import scala.concurrent.Future.successful
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
+import scala.concurrent.Future.successful
 
 @Singleton
 class AttachmentsController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
-  remove_attachment: views.html.v2.remove_attachment,
+  remove_attachment: remove_attachment,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
 )(implicit ec: ExecutionContext)

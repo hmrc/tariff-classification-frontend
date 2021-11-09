@@ -1,108 +1,109 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
-@import helper.CSRF
-@import models.request.AuthenticatedRequest
-@import models.Operator
-@import models.viewmodels.atar._
-@import views.html.includes.main
-@import views.html.components.{manager_tools_secondary_navigation, primary_navigation}
-@import models.viewmodels.{SubNavigationTab, ManagerToolsUsersTab, ManagerToolsTab, ApplicationTabViewModel}
 @import controllers.v2.routes
+@import layouts.full_main_content_layout
+@import models.Operator
+@import models.request.AuthenticatedRequest
+@import models.viewmodels.{ApplicationTabViewModel, ManagerToolsTab, ManagerToolsUsersTab, SubNavigationTab}
+@import views.html.components.manager_tools_secondary_navigation
+@import views.html.includes.main
+@import views.html.partials.back_link
 
 @this(
-user_heading: views.html.v2.user_heading,
-user_details: views.html.partials.users.user_details
+    main: main,
+    fullMainContent: full_main_content_layout,
+    user_heading: views.html.v2.user_heading,
+    user_details: views.html.partials.users.user_details,
+        backLink: back_link
 )
 
 @(
-detailsTab: Operator,
-applicationTabViewModel: ApplicationTabViewModel,
-atarForm: Form[Set[String]],
-liabForm: Form[Set[String]],
-corrForm: Form[Set[String]],
-miscForm: Form[Set[String]],
-activeSubNav : SubNavigationTab = ManagerToolsUsersTab
+        detailsTab: Operator,
+        applicationTabViewModel: ApplicationTabViewModel,
+        atarForm: Form[Set[String]],
+        liabForm: Form[Set[String]],
+        corrForm: Form[Set[String]],
+        miscForm: Form[Set[String]],
+        activeSubNav : SubNavigationTab = ManagerToolsUsersTab
 )(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
-bodyClasses = None,
-customTitle = Some(messages("Manage user")),
-customPrimaryNavTab = ManagerToolsTab
+    pageTitle = messages("Manage user"),
+    optCustomLayout = Some(fullMainContent(_)),
+    backLink = Some(backLink("Back to manage users", s"${routes.ManageUserController.displayManageUsers}")),
+    customPrimaryNavTab = ManagerToolsTab,
+    subNavigationTab = Some(manager_tools_secondary_navigation(activeSubNav))
 ) {
-@manager_tools_secondary_navigation(activeSubNav)
-<a id="back-link" class="link-back" href="@routes.ManageUserController.displayManageUsers">
-    Back to manage users
-</a>
-@user_heading(detailsTab.safeName)
 
-@if(detailsTab.id != request.operator.id){
-<div class="form-group">
-    <a href="@routes.ManageUserController.deleteUser(detailsTab.id)" id="delete-user" role="button" class="button button-red">Delete user</a>
-</div>
-}
-<div class="form-groups">
+    @user_heading(detailsTab.safeName)
 
-</div>
-
-<div id="atar_tabs" class="govuk-tabs" data-module="govuk-tabs">
-    <ul class="govuk-tabs__list">
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#user_details_tab">
-                @messages("users.user.details.tab_title")
-            </a>
-        </li>
-
-        @for(caseTab <- applicationTabViewModel.applicationTabs) {
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#@caseTab.elementId">
-                @messages(caseTab.tabMessageKey) (@caseTab.searchResult.size)
-            </a>
-        </li>
-        }
-
-<!--        <li class="govuk-tabs__list-item">-->
-<!--            <a class="govuk-tabs__tab" href="#keywords_tab">-->
-<!--                @messages("users.user.keywords.tab_title")-->
-<!--            </a>-->
-<!--        </li>-->
-
-    </ul>
-
-    <div class="govuk-tabs__panel" id="user_details_tab">
-        @user_details(detailsTab)
-    </div>
-
-    @for(caseTab <- applicationTabViewModel.applicationTabs) {
-    <div class="govuk-tabs__panel" id="@caseTab.elementId">
-        @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
-        case (_, 0) => messages("users.user.noCases", caseTab.applicationType.prettyName)
-        case (ApplicationType.ATAR, _) => atar_table(caseTab, atarForm, detailsTab.id)
-        case (ApplicationType.LIABILITY, _) => liability_table(caseTab, liabForm, detailsTab.id)
-        case (ApplicationType.CORRESPONDENCE, _) => correspondence_table(caseTab, corrForm, detailsTab.id)
-        case (ApplicationType.MISCELLANEOUS, _) => misc_table(caseTab, miscForm, detailsTab.id)
-        }
-        }
-    </div>
+    @if(detailsTab.id != request.operator.id){
+        <div class="govuk-form-group">
+            <a href="@routes.ManageUserController.deleteUser(detailsTab.id)" id="delete-user" role="button" class="govuk-button govuk-button--warning">Delete user</a>
+        </div>
     }
 
-    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="keywords_tab">
-    </div>
+    <div id="atar_tabs" class="govuk-tabs" data-module="govuk-tabs">
+        <ul class="govuk-tabs__list">
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#user_details_tab">
+                @messages("users.user.details.tab_title")
+                </a>
+            </li>
 
-</div>
+            @for(caseTab <- applicationTabViewModel.applicationTabs) {
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#@caseTab.elementId">
+                        @messages(caseTab.tabMessageKey) (@caseTab.searchResult.size)
+                    </a>
+                </li>
+            }
+
+                <!--        <li class="govuk-tabs__list-item">-->
+                <!--            <a class="govuk-tabs__tab" href="#keywords_tab">-->
+                <!--                @messages("users.user.keywords.tab_title")-->
+                <!--            </a>-->
+                <!--        </li>-->
+
+        </ul>
+
+        <div class="govuk-tabs__panel" id="user_details_tab">
+        @user_details(detailsTab)
+        </div>
+
+        @for(caseTab <- applicationTabViewModel.applicationTabs) {
+            <div class="govuk-tabs__panel" id="@caseTab.elementId">
+                <div class="govuk-body">
+                    @{(caseTab.applicationType, caseTab.searchResult.results.size) match {
+                            case (_, 0) => messages("users.user.noCases", caseTab.applicationType.prettyName)
+                            case (ApplicationType.ATAR, _) => atar_table(caseTab, atarForm, detailsTab.id)
+                            case (ApplicationType.LIABILITY, _) => liability_table(caseTab, liabForm, detailsTab.id)
+                            case (ApplicationType.CORRESPONDENCE, _) => correspondence_table(caseTab, corrForm, detailsTab.id)
+                            case (ApplicationType.MISCELLANEOUS, _) => misc_table(caseTab, miscForm, detailsTab.id)
+                        }
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="keywords_tab">
+        </div>
+
+    </div>
 }
 

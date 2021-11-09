@@ -21,19 +21,18 @@
 
 @(summaryReportTab: ReportTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<dl class="govuk-check-your-answers cya-questions-long">
+<dl class="govuk-summary-list">
 
     @for((result, index) <- summaryReportTab.reports.zipWithIndex) {
-    <div id="report-tab-@{result.reportId}" class="grid-row">
-        <dt class="cya-question">
+    <div id="report-tab-@{result.reportId}" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
             @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")
         </dt>
 
-        <dd class="cya-answer" id="@result.reportId">
-            <a class="float-right" href="@routes.ReportingController.getReportByName(result.reportId)">@messages("reporting.report_tab.run-report")</a>
-            <span class="visually-hidden">Run report for @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")</span>
+        <dd class="govuk-summary-list__actions" id="@result.reportId">
+            <a class="govuk-link" href="@routes.ReportingController.getReportByName(result.reportId)">@messages("reporting.report_tab.run-report")</a>
+            <span class="govuk-visually-hidden">Run report for @messages(s"reporting.${summaryReportTab.tabMessageKey}.${result.nameMessageKey}")</span>
         </dd>
     </div>
     }
 </dl>
-

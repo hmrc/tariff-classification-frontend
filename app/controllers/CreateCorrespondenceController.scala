@@ -29,6 +29,8 @@ import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2._
+import views.html.{case_not_found, release_case, resource_not_found}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,11 +43,14 @@ class CreateCorrespondenceController @Inject() (
   casesService: CasesService,
   queueService: QueuesService,
   mcc: MessagesControllerComponents,
-  val releaseCaseView: views.html.release_case,
-  val releaseCaseQuestionView: views.html.v2.release_option_choice,
-  val confirmation_case_creation: views.html.v2.confirmation_case_creation,
-  val correspondence_details_edit: views.html.v2.correspondence_details_edit,
-  val correspondence_contact_edit: views.html.v2.correspondence_contact_edit,
+  val releaseCaseView: release_case,
+  val releaseCaseQuestionView: release_option_choice,
+  val confirmation_case_creation: confirmation_case_creation,
+  val correspondence_details_edit: correspondence_details_edit,
+  val correspondence_contact_edit: correspondence_contact_edit,
+  val create_correspondence: create_correspondence,
+  val case_not_found: case_not_found,
+  val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -58,13 +63,13 @@ class CreateCorrespondenceController @Inject() (
   )
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request => Future.successful(Ok(views.html.v2.create_correspondence(form)))
+    implicit request => Future.successful(Ok(create_correspondence(form)))
   }
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
     implicit request =>
       form.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(views.html.v2.create_correspondence(formWithErrors))),
+        formWithErrors => Future.successful(Ok(create_correspondence(formWithErrors))),
         correspondenceApp =>
           casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
             Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
@@ -83,7 +88,7 @@ class CreateCorrespondenceController @Inject() (
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => successful(Ok(releaseCaseQuestionView(c, form)))
-      case _             => successful(Ok(views.html.case_not_found(reference)))
+      case _             => successful(Ok(case_not_found(reference)))
     }
 
   def postChoice(reference: String): Action[AnyContent] =
@@ -109,13 +114,13 @@ class CreateCorrespondenceController @Inject() (
             .map(id =>
               queueService.getOneById(id) flatMap {
                 case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
-                case None        => Future.successful(Ok(views.html.resource_not_found(s"Case Queue")))
+                case None        => Future.successful(Ok(resource_not_found(s"Case Queue")))
               }
             )
             .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
 
         }
-        case _ => successful(Ok(views.html.case_not_found(reference)))
+        case _ => successful(Ok(case_not_found(reference)))
       }
     }
 

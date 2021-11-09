@@ -21,8 +21,7 @@ import config.AppConfig
 import controllers.RequestActions
 import models._
 import models.forms.KeywordForm
-import models.forms.v2.{EditApprovedKeywordForm, EditKeywordAction}
-import models.forms.v2.ChangeKeywordStatusForm
+import models.forms.v2.{ChangeKeywordStatusForm, EditApprovedKeywordForm, EditKeywordAction}
 import models.request.AuthenticatedRequest
 import models.viewmodels._
 import models.viewmodels.managementtools.ManageKeywordsViewModel
@@ -32,6 +31,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.case_not_found
+import views.html.managementtools._
 
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,14 +42,15 @@ class ManageKeywordsController @Inject() (
   casesService: CasesService,
   keywordService: ManageKeywordsService,
   mcc: MessagesControllerComponents,
-  val manageKeywordsView: views.html.managementtools.manage_keywords_view,
-  val keywordCreatedConfirm: views.html.managementtools.confirm_keyword_created,
-  val newKeywordView: views.html.managementtools.new_keyword_view,
-  val keywordChangeConfirm: views.html.managementtools.confirm_keyword_status,
-  val changeKeywordStatusView: views.html.managementtools.change_keyword_status_view,
-  val editApprovedKeywordsView: views.html.managementtools.edit_approved_keywords,
-  val confirmKeywordDeletedView: views.html.managementtools.confirmation_keyword_deleted,
-  val confirmKeywordRenamedView: views.html.managementtools.confirmation_keyword_renamed,
+  val manageKeywordsView: manage_keywords_view,
+  val keywordCreatedConfirm: confirm_keyword_created,
+  val newKeywordView: new_keyword_view,
+  val keywordChangeConfirm: confirm_keyword_status,
+  val changeKeywordStatusView: change_keyword_status_view,
+  val editApprovedKeywordsView: edit_approved_keywords,
+  val confirmKeywordDeletedView: confirmation_keyword_deleted,
+  val confirmKeywordRenamedView: confirmation_keyword_renamed,
+  val case_not_found: case_not_found,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -189,7 +191,7 @@ class ManageKeywordsController @Inject() (
                 }
             )
           }
-          case _ => successful(Ok(views.html.case_not_found(reference)))
+          case _ => successful(Ok(case_not_found(reference)))
         }
     }
 
@@ -207,7 +209,7 @@ class ManageKeywordsController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       casesService.getOne(reference).flatMap {
         case Some(c: Case) => Future.successful(Ok(changeKeywordStatusView(keywordName, c, changeKeywordStatusForm)))
-        case _             => Future.successful(Ok(views.html.case_not_found(reference)))
+        case _             => Future.successful(Ok(case_not_found(reference)))
       }
     )
 

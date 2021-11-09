@@ -18,10 +18,17 @@ package controllers
 
 import play.api.http.Status
 import play.api.test.Helpers._
+import views.html.not_authorized
 
 class SecurityControllerSpec extends ControllerBaseSpec {
 
-  private val controller = new SecurityController(mcc, realAppConfig)
+  private val notAuthorised = app.injector.instanceOf[not_authorized]
+
+  private val controller = new SecurityController(
+    mcc,
+    notAuthorised,
+    realAppConfig
+  )
 
   "Unauthorized" should {
 

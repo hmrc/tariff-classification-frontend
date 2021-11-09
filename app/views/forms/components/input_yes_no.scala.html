@@ -21,11 +21,21 @@
 @import views.html.forms.components.input_radiogroup
 @import play.api.data.Field
 
-@(field: Field, componentId: String)(implicit messages: Messages)
+@(
+        field: Field,
+        componentId: String,
+        contentHtml: Option[Html] = None,
+        label: Option[String] = None,
+        legendAsPageHeading: Boolean = false,
+        headingCaption: Option[String] = None
+)(implicit messages: Messages)
 
  @input_radiogroup(
   field = field,
   options = Seq(RadioOption("true", "Yes"), RadioOption("false", "No")),
-  id = componentId
+  id = componentId,
+  contentHtml = contentHtml,
+  label = label,
+  legendAsPageHeading = legendAsPageHeading,
+  headingCaption = headingCaption
  )
-

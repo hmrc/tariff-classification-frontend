@@ -18,15 +18,15 @@ package controllers
 
 import cats.data.OptionT
 import config.AppConfig
-
-import javax.inject.{Inject, Singleton}
 import models.Permission
 import models.response.FileMetadata
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.FileStoreService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.view_attachment_unavailable
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -35,6 +35,7 @@ class ViewAttachmentController @Inject() (
   verify: RequestActions,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
+  val view_attachment_unavailable: view_attachment_unavailable,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {
@@ -51,10 +52,10 @@ class ViewAttachmentController @Inject() (
             .withHeaders(
               "Content-Disposition" -> s"filename=${fileSubmitted.fileName}"
             )
-          fileStoreResponse.getOrElse(NotFound(views.html.view_attachment_unavailable(meta)))
+          fileStoreResponse.getOrElse(NotFound(view_attachment_unavailable(meta)))
 
         case None =>
-          Future.successful(NotFound(views.html.view_attachment_unavailable(None)))
+          Future.successful(NotFound(view_attachment_unavailable(None)))
       }
     }
 }

@@ -30,6 +30,7 @@ import play.api.test.Helpers.{redirectLocation, _}
 import service.FileStoreService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import views.html.view_attachment_unavailable
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,6 +42,8 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
   private val reference = Cases.btiNewCase.reference
 
+  private val view_attachment_unavailable = app.injector.instanceOf[view_attachment_unavailable]
+
   override def afterEach(): Unit = {
     super.afterEach()
     reset(fileService)
@@ -51,6 +54,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       new SuccessfulRequestActions(playBodyParsers, operator),
       fileService,
       mcc,
+      view_attachment_unavailable,
       realAppConfig
     )
 
@@ -59,6 +63,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
       fileService,
       mcc,
+      view_attachment_unavailable,
       realAppConfig
     )
 

@@ -16,24 +16,24 @@
 
 package controllers
 
-import java.util.UUID
-import javax.inject.{Inject, Singleton}
-
-import connector.DataCacheConnector
 import config.AppConfig
+import connector.DataCacheConnector
 import controllers.v2.UpscanErrorHandling
-import models.{Attachment, Permission, UserAnswers}
 import models.forms.{AddNoteForm, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
+import models.{Attachment, Permission, UserAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.{confirm_suspended, suspend_case_email, suspend_case_reason}
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SuspendCaseController @Inject() (
@@ -42,6 +42,9 @@ class SuspendCaseController @Inject() (
   fileService: FileStoreService,
   dataCacheConnector: DataCacheConnector,
   mcc: MessagesControllerComponents,
+  val suspend_case_reason: suspend_case_reason,
+  val suspend_case_email: suspend_case_email,
+  val confirm_suspended: confirm_suspended,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -55,7 +58,7 @@ class SuspendCaseController @Inject() (
   def getSuspendCaseReason(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.SUSPEND_CASE)) { implicit request =>
-      Ok(views.html.suspend_case_reason(request.`case`, AddNoteForm.getForm("suspend")))
+      Ok(suspend_case_reason(request.`case`, AddNoteForm.getForm("suspend")))
     }
 
   def postSuspendCaseReason(reference: String): Action[AnyContent] =
@@ -65,7 +68,7 @@ class SuspendCaseController @Inject() (
           .getForm("suspend")
           .bindFromRequest()
           .fold(
-            formWithErrors => successful(BadRequest(views.html.suspend_case_reason(request.`case`, formWithErrors))),
+            formWithErrors => successful(BadRequest(suspend_case_reason(request.`case`, formWithErrors))),
             note => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(NoteCacheKey, note)
@@ -101,7 +104,7 @@ class SuspendCaseController @Inject() (
           maxFileSize     = appConfig.fileUploadMaxSize
         )
       )
-      .map(initiateResponse => views.html.suspend_case_email(request.`case`, uploadForm, initiateResponse))
+      .map(initiateResponse => suspend_case_email(request.`case`, uploadForm, initiateResponse))
   }
 
   def getSuspendCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
@@ -138,6 +141,6 @@ class SuspendCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(views.html.confirm_suspended(request.`case`))
+      Ok(confirm_suspended(request.`case`))
     }
 }

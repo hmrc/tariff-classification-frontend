@@ -27,6 +27,7 @@ import play.api.test.Helpers.{redirectLocation, _}
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import views.html.{confirm_reassign_case, reassign_queue_case, resource_not_found}
 
 import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,6 +38,10 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val queueService = mock[QueuesService]
   private val queue        = mock[Queue]
   private val operator     = Operator(id = "id")
+
+  private val reassignQueueCase = injector.instanceOf[reassign_queue_case]
+  private val confirmReassignCase = injector.instanceOf[confirm_reassign_case]
+  private val resourceNotFound = injector.instanceOf[resource_not_found]
 
   private val caseWithStatusNEW = Cases.caseQueueExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.caseQueueExample
@@ -52,6 +57,9 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     casesService,
     queueService,
     mcc,
+    reassignQueueCase,
+    confirmReassignCase,
+    resourceNotFound,
     realAppConfig
   )
 
@@ -61,6 +69,9 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       casesService,
       queueService,
       mcc,
+      reassignQueueCase,
+      confirmReassignCase,
+      resourceNotFound,
       realAppConfig
     )
 

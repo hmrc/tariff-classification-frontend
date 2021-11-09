@@ -78,6 +78,3 @@ case class Case(
       case _                           => false
     }
 }
-
-
-

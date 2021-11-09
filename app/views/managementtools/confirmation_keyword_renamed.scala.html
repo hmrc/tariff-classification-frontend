@@ -1,47 +1,51 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
-@import views.html.includes.main
-@import views.html.components.manager_tools_secondary_navigation
 
-@this()
+@import views.html.components.manager_tools_secondary_navigation
+@import views.html.includes.main
+
+@this(
+        main: main
+)
+
 
 @(oldKeywordName: String, newKeywordName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("management.manage-keywords.edit-approved-keywords.renamed.heading"))) {
-
-
-    <div class="grid-row">
-        <div id="confirm_keyword_renamed_id" class="column-two-thirds">
-            <div class="govuk-panel govuk-panel--confirmation">
-                <h2 class="heading-large mt-30">@messages("management.manage-keywords.edit-approved-keywords.renamed.heading")</h2>
-                <h3 class="heading-medium mt-10">@messages("management.manage-keywords.edit-approved-keywords.renamed", oldKeywordName, newKeywordName)</h3>
+@main(
+    pageTitle = messages("management.manage-keywords.edit-approved-keywords.renamed.heading")
+) {
+    <div id="confirm_keyword_renamed_id" class="govuk-form-group">
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">@messages("management.manage-keywords.edit-approved-keywords.renamed.heading")</h1>
+            <div class="govuk-panel__body">
+                @messages("management.manage-keywords.edit-approved-keywords.renamed", oldKeywordName, newKeywordName)
             </div>
-
-            <p id="renamed-keyword-p mt-45">@messages("management.manage-keywords.edit-approved-keywords.renamed.p", newKeywordName)</p>
-
-            <h3 class="heading-medium mt-0">@messages("management.create-keyword.new-keyword-done.next")</h3>
-            <p>
-                <a id="manage-all-keywords-link" href="@controllers.v2.routes.ManageKeywordsController.displayManageKeywords()">
-                @messages("management.create-keyword.new-keyword-done.link")
-                </a>
-            </p>
-
         </div>
+
+        <p id="renamed-keyword-p" class="govuk-body"">@messages("management.manage-keywords.edit-approved-keywords.renamed.p", newKeywordName)</p>
+
+        <h2 class="govuk-heading-m">@messages("management.create-keyword.new-keyword-done.next")</h2>
+        <p class="govuk-body">
+            <a id="manage-all-keywords-link" href="@controllers.v2.routes.ManageKeywordsController.displayManageKeywords()" class="govuk-body">
+                @messages("management.create-keyword.new-keyword-done.link")
+            </a>
+        </p>
+
     </div>
 }

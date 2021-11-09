@@ -16,7 +16,6 @@
 
 package controllers
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
 import models.SampleSend.SampleSend
 import models._
 import models.forms.SampleSendForm
@@ -27,7 +26,9 @@ import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.change_sample_send
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -35,6 +36,7 @@ import scala.concurrent.Future.successful
 class SampleWhoSendingController @Inject()(
   override val verify: RequestActions,
   override val caseService: CasesService,
+  val change_sample_send: change_sample_send,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
@@ -51,7 +53,7 @@ class SampleWhoSendingController @Inject()(
     notFilledForm: Form[Option[SampleSend]],
     options: Option[String] = None
   )(implicit request: AuthenticatedRequest[_]): Html =
-    views.html.change_sample_send(c, notFilledForm)
+    change_sample_send(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen

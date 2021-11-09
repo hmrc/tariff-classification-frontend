@@ -20,21 +20,21 @@ import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models.viewmodels._
-import models.{NoPagination, Permission}
+import models.{ApplicationType, NoPagination, Permission}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.open_cases_view
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import models.ApplicationType
 
 class AllOpenCasesController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   queueService: QueuesService,
   mcc: MessagesControllerComponents,
-  val openCasesView: views.html.v2.open_cases_view,
+  val openCasesView: open_cases_view,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with I18nSupport {

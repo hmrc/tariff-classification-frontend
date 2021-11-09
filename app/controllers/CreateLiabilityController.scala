@@ -24,6 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.create_liability
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,6 +34,7 @@ import scala.concurrent.Future
 class CreateLiabilityController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
+  val create_liability: create_liability,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
@@ -41,13 +43,13 @@ class CreateLiabilityController @Inject() (
   private val form: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request => Future.successful(Ok(views.html.create_liability(form)))
+    implicit request => Future.successful(Ok(create_liability(form)))
   }
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
     implicit request =>
       form.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(views.html.create_liability(formWithErrors))),
+        formWithErrors => Future.successful(Ok(create_liability(formWithErrors))),
         liabilityOrder =>
           casesService.createCase(liabilityOrder, request.operator).map { caseCreated =>
             Redirect(routes.CaseController.get(caseCreated.reference))

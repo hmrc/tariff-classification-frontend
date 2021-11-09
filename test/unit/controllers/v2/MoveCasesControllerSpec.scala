@@ -46,6 +46,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   private val chooseUserTeamPage = injector.instanceOf[views.html.partials.users.move_cases_choose_one_from_user_teams]
   private val doneMoveCasesPage  = injector.instanceOf[views.html.partials.users.done_move_cases]
   private val viewUser           = injector.instanceOf[views.html.partials.users.view_user]
+  private val userNotFound       = injector.instanceOf[views.html.user_not_found]
+  private val resourceNotFound   = injector.instanceOf[views.html.resource_not_found]
   private val MoveCasesCacheKey  = "move_cases"
   private val ChosenCases        = "chosen_cases"
   private val ChosenTeam         = "chosen_team"
@@ -71,7 +73,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       chooseUserPage,
       chooseUserTeamPage,
       doneMoveCasesPage,
-      viewUser
+      viewUser,
+      userNotFound,
+      resourceNotFound
     )(realAppConfig, global)
 
   private def controllerWithData(permission: Set[Permission], userAnswers: UserAnswers = userAnswersMock) =
@@ -93,7 +97,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       chooseUserPage,
       chooseUserTeamPage,
       doneMoveCasesPage,
-      viewUser
+      viewUser,
+      userNotFound,
+      resourceNotFound
     )(realAppConfig, global)
 
   "postMoveATaRCases" should {

@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import models._
 import models.forms.ReleaseCaseForm
@@ -25,6 +26,7 @@ import play.api.data.Form
 import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.{confirm_reassign_case, reassign_queue_case, resource_not_found}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -36,6 +38,9 @@ class ReassignCaseController @Inject() (
   override val caseService: CasesService,
   queueService: QueuesService,
   mcc: MessagesControllerComponents,
+  val reassign_queue_case: reassign_queue_case,
+  val confirm_reassign_case: confirm_reassign_case,
+  val resource_not_found: resource_not_found,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -55,7 +60,7 @@ class ReassignCaseController @Inject() (
       for {
         queues        <- queueService.getAllForCaseType(c.application.`type`)
         assignedQueue <- c.queueId.map(queueService.getOneById).getOrElse(successful(None))
-      } yield views.html.reassign_queue_case(c, f, queues, assignedQueue, origin)
+      } yield reassign_queue_case(c, f, queues, assignedQueue, origin)
     )
 
   def reassignCase(reference: String, origin: String): Action[AnyContent] =
@@ -66,7 +71,7 @@ class ReassignCaseController @Inject() (
 
       def onValidForm(queueSlug: String): Future[Result] =
         queueService.getOneBySlug(queueSlug) flatMap {
-          case None => successful(Ok(views.html.resource_not_found(s"Queue $queueSlug")))
+          case None => successful(Ok(resource_not_found(s"Queue $queueSlug")))
           case Some(q: Queue) =>
             validateAndRedirect(
               caseService
@@ -83,7 +88,7 @@ class ReassignCaseController @Inject() (
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
       def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) =
-        successful(views.html.resource_not_found(s"Case Queue"))
+        successful(resource_not_found(s"Case Queue"))
 
       renderView(
         c => CaseStatus.openStatuses.contains(c.status),
@@ -91,7 +96,7 @@ class ReassignCaseController @Inject() (
           c.queueId
             .map(id =>
               queueService.getOneById(id) flatMap {
-                case Some(queue) => successful(views.html.confirm_reassign_case(c, queue, origin))
+                case Some(queue) => successful(confirm_reassign_case(c, queue, origin))
                 case None        => queueNotFound
               }
             )

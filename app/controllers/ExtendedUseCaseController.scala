@@ -19,8 +19,6 @@ package controllers
 import config.AppConfig
 import models.forms.BooleanForm
 import models.request.AuthenticatedRequest
-
-import javax.inject.{Inject, Singleton}
 import models.{Case, Operator, Permission}
 import play.api.data.Form
 import play.api.mvc._
@@ -28,7 +26,9 @@ import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.change_extended_use_status
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
@@ -36,6 +36,7 @@ class ExtendedUseCaseController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
+  val change_extended_use_status: change_extended_use_status,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
     with StatusChangeAction[Boolean] {
@@ -49,8 +50,7 @@ class ExtendedUseCaseController @Inject() (
 
   override protected def chooseStatusView(c: Case, preFilledForm: Form[Boolean], options: Option[String] = None)(
     implicit request: AuthenticatedRequest[_]
-  ): Html =
-    views.html.change_extended_use_status(c, preFilledForm)
+  ): Html = change_extended_use_status(c, preFilledForm)
 
   override protected def update(c: Case, status: Boolean, operator: Operator)(
     implicit hc: HeaderCarrier

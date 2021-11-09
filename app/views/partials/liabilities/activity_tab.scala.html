@@ -1,95 +1,83 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
-
+@import controllers.{Tab, routes}
 @import helper._
-@import config.AppConfig
-@import controllers.Tab
-@import controllers.routes
+@import models.Permission
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
-@import models.Permission
-@import views.html.forms.components.input_textarea
-@import views.html.partials.{assignee, tab_heading, notification_banner}
-@import views.html.partials.liabilities.activity_tab_events_table
-@import views.html.partials.error_summary
 @import models.viewmodels.ActivityViewModel
+@import views.html.forms.components.input_textarea
+@import views.html.partials.liabilities.activity_tab_events_table
+@import views.html.partials.{assignee, error_summary, notification_banner, tab_heading}
 
 @this()
 
 @(activityViewModel: ActivityViewModel, activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@error_summary(activityForm.errors)
+ @error_summary(activityForm.errors)
 
  @if(request.flash.get("success").getOrElse("").contains("note")){
   @notification_banner()(request.flash, messages)
  }
 
-@tab_heading("activity", messages("case.v2.liability.activity_tab.tab_title"))
+ @tab_heading("activity", messages("case.v2.liability.activity_tab.tab_title"))
 
- <div class="form-hint">@messages("case.v2.liability.activity_tab.hint")</div>
+ <div class="govuk-hint">@messages("case.v2.liability.activity_tab.hint")</div>
 
  @if(request.hasPermission(Permission.ADD_NOTE)) {
- <div class="grid-row">
-
-  <div class="column-full">
 
   @form(action = routes.CaseController.addNote(activityViewModel.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),
     label = messages("case.v2.liability.activity_tab.add_note"),
-    labelClass = Some("heading-small"),
+    labelClass = Some("govuk-label--s"),
     hint = Some(messages("case.v2.liability.activity_tab.add_note_hint")),
     customErrorMessage = Some(messages("error.empty.note"))
    )
-   <div class="form-group">
-    <button id="add-note-submit" class="button" type="submit">Add note to activity timeline</button>
+   <div class="govuk-form-group">
+    <button id="add-note-submit" class="govuk-button" type="submit">Add note to activity timeline</button>
    </div>
   }
-  </div>
- </div>
-}
-@activity_tab_events_table(activityViewModel)
-
-<div class="grid-row mt-2">
-@if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){
- <div class="column-full">
- @if(activityViewModel.assignee.isDefined) {
-  <span id="activity-events-assignee-label">
-  @messages("case.activity.assigned-to")
-  </span>
-  <span id="activity-events-assignee">
-  @assignee(activityViewModel.assignee.get, true)
-  </span>
- } else {
-  <span id="activity-events-assigned-queue-label">
-  @messages("case.activity.assigned-queue")
-  </span>
-  <span id="activity-events-assigned-queue">
-  @{
-   if(activityViewModel.queueId.isDefined) {
-       activityViewModel.queueName
-   } else {
-    messages("case.activity.no-queue-assigned")
+ }
+ @activity_tab_events_table(activityViewModel)
+ <p class="govuk-body">
+ @if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){
+  @if(activityViewModel.assignee.isDefined) {
+   <span id="activity-events-assignee-label">
+   @messages("case.activity.assigned-to")
+   </span>
+   <span id="activity-events-assignee">
+   @assignee(activityViewModel.assignee.get, true)
+   </span>
+  } else {
+   <span id="activity-events-assigned-queue-label">
+   @messages("case.activity.assigned-queue")
+   </span>
+   <span id="activity-events-assigned-queue">
+   @{
+    if(activityViewModel.queueId.isDefined) {
+     activityViewModel.queueName
+    } else {
+     messages("case.activity.no-queue-assigned")
+    }
    }
+   </span>
   }
-  </span>
-}
- </div>
-}
-</div>
+ </p>
+ }

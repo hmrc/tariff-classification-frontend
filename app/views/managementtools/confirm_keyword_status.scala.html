@@ -1,62 +1,58 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.Keyword
-@import views.html.includes.main
+
 @import views.html.partials._
 @import controllers.v2.routes.ManageKeywordsController
 @import models.viewmodels.{NoTabSelected}
 @import views.html.components.manager_tools_secondary_navigation
+@import views.html.includes.main
 
-@this()
+@this(
+        main: main
+)
 
 @(keyword: String, approved: Boolean, goodsName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-@main(bodyClasses = None, customTitle = Some(messages("management.update-keyword.confirmation.custom-title"))) {
+@approvedOrRejected = @{if(approved){"approved"}else{"rejected"}}
 
-    <div class="column-two-thirds pl-0">
+@main(
+    pageTitle = messages("management.update-keyword.confirmation.custom-title")
+) {
 
-        <div class="govuk-panel govuk-panel--confirmation">
-            @if(approved) {
-                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "approved")</h1>
-                <h2 class="heading-large mt-0">@messages(keyword.toUpperCase)</h2>
-            } else {
-                <h1 class="heading-xlarge mt-0">@messages("management.update-keyword.confirmation.title", "rejected")</h1>
-                <h2 class="heading-large mt-0">@messages(keyword.toUpperCase)</h2>
-            }
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">@messages("management.update-keyword.confirmation.title", approvedOrRejected)</h1>
+        <div class="govuk-panel__body">
+            @messages(keyword.toUpperCase)
         </div>
-
-        @if(approved) {
-            <p>@messages("management.update-keyword.confirmation.info.start", "approved") <span class="bold">@goodsName</span> @messages("management.update-keyword.confirmation.approved.info.end")</p>
-        } else {
-            <p>@messages("management.update-keyword.confirmation.info.start", "rejected") <span class="bold">@goodsName</span> @messages("management.update-keyword.confirmation.rejected.info.end")</p>
-        }
-
-        <div class="grid-row">
-            <div class="column-full">
-                <h2 class="heading-large mt-0">Next steps</h2>
-                <p>
-                    <a id="my-cases-link" href="@ManageKeywordsController.displayManageKeywords()">
-                        @messages("back.user.keywords")
-                    </a>
-                </p>
-            </div>
-        </div>
-
     </div>
+    <p class="govuk-body">@messages("management.update-keyword.confirmation.info.start", approvedOrRejected) <span class="bold">@goodsName</span>
+        @if(approved) {
+             @messages("management.update-keyword.confirmation.approved.info.end")
+        } else {
+             @messages("management.update-keyword.confirmation.rejected.info.end")
+        }
+    </p>
+
+    <h2 class="govuk-heading-l">Next steps</h2>
+    <a id="my-cases-link" class="govuk-link" href="@ManageKeywordsController.displayManageKeywords()">
+        @messages("back.user.keywords")
+    </a>
+
 }

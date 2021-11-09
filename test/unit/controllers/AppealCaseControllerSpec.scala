@@ -29,6 +29,7 @@ import play.api.test.Helpers._
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
+import views.html.{appeal_change_status, appeal_choose_status, appeal_choose_type}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,10 +39,17 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
 
+  private val appealChooseStatus = injector.instanceOf[appeal_choose_status]
+  private val appealChooseType = injector.instanceOf[appeal_choose_type]
+  private val appealChangeStatus = injector.instanceOf[appeal_change_status]
+
   private def controller(requestCase: Case) = new AppealCaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     realAppConfig,
+    appealChooseStatus,
+    appealChooseType,
+    appealChangeStatus,
     mcc
   )
 
@@ -49,6 +57,9 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
     realAppConfig,
+    appealChooseStatus,
+    appealChooseType,
+    appealChangeStatus,
     mcc
   )
 

@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(
-)
+package models.constraints
 
-@(
-        heading: String
-)(implicit messages: Messages)
+import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
-<div id="move-cases-heading" class="case-heading mb-4">
+object StopOnFirstFail {
 
-    <div id="move-cases-subheading" class="case-reference">
-        Move selected cases
-    </div>
+  def apply[T](constraints: Constraint[T]*) = Constraint { field: T =>
+    constraints.toList dropWhile (_(field) == Valid) match {
+      case Nil             => Valid
+      case constraint :: _ => constraint(field)
+    }
+  }
 
-    <h1 class="heading-xlarge case-title">
-        @heading
-    </h1>
-</div>
+  def constraint[T](message: String, validator: (T) => Boolean) =
+    Constraint((data: T) => if (validator(data)) Valid else Invalid(Seq(ValidationError(message))))
+}

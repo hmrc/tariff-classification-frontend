@@ -54,17 +54,18 @@
         </ul>
 
         <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
-            <h2 class="heading-large mt-0">@messages("management.manage-keywords.approve-tab.heading")</h2>
-            @{
-                manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size match {
-                    case 0 => "There are no keywords waiting for approval."
-                    case _ => keywords_for_approval_table(manageKeywordsViewModel.keywordsForApprovalTab)
+            <h2 class="govuk-heading-l">@messages("management.manage-keywords.approve-tab.heading")</h2>
+            <div class="govuk-form-group govuk-body">
+                @{
+                    manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size match {
+                        case 0 => "There are no keywords waiting for approval."
+                        case _ => keywords_for_approval_table(manageKeywordsViewModel.keywordsForApprovalTab)
+                    }
                 }
-            }
+            </div>
         </div>
-
         <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.allKeywordsTab.elementId">
-            <h2 class="heading-large mt-0">@messages("management.manage-keywords.search-all-keywords.heading")</h2>
+            <h2 class="govuk-heading-l">@messages("management.manage-keywords.search-all-keywords.heading")</h2>
             @all_keywords(manageKeywordsViewModel.allKeywordsTab, keywordForm)
         </div>
     </div>

@@ -16,11 +16,8 @@
 
 package controllers.v2
 
-import java.util.UUID
-
 import config.AppConfig
 import controllers.{RequestActions, Tab}
-import javax.inject.{Inject, Singleton}
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
@@ -34,7 +31,10 @@ import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.correspondence_view
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -44,7 +44,7 @@ class CorrespondenceController @Inject() (
   queuesService: QueuesService,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
-  val correspondenceView: views.html.v2.correspondence_view,
+  val correspondenceView: correspondence_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)

@@ -17,16 +17,17 @@
 package controllers
 
 import config.AppConfig
-import models.forms.DecisionForm
-import javax.inject.{Inject, Singleton}
 import models._
+import models.forms.DecisionForm
 import models.forms.v2.{CompleteCaseChoiceForm, LiabilityDetailsForm}
 import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.{complete_case, confirm_complete_case}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
@@ -37,6 +38,8 @@ class CompleteCaseController @Inject() (
   decisionForm: DecisionForm,
   liabilityDetailsForm: LiabilityDetailsForm,
   mcc: MessagesControllerComponents,
+  val confirm_complete_case: confirm_complete_case,
+  val complete_case: complete_case,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -51,7 +54,7 @@ class CompleteCaseController @Inject() (
         validateAndRespond(c =>
           c.application.`type` match {
             case ApplicationType.ATAR =>
-              successful(Ok(views.html.complete_case(c, completeCaseForm)))
+              successful(Ok(complete_case(c, completeCaseForm)))
 
             case ApplicationType.LIABILITY | ApplicationType.CORRESPONDENCE | ApplicationType.MISCELLANEOUS =>
               casesService
@@ -67,7 +70,7 @@ class CompleteCaseController @Inject() (
         completeCaseForm
           .bindFromRequest()
           .fold(
-            errors => validateAndRespond(c => successful(Ok(views.html.complete_case(c, errors)))), {
+            errors => validateAndRespond(c => successful(Ok(complete_case(c, errors)))), {
               case true =>
                 validateAndRedirect(
                   casesService
@@ -84,7 +87,7 @@ class CompleteCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      renderView(c => c.status == CaseStatus.COMPLETED, c => successful(views.html.confirm_complete_case(c)))
+      renderView(c => c.status == CaseStatus.COMPLETED, c => successful(confirm_complete_case(c)))
     }
 
   override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = hasValidDecision(c)

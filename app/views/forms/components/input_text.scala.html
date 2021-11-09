@@ -28,34 +28,31 @@
         customGroupClasses : Option[String] = None
 )(implicit messages: Messages)
 
-<div class="form-group @customGroupClasses.getOrElse("")
-    @if(field.hasErrors){form-group-error}">
-    <label class="form-label" for="@{field.id}">
+<div class="govuk-form-group @customGroupClasses.getOrElse("")
+    @if(field.hasErrors){govuk-form-group--error}">
+    <label class="govuk-label" for="@{field.id}">
         <span class="@if(labelClass.nonEmpty){@labelClass}">@label</span>
     </label>
 
     @if(hint.nonEmpty){
-        <span class="form-hint" id="@{field.id}-hint">@hint</span>
+        <span class="govuk-hint" id="@{field.id}-hint">@hint</span>
     }
 
     @field.errors.map { error =>
-        <span class="error-message" id="@{field.id}-error"><span class="visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+        <span class="govuk-error-message" id="@{field.id}-error"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
     }
 
-    <div class="form-control-wrapper @formControlClass">
-        <input
-        class="form-control @inputClass"
-        type="text"
-        @if(disableAutoComplete) {
-            autocomplete="off"
-        }
-        @if(field.hasErrors || hint.nonEmpty){
-            aria-describedby="@if(hint.nonEmpty){@{field.id}-hint}@if(field.hasErrors && hint.nonEmpty){ }@if(field.hasErrors){@{field.id}-error}"
-        }
-        id="@{field.id}"
-        name="@{field.name}"
-        value="@{field.value}"
-        />
-    </div>
+    <input
+    class="govuk-input @inputClass @if(field.hasErrors){govuk-input--error}"
+    type="text"
+    @if(disableAutoComplete) {
+        autocomplete="off"
+    }
+    @if(field.hasErrors || hint.nonEmpty){
+        aria-describedby="@if(hint.nonEmpty){@{field.id}-hint}@if(field.hasErrors && hint.nonEmpty){ }@if(field.hasErrors){@{field.id}-error}"
+    }
+    id="@{field.id}"
+    name="@{field.name}"
+    value="@{field.value}"
+    />
 </div>
-

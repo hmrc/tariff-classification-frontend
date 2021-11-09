@@ -17,11 +17,9 @@
 package controllers
 
 import config.AppConfig
-import models.forms.SampleReturnForm
-
-import javax.inject.{Inject, Singleton}
 import models.SampleReturn.SampleReturn
 import models._
+import models.forms.SampleReturnForm
 import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc._
@@ -29,7 +27,9 @@ import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.change_sample_return
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -37,6 +37,7 @@ import scala.concurrent.Future.successful
 class SampleReturnController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
+  val change_sample_return: change_sample_return,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
@@ -53,7 +54,7 @@ class SampleReturnController @Inject() (
     notFilledForm: Form[Option[SampleReturn]],
     options: Option[String] = None
   )(implicit request: AuthenticatedRequest[_]): Html =
-    views.html.change_sample_return(c, notFilledForm)
+    change_sample_return(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen

@@ -24,23 +24,23 @@
 
 @(activity: ActivityViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-<table id="activity-events">
-    <caption class="visually-hidden">Activity log</caption>
+<table id="activity-events" class="govuk-table">
+    <caption class="govuk-visually-hidden" class="govuk-table__caption">Activity log</caption>
     <thead class="govuk-table__head">
         <tr>
-            <th scope="col">Identifier</th>
-            <th scope="col">Description</th>
-            <th scope="col">Date</th>
+            <th scope="col" class="govuk-table__header">Identifier</th>
+            <th scope="col" class="govuk-table__header">Description</th>
+            <th scope="col" class="govuk-table__header">Date</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="govuk-table__body">
     @for((event: Event, index: Int) <- activity.events.results.zipWithIndex) {
-        <tr id="activity-events-row-@{index}">
-            <td id="activity-events-row-@{index}-operator" class="activity-cell">
+        <tr id="activity-events-row-@{index}" class="govuk-table__row">
+            <td id="activity-events-row-@{index}-operator"  class="govuk-table__cell" class="govuk-table__cell">
                 @event.operator.name.getOrElse("Unknown")
             </td>
 
-            <td id="activity-events-row-@{index}-content" class="activity-cell-desc">
+            <td id="activity-events-row-@{index}-content" class="govuk-table__cell">
                 @{
                     event.details.`type` match {
                         case EventType.NOTE => {
@@ -160,9 +160,8 @@
                 }
             </td>
 
-            <td id="activity-events-row-@{index}-date" class="activity-cell-date">@Dates.format(event.timestamp)</td>
+            <td id="activity-events-row-@{index}-date"  class="govuk-table__cell">@Dates.format(event.timestamp)</td>
         </tr>
     }
     </tbody>
-
 </table>

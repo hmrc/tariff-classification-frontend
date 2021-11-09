@@ -18,19 +18,20 @@ package controllers
 
 import config.AppConfig
 import models.forms.CaseStatusRadioInputFormProvider
-import javax.inject.Inject
 import models.{CaseStatusRadioInput, Permission}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_case_status
 
+import javax.inject.Inject
 import scala.concurrent.Future.successful
 
 class ChangeCaseStatusController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
+  val change_case_status: change_case_status,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {

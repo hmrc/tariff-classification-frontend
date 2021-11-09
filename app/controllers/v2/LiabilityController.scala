@@ -16,14 +16,11 @@
 
 package controllers.v2
 
-import java.util.UUID
-import javax.inject.{Inject, Singleton}
-
 import config.AppConfig
 import controllers.{RequestActions, Tab, v2}
+import models._
 import models.forms._
 import models.forms.v2.LiabilityDetailsForm
-import models._
 import models.request._
 import models.viewmodels._
 import play.api.data.Form
@@ -33,9 +30,12 @@ import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.{liability_details_edit, liability_view}
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LiabilityController @Inject() (
@@ -47,8 +47,8 @@ class LiabilityController @Inject() (
   keywordsService: KeywordsService,
   mcc: MessagesControllerComponents,
   liabilityDetailsForm: LiabilityDetailsForm,
-  val liability_view: views.html.v2.liability_view,
-  val liability_details_edit: views.html.v2.liability_details_edit,
+  val liability_view: liability_view,
+  val liability_details_edit: liability_details_edit,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)

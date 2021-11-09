@@ -1,18 +1,18 @@
 @*
- * Copyright 2021 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2021 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import views.html.partials.create_case_button
 @import views.html.components.atarCaseTable
@@ -22,49 +22,37 @@
 @import models.request.AuthenticatedRequest
 @import config.AppConfig
 @import models.viewmodels.CasesTabViewModel
+@import views.html.components.heading
 
 @(cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
 
+    @heading(messages(cases.headingMessageKey))
 
-@heading(messages(cases.headingMessageKey))
-@if(cases.caseType == ApplicationType.LIABILITY) {
-    <div class="grid-row">
-        <div class="column-full">
-            @create_case_button("mb-3", ApplicationType.LIABILITY.prettyName.toLowerCase())
-        </div>
-    </div>
-}
-@if(cases.caseType == ApplicationType.CORRESPONDENCE) {
-<div class="grid-row">
-    <div class="column-full">
-        @create_case_button("mb-3", ApplicationType.CORRESPONDENCE.prettyName.toLowerCase())
-    </div>
-</div>
-}
+    @if(cases.caseType == ApplicationType.LIABILITY) {
+        @create_case_button(ApplicationType.LIABILITY.prettyName.toLowerCase())
+    }
 
-@if(cases.caseType == ApplicationType.MISCELLANEOUS) {
-<div class="grid-row">
-    <div class="column-full">
-        @create_case_button("mb-3", ApplicationType.MISCELLANEOUS.prettyName.toLowerCase())
-    </div>
-</div>
-}
+    @if(cases.caseType == ApplicationType.CORRESPONDENCE) {
+        @create_case_button(ApplicationType.CORRESPONDENCE.prettyName.toLowerCase())
+    }
 
-<div id="open-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
-    <ul class="govuk-tabs__list">
+    @if(cases.caseType == ApplicationType.MISCELLANEOUS) {
+        @create_case_button(ApplicationType.MISCELLANEOUS.prettyName.toLowerCase())
+    }
+
+    <div id="open-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
+        <ul class="govuk-tabs__list">
         @for(caseTab <- cases.casesTabs) {
-        <li class="govuk-tabs__list-item">
-            <a class="govuk-tabs__tab" href="#@caseTab.elementId">
-                @messages(caseTab.tabMessageKey) (@caseTab.searchResult.size)
-            </a>
-        </li>
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#@caseTab.elementId">
+                    @messages(caseTab.tabMessageKey) (@caseTab.searchResult.size)
+                </a>
+            </li>
         }
-    </ul>
+        </ul>
 
-    @* content*@
-    <!--ACT tab component-->
-   @for(caseTab <- cases.casesTabs) {
-        <div class="govuk-tabs__panel" id="@caseTab.elementId">
+        @for(caseTab <- cases.casesTabs) {
+            <div class="govuk-tabs__panel govuk-body" id="@caseTab.elementId">
             @{(cases.caseType, caseTab.searchResult.results.size) match {
                 case (_, 0) => messages("cases.table.empty")
                 case (ApplicationType.ATAR, _) => atarCaseTable(caseTab, cases.headingMessageKey)
@@ -72,7 +60,7 @@
                 case (ApplicationType.CORRESPONDENCE, _) => correspondenceCaseTable(caseTab, cases.headingMessageKey)
                 case (ApplicationType.MISCELLANEOUS, _) => miscellaneousCaseTable(caseTab, cases.headingMessageKey)
             }
-    }
-        </div>
-    }
-</div>
+            }
+            </div>
+        }
+    </div>

@@ -15,33 +15,29 @@
  *@
 
 @import config.AppConfig
-@import models.{BTIApplication, Case, Queue}
-@import views.html.forms.select_queue_form
-@import views.html.includes.main
-@import controllers.routes.ReleaseCaseController
-@import controllers.routes.CreateCorrespondenceController
-@import views.html.partials.{error_summary, back_link, case_heading}
-@import models.viewmodels.CaseHeaderViewModel
+@import models.Case
 @import models.request.AuthenticatedRequest
+@import views.forms.components.RadioOption
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_radiogroup
-@import views.forms.components.RadioOption
+@import views.html.includes.main
+@import views.html.partials.{case_heading, back_link, error_summary}
 
-@this()
+@this(
+    main: main,
+        backLink: back_link
+)
 
 @(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
-@main(bodyClasses = None, customTitle = Some(messages("action_this_corr.case.page.title"))) {
-
-@back_link()
+@main(
+    pageTitle = messages("action_this_corr.case.page.title"),
+    backLink = Some(backLink())
+) {
 
 @error_summary(form.errors)
 
-<div class="column-two-thirds operation-dashboard-header">
     @case_heading(c, messageKey=Some("action_this_corr.case.header"))
-</div>
 
-<div class="grid-row">
-    <div class="column-full">
      @helper.form(
          action = routes.CreateCorrespondenceController.postChoice(c.reference),
          'id -> "release_choice_form",
@@ -52,7 +48,7 @@
         @input_radiogroup(
             field = form("choice"),
             label = Some(messages("action_this_corr.case.header",c.application.goodsName)),
-            labelClass= Some("visually-hidden"),
+            labelClass= Some("govuk-visually-hidden"),
             options = Seq(RadioOption("Yes", "Yes"), RadioOption("No", "No")),
             id = "release_choice_form",
             preSelect = false
@@ -65,6 +61,4 @@
             cancelHref = controllers.routes.CreateCorrespondenceController.get()
         )
      }
-    </div>
-</div>
 }

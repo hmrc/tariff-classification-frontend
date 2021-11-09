@@ -17,7 +17,6 @@
 package controllers
 
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
 import models.Permission
 import models.request.AuthenticatedCaseRequest
 import play.api.mvc._
@@ -25,6 +24,7 @@ import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Notification._
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton

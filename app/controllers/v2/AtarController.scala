@@ -30,6 +30,7 @@ import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.v2.atar_view
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
@@ -45,7 +46,7 @@ class AtarController @Inject() (
   countriesService: CountriesService,
   decisionForm: DecisionForm,
   mcc: MessagesControllerComponents,
-  val atarView: views.html.v2.atar_view,
+  val atarView: atar_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)

@@ -18,15 +18,15 @@ package controllers
 
 import config.AppConfig
 import models.forms.TakeOwnerShipForm
-
-import javax.inject.{Inject, Singleton}
 import models.request.AuthenticatedRequest
 import models.{Case, Permission}
 import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.assign_case
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -36,6 +36,7 @@ class AssignCaseController @Inject() (
   verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
+  val assignCase: assign_case,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
     with RenderCaseAction {
@@ -44,7 +45,7 @@ class AssignCaseController @Inject() (
 
   def get(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
-      .async(implicit request => getCaseAndRenderView(reference, c => successful(views.html.assign_case(c, takeOwnershipForm))))
+      .async(implicit request => getCaseAndRenderView(reference, c => successful(assignCase(c, takeOwnershipForm))))
 
   def post(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
@@ -62,7 +63,7 @@ class AssignCaseController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              getCaseAndRenderView(reference, c => successful(views.html.assign_case(c, formWithErrors))),
+              getCaseAndRenderView(reference, c => successful(assignCase(c, formWithErrors))),
              {
               case true =>
                 getCaseAndRespond(reference, respond)
