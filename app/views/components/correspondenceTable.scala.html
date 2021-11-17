@@ -73,10 +73,10 @@
       <span class="govuk-visually-hidden">case reference @{result.reference}</span>
      </a>
     </td>
-    <td id="@{correspondenceTab.tabMessageKey}-subject-@index" class="govuk-table__cell">@{correspondence.summary}</td>
-    <td id="@{correspondenceTab.tabMessageKey}-source-@index" class="govuk-table__cell">@{correspondence.correspondenceStarter}</td>
+    <td id="@{correspondenceTab.tabMessageKey}-subject-@index" class="govuk-table__cell pre-wrap">@{correspondence.summary}</td>
+    <td id="@{correspondenceTab.tabMessageKey}-source-@index" class="govuk-table__cell pre-wrap">@{correspondence.correspondenceStarter}</td>
     @if(assignmentType != "applicationTab.referredByMe") {
-     <td id="@{correspondenceTab.tabMessageKey}-contact-email-@index" class="govuk-table__cell">@{correspondence.contact.email}</td>
+     <td id="@{correspondenceTab.tabMessageKey}-contact-email-@index" class="govuk-table__cell pre-wrap">@{correspondence.contact.email}</td>
     }
     <td id="@{correspondenceTab.tabMessageKey}-elapsed-days-@index" class="govuk-table__cell">@{result.daysElapsed}</td>
     @if(assignmentType == "applicationTab.completedByMe") {

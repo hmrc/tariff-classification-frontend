@@ -21,11 +21,11 @@
 
 @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
     <a @if(useTabIndex.isDefined){ tabindex="@{useTabIndex.get}" } class="govuk-link" id="@{id}-file" href="@routes.ViewAttachmentController.get(reference, file.id)" target="_blank">
-        <span class="" aria-hidden="true">@name.getOrElse(file.fileName)</span>
+        <span class="pre-wrap" aria-hidden="true">@name.getOrElse(file.fileName)</span>
         <span class="govuk-visually-hidden">view attached file @name.getOrElse(file.fileName)</span>
     </a>
 } else {
     <div>
-        <span id="@{id}-file">@name.getOrElse(file.fileName)</span>
+        <span id="@{id}-file" class="pre-wrap">@name.getOrElse(file.fileName)</span>
     </div>
 }

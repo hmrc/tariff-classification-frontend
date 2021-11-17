@@ -72,8 +72,8 @@
         <span class="govuk-visually-hidden">case reference @{result.reference}</span>
        </a>
       </td>
-      <td id="@{liabilityTab.tabMessageKey}-goods-@index" class="govuk-table__cell">@{liability.goodName}</td>
-      <td id="@{liabilityTab.tabMessageKey}-trader-@index" class="govuk-table__cell">@{liability.traderName}</td>
+      <td id="@{liabilityTab.tabMessageKey}-goods-@index" class="govuk-table__cell pre-wrap">@{liability.goodName}</td>
+      <td id="@{liabilityTab.tabMessageKey}-trader-@index" class="govuk-table__cell pre-wrap">@{liability.traderName}</td>
       <td id="@{liabilityTab.tabMessageKey}-type-@index" class="govuk-table__cell"> @if(liability.isLiveLiabilityOrder) {
        <span class="govuk-tag govuk-tag--pink">@{liability.status}</span>
        }</td>

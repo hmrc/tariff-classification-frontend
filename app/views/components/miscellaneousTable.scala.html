@@ -67,7 +67,7 @@
         <span class="govuk-visually-hidden">case reference @{result.reference}</span>
        </a>
       </td>
-      <td id="@{miscellaneousTab.tabMessageKey}-subject-@index" class="govuk-table__cell">@{miscellaneous.name}</td>
+      <td id="@{miscellaneousTab.tabMessageKey}-subject-@index" class="govuk-table__cell pre-wrap">@{miscellaneous.name}</td>
       <td id="@{miscellaneousTab.tabMessageKey}-type-@index" class="govuk-table__cell">@{MiscCaseType.format(miscellaneous.caseType)}</td>
       <td id="@{miscellaneousTab.tabMessageKey}-elapsed-days-@index" class="govuk-table__cell">@{result.daysElapsed}</td>
       @if(assignmentType == "applicationTab.referredByMe") {

@@ -47,7 +47,9 @@
                         <tr id="@{id}-row-@{index}" class="govuk-table__row">
                             <td id="@{id}-row-@{index}-title" class="govuk-table__cell word-break">
                                 @attachment(s"$id-row-$index", file, caseRef)
-                                <span class="refresh-content">@messages("case.attachment.refresh.content")</span>
+                                @if(file.scanStatus.isEmpty) {
+                                    <span class="refresh-content">@messages("case.attachment.refresh.content")</span>
+                                }
                             </td>
 
                             @if(showUploadedBy) {
