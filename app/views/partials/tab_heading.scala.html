@@ -20,8 +20,8 @@
         hintText: Option[String] = None
 )
 
-<div id="@tab-heading">
-    <h2 class="govuk-heading-l">@heading</h2>
+<div id="@{tab}-heading">
+    <h2 class="heading-large mt-0 mb-30">@heading</h2>
     @if(hintText.isDefined) {
         <p class="govuk-hint">@hintText.get</p>
     }
