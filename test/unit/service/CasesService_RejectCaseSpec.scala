@@ -22,7 +22,7 @@ import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{refEq, _}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -111,7 +111,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
         await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator))
       }
 
-      verifyZeroInteractions(audit)
+      verifyNoMoreInteractions(audit)
       verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
     }
 

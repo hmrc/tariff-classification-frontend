@@ -21,7 +21,9 @@ import com.kenshoo.play.metrics.Metrics
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import org.mockito.ArgumentMatchers._
-import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers, OptionValues}
+import org.scalatest.wordspec.AsyncWordSpecLike
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.{BeforeAndAfterAll, OptionValues}
 import org.scalatest.compatible.Assertion
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{MessagesAbstractController, Results}
@@ -36,8 +38,8 @@ class HasMetricsSpec
     with BeforeAndAfterAll {
 
   trait MockHasMetrics { self: HasMetrics =>
-    val timer                               = mock[Timer.Context]
-    val metrics                             = mock[Metrics]
+    val timer: Timer.Context = mock[Timer.Context]
+    val metrics: Metrics = mock[Metrics]
     override val localMetrics: LocalMetrics = mock[LocalMetrics]
     when(localMetrics.startTimer(anyString())) thenReturn timer
   }
@@ -144,7 +146,6 @@ class HasMetricsSpec
           assertThrows[RuntimeException] {
             metrics.withMetricsTimerAsync(TestMetric)(_ => Future.successful(throw new RuntimeException))
           }
-
           Future.successful(verifyCompletedWithFailure(TestMetric, metrics))
       }
     }
@@ -195,10 +196,8 @@ class HasMetricsSpec
           .withMetricsTimerResult(TestMetric) {
             Future.failed(new Exception)
           }
-          .transformWith {
-            case _ =>
-              verifyCompletedWithFailure(TestMetric, metrics)
-          }
+          .transformWith(_ =>
+            verifyCompletedWithFailure(TestMetric, metrics))
       }
 
       "increment failure counter when the user throws an exception constructing their code block" in withTestMetrics {

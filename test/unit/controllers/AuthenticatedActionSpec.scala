@@ -17,28 +17,27 @@
 package controllers
 
 import config.AppConfig
-import connector.StrideAuthConnector
-import models.{Operator, Role}
+import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
 import models.request.AuthenticatedRequest
+import models.{Operator, Role}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.{reset, verify}
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.mvc.{AnyContent, ControllerComponents, Result}
+import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
 import play.api.{ConfigLoader, Configuration, Environment, Mode}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrieval, ~}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import connector.BindingTariffClassificationConnector
 
 class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -50,7 +49,6 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val block: AuthenticatedRequest[AnyContent] => Future[Result] =
     mock[AuthenticatedRequest[AnyContent] => Future[Result]]
   private val result               = mock[Result]
-  private val controllerComponents = injector.instanceOf[ControllerComponents]
 
   override protected def afterEach(): Unit = {
     super.afterEach()

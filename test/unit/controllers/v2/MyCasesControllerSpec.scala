@@ -75,7 +75,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       status(result) shouldBe Status.SEE_OTHER
 
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
     }
 
     "return 200 OK with the correct subNavigation tab for AssignedToMe" in {

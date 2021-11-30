@@ -29,10 +29,10 @@ import play.api.test.Helpers._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.{confirm_supressed_case, confirm_suspended, suppress_case_email, suppress_case_reason, suspend_case_email, suspend_case_reason}
+import views.html.{confirm_supressed_case, suppress_case_email, suppress_case_reason}
 
-import scala.concurrent.Future.successful
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future.successful
 
 class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

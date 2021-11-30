@@ -21,7 +21,7 @@ import connector.BindingTariffClassificationConnector
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions, verifyZeroInteractions}
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -56,8 +56,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       intercept[IllegalStateException] {
         await(service.addKeyword(aCase, aKeyword, operator))
       }
-
-      verifyZeroInteractions(auditService)
+      verifyNoInteractions(auditService)
     }
 
     "add the keyword to the case keywords using the upper-case format" in {
@@ -79,7 +78,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
       await(service.addKeyword(aCaseWithExistingKeyword, aKeyword, operator)) shouldBe aCaseWithExistingKeyword
 
-      verifyZeroInteractions(auditService)
+      verifyNoMoreInteractions(auditService)
     }
   }
 
@@ -97,7 +96,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
         await(service.removeKeyword(aCaseWithExistingKeyword, aKeyword, operator))
       }
 
-      verifyZeroInteractions(auditService)
+      verifyNoMoreInteractions(auditService)
     }
 
     "remove the keyword from the case keywords" in {
@@ -118,7 +117,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
       await(service.removeKeyword(aCaseWithKeyword, aKeyword, operator)) shouldBe aCaseWithKeyword
 
-      verifyZeroInteractions(auditService)
+      verifyNoMoreInteractions(auditService)
     }
   }
 

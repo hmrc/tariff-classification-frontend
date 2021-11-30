@@ -52,14 +52,14 @@ class IndexControllerSpec extends ControllerBaseSpec {
       val result = await(controller(Role.CLASSIFICATION_OFFICER).get()(fakeRequest))
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(routes.OperatorDashboardController.onPageLoad().url)
+      redirectLocation(result) shouldBe Some(routes.OperatorDashboardController.onPageLoad.url)
     }
 
     "Redirect for Manager role" in {
       val result = await(controller(Role.CLASSIFICATION_MANAGER).get()(fakeRequest))
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(routes.OperatorDashboardController.onPageLoad().url)
+      redirectLocation(result) shouldBe Some(routes.OperatorDashboardController.onPageLoad.url)
     }
   }
 

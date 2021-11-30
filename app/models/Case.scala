@@ -63,6 +63,7 @@ case class Case(
     application.`type` match {
       case ApplicationType.ATAR             => application.asATAR.sampleToBeProvided
       case ApplicationType.LIABILITY => sample.status.isDefined
+
     }
 
   def sampleToBeReturned: Boolean =
@@ -72,7 +73,7 @@ case class Case(
     }
 
   def isCaseOverdue: Boolean =
-    (application.isLiveLiabilityOrder) match {
+    application.isLiveLiabilityOrder match {
       case true  if daysElapsed >= 5   => true
       case false if daysElapsed >= 30  => true
       case _                           => false

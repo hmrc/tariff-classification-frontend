@@ -44,7 +44,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   lazy val casesService: CasesService                         = mock[CasesService]
   lazy val fileService: FileStoreService                      = mock[FileStoreService]
-  lazy val operator                                           = Operator(id = "id")
+  lazy val operator: Operator                                 = Operator(id = "id")
   lazy val liabilityController: LiabilityController           = mock[LiabilityController]
   lazy val atarController: AtarController                     = mock[AtarController]
   lazy val correspondenceController: CorrespondenceController = mock[CorrespondenceController]

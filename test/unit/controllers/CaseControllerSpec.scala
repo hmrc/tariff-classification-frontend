@@ -16,27 +16,27 @@
 
 package controllers
 
-import java.time.{Clock, Instant}
 import connector.BindingTariffClassificationConnector
 import controllers.v2.{AtarController, CorrespondenceController, LiabilityController, MiscellaneousController}
-import models.{Case, Event, Message, Operator, Permission}
 import models.forms.{ActivityFormData, MessageFormData}
 import models.request.AuthenticatedCaseRequest
+import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
-import play.api.mvc.{Result, Results}
+import play.api.mvc.Result
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.Cases._
 
-import scala.concurrent.Future
+import java.time.{Clock, Instant}
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.twirl.api.Html
+import scala.concurrent.Future
 
 class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -358,7 +358,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
-      verifyZeroInteractions(eventService)
+      verifyNoMoreInteractions(eventService)
     }
 
     "not add a new note when a case note is not provided (atar)" in {
@@ -378,7 +378,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
-      verifyZeroInteractions(eventService)
+      verifyNoMoreInteractions(eventService)
     }
 
     "redirect to unauthorised if the user does not have the right permissions" in {
@@ -425,7 +425,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
-      verifyZeroInteractions(keywordsService)
+      verifyNoMoreInteractions(keywordsService)
     }
 
     "redirect to unauthorised if the user does not have the right permissions" in {
@@ -528,7 +528,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       status(result)          shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
-      verifyZeroInteractions(casesService)
+      verifyNoMoreInteractions(casesService)
     }
 
     "redirect to unauthorised if the user does not have the right permissions" in {

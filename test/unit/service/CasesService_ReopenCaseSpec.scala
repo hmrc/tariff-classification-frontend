@@ -23,7 +23,7 @@ import models.request.NewEventRequest
 import models.{CaseStatus, _}
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -111,7 +111,7 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
         await(service.reopenCase(originalCase, operator))
       }
 
-      verifyZeroInteractions(audit)
+      verifyNoMoreInteractions(audit)
       verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
     }
 

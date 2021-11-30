@@ -22,7 +22,7 @@ import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{refEq, _}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -96,7 +96,7 @@ class CasesService_SuspendCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
         await(service.suspendCase(caseUpdated, attachment, "note", operator))
       }
 
-      verifyZeroInteractions(audit)
+      verifyNoMoreInteractions(audit)
       verify(connector, never()).createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])
     }
 

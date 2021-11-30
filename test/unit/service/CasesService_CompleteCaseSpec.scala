@@ -25,7 +25,7 @@ import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
@@ -76,7 +76,8 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         val caseUpdated = aLiability.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
         given(config.decisionLifetimeYears).willReturn(1)
-        given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L)))
+        given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(
+            successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L)))
         given(pdfService.generatePdf(any[Html])).willReturn(successful(PdfFile(Array.emptyByteArray, "application/pdf")))
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
@@ -175,9 +176,9 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         await(service.completeCase(originalCase, operator))
       }
 
-      verifyZeroInteractions(audit)
-      verifyZeroInteractions(connector)
-      verifyZeroInteractions(emailService)
+      verifyNoMoreInteractions(audit)
+      verifyNoMoreInteractions(connector)
+      verifyNoMoreInteractions(emailService)
     }
 
     "not create event on update failure" in {
@@ -194,8 +195,8 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         await(service.completeCase(originalCase, operator))
       }
 
-      verifyZeroInteractions(audit)
-      verifyZeroInteractions(emailService)
+      verifyNoMoreInteractions(audit)
+      verifyNoMoreInteractions(emailService)
       verify(connector, never()).createEvent(refEq(aBTI), any[NewEventRequest])(any[HeaderCarrier])
     }
 

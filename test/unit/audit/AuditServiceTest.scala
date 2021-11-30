@@ -26,7 +26,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
+import uk.gov.hmrc.play.audit.DefaultAuditConnector
 import utils.Cases._
 import utils.JsonFormatters.{caseFormat, operatorFormat}
 
@@ -35,9 +35,9 @@ import scala.concurrent.ExecutionContext
 
 class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
-  private val connector = mock[DefaultAuditConnector]
+  private val connector: DefaultAuditConnector = mock[DefaultAuditConnector]
 
-  private val service = new AuditService(connector)
+  private val service: AuditService = new AuditService(connector)
 
   private val operator = Operator("operator-id")
 
@@ -540,7 +540,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
   "Service 'auditManagerKeywordCreated'" should {
 
     "audit keyword created" in {
-      val keyword = Keyword("new keyword", true)
+      val keyword = Keyword("new keyword", approved = true)
 
       service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.CREATED)
 
@@ -554,7 +554,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     }
 
     "audit keyword approved" in {
-      val keyword = Keyword("new keyword", true)
+      val keyword = Keyword("new keyword", approved = true)
 
       service.auditManagerKeywordCreated(operator, keyword, ChangeKeywordStatusAction.APPROVE)
 
@@ -586,7 +586,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
   "Service 'auditManagerKeywordDeleted'" should {
 
     "audit keyword deleted" in {
-      val keyword = Keyword("new keyword", true)
+      val keyword = Keyword("new keyword", approved = true)
 
       service.auditManagerKeywordDeleted(operator, keyword)
 
@@ -603,8 +603,8 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
   "Service 'auditManagerKeywordRenamed'" should {
 
     "audit keyword renamed" in {
-      val oldKeyword = Keyword("oldKeywordName", true)
-      val newKeyword = Keyword("newKeywordName", true)
+      val oldKeyword = Keyword("oldKeywordName", approved = true)
+      val newKeyword = Keyword("newKeywordName", approved = true)
 
       service.auditManagerKeywordRenamed(operator, oldKeyword, newKeyword)
 
@@ -722,10 +722,7 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     )
 
   private def sampleSendChangeAudit(
-    caseReference: String,
-    newSender: String,
-    previousSender: String,
-    operatorId: String
+    caseReference: String,  newSender: String, previousSender: String, operatorId: String
   ): Map[String, String] =
     Map[String, String](
       "caseReference"        -> caseReference,

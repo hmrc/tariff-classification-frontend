@@ -22,7 +22,7 @@ import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
@@ -60,7 +60,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
       )
       val caseUpdated = aCase(
         withDecision(cancellation =
-          Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = false))
+          Some(Cancellation(reason = CancelReason.ANNULLED))
         )
       )
 
@@ -91,8 +91,8 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
         await(service.updateExtendedUseStatus(originalCase, status = false, operator))
       }
 
-      verifyZeroInteractions(audit)
-      verifyZeroInteractions(connector)
+      verifyNoMoreInteractions(audit)
+      verifyNoMoreInteractions(connector)
     }
 
     "throw exception on missing cancellation" in {
@@ -103,8 +103,8 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
         await(service.updateExtendedUseStatus(originalCase, status = false, operator))
       }
 
-      verifyZeroInteractions(audit)
-      verifyZeroInteractions(connector)
+      verifyNoMoreInteractions(audit)
+      verifyNoMoreInteractions(connector)
     }
 
     "not create event on update failure" in {
@@ -121,7 +121,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
         await(service.updateExtendedUseStatus(originalCase, status = false, operator))
       }
 
-      verifyZeroInteractions(audit)
+      verifyNoMoreInteractions(audit)
       verify(connector, never()).createEvent(refEq(originalCase), any[NewEventRequest])(any[HeaderCarrier])
     }
 
@@ -130,7 +130,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase(
         withDecision(cancellation =
-          Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = false))
+          Some(Cancellation(reason = CancelReason.ANNULLED))
         )
       )
       val caseUpdated = aCase(

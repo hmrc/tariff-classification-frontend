@@ -72,8 +72,9 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
     }
   }
 
-  private def commodityCodeJsValue(value: String): JsValue =
+  private def commodityCodeJsValue(value: String): JsValue = {
     JsObject(Seq(bindingCommodityCodeElementId -> JsString(value)))
+  }
 
   private def assertNoErrors(commodityCodeValue: String): Unit = {
     val errors =
@@ -83,7 +84,8 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
   private def assertOnlyOneError(commodityCodeValue: String, errorMessages: Seq[String]): Unit = {
     val errors =
-      decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+      decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue))
+          .errors(bindingCommodityCodeElementId)
     errors.map(_.message) shouldBe errorMessages
   }
 
