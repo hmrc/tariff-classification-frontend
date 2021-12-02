@@ -25,7 +25,7 @@ import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -67,7 +67,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
     super.afterEach()
 
     // should never use email service
-    verifyZeroInteractions(emailService)
+    verifyNoMoreInteractions(emailService)
     reset(connector, audit, queue, oneCase, manyCases, config, emailService)
   }
 
@@ -124,8 +124,8 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
       }
 
-      verifyZeroInteractions(audit)
-      verifyZeroInteractions(connector)
+      verifyNoMoreInteractions(audit)
+      verifyNoMoreInteractions(connector)
     }
 
     "not create event on update failure" in {
@@ -142,7 +142,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
       }
 
-      verifyZeroInteractions(audit)
+      verifyNoMoreInteractions(audit)
       verify(connector, never()).createEvent(refEq(aCase), any[NewEventRequest])(any[HeaderCarrier])
     }
 

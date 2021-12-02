@@ -24,7 +24,7 @@ import models.request.NewEventRequest
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
@@ -67,8 +67,8 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
         )
       }
 
-      verifyZeroInteractions(audit)
-      verifyZeroInteractions(connector)
+      verifyNoMoreInteractions(audit)
+      verifyNoMoreInteractions(connector)
     }
 
     "update appeal status" in {
@@ -123,7 +123,7 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
         )
       }
 
-      verifyZeroInteractions(audit)
+      verifyNoMoreInteractions(audit)
       verify(connector, never()).createEvent(any[Case], any[NewEventRequest])(any[HeaderCarrier])
     }
 

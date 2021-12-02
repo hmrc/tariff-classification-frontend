@@ -17,8 +17,7 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
-import models.{ApplicationType, Operator, Paged, Pagination, Permission, Queue}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
@@ -65,7 +64,7 @@ class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       status(result) shouldBe Status.SEE_OTHER
 
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
     }
 
   }

@@ -39,7 +39,8 @@ class IndexController @Inject() (
   def get(): Action[AnyContent] = authenticate { implicit request: AuthenticatedRequest[AnyContent] =>
     request.operator.role match {
       case Role.CLASSIFICATION_MANAGER | Role.CLASSIFICATION_OFFICER =>
-        Redirect(routes.OperatorDashboardController.onPageLoad())
+        Redirect(routes.OperatorDashboardController.onPageLoad)
+
       case _ =>
         Ok(read_only_home())
           .addingToSession((backToQueuesLinkLabel, ""), (backToQueuesLinkUrl, routes.IndexController.get().url))

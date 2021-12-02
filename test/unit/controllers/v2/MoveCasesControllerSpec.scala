@@ -217,7 +217,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
         )
       status(result)           shouldBe Status.SEE_OTHER //should be see other
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -229,7 +229,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller(Set()).postMoveATaRCases("1")(newFakeGETRequestWithCSRF(app)))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 

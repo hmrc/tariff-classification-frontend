@@ -32,11 +32,12 @@ docker run --restart unless-stopped -d -p 27017-27019:27017-27019 --name mongodb
 
 #### Starting the application:
  
-1) Launch dependencies using `sm --start DIGITAL_TARIFF_DEPS -r`
+1) Launch dependencies using `sm --start DIGITAL_TARIFFS_DEPS -r`
 2) Start the backend service [binding-tariff-classification](https://github.com/hmrc/binding-tariff-classification) using `sm --start BINDING_TARIFF_CLASSIFICATION -r`
 3) Start the filestore service [binding-tariff-filestore](https://github.com/hmrc/binding-tariff-filestore) using `sm --start BINDING_TARIFF_FILESTORE -r`
 4) Start the ruling frontend [binding-tariff-ruling-frontend](https://github.com/hmrc/binding-tariff-ruling-frontend) using `sm --start BINDING_TARIFF_RULING_FRONTEND -r`
-5) On Mac OS you must start an older version of the [pdf-generator-service](https://github.com/hmrc/pdf-generator-service):
+5) Start the trader frontend [binding-tariff-trader-frontend](https://github.com/hmrc/binding-tariff-trader-frontend) using `sm --start BINDING_TARIFF_TRADER_FRONTEND -r`
+6) On Mac OS you must start an older version of the [pdf-generator-service](https://github.com/hmrc/pdf-generator-service):
 ```
 sm --stop PDF_GENERATOR_SERVICE
 sm --start PDF_GENERATOR_SERVICE -r 1.20.0

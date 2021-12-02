@@ -26,8 +26,7 @@ object CorrespondenceDetailsForm extends Constraints {
 
   def correspondenceDetailsForm(existingCorrespondence: Case): Form[Case] =
     Form[Case](
-      mapping[
-        Case,
+      mapping[Case,
         String,
         String,
         Option[String],

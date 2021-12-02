@@ -46,8 +46,7 @@ class SearchController @Inject() (
 ) extends FrontendController(mcc)
     with I18nSupport {
 
-  def search(
-    selectedTab: SearchTab,
+  def search(selectedTab: SearchTab,
     addToSearch: Option[Boolean] = None,
     reference: Option[String]    = None,
     search: Search               = Search(),

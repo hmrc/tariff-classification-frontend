@@ -20,11 +20,11 @@ import models.AppealType
 import models.forms.AppealForm
 import utils.Cases
 import views.ViewMatchers._
-import views.html.{appeal_choose_type, change_case_status}
+import views.html.appeal_choose_type
 
 class AppealChooseTypeViewSpec extends ViewSpec {
 
-  val appealChooseTypeView = app.injector.instanceOf[appeal_choose_type]
+  val appealChooseTypeView: appeal_choose_type = app.injector.instanceOf[appeal_choose_type]
 
   "Appeal Choose Type" should {
 

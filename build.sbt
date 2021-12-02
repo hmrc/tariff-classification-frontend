@@ -20,7 +20,7 @@ lazy val microservice = (project in file("."))
     name := appName,
     scalaVersion := "2.12.12",
     targetJvm := "jvm-1.8",
-    libraryDependencies ++= (AppDependencies.compile ++ AppDependencies.test).map(_ withSources ()),
+    libraryDependencies ++= AppDependencies(),
     parallelExecution in Test := false,
     fork in Test := true,
     retrieveManaged := true,
@@ -83,6 +83,7 @@ lazy val microservice = (project in file("."))
     addTestReportOption(IntegrationTest, "int-test-reports"),
     parallelExecution in IntegrationTest := false
   )
+
   .settings(
     resolvers += Resolver.jcenterRepo
   )

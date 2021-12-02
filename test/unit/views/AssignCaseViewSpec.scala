@@ -19,15 +19,16 @@ package views
 import controllers.routes
 import models.Operator
 import models.forms.TakeOwnerShipForm
+import play.api.data.Form
 import utils.Cases._
 import views.ViewMatchers._
-import views.html.{assign_case, change_case_status}
+import views.html.assign_case
 
 class AssignCaseViewSpec extends ViewSpec {
 
-  val form = TakeOwnerShipForm.form
+  val form: Form[Boolean] = TakeOwnerShipForm.form
 
-  val assignCaseView = app.injector.instanceOf[assign_case]
+  val assignCaseView: assign_case = app.injector.instanceOf[assign_case]
 
   "Assign Case" should {
 

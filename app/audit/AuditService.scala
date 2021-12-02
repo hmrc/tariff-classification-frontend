@@ -23,7 +23,7 @@ import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 import models._
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.audit.DefaultAuditConnector
+import uk.gov.hmrc.play.audit.DefaultAuditConnector
 import utils.JsonFormatters.{caseFormat, operatorFormat}
 
 import scala.concurrent.ExecutionContext.Implicits.global

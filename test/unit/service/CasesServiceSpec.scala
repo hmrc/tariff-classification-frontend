@@ -23,7 +23,7 @@ import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify, verifyZeroInteractions}
+import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
@@ -187,7 +187,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
       verify(connector, never()).createEvent(refEq(aLiabilityCase), any[NewEventRequest])(any[HeaderCarrier])
 
-      verifyZeroInteractions(audit)
+      verifyNoMoreInteractions(audit)
     }
 
     "succeed but not create event on create event failure" in {

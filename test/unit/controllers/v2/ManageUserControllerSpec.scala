@@ -18,20 +18,19 @@ package controllers.v2
 
 import akka.stream.Materializer
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models._
-import models.CaseStatus.CaseStatus
 import models.Role.Role
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import service.{CasesService, EventsService, UserService}
+import service.{CasesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.managementtools.manage_users_view
-import views.html.partials.users.{user_team_edit, view_user, _}
+import views.html.partials.users._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -101,7 +100,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller(Set()).displayUserDetails("1")(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -154,7 +153,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("0")(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -166,7 +165,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller(Set()).deleteUser("1")(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -257,7 +256,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).doneDeleteUser("1")(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
   }
@@ -307,7 +306,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       val fakeReq = newFakePOSTRequestWithCSRF(
         app,
         Map(
-          "memberOfTeams" -> ("2")
+          "memberOfTeams" -> "2"
         )
       )
 
@@ -433,7 +432,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller(Set()).displayManageUsers()(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
   }

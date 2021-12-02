@@ -16,17 +16,15 @@
 
 package connector
 
+import cats.data.NonEmptySeq
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models._
 import models.reporting._
 import org.apache.http.HttpStatus
+import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils._
-import cats.data.NonEmptySeq
-import java.time.Instant
-
-import play.api.http.Status
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
@@ -505,7 +503,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
     "get cases by 'application type'" in {
       val url =
-        s"/cases?sort_direction=asc&sort_by=commodity-code&application_type=BTI&application_type=LIABILITY_ORDER&application_type=CORRESPONDENCE&application_type=MISCELLANEOUS&page=1&page_size=2"
+        s"/cases?sort_direction=asc&sort_by=commodity-code&application_type=BTI&" +
+          s"application_type=LIABILITY_ORDER&application_type=CORRESPONDENCE&application_type=MISCELLANEOUS&page=1&page_size=2"
 
       stubFor(
         get(urlEqualTo(url))
@@ -1160,7 +1159,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'findAllKeywords'" should {
 
     "return all keywords" in {
-      val keyword  = Keyword("AKeyword", true)
+      val keyword  = Keyword("AKeyword", approved = true)
       val response = Json.toJson(Paged(Seq(keyword))).toString()
 
       val url = s"/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
@@ -1185,7 +1184,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'create Keyword'" should {
 
     "create new keyword" in {
-      val keyword  = Keyword("AKeyword".toUpperCase, true)
+      val keyword  = Keyword("AKeyword".toUpperCase, approved = true)
       val request  = Json.toJson(NewKeywordRequest(keyword)).toString()
       val response = Json.toJson(keyword).toString()
 
@@ -1210,7 +1209,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'getCaseKeywords'" should {
 
     "return case keywords" in {
-      val keyword     = Keyword("AKeyword", true)
+      val keyword     = Keyword("AKeyword", approved = true)
       val caseHeader  = CaseHeader("ref", None, None, None, ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)
       val caseKeyword = CaseKeyword(keyword, List(caseHeader))
 
@@ -1237,7 +1236,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'delete Keyword'" should {
 
     "delete the keyword given" in {
-      val keyword = Keyword("AKeyword", true)
+      val keyword = Keyword("AKeyword", approved = true)
       stubFor(
         delete(s"/keyword/${keyword.name}")
           .willReturn(

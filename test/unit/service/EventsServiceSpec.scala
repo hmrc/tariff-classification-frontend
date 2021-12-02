@@ -24,7 +24,7 @@ import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions, verifyZeroInteractions}
+import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -106,7 +106,7 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
         await(service.addNote(aCase, aNote, operator, clock))
       }
 
-      verifyZeroInteractions(auditService)
+      verifyNoMoreInteractions(auditService)
     }
   }
 

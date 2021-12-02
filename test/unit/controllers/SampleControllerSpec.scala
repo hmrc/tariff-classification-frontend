@@ -17,7 +17,7 @@
 package controllers
 
 import models.SampleStatus.SampleStatus
-import models.{Permission, _}
+import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
@@ -25,13 +25,13 @@ import org.mockito.Mockito.{never, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, EventsService}
+import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.{change_correspondence_sending_sample, change_liablity_sending_sample, change_sample_status}
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
