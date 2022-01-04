@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +16,28 @@
 
 package models.forms
 
-import play.api.data.{Form, FormError}
+import models.forms.mappings.FormMappings.textNonEmpty
+import models.{CaseReferral, ReferralReason}
 import play.api.data.Forms._
 import play.api.data.format.Formatter
-import play.api.data.format.Formats._
-import models.forms.mappings.FormMappings.textNonEmpty
-import models.CaseReferral
-import models.ReferralReason
+import play.api.data.{Form, FormError, Mapping}
 
 object ReferCaseForm {
   val referentSpecified: Formatter[Option[String]] = new Formatter[Option[String]] {
-    def optionalMapping(key: String) =
+    def optionalMapping(key: String): Mapping[Option[String]] =
       single(key -> optional(text))
 
-    def mandatoryMapping(key: String) =
+    def mandatoryMapping(key: String): Mapping[Option[String]] =
       single(
         key -> textNonEmpty("Enter who you are referring this case to")
           .transform[Option[String]](Some(_), _.get)
       )
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
-      of[String].binder.bind("referredTo", data).flatMap { referredTo =>
-        if (referredTo.equalsIgnoreCase("Other")) {
-          mandatoryMapping(key).bind(data)
-        } else {
-          optionalMapping(key).bind(data)
-        }
+
+      data.get("referredTo") match {
+        case Some(value) if value.equalsIgnoreCase("Other") => mandatoryMapping(key).bind(data)
+        case _ => optionalMapping(key).bind(data)
       }
 
     override def unbind(key: String, value: Option[String]): Map[String, String] =
@@ -49,23 +45,22 @@ object ReferCaseForm {
   }
 
   val reasonSpecified: Formatter[List[ReferralReason.Value]] = new Formatter[List[ReferralReason.Value]] {
-    def optionalMapping(key: String) =
+    def optionalMapping(key: String): Mapping[List[ReferralReason.Value]] =
       single(key -> list(text.transform[ReferralReason.Value](ReferralReason.withName, _.toString)))
 
-    def mandatoryMapping(key: String) =
+    def mandatoryMapping(key: String): Mapping[List[ReferralReason.Value]] =
       single(
         key -> list(text.transform[ReferralReason.Value](ReferralReason.withName, _.toString))
           .verifying("Select why you are referring this case", _.nonEmpty)
       )
 
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], List[ReferralReason.Value]] =
-      of[String].binder.bind("referredTo", data).flatMap { referredTo =>
-        if (referredTo.equalsIgnoreCase("Applicant")) {
-          mandatoryMapping(key).bind(data)
-        } else {
-          optionalMapping(key).bind(data)
-        }
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], List[ReferralReason.Value]] = {
+
+      data.get("referredTo") match {
+        case Some(value) if value.equalsIgnoreCase("Applicant") => mandatoryMapping(key).bind(data)
+        case _ => optionalMapping(key).bind(data)
       }
+    }
 
     override def unbind(key: String, value: List[ReferralReason.Value]): Map[String, String] =
       optionalMapping(key).unbind(value)
