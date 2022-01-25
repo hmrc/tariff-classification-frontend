@@ -73,12 +73,12 @@
                         hint = Some(messages("management.manage-keywords.edit-approved-keywords.hint")),
                         autoCompleteOptions = globalKeywords.map(_.name),
                         placeholder = Some(messages("management.manage-keywords.search-all-keywords.placeholder"))
-                    )
+                        )
                     )
                 )
             ),
             id = "change-keyword-status",
-            customGroupId = Some("keyword-status")
+            customGroupId = Some("action")
         )
 
         <div>
@@ -86,3 +86,5 @@
         </div>
     }
 }
+
+

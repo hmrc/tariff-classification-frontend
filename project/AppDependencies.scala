@@ -3,15 +3,15 @@ object AppDependencies {
   import play.core.PlayVersion.current
 
   val compile = Seq(
-    "uk.gov.hmrc"                %% "play-frontend-hmrc"         % "1.26.0-play-28",
-    "uk.gov.hmrc"                %% "bootstrap-frontend-play-28" % "5.16.0",
-    "uk.gov.hmrc"                %% "http-caching-client"        % "9.5.0-play-28",
-    "uk.gov.hmrc"                %% "simple-reactivemongo"       % "8.0.0-play-28",
-    "com.typesafe.play"          %% "play-json"                  % "2.9.2",
-    "uk.gov.hmrc"                %% "play-json-union-formatter"  % "1.15.0-play-28",
-    "org.typelevel"              %% "cats-core"                  % "2.6.1",
-    "com.github.blemale"         %% "scaffeine"                  % "4.0.2",
-    "com.lightbend.akka"         %% "akka-stream-alpakka-csv"    % "1.1.2"
+    "uk.gov.hmrc"                %% "play-frontend-hmrc"            % "1.26.0-play-28",
+    "uk.gov.hmrc"                %% "bootstrap-frontend-play-28"    % "5.16.0",
+    "uk.gov.hmrc"                %% "http-caching-client"           % "9.5.0-play-28",
+    "uk.gov.hmrc"                %% "simple-reactivemongo"          % "8.0.0-play-28",
+    "com.typesafe.play"          %% "play-json"                     % "2.9.2",
+    "uk.gov.hmrc"                %% "play-json-union-formatter"     % "1.15.0-play-28",
+    "org.typelevel"              %% "cats-core"                     % "2.6.1",
+    "com.github.blemale"         %% "scaffeine"                     % "4.0.2",
+    "com.lightbend.akka"         %% "akka-stream-alpakka-csv"       % "1.1.2"
   )
 
   private lazy val scope: String = "test, it"

@@ -19,9 +19,11 @@ package models.forms.v2
 import models.Keyword
 import models.forms.mappings.FormMappings.oneOf
 import models.forms.v2.EditKeywordAction.EditKeywordAction
-import play.api.data.Form
-import play.api.data.Forms.{text, tuple}
+import play.api.data.Forms.tuple
+import play.api.data.Forms.of
+import play.api.data.format.Formatter
 import play.api.data.validation._
+import play.api.data.{Form, FormError, Forms}
 
 object EditKeywordAction extends Enumeration {
   type EditKeywordAction = Value
@@ -29,31 +31,39 @@ object EditKeywordAction extends Enumeration {
 }
 
 object EditApprovedKeywordForm {
-  def nonExistingKeyword(allKeywords: Seq[Keyword]): Constraint[(EditKeywordAction, String)] =
-    Constraint {
-      case (EditKeywordAction.DELETE, _) => Valid
-      case (EditKeywordAction.RENAME, name: String) if allKeywords.map(_.name).contains(name) => {
-        if (allKeywords.filter(_.name == name).head.approved) {
-          Invalid("management.create-keyword.error.duplicate.keyword")
-        } else {
-          Invalid("management.create-keyword.error.rejected.keyword")
+  def keyWordFormat(allKeywords: Seq[Keyword]): Formatter[String] =
+    new Formatter[String] {
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+
+        val keywordName = data.getOrElse(key, "")
+
+        data.get("action") match {
+          case None    => Right(keywordName)
+          case Some(action) if EditKeywordAction.DELETE.toString == action =>
+            Right(action)
+          case Some(action) if EditKeywordAction.RENAME.toString == action && keywordName.isEmpty =>
+            Left(Seq(FormError(key, "management.manage-keywords.edit-approved-keywords.empty.keyword.renamed")))
+          case Some(_) if allKeywords.map(_.name).contains(keywordName) =>
+            if (allKeywords.filter(_.name == keywordName).head.approved) {
+              Left(Seq(FormError(key, "management.create-keyword.error.duplicate.keyword")))
+            } else {
+              Left(Seq(FormError(key, "management.create-keyword.error.rejected.keyword")))
+            }
+          case _ => Right(keywordName)
         }
       }
-      case _ => Valid
-    }
 
-  val nonEmptyKeyword: Constraint[(EditKeywordAction, String)] = Constraint {
-    case (EditKeywordAction.DELETE, _)                             => Valid
-    case (EditKeywordAction.RENAME, name: String) if name.nonEmpty => Valid
-    case _                                                         => Invalid("management.manage-keywords.edit-approved-keywords.empty.keyword.renamed")
-  }
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value)
+    }
 
   def formWithAuto(allKeywords: Seq[Keyword]): Form[(EditKeywordAction, String)] = Form(
     tuple(
       "action" -> oneOf("error.empty.action", EditKeywordAction)
         .transform[EditKeywordAction](EditKeywordAction.withName, _.toString),
-      "keywordName" -> text
-    ).verifying(nonEmptyKeyword, nonExistingKeyword(allKeywords))
+      "keywordName" -> of[String](keyWordFormat(allKeywords))
+    )
   )
+
 
 }
