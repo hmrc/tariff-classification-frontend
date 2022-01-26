@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import scala.concurrent.Future.successful
 class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val keyword: Keyword = Keyword("Scarf", approved = true)
-  val keywords = Seq(Keyword("SHOES", approved = true), Keyword("HATS", approved = true), Keyword("SHIRTS", approved = true))
+  val keywords = Seq(Keyword("SHOES", approved = true), Keyword("HATS", approved = true), Keyword("SHIRTS", approved = true), Keyword("TEST"))
   val keywordForm: Form[String] = KeywordForm.formWithAuto(keywords.map(_.name))
   val editKeywordForm: EditApprovedKeywordForm.type = EditApprovedKeywordForm
   val caseKeyword: CaseKeyword = CaseKeyword(
@@ -370,6 +370,27 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   }
 
   "postEditApprovedKeywords" should {
+
+    "return Bad request when no action has selected" in {
+        val result = await(
+            controller(Set(Permission.MANAGE_USERS))
+            .postEditApprovedKeywords("oldKeyword")(newFakePOSTRequestWithCSRF(Map("action" -> "", "" -> "")))
+          )
+          status(result) shouldBe Status.BAD_REQUEST
+          contentAsString(result) should include(messages("error.empty.action"))
+    }
+
+    "render errors when update keyword is not entered for renaming" in {
+      val result = await(
+          controller(Set(Permission.MANAGE_USERS))
+          .postEditApprovedKeywords("oldKeyword")(
+               newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> ""))
+          )
+      )
+      status(result) shouldBe Status.BAD_REQUEST
+      contentAsString(result) should include(messages("management.manage-keywords.edit-approved-keywords.empty.keyword.renamed"))
+    }
+
     "delete a keyword when keyword has been selected and found" in {
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
@@ -389,8 +410,43 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     }
 
+    "render errors when duplicate keyword is entered for renaming" in {
+      val newKeyword = Keyword("SHOES", approved = true)
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier])).willReturn(Future(newKeyword))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postEditApprovedKeywords("oldKeyword")(
+            newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> "SHOES"))
+          )
+      )
+      status(result) shouldBe Status.BAD_REQUEST
+      contentAsString(result) should include(messages("management.update-keyword.error.duplicate.keyword"))
+    }
+
+    "render errors when updating keyword with rejected keyword" in {
+      val newKeyword = Keyword("TEST")
+
+      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .willReturn(Future(Paged(keywords)))
+
+      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier])).willReturn(Future(newKeyword))
+
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postEditApprovedKeywords("oldKeyword")(
+            newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> "TEST"))
+          )
+      )
+      status(result) shouldBe Status.BAD_REQUEST
+      contentAsString(result) should include(messages("management.create-keyword.error.rejected.keyword"))
+    }
+
     "rename a keyword when keyword has been selected and found" in {
-      val oldKeyword = Keyword("oldKeyword", approved = true)
       val newKeyword = Keyword("updatedKeyword", approved = true)
 
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
@@ -412,7 +468,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
             .displayConfirmationKeywordRenamed("oldKeyword", "updatedKeyword")
             .path()
         )
-
     }
 
     "return Bad request when form has errors" in {
