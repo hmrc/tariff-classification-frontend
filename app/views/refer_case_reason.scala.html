@@ -53,7 +53,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("referredTo" -> "referred_to-group-Applicant", "reasons" -> "reasons-0"))
 
     @case_heading( c, messageKey = Some("change_case_status.referred.reason.heading"))
 

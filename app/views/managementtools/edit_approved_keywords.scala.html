@@ -48,7 +48,7 @@
     additionalCSS = Some(additionalCSS),
     additionalJS = Some(additionalJS)
 ) {
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("action" -> s"change-keyword-status-${EditKeywordAction.DELETE.toString}"))
 
     <span class="govuk-caption-xl">
         <span class="govuk-visually-hidden">This section is </span>

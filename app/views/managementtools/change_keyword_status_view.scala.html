@@ -34,7 +34,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("change-keyword-status" -> "change-keyword-status-approve"))
 
     <span class="govuk-caption-xl"><span class="govuk-visually-hidden">This section is </span>Manage keywords</span>
     <h1 id="keyword-edit-heading" class="govuk-heading-xl">@keywordName</h1>

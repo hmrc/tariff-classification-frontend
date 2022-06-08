@@ -41,7 +41,7 @@
     subNavigationTab = Some(manager_tools_secondary_navigation(ManagerToolsReportsTab))
 ) {
 
-  @error_summary(form.errors)
+  @error_summary(form.errors, keySwaps = Map("allTeams" -> "radio_option_group-true"))
 
   @reportHeading(report.name, messages("reporting.choose_teams.heading"))
 

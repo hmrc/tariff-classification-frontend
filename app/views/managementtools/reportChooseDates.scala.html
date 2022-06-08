@@ -43,7 +43,7 @@
     subNavigationTab = Some(manager_tools_secondary_navigation(ManagerToolsReportsTab))
 ) {
 
-  @error_summary(form.errors)
+  @error_summary(form.errors, keySwaps = Map("specificDates" -> "radio_option_group-false"))
 
   @reportHeading(report.name, messages("reporting.choose_date.heading"))
 

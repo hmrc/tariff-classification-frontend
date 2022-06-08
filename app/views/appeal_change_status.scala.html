@@ -38,7 +38,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("status" -> s"appeal_status-${AppealStatus.validFor(appeal.`type`).headOption.map(_.toString).getOrElse("")}"))
 
     @case_heading(c)
 

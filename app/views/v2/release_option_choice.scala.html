@@ -34,7 +34,7 @@
     backLink = Some(backLink())
 ) {
 
-@error_summary(form.errors)
+@error_summary(form.errors, keySwaps = Map("choice" -> "release_choice_form-Yes"))
 
     @case_heading(c, messageKey=Some("action_this_corr.case.header"))
 

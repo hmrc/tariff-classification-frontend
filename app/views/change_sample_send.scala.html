@@ -35,7 +35,7 @@
     customPrimaryNavTab = NoTabSelected,
     backLink = Some(backLink())
 ) {
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("sample-sender" -> s"sample_return_form-${SampleSend.values.toList.sorted.headOption.map(_.toString).getOrElse("")}"))
 
     @case_heading(c, messageKey = Some("case.sample.sender.who-sending"))
 
