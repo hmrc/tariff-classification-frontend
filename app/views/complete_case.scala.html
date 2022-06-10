@@ -50,7 +50,7 @@
 ) {
     @defining(c.application.asATAR) { btiApp: BTIApplication =>
 
-        @error_summary(form.errors)
+        @error_summary(form.errors, keySwaps = Map("complete-case" -> "complete-case-true"))
         @case_heading(c, messageKey = Some("complete_case.areYouSure"))
 
         <p class="govuk-body govuk-!-margin-top-9">When this case is completed:</p>

@@ -36,7 +36,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("state" -> "remove-attachment-true"))
 
     @case_heading(c, Some(messages("case.attachments.remove_attachment.heading", fileName)))
 

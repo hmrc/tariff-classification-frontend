@@ -71,7 +71,7 @@
     additionalCSS = Some(additionalCSS)
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("application_type" -> "application_type-0", "status" -> "status-0"))
 
     <h1 id="advanced_search-heading" class="govuk-heading-xl">Advanced search</h1>
     <p class="govuk-body">To narrow your search, enter multiple search terms.<p>

@@ -35,7 +35,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("caseType" -> s"create_misc-type-Harmonised_systems"))
 
     <h1 id="create_misc-heading" class="govuk-heading-xl">@messages("page.title.create_misc.h1")</h1>
 

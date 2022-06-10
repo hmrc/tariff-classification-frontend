@@ -48,7 +48,7 @@
     customPrimaryNavTab = NoTabSelected,
     backLink = Some(backLink())
 ) {
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("team" -> s"move-to-user-team-${queues.headOption.map(q => q.id).getOrElse("")}"))
 
     @helper.form(action = routes.MoveCasesController.postTeamChoice(), 'id -> "move-to-team", 'novalidate -> "novalidate") {
         @helper.CSRF.formField

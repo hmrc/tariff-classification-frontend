@@ -36,7 +36,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("status" -> s"sample_status_form-${SampleStatus.values.toList.sorted.headOption.map(_.toString).getOrElse("")}"))
 
 
     @case_heading(c, messageKey = Some("case.miscellaneous.header"))

@@ -38,7 +38,7 @@
     customPrimaryNavTab = MyCasesTab,
     backLink = Some(backLink())
 ) {
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("reason" -> s"reason-${CancelReason.values.toSeq.sorted.headOption.getOrElse("")}"))
 
     @case_heading( c, messageKey = Some("change_case_status.cancelled.reason.heading"))
 

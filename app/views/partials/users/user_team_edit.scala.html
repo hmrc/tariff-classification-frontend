@@ -55,7 +55,7 @@
     customPrimaryNavTab = NoTabSelected,
     backLink = Some(backLink())
 ) {
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("memberOfTeams" -> "memberOfTeams-0"))
 
     <h1 id="user-team-edit-heading" class="govuk-heading-xl">
         <span class="govuk-caption-xl">

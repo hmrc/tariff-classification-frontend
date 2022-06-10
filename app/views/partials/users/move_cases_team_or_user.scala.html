@@ -48,7 +48,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("choice" -> s"team-or-user-${TeamOrUser.TEAM.toString}"))
     @helper.form(action = routes.MoveCasesController.postTeamOrUserChoice(), 'id -> "team-or-user", 'novalidate -> "novalidate") {
         @helper.CSRF.formField
 

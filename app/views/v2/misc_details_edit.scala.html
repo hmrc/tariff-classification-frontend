@@ -39,7 +39,7 @@
     customPrimaryNavTab = NoTabSelected
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("caseType" -> s"create_misc-type-Harmonised_systems"))
 
         @case_heading(caseViewModel.caseHeader, messageKey=Some("case.v2.misc.case-details-edit-header"))
 

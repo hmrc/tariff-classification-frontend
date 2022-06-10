@@ -37,7 +37,7 @@
     customPrimaryNavTab = NoTabSelected,
     backLink = Some(backLink())
 ) {
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("reason" ->  s"reason-${RejectReason.values.toSeq.sorted.headOption.map(_.toString).getOrElse("")}"))
 
     @case_heading(c, messageKey = Some("change_case_status.rejected.reason.heading"))
 

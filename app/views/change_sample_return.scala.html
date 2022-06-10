@@ -37,7 +37,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("return" -> s"sample_return_form${SampleReturn.YES.toString}"))
 
     @case_heading(c, messageKey = Some("case.application.returning-samples.header"))
 

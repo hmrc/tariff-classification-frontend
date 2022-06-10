@@ -37,7 +37,7 @@
     backLink =Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors , keySwaps = Map("queue" -> s"input-${queues.headOption.map(_.slug).getOrElse("")}")))
 
     @case_heading(c, messageKey = Some("move_case.header"))
 

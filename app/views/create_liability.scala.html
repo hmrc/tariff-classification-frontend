@@ -40,7 +40,7 @@
     customPrimaryNavTab = NoTabSelected
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("liability-status" -> "create_liability-liability_status-LIVE"))
 
     <h1 id="create_liability-heading" class="govuk-heading-xl">@messages("page.title.create_liability.h1")</h1>
 
