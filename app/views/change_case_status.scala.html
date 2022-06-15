@@ -36,7 +36,7 @@
     customPrimaryNavTab = NoTabSelected,
     backLink = Some(backLink())
 ) {
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("caseStatus" -> CaseStatusRadioInput.changeCaseStatusOptionsFor(c.application.`type`).headOption.map(ir => ir.id).getOrElse("")))
 
     @case_heading(c, messageKey = Some("change_case_status_legend"))
 

@@ -27,7 +27,7 @@
 @import controllers.Tab
 
 @(miscTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
-@error_summary(form.errors)
+@error_summary(form.errors, keySwaps = Map("miscCases" -> "miscCases-0"))
 
 <h2 class="govuk-heading-l">@messages("users.user.correspondence.heading")</h2>
 @helper.form(action = MoveCasesController.postMoveMiscCases(userID).withFragment(Tab.MISCELLANEOUS_TAB.name), 'id -> "miscCases", 'novalidate -> "novalidate") {
