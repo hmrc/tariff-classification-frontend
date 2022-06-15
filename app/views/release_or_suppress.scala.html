@@ -37,7 +37,7 @@
 
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("caseStatus" -> CaseStatusRadioInput.releaseOrSuppressOptions.headOption.map(ir => ir.id).getOrElse("")))
 
     @case_heading(c, messageKey=Some("action_this_case.header"))
 

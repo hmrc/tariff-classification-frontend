@@ -27,7 +27,7 @@
 @import controllers.Tab
 
 @(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
- @error_summary(form.errors)
+ @error_summary(form.errors, keySwaps = Map("corrCases" -> "corrCases-0"))
  <h2 class="govuk-heading-l">@messages("users.user.correspondence.heading")</h2>
  @helper.form(action = MoveCasesController.postMoveCorrCases(userID).withFragment(Tab.CORRESPONDENCE_TAB.name), 'id -> "corrCases", 'novalidate -> "novalidate") {
   @helper.CSRF.formField
