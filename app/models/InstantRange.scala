@@ -17,7 +17,6 @@
 package models
 
 import java.time.Instant
-
 import models.BinderUtil._
 import play.api.mvc.QueryStringBindable
 

@@ -19,6 +19,7 @@ package models.forms.mappings
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import utils.PostcodeValidator
 
+import java.time.LocalDate
 import scala.util.matching.Regex
 
 trait Constraints {
@@ -113,4 +114,13 @@ trait Constraints {
       case _ => Invalid(notValidPostcodeErrorKey)
     }
   }
+
+
+  protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
+    Constraint {
+      case date if date.isAfter(maximum) =>
+        Invalid(errorKey, args: _*)
+      case _ =>
+        Valid
+    }
 }

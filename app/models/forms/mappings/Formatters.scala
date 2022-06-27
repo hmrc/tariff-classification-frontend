@@ -57,7 +57,8 @@ trait Formatters {
   private[mappings] def intFormatter(
     requiredKey: String,
     wholeNumberKey: String,
-    nonNumericKey: String
+    nonNumericKey: String,
+    args: Seq[String] = Seq.empty
   ): Formatter[Int] =
     new Formatter[Int] {
 
@@ -69,16 +70,16 @@ trait Formatters {
         baseFormatter
           .bind(key, data)
           .right
-          .map(_.replace(",", ""))
+          .map(_.replace(",", "").replace(" ", ""))
           .right
           .flatMap {
             case s if s.matches(decimalRegexp) =>
-              Left(Seq(FormError(key, wholeNumberKey)))
+              Left(Seq(FormError(key, wholeNumberKey, args)))
             case s =>
               nonFatalCatch
                 .either(s.toInt)
                 .left
-                .map(_ => Seq(FormError(key, nonNumericKey)))
+                .map(_ => Seq(FormError(key, nonNumericKey, args)))
           }
 
       override def unbind(key: String, value: Int) =

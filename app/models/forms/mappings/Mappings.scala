@@ -20,6 +20,8 @@ import play.api.data.FieldMapping
 import play.api.data.Forms.of
 import utils.Enumerable
 
+import java.time.LocalDate
+
 trait Mappings extends Formatters with Constraints {
 
   protected def text(errorKey: String = "error.required"): FieldMapping[String] =
@@ -43,4 +45,8 @@ trait Mappings extends Formatters with Constraints {
   ): FieldMapping[A] =
     of(enumerableFormatter[A](requiredKey, invalidKey))
 
+  protected def localDate(
+                           messagePrefix: String,
+                           args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
+    of(new LocalDateFormatter(messagePrefix, args))
 }
