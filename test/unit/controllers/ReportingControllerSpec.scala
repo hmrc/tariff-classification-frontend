@@ -664,7 +664,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result)          shouldBe Status.BAD_REQUEST
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
-      contentAsString(result) should include(messages("reporting.choose_date.invalid_date"))
+      contentAsString(result) should include(messages("reporting.startDate.error.required.one", "month"))
     }
 
     "return 400 and HTML content type when end date is before start date" in {

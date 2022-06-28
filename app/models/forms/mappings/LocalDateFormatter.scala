@@ -1,0 +1,97 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package models.forms.mappings
+
+import play.api.data.FormError
+import play.api.data.format.Formatter
+
+import java.time.LocalDate
+import scala.util.{Failure, Success, Try}
+
+
+private[mappings] class LocalDateFormatter(
+                                            messagePrefix: String,
+                                            args: Seq[String] = Seq.empty
+                                          ) extends Formatter[LocalDate]  with GenericDateFormatter {
+
+  val invalidKey: String = s"$messagePrefix.error.invalid"
+  val allRequiredKey = s"$messagePrefix.error.required.all"
+  val twoRequiredKey = s"$messagePrefix.error.required.two"
+  val requiredKey    = s"$messagePrefix.error.required.one"
+  val nonNumericKey  = s"$messagePrefix.error.nonNumeric"
+
+  val fieldKeys: List[String] = List("day", "month", "year")
+
+  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
+    Try(LocalDate.of(year, month, day)) match {
+      case Success(date) =>
+        Right(date)
+      case Failure(_) =>
+        Left(Seq(FormError(keyWithError(key, "day"), invalidKey, args)))
+    }
+
+  private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
+
+    val int = intFormatter(
+      requiredKey = invalidKey,
+      wholeNumberKey = invalidKey,
+      nonNumericKey = invalidKey,
+      args
+    )
+
+    for {
+      day   <- int.bind(getKey(key, "day"), data).right
+      month <- int.bind(getKey(key, "month"), data).right
+      year  <- int.bind(getKey(key, "year"), data).right
+      date  <- toDate(key, day, month, year).right
+    } yield date
+  }
+
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
+
+    val dataWithoutSpaces: Map[String, String] = data.map(entry => (entry._1, entry._2.replace(" ", "")))
+
+    fields(key, dataWithoutSpaces).count(_._2.isDefined) match {
+      case 3 if illegalFields(key, dataWithoutSpaces).nonEmpty | illegalZero(key, dataWithoutSpaces).nonEmpty =>
+        Left(List() ++ illegalErrors(key, dataWithoutSpaces, nonNumericKey, args, illegalFields)
+          ++ illegalErrors(key, dataWithoutSpaces, invalidKey, args, illegalZero))
+      case 3 =>
+        formatDate(key, dataWithoutSpaces)
+      case 2 =>
+       leftErrors(key, dataWithoutSpaces, requiredKey, invalidKey, args)
+      case 1 =>
+        leftErrors(key, dataWithoutSpaces, twoRequiredKey, invalidKey, args)
+      case _ =>
+        leftErrors(key, dataWithoutSpaces, allRequiredKey, invalidKey, args)
+    }
+
+  }
+
+
+  override def unbind(key: String, value: LocalDate): Map[String, String] = {
+    if (value == null) {
+      Map()
+    } else {
+      val map = Map(
+        getKey(key, "day") -> value.getDayOfMonth.toString,
+        getKey(key, "month") -> value.getMonthValue.toString,
+        getKey(key, "year") -> value.getYear.toString
+      )
+      map
+    }
+  }
+}

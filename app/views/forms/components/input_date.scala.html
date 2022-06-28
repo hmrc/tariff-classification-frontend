@@ -30,8 +30,8 @@
         formControlUnBold: Boolean = false
 )(implicit messages: Messages)
 
-<div id="@{dateField.id}" class="govuk-form-group @formGroupClass @if(dateField.hasErrors) {govuk-form-group--error}">
-    <fieldset class="govuk-fieldset" id="@fieldsetId" @if(dateField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
+<div id="@{dateField.id}" class="govuk-form-group @formGroupClass @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors) {govuk-form-group--error}">
+    <fieldset class="govuk-fieldset" id="@fieldsetId" @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
         <legend class="govuk-fieldset__legend @labelClass">
             @legend
         </legend>
@@ -40,9 +40,18 @@
             <span class="govuk-hint" id="@{dateField.id}-hint">@hint</span>
         }
 
-        @if(dateField.hasErrors) {
+        @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors) {
             <span class="govuk-error-message" id="error-message-date-input">
                 @dateField.errors.map { error =>
+                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
+                }
+                @dayField.errors.map { error =>
+                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
+                }
+                @monthField.errors.map { error =>
+                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
+                }
+                @yearField.errors.map { error =>
                     <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
                 }
             </span>

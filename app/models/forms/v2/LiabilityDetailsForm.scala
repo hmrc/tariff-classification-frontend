@@ -37,6 +37,7 @@ class LiabilityDetailsForm @Inject() (
     Form[Case](
       mapping[Case,
         Option[Instant],
+        Option[Instant],
         String,
         Option[String],
         Option[String],
@@ -48,7 +49,6 @@ class LiabilityDetailsForm @Inject() (
         Option[String],
         Option[String],
         Boolean,
-        Option[Instant],
         Option[String],
         Option[String],
         Option[String],
@@ -57,6 +57,17 @@ class LiabilityDetailsForm @Inject() (
         Option[String],
         Option[String]
       ](
+        "dateOfReceipt" -> optional(
+          FormDate
+            .date("case.liability.error.date-of-receipt")
+            .verifying(dateMustBeInThePast("case.liability.error.date-of-receipt.future"))
+            .verifying(
+              dateLowerBound(
+                "case.liability.error.date-of-receipt.year.lower.bound",
+                appConfig.dateOfReceiptYearLowerBound
+              )
+            )
+        ),
         "entryDate" -> optional(
           FormDate
             .date("case.liability.error.entry-date")
@@ -80,17 +91,6 @@ class LiabilityDetailsForm @Inject() (
         //TODO ^^
         "btiReference"   -> optional(Forms.text.verifying(emptyOr(btiReferenceIsCorrectFormat()): _*)),
         "repaymentClaim" -> Forms.boolean,
-        "dateOfReceipt" -> optional(
-          FormDate
-            .date("case.liability.error.date-of-receipt")
-            .verifying(dateMustBeInThePast("case.liability.error.date-of-receipt.future"))
-            .verifying(
-              dateLowerBound(
-                "case.liability.error.date-of-receipt.year.lower.bound",
-                appConfig.dateOfReceiptYearLowerBound
-              )
-            )
-        ),
         "goodName" -> optional(Forms.text).verifying(defined("case.liability.error.empty.good-name")),
         "entryNumber" -> optional(
           Forms.text.verifying(emptyOr(entryNumberIsNumbersAndLettersOnly()): _*)
@@ -130,6 +130,7 @@ class LiabilityDetailsForm @Inject() (
 
   private def form2Liability(existingCase: Case): (
     Option[Instant],
+    Option[Instant],
     String,
     Option[String],
     Option[String],
@@ -141,7 +142,6 @@ class LiabilityDetailsForm @Inject() (
     Option[String],
     Option[String],
     Boolean,
-    Option[Instant],
     Option[String],
     Option[String],
     Option[String],
@@ -151,6 +151,7 @@ class LiabilityDetailsForm @Inject() (
     Option[String]
   ) => Case = {
     case (
+        dateOfReceipt,
         entryDate,
         traderName,
         traderEmail,
@@ -163,7 +164,6 @@ class LiabilityDetailsForm @Inject() (
         agentName,
         btiReference,
         isRepaymentClaim,
-        dateOfReceipt,
         goodName,
         entryNumber,
         traderCommodityCode,
@@ -209,6 +209,7 @@ class LiabilityDetailsForm @Inject() (
 
   private def liability2Form(existingCase: Case): Option[(
       Option[Instant],
+      Option[Instant],
       String,
       Option[String],
       Option[String],
@@ -220,7 +221,6 @@ class LiabilityDetailsForm @Inject() (
       Option[String],
       Option[String],
       Boolean,
-      Option[Instant],
       Option[String],
       Option[String],
       Option[String],
@@ -244,6 +244,7 @@ class LiabilityDetailsForm @Inject() (
 
     Some(
       (
+        existingLiability.dateOfReceipt,
         existingLiability.entryDate,
         existingLiability.traderName,
         Some(existingLiability.traderContactDetails.map(_.email.getOrElse("")).getOrElse("")),
@@ -256,7 +257,6 @@ class LiabilityDetailsForm @Inject() (
         existingLiability.agentName,
         existingLiability.btiReference,
         existingLiability.repaymentClaim.isDefined,
-        existingLiability.dateOfReceipt,
         existingLiability.goodName,
         existingLiability.entryNumber,
         existingLiability.traderCommodityCode,
@@ -273,6 +273,7 @@ class LiabilityDetailsForm @Inject() (
     Form[Case](
       mapping[Case,
         Option[Instant],
+        Option[Instant],
         String,
         Option[String],
         Option[String],
@@ -284,7 +285,6 @@ class LiabilityDetailsForm @Inject() (
         Option[String],
         Option[String],
         Boolean,
-        Option[Instant],
         Option[String],
         Option[String],
         Option[String],
@@ -293,6 +293,17 @@ class LiabilityDetailsForm @Inject() (
         Option[String],
         Option[String]
       ](
+        "dateOfReceipt" -> optional(
+          FormDate
+            .date("case.liability.error.date-of-receipt")
+            .verifying(dateMustBeInThePast("case.liability.error.date-of-receipt.future"))
+            .verifying(
+              dateLowerBound(
+                "case.liability.error.date-of-receipt.year.lower.bound",
+                appConfig.dateOfReceiptYearLowerBound
+              )
+            )
+        ),
         "entryDate" -> optional(
           FormDate
             .date("case.liability.error.entry-date")
@@ -321,17 +332,6 @@ class LiabilityDetailsForm @Inject() (
         //TODO take a look ^^
         "btiReference"   -> optional(nonEmptyText),
         "repaymentClaim" -> Forms.boolean,
-        "dateOfReceipt" -> optional(
-          FormDate
-            .date("case.liability.error.date-of-receipt")
-            .verifying(dateMustBeInThePast("case.liability.error.date-of-receipt.future"))
-            .verifying(
-              dateLowerBound(
-                "case.liability.error.date-of-receipt.year.lower.bound",
-                appConfig.dateOfReceiptYearLowerBound
-              )
-            )
-        ),
         "goodName"    -> optional(nonEmptyText).verifying("Enter the goods name", _.isDefined),
         "entryNumber" -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
         "traderCommodityCode" -> optional(nonEmptyText)

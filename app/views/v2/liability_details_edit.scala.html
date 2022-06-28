@@ -40,7 +40,7 @@
     backLink = Some(backLink())
 ) {
 
-    @error_summary(form.errors)
+    @error_summary(form.errors, keySwaps = Map("dateOfReceipt" -> "dateOfReceipt_day", "entryDate" -> "entryDate_day"))
 
     <div class="govuk-form-group">
     @case_heading(
