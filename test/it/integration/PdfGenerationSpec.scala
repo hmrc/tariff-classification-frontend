@@ -50,7 +50,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       // When
       val response: WSResponse =
-        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/application/$caseRef").get())
+        await(requestWithSession(s"/pdf/application/$caseRef").get())
 
       // Then
       response.status shouldBe OK
@@ -63,7 +63,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       // When
       val response: WSResponse =
-        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/application/$caseRef").get())
+        await(requestWithSession(s"/pdf/application/$caseRef").get())
 
       // Then
       response.status shouldBe OK
@@ -107,7 +107,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       // When
       val response: WSResponse =
-        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/ruling/$caseRef").get())
+        await(requestWithSession(s"/pdf/ruling/$caseRef").get())
 
       // Then
       response.status shouldBe OK
@@ -120,7 +120,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       // When
       val response: WSResponse =
-        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/pdf/ruling/$caseRef").get())
+        await(requestWithSession(s"/pdf/ruling/$caseRef").get())
 
       // Then
       response.status shouldBe OK

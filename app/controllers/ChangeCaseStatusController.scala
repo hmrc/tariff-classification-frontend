@@ -21,6 +21,7 @@ import models.forms.CaseStatusRadioInputFormProvider
 import models.{CaseStatusRadioInput, Permission}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_case_status
 
@@ -34,7 +35,7 @@ class ChangeCaseStatusController @Inject() (
   val change_case_status: change_case_status,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction {
+    with RenderCaseAction with WithDefaultFormBinding {
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService

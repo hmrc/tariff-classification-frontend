@@ -25,6 +25,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_sample_send
 
@@ -40,7 +41,7 @@ class SampleWhoSendingController @Inject()(
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Option[SampleSend]] {
+    with StatusChangeAction[Option[SampleSend]] with WithDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 

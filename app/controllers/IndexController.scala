@@ -22,6 +22,7 @@ import models.Role
 import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.read_only_home
 
@@ -34,7 +35,7 @@ class IndexController @Inject() (
   val read_only_home: read_only_home,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport {
+    with I18nSupport with WithDefaultFormBinding {
 
   def get(): Action[AnyContent] = authenticate { implicit request: AuthenticatedRequest[AnyContent] =>
     request.operator.role match {

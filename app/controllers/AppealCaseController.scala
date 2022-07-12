@@ -24,6 +24,7 @@ import models.forms.AppealForm
 import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{appeal_change_status, appeal_choose_status, appeal_choose_type}
 
@@ -42,7 +43,7 @@ class AppealCaseController @Inject() (
   val appeal_change_status: appeal_change_status,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
-    with RenderCaseAction {
+    with RenderCaseAction with WithDefaultFormBinding {
 
   private val typeForm: Form[AppealType]     = AppealForm.appealTypeForm
   private val statusForm: Form[AppealStatus] = AppealForm.appealStatusForm

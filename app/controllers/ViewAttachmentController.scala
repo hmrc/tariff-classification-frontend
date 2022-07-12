@@ -23,6 +23,7 @@ import models.response.FileMetadata
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.FileStoreService
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.view_attachment_unavailable
 
@@ -38,7 +39,7 @@ class ViewAttachmentController @Inject() (
   val view_attachment_unavailable: view_attachment_unavailable,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport {
+    with I18nSupport with WithDefaultFormBinding {
 
   def get(reference: String, id: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>

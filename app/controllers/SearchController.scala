@@ -24,6 +24,7 @@ import models.forms.SearchForm
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService, KeywordsService}
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.SearchTab.SearchTab
 import views.partials.SearchResult
@@ -44,7 +45,7 @@ class SearchController @Inject() (
   val advanced_search: html.advanced_search,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport {
+    with I18nSupport with WithDefaultFormBinding {
 
   def search(selectedTab: SearchTab,
     addToSearch: Option[Boolean] = None,

@@ -27,6 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
 import views.html.{confirm_rejected, reject_case_email, reject_case_reason}
@@ -50,7 +51,7 @@ class RejectCaseController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with UpscanErrorHandling {
+    with UpscanErrorHandling with WithDefaultFormBinding {
 
   private val RejectionCacheKey = "rejection"
   private def cacheKey(reference: String) =

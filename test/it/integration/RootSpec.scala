@@ -40,7 +40,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl").get())
+      val response = await(requestWithSession(s"/operator-dashboard-classification").get())
 
       // Then
       response.status shouldBe OK
@@ -54,7 +54,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
       givenAuthFailed()
 
       // When
-      val response = await(ws.url(s"$baseUrl").get())
+      val response = await(requestWithSession(s"").get())
 
       // Then
       response.status shouldBe OK
@@ -63,7 +63,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 
     "redirect to error handler for unknown path" in {
       // When
-      val response = await(ws.url(s"$baseUrl/rubbish").get())
+      val response = await(requestWithSession("/rubbish").get())
 
       // Then
       response.status shouldBe NOT_FOUND

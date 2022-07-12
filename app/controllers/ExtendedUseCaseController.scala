@@ -25,6 +25,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_extended_use_status
 
@@ -39,7 +40,7 @@ class ExtendedUseCaseController @Inject() (
   val change_extended_use_status: change_extended_use_status,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Boolean] {
+    with StatusChangeAction[Boolean] with WithDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EXTENDED_USE
 

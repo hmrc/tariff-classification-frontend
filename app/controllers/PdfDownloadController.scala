@@ -21,6 +21,7 @@ import config.AppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{case_not_found, document_not_found, ruling_not_found}
 
@@ -39,7 +40,7 @@ class PdfDownloadController @Inject() (
   val document_not_found: document_not_found
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
-    with I18nSupport {
+    with I18nSupport with WithDefaultFormBinding {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference).flatMap {

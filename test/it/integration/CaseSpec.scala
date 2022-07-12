@@ -26,7 +26,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/cases/1").get())
+      val response = await(requestWithSession("/cases/1").get())
 
       // Then
       response.status shouldBe NOT_FOUND
@@ -34,7 +34,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1")
+      verifyNotAuthorisedFor("/cases/1")
     }
   }
 
@@ -101,7 +101,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/cases/1").get())
+      val response = await(requestWithSession("/cases/v2/1/atar").get())
 
       // Then
       response.status shouldBe OK
@@ -109,13 +109,13 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1")
+      verifyNotAuthorisedFor("/cases/1")
     }
   }
 
   "Case Ruling Details" should {
 
-    "return status 200" in {
+    "return status SEE_OTHER" in {
       // Given
       givenAuthSuccess()
       stubFor(
@@ -136,21 +136,21 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/cases/1/ruling").get())
+      val response = await(requestWithSession("/cases/1/ruling").withFollowRedirects(false).get())
 
       // Then
-      response.status shouldBe OK
-      response.body   should include("id=\"ruling-heading\"")
+      response.status shouldBe SEE_OTHER
+      response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#ruling_tab"))
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1/ruling")
+      verifyNotAuthorisedFor("/cases/1/ruling")
     }
   }
 
   "Case activity details" should {
 
-    "return status 200" in {
+    "return status SEE_OTHER" in {
       // Given
       givenAuthSuccess()
       stubFor(
@@ -174,21 +174,21 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
         )
       )
       // When
-      val response = await(ws.url(s"$baseUrl/cases/1/activity").get())
+      val response = await(requestWithSession("/cases/1/activity").withFollowRedirects(false).get())
 
       // Then
-      response.status shouldBe OK
-      response.body   should include("id=\"activity-heading\"")
+      response.status shouldBe SEE_OTHER
+      response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#activity_tab"))
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1/activity")
+      verifyNotAuthorisedFor("/cases/1/activity")
     }
   }
 
   "Case attachments details" should {
 
-    "return status 200" in {
+    "return status SEE_OTHER" in {
       // Given
       givenAuthSuccess()
       stubFor(
@@ -209,15 +209,15 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/cases/1/attachments").get())
+      val response = await(requestWithSession("/cases/1/attachments").withFollowRedirects(false).get())
 
       // Then
-      response.status shouldBe OK
-      response.body   should include("id=\"attachments-heading\"")
+      response.status shouldBe SEE_OTHER
+      response.header("Location")  should be(Some("/manage-tariff-classifications/cases/v2/1/atar#attachments_tab"))
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/1/attachments")
+      verifyNotAuthorisedFor("/cases/1/attachments")
     }
   }
 

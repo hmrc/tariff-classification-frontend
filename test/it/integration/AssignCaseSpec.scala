@@ -34,7 +34,7 @@ class AssignCaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/assign").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
 
       // Then
       response.status shouldBe OK
@@ -46,7 +46,7 @@ class AssignCaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthFailed()
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/assign").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
 
       // Then
       response.status shouldBe OK

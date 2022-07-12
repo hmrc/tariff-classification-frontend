@@ -71,11 +71,20 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?reference=1").get())
+      val response1 = await(requestWithSession("/search?reference=1").withFollowRedirects(false).get())
+      response1.header("Location") shouldBe(Some("/manage-tariff-classifications/cases/1"))
+      response1.status shouldBe SEE_OTHER
+
+
+      val response2 = await(requestWithSession("/cases/1").withFollowRedirects(false).get())
+      response2.header("Location") shouldBe(Some("/manage-tariff-classifications/cases/v2/1/atar"))
+      response2.status shouldBe SEE_OTHER
+
+      val response3 = await(requestWithSession("/cases/v2/1/atar").withFollowRedirects(false).get())
 
       // Then
-      response.status shouldBe OK
-      response.body   should include("trader-heading")
+      response3.status shouldBe OK
+      response3.body   should include("trader-heading")
     }
   }
 
@@ -86,7 +95,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?case_source=").get())
+      val response = await(requestWithSession("/search?case_source=").get())
 
       // Then
       response.status shouldBe OK
@@ -106,7 +115,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?case_source=1").get())
+      val response = await(requestWithSession("/search?case_source=1").get())
 
       // Then
       response.status shouldBe OK
@@ -121,7 +130,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?commodity_code=").get())
+      val response = await(requestWithSession("/search?commodity_code=").get())
 
       // Then
       response.status shouldBe OK
@@ -141,7 +150,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?commodity_code=11").get())
+      val response = await(requestWithSession("/search?commodity_code=11").get())
 
       // Then
       response.status shouldBe OK
@@ -156,7 +165,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?decision_details=").get())
+      val response = await(requestWithSession("/search?decision_details=").get())
 
       // Then
       response.status shouldBe OK
@@ -176,7 +185,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?decision_details=1").get())
+      val response = await(requestWithSession("/search?decision_details=1").get())
 
       // Then
       response.status shouldBe OK
@@ -191,7 +200,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?keyword[0]=").get())
+      val response = await(requestWithSession("/search?keyword[0]=").get())
 
       // Then
       response.status shouldBe OK
@@ -211,7 +220,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?keyword[0]=k1&keyword[1]=k2").get())
+      val response = await(requestWithSession("/search?keyword[0]=k1&keyword[1]=k2").get())
 
       // Then
       response.status shouldBe OK
@@ -228,7 +237,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?live_rulings_only=").get())
+      val response = await(requestWithSession("/search?live_rulings_only=").get())
 
       // Then
       response.status shouldBe OK
@@ -240,7 +249,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?live_rulings_only=true").get())
+      val response = await(requestWithSession("/search?live_rulings_only=true").get())
 
       // Then
       response.status shouldBe OK
@@ -262,7 +271,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?case_source=1&live_rulings_only=true").get())
+      val response = await(requestWithSession("/search?case_source=1&live_rulings_only=true").get())
 
       // Then
       response.status shouldBe OK
@@ -283,7 +292,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?case_source=1").get())
+      val response = await(requestWithSession("/search?case_source=1").get())
 
       // Then
       response.status shouldBe OK
@@ -303,7 +312,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?case_source=1&live_rulings_only=false").get())
+      val response = await(requestWithSession("/search?case_source=1&live_rulings_only=false").get())
 
       // Then
       response.status shouldBe OK
@@ -326,7 +335,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?case_source=1").get())
+      val response = await(requestWithSession("/search?case_source=1").get())
 
       // Then
       response.status shouldBe OK
@@ -346,7 +355,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/search?sort_by=commodity-code&sort_direction=desc&case_source=1").get())
+      val response = await(requestWithSession("/search?sort_by=commodity-code&sort_direction=desc&case_source=1").get())
 
       // Then
       response.status shouldBe OK
@@ -354,7 +363,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("search")
+      verifyNotAuthorisedFor("/search")
     }
   }
 

@@ -7,12 +7,12 @@ import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.{WSClient, WSRequest}
 import play.api.test.Helpers.{OK, UNAUTHORIZED}
 import utils.{ResourceFiles, UnitSpec, WiremockTestServer}
 import utils.TestMetrics
 
-trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with ResourceFiles with WiremockTestServer {
+trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with ResourceFiles with WiremockTestServer with MockSessionCookie {
 
   val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang.defaultLang))
 
@@ -25,8 +25,10 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
           "microservice.services.binding-tariff-classification.port" -> wirePort,
           "microservice.services.binding-tariff-filestore.port"      -> wirePort,
           "microservice.services.auth.port"                          -> wirePort,
-          "microservice.services.pdf-generator-service.port"         -> wirePort
-        )
+          "microservice.services.pdf-generator-service.port"         -> wirePort,
+//          "platform-url.host" -> s"http://localhost:$port",
+         // "play.filters.https.redirectEnabled" -> "false"
+  )
       )
       .build()
 
@@ -87,6 +89,18 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
     )
   }
 
+  def request(path: String, sessionId: String = "123"): WSRequest =
+    ws.url(s"$baseUrl$path")
+      .withHttpHeaders(
+        "X-Session-ID" -> sessionId,
+        "Authorization" -> "Bearer 121"
+      )
+
+  def requestWithSession(path: String, sessionId: String = "sessionId"): WSRequest = {
+    request(path, sessionId)
+    .withCookies(mockSessionCookie(sessionId))
+}
+
   protected def givenAuthFailed(): Unit =
     stubFor(
       post(urlEqualTo("/auth/authorise"))
@@ -99,7 +113,7 @@ trait IntegrationTest extends UnitSpec with GuiceOneServerPerSuite with Resource
   protected def verifyNotAuthorisedFor(path: String): Unit = {
     givenAuthFailed()
 
-    val response = await(ws.url(s"$baseUrl/$path").get())
+    val response = await(requestWithSession(path).get())
 
     response.status shouldBe OK
     response.body   should include(messages("not_authorised.paragraph1"))
