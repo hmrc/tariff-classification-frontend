@@ -24,6 +24,7 @@ import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{complete_case, confirm_complete_case}
 
@@ -42,7 +43,7 @@ class CompleteCaseController @Inject() (
   val complete_case: complete_case,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction {
+    with RenderCaseAction with WithDefaultFormBinding {
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService

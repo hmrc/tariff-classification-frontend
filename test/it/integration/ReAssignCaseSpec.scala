@@ -95,7 +95,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
   private def shouldSucceed = {
     // When
-    val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reassign-case?origin=/").get())
+    val response: WSResponse = await(requestWithSession("/cases/1/reassign-case?origin=/").get())
 
     // Then
     response.status shouldBe OK
@@ -104,7 +104,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
   private def shouldFail = {
     // When
-    val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/reassign-case?origin=/").get())
+    val response: WSResponse = await(requestWithSession("/cases/1/reassign-case?origin=/").get())
 
     // Then
     response.status shouldBe OK

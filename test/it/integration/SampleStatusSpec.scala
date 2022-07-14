@@ -24,7 +24,7 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/sample/status").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/sample/status").get())
 
       // Then
       response.status shouldBe OK
@@ -44,7 +44,7 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/cases/1/sample/status?options=liability").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/sample/status?options=liability").get())
 
       // Then
       response.status shouldBe OK

@@ -79,7 +79,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response = await(ws.url(s"$baseUrl/cases/v2/1/liability").get())
+      val response = await(requestWithSession("/cases/v2/1/liability").get())
 
       // Then
       response.status shouldBe OK
@@ -87,7 +87,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      verifyNotAuthorisedFor("cases/v2/1/liability")
+      verifyNotAuthorisedFor("/cases/v2/1/liability")
     }
   }
 }

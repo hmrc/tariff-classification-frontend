@@ -21,6 +21,7 @@ import models.Permission
 import models.request.AuthenticatedCaseRequest
 import play.api.mvc._
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Notification._
 
@@ -34,7 +35,7 @@ class ReopenCaseController @Inject() (
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction {
+    with RenderCaseAction with WithDefaultFormBinding {
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService

@@ -41,7 +41,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 
       // When
       val response: WSResponse =
-        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/release").get())
+        await(requestWithSession(s"/cases/1/release").get())
 
       // Then
       response.status shouldBe OK
@@ -54,7 +54,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 
       // When
       val response: WSResponse =
-        await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/release").get())
+        await(requestWithSession("/cases/1/release").get())
 
       // Then
       response.status shouldBe OK
@@ -82,7 +82,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 //      )
 //
 //      // When
-//      val response: WSResponse = await(ws.url(s"http://localhost:$port/manage-tariff-classifications/cases/1/release").post(Map("queue" -> Seq("cars"), "csrfToken" -> Seq(token))))
+//      val response: WSResponse = await(requestWithSession(s"http://localhost:$port/manage-tariff-classifications/cases/1/release").post(Map("queue" -> Seq("cars"), "csrfToken" -> Seq(token))))
 //
 //      // Then
 //      response.status shouldBe OK

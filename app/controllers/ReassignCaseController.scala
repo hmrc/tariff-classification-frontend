@@ -25,6 +25,7 @@ import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.mvc._
 import service.{CasesService, QueuesService}
+import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_reassign_case, reassign_queue_case, resource_not_found}
 
@@ -43,7 +44,7 @@ class ReassignCaseController @Inject() (
   val resource_not_found: resource_not_found,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction {
+    with RenderCaseAction with WithDefaultFormBinding {
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 

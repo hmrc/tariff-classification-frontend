@@ -41,7 +41,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
     def shouldFail = {
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/attachment/ref/id").get())
+      val response: WSResponse = await(requestWithSession("/attachment/ref/id").get())
 
       // Then
       response.status shouldBe OK
@@ -78,7 +78,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
       )
 
       // When
-      val response: WSResponse = await(ws.url(s"$baseUrl/attachment/$caseRef/id").get())
+      val response: WSResponse = await(requestWithSession(s"/attachment/$caseRef/id").get())
 
       // Then
       response.status shouldBe OK
