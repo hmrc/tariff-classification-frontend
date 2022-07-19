@@ -333,7 +333,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         )
       ) thenReturn Future(event)
 
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val fakeReq = newFakePOSTRequestWithCSRF(Map("note" -> aNote))
       val result: Future[Result] =
         controller(aLiabilityCase, Set(Permission.ADD_NOTE)).addNote(aLiabilityCase.reference)(fakeReq)
 
@@ -343,7 +343,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "not add a new note when a case note is not provided (liability)" in {
       val aNote   = ""
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val fakeReq = newFakePOSTRequestWithCSRF(Map("note" -> aNote))
 
       when(
         liabilityController
@@ -363,7 +363,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "not add a new note when a case note is not provided (atar)" in {
       val aNote   = ""
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val fakeReq = newFakePOSTRequestWithCSRF(Map("note" -> aNote))
 
       when(
         atarController
@@ -383,7 +383,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "redirect to unauthorised if the user does not have the right permissions" in {
       val aNote                  = "This is a note"
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("note" -> aNote))
+      val fakeReq                = newFakePOSTRequestWithCSRF(Map("note" -> aNote))
       val result: Future[Result] = controller(aLiabilityCase, Set()).addNote(aLiabilityCase.reference)(fakeReq)
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -400,7 +400,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         aCase
       )
 
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+      val fakeReq = newFakePOSTRequestWithCSRF(Map("keyword" -> keyword))
       val result: Future[Result] =
         controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(fakeReq)
 
@@ -410,7 +410,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return to view if form fails to validate" in {
       val keyword = ""
-      val fakeReq = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+      val fakeReq = newFakePOSTRequestWithCSRF(Map("keyword" -> keyword))
 
       when(
         liabilityController
@@ -430,7 +430,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "redirect to unauthorised if the user does not have the right permissions" in {
       val keyword                = "pajamas"
-      val fakeReq                = newFakePOSTRequestWithCSRF(app, Map("keyword" -> keyword))
+      val fakeReq                = newFakePOSTRequestWithCSRF(Map("keyword" -> keyword))
       val result: Future[Result] = controller(aCase, Set()).addKeyword(aCase.reference)(fakeReq)
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -442,7 +442,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "remove keyword and return to case view" in {
       val keyword = "llamas"
-      val fakeReq = newFakeGETRequestWithCSRF(app)
+      val fakeReq = newFakeGETRequestWithCSRF()
 
       when(keywordsService.removeKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])) thenReturn Future(
         aCase
@@ -457,7 +457,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "redirect to unauthorised if the user does not have the right permissions" in {
       val keyword                = "llamas"
-      val fakeReq                = newFakeGETRequestWithCSRF(app)
+      val fakeReq                = newFakeGETRequestWithCSRF()
       val result: Future[Result] = controller(aCase, Set()).removeKeyword(aCase.reference, keyword)(fakeReq)
       status(result)               shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -485,7 +485,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         casesService.addMessage(refEq(anExampleCorrespondenceCase), any[Message], any[Operator])(any[HeaderCarrier])
       ) thenReturn Future(updatedCorrespondenceCase)
 
-      val fakeReq = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("message" -> aMessage.message)
+      val fakeReq = newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("message" -> aMessage.message)
       val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_MESSAGE))
         .addMessage(anExampleCorrespondenceCase.reference)(fakeReq)
 
@@ -501,7 +501,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         casesService.addMessage(refEq(anExampleMiscellaneousCase), any[Message], any[Operator])(any[HeaderCarrier])
       ) thenReturn Future(updatedMiscellaneousCase)
 
-      val fakeReq = newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("message" -> aMessage.message)
+      val fakeReq = newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("message" -> aMessage.message)
       val result: Future[Result] = controller(anExampleMiscellaneousCase, Set(Permission.ADD_MESSAGE))
         .addMessage(anExampleMiscellaneousCase.reference)(fakeReq)
 
@@ -513,7 +513,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "not add a new message when a case note is not provided" in {
       val aMessage = ""
-      val fakeReq  = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessage))
+      val fakeReq  = newFakePOSTRequestWithCSRF(Map("message" -> aMessage))
 
       when(
         correspondenceController
@@ -533,7 +533,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "redirect to unauthorised if the user does not have the right permissions" in {
       val aMessages = "This is a message"
-      val fakeReq   = newFakePOSTRequestWithCSRF(app, Map("message" -> aMessages))
+      val fakeReq   = newFakePOSTRequestWithCSRF(Map("message" -> aMessages))
       val result: Future[Result] =
         controller(anExampleCorrespondenceCase, Set()).addMessage(anExampleCorrespondenceCase.reference)(fakeReq)
       status(result)               shouldBe Status.SEE_OTHER

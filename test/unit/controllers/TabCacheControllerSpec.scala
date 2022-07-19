@@ -51,25 +51,25 @@ class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach 
     "save active tab in the database" in {
       val result = controller()
         .post("caseRef", ApplicationType.LIABILITY)
-        .apply(newFakePOSTRequestWithCSRF(app, Tab.C592_TAB.name))
+        .apply(newFakePOSTRequestWithCSRF(Tab.C592_TAB.name))
       status(result)                                                                  shouldBe Status.ACCEPTED
       await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe Some(Tab.C592_TAB)
     }
 
     "not save active tab when anchor is empty" in {
-      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app, ""))
+      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF( ""))
       status(result)                                                                  shouldBe Status.BAD_REQUEST
       await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe None
     }
 
     "not save active tab when tab name does not exist" in {
-      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app, "foo"))
+      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF("foo"))
       status(result)                                                                  shouldBe Status.BAD_REQUEST
       await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe None
     }
 
     "not save active tab when body is null" in {
-      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(app))
+      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF())
       status(result)                                                                  shouldBe Status.BAD_REQUEST
       await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe None
     }
@@ -78,21 +78,21 @@ class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach 
   "GET" should {
     "retrieve active tab from the database" in {
       await(
-        controller().post("caseRef", ApplicationType.ATAR).apply(newFakePOSTRequestWithCSRF(app, Tab.ACTIVITY_TAB.name))
+        controller().post("caseRef", ApplicationType.ATAR).apply(newFakePOSTRequestWithCSRF(Tab.ACTIVITY_TAB.name))
       )
-      val result = controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app))
+      val result = controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF())
       status(result)          shouldBe Status.OK
       contentAsString(result) shouldBe Tab.ACTIVITY_TAB.name
     }
 
     "clear active tab after it is fetched" in {
       await(
-        controller().post("caseRef", ApplicationType.ATAR).apply(newFakePOSTRequestWithCSRF(app, Tab.KEYWORDS_TAB.name))
+        controller().post("caseRef", ApplicationType.ATAR).apply(newFakePOSTRequestWithCSRF(Tab.KEYWORDS_TAB.name))
       )
-      val afterSet = await(controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app)))
+      val afterSet = await(controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF()))
       status(afterSet)          shouldBe Status.OK
       contentAsString(afterSet) shouldBe Tab.KEYWORDS_TAB.name
-      val afterGet = await(controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF(app)))
+      val afterGet = await(controller().get("caseRef", ApplicationType.ATAR).apply(newFakeGETRequestWithCSRF()))
       status(afterGet)          shouldBe Status.OK
       contentAsString(afterGet) shouldBe ""
     }

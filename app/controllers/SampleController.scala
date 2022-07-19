@@ -26,11 +26,11 @@ import play.api.mvc._
 import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{change_correspondence_sending_sample, change_liablity_sending_sample, change_sample_status}
-
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -44,7 +44,7 @@ class SampleController @Inject()(
   val change_sample_status: change_sample_status,
   val change_correspondence_sending_sample: change_correspondence_sending_sample
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Option[SampleStatus]] with WithDefaultFormBinding {
+    with StatusChangeAction[Option[SampleStatus]] with WithUnsafeDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 

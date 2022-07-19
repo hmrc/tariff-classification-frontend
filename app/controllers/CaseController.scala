@@ -25,12 +25,13 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service._
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Notification._
-
 import java.time.Instant
+
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -47,7 +48,7 @@ class CaseController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
-    with I18nSupport with WithDefaultFormBinding {
+    with I18nSupport with WithUnsafeDefaultFormBinding {
 
   def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
     implicit request =>

@@ -97,12 +97,12 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   "Complete Case" should {
 
-    when(commodityCodeService.find(any())).thenReturn(Some(CommodityCode("code")))
+    when(commodityCodeService.find(any[String])).thenReturn(Some(CommodityCode("code")))
 
     "return OK and HTML content type" when {
       "Case is a valid BTI" in {
         val result: Result =
-          await(getController(validCaseWithStatusOPEN).completeCase("reference")(newFakeGETRequestWithCSRF(app)))
+          await(getController(validCaseWithStatusOPEN).completeCase("reference")(newFakeGETRequestWithCSRF()))
 
         status(result)        shouldBe Status.OK
         contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -121,7 +121,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier], any[Messages]))
           .thenReturn(successful(caseWithStatusCOMPLETED))
 
-        val result: Result = await(getController(c).completeCase("reference")(newFakeGETRequestWithCSRF(app)))
+        val result: Result = await(getController(c).completeCase("reference")(newFakeGETRequestWithCSRF()))
 
         status(result)     shouldBe Status.SEE_OTHER
         locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/complete/confirmation")
@@ -130,7 +130,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "redirect to default page (validateBeforeComplete) for cases without a decision" in {
       val result: Result =
-        await(getController(caseWithoutDecision).completeCase("reference")(newFakeGETRequestWithCSRF(app)))
+        await(getController(caseWithoutDecision).completeCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -146,7 +146,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         withDecision(goodsDescription = "")
       )
 
-      val result: Result = await(getController(c).completeCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(getController(c).completeCase("reference")(newFakePOSTRequestWithCSRF()))
 
       status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -162,7 +162,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         withDecision()
       )
 
-      val result: Result = await(getController(c).completeCase("reference")(newFakePOSTRequestWithCSRF(app)))
+      val result: Result = await(getController(c).completeCase("reference")(newFakePOSTRequestWithCSRF()))
 
       status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -173,7 +173,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return OK when user has right permissions" in {
       val result: Result = await(
         controller(validCaseWithStatusOPEN, Set(Permission.COMPLETE_CASE))
-          .completeCase("reference")(newFakeGETRequestWithCSRF(app))
+          .completeCase("reference")(newFakeGETRequestWithCSRF())
       )
 
       status(result) shouldBe Status.OK
@@ -182,7 +182,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
         controller(validCaseWithStatusOPEN, Set.empty)
-          .completeCase("reference")(newFakeGETRequestWithCSRF(app))
+          .completeCase("reference")(newFakeGETRequestWithCSRF())
       )
 
       status(result)               shouldBe Status.SEE_OTHER
@@ -199,7 +199,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result: Result =
         await(
           getController(validCaseWithStatusOPEN).postCompleteCase("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "true")
           )
         )
@@ -215,7 +215,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result: Result =
         await(
           getController(validCaseWithStatusOPEN).postCompleteCase("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "false")
           )
         )
@@ -231,7 +231,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result: Result =
         await(
           getController(validCaseWithStatusOPEN).postCompleteCase("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
           )
         )
 
@@ -243,7 +243,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result: Result =
         await(
           getController(caseWithStatusCOMPLETED).postCompleteCase("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "true")
           )
         )
@@ -259,7 +259,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result: Result =
         await(
           getController(caseWithoutDecision).postCompleteCase("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "true")
           )
         )
@@ -274,7 +274,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result: Result =
         await(
           getController(caseWithIncompleteDecision).postCompleteCase("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "true")
           )
         )
@@ -295,7 +295,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result: Result = await(
         getController(c).postCompleteCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
+          newFakePOSTRequestWithCSRF()
             .withFormUrlEncodedBody("state" -> "true")
         )
       )
@@ -316,7 +316,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result: Result = await(
         getController(c).postCompleteCase("reference")(
-          newFakePOSTRequestWithCSRF(app)
+          newFakePOSTRequestWithCSRF()
             .withFormUrlEncodedBody("state" -> "true")
         )
       )
@@ -333,7 +333,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result: Result = await(
         controller(validCaseWithStatusOPEN, Set(Permission.COMPLETE_CASE))
-          .postCompleteCase("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true"))
+          .postCompleteCase("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("state" -> "true"))
       )
 
       status(result)     shouldBe Status.SEE_OTHER
@@ -343,7 +343,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
         controller(validCaseWithStatusOPEN, Set.empty)
-          .postCompleteCase("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true"))
+          .postCompleteCase("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("state" -> "true"))
       )
 
       status(result)               shouldBe Status.SEE_OTHER
@@ -355,7 +355,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return OK and HTML content type" in {
       val result: Result =
-        await(getController(caseWithStatusCOMPLETED).confirmCompleteCase("reference")(newFakeGETRequestWithCSRF(app)))
+        await(getController(caseWithStatusCOMPLETED).confirmCompleteCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -365,7 +365,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "redirect to a default page if the status is not right" in {
       val result: Result =
-        await(getController(validCaseWithStatusOPEN).confirmCompleteCase("reference")(newFakeGETRequestWithCSRF(app)))
+        await(getController(validCaseWithStatusOPEN).confirmCompleteCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None

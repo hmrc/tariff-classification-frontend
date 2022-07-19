@@ -41,7 +41,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
   private val casesService               = mock[CasesService]
   private val queuesService              = mock[QueuesService]
-  private val operator                   = mock[Operator]
   private val releaseCaseView            = injector.instanceOf[views.html.release_case]
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
   private val misc_details_edit          = injector.instanceOf[views.html.v2.misc_details_edit]
@@ -51,21 +50,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
   private val caseWithStatusOPEN =
     Cases.miscellaneousCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
-
-  private def controller(c: Case) =
-    new CreateMiscellaneousController(
-      new SuccessfulRequestActions(playBodyParsers, operator, c = c),
-      casesService,
-      queuesService,
-      mcc,
-      releaseCaseView,
-      confirmation_case_creation,
-      misc_details_edit,
-      createMisc,
-      caseNotFound,
-      resourceNotFound,
-      realAppConfig
-    )
 
   private def controller(requestCase: Case, permission: Set[Permission]) =
     new CreateMiscellaneousController(
@@ -86,7 +70,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
     "return OK with correct HTML" in {
       val result =
-        await(controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES)).get()(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES)).get()(newFakeGETRequestWithCSRF()))
 
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -96,7 +80,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     "return OK when the user has the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
-          .get()(newFakeGETRequestWithCSRF(app))
+          .get()(newFakeGETRequestWithCSRF())
       )
 
       status(result)          shouldBe Status.OK
@@ -108,7 +92,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     "return unauthorised when user does not have the necessary permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
-          .get()(newFakeGETRequestWithCSRF(app))
+          .get()(newFakeGETRequestWithCSRF())
       )
 
       status(result)               shouldBe Status.SEE_OTHER
@@ -121,7 +105,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody(
                 "name"        -> "",
                 "contactName" -> "",
@@ -145,7 +129,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
-          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)          shouldBe Status.OK
@@ -163,7 +147,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
-          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)          shouldBe Status.OK
@@ -175,17 +159,16 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       "return 200" in {
         val result = await(
           controller(caseWithStatusOPEN, Set(Permission.EDIT_MISCELLANEOUS))
-            .editMiscDetails("reference")(newFakePOSTRequestWithCSRF(app))
+            .editMiscDetails("reference")(newFakePOSTRequestWithCSRF())
         )
         status(result) shouldBe OK
       }
 
       "return unauthorised if the user does not have the right permissions" in {
 
-        val fakeReq = newFakeGETRequestWithCSRF(app)
         val result = await(
           controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
-            .editMiscDetails("reference")(newFakePOSTRequestWithCSRF(app))
+            .editMiscDetails("reference")(newFakePOSTRequestWithCSRF())
         )
         status(result)               shouldBe SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
@@ -201,7 +184,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
-          app,
           Map(
             "summary"             -> "A short summary",
             "detailedDescription" -> "A detailed desc",
@@ -228,7 +210,6 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
-          app,
           Map(
             "summary"             -> "",
             "detailedDescription" -> "A detailed desc",

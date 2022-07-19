@@ -74,10 +74,10 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   "Release Case" should {
 
     "return OK and HTML content type" in {
-      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
+      when(queueService.getAllForCaseType(any[ApplicationType])).thenReturn(successful(List.empty))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithStatusNEW).releaseCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -86,11 +86,11 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     }
 
     "return OK when user has right permissions" in {
-      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
+      when(queueService.getAllForCaseType(any[ApplicationType])).thenReturn(successful(List.empty))
 
       val result: Result = await(
         controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE))
-          .releaseCase("reference")(newFakeGETRequestWithCSRF(app))
+          .releaseCase("reference")(newFakeGETRequestWithCSRF())
       )
 
       status(result) shouldBe Status.OK
@@ -98,7 +98,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result =
-        await(controller(caseWithStatusNEW, Set.empty).releaseCase("reference")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithStatusNEW, Set.empty).releaseCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -114,7 +114,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         .thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+        await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue()))
 
       status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference/release/confirmation")
@@ -124,7 +124,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       when(queueService.getOneBySlug("queue")).thenReturn(successful(None))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+        await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(requestWithQueue()))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -134,12 +134,12 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "redirect back to case on Form Error" in {
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
+      when(queueService.getAllForCaseType(any[ApplicationType])).thenReturn(successful(List.empty))
       when(casesService.releaseCase(refEq(caseWithStatusNEW), any[Queue], refEq(operator))(any[HeaderCarrier]))
         .thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(caseWithStatusNEW).releaseCaseToQueue("reference")(newFakePOSTRequestWithCSRF()))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -154,7 +154,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result: Result = await(
         controller(caseWithStatusNEW, Set(Permission.RELEASE_CASE))
-          .releaseCaseToQueue("reference")(requestWithQueue("queue"))
+          .releaseCaseToQueue("reference")(requestWithQueue())
       )
 
       status(result)     shouldBe Status.SEE_OTHER
@@ -163,7 +163,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "redirect unauthorised when does not have right permissions" in {
       val result: Result =
-        await(controller(caseWithStatusNEW, Set.empty).releaseCaseToQueue("reference")(requestWithQueue("queue")))
+        await(controller(caseWithStatusNEW, Set.empty).releaseCaseToQueue("reference")(requestWithQueue()))
 
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -179,7 +179,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       when(queueService.getOneById(refEq("1"))).thenReturn(successful(Some(Queue("1", "SLUG", "NAME"))))
 
       val result: Result =
-        await(controller(caseWithQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("case has been released")
@@ -189,7 +189,7 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       when(queueService.getOneById(refEq("1"))).thenReturn(successful(None))
 
       val result: Result =
-        await(controller(caseWithQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Case Queue not found")
@@ -197,14 +197,14 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
     "return resource not found when the case have no queue assign" in {
       val result: Result =
-        await(controller(caseWithoutQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithoutQueue).confirmReleaseCase("reference")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Case Queue not found")
     }
 
     "redirect to a default page on validation error" in {
-      val result: Result = await(controller(caseWithStatusNEW).confirmReleaseCase("1")(newFakeGETRequestWithCSRF(app)))
+      val result: Result = await(controller(caseWithStatusNEW).confirmReleaseCase("1")(newFakeGETRequestWithCSRF()))
 
       status(result)        shouldBe Status.SEE_OTHER
       contentTypeOf(result) shouldBe None
@@ -213,6 +213,6 @@ class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     }
   }
 
-  private def requestWithQueue(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] =
-    newFakePOSTRequestWithCSRF(app, Map("queue" -> queue))
+  private def requestWithQueue(queue: String = "queue"): FakeRequest[AnyContentAsFormUrlEncoded] =
+    newFakePOSTRequestWithCSRF(Map("queue" -> queue))
 }

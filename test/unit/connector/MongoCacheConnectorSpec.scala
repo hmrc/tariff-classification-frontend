@@ -24,184 +24,117 @@ import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.JsString
-import repositories.{ReactiveMongoRepository, SessionRepository}
+import repositories.SessionRepository
 import scala.concurrent.Future
 import uk.gov.hmrc.http.cache.client.CacheMap
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class MongoCacheConnectorSpec
-    extends ScalaCheckDrivenPropertyChecks
+  extends ScalaCheckDrivenPropertyChecks
     with Generators
     with ConnectorTest
     with ScalaFutures
     with OptionValues {
 
+  private trait Test {
+    val mockSessionRepository: SessionRepository = mock[SessionRepository]
+    val mongoCacheConnector: MongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
+  }
+
   ".save" should {
-
-    "save the cache map to the Mongo repository" in {
-
-      val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-      val mockSessionRepository       = mock[SessionRepository]
-
-      when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
-      when(mockReactiveMongoRepository.upsert(any[CacheMap])) thenReturn Future.successful(true)
-
-      val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
+    "save the cache map to the Mongo repository" in new Test {
+      when(mockSessionRepository.upsert(any[CacheMap])) thenReturn Future.successful(true)
 
       forAll(arbitrary[CacheMap]) { cacheMap =>
         val result = mongoCacheConnector.save(cacheMap)
 
         whenReady(result) { savedCacheMap =>
           savedCacheMap shouldBe cacheMap
-          verify(mockReactiveMongoRepository).upsert(cacheMap)
+          verify(mockSessionRepository).upsert(cacheMap)
         }
-
       }
-
     }
-
   }
 
   ".remove" should {
-
-    "remove the cache map to the Mongo repository" in {
-
-      val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-      val mockSessionRepository       = mock[SessionRepository]
-
-      when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
-      when(mockReactiveMongoRepository.remove(any[CacheMap])) thenReturn Future.successful(true)
-
-      val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
+    "remove the cache map to the Mongo repository" in new Test {
+      when(mockSessionRepository.remove(any[CacheMap])) thenReturn Future.successful(true)
 
       forAll(arbitrary[CacheMap]) { cacheMap =>
         val result = mongoCacheConnector.remove(cacheMap)
 
         whenReady(result) { savedCacheMap =>
           savedCacheMap shouldBe true
-          verify(mockReactiveMongoRepository).remove(cacheMap)
+          verify(mockSessionRepository).remove(cacheMap)
         }
       }
-
     }
-
   }
 
   ".fetch" when {
-
     "there isn't a record for this key in Mongo" should {
-
-      "return None" in {
-
-        val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository       = mock[SessionRepository]
-
-        when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
-        when(mockReactiveMongoRepository.get(any())) thenReturn Future.successful(None)
-
-        val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
+      "return None" in new Test {
+        when(mockSessionRepository.get(any[String])) thenReturn Future.successful(None)
 
         forAll(nonEmptyString) { cacheId =>
           val result = mongoCacheConnector.fetch(cacheId)
 
           whenReady(result)(optionalCacheMap => optionalCacheMap should be(empty))
         }
-
       }
-
     }
 
     "a record exists for this key" should {
-
-      "return the record" in {
-
-        val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository       = mock[SessionRepository]
-
-        when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
-
-        val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
+      "return the record" in new Test {
 
         forAll(arbitrary[CacheMap]) { cacheMap =>
-          when(mockReactiveMongoRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+          when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
           val result = mongoCacheConnector.fetch(cacheMap.id)
 
           whenReady(result)(optionalCacheMap => optionalCacheMap.get shouldBe cacheMap)
         }
-
       }
-
     }
-
   }
 
   ".getEntry" when {
-
     "there isn't a record for this key in Mongo" should {
-
-      "return None" in {
-
-        val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository       = mock[SessionRepository]
-
-        when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
-        when(mockReactiveMongoRepository.get(any())) thenReturn Future.successful(None)
-
-        val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
+      "return None" in new Test {
+        when(mockSessionRepository.get(any[String])) thenReturn Future.successful(None)
 
         forAll(nonEmptyString, nonEmptyString) { (cacheId, key) =>
           val result = mongoCacheConnector.getEntry[String](cacheId, key)
 
           whenReady(result)(optionalValue => optionalValue should be(empty))
         }
-
       }
-
     }
 
     "a record exists in Mongo but this key is not present" should {
+      "return None" in new Test {
 
-      "return None" in {
-
-        val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository       = mock[SessionRepository]
-
-        when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
-
-        val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
-
-        val gen = for {
+        private val gen = for {
           key      <- nonEmptyString
           cacheMap <- arbitrary[CacheMap]
         } yield (key, cacheMap copy (data = cacheMap.data - key))
 
         forAll(gen) {
           case (k, cacheMap) =>
-            when(mockReactiveMongoRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+            when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
             val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
             whenReady(result)(optionalValue => optionalValue should be(empty))
         }
-
       }
-
     }
 
     "a record exists in Mongo with this key" should {
+      "return the key's value" in new Test {
 
-      "return the key's value" in {
-
-        val mockReactiveMongoRepository = mock[ReactiveMongoRepository]
-        val mockSessionRepository       = mock[SessionRepository]
-
-        when(mockSessionRepository.apply()) thenReturn mockReactiveMongoRepository
-
-        val mongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
-
-        val gen = for {
+        private val gen = for {
           key      <- nonEmptyString
           value    <- nonEmptyString
           cacheMap <- arbitrary[CacheMap]
@@ -209,17 +142,13 @@ class MongoCacheConnectorSpec
 
         forAll(gen) {
           case (k, v, cacheMap) =>
-            when(mockReactiveMongoRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+            when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
             val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
             whenReady(result)(optionalValue => optionalValue.get shouldBe v)
         }
-
       }
-
     }
-
   }
-
 }

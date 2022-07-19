@@ -22,8 +22,7 @@ import models.forms.v2.EditKeywordAction.EditKeywordAction
 import play.api.data.Forms.tuple
 import play.api.data.Forms.of
 import play.api.data.format.Formatter
-import play.api.data.validation._
-import play.api.data.{Form, FormError, Forms}
+import play.api.data.{Form, FormError}
 
 object EditKeywordAction extends Enumeration {
   type EditKeywordAction = Value

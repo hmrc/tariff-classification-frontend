@@ -23,12 +23,12 @@ import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.mvc._
 import service.{CasesService, QueuesService}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.confirmation_case_creation
 import views.html.{release_case, resource_not_found}
-
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -44,7 +44,7 @@ class ReleaseCaseController @Inject() (
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction with WithDefaultFormBinding {
+    with RenderCaseAction with WithUnsafeDefaultFormBinding {
 
   private lazy val releaseCaseForm: Form[String]   = ReleaseCaseForm.form
   override protected val config: AppConfig         = appConfig

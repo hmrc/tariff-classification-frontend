@@ -67,7 +67,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
         aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
 
       val result =
-        await(controller(c, Set(Permission.EXTENDED_USE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+        await(controller(c, Set(Permission.EXTENDED_USE)).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
@@ -79,7 +79,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
       val c =
         aCase(withStatus(CaseStatus.CANCELLED), withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED))))
 
-      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -101,7 +101,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
       val result = await(
         controller(c)
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false"))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("state" -> "false"))
       )
 
       verify(casesService).updateExtendedUseStatus(refEq(c), refEq(false), any[Operator])(any[HeaderCarrier])
@@ -119,7 +119,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
       val result = await(
         controller(c)
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "true"))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("state" -> "true"))
       )
 
       verify(casesService, never()).updateExtendedUseStatus(any[Case], any[Boolean], any[Operator])(any[HeaderCarrier])
@@ -140,7 +140,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
       val result = await(
         controller(c, Set(Permission.EXTENDED_USE))
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false"))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("state" -> "false"))
       )
 
       status(result)     shouldBe Status.SEE_OTHER
@@ -156,7 +156,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
       val result = await(
         controller(c, Set.empty)
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("state" -> "false"))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("state" -> "false"))
       )
 
       status(result)               shouldBe Status.SEE_OTHER

@@ -26,12 +26,12 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.ruling_details_edit
 import views.html.v2.{edit_liability_ruling, liability_details_edit}
-
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -49,7 +49,7 @@ class RulingController @Inject() (
   val ruling_details_edit: ruling_details_edit,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithDefaultFormBinding {
+    with I18nSupport with WithUnsafeDefaultFormBinding {
 
   private final val rulingDetailsStartTabIndex = 7000
 

@@ -21,11 +21,11 @@ import models.forms.CaseStatusRadioInputFormProvider
 import models.{CaseStatusRadioInput, Permission}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.release_or_suppress
-
 import javax.inject.Inject
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.Future.successful
 
 class ReleaseOrSuppressCaseController @Inject() (
@@ -35,7 +35,7 @@ class ReleaseOrSuppressCaseController @Inject() (
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction with WithDefaultFormBinding {
+    with RenderCaseAction with WithUnsafeDefaultFormBinding {
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService

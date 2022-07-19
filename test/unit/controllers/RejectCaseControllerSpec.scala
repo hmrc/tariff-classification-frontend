@@ -95,7 +95,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
-          .getRejectCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getRejectCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -109,7 +109,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .getRejectCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getRejectCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -123,7 +123,6 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       val result = await(
         controller(caseWithStatusOPEN).postRejectCaseReason(caseWithStatusOPEN.reference)(
           newFakePOSTRequestWithCSRF(
-            app,
             Map(
               "reason" -> RejectReason.DUPLICATE_APPLICATION.toString,
               "note"   -> "some-note"
@@ -141,7 +140,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "display error page when reason is missing" in {
       val result = await(
         controller(caseWithStatusOPEN).postRejectCaseReason(caseWithStatusOPEN.reference)(
-          newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
+          newFakePOSTRequestWithCSRF(Map("note" -> "some-note"))
         )
       )
 
@@ -154,7 +153,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "display error page when note is missing" in {
       val result = await(
         controller(caseWithStatusOPEN).postRejectCaseReason(caseWithStatusOPEN.reference)(
-          newFakePOSTRequestWithCSRF(app, Map("reason" -> RejectReason.ATAR_RULING_ALREADY_EXISTS.toString))
+          newFakePOSTRequestWithCSRF(Map("reason" -> RejectReason.ATAR_RULING_ALREADY_EXISTS.toString))
         )
       )
 
@@ -169,7 +168,6 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
         controller(caseWithStatusOPEN, Set.empty)
           .postRejectCaseReason(caseWithStatusNEW.reference)(
             newFakePOSTRequestWithCSRF(
-              app,
               Map(
                 "reason" -> RejectReason.APPLICATION_WITHDRAWN.toString,
                 "note"   -> "some-note"
@@ -192,7 +190,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.REJECT_CASE))
-          .getRejectCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getRejectCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -206,7 +204,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .getRejectCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getRejectCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -234,7 +232,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result = await(
         controller(caseWithStatusOPEN).rejectCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -247,7 +245,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to unauthorised when the user does not have any saved answers" in {
       val result = await(
         controller(caseWithStatusOPEN).rejectCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -262,7 +260,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).rejectCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -275,7 +273,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusREJECTED).confirmRejectCase(caseWithStatusREJECTED.reference)(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 

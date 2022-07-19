@@ -72,7 +72,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(newFakeGETRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(newFakeGETRequestWithCSRF()))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -126,7 +126,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
         .willReturn(Paged(Seq.empty[Case]))
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("1")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("1")(newFakeGETRequestWithCSRF()))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -138,7 +138,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
         .willReturn(Paged(Seq.empty[Case]))
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("1")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(Set(Permission.MANAGE_USERS)).deleteUser("1")(newFakeGETRequestWithCSRF()))
       status(result)      shouldBe Status.NOT_FOUND
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
@@ -176,7 +176,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .confirmRemoveUser("1")(newFakeGETRequestWithCSRF(app))
+          .confirmRemoveUser("1")(newFakeGETRequestWithCSRF())
       )
 
       status(result) shouldBe OK
@@ -189,7 +189,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       val result: Result = await(
         controller(Set(Permission.MANAGE_USERS))
           .confirmRemoveUser("1")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "true")
           )
       )
@@ -206,7 +206,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       val result: Result = await(
         controller(Set(Permission.MANAGE_USERS))
           .confirmRemoveUser("1")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "true")
           )
       )
@@ -223,7 +223,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       val result: Result = await(
         controller(Set(Permission.MANAGE_USERS))
           .confirmRemoveUser("1")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
           )
       )
 
@@ -234,7 +234,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       val result: Result = await(
         controller(Set(Permission.MANAGE_USERS))
           .confirmRemoveUser("1")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "false")
           )
       )
@@ -268,7 +268,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
+          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF())
       )
       status(result) shouldBe OK
     }
@@ -278,7 +278,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
+          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF())
       )
       status(result) shouldBe NOT_FOUND
     }
@@ -288,7 +288,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
 
       val result = await(
         controller(Set(Permission.VIEW_ASSIGNED_CASES))
-          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF(app))
+          .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF())
       )
       status(result)               shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -304,7 +304,6 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       )
 
       val fakeReq = newFakePOSTRequestWithCSRF(
-        app,
         Map(
           "memberOfTeams" -> "2"
         )
@@ -330,7 +329,6 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       )
 
       val fakeReq = newFakePOSTRequestWithCSRF(
-        app,
         Map(
           "" -> ""
         )

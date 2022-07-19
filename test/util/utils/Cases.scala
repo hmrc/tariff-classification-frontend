@@ -558,7 +558,7 @@ object Cases {
   def withoutAssignee(): Case => Case =
     _.copy(assignee = None)
 
-  def withDaysElapsed(elapsed: Int): Case => Case =
+  def withDaysElapsed(elapsed: Long): Case => Case =
     _.copy(daysElapsed = elapsed)
 
   def withQueue(queue: String): Case => Case =

@@ -122,7 +122,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "error when case not found" in {
       givenNotFoundCase()
 
-      val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
 
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
@@ -135,7 +135,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       givenCaseWithoutAttachments()
       givenNotFoundPdf()
 
-      val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.applicationPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
 
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
@@ -185,7 +185,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "error when case not found" in {
       givenNotFoundCase()
 
-      val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
 
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
@@ -198,7 +198,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       givenCaseWithoutAttachments()
       givenNotFoundPdf()
 
-      val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
 
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
