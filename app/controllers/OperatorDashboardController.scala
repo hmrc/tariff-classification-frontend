@@ -22,11 +22,11 @@ import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.operator_dashboard_classification
-
 import javax.inject.Inject
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class OperatorDashboardController @Inject() (
@@ -36,7 +36,7 @@ class OperatorDashboardController @Inject() (
   operator_dashboard_classification: operator_dashboard_classification,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithDefaultFormBinding {
+    with I18nSupport with WithUnsafeDefaultFormBinding {
 
   def onPageLoad: Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
     implicit request: AuthenticatedRequest[AnyContent] =>

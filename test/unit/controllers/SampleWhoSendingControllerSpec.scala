@@ -65,7 +65,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
     "return 200 OK and HTML" in {
       val c = aCase(withStatus(CaseStatus.OPEN), withDecision())
 
-      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -77,7 +77,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
       val result =
-        await(controller(c, Set(Permission.EDIT_SAMPLE)).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+        await(controller(c, Set(Permission.EDIT_SAMPLE)).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
     }
@@ -85,7 +85,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
     "redirect unauthorised when does not have right permissions" in {
       val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision())
 
-      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
       status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
@@ -102,7 +102,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
       val result = await(
         controller(c)
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("sample-sender" -> "AGENT"))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> "AGENT"))
       )
 
       verify(casesService)
@@ -116,7 +116,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
 
       val result = await(
-        controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("sample-sender" -> ""))
+        controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> ""))
       )
 
       verify(casesService, never())
@@ -131,7 +131,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
       val result = await(
         controller(c).updateStatus("reference")(
-          newFakePOSTRequestWithCSRF(app)
+          newFakePOSTRequestWithCSRF()
             .withFormUrlEncodedBody("sample-sender" -> "WRONG_STATUS")
         )
       )
@@ -151,7 +151,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
       val result = await(
         controller(c, Set(Permission.EDIT_SAMPLE))
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("sample-sender" -> "TRADER"))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> "TRADER"))
       )
 
       status(result)     shouldBe Status.SEE_OTHER
@@ -163,7 +163,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
       val result = await(
         controller(c, Set.empty)
-          .updateStatus("reference")(newFakePOSTRequestWithCSRF(app).withFormUrlEncodedBody("sample-sender" -> "TRADER"))
+          .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> "TRADER"))
       )
 
       status(result)               shouldBe Status.SEE_OTHER

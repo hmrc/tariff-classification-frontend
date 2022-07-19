@@ -109,10 +109,9 @@ class DecisionFormTest extends ModelsBaseSpec {
         val form = formProvider(mockedCommodityCodeConstraint)
           .liabilityCompleteForm(decision)
           .bindFromRequest(params.mapValues(_ => Seq("")))
-        val errorNumbers = 3
 
         form.hasErrors         shouldBe true
-        form.errors            should have(size(errorNumbers))
+        form.errors.size       shouldBe 3
         form.errors.map(_.key) shouldBe Seq("goodsDescription", "methodSearch", "justification")
       }
     }

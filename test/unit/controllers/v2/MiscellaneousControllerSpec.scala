@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
+import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.forms._
 import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
@@ -43,7 +43,6 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
   private val queueService                       = mock[QueuesService]
   private val eventService                       = mock[EventsService]
   private val fileService                        = mock[FileStoreService]
-  private val operator                           = Operator(id = "id")
   private val event                              = mock[Event]
   private val miscellaneousView                  = mock[miscellaneous_view]
   private val attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment)
@@ -64,16 +63,6 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
       event,
       miscellaneousView
     )
-
-  private def controller(c: Case) = new MiscellaneousController(
-    new SuccessfulRequestActions(playBodyParsers, operator, c = c),
-    eventService,
-    queueService,
-    fileService,
-    mcc,
-    miscellaneousView,
-    realAppConfig
-  )
 
   private def controller(c: Case, permission: Set[Permission]) = new MiscellaneousController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = c),
@@ -119,7 +108,7 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
       ) thenReturn Html("body")
 
       val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
-        .displayMiscellaneous("reference")(newFakeGETRequestWithCSRF(app))
+        .displayMiscellaneous("reference")(newFakeGETRequestWithCSRF())
       status(result) shouldBe Status.OK
     }
 

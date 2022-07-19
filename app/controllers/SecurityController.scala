@@ -19,11 +19,11 @@ package controllers
 import config.AppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.not_authorized
-
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -32,7 +32,7 @@ class SecurityController @Inject() (
   val not_authorized: not_authorized,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithDefaultFormBinding {
+    with I18nSupport with WithUnsafeDefaultFormBinding {
 
   def unauthorized(): Action[AnyContent] = Action.async(implicit request => successful(Ok(not_authorized())))
 

@@ -28,6 +28,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import service.{CasesService, QueuesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.Cases
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -111,7 +112,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(newFakePOSTRequestWithCSRF()))
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -126,7 +127,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(newFakePOSTRequestWithCSRF()))
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -134,7 +135,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -143,18 +144,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val atarForm = MoveCasesForm.moveCasesForm("atarCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, atarForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(atarForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserOrTeam().url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -165,18 +166,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val atarForm = MoveCasesForm.moveCasesForm("atarCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, atarForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(atarForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -188,18 +189,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val atarForm = MoveCasesForm.moveCasesForm("atarCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, atarForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(atarForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -211,12 +212,12 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val atarForm = MoveCasesForm.moveCasesForm("atarCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, atarForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(atarForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
@@ -227,7 +228,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
-      val result = await(controller(Set()).postMoveATaRCases("1")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(Set()).postMoveATaRCases("1")(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
@@ -244,7 +245,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(newFakePOSTRequestWithCSRF()))
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -259,7 +260,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(newFakePOSTRequestWithCSRF()))
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -267,7 +268,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -276,18 +277,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val liabForm = MoveCasesForm.moveCasesForm("liabilityCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, liabForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(liabForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserOrTeam().url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -298,18 +299,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val liabForm = MoveCasesForm.moveCasesForm("liabilityCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, liabForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(liabForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -321,18 +322,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val liabForm = MoveCasesForm.moveCasesForm("liabilityCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, liabForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(liabForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -344,13 +345,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val liabForm = MoveCasesForm.moveCasesForm("liabilityCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, liabForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(liabForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -360,9 +361,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
-      val result = await(controller(Set()).postMoveLiabCases("1")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(Set()).postMoveLiabCases("1")(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -377,7 +378,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(newFakePOSTRequestWithCSRF()))
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -392,7 +393,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(newFakePOSTRequestWithCSRF()))
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -400,7 +401,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -409,18 +410,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val corrForm = MoveCasesForm.moveCasesForm("corrCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, corrForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(corrForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserOrTeam().url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -431,18 +432,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val corrForm = MoveCasesForm.moveCasesForm("corrCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, corrForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(corrForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -454,18 +455,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val corrForm = MoveCasesForm.moveCasesForm("corrCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, corrForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(corrForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -477,13 +478,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val corrForm = MoveCasesForm.moveCasesForm("corrCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, corrForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(corrForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -493,9 +494,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
-      val result = await(controller(Set()).postMoveCorrCases("1")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(Set()).postMoveCorrCases("1")(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -511,7 +512,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)))
-          .postMoveMiscCases("1")(newFakePOSTRequestWithCSRF(app))
+          .postMoveMiscCases("1")(newFakePOSTRequestWithCSRF())
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -526,7 +527,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveMiscCases("1")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).postMoveMiscCases("1")(newFakePOSTRequestWithCSRF()))
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -534,7 +535,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -543,18 +544,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val miscForm = MoveCasesForm.moveCasesForm("miscCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, miscForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(miscForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveMiscCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserOrTeam().url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -565,18 +566,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val miscForm = MoveCasesForm.moveCasesForm("miscCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, miscForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(miscForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveMiscCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -588,18 +589,18 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val miscForm = MoveCasesForm.moveCasesForm("miscCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, miscForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(miscForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveMiscCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -611,13 +612,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       val miscForm = MoveCasesForm.moveCasesForm("miscCases").fill(Set("100"))
 
-      val fakeReqWithCases = newFakePOSTRequestWithCSRF(app, miscForm.data)
+      val fakeReqWithCases = newFakePOSTRequestWithCSRF(miscForm.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS)).postMoveMiscCases("1")(fakeReqWithCases)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -627,9 +628,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
-      val result = await(controller(Set()).postMoveMiscCases("1")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(Set()).postMoveMiscCases("1")(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -646,7 +647,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       val result =
         await(
           controllerWithData(Set(Permission.MANAGE_USERS), userAnswersMock.set(ChosenCases, Set("100")))
-            .chooseUserOrTeam()(newFakeGETRequestWithCSRF(app))
+            .chooseUserOrTeam()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -663,7 +664,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       val result =
         await(
           controllerWithData(Set(Permission.MANAGE_USERS))
-            .chooseUserOrTeam()(newFakeGETRequestWithCSRF(app))
+            .chooseUserOrTeam()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -680,7 +681,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       val result =
         await(controllerWithData(Set(), userAnswersMock.set(ChosenCases, Set("100"))).chooseUserOrTeam()(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -690,9 +691,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
 
-      val result = await(controller(Set(Permission.MANAGE_USERS)).chooseUserOrTeam()(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(Set(Permission.MANAGE_USERS)).chooseUserOrTeam()(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -708,7 +709,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       val result =
         await(
           controllerWithData(Set(Permission.MANAGE_USERS), userAnswersMock.set(ChosenCases, Set("100")))
-            .chooseUserToMoveCases()(newFakeGETRequestWithCSRF(app))
+            .chooseUserToMoveCases()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -724,7 +725,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       val result =
         await(
           controllerWithData(Set(Permission.MANAGE_USERS))
-            .chooseUserToMoveCases()(newFakeGETRequestWithCSRF(app))
+            .chooseUserToMoveCases()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -740,7 +741,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       val result =
         await(
           controllerWithData(Set(Permission.MANAGE_USERS), userAnswersMock.set(ChosenCases, Set("100")))
-            .chooseUserToMoveCases(Some("2"))(newFakeGETRequestWithCSRF(app))
+            .chooseUserToMoveCases(Some("2"))(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -757,7 +758,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(Set(), userAnswersMock.set(ChosenCases, Set("100"))).chooseUserToMoveCases()(fakeRequest)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -766,9 +767,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Paged(Seq(Operator("1"))))
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).chooseUserToMoveCases()(newFakeGETRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).chooseUserToMoveCases()(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -786,7 +787,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(ChosenUserPID, "1")
-          ).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF(app))
+          ).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -804,7 +805,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(ChosenUserPID, "1")
-          ).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF(app))
+          ).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -821,7 +822,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(ChosenUserPID, "1")
-          ).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF(app))
+          ).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF())
         )
       status(result) shouldBe Status.NOT_FOUND
 
@@ -835,10 +836,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100"))
-          ).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF(app))
+          ).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF())
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -848,15 +849,15 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(Set(), userAnswersMock.set(ChosenCases, Set("100"))).chooseOneOfUsersTeams()(fakeRequest)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
     "return unauthorised with no data" in {
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).chooseOneOfUsersTeams()(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -873,7 +874,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(ChosenUserPID, "1")
-          ).chooseUserFromAnotherTeam()(newFakeGETRequestWithCSRF(app))
+          ).chooseUserFromAnotherTeam()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -890,7 +891,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             .chooseUserFromAnotherTeam()(fakeRequest)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -898,9 +899,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).chooseUserFromAnotherTeam()(newFakeGETRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).chooseUserFromAnotherTeam()(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -917,7 +918,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(ChosenUserPID, "1")
-          ).chooseTeamToMoveCases()(newFakeGETRequestWithCSRF(app))
+          ).chooseTeamToMoveCases()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -931,7 +932,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val result =
         await(
-          controllerWithData(Set(Permission.MANAGE_USERS)).chooseTeamToMoveCases()(newFakeGETRequestWithCSRF(app))
+          controllerWithData(Set(Permission.MANAGE_USERS)).chooseTeamToMoveCases()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -948,7 +949,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             .chooseTeamToMoveCases()(fakeRequest)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -956,9 +957,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).chooseTeamToMoveCases()(newFakeGETRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).chooseTeamToMoveCases()(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -979,7 +980,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenCases, Set("100"))
               .set(OriginalUserPID, "2")
               .set(ChosenTeam, "2")
-          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -1000,7 +1001,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenCases, Set("100"))
               .set(OriginalUserPID, "2")
               .set(ChosenTeam, "2")
-          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF())
         )
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
@@ -1022,7 +1023,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenCases, Set("100"))
               .set(OriginalUserPID, "ref")
               .set(ChosenTeam, "2")
-          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF())
         )
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
@@ -1043,10 +1044,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock
               .set(ChosenCases, Set("100"))
               .set(ChosenTeam, "2")
-          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF())
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1062,10 +1063,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock
               .set(ChosenCases, Set("100"))
               .set(OriginalUserPID, "2")
-          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF())
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1084,7 +1085,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           ).casesMovedToTeamDone()(fakeRequest)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1093,9 +1094,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(queueService.getQueuesById(any[Seq[String]])).willReturn(Seq(Some(Queues.elm)))
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).casesMovedToTeamDone()(newFakeGETRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).casesMovedToTeamDone()(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1118,7 +1119,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(OriginalUserPID, "2")
               .set(ChosenUserPID, "1")
               .set(ChosenTeam, "2")
-          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -1141,7 +1142,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(OriginalUserPID, "2")
               .set(ChosenUserPID, "1")
               .set(ChosenTeam, "2")
-          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
@@ -1165,7 +1166,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(OriginalUserPID, "2")
               .set(ChosenUserPID, "1")
               .set(ChosenTeam, "2")
-          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
@@ -1189,7 +1190,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(OriginalUserPID, "ref")
               .set(ChosenUserPID, "1")
               .set(ChosenTeam, "2")
-          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
@@ -1212,10 +1213,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenCases, Set("100"))
               .set(ChosenUserPID, "1")
               .set(ChosenTeam, "2")
-          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1233,10 +1234,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenCases, Set("100"))
               .set(OriginalUserPID, "2")
               .set(ChosenTeam, "2")
-          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1254,10 +1255,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenCases, Set("100"))
               .set(ChosenUserPID, "1")
               .set(OriginalUserPID, "2")
-          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF(app))
+          ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1277,7 +1278,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           ).casesMovedToUserDone()(fakeRequest)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1286,9 +1287,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(queueService.getQueuesById(any[Seq[String]])).willReturn(Seq(Some(Queues.elm)))
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).casesMovedToUserDone()(newFakeGETRequestWithCSRF(app)))
+        await(controller(Set(Permission.MANAGE_USERS)).casesMovedToUserDone()(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1300,7 +1301,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       val result =
         await(
           controllerWithData(Set(Permission.MANAGE_USERS), userAnswersMock.set(ChosenCases, Set("100")))
-            .postTeamOrUserChoice()(newFakePOSTRequestWithCSRF(app))
+            .postTeamOrUserChoice()(newFakePOSTRequestWithCSRF())
         )
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
@@ -1310,7 +1311,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with User option" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1319,33 +1320,33 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       val form    = TeamOrUserForm.form.fill(TeamOrUser.USER)
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(Set(Permission.MANAGE_USERS), userAnswersMock.set(ChosenCases, Set("100")))
             .postTeamOrUserChoice()(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases().url)
 
     }
 
     "redirect to chooseTeamToMoveCases on valid form with Team selected" in {
       val form    = TeamOrUserForm.form.fill(TeamOrUser.TEAM)
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(Set(Permission.MANAGE_USERS), userAnswersMock.set(ChosenCases, Set("100")))
             .postTeamOrUserChoice()(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseTeamToMoveCases().url)
 
     }
 
     "return unauthorised with no permissions" in {
       val form    = TeamOrUserForm.form.fill(TeamOrUser.TEAM)
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(Set(), userAnswersMock.set(ChosenCases, Set("100")))
@@ -1353,13 +1354,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
     "return unauthorised with no data" in {
       val form    = TeamOrUserForm.form.fill(TeamOrUser.TEAM)
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS))
@@ -1367,7 +1368,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1376,7 +1377,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postUserChoice" should {
 
     "return 200 OK and HTML content type on form error" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1398,7 +1399,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
-          ).postUserChoice(None)(newFakePOSTRequestWithCSRF(app))
+          ).postUserChoice(None)(newFakePOSTRequestWithCSRF())
         )
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
@@ -1408,7 +1409,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone on valid form with User selected" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1426,7 +1427,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1434,13 +1435,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postUserChoice()(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.casesMovedToUserDone().url)
 
     }
 
     "redirect to Not Found on valid form when user with posted pid is not present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1458,7 +1459,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(None)
 
       val form    = UserToMoveCaseForm.form.fill("1")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1466,7 +1467,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postUserChoice()(fakeReq)
         )
-      status(result)          shouldBe Status.NOT_FOUND //should be see other
+      status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
@@ -1474,7 +1475,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseOneOfUsersTeams on valid form with User with more than 1 team selected" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1492,7 +1493,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2", "3"))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1500,13 +1501,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postUserChoice()(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseOneOfUsersTeams().url)
 
     }
 
     "redirect to casesMovedToUserDone on valid form with User selected and teamId present" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1524,7 +1525,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1532,13 +1533,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postUserChoice(Some("2"))(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.casesMovedToUserDone().url)
 
     }
 
     "redirect to chooseUserFromAnotherTeam on valid form with OTHER selected" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1556,7 +1557,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
 
       val form    = UserToMoveCaseForm.form.fill("OTHER")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1564,13 +1565,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postUserChoice()(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserFromAnotherTeam().url)
 
     }
 
     "return unauthorised with no permissions" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1588,7 +1589,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(Set(), userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1"))
@@ -1596,12 +1597,12 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
     "return unauthorised with no data" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1619,14 +1620,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS))
             .postUserChoice()(fakeReq)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1641,7 +1642,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
-          ).postChooseUserFromAnotherTeam()(newFakePOSTRequestWithCSRF(app))
+          ).postChooseUserFromAnotherTeam()(newFakePOSTRequestWithCSRF())
         )
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
@@ -1653,7 +1654,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     "redirect to casesMovedToUserDone on valid form with User selected" in {
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1661,7 +1662,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postChooseUserFromAnotherTeam()(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(Some("2")).url)
 
     }
@@ -1669,7 +1670,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     "return unauthorised with no permissions" in {
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1679,14 +1680,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
     "return unauthorised with no data" in {
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controller(
@@ -1694,7 +1695,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           ).postChooseUserFromAnotherTeam()(fakeReq)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1703,7 +1704,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postTeamChoice" should {
 
     "return 200 OK and HTML content type on form error" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1722,7 +1723,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
-          ).postTeamChoice()(newFakePOSTRequestWithCSRF(app))
+          ).postTeamChoice()(newFakePOSTRequestWithCSRF())
         )
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
@@ -1732,7 +1733,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToTeamDone” on valid form with team selected" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1747,7 +1748,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1755,13 +1756,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postTeamChoice()(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.casesMovedToTeamDone().url)
 
     }
 
     "return unauthorised with no permissions" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1776,7 +1777,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1786,12 +1787,12 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
     "return unauthorised with no data" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1806,7 +1807,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controller(
@@ -1814,7 +1815,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           ).postTeamChoice()(fakeReq)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
@@ -1823,7 +1824,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postChooseOneOfUsersTeams" should {
 
     "return 200 OK and HTML content type on form error" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1845,7 +1846,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(
             Set(Permission.MANAGE_USERS),
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1").set(ChosenUserPID, "2")
-          ).postChooseOneOfUsersTeams()(newFakePOSTRequestWithCSRF(app))
+          ).postChooseOneOfUsersTeams()(newFakePOSTRequestWithCSRF())
         )
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
@@ -1855,7 +1856,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone” on valid form with team selected" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1874,7 +1875,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1882,13 +1883,13 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1").set(ChosenUserPID, "2")
           ).postChooseOneOfUsersTeams()(fakeReq)
         )
-      status(result)           shouldBe Status.SEE_OTHER //should be see other
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.casesMovedToUserDone().url)
 
     }
 
     "return unauthorised with no permissions" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1907,7 +1908,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controllerWithData(
@@ -1917,12 +1918,12 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 
     "return unauthorised with no data" in {
-      given(dataCacheConnector.save(any())).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1940,7 +1941,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       given(queueService.getOneById(any[String])).willReturn(Some(Queues.elm))
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
       val form    = TeamToMoveCaseForm.form.fill("2")
-      val fakeReq = newFakePOSTRequestWithCSRF(app, form.data)
+      val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
         await(
           controller(
@@ -1948,7 +1949,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           ).postChooseOneOfUsersTeams()(fakeReq)
         )
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 

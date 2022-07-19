@@ -255,7 +255,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS))
-            .changeKeywordStatus("keywordName", "reference")(newFakeGETRequestWithCSRF(app))
+            .changeKeywordStatus("keywordName", "reference")(newFakeGETRequestWithCSRF())
         )
 
       status(result)      shouldBe Status.OK
@@ -270,7 +270,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       val result =
         await(
           controller(Set(Permission.MANAGE_USERS))
-            .changeKeywordStatus("keywordName", "reference")(newFakeGETRequestWithCSRF(app))
+            .changeKeywordStatus("keywordName", "reference")(newFakeGETRequestWithCSRF())
         )
 
       status(result)          shouldBe Status.OK

@@ -78,11 +78,11 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "Reassign Case" should {
 
     "return OK and HTML content type" in {
-      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
-      when(queueService.getOneById(any())).thenReturn(successful(None))
+      when(queueService.getAllForCaseType(any[ApplicationType])).thenReturn(successful(List.empty))
+      when(queueService.getOneById(any[String])).thenReturn(successful(None))
 
       val result: Result =
-        await(controller(caseWithStatusOPEN).showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithStatusOPEN).showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF()))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -91,12 +91,12 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     }
 
     "return OK when user has right permissions" in {
-      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
-      when(queueService.getOneById(any())).thenReturn(successful(None))
+      when(queueService.getAllForCaseType(any[ApplicationType])).thenReturn(successful(List.empty))
+      when(queueService.getOneById(any[String])).thenReturn(successful(None))
 
       val result: Result = await(
         controller(caseWithStatusOPEN, Set(Permission.MOVE_CASE_BACK_TO_QUEUE))
-          .showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(app))
+          .showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF())
       )
 
       status(result) shouldBe Status.OK
@@ -105,7 +105,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF(app))
+          .showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF())
       )
 
       status(result)               shouldBe Status.SEE_OTHER
@@ -124,7 +124,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         .thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result =
-        await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(requestWithQueue("queue")))
+        await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(requestWithQueue()))
 
       status(result) shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(
@@ -135,14 +135,14 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "show error message when no option is selected" in {
 
       when(queueService.getOneBySlug("queue")).thenReturn(successful(Some(queue)))
-      when(queueService.getAllForCaseType(any())).thenReturn(successful(List.empty))
+      when(queueService.getAllForCaseType(any[ApplicationType])).thenReturn(successful(List.empty))
       when(queue.name).thenReturn("SOME_QUEUE")
-      when(queueService.getOneById(any())).thenReturn(successful(None))
+      when(queueService.getOneById(any[String])).thenReturn(successful(None))
       when(casesService.reassignCase(refEq(caseWithStatusOPEN), any[Queue], refEq(operator))(any[HeaderCarrier]))
         .thenReturn(successful(caseWithStatusOPEN))
 
       val result: Result =
-        await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(newFakePOSTRequestWithCSRF(app)))
+        await(controller(caseWithStatusOPEN).reassignCase("reference", "origin")(newFakePOSTRequestWithCSRF()))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -154,7 +154,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       when(queueService.getOneBySlug("queue")).thenReturn(successful(None))
 
       val result: Result =
-        await(controller(caseWithStatusNEW).reassignCase("reference", "origin")(requestWithQueue("queue")))
+        await(controller(caseWithStatusNEW).reassignCase("reference", "origin")(requestWithQueue()))
 
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
@@ -171,7 +171,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result: Result = await(
         controller(caseWithStatusOPEN, Set(Permission.MOVE_CASE_BACK_TO_QUEUE))
-          .reassignCase("reference", "origin")(requestWithQueue("queue"))
+          .reassignCase("reference", "origin")(requestWithQueue())
       )
 
       status(result) shouldBe Status.SEE_OTHER
@@ -183,7 +183,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .reassignCase("reference", "origin")(requestWithQueue("queue"))
+          .reassignCase("reference", "origin")(requestWithQueue())
       )
 
       status(result)               shouldBe Status.SEE_OTHER
@@ -199,7 +199,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return OK and HTML content type" in {
       when(queueService.getOneById(refEq("1"))).thenReturn(successful(Some(Queue("1", "SLUG", "NAME"))))
       val result: Result =
-        await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("case has been moved")
@@ -208,7 +208,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return resource not found when the queue is not found" in {
       when(queueService.getOneById(refEq("1"))).thenReturn(successful(None))
       val result: Result =
-        await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Case Queue not found")
@@ -216,7 +216,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "return resource not found when the case have no queue assign" in {
       val result: Result =
-        await(controller(caseWithoutQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithoutQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
       bodyOf(result) should include("Case Queue not found")
@@ -224,14 +224,14 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
     "redirect to a default page if the status is not right" in {
       val result: Result =
-        await(controller(caseWithStatusNEW).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF(app)))
+        await(controller(caseWithStatusNEW).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF()))
 
       status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some("/manage-tariff-classifications/cases/reference")
     }
   }
 
-  private def requestWithQueue(queue: String): FakeRequest[AnyContentAsFormUrlEncoded] =
-    newFakePOSTRequestWithCSRF(app, Map("queue" -> queue))
+  private def requestWithQueue(queue: String = "queue"): FakeRequest[AnyContentAsFormUrlEncoded] =
+    newFakePOSTRequestWithCSRF(Map("queue" -> queue))
 
 }

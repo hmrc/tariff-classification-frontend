@@ -28,12 +28,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2._
 import views.html.{case_not_found, release_case, resource_not_found}
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -54,7 +54,7 @@ class CreateCorrespondenceController @Inject() (
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithDefaultFormBinding {
+    with I18nSupport with WithUnsafeDefaultFormBinding {
 
   private val form: Form[CorrespondenceApplication] = CorrespondenceForm.newCorrespondenceForm
   private val formReleaseChoice: Form[String] = Form(

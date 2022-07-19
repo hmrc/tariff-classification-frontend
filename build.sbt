@@ -21,7 +21,6 @@ lazy val microservice = (project in file("."))
     scalaVersion := "2.12.16",
     targetJvm := "jvm-1.8",
     libraryDependencies ++= AppDependencies(),
-    Test / parallelExecution := false,
     Test / fork := true,
     retrieveManaged := true,
     // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
@@ -33,11 +32,7 @@ lazy val microservice = (project in file("."))
           "-Ywarn-value-discard"
         )
       )
-    },
-    libraryDependencies ++= Seq(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % "1.7.9" cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % "1.7.9" % Provided cross CrossVersion.full
-    )
+    }
   )
   .settings(inConfig(TemplateTest)(Defaults.testSettings): _*)
   .settings(
@@ -72,7 +67,7 @@ lazy val microservice = (project in file("."))
   .settings(inConfig(IntegrationTest)(ScalafmtPlugin.scalafmtConfigSettings))
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
   .settings(
-    IntegrationTest / Keys.fork := true,
+    IntegrationTest / fork := true,
 //    works only when fork is true
     Test / javaOptions += "-Xmx1G",
     IntegrationTest / unmanagedSourceDirectories:= Seq(
@@ -80,8 +75,7 @@ lazy val microservice = (project in file("."))
       (IntegrationTest / baseDirectory).value / "test/util"
     ),
     IntegrationTest / resourceDirectory := baseDirectory.value / "test" / "resources",
-    addTestReportOption(IntegrationTest, "int-test-reports"),
-    IntegrationTest / parallelExecution := false
+    addTestReportOption(IntegrationTest, "int-test-reports")
   )
 
   .settings(
@@ -100,4 +94,6 @@ lazy val TemplateItTest = config("tit") extend IntegrationTest
 // Coverage configuration
 coverageMinimumStmtTotal := 91
 coverageFailOnMinimum := true
-coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;.*repositories.*"
+coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;"
+
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules"  %% "scala-java8-compat" % "always"

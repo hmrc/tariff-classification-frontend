@@ -62,7 +62,7 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
     given(appConfig.readOnlyEnrolment).willReturn("read-only-enrolment")
     given(appConfig.checkEnrolment).willReturn(true)
     given(environment.mode).willReturn(Mode.Test)
-    given(config.getOptional(any[String])(any)).willReturn(None)
+    given(config.getOptional(any[String])(any[ConfigLoader[String]])).willReturn(None)
   }
 
   "AuthenticatedAction" when {

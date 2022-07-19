@@ -96,7 +96,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-          .getReferCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getReferCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -110,7 +110,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "redirect to unauthorised when the user does not have right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .getReferCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getReferCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -124,7 +124,6 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result = await(
         controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
           newFakePOSTRequestWithCSRF(
-            app,
             Map(
               "referredTo" -> "Applicant",
               "reasons[0]" -> ReferralReason.REQUEST_SAMPLE.toString,
@@ -143,7 +142,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "display error page when referent is missing" in {
       val result = await(
         controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
-          newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
+          newFakePOSTRequestWithCSRF(Map("note" -> "some-note"))
         )
       )
 
@@ -156,7 +155,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "display error page when referred to applicant and no reason is selected" in {
       val result = await(
         controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
-          newFakePOSTRequestWithCSRF(app, Map("referredTo" -> "Applicant", "note" -> "some-note"))
+          newFakePOSTRequestWithCSRF(Map("referredTo" -> "Applicant", "note" -> "some-note"))
         )
       )
 
@@ -169,7 +168,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "display error page when referred to Other and no details of who is referred to are provided" in {
       val result = await(
         controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
-          newFakePOSTRequestWithCSRF(app, Map("referredTo" -> "Other", "note" -> "some-note"))
+          newFakePOSTRequestWithCSRF(Map("referredTo" -> "Other", "note" -> "some-note"))
         )
       )
 
@@ -182,7 +181,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "display error page when note is missing" in {
       val result = await(
         controller(caseWithStatusOPEN).postReferCaseReason(caseWithStatusOPEN.reference)(
-          newFakePOSTRequestWithCSRF(app, Map("referredTo" -> "LAB"))
+          newFakePOSTRequestWithCSRF(Map("referredTo" -> "LAB"))
         )
       )
 
@@ -197,7 +196,6 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         controller(caseWithStatusNEW, Set.empty)
           .postReferCaseReason(caseWithStatusNEW.reference)(
             newFakePOSTRequestWithCSRF(
-              app,
               Map(
                 "referredTo" -> "APPLICANT",
                 "reasons[0]" -> ReferralReason.REQUEST_SAMPLE.toString,
@@ -221,7 +219,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.REFER_CASE))
-          .getReferCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getReferCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -235,7 +233,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "redirect to unauthorised when the user does not have right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .getReferCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getReferCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -264,7 +262,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(
         controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -300,7 +298,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(
         controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -314,7 +312,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "redirect to unauthorised when the user does not have any saved answers" in {
       val result = await(
         controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -330,7 +328,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).referCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -343,7 +341,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusREFERRED).confirmReferCase(caseWithStatusREFERRED.reference)(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
