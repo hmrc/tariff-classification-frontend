@@ -21,7 +21,7 @@ import akka.util.ByteString
 import models.response.{FileMetadata, ScanStatus}
 import models.{Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.{BDDMyOngoingStubbing, given}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
@@ -67,10 +67,10 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       realAppConfig
     )
 
-  private def givenFileMetadata(fileMetadata: Option[FileMetadata]) =
+  private def givenFileMetadata(fileMetadata: Option[FileMetadata]): BDDMyOngoingStubbing[Future[Option[FileMetadata]]] =
     given(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])) willReturn Future.successful(fileMetadata)
 
-  private def givenFileContent(url: String, fileContent: Array[Byte]) =
+  private def givenFileContent(url: String, fileContent: Array[Byte]): BDDMyOngoingStubbing[Future[Option[Source[ByteString, _]]]] =
     given(fileService.downloadFile(refEq(url))(any[HeaderCarrier])) willReturn Future.successful(Some(Source.single(ByteString(fileContent))))
 
   private val fileReady      = FileMetadata("id", Some("file"), Some("type"), Some("url"), Some(ScanStatus.READY))
@@ -83,7 +83,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       givenFileMetadata(Some(fileReady))
       givenFileContent(fileReady.url.get, "CONTENT".getBytes())
 
-      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
       status(result)     shouldBe Status.OK
       contentAsBytes(result) shouldBe ByteString("CONTENT".getBytes)
@@ -92,7 +92,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 404 for file processing" in {
       givenFileMetadata(Some(fileProcessing))
 
-      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
       status(result)      shouldBe Status.NOT_FOUND
       contentType(result) shouldBe Some("text/html")
@@ -103,7 +103,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 404 for un-safe file found" in {
       givenFileMetadata(Some(fileFailed))
 
-      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
       status(result)      shouldBe Status.NOT_FOUND
       contentType(result) shouldBe Some("text/html")
@@ -116,7 +116,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       val result: Result = await(
         controller(Set(Permission.VIEW_CASES))
-          .get(reference, "id")(newFakeGETRequestWithCSRF(app))
+          .get(reference, "id")(newFakeGETRequestWithCSRF())
       )
 
       status(result)      shouldBe Status.NOT_FOUND
@@ -128,7 +128,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "redirect unauthorised when does not have right permissions" in {
       val result: Result = await(
         controller(Set.empty)
-          .get(reference, "id")(newFakeGETRequestWithCSRF(app))
+          .get(reference, "id")(newFakeGETRequestWithCSRF())
       )
 
       status(result)               shouldBe Status.SEE_OTHER

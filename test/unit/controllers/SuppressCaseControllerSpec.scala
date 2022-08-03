@@ -92,7 +92,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.SUPPRESS_CASE))
-          .getSuppressCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getSuppressCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -104,7 +104,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .getSuppressCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getSuppressCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -118,7 +118,6 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result = await(
         controller(caseWithStatusOPEN).postSuppressCaseReason(caseWithStatusOPEN.reference)(
           newFakePOSTRequestWithCSRF(
-            app,
             Map("note" -> "some-note")
           )
         )
@@ -133,7 +132,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "display error page when note is missing" in {
       val result = await(
         controller(caseWithStatusOPEN).postSuppressCaseReason(caseWithStatusOPEN.reference)(
-          newFakePOSTRequestWithCSRF(app, Map.empty[String, String])
+          newFakePOSTRequestWithCSRF(Map.empty[String, String])
         )
       )
 
@@ -146,7 +145,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).postSuppressCaseReason(caseWithStatusNEW.reference)(
-          newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
+          newFakePOSTRequestWithCSRF(Map("note" -> "some-note"))
         )
       )
 
@@ -164,7 +163,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.SUPPRESS_CASE))
-          .getSuppressCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getSuppressCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -176,7 +175,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .getSuppressCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getSuppressCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -202,7 +201,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(
         controller(caseWithStatusOPEN).suppressCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -215,7 +214,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have any saved answers" in {
       val result = await(
         controller(caseWithStatusOPEN).suppressCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -230,7 +229,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).suppressCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -243,7 +242,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusSUPPRESSED).confirmSuppressCase(caseWithStatusSUPPRESSED.reference)(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 

@@ -28,14 +28,15 @@ import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{QueuesService, ReportingService, UserService}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools._
 import views.html.report_not_found
-
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -55,7 +56,7 @@ class ReportingController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
-    with I18nSupport with WithDefaultFormBinding {
+    with I18nSupport with WithUnsafeDefaultFormBinding {
 
   lazy val chooseDatesForm = ReportDateForm.form
   lazy val chooseTeamsForm = ReportTeamForm.form

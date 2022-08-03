@@ -58,7 +58,7 @@ class SuccessfulCasePermissionsAction(
     successful(Right(new AuthenticatedCaseRequest(operator.copy(permissions = permissions), request, request.`case`)))
 }
 
-class ExistingCaseActionFactory(reference: String, requestCase: Case)
+class ExistingCaseActionFactory(requestCase: Case)
     extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService]))(
       mock(classOf[MessagesApi]),
       mock(classOf[AppConfig]),
@@ -112,7 +112,7 @@ class MustHaveDataActionFactory(userAnswers: UserAnswers)
 
 }
 
-class HaveExistingCaseDataActionFactory(reference: String, requestCase: Case)
+class HaveExistingCaseDataActionFactory(requestCase: Case)
     extends RequireCaseDataActionFactory(
       casesService       = mock(classOf[CasesService]),
       dataCacheConnector = FakeDataCacheConnector,
@@ -147,22 +147,20 @@ class SuccessfulRequestActions(
   parse: PlayBodyParsers,
   operator: Operator,
   c: Case           = Cases.btiCaseExample,
-  reference: String = "test-reference"
 )(implicit ec: ExecutionContext)
     extends RequestActions(
       new SuccessfulCasePermissionsAction(operator),
       new SuccessfulAuthenticatedAction(parse, operator),
-      new ExistingCaseActionFactory(reference, c),
+      new ExistingCaseActionFactory(c),
       new HaveRightPermissionsActionFactory,
       new RequireDataActionFactory(FakeDataCacheConnector),
-      new HaveExistingCaseDataActionFactory(reference, c)
+      new HaveExistingCaseDataActionFactory(c)
     ) {}
 
 class RequestActionsWithPermissions(
   parse: PlayBodyParsers,
   permissions: Set[Permission],
   addViewCasePermission: Boolean = true,
-  reference: String              = "test-reference",
   c: Case                        = Cases.btiCaseExample,
   op: Operator                   = Operator("0", Some("name"))
 )(implicit ec: ExecutionContext)
@@ -176,10 +174,10 @@ class RequestActionsWithPermissions(
         operator    = op,
         permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
       ),
-      new ExistingCaseActionFactory(reference, c),
+      new ExistingCaseActionFactory(c),
       new MustHavePermissionActionFactory,
       new RequireDataActionFactory(FakeDataCacheConnector),
-      new HaveExistingCaseDataActionFactory(reference, c)
+      new HaveExistingCaseDataActionFactory(c)
     ) {}
 
 class RequestActionsWithPermissionsAndData(
@@ -187,7 +185,6 @@ class RequestActionsWithPermissionsAndData(
   permissions: Set[Permission],
   userAnswers: UserAnswers,
   addViewCasePermission: Boolean = true,
-  reference: String              = "test-reference",
   c: Case                        = Cases.btiCaseExample,
   op: Operator                   = Operator("0", Some("name"))
 )(implicit ec: ExecutionContext)
@@ -201,8 +198,8 @@ class RequestActionsWithPermissionsAndData(
         operator    = op,
         permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
       ),
-      new ExistingCaseActionFactory(reference, c),
+      new ExistingCaseActionFactory(c),
       new MustHavePermissionActionFactory,
       new MustHaveDataActionFactory(userAnswers),
-      new HaveExistingCaseDataActionFactory(reference, c)
+      new HaveExistingCaseDataActionFactory(c)
     ) {}

@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
+import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.forms._
 import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
@@ -44,7 +44,6 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private val queueService                       = mock[QueuesService]
   private val eventService                       = mock[EventsService]
   private val fileService                        = mock[FileStoreService]
-  private val operator                           = Operator(id = "id")
   private val event                              = mock[Event]
   private val correspondenceView                 = mock[correspondence_view]
   private val attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment)
@@ -65,16 +64,6 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       event,
       correspondenceView
     )
-
-  private def controller(c: Case) = new CorrespondenceController(
-    new SuccessfulRequestActions(playBodyParsers, operator, c = c),
-    eventService,
-    queueService,
-    fileService,
-    mcc,
-    correspondenceView,
-    realAppConfig
-  )
 
   private def controller(c: Case, permission: Set[Permission]) = new CorrespondenceController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = c),
@@ -122,7 +111,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       ) thenReturn Html("body")
 
       val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
-        .displayCorrespondence("reference")(newFakeGETRequestWithCSRF(app))
+        .displayCorrespondence("reference")(newFakeGETRequestWithCSRF())
 
       status(result) shouldBe Status.OK
     }

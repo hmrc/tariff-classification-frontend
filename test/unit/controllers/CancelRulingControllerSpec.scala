@@ -97,7 +97,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
-          .getCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+          .getCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -109,7 +109,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have right permissions" in {
       val result = await(
         controller(caseWithStatusCOMPLETED, Set.empty)
-          .getCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+          .getCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -123,7 +123,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result = await(
         controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
           .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(
-            newFakePOSTRequestWithCSRF(app, Map("reason" -> "ANNULLED", "note" -> "some-note"))
+            newFakePOSTRequestWithCSRF(Map("reason" -> "ANNULLED", "note" -> "some-note"))
           )
       )
 
@@ -137,7 +137,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result = await(
         controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
           .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(
-            newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
+            newFakePOSTRequestWithCSRF(Map("note" -> "some-note"))
           )
       )
 
@@ -151,7 +151,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result = await(
         controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
           .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(
-            newFakePOSTRequestWithCSRF(app, Map("reason" -> "ANNULLED"))
+            newFakePOSTRequestWithCSRF(Map("reason" -> "ANNULLED"))
           )
       )
 
@@ -164,7 +164,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusCOMPLETED, Set.empty)
-          .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+          .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -181,7 +181,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(
         controller(caseWithStatusCOMPLETED, Set(Permission.CANCEL_CASE))
-          .getCancelRulingEmail(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+          .getCancelRulingEmail(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -193,7 +193,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have right permissions" in {
       val result = await(
         controller(caseWithStatusCOMPLETED, Set.empty)
-          .getCancelRulingEmail(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF(app))
+          .getCancelRulingEmail(caseWithStatusCOMPLETED.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -220,7 +220,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(
         controller(caseWithStatusCOMPLETED).cancelRuling(caseWithStatusCOMPLETED.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -233,7 +233,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have any saved answers" in {
       val result = await(
         controller(caseWithStatusCOMPLETED).cancelRuling(caseWithStatusCOMPLETED.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -249,7 +249,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val result = await(
         controller(caseWithStatusCOMPLETED, Set.empty)
           .postCancelRulingReason(caseWithStatusCOMPLETED.reference)(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withBody(aMultipartBodyWithParams("reason" -> Seq("ANNULLED"), "note" -> Seq("some-note")))
           )
       )
@@ -263,7 +263,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusCANCELLED).confirmCancelRuling(caseWithStatusCANCELLED.reference)(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 

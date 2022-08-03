@@ -27,13 +27,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
 import views.html.{confirm_refer_case, refer_case_email, refer_case_reason}
-
 import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,7 +52,7 @@ class ReferCaseController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with UpscanErrorHandling with WithDefaultFormBinding {
+    with UpscanErrorHandling with WithUnsafeDefaultFormBinding {
 
   private val ReferralCacheKey = "referral"
   private def cacheKey(reference: String) =

@@ -23,11 +23,11 @@ import models.{Case, Permission}
 import play.api.data.Form
 import play.api.mvc._
 import service.CasesService
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.assign_case
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -40,7 +40,7 @@ class AssignCaseController @Inject() (
   val assignCase: assign_case,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction with WithDefaultFormBinding {
+    with RenderCaseAction with WithUnsafeDefaultFormBinding {
 
   private lazy val takeOwnershipForm: Form[Boolean] = TakeOwnerShipForm.form
 

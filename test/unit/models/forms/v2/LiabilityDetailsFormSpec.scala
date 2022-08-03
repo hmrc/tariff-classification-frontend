@@ -16,12 +16,11 @@
 
 package models.forms.v2
 
-import java.time.Instant
+import java.time.{Instant, LocalDate}
 
 import config.AppConfig
 import models._
 import models.forms.CommodityCodeConstraints
-import org.joda.time.{DateTime, DateTimeZone}
 import utils.Cases
 
 class LiabilityDetailsFormSpec extends ModelsBaseSpec {
@@ -84,9 +83,9 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
   private val sampleEmptyCase = Cases.newLiabilityLiveCaseExample
     .copy(caseBoardsFileNumber = Some("SCR/ARD/123"), application = emptyLiabilityOrder)
 
-  private val day   = new DateTime(Instant.EPOCH.getEpochSecond, DateTimeZone.forID("Etc/UTC")).dayOfMonth.getAsText
-  private val month = new DateTime(Instant.EPOCH.getEpochSecond, DateTimeZone.forID("Etc/UTC")).getMonthOfYear.toString
-  private val year  = new DateTime(Instant.EPOCH.getEpochSecond, DateTimeZone.forID("Etc/UTC")).year.getAsText
+  private val day   = LocalDate.ofEpochDay(Instant.EPOCH.getEpochSecond).getDayOfMonth.toString
+  private val month = LocalDate.ofEpochDay(Instant.EPOCH.getEpochSecond).getMonthValue.toString
+  private val year  = LocalDate.ofEpochDay(Instant.EPOCH.getEpochSecond).getYear.toString
 
   private val params = Map(
     "contact.contactName"     -> Seq("contact-name"),

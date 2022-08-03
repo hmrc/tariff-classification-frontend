@@ -19,6 +19,7 @@ package models.forms
 import models.{CommodityCode, ModelsBaseSpec}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.data.Form.FromJsonMaxChars
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import service.CommodityCodeService
 
@@ -33,7 +34,7 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
   "DecisionForm validation" should {
 
-    when(commodityCodeService.find(any())).thenReturn(Some(CommodityCode("code")))
+    when(commodityCodeService.find(any[String])).thenReturn(Some(CommodityCode("code")))
 
     "pass if the commodity code is empty" in {
       assertNoErrors("")
@@ -78,14 +79,13 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
   private def assertNoErrors(commodityCodeValue: String): Unit = {
     val errors =
-      decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue)).errors(bindingCommodityCodeElementId)
+      decisionForm.btiForm().bind(commodityCodeJsValue(commodityCodeValue), FromJsonMaxChars).errors(bindingCommodityCodeElementId)
     errors shouldBe Seq.empty
   }
 
   private def assertOnlyOneError(commodityCodeValue: String, errorMessages: Seq[String]): Unit = {
     val errors =
-      decisionForm.btiForm.bind(commodityCodeJsValue(commodityCodeValue))
-          .errors(bindingCommodityCodeElementId)
+      decisionForm.btiForm().bind(commodityCodeJsValue(commodityCodeValue), FromJsonMaxChars).errors(bindingCommodityCodeElementId)
     errors.map(_.message) shouldBe errorMessages
   }
 

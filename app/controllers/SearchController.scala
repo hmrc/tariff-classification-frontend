@@ -24,13 +24,13 @@ import models.forms.SearchForm
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService, KeywordsService}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.SearchTab.SearchTab
 import views.partials.SearchResult
 import views.{SearchTab, html}
-
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -45,7 +45,7 @@ class SearchController @Inject() (
   val advanced_search: html.advanced_search,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithDefaultFormBinding {
+    with I18nSupport with WithUnsafeDefaultFormBinding {
 
   def search(selectedTab: SearchTab,
     addToSearch: Option[Boolean] = None,

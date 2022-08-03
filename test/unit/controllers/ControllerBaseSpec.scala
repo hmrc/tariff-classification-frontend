@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import play.api.Application
 import play.api.http.HeaderNames.LOCATION
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, AnyContentAsText, Result}
 import play.api.test.CSRFTokenHelper._
@@ -37,16 +36,6 @@ class ControllerBaseSpec extends SpecBase {
       case _                                 => None
     }
 
-  protected def newFakeGETRequestWithCSRF(application: Application): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty).withCSRFToken
-      .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
-
-  protected def newFakePOSTRequestWithCSRF(application: Application, body: String): FakeRequest[AnyContentAsText] =
-    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsText)
-      .withTextBody(body)
-      .withCSRFToken
-      .asInstanceOf[FakeRequest[AnyContentAsText]]
-
   protected def newFakeGETRequestWithCSRF(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty).withCSRFToken
       .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
@@ -58,7 +47,6 @@ class ControllerBaseSpec extends SpecBase {
       .asInstanceOf[FakeRequest[AnyContentAsText]]
 
   protected def newFakePOSTRequestWithCSRF(
-    application: Application,
     encodedBody: Map[String, String] = Map.empty
   ): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsFormUrlEncoded)
@@ -66,11 +54,4 @@ class ControllerBaseSpec extends SpecBase {
       .withCSRFToken
       .asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
 
-  protected def newFakePOSTRequestWithCSRF(
-    encodedBody: Map[String, String]
-  ): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsFormUrlEncoded)
-      .withFormUrlEncodedBody(encodedBody.toSeq: _*)
-      .withCSRFToken
-      .asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
 }

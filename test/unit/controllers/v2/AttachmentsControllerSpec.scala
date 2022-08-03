@@ -24,6 +24,7 @@ import models.request.AuthenticatedRequest
 import models.viewmodels.CaseHeaderViewModel
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
@@ -38,6 +39,7 @@ import views.html.partials.liabilities.attachments_details
 import views.html.v2.remove_attachment
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -84,7 +86,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result: Result = await(
         controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
-          .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app))
+          .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF())
       )
 
       status(result) shouldBe Status.OK
@@ -93,7 +95,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "redirect unauthorised when does not have correct permissions" in {
       val result: Result = await(
         controller(aCase, Set.empty)
-          .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF(app))
+          .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF())
       )
 
       status(result)               shouldBe Status.SEE_OTHER
@@ -111,7 +113,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val result: Result = await(
         controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
           .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "true")
           )
       )
@@ -123,7 +125,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val result: Result = await(
         controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
           .confirmRemoveAttachment(aCase.reference, "reference", "some-file.jpg")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody("state" -> "false")
           )
       )
@@ -137,7 +139,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result: Result = await(
         controller(aCase, Set(Permission.REMOVE_ATTACHMENTS))
-          .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")(newFakePOSTRequestWithCSRF(app))
+          .confirmRemoveAttachment(aCase.reference, "fileId", "some-file.jpg")(newFakePOSTRequestWithCSRF())
       )
 
       status(result) shouldBe Status.OK
@@ -152,9 +154,13 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   }
 
-  private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case) = {
-    when(remove_attachment.apply(any(), any(), anyString(), anyString())(any(), any(), any()))
-      .thenReturn(Html("heading"))
+  private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case): OngoingStubbing[Future[Option[StoredAttachment]]] = {
+    when(remove_attachment.apply(
+      any[CaseHeaderViewModel],
+      any[Form[Boolean]],
+      anyString(),
+      anyString()
+    )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])).thenReturn(Html("heading"))
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))
     when(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(None))

@@ -92,7 +92,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
   "CreateCorrespondenceController" should {
 
     "return OK with correct HTML" in {
-      val result = await(controller(caseWithStatusOPEN).get()(newFakeGETRequestWithCSRF(app)))
+      val result = await(controller(caseWithStatusOPEN).get()(newFakeGETRequestWithCSRF()))
 
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -102,7 +102,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
     "return OK when the user has the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
-          .get()(newFakeGETRequestWithCSRF(app))
+          .get()(newFakeGETRequestWithCSRF())
       )
 
       status(result)          shouldBe Status.OK
@@ -114,7 +114,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
     "return unauthorised when user does not have the necessary permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
-          .get()(newFakeGETRequestWithCSRF(app))
+          .get()(newFakeGETRequestWithCSRF())
       )
 
       status(result)               shouldBe Status.SEE_OTHER
@@ -129,7 +129,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody(
                 "summary"      -> "dummy1",
                 "source"       -> "dummy2",
@@ -148,7 +148,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody(
                 "summary"      -> "",
                 "source"       -> "",
@@ -165,7 +165,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
           .postChoice("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody(
                 "choice" -> "Yes"
               )
@@ -180,7 +180,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
           .postChoice("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
               .withFormUrlEncodedBody(
                 "choice" -> "No"
               )
@@ -197,7 +197,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
           .postChoice("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
           )
       )
       status(result) shouldBe Status.OK
@@ -212,7 +212,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
           .postChoice("reference")(
-            newFakePOSTRequestWithCSRF(app)
+            newFakePOSTRequestWithCSRF()
           )
       )
       status(result) shouldBe Status.OK
@@ -228,7 +228,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         .willReturn(successful(Some(Cases.correspondenceCaseExample)))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES, Permission.RELEASE_CASE))
-          .displayQuestion("reference")(newFakePOSTRequestWithCSRF(app))
+          .displayQuestion("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result) shouldBe Status.OK
@@ -242,7 +242,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         .willReturn(successful(Some(Cases.correspondenceCaseExample.copy(queueId = None))))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
-          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)          shouldBe Status.OK
@@ -260,7 +260,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
-          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)          shouldBe Status.OK
@@ -278,7 +278,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
-          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)          shouldBe Status.OK
@@ -296,7 +296,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
-          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF(app))
+          .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)          shouldBe Status.OK
@@ -308,17 +308,16 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       "return 200 and load the editLiability form" in {
         val result = await(
           controller(caseWithStatusOPEN, Set(Permission.EDIT_CORRESPONDENCE))
-            .editCorrespondence("reference")(newFakePOSTRequestWithCSRF(app))
+            .editCorrespondence("reference")(newFakePOSTRequestWithCSRF())
         )
         status(result) shouldBe OK
       }
 
       "return unauthorised if the user does not have the right permissions" in {
 
-        val fakeReq = newFakeGETRequestWithCSRF(app)
         val result = await(
           controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
-            .editCorrespondence("reference")(newFakePOSTRequestWithCSRF(app))
+            .editCorrespondence("reference")(newFakePOSTRequestWithCSRF())
         )
         status(result)               shouldBe SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
@@ -334,7 +333,6 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
-          app,
           Map(
             "summary"             -> "A short summary",
             "detailedDescription" -> "A detailed desc"
@@ -359,7 +357,6 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
-          app,
           Map(
             "summary"             -> "",
             "detailedDescription" -> "A detailed desc"
@@ -380,17 +377,16 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       "return 200 and load the editLiability form" in {
         val result = await(
           controller(caseWithStatusOPEN, Set(Permission.EDIT_CORRESPONDENCE))
-            .editCorrespondenceContact("reference")(newFakePOSTRequestWithCSRF(app))
+            .editCorrespondenceContact("reference")(newFakePOSTRequestWithCSRF())
         )
         status(result) shouldBe OK
       }
 
       "return unauthorised if the user does not have the right permissions" in {
 
-        val fakeReq = newFakeGETRequestWithCSRF(app)
         val result = await(
           controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
-            .editCorrespondenceContact("reference")(newFakePOSTRequestWithCSRF(app))
+            .editCorrespondenceContact("reference")(newFakePOSTRequestWithCSRF())
         )
         status(result)               shouldBe SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
@@ -406,7 +402,6 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
-          app,
           Map(
             "correspondenceStarter" -> "Starter",
             "name"                  -> "a name",
@@ -435,7 +430,6 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
-          app,
           Map(
             "correspondenceStarter" -> "",
             "name"                  -> "a name",

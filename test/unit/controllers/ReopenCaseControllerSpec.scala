@@ -75,7 +75,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result: Result = await(
         controller(btiCaseWithStatusREFERRED)
-          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)     shouldBe Status.SEE_OTHER
@@ -88,7 +88,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result: Result = await(
         controller(btiCaseWithStatusSUSPENDED)
-          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)     shouldBe Status.SEE_OTHER
@@ -101,7 +101,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result: Result = await(
         controller(liabilityCaseWithStatusSuspended)
-          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)     shouldBe Status.SEE_OTHER
@@ -114,7 +114,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
       val result: Result = await(
         controller(btiCaseWithStatusREFERRED, Set(Permission.REOPEN_CASE))
-          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)     shouldBe Status.SEE_OTHER
@@ -124,7 +124,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to unauthorised when user does not have the right permissions" in {
       val result: Result = await(
         controller(btiCaseWithStatusREFERRED, Set.empty)
-          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF(app))
+          .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF())
       )
 
       status(result)               shouldBe Status.SEE_OTHER

@@ -92,7 +92,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.SUSPEND_CASE))
-          .getSuspendCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getSuspendCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -104,7 +104,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .getSuspendCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getSuspendCaseReason(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -118,7 +118,6 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val result = await(
         controller(caseWithStatusOPEN).postSuspendCaseReason(caseWithStatusOPEN.reference)(
           newFakePOSTRequestWithCSRF(
-            app,
             Map("note" -> "some-note")
           )
         )
@@ -133,7 +132,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "display error page when note is missing" in {
       val result = await(
         controller(caseWithStatusOPEN).postSuspendCaseReason(caseWithStatusOPEN.reference)(
-          newFakePOSTRequestWithCSRF(app, Map.empty[String, String])
+          newFakePOSTRequestWithCSRF()
         )
       )
 
@@ -146,7 +145,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).postSuspendCaseReason(caseWithStatusNEW.reference)(
-          newFakePOSTRequestWithCSRF(app, Map("note" -> "some-note"))
+          newFakePOSTRequestWithCSRF(Map("note" -> "some-note"))
         )
       )
 
@@ -164,7 +163,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.SUSPEND_CASE))
-          .getSuspendCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getSuspendCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)        shouldBe Status.OK
@@ -176,7 +175,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "redirect to unauthorised when the user does not have the right permissions" in {
       val result = await(
         controller(caseWithStatusOPEN, Set.empty)
-          .getSuspendCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF(app))
+          .getSuspendCaseEmail(caseWithStatusOPEN.reference)(newFakeGETRequestWithCSRF())
       )
 
       status(result)           shouldBe Status.SEE_OTHER
@@ -202,7 +201,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result = await(
         controller(caseWithStatusOPEN).suspendCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -215,7 +214,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "redirect to unauthorised when the user does not have any saved answers" in {
       val result = await(
         controller(caseWithStatusOPEN).suspendCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -230,7 +229,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).suspendCase(caseWithStatusOPEN.reference, "id")(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 
@@ -243,7 +242,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     "return OK and HTML content type" in {
       val result = await(
         controller(caseWithStatusSUSPENDED).confirmSuspendCase(caseWithStatusSUSPENDED.reference)(
-          newFakeGETRequestWithCSRF(app)
+          newFakeGETRequestWithCSRF()
         )
       )
 

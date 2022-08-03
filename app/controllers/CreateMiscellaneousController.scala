@@ -17,7 +17,6 @@
 package controllers
 
 import config.AppConfig
-
 import javax.inject.Inject
 import models.forms.v2.{MiscDetailsForm, MiscellaneousForm}
 import models.request.AuthenticatedRequest
@@ -28,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{MessagesControllerComponents, _}
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{case_not_found, release_case, resource_not_found}
 import views.html.v2.{confirmation_case_creation, create_misc, misc_details_edit}
@@ -50,7 +49,7 @@ class CreateMiscellaneousController @Inject() (
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithDefaultFormBinding {
+    with I18nSupport with WithUnsafeDefaultFormBinding {
 
   private val form: Form[MiscApplication] = MiscellaneousForm.newMiscForm
 

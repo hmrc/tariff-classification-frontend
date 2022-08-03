@@ -27,13 +27,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
-import uk.gov.hmrc.play.bootstrap.controller.WithDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
 import views.html.{cancel_ruling_email, cancel_ruling_reason, confirm_cancel_ruling}
-
 import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,7 +52,7 @@ class CancelRulingController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with UpscanErrorHandling with WithDefaultFormBinding {
+    with UpscanErrorHandling with WithUnsafeDefaultFormBinding {
 
   private val CancellationCacheKey = "cancellation"
   private def cacheKey(reference: String) =
