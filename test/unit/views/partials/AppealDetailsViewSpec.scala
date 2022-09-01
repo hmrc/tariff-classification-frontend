@@ -99,7 +99,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render Add Appeal if user has permission APPEAL_CASE" in {
       // Given
-      val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+      val c         = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
       val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
@@ -110,7 +110,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Not render Add Appeal if user does not have permission" in {
       // Given
-      val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+      val c         = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
       val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
@@ -151,7 +151,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Render Extended Use Change if user has permission EXTENDED_USE" in {
       // Given
-      val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+      val c         = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
       val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When
@@ -162,7 +162,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
     "Not render Extended Use Change if user does not have permission" in {
       // Given
-      val c = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
+      val c         = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
       val appealTab = AppealTabViewModel.fromCase(c).get
 
       // When

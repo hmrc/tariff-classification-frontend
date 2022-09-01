@@ -145,7 +145,5 @@ class RejectCaseController @Inject() (
   def confirmRejectCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(confirm_rejected(request.`case`))
-    }
+      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_rejected(request.`case`)))
 }

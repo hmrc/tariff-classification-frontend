@@ -562,9 +562,9 @@ class PermissionTest extends ModelsBaseSpec {
 
     "contain 'Edit Correspondence'" in {
       val permission = Permission.EDIT_CORRESPONDENCE
-      val name = "EDIT_CORRESPONDENCE"
+      val name       = "EDIT_CORRESPONDENCE"
 
-      permission.name shouldBe name
+      permission.name       shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
       permission.appliesTo(caseUnassigned, readOnly)               shouldBe false
@@ -575,9 +575,9 @@ class PermissionTest extends ModelsBaseSpec {
 
     "contain 'Edit Miscellaneous'" in {
       val permission = Permission.EDIT_MISCELLANEOUS
-      val name = "EDIT_MISCELLANEOUS"
+      val name       = "EDIT_MISCELLANEOUS"
 
-      permission.name shouldBe name
+      permission.name       shouldBe name
       Permission.from(name) shouldBe Some(permission)
 
       permission.appliesTo(caseUnassigned, readOnly)               shouldBe false
@@ -588,7 +588,7 @@ class PermissionTest extends ModelsBaseSpec {
 
     "contain 'Manage Users'" in {
       val permission = Permission.MANAGE_USERS
-      val name = "MANAGE_USERS"
+      val name       = "MANAGE_USERS"
 
       permission.name       shouldBe name
       Permission.from(name) shouldBe Some(permission)

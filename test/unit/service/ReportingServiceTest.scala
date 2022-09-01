@@ -49,7 +49,10 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
       ) willReturn Future.successful(Paged.empty[Map[String, ReportResultField[_]]])
 
       await(
-        service.caseReport(CaseReport("ATaR Summary Report", fields = NonEmptySeq.one(ReportField.Reference)), SearchPagination())
+        service.caseReport(
+          CaseReport("ATaR Summary Report", fields = NonEmptySeq.one(ReportField.Reference)),
+          SearchPagination()
+        )
       ) shouldBe Paged.empty
     }
   }

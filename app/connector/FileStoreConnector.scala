@@ -80,7 +80,11 @@ class FileStoreConnector @Inject() (
   def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
     withMetricsTimerAsync("initiate-file-upload") { _ =>
       http
-        .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](s"${appConfig.fileStoreUrl}/file/initiate", request, headers = http.addAuth)
+        .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](
+          s"${appConfig.fileStoreUrl}/file/initiate",
+          request,
+          headers = http.addAuth
+        )
     }
 
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileMetadata] =
@@ -123,6 +127,8 @@ class FileStoreConnector @Inject() (
     }
 
   def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
-    withMetricsTimerAsync("delete-file")(_ => http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId", headers = http.addAuth))
+    withMetricsTimerAsync("delete-file")(_ =>
+      http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId", headers = http.addAuth)
+    )
 
 }

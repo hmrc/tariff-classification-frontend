@@ -43,15 +43,11 @@ class OperatorDashboardController @Inject() (
       for {
         casesByAssignee <- casesService.getCasesByAssignee(request.operator, NoPagination())
         casesByQueue    <- casesService.countCasesByQueue
-        totalCasesAssignedToMe = casesByAssignee.results.count(c =>
-          c.status == CaseStatus.OPEN
-        )
+        totalCasesAssignedToMe = casesByAssignee.results.count(c => c.status == CaseStatus.OPEN)
         referredCasesAssignedToMe = casesByAssignee.results.count(c =>
           c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED
         )
-        completedCasesAssignedToMe = casesByAssignee.results.count(c =>
-          c.status == CaseStatus.COMPLETED
-        )
+        completedCasesAssignedToMe = casesByAssignee.results.count(c => c.status == CaseStatus.COMPLETED)
       } yield Ok(
         operator_dashboard_classification(
           casesByQueue,

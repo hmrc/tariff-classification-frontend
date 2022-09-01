@@ -41,8 +41,8 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val casesService = mock[CasesService]
   private val fileService  = mock[FileStoreService]
 
-  private val cancelRulingReason = injector.instanceOf[cancel_ruling_reason]
-  private val cancelRulingEmail = injector.instanceOf[cancel_ruling_email]
+  private val cancelRulingReason  = injector.instanceOf[cancel_ruling_reason]
+  private val cancelRulingEmail   = injector.instanceOf[cancel_ruling_email]
   private val confirmCancelRuling = injector.instanceOf[confirm_cancel_ruling]
 
   private val caseWithStatusCOMPLETED = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
@@ -103,7 +103,9 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.cancelled.reason.heading", caseWithStatusCOMPLETED.application.goodsName))
+      bodyOf(result) should include(
+        messages("change_case_status.cancelled.reason.heading", caseWithStatusCOMPLETED.application.goodsName)
+      )
     }
 
     "redirect to unauthorised when the user does not have right permissions" in {
@@ -187,7 +189,9 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.cancelled.email.heading", caseWithStatusCOMPLETED.application.goodsName))
+      bodyOf(result) should include(
+        messages("change_case_status.cancelled.email.heading", caseWithStatusCOMPLETED.application.goodsName)
+      )
     }
 
     "redirect to unauthorised when the user does not have right permissions" in {

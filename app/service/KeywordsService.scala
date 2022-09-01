@@ -46,9 +46,9 @@ class KeywordsService @Inject() (
     .executor(mat.executionContext)
     .expireAfterWrite(config.keywordsCacheExpiration)
     .maximumSize(1)
-    .buildAsyncFuture[String, Seq[Keyword]]{_ =>
-    connector.findAllKeywords(NoPagination())(cacheHeaderCarrier).map(_.results.filter(_.approved))
-  }
+    .buildAsyncFuture[String, Seq[Keyword]] { _ =>
+      connector.findAllKeywords(NoPagination())(cacheHeaderCarrier).map(_.results.filter(_.approved))
+    }
 
   def addKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     if (c.keywords.contains(keyword.toUpperCase)) {

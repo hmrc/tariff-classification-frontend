@@ -34,6 +34,9 @@ class RulingConnector @Inject() (
 
   def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] =
     withMetricsTimerAsync("notify-rulings-frontend") { _ =>
-      http.POSTEmpty[Unit](s"${configuration.rulingUrl}/search-for-advance-tariff-rulings/ruling/$id", headers = http.addAuth)
+      http.POSTEmpty[Unit](
+        s"${configuration.rulingUrl}/search-for-advance-tariff-rulings/ruling/$id",
+        headers = http.addAuth
+      )
     }
 }

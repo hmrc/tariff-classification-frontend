@@ -56,22 +56,22 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   def controller: AttachmentsController =
     new AttachmentsController(
-      verify                   = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
-      casesService             = casesService,
-      mcc                      = mcc,
-      remove_attachment        = remove_attachment,
-      appConfig                = realAppConfig,
-      mat                      = mat
+      verify            = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
+      casesService      = casesService,
+      mcc               = mcc,
+      remove_attachment = remove_attachment,
+      appConfig         = realAppConfig,
+      mat               = mat
     )
 
   def controller(requestCase: Case, permission: Set[Permission]): AttachmentsController =
     new AttachmentsController(
-      verify                   = new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
-      casesService             = casesService,
-      mcc                      = mcc,
-      remove_attachment        = remove_attachment,
-      appConfig                = realAppConfig,
-      mat                      = mat
+      verify            = new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+      casesService      = casesService,
+      mcc               = mcc,
+      remove_attachment = remove_attachment,
+      appConfig         = realAppConfig,
+      mat               = mat
     )
 
   override protected def beforeEach(): Unit =

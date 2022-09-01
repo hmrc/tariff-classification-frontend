@@ -30,7 +30,10 @@ class ReportButtonsViewSpec extends ViewSpec {
     val summaryReport =
       SummaryReport("Summary report", groupBy = NonEmptySeq.one(ReportField.Status), sortBy = ReportField.Status)
     val caseReport =
-      CaseReport("Case report", fields = NonEmptySeq.of(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays))
+      CaseReport(
+        "Case report",
+        fields = NonEmptySeq.of(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays)
+      )
 
     "render with the specified ID" in {
       val doc = view(reportButtons(summaryReport, "test-report"))

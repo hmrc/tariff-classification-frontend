@@ -27,7 +27,7 @@ object SampleSendForm {
 
   private def oneOf(values: SampleSend.ValueSet): Constraint[String] = Constraint("constraints.sample-sender") {
     case s: String if SampleSend.values.exists(_.toString == s) => Valid
-    case _                                                        => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
+    case _                                                      => Invalid(s"Must be one of [${values.toSeq.mkString(", ")}]")
   }
 
   private val mapping: Mapping[Option[SampleSend]] = Forms.mapping[Option[SampleSend], String](

@@ -42,21 +42,22 @@ class ViewAttachmentController @Inject() (
     with I18nSupport with WithUnsafeDefaultFormBinding {
 
   def get(reference: String, id: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      fileService.getFileMetadata(id).flatMap {
-        case meta @ Some(fileSubmitted: FileMetadata) =>
-          val fileStoreResponse = for {
-            url     <- OptionT.fromOption[Future](fileSubmitted.url)
-            content <- OptionT(fileService.downloadFile(url))
-          } yield Ok
-            .streamed(content, None, fileSubmitted.mimeType)
-            .withHeaders(
-              "Content-Disposition" -> s"filename=${fileSubmitted.fileName}"
-            )
-          fileStoreResponse.getOrElse(NotFound(view_attachment_unavailable(meta)))
+    (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.VIEW_CASES))
+      .async { implicit request =>
+        fileService.getFileMetadata(id).flatMap {
+          case meta @ Some(fileSubmitted: FileMetadata) =>
+            val fileStoreResponse = for {
+              url     <- OptionT.fromOption[Future](fileSubmitted.url)
+              content <- OptionT(fileService.downloadFile(url))
+            } yield Ok
+              .streamed(content, None, fileSubmitted.mimeType)
+              .withHeaders(
+                "Content-Disposition" -> s"filename=${fileSubmitted.fileName}"
+              )
+            fileStoreResponse.getOrElse(NotFound(view_attachment_unavailable(meta)))
 
-        case None =>
-          Future.successful(NotFound(view_attachment_unavailable(None)))
+          case None =>
+            Future.successful(NotFound(view_attachment_unavailable(None)))
+        }
       }
-    }
 }

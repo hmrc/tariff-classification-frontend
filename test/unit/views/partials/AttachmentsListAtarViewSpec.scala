@@ -32,9 +32,9 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Render Nothing given no attachments" in {
       // When
-      val c = Cases.btiCaseExample
+      val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq.empty)
-      val doc = view(attachments_list_atar("MODULE", attachments))
+      val doc         = view(attachments_list_atar("MODULE", attachments))
 
       // Then
       doc shouldNot containElementWithID("MODULE-table")
@@ -50,7 +50,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
         timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
-      val c = Cases.btiCaseExample
+      val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
       // When
@@ -70,7 +70,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
         operator = Some(Operator("id", Some("operator name")))
       )
 
-      val c = Cases.btiCaseExample
+      val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
       // When
@@ -94,7 +94,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
         fileName = Some("fileName")
       )
 
-      val c = Cases.btiCaseExample
+      val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment, attachment_trader))
 
       // When
@@ -119,7 +119,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
         operator = Some(Operator("id", None))
       )
 
-      val c = Cases.btiCaseExample
+      val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
       // When
@@ -134,9 +134,15 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Status should display PUBLISHED if the file is public" in {
       val attachment = Cases.storedAttachment
-        .copy(id = "FILE_ID", public = true, fileName = Some("name"), url = Some("url"), scanStatus = Some(ScanStatus.READY))
+        .copy(
+          id         = "FILE_ID",
+          public     = true,
+          fileName   = Some("name"),
+          url        = Some("url"),
+          scanStatus = Some(ScanStatus.READY)
+        )
 
-      val c = Cases.btiCaseExample
+      val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
       // When
@@ -148,9 +154,15 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Status should display CONFIDENTIAL if the file is not public" in {
       val attachment = Cases.storedAttachment
-        .copy(id = "FILE_ID", public = false, fileName = Some("name"), url = Some("url"), scanStatus = Some(ScanStatus.READY))
+        .copy(
+          id         = "FILE_ID",
+          public     = false,
+          fileName   = Some("name"),
+          url        = Some("url"),
+          scanStatus = Some(ScanStatus.READY)
+        )
 
-      val c = Cases.btiCaseExample
+      val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
       // When
@@ -171,7 +183,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
           scanStatus = Some(ScanStatus.FAILED)
         )
 
-      val c = Cases.btiCaseExample
+      val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
       // When

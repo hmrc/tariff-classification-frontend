@@ -27,10 +27,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class ManageKeywordsService @Inject()(auditService: AuditService, connector: BindingTariffClassificationConnector) {
+class ManageKeywordsService @Inject() (auditService: AuditService, connector: BindingTariffClassificationConnector) {
 
   def createKeyword(keyword: Keyword, user: Operator, keywordStatusAction: ChangeKeywordStatusAction)(
-    implicit hc: HeaderCarrier): Future[Keyword] =
+    implicit hc: HeaderCarrier
+  ): Future[Keyword] =
     for {
       keywordCreated <- connector.createKeyword(keyword)
       _ = auditService.auditManagerKeywordCreated(user, keywordCreated, keywordStatusAction)
@@ -46,7 +47,8 @@ class ManageKeywordsService @Inject()(auditService: AuditService, connector: Bin
     connector.deleteKeyword(keyword).map(_ => auditService.auditManagerKeywordDeleted(user, keyword))
 
   def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword, user: Operator)(
-    implicit hc: HeaderCarrier): Future[Keyword] =
+    implicit hc: HeaderCarrier
+  ): Future[Keyword] =
     for {
       keywordRenamed <- connector
                          .deleteKeyword(keywordToDelete)

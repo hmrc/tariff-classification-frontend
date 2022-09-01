@@ -51,7 +51,8 @@ class CasesService_UpdateSampleWhoSendingSpec extends ServiceSpecBase with Befor
       reportingService,
       pdfService,
       connector,
-      rulingConnector)(global, realAppConfig)
+      rulingConnector
+    )(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

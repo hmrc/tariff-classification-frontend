@@ -30,7 +30,7 @@ class CancelRulingButtonViewSpec extends ViewSpec {
   "Cancel Ruling Button" should {
 
     "render button for OPEN case" in {
-      val c = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
+      val c         = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
       val rulingTab = RulingTabViewModel.fromCase(c)
 
       // When
@@ -45,7 +45,7 @@ class CancelRulingButtonViewSpec extends ViewSpec {
     }
 
     "not render button for other case status" in {
-      val c = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+      val c         = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
       val rulingTab = RulingTabViewModel.fromCase(c)
 
       // When
@@ -56,7 +56,7 @@ class CancelRulingButtonViewSpec extends ViewSpec {
     }
 
     "not render button for expired rulings" in {
-      val c = Cases.btiCaseWithExpiredRuling
+      val c         = Cases.btiCaseWithExpiredRuling
       val rulingTab = RulingTabViewModel.fromCase(c)
 
       // When

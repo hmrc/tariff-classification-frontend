@@ -45,7 +45,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     new LiabilityDetailsForm(new CommodityCodeConstraints(), realAppConfig)
 
   private val confirmCompleteCase = injector.instanceOf[confirm_complete_case]
-  private val completeCase = injector.instanceOf[complete_case]
+  private val completeCase        = injector.instanceOf[complete_case]
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",

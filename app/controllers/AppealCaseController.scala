@@ -120,8 +120,7 @@ class AppealCaseController @Inject() (
           statusForm
             .bindFromRequest()
             .fold(
-              formWithErrors =>
-                successful(Ok(appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
+              formWithErrors => successful(Ok(appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
               appealStatus =>
                 caseService
                   .addAppeal(`case`, appealTypeFound, appealStatus, request.operator)

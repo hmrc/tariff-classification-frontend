@@ -52,7 +52,13 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type" in {
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
+          .getCasesByAllQueues(
+            any[Seq[Queue]],
+            any[Pagination],
+            any[Set[ApplicationType]],
+            any[Set[CaseStatus]],
+            any[String]
+          )(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -76,7 +82,13 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type for ATaR tab" in {
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
+          .getCasesByAllQueues(
+            any[Seq[Queue]],
+            any[Pagination],
+            any[Set[ApplicationType]],
+            any[Set[CaseStatus]],
+            any[String]
+          )(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -105,7 +117,13 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type for Liability tab" in {
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
+          .getCasesByAllQueues(
+            any[Seq[Queue]],
+            any[Pagination],
+            any[Set[ApplicationType]],
+            any[Set[CaseStatus]],
+            any[String]
+          )(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -118,7 +136,8 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       val result = await(
-        controller(Set(Permission.VIEW_CASES, Permission.VIEW_QUEUE_CASES, Permission.CREATE_CASES)).displayAllOpenCases(LiabilitiesTab)(fakeRequest)
+        controller(Set(Permission.VIEW_CASES, Permission.VIEW_QUEUE_CASES, Permission.CREATE_CASES))
+          .displayAllOpenCases(LiabilitiesTab)(fakeRequest)
       )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
@@ -129,7 +148,13 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
+          .getCasesByAllQueues(
+            any[Seq[Queue]],
+            any[Pagination],
+            any[Set[ApplicationType]],
+            any[Set[CaseStatus]],
+            any[String]
+          )(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -156,7 +181,13 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type for Miscellaneous tab" in {
       given(
         casesService
-          .getCasesByAllQueues(any[Seq[Queue]], any[Pagination], any[Set[ApplicationType]], any[Set[CaseStatus]], any[String])(any[HeaderCarrier])
+          .getCasesByAllQueues(
+            any[Seq[Queue]],
+            any[Pagination],
+            any[Set[ApplicationType]],
+            any[Set[CaseStatus]],
+            any[String]
+          )(any[HeaderCarrier])
       ).willReturn(
         Paged(
           Seq(
@@ -170,7 +201,10 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
           )
         )
       )
-      val result = await(controller(Set(Permission.VIEW_CASES, Permission.VIEW_QUEUE_CASES)).displayAllOpenCases(MiscellaneousTab)(fakeRequest))
+      val result = await(
+        controller(Set(Permission.VIEW_CASES, Permission.VIEW_QUEUE_CASES))
+          .displayAllOpenCases(MiscellaneousTab)(fakeRequest)
+      )
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")

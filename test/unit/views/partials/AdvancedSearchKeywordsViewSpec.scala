@@ -64,23 +64,21 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
         )
       )
 
-
-
       // When
       val doc = view(advanced_search_keywords(form, Seq.empty))
       // Then the table should contain the keyword
-      doc                                                              should containElementWithID("advanced_search_keywords-list")
-      doc                                                              should containElementWithID("advanced_search_keywords-list-row-1")
-      doc                                                              should containElementWithID("advanced_search_keywords-list-row-1-input")
+      doc                                                             should containElementWithID("advanced_search_keywords-list")
+      doc                                                             should containElementWithID("advanced_search_keywords-list-row-1")
+      doc                                                             should containElementWithID("advanced_search_keywords-list-row-1-input")
       doc.getElementById("advanced_search_keywords-list-row-1-input") should haveTag("input")
       doc.getElementById("advanced_search_keywords-list-row-1-input") should haveAttribute("value", "K1")
       doc.getElementById("advanced_search_keywords-list-row-1-input") should haveAttribute("name", "keyword[1]")
       doc.getElementById("advanced_search_keywords-list-row-1-input") should haveAttribute("type", "hidden")
 
-      doc                                                              should containElementWithID("advanced_search_keywords-list-row-1-label")
+      doc                                                             should containElementWithID("advanced_search_keywords-list-row-1-label")
       doc.getElementById("advanced_search_keywords-list-row-1-label") should containText("K1")
 
-      doc                                                                      should containElementWithID("advanced_search_keywords-list-row-1-remove_button")
+      doc                                                                     should containElementWithID("advanced_search_keywords-list-row-1-remove_button")
       doc.getElementById("advanced_search_keywords-list-row-1-remove_button") should haveAttribute("type", "link")
       doc.getElementById("advanced_search_keywords-list-row-1-remove_button") should haveAttribute(
         "onclick",

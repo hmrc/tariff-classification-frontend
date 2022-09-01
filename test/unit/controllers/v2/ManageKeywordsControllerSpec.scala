@@ -42,8 +42,13 @@ import scala.concurrent.Future.successful
 class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val keyword: Keyword = Keyword("Scarf", approved = true)
-  val keywords = Seq(Keyword("SHOES", approved = true), Keyword("HATS", approved = true), Keyword("SHIRTS", approved = true), Keyword("TEST"))
-  val keywordForm: Form[String] = KeywordForm.formWithAuto(keywords.map(_.name))
+  val keywords = Seq(
+    Keyword("SHOES", approved  = true),
+    Keyword("HATS", approved   = true),
+    Keyword("SHIRTS", approved = true),
+    Keyword("TEST")
+  )
+  val keywordForm: Form[String]                     = KeywordForm.formWithAuto(keywords.map(_.name))
   val editKeywordForm: EditApprovedKeywordForm.type = EditApprovedKeywordForm
   val caseKeyword: CaseKeyword = CaseKeyword(
     Keyword("BOOK"),
@@ -51,18 +56,18 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   )
   val dummyCase: Case = Cases.caseAssignedExample
 
-  private lazy val manage_keywords_view = injector.instanceOf[manage_keywords_view]
-  private lazy val confirm_keyword_view = injector.instanceOf[confirm_keyword_created]
-  private lazy val new_keyword_view = injector.instanceOf[new_keyword_view]
-  private lazy val edit_approved_keyword_view = injector.instanceOf[edit_approved_keywords]
+  private lazy val manage_keywords_view              = injector.instanceOf[manage_keywords_view]
+  private lazy val confirm_keyword_view              = injector.instanceOf[confirm_keyword_created]
+  private lazy val new_keyword_view                  = injector.instanceOf[new_keyword_view]
+  private lazy val edit_approved_keyword_view        = injector.instanceOf[edit_approved_keywords]
   private lazy val confirmation_keyword_deleted_view = injector.instanceOf[confirmation_keyword_deleted]
   private lazy val confirmation_keyword_renamed_view = injector.instanceOf[confirmation_keyword_renamed]
-  private lazy val keywordService = mock[ManageKeywordsService]
-  private lazy val keywordChangeConfirm    = injector.instanceOf[confirm_keyword_status]
-  private lazy val changeKeywordStatusView = injector.instanceOf[change_keyword_status_view]
-  private lazy val caseNotFound = injector.instanceOf[case_not_found]
-  private val casesService = mock[CasesService]
-  val form: Form[String] = ChangeKeywordStatusForm.form
+  private lazy val keywordService                    = mock[ManageKeywordsService]
+  private lazy val keywordChangeConfirm              = injector.instanceOf[confirm_keyword_status]
+  private lazy val changeKeywordStatusView           = injector.instanceOf[change_keyword_status_view]
+  private lazy val caseNotFound                      = injector.instanceOf[case_not_found]
+  private val casesService                           = mock[CasesService]
+  val form: Form[String]                             = ChangeKeywordStatusForm.form
 
   override protected def beforeEach(): Unit =
     reset(
@@ -95,15 +100,15 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         .willReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(newFakeGETRequestWithCSRF()))
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
 
     }
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).displayManageKeywords()(fakeRequest))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
@@ -118,14 +123,14 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         .willReturn(Future(Paged(keywords)))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).newKeyword()(newFakeGETRequestWithCSRF()))
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
     }
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).newKeyword()(fakeRequest))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
     }
   }
@@ -137,8 +142,9 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.createKeyword(any[Keyword], any[Operator], any[ChangeKeywordStatusAction])(any[HeaderCarrier]))
-        .willReturn(Future(Keyword("newkeyword", approved = true)))
+      given(
+        keywordService.createKeyword(any[Keyword], any[Operator], any[ChangeKeywordStatusAction])(any[HeaderCarrier])
+      ).willReturn(Future(Keyword("newkeyword", approved = true)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -154,7 +160,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "newkeyword"))))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
     }
 
@@ -167,9 +173,9 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "")))
       )
 
-      status(result) shouldBe Status.BAD_REQUEST
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      status(result)          shouldBe Status.BAD_REQUEST
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include(messages("management.create-keyword.error.empty.keyword"))
 
@@ -184,9 +190,9 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name)))
       )
 
-      status(result) shouldBe Status.BAD_REQUEST
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      status(result)          shouldBe Status.BAD_REQUEST
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include(messages("management.create-keyword.error.duplicate.keyword"))
     }
@@ -200,27 +206,37 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.createKeyword(any[Keyword], any[Operator], any[ChangeKeywordStatusAction])(any[HeaderCarrier]))
-        .willReturn(Future(Keyword("updatedKeyword", approved = true)))
+      given(
+        keywordService.createKeyword(any[Keyword], any[Operator], any[ChangeKeywordStatusAction])(any[HeaderCarrier])
+      ).willReturn(Future(Keyword("updatedKeyword", approved = true)))
 
       given(casesService.getOne(any[String])(any[HeaderCarrier]))
         .willReturn(Future(Some(dummyCase)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
-          .approveOrRejectKeyword("updatedKeyword", "12345678")(newFakePOSTRequestWithCSRF(Map("keyword-status" -> "APPROVE"))))
+          .approveOrRejectKeyword("updatedKeyword", "12345678")(
+            newFakePOSTRequestWithCSRF(Map("keyword-status" -> "APPROVE"))
+          )
+      )
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(
-        controllers.v2.routes.ManageKeywordsController.displayKeywordChangeConfirmation(
-          "updatedKeyword",
-          keyword.approved,
-          "Laptop"
-        ).path())
+        controllers.v2.routes.ManageKeywordsController
+          .displayKeywordChangeConfirmation(
+            "updatedKeyword",
+            keyword.approved,
+            "Laptop"
+          )
+          .path()
+      )
 
     }
 
     "return unauthorised with no permissions" in {
-      val result = await(controller(Set()).approveOrRejectKeyword("kword", "12345678")(newFakePOSTRequestWithCSRF(Map("keyword" -> "kword"))))
+      val result = await(
+        controller(Set())
+          .approveOrRejectKeyword("kword", "12345678")(newFakePOSTRequestWithCSRF(Map("keyword" -> "kword")))
+      )
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
     }
@@ -231,20 +247,19 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 200 OK and HTML content type" in {
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayConfirmKeyword("KEYWORD")(fakeRequest))
-      status(result) shouldBe Status.OK
+      status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
+      charset(result)     shouldBe Some("utf-8")
 
     }
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).displayConfirmKeyword("KEYWORD")(fakeRequest))
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
   }
-
 
   "Change keyword status" should {
     val aCase = Cases.btiCaseExample.copy(reference = "reference")
@@ -299,7 +314,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         controller(Set(Permission.MANAGE_USERS)).displayKeywordChangeConfirmation(
           keyword.name,
           keyword.approved,
-          "goodsName",
+          "goodsName"
         )(fakeRequest)
       )
       status(result)      shouldBe Status.OK
@@ -372,30 +387,33 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   "postEditApprovedKeywords" should {
 
     "return Bad request when no action has selected" in {
-        val result = await(
-            controller(Set(Permission.MANAGE_USERS))
-            .postEditApprovedKeywords("oldKeyword")(newFakePOSTRequestWithCSRF(Map("action" -> "", "" -> "")))
-          )
-          status(result) shouldBe Status.BAD_REQUEST
-          contentAsString(result) should include(messages("error.empty.action"))
+      val result = await(
+        controller(Set(Permission.MANAGE_USERS))
+          .postEditApprovedKeywords("oldKeyword")(newFakePOSTRequestWithCSRF(Map("action" -> "", "" -> "")))
+      )
+      status(result)          shouldBe Status.BAD_REQUEST
+      contentAsString(result) should include(messages("error.empty.action"))
     }
 
     "render errors when update keyword is not entered for renaming" in {
       val result = await(
-          controller(Set(Permission.MANAGE_USERS))
+        controller(Set(Permission.MANAGE_USERS))
           .postEditApprovedKeywords("oldKeyword")(
-               newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> ""))
+            newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> ""))
           )
       )
       status(result) shouldBe Status.BAD_REQUEST
-      contentAsString(result) should include(messages("management.manage-keywords.edit-approved-keywords.empty.keyword.renamed"))
+      contentAsString(result) should include(
+        messages("management.manage-keywords.edit-approved-keywords.empty.keyword.renamed")
+      )
     }
 
     "delete a keyword when keyword has been selected and found" in {
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.deleteKeyword(any[Keyword], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful((): Unit))
+      given(keywordService.deleteKeyword(any[Keyword], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future.successful((): Unit))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -416,7 +434,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier])).willReturn(Future(newKeyword))
+      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future(newKeyword))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -424,7 +443,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
             newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> "SHOES"))
           )
       )
-      status(result) shouldBe Status.BAD_REQUEST
+      status(result)          shouldBe Status.BAD_REQUEST
       contentAsString(result) should include(messages("management.update-keyword.error.duplicate.keyword"))
     }
 
@@ -434,7 +453,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier])).willReturn(Future(newKeyword))
+      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future(newKeyword))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -442,7 +462,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
             newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> "TEST"))
           )
       )
-      status(result) shouldBe Status.BAD_REQUEST
+      status(result)          shouldBe Status.BAD_REQUEST
       contentAsString(result) should include(messages("management.create-keyword.error.rejected.keyword"))
     }
 
@@ -452,7 +472,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .willReturn(Future(Paged(keywords)))
 
-      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier])).willReturn(Future(newKeyword))
+      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
+        .willReturn(Future(newKeyword))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))

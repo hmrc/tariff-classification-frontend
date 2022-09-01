@@ -31,9 +31,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val operator     = Operator(id = "id")
-  private val changeCaseStatus = injector.instanceOf[change_case_status]
+  private val casesService       = mock[CasesService]
+  private val operator           = Operator(id = "id")
+  private val changeCaseStatus   = injector.instanceOf[change_case_status]
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
 
   private def controller(c: Case) =

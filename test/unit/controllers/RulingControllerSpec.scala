@@ -46,9 +46,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val decisionForm             = new DecisionForm(commodityCodeConstraints)
   private val liabilityDetailsForm     = new LiabilityDetailsForm(commodityCodeConstraints, realAppConfig)
 
-  private lazy val editLiabilityView   = injector.instanceOf[edit_liability_ruling]
-  private val liability_details_edit   = injector.instanceOf[views.html.v2.liability_details_edit]
-  private val rulingDetailsEdit = injector.instanceOf[ruling_details_edit]
+  private lazy val editLiabilityView = injector.instanceOf[edit_liability_ruling]
+  private val liability_details_edit = injector.instanceOf[views.html.v2.liability_details_edit]
+  private val rulingDetailsEdit      = injector.instanceOf[ruling_details_edit]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -229,7 +229,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "update and redirect for permitted user" when {
       "Case is an ATaR" in {
-        given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(Future.successful(updatedCase))
+        given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier]))
+          .willReturn(Future.successful(updatedCase))
         given(fileService.getAttachments(refEq(updatedCase))(any[HeaderCarrier]))
           .willReturn(Future.successful(Seq(attachment)))
 

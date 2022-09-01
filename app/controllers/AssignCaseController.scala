@@ -51,7 +51,6 @@ class AssignCaseController @Inject() (
   def post(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
       .async { implicit request =>
-
         def respond: Case => Future[Result] = {
           case c: Case if c.assignee.isEmpty =>
             caseService.assignCase(c, request.operator).map(_ => Redirect(routes.CaseController.get(reference)))
@@ -60,12 +59,9 @@ class AssignCaseController @Inject() (
         }
 
         takeOwnershipForm
-
           .bindFromRequest()
           .fold(
-            formWithErrors =>
-              getCaseAndRenderView(reference, c => successful(assignCase(c, formWithErrors))),
-             {
+            formWithErrors => getCaseAndRenderView(reference, c => successful(assignCase(c, formWithErrors))), {
               case true =>
                 getCaseAndRespond(reference, respond)
               case _ =>

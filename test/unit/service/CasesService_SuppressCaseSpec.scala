@@ -45,7 +45,16 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   private val aCase            = Cases.btiCaseExample
 
   private val service =
-    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, realAppConfig)
+    new CasesService(
+      audit,
+      emailService,
+      fileStoreService,
+      countriesService,
+      reportingService,
+      pdfService,
+      connector,
+      rulingConnector
+    )(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

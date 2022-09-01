@@ -85,7 +85,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
-      status(result)     shouldBe Status.OK
+      status(result)         shouldBe Status.OK
       contentAsBytes(result) shouldBe ByteString("CONTENT".getBytes)
     }
 

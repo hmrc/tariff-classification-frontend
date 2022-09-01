@@ -23,13 +23,11 @@ case class UserAnswers(cacheMap: CacheMap) {
   def get[A](key: String)(implicit rds: Reads[A]): Option[A] =
     cacheMap.getEntry[A](key)
 
-  def set[A](key: String, value: A)(implicit writes: Writes[A]): UserAnswers = {
+  def set[A](key: String, value: A)(implicit writes: Writes[A]): UserAnswers =
     UserAnswers(cacheMap.copy(data = cacheMap.data + (key -> Json.toJson(value))))
-  }
 
-  def remove[A](key: String): UserAnswers = {
+  def remove[A](key: String): UserAnswers =
     UserAnswers(cacheMap.copy(data = cacheMap.data - key))
-  }
 }
 
 object UserAnswers {

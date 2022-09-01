@@ -36,17 +36,16 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
   implicit val appConfig = realAppConfig
 
   implicit def authenticatedRequest[A](
-                                        implicit
-                                        operator: Operator,
-                                        request: Request[A]
-                                      ): AuthenticatedRequest[A] =
+    implicit
+    operator: Operator,
+    request: Request[A]
+  ): AuthenticatedRequest[A] =
     AuthenticatedRequest(operator, request)
-
 
   val operator_dashboard_classification = injector.instanceOf[views.html.operator_dashboard_classification]
 
   val casesCounted: Map[(Option[String], ApplicationType), Int] = Map(
-    (None, ApplicationType.ATAR) -> 2,
+    (None, ApplicationType.ATAR)      -> 2,
     (None, ApplicationType.LIABILITY) -> 3
   )
 
@@ -59,8 +58,7 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
     .willReturn(Future.successful(Paged.empty[Case]))
 
   private def controller(permission: Set[Permission]) = new OperatorDashboardController(
-    new RequestActionsWithPermissions(playBodyParsers,
-      permission),
+    new RequestActionsWithPermissions(playBodyParsers, permission),
     casesService,
     mcc,
     operator_dashboard_classification,
@@ -80,15 +78,22 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
 
       val result = controller(Set(Permission.VIEW_CASES)).onPageLoad()(fakeRequest)
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)               shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
     "return 200 OK for the correct number of refer by me cases" in {
 
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Paged(Seq(Cases.btiCaseExample.copy(status = CaseStatus.REFERRED),
-          Cases.btiCaseExample.copy(status = CaseStatus.SUPPRESSED))))
+        .willReturn(
+          Future.successful(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(status = CaseStatus.REFERRED),
+                Cases.btiCaseExample.copy(status = CaseStatus.SUPPRESSED)
+              )
+            )
+          )
         )
 
       val result = controller(Set(Permission.VIEW_MY_CASES)).onPageLoad()(fakeRequest)

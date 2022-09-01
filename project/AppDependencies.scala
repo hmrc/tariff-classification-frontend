@@ -32,7 +32,6 @@ object AppDependencies {
     "org.scalatestplus"      %% "scalacheck-1-16"          % "3.2.13.0"           % scope,
     "uk.gov.hmrc"            %% "bootstrap-test-play-28"   % bootstrapPlayVersion % scope,
     "com.vladsch.flexmark"   % "flexmark-all"              % "0.62.2"             % scope
-  )
 
   def apply(): Seq[ModuleID] = compile ++ test
 

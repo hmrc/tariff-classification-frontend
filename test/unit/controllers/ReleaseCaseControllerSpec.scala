@@ -34,15 +34,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val queueService = mock[QueuesService]
-  private val queue        = mock[Queue]
-  private val operator     = Operator(id = "id")
-  private val releaseCaseView = injector.instanceOf[views.html.release_case]
+  private val casesService               = mock[CasesService]
+  private val queueService               = mock[QueuesService]
+  private val queue                      = mock[Queue]
+  private val operator                   = Operator(id = "id")
+  private val releaseCaseView            = injector.instanceOf[views.html.release_case]
   private val confirmation_case_creation = injector.instanceOf[views.html.v2.confirmation_case_creation]
-  private val resourceNotFound = injector.instanceOf[resource_not_found]
-  private val caseWithStatusNEW  = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
-  private val caseWithStatusOPEN = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
+  private val resourceNotFound           = injector.instanceOf[resource_not_found]
+  private val caseWithStatusNEW          = Cases.btiCaseExample.copy(status = CaseStatus.NEW)
+  private val caseWithStatusOPEN         = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
 
   override def afterEach(): Unit = {
     super.afterEach()

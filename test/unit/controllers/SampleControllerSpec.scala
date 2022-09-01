@@ -35,8 +35,8 @@ import scala.concurrent.Future
 
 class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService  = mock[CasesService]
-  private val operator      = Operator(id = "id")
+  private val casesService = mock[CasesService]
+  private val operator     = Operator(id = "id")
 
   private val changeLiabilitySendingSample = app.injector.instanceOf[change_liablity_sending_sample]
   private val changeSampleStatus = app.injector.instanceOf[change_sample_status]
@@ -74,10 +74,10 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
-      bodyOf(result) should include("<h1 class=\"govuk-heading-xl\" id=\"heading\">")
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+      bodyOf(result)      should include("<h1 class=\"govuk-heading-xl\" id=\"heading\">")
     }
 
     "return OK when user has right permissions" in {

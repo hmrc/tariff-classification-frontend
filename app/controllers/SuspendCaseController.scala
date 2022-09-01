@@ -142,7 +142,5 @@ class SuspendCaseController @Inject() (
   def confirmSuspendCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(confirm_suspended(request.`case`))
-    }
+      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_suspended(request.`case`)))
 }

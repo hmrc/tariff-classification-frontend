@@ -38,8 +38,8 @@ class HasMetricsSpec
     with BeforeAndAfterAll {
 
   trait MockHasMetrics { self: HasMetrics =>
-    val timer: Timer.Context = mock[Timer.Context]
-    val metrics: Metrics = mock[Metrics]
+    val timer: Timer.Context                = mock[Timer.Context]
+    val metrics: Metrics                    = mock[Metrics]
     override val localMetrics: LocalMetrics = mock[LocalMetrics]
     when(localMetrics.startTimer(anyString())) thenReturn timer
   }
@@ -196,8 +196,7 @@ class HasMetricsSpec
           .withMetricsTimerResult(TestMetric) {
             Future.failed(new Exception)
           }
-          .transformWith(_ =>
-            verifyCompletedWithFailure(TestMetric, metrics))
+          .transformWith(_ => verifyCompletedWithFailure(TestMetric, metrics))
       }
 
       "increment failure counter when the user throws an exception constructing their code block" in withTestMetrics {

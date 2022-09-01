@@ -144,7 +144,5 @@ class CancelRulingController @Inject() (
   def confirmCancelRuling(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(confirm_cancel_ruling(request.`case`))
-    }
+      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_cancel_ruling(request.`case`)))
 }

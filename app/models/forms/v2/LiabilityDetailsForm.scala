@@ -31,11 +31,13 @@ import play.api.data.Forms._
 class LiabilityDetailsForm @Inject() (
   commodityCodeConstraints: CommodityCodeConstraints,
   appConfig: AppConfig
-) extends Constraints with Mappings {
+) extends Constraints
+    with Mappings {
 
   def liabilityDetailsForm(existingLiability: Case): Form[Case] =
     Form[Case](
-      mapping[Case,
+      mapping[
+        Case,
         Option[Instant],
         Option[Instant],
         String,
@@ -83,15 +85,17 @@ class LiabilityDetailsForm @Inject() (
         "traderBuildingAndStreet" -> optional(Forms.text),
         "traderTownOrCity"        -> optional(Forms.text),
         "traderCounty"            -> optional(Forms.text),
-        "traderPostcode"          -> optional(Forms.text)
-          .verifying(validPostcode("case.liability.error.postcode.valid"),
-            optionalPostCodeMaxLength("case.liability.error.postcode.length")),
-        "boardsFileNumber"        -> optional(Forms.text),
-        "agentName"               -> optional(Forms.text),
+        "traderPostcode" -> optional(Forms.text)
+          .verifying(
+            validPostcode("case.liability.error.postcode.valid"),
+            optionalPostCodeMaxLength("case.liability.error.postcode.length")
+          ),
+        "boardsFileNumber" -> optional(Forms.text),
+        "agentName"        -> optional(Forms.text),
         //TODO ^^
         "btiReference"   -> optional(Forms.text.verifying(emptyOr(btiReferenceIsCorrectFormat()): _*)),
         "repaymentClaim" -> Forms.boolean,
-        "goodName" -> optional(Forms.text).verifying(defined("case.liability.error.empty.good-name")),
+        "goodName"       -> optional(Forms.text).verifying(defined("case.liability.error.empty.good-name")),
         "entryNumber" -> optional(
           Forms.text.verifying(emptyOr(entryNumberIsNumbersAndLettersOnly()): _*)
         ),
@@ -207,7 +211,8 @@ class LiabilityDetailsForm @Inject() (
       )
   }
 
-  private def liability2Form(existingCase: Case): Option[(
+  private def liability2Form(existingCase: Case): Option[
+    (
       Option[Instant],
       Option[Instant],
       String,
@@ -271,7 +276,8 @@ class LiabilityDetailsForm @Inject() (
   //TODO: As part of the follow-up ticket regarding complete form validation, add tests
   def liabilityDetailsCompleteForm(existingLiability: Case): Form[Case] =
     Form[Case](
-      mapping[Case,
+      mapping[
+        Case,
         Option[Instant],
         Option[Instant],
         String,
@@ -324,16 +330,18 @@ class LiabilityDetailsForm @Inject() (
         "traderBuildingAndStreet" -> optional(Forms.text),
         "traderTownOrCity"        -> optional(Forms.text),
         "traderCounty"            -> optional(Forms.text),
-        "traderPostcode"          -> optional(Forms.text)
-          .verifying(validPostcode("case.liability.error.postcode.valid"),
-            optionalPostCodeMaxLength("case.liability.error.postcode.length")),
-        "boardsFileNumber"        -> optional(Forms.text),
-        "agentName"               -> optional(Forms.text),
+        "traderPostcode" -> optional(Forms.text)
+          .verifying(
+            validPostcode("case.liability.error.postcode.valid"),
+            optionalPostCodeMaxLength("case.liability.error.postcode.length")
+          ),
+        "boardsFileNumber" -> optional(Forms.text),
+        "agentName"        -> optional(Forms.text),
         //TODO take a look ^^
         "btiReference"   -> optional(nonEmptyText),
         "repaymentClaim" -> Forms.boolean,
-        "goodName"    -> optional(nonEmptyText).verifying("Enter the goods name", _.isDefined),
-        "entryNumber" -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
+        "goodName"       -> optional(nonEmptyText).verifying("Enter the goods name", _.isDefined),
+        "entryNumber"    -> optional(nonEmptyText).verifying("Enter an entry number", _.isDefined),
         "traderCommodityCode" -> optional(nonEmptyText)
           .verifying("Enter the commodity code from the trader", _.isDefined),
         "officerCommodityCode" -> optional(nonEmptyText)

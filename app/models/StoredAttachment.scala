@@ -40,7 +40,7 @@ case class StoredAttachment(
       case Some("image/png")  => true
       case Some("image/jpeg") => true
       case Some("image/gif")  => true
-      case _            => false
+      case _                  => false
     }
 
   def formattedDate: String =
@@ -68,15 +68,15 @@ object StoredAttachment {
   def apply(attachment: Attachment, metadata: FileMetadata): StoredAttachment = {
     require(attachment.id == metadata.id, "Cannot combine different attachments")
     StoredAttachment(
-      id          = attachment.id,
-      public      = attachment.public,
-      operator    = attachment.operator,
-      timestamp   = attachment.timestamp,
-      url         = metadata.url,
-      fileName    = metadata.fileName,
-      mimeType    = metadata.mimeType,
-      scanStatus  = metadata.scanStatus,
-      description = attachment.description,
+      id                     = attachment.id,
+      public                 = attachment.public,
+      operator               = attachment.operator,
+      timestamp              = attachment.timestamp,
+      url                    = metadata.url,
+      fileName               = metadata.fileName,
+      mimeType               = metadata.mimeType,
+      scanStatus             = metadata.scanStatus,
+      description            = attachment.description,
       shouldPublishToRulings = attachment.shouldPublishToRulings
     )
   }

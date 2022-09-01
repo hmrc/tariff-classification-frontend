@@ -15,7 +15,7 @@
  */
 
 package models.forms
-import models.{CorrespondenceApplication, Address, Contact}
+import models.{Address, Contact, CorrespondenceApplication}
 import play.api.data.Form
 import play.api.data.Forms._
 import models.forms.mappings.FormMappings._
@@ -29,13 +29,13 @@ object CorrespondenceForm {
     case (shortDescr, source, contactEmail) =>
       CorrespondenceApplication(
         correspondenceStarter = Some(source),
-        agentName = None,
-        contact = Contact("", contactEmail, None),
-        summary = shortDescr,
-        detailedDescription = "",
-        sampleToBeProvided = false,
-        sampleToBeReturned = false,
-        address = Address("", "", None, None)
+        agentName             = None,
+        contact               = Contact("", contactEmail, None),
+        summary               = shortDescr,
+        detailedDescription   = "",
+        sampleToBeProvided    = false,
+        sampleToBeReturned    = false,
+        address               = Address("", "", None, None)
       )
   }
 

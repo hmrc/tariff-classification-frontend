@@ -26,7 +26,7 @@ import java.time.{ZoneOffset, ZonedDateTime}
 
 class AttachmentsEditListViewSpec extends ViewSpec {
 
-  private val caseRef:String = "600000004"
+  private val caseRef: String = "600000004"
 
   "Attachments Edit List" should {
 

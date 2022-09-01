@@ -48,11 +48,11 @@ class PdfDownloadController @Inject() (
         cse.decision match {
           case Some(decision) =>
             val pdfResult = for {
-              pdf     <- OptionT.fromOption[Future](decision.decisionPdf)
-              meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
-              url     <- OptionT.fromOption[Future](meta.url)
+              pdf      <- OptionT.fromOption[Future](decision.decisionPdf)
+              meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
+              url      <- OptionT.fromOption[Future](meta.url)
               fileName <- OptionT.fromOption[Future](meta.fileName)
-              content <- OptionT(fileStore.downloadFile(url))
+              content  <- OptionT(fileStore.downloadFile(url))
             } yield Ok
               .streamed(content, None, meta.mimeType)
               .withHeaders(
@@ -78,11 +78,11 @@ class PdfDownloadController @Inject() (
         cse.decision match {
           case Some(decision) =>
             val pdfResult = for {
-              pdf     <- OptionT.fromOption[Future](decision.letterPdf)
-              meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
-              url     <- OptionT.fromOption[Future](meta.url)
+              pdf      <- OptionT.fromOption[Future](decision.letterPdf)
+              meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
+              url      <- OptionT.fromOption[Future](meta.url)
               fileName <- OptionT.fromOption[Future](meta.fileName)
-              content <- OptionT(fileStore.downloadFile(url))
+              content  <- OptionT(fileStore.downloadFile(url))
             } yield Ok
               .streamed(content, None, meta.mimeType)
               .withHeaders(
@@ -106,11 +106,11 @@ class PdfDownloadController @Inject() (
     caseService.getOne(reference).flatMap {
       case Some(cse) =>
         val pdfResult = for {
-          pdf     <- OptionT.fromOption[Future](cse.application.asATAR.applicationPdf)
-          meta    <- OptionT(fileStore.getFileMetadata(pdf.id))
-          url     <- OptionT.fromOption[Future](meta.url)
+          pdf      <- OptionT.fromOption[Future](cse.application.asATAR.applicationPdf)
+          meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
+          url      <- OptionT.fromOption[Future](meta.url)
           fileName <- OptionT.fromOption[Future](meta.fileName)
-          content <- OptionT(fileStore.downloadFile(url))
+          content  <- OptionT(fileStore.downloadFile(url))
         } yield Ok
           .streamed(content, None, meta.mimeType)
           .withHeaders(

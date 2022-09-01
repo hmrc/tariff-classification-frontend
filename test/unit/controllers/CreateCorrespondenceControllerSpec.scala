@@ -397,7 +397,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case] ,any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
           Cases.aCorrespondenceCase()
         )
 
@@ -463,10 +463,10 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
               case (x, i) => asFormParams(x.asInstanceOf[Product]).map { case (k, v) => (s"$n[$i].$k", v) }
             }
           case (n, Some(p: Product)) => asFormParams(p).map { case (k, v) => (s"$n.$k", v) }
-          case (n, Some(a)) => List((n, a.toString))
-          case (n, None) => List((n, ""))
-          case (n, p: Product) => asFormParams(p).map { case (k, v) => (s"$n.$k", v) }
-          case (n, a) => List((n, a.toString))
+          case (n, Some(a))          => List((n, a.toString))
+          case (n, None)             => List((n, ""))
+          case (n, p: Product)       => asFormParams(p).map { case (k, v) => (s"$n.$k", v) }
+          case (n, a)                => List((n, a.toString))
         }
   }
 }

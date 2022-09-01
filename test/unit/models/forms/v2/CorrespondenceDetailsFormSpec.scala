@@ -28,7 +28,7 @@ class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
     correspondenceCase.copy(application = Cases.corrExampleWithMissingFields.copy(summary = ""))
 
   private val params = Map(
-    "summary"              -> Seq("A short summary"),
+    "summary"             -> Seq("A short summary"),
     "detailedDescription" -> Seq("A detailed desc")
   )
 

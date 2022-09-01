@@ -32,7 +32,7 @@ object Events {
 
   val referredEvent: Event = event.copy(details = referredDetailsCaseChange)
 
-  val pagedReferredEvents: Paged[Event] = Paged(Seq(referredEvent, referredEvent))
+  val pagedReferredEvents: Paged[Event]      = Paged(Seq(referredEvent, referredEvent))
   val referralEventsById: Map[String, Event] = Map(referredEvent.caseReference -> referredEvent)
 
   val completedDetailsCaseChange: CompletedCaseStatusChange =
@@ -40,7 +40,7 @@ object Events {
 
   val completedEvent: Event = event.copy(details = completedDetailsCaseChange)
 
-  val pagedCompletedEvents: Paged[Event] = Paged(Seq(completedEvent, completedEvent))
+  val pagedCompletedEvents: Paged[Event]       = Paged(Seq(completedEvent, completedEvent))
   val completionEventsById: Map[String, Event] = Map(completedEvent.caseReference -> completedEvent)
 
   val sampleEvent = Event(

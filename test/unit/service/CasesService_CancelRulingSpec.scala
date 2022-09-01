@@ -55,7 +55,16 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
   private val aCase = Cases.btiCaseExample
 
   private val service =
-    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, config)
+    new CasesService(
+      audit,
+      emailService,
+      fileStoreService,
+      countriesService,
+      reportingService,
+      pdfService,
+      connector,
+      rulingConnector
+    )(global, config)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -75,7 +84,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
     "update case status to CANCELLED and decision end date" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val attachment = Attachment("id", operator = Some(operator))
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))
@@ -116,7 +125,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
     "reject case without a decision" in {
       // Given
       val operator: Operator = Operator("operator-id")
-      val attachment = Attachment("id", operator = Some(operator))
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.COMPLETED, decision = None)
 
       // When Then
@@ -130,7 +139,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
 
     "not create event on update failure" in {
       val operator: Operator = Operator("operator-id")
-      val attachment = Attachment("id", operator = Some(operator))
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
@@ -149,7 +158,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
     "succeed on event create failure" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val attachment = Attachment("id", operator = Some(operator))
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))
@@ -173,7 +182,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
     "succeed on ruling store notify failure" in {
       // Given
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
-      val attachment = Attachment("id", operator = Some(operator))
+      val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))

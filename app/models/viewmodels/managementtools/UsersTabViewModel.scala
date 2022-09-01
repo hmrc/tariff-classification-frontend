@@ -32,7 +32,6 @@ object UsersTabViewModel {
   def fromUsers(manager: Operator, users: Paged[Operator]): UsersTabViewModel = {
 
     val managedTeamsTabs = manager.memberOfTeams.map { managedTeam =>
-
       val userForTeams = users.results.filter(_.memberOfTeams.contains(managedTeam))
       val messageKey   = Queues.queueById(managedTeam).map(_.name).getOrElse("unknown")
 

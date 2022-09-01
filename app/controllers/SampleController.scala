@@ -35,7 +35,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SampleController @Inject()(
+class SampleController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
@@ -91,7 +91,6 @@ class SampleController @Inject()(
   ): Future[Case] =
     caseService.updateSampleStatus(c, status, operator)
 
-  override protected def onSuccessRedirect(reference: String): Call = {
+  override protected def onSuccessRedirect(reference: String): Call =
     controllers.routes.CaseController.sampleDetails(reference)
-  }
 }

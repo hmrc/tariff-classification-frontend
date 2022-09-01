@@ -21,7 +21,7 @@ import models.forms.mappings.Constraints
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 @Singleton
-class CommodityCodeConstraints @Inject()() extends Constraints {
+class CommodityCodeConstraints @Inject() () extends Constraints {
 
   val commodityCodeNonEmpty: Constraint[String] =
     customNonEmpty("decision_form.error.bindingCommodityCode.required")

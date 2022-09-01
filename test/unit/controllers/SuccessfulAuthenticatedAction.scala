@@ -116,7 +116,7 @@ class HaveExistingCaseDataActionFactory(requestCase: Case)
     extends RequireCaseDataActionFactory(
       casesService       = mock(classOf[CasesService]),
       dataCacheConnector = FakeDataCacheConnector,
-      case_not_found = mock(classOf[case_not_found])
+      case_not_found     = mock(classOf[case_not_found])
     )(
       mock(classOf[MessagesApi]),
       mock(classOf[AppConfig])

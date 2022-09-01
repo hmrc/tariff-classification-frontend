@@ -171,8 +171,8 @@ class MyCasesViewSpec extends ViewSpec {
       ApplicationsTab
         .completedByMe(
           Seq(
-            Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED),
-            Cases.liabilityCaseExample.copy(reference = "2", status = CaseStatus.COMPLETED),
+            Cases.btiCaseExample.copy(status               = CaseStatus.COMPLETED),
+            Cases.liabilityCaseExample.copy(reference      = "2", status = CaseStatus.COMPLETED),
             Cases.correspondenceCaseExample.copy(reference = "3", status = CaseStatus.COMPLETED),
             Cases.miscellaneousCaseExample.copy(reference  = "4", status = CaseStatus.COMPLETED)
           ),
@@ -372,8 +372,8 @@ class MyCasesViewSpec extends ViewSpec {
     "contain a completed status in ATaR table for Completed by me" in {
       val doc = view(myCasesView(completedByMeCasesTab))
 
-      doc should containElementWithID("applicationTab.atar-status-label-0-status")
-      doc should containElementWithClass("govuk-tag govuk-tag--green")
+      doc                                                             should containElementWithID("applicationTab.atar-status-label-0-status")
+      doc                                                             should containElementWithClass("govuk-tag govuk-tag--green")
       doc.getElementById("applicationTab.atar-status-label-0-status") should containText("COMPLETED")
     }
 

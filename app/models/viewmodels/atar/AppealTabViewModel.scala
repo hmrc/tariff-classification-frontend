@@ -27,15 +27,17 @@ case class AppealTabViewModel(
 object AppealTabViewModel {
   def fromCase(cse: Case): Option[AppealTabViewModel] =
     if (Set(CaseStatus.COMPLETED, CaseStatus.CANCELLED).contains(cse.status)) {
-      val appeals = cse.decision.map(_.appeal).getOrElse(Seq.empty)
+      val appeals     = cse.decision.map(_.appeal).getOrElse(Seq.empty)
       val extendedUse = cse.decision.flatMap(_.cancellation).exists(_.applicationForExtendedUse)
 
-      Some(AppealTabViewModel(
-        caseReference = cse.reference,
-        caseStatus = cse.status,
-        appeals = appeals.sortBy(_.`type`.id).toList,
-        applicationForExtendedUse = extendedUse
-      ))
+      Some(
+        AppealTabViewModel(
+          caseReference             = cse.reference,
+          caseStatus                = cse.status,
+          appeals                   = appeals.sortBy(_.`type`.id).toList,
+          applicationForExtendedUse = extendedUse
+        )
+      )
     } else {
       None
     }

@@ -32,7 +32,7 @@ lazy val microservice = (project in file("."))
           "-Ywarn-value-discard"
         )
       )
-    }
+    },
   )
   .settings(inConfig(TemplateTest)(Defaults.testSettings): _*)
   .settings(

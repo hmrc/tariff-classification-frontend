@@ -25,12 +25,12 @@ import service.CommodityCodeService
 
 class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
-  private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints())
-  private val commodityCodeValidLengthErrorMessage = "decision_form.error.bindingCommodityCode.valid.length"
+  private val commodityCodeService                     = mock[CommodityCodeService]
+  private val decisionForm                             = new DecisionForm(new CommodityCodeConstraints())
+  private val commodityCodeValidLengthErrorMessage     = "decision_form.error.bindingCommodityCode.valid.length"
   private val commodityCodeValidNumberTypeErrorMessage = "decision_form.error.bindingCommodityCode.valid.number"
   private val commodityCodeValidEvenDigitsErrorMessage = "decision_form.error.bindingCommodityCode.valid.evenDigits"
-  private val bindingCommodityCodeElementId     = "bindingCommodityCode"
+  private val bindingCommodityCodeElementId            = "bindingCommodityCode"
 
   "DecisionForm validation" should {
 
@@ -73,9 +73,8 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
     }
   }
 
-  private def commodityCodeJsValue(value: String): JsValue = {
+  private def commodityCodeJsValue(value: String): JsValue =
     JsObject(Seq(bindingCommodityCodeElementId -> JsString(value)))
-  }
 
   private def assertNoErrors(commodityCodeValue: String): Unit = {
     val errors =

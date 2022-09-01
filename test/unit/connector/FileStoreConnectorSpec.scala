@@ -36,7 +36,6 @@ class FileStoreConnectorSpec extends ConnectorTest {
   private val attachmentId = "id"
   private val connector    = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
 
-
   "Connector 'GET' one" should {
     "handle 404" in {
       when(mockAppConfig.apiToken) thenReturn config.apiToken
@@ -197,7 +196,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     val initiateRequest = FileStoreInitiateRequest(maxFileSize = 0)
 
     await(connector.initiate(initiateRequest)) shouldBe FileStoreInitiateResponse(
-      id = "id",
+      id              = "id",
       upscanReference = "ref",
       uploadRequest = UpscanFormTemplate(
         "http://localhost:20001/upscan/upload",

@@ -35,8 +35,8 @@ import scala.concurrent.Future
 
 class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val operator     = Operator(id = "id")
+  private val casesService     = mock[CasesService]
+  private val operator         = Operator(id = "id")
   private val changeSampleSend = app.injector.instanceOf[change_sample_send]
 
   private def controller(requestCase: Case) = new SampleWhoSendingController(

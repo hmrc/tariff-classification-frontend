@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-
 import akka.stream.Materializer
 import com.google.inject.Inject
 import config.AppConfig
