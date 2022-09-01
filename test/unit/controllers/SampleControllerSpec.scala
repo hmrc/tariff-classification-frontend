@@ -38,8 +38,8 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val casesService = mock[CasesService]
   private val operator     = Operator(id = "id")
 
-  private val changeLiabilitySendingSample = app.injector.instanceOf[change_liablity_sending_sample]
-  private val changeSampleStatus = app.injector.instanceOf[change_sample_status]
+  private val changeLiabilitySendingSample      = app.injector.instanceOf[change_liablity_sending_sample]
+  private val changeSampleStatus                = app.injector.instanceOf[change_sample_status]
   private val changeCorrespondenceSendingSample = app.injector.instanceOf[change_correspondence_sending_sample]
 
   private def controller(requestCase: Case) = new SampleController(

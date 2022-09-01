@@ -41,7 +41,8 @@ class SampleWhoSendingController @Inject() (
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Option[SampleSend]] with WithUnsafeDefaultFormBinding {
+    with StatusChangeAction[Option[SampleSend]]
+    with WithUnsafeDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 

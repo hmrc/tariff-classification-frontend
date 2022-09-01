@@ -44,7 +44,8 @@ class SampleController @Inject() (
   val change_sample_status: change_sample_status,
   val change_correspondence_sending_sample: change_correspondence_sending_sample
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Option[SampleStatus]] with WithUnsafeDefaultFormBinding {
+    with StatusChangeAction[Option[SampleStatus]]
+    with WithUnsafeDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 

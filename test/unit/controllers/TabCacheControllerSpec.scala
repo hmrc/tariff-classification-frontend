@@ -57,7 +57,7 @@ class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach 
     }
 
     "not save active tab when anchor is empty" in {
-      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF( ""))
+      val result = controller().post("caseRef", ApplicationType.LIABILITY).apply(newFakePOSTRequestWithCSRF(""))
       status(result)                                                                  shouldBe Status.BAD_REQUEST
       await(tabCacheService.getActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe None
     }

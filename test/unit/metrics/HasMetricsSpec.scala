@@ -144,7 +144,7 @@ class HasMetricsSpec
       "increment failure counter when the user throws an exception constructing their code block" in withTestMetrics {
         metrics =>
           assertThrows[RuntimeException] {
-            metrics.withMetricsTimerAsync(TestMetric){_ => throw new RuntimeException}
+            metrics.withMetricsTimerAsync(TestMetric)(_ => throw new RuntimeException)
           }
           Future.successful(verifyCompletedWithFailure(TestMetric, metrics))
       }

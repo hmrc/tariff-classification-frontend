@@ -43,7 +43,8 @@ class AppealCaseController @Inject() (
   val appeal_change_status: appeal_change_status,
   mcc: MessagesControllerComponents
 ) extends FrontendController(mcc)
-    with RenderCaseAction with WithUnsafeDefaultFormBinding {
+    with RenderCaseAction
+    with WithUnsafeDefaultFormBinding {
 
   private val typeForm: Form[AppealType]     = AppealForm.appealTypeForm
   private val statusForm: Form[AppealStatus] = AppealForm.appealStatusForm

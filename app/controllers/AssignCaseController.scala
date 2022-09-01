@@ -40,7 +40,8 @@ class AssignCaseController @Inject() (
   val assignCase: assign_case,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction with WithUnsafeDefaultFormBinding {
+    with RenderCaseAction
+    with WithUnsafeDefaultFormBinding {
 
   private lazy val takeOwnershipForm: Form[Boolean] = TakeOwnerShipForm.form
 

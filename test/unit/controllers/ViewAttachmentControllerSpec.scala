@@ -67,11 +67,18 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       realAppConfig
     )
 
-  private def givenFileMetadata(fileMetadata: Option[FileMetadata]): BDDMyOngoingStubbing[Future[Option[FileMetadata]]] =
+  private def givenFileMetadata(
+    fileMetadata: Option[FileMetadata]
+  ): BDDMyOngoingStubbing[Future[Option[FileMetadata]]] =
     given(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])) willReturn Future.successful(fileMetadata)
 
-  private def givenFileContent(url: String, fileContent: Array[Byte]): BDDMyOngoingStubbing[Future[Option[Source[ByteString, _]]]] =
-    given(fileService.downloadFile(refEq(url))(any[HeaderCarrier])) willReturn Future.successful(Some(Source.single(ByteString(fileContent))))
+  private def givenFileContent(
+    url: String,
+    fileContent: Array[Byte]
+  ): BDDMyOngoingStubbing[Future[Option[Source[ByteString, _]]]] =
+    given(fileService.downloadFile(refEq(url))(any[HeaderCarrier])) willReturn Future.successful(
+      Some(Source.single(ByteString(fileContent)))
+    )
 
   private val fileReady      = FileMetadata("id", Some("file"), Some("type"), Some("url"), Some(ScanStatus.READY))
   private val fileFailed     = FileMetadata("id", Some("file"), Some("type"), None, Some(ScanStatus.FAILED))

@@ -52,7 +52,8 @@ class ReferCaseController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with UpscanErrorHandling with WithUnsafeDefaultFormBinding {
+    with UpscanErrorHandling
+    with WithUnsafeDefaultFormBinding {
 
   private val ReferralCacheKey = "referral"
   private def cacheKey(reference: String) =

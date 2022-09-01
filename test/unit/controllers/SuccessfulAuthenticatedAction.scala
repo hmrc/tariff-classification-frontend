@@ -146,7 +146,7 @@ class HaveExistingCaseDataActionFactory(requestCase: Case)
 class SuccessfulRequestActions(
   parse: PlayBodyParsers,
   operator: Operator,
-  c: Case           = Cases.btiCaseExample,
+  c: Case = Cases.btiCaseExample
 )(implicit ec: ExecutionContext)
     extends RequestActions(
       new SuccessfulCasePermissionsAction(operator),

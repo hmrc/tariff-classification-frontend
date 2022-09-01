@@ -40,7 +40,8 @@ class PdfDownloadController @Inject() (
   val document_not_found: document_not_found
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
-    with I18nSupport with WithUnsafeDefaultFormBinding {
+    with I18nSupport
+    with WithUnsafeDefaultFormBinding {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference).flatMap {

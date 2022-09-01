@@ -154,13 +154,18 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   }
 
-  private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(testReference: String, aCase: Case): OngoingStubbing[Future[Option[StoredAttachment]]] = {
-    when(remove_attachment.apply(
-      any[CaseHeaderViewModel],
-      any[Form[Boolean]],
-      anyString(),
-      anyString()
-    )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])).thenReturn(Html("heading"))
+  private def givenACaseWithNoAttachmentsAndNoLetterOfAuthority(
+    testReference: String,
+    aCase: Case
+  ): OngoingStubbing[Future[Option[StoredAttachment]]] = {
+    when(
+      remove_attachment.apply(
+        any[CaseHeaderViewModel],
+        any[Form[Boolean]],
+        anyString(),
+        anyString()
+      )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
+    ).thenReturn(Html("heading"))
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))
     when(fileService.getLetterOfAuthority(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(None))

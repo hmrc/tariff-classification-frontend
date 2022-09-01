@@ -116,7 +116,9 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
 
       val result = await(
-        controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> ""))
+        controller(c).updateStatus("reference")(
+          newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> "")
+        )
       )
 
       verify(casesService, never())

@@ -49,7 +49,8 @@ class RulingController @Inject() (
   val ruling_details_edit: ruling_details_edit,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithUnsafeDefaultFormBinding {
+    with I18nSupport
+    with WithUnsafeDefaultFormBinding {
 
   private final val rulingDetailsStartTabIndex = 7000
 
