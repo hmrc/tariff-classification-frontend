@@ -3,7 +3,7 @@ object AppDependencies {
   import play.core.PlayVersion.current
 
   private val silencerVersion = "1.7.9"
-  private val bootstrapPlayVersion = "6.4.0"
+  private val bootstrapPlayVersion = "7.1.0"
   private val hmrcMongoPlayVersion = "0.71.0"
 
   val compile: Seq[ModuleID] = Seq(
@@ -16,7 +16,7 @@ object AppDependencies {
     "org.typelevel"                %% "cats-core"                  % "2.8.0",
     "com.github.blemale"           %% "scaffeine"                  % "4.1.0",
     "com.lightbend.akka"           %% "akka-stream-alpakka-csv"    % "3.0.4",
-    "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.13.3",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.13.4",
     compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
     "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
   )
