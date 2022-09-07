@@ -32,7 +32,7 @@ lazy val microservice = (project in file("."))
           "-Ywarn-value-discard"
         )
       )
-    },
+    }
   )
   .settings(inConfig(TemplateTest)(Defaults.testSettings): _*)
   .settings(
@@ -40,7 +40,7 @@ lazy val microservice = (project in file("."))
       (Test / baseDirectory).value / "test/unit",
       (Test / baseDirectory).value / "test/util"
     ),
-    Test / resourceDirectory:= baseDirectory.value / "test" / "resources",
+    Test / resourceDirectory := baseDirectory.value / "test" / "resources",
 //    works only when fork is true
     Test / javaOptions += "-Xmx1G",
     addTestReportOption(Test, "test-reports")
@@ -70,14 +70,13 @@ lazy val microservice = (project in file("."))
     IntegrationTest / fork := true,
 //    works only when fork is true
     Test / javaOptions += "-Xmx1G",
-    IntegrationTest / unmanagedSourceDirectories:= Seq(
+    IntegrationTest / unmanagedSourceDirectories := Seq(
       (IntegrationTest / baseDirectory).value / "test/it",
       (IntegrationTest / baseDirectory).value / "test/util"
     ),
     IntegrationTest / resourceDirectory := baseDirectory.value / "test" / "resources",
     addTestReportOption(IntegrationTest, "int-test-reports")
   )
-
   .settings(
     resolvers += Resolver.jcenterRepo
   )
@@ -96,4 +95,7 @@ coverageMinimumStmtTotal := 91
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;"
 
-ThisBuild / libraryDependencySchemes += "org.scala-lang.modules"  %% "scala-java8-compat" % "always"
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % "always"
+
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle")
