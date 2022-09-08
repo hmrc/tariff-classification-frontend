@@ -25,15 +25,22 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
   private val sampleEmptyCase    = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)
 
   private val emptyCaseWithEmail = sampleEmptyCase.copy(
-    application = Cases.corrExampleWithMissingFields.copy(contact = Contact("name", "valid@email", Some("123"))))
+    application = Cases.corrExampleWithMissingFields.copy(contact = Contact("name", "valid@email", Some("123")))
+  )
 
   private val emptyCaseWithInvalidEmail = correspondenceCase.copy(
     application = Cases.corrExampleWithMissingFields
-      .copy(correspondenceStarter = Some("case-source"), contact = Contact("name", "email", Some("123"))))
+      .copy(correspondenceStarter = Some("case-source"), contact = Contact("name", "email", Some("123")))
+  )
 
   private val emptyCaseWithInvalidPostcode = correspondenceCase.copy(
     application = Cases.corrExampleWithMissingFields
-      .copy(correspondenceStarter = Some("case-source"), contact = Contact("name", "valid@email", Some("123")), address = Address("buildingAndStreet", "townOrCity", Some("county"), Some("1234567890"))))
+      .copy(
+        correspondenceStarter = Some("case-source"),
+        contact               = Contact("name", "valid@email", Some("123")),
+        address               = Address("buildingAndStreet", "townOrCity", Some("county"), Some("1234567890"))
+      )
+  )
 
   private val params = Map(
     "correspondenceStarter" -> Seq("Starter"),
@@ -41,7 +48,7 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
     "email"                 -> Seq("anemail@some.com"),
     "buildingAndStreet"     -> Seq("New building"),
     "townOrCity"            -> Seq("Old Town"),
-    "agentName"             -> Seq("Agent 007"),
+    "agentName"             -> Seq("Agent 007")
   )
 
   "CorrespondenceContactForm" should {
@@ -111,7 +118,10 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
               form.hasErrors         shouldBe true
               form.errors.size       shouldBe 2
               form.errors.map(_.key) shouldBe Seq("postCode", "postCode")
-              form.errors.flatMap(_.messages) shouldBe Seq("case.liability.error.postcode.valid", "case.liability.error.postcode.length")
+              form.errors.flatMap(_.messages) shouldBe Seq(
+                "case.liability.error.postcode.valid",
+                "case.liability.error.postcode.length"
+              )
             },
             _ => "form should not succeed"
           )

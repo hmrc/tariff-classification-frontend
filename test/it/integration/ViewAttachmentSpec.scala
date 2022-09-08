@@ -15,7 +15,9 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
   private val cse     = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
   private val caseRef = 123456
-  private val fileMetadata = Json.toJson(FileMetadata("id", Some("file.txt"), Some("text/plain"), Some(s"$wireMockUrl/$caseRef/file.txt"))).toString()
+  private val fileMetadata = Json
+    .toJson(FileMetadata("id", Some("file.txt"), Some("text/plain"), Some(s"$wireMockUrl/$caseRef/file.txt")))
+    .toString()
 
   "View Attachment" should {
 
@@ -69,7 +71,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
       )
 
       stubFor(
-        get(urlEqualTo(s"/${caseRef}/file.txt"))
+        get(urlEqualTo(s"/$caseRef/file.txt"))
           .willReturn(
             aResponse()
               .withStatus(OK)
@@ -81,7 +83,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
       val response: WSResponse = await(requestWithSession(s"/attachment/$caseRef/id").get())
 
       // Then
-      response.status shouldBe OK
+      response.status      shouldBe OK
       response.bodyAsBytes shouldBe ByteString("FILE_CONTENTS")
     }
   }

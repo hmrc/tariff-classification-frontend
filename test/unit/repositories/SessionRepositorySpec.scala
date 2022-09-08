@@ -29,13 +29,13 @@ import scala.concurrent.ExecutionContext
 
 class SessionRepositorySpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
-  implicit val ec: ExecutionContext  = scala.concurrent.ExecutionContext.global
+  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
   private val emptyCacheMap: CacheMap = CacheMap("id1", Map.empty)
-  private val cacheMap: CacheMap = CacheMap("id2", Map("run" -> JsString("walk")))
+  private val cacheMap: CacheMap      = CacheMap("id2", Map("run" -> JsString("walk")))
 
-  private val config = app.injector.instanceOf[Configuration]
-  private val mongoComponent = app.injector.instanceOf[MongoComponent]
+  private val config            = app.injector.instanceOf[Configuration]
+  private val mongoComponent    = app.injector.instanceOf[MongoComponent]
   private val sessionRepository = new SessionRepository(config, mongoComponent)
 
   "SessionRepository" when {

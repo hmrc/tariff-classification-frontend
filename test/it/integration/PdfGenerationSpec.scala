@@ -12,8 +12,9 @@ class PdfGenerationSpec extends IntegrationTest {
 
   private val cse     = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
   private val caseRef = 12
-  private val pdfUrl  = s"${wireMockUrl}/digital-tariffs-local/id"
-  private val pdfMeta = CasePayloads.jsonOf(Some(FileMetadata("id", Some("some.pdf"), Some("application/pdf"), Some(pdfUrl))))
+  private val pdfUrl  = s"$wireMockUrl/digital-tariffs-local/id"
+  private val pdfMeta =
+    CasePayloads.jsonOf(Some(FileMetadata("id", Some("some.pdf"), Some("application/pdf"), Some(pdfUrl))))
 
   "PDF Application" should {
 

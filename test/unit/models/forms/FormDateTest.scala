@@ -22,7 +22,7 @@ import play.api.data.Form
 
 class FormDateTest extends ModelsBaseSpec {
 
-  private val test = Form(FormDate.date("invalid.date"))
+  private val test         = Form(FormDate.date("invalid.date"))
   private val optionalTest = Form(FormDate.optionalDate("", "invalid.date"))
 
   val emptyStr = ""
@@ -35,9 +35,9 @@ class FormDateTest extends ModelsBaseSpec {
 
     "disallow empty fields" in {
       assertInvalid(
-        day = emptyStr,
+        day   = emptyStr,
         month = emptyStr,
-        year = emptyStr,
+        year  = emptyStr,
         List("invalid.date.error.required.all")
       )
     }
@@ -74,9 +74,9 @@ class FormDateTest extends ModelsBaseSpec {
       test
         .bindFromRequest(
           Map(
-            "day" -> Seq("1"),
+            "day"   -> Seq("1"),
             "month" -> Seq("1"),
-            "year" -> Seq("2019")
+            "year"  -> Seq("2019")
           )
         )
         .get shouldBe ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
@@ -137,13 +137,26 @@ class FormDateTest extends ModelsBaseSpec {
     }
 
     "not verify invalid date when not required" in {
-      assertOptionalInvalid(day = "30", month = "02", year = "2019", List(), hasEndDate = false)
+      assertOptionalInvalid(day               = "30", month = "02", year = "2019", List(), hasEndDate = false)
       assertOptionalInvalidWithoutEndDate(day = "30", month = "02", year = "2019", List())
     }
 
-    def assertOptionalInvalid(day: String, month: String, year: String, expected: List[String], hasEndDate: Boolean = true) = {
+    def assertOptionalInvalid(
+      day: String,
+      month: String,
+      year: String,
+      expected: List[String],
+      hasEndDate: Boolean = true
+    ) = {
       val messages = optionalTest
-        .bindFromRequest(Map("day" -> Seq(day), "month" -> Seq(month), "year" -> Seq(year), "explicitEndDate" -> Seq(String.valueOf(hasEndDate))))
+        .bindFromRequest(
+          Map(
+            "day"             -> Seq(day),
+            "month"           -> Seq(month),
+            "year"            -> Seq(year),
+            "explicitEndDate" -> Seq(String.valueOf(hasEndDate))
+          )
+        )
         .errors
         .flatMap(_.messages)
 

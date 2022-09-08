@@ -34,8 +34,8 @@ class KeywordsDetailsViewSpec extends ViewSpec {
 
   val keywordsTabViewModel =
     KeywordsTabViewModel("reference", Set("keyword1", "keyword2"), Seq("keyword1", "keywordX", "keywordY"))
-  val keywords    = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
-  val form = KeywordForm.formWithAuto(keywords.map(_.name))
+  val keywords = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
+  val form     = KeywordForm.formWithAuto(keywords.map(_.name))
 
   "Keyword Details" should {
 

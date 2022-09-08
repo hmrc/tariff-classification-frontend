@@ -25,8 +25,8 @@ case class KeywordsTabViewModel(
 
 object KeywordsTabViewModel {
   def fromCase(cse: Case, globalKeywords: Seq[String]): KeywordsTabViewModel = KeywordsTabViewModel(
-    caseReference = cse.reference,
-    caseKeywords = cse.keywords,
+    caseReference  = cse.reference,
+    caseKeywords   = cse.keywords,
     globalKeywords = globalKeywords
   )
 }

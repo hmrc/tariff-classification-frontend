@@ -38,11 +38,17 @@ object ReportDateForm extends Mappings {
   def date: Mapping[Instant] =
     localDate("reporting.startDate")
       .verifying(maxDate(LocalDate.now().plusDays(1), s"reporting.startDate.error.minimum", "day", "month", "year"))
-      .transform(date => date.atStartOfDay(ZoneOffset.UTC).toInstant, instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null))
+      .transform(
+        date => date.atStartOfDay(ZoneOffset.UTC).toInstant,
+        instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null)
+      )
 
   def endDateInclusive: Mapping[Instant] =
     localDate("reporting.endDate")
-      .transform(date => date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant, instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null))
+      .transform(
+        date => date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant,
+        instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null)
+      )
 
   val optionalDateRangeFormat: Formatter[InstantRange] = new Formatter[InstantRange] {
 
@@ -70,7 +76,7 @@ object ReportDateForm extends Mappings {
   val form: Form[ReportDateFormData] = Form(
     mapping(
       specificDatesKey -> boolean("reporting.choose_date.required"),
-      dateRangeKey+"_max_day" -> of[InstantRange](optionalDateRangeFormat).verifying(
+      dateRangeKey + "_max_day" -> of[InstantRange](optionalDateRangeFormat).verifying(
         "reporting.choose_date.invalid_end_date",
         range => range.max.isAfter(range.min)
       )

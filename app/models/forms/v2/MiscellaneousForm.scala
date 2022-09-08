@@ -16,7 +16,6 @@
 
 package models.forms.v2
 
-
 import models.{Contact, MiscApplication, MiscCaseType}
 import play.api.data.Form
 import play.api.data.Forms._
@@ -27,25 +26,25 @@ object MiscellaneousForm {
   private val form2Misc: (String, String, String) => MiscApplication = {
     case (shortDescription, contactName, caseType) =>
       MiscApplication(
-        contact = Contact("", "", None),
-        name = shortDescription,
-        contactName = Some(contactName),
-        caseType = MiscCaseType.withName(caseType),
+        contact             = Contact("", "", None),
+        name                = shortDescription,
+        contactName         = Some(contactName),
+        caseType            = MiscCaseType.withName(caseType),
         detailedDescription = None,
-        sampleToBeProvided = false,
-        sampleToBeReturned = false,
-        messagesLogged = List.empty
+        sampleToBeProvided  = false,
+        sampleToBeReturned  = false,
+        messagesLogged      = List.empty
       )
   }
 
-    private val misc2Form: MiscApplication => Option[(String, String, String)] = misc =>
-      Some((misc.name, misc.contactName.getOrElse(""), misc.caseType.toString))
+  private val misc2Form: MiscApplication => Option[(String, String, String)] = misc =>
+    Some((misc.name, misc.contactName.getOrElse(""), misc.caseType.toString))
 
-    val newMiscForm: Form[MiscApplication] = Form (
-      mapping(
-        "name"       -> textNonEmpty("error.empty.misc.shortDesc"),
-        "contactName"      -> textNonEmpty("error.empty.misc.contactName"),
-        "caseType" -> oneOf("error.empty.miscCaseType", MiscCaseType)
-      )(form2Misc)(misc2Form)
-    )
+  val newMiscForm: Form[MiscApplication] = Form(
+    mapping(
+      "name"        -> textNonEmpty("error.empty.misc.shortDesc"),
+      "contactName" -> textNonEmpty("error.empty.misc.contactName"),
+      "caseType"    -> oneOf("error.empty.miscCaseType", MiscCaseType)
+    )(form2Misc)(misc2Form)
+  )
 }

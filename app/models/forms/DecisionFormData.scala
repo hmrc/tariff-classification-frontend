@@ -26,27 +26,29 @@ import models.Decision
 import models.constraints.StopOnFirstFail
 
 case class DecisionFormData(
-                             bindingCommodityCode: String         = "",
-                             goodsDescription: String             = "",
-                             methodSearch: String                 = "",
-                             justification: String                = "",
-                             methodCommercialDenomination: String = "",
-                             methodExclusion: String              = "",
-                             attachments: Seq[String]             = Seq.empty,
-                             explanation: String                  = "",
-                             expiryDate: Option[Instant]          = None,
-                             explicitEndDate: Boolean             = false
-                           )
+  bindingCommodityCode: String         = "",
+  goodsDescription: String             = "",
+  methodSearch: String                 = "",
+  justification: String                = "",
+  methodCommercialDenomination: String = "",
+  methodExclusion: String              = "",
+  attachments: Seq[String]             = Seq.empty,
+  explanation: String                  = "",
+  expiryDate: Option[Instant]          = None,
+  explicitEndDate: Boolean             = false
+)
 
 class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
 
-  def btiForm(): Form[DecisionFormData] = {
+  def btiForm(): Form[DecisionFormData] =
     Form[DecisionFormData](
       mapping(
         "bindingCommodityCode" -> text.verifying(
-          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
+          emptyOr(
+            commodityCodeConstraints.commodityCodeLengthValid,
             commodityCodeConstraints.commodityCodeNumbersValid,
-            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
+          ): _*
         ),
         "goodsDescription"             -> text,
         "methodSearch"                 -> text,
@@ -56,12 +58,12 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         "attachments"                  -> seq(text),
         "explanation"                  -> text,
         "expiryDate"                   -> FormDate.optionalDate(),
-        "expiryDate.explicitEndDate"  -> boolean
-      )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.error.required.all",
-        formData => if(formData.explicitEndDate)formData.expiryDate.isDefined else true
+        "expiryDate.explicitEndDate"   -> boolean
+      )(DecisionFormData.apply)(DecisionFormData.unapply).verifying(
+        "atar.editRuling.expiryDate.error.required.all",
+        formData => if (formData.explicitEndDate) formData.expiryDate.isDefined else true
       )
     )
-  }
 
   val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
@@ -82,13 +84,12 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "attachments"                  -> seq(text),
       "explanation"                  -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required")),
       "expiryDate"                   -> FormDate.optionalDate(),
-      "expiryDate.explicitEndDate"              -> boolean
-    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying("atar.editRuling.expiryDate.error.required.all",
-      formData => if(formData.explicitEndDate) formData.expiryDate.isDefined else true
+      "expiryDate.explicitEndDate"   -> boolean
+    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying(
+      "atar.editRuling.expiryDate.error.required.all",
+      formData => if (formData.explicitEndDate) formData.expiryDate.isDefined else true
     )
   )
-
-
 
   def bindFrom: Option[Decision] => Option[Form[DecisionFormData]] =
     _.map(mapFrom)
@@ -112,9 +113,11 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
     Form[Decision](
       mapping(
         "bindingCommodityCode" -> text.verifying(
-          emptyOr(commodityCodeConstraints.commodityCodeLengthValid,
+          emptyOr(
+            commodityCodeConstraints.commodityCodeLengthValid,
             commodityCodeConstraints.commodityCodeNumbersValid,
-            commodityCodeConstraints.commodityCodeEvenDigitsValid): _*
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
+          ): _*
         ),
         "goodsDescription" -> text,
         "methodSearch"     -> text,
@@ -132,13 +135,12 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
           commodityCodeConstraints.commodityCodeNumbersValid,
           commodityCodeConstraints.commodityCodeEvenDigitsValid
         ),
-        "goodsDescription"     -> text.verifying(customNonEmpty("Enter a goods description")),
-        "methodSearch"         -> text.verifying(customNonEmpty("Enter the searches performed")),
-        "justification"        -> text.verifying(customNonEmpty("Enter the justification")),
-        "methodExclusion"      -> text
+        "goodsDescription" -> text.verifying(customNonEmpty("Enter a goods description")),
+        "methodSearch"     -> text.verifying(customNonEmpty("Enter the searches performed")),
+        "justification"    -> text.verifying(customNonEmpty("Enter the justification")),
+        "methodExclusion"  -> text
       )(liabilityForm2Decision(existingDecision))(decision2LiabilityForm)
     ).fillAndValidate(existingDecision)
-
 
   private def liabilityForm2Decision(existingDecision: Decision): (String, String, String, String, String) => Decision = {
     case (code, description, search, justification, exclusion) =>

@@ -27,20 +27,21 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyChecks {
 
   val cacheConnector = FakeDataCacheConnector
-  val service = new TabCacheService(cacheConnector)
+  val service        = new TabCacheService(cacheConnector)
 
-  val tabGenerator = Gen.oneOf(List(
-    Tab.ACTIVITY_TAB,
-    Tab.ATTACHMENTS_TAB,
-    Tab.C592_TAB,
-    Tab.KEYWORDS_TAB,
-    Tab.RULING_TAB,
-    Tab.SAMPLE_TAB
-  ))
+  val tabGenerator = Gen.oneOf(
+    List(
+      Tab.ACTIVITY_TAB,
+      Tab.ATTACHMENTS_TAB,
+      Tab.C592_TAB,
+      Tab.KEYWORDS_TAB,
+      Tab.RULING_TAB,
+      Tab.SAMPLE_TAB
+    )
+  )
 
-  override protected def beforeEach(): Unit = {
+  override protected def beforeEach(): Unit =
     await(cacheConnector.remove(CacheMap("id", Map.empty)))
-  }
 
   "TabCacheService" should {
     "get the active tab" in {

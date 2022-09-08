@@ -40,8 +40,8 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
       val doc = view(sample_details_bti(sampleTab))
 
       // Then
-      doc.getElementById("app-details-sending-samples-answer")   should containText(messages("answer.yes"))
-      doc.getElementById("app-details-returning-samples") should containText(messages("answer.yes"))
+      doc.getElementById("app-details-sending-samples-answer") should containText(messages("answer.yes"))
+      doc.getElementById("app-details-returning-samples")      should containText(messages("answer.yes"))
     }
 
     "not render sample to be returned when sample not provided" in {

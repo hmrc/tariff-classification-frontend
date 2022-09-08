@@ -33,10 +33,10 @@ object ContactDetailsTabViewModel {
     ContactDetailsTabViewModel(
       cse.reference,
       caseSource = correspondenceApplication.correspondenceStarter.getOrElse(""),
-      contact = correspondenceApplication.contact,
-      fax = correspondenceApplication.fax,
-      address = correspondenceApplication.address,
-      agentName = correspondenceApplication.agentName
+      contact    = correspondenceApplication.contact,
+      fax        = correspondenceApplication.fax,
+      address    = correspondenceApplication.address,
+      agentName  = correspondenceApplication.agentName
     )
   }
 }

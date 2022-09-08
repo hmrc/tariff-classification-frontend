@@ -31,19 +31,31 @@ class ReportNumberFieldViewSpec extends ViewSpec {
   "reportNumberField view" should {
 
     "render with the specified ID" in {
-      val doc = view(withTableWrapper(reportNumberField(NumberResultField(ReportField.ElapsedDays.fieldName, Some(12)), "case-report", 0)))
+      val doc = view(
+        withTableWrapper(
+          reportNumberField(NumberResultField(ReportField.ElapsedDays.fieldName, Some(12)), "case-report", 0)
+        )
+      )
       doc should containElementWithID("case-report-elapsed_days-0")
     }
 
     "render the numeric value retrieved" in {
-      val doc = view(withTableWrapper(reportNumberField(NumberResultField(ReportField.ElapsedDays.fieldName, Some(12)), "case-report", 0)))
-      doc should containElementWithID("case-report-elapsed_days-0")
+      val doc = view(
+        withTableWrapper(
+          reportNumberField(NumberResultField(ReportField.ElapsedDays.fieldName, Some(12)), "case-report", 0)
+        )
+      )
+      doc                                              should containElementWithID("case-report-elapsed_days-0")
       doc.getElementById("case-report-elapsed_days-0") should containText("12")
     }
 
     "render 0 if no value was found" in {
-      val doc = view(withTableWrapper(reportNumberField(NumberResultField(ReportField.ElapsedDays.fieldName, None), "case-report", 0)))
-      doc should containElementWithID("case-report-elapsed_days-0")
+      val doc = view(
+        withTableWrapper(
+          reportNumberField(NumberResultField(ReportField.ElapsedDays.fieldName, None), "case-report", 0)
+        )
+      )
+      doc                                              should containElementWithID("case-report-elapsed_days-0")
       doc.getElementById("case-report-elapsed_days-0") should containText("0")
     }
   }

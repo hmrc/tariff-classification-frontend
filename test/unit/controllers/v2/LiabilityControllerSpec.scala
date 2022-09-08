@@ -147,12 +147,16 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     attachments: Seq[StoredAttachment]          = Seq(Cases.storedAttachment),
     letterOfAuthority: Option[StoredAttachment] = Some(Cases.letterOfAuthority)
   ): Any = {
-    when(eventService.getFilteredEvents(
-      any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])) thenReturn Future(pagedEvent)
+    when(
+      eventService
+        .getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])
+    ) thenReturn Future(pagedEvent)
     when(queueService.getAll) thenReturn Future(queues)
 
     when(fileStoreService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(attachments)
-    when(fileStoreService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(letterOfAuthority)
+    when(fileStoreService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(
+      letterOfAuthority
+    )
     when(keywordsService.findAll) thenReturn Future(Seq(keyword1, keyword2))
     when(keywordsService.addKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])) thenReturn Future(
       Cases.liabilityLiveCaseExample

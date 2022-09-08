@@ -49,7 +49,8 @@ class CreateMiscellaneousController @Inject() (
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithUnsafeDefaultFormBinding {
+    with I18nSupport
+    with WithUnsafeDefaultFormBinding {
 
   private val form: Form[MiscApplication] = MiscellaneousForm.newMiscForm
 

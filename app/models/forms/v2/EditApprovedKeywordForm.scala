@@ -37,7 +37,7 @@ object EditApprovedKeywordForm {
         val keywordName = data.getOrElse(key, "")
 
         data.get("action") match {
-          case None    => Right(keywordName)
+          case None => Right(keywordName)
           case Some(action) if EditKeywordAction.DELETE.toString == action =>
             Right(action)
           case Some(action) if EditKeywordAction.RENAME.toString == action && keywordName.isEmpty =>
@@ -63,6 +63,5 @@ object EditApprovedKeywordForm {
       "keywordName" -> of[String](keyWordFormat(allKeywords))
     )
   )
-
 
 }

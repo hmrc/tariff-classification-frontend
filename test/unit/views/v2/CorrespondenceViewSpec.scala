@@ -59,7 +59,7 @@ class CorrespondenceViewSpec extends ViewSpec {
   )
 
   val initiateResponse = FileStoreInitiateResponse(
-    id = "id",
+    id              = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -76,8 +76,8 @@ class CorrespondenceViewSpec extends ViewSpec {
 
   private val address: Address = Address("Street building", "Sofia", None, Some("NE2 8PN"));
 
-  private val exampleMessages = List(Message("name", Instant.now(), "message"),
-    Message("name2", Instant.now(), "message2"))
+  private val exampleMessages =
+    List(Message("name", Instant.now(), "message"), Message("name2", Instant.now(), "message2"))
 
   private val messagesTab: MessagesTabViewModel = MessagesTabViewModel("reference", exampleMessages)
 
@@ -159,26 +159,26 @@ class CorrespondenceViewSpec extends ViewSpec {
       doc should containElementWithID("contact_details_tab")
     }
 
-        "render Messages details" in {
-          val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
-          val doc = view(
-            correspondenceView(
-              CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
-              caseDetailsTab,
-              contactDetails,
-              messagesTab,
-              messageForm,
-              sampleStatusTabViewModel,
-              attachmentsTab,
-              uploadAttachmentForm,
-              initiateResponse,
-              activityTab,
-              activityForm,
-              Seq.empty
-            )
-          )
-          doc should containElementWithID("messages_tab")
-        }
+    "render Messages details" in {
+      val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)
+      val doc = view(
+        correspondenceView(
+          CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions),
+          caseDetailsTab,
+          contactDetails,
+          messagesTab,
+          messageForm,
+          sampleStatusTabViewModel,
+          attachmentsTab,
+          uploadAttachmentForm,
+          initiateResponse,
+          activityTab,
+          activityForm,
+          Seq.empty
+        )
+      )
+      doc should containElementWithID("messages_tab")
+    }
 
     "render Sample Details tab" in {
       val c = aCorrespondenceCase(withReference("reference"), withCorrespondenceApplication)

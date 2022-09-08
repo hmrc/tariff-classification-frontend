@@ -43,7 +43,7 @@ class SampleDetailsViewSpec extends ViewSpec {
         )
       )
       doc.getElementById("correspondence-sending-samples_answer") should containText("Yes")
-      doc                                                    should containElementWithID("correspondence-returning-samples")
+      doc                                                         should containElementWithID("correspondence-returning-samples")
 
     }
 

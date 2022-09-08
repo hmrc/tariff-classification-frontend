@@ -32,7 +32,8 @@ class SecurityController @Inject() (
   val not_authorized: not_authorized,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithUnsafeDefaultFormBinding {
+    with I18nSupport
+    with WithUnsafeDefaultFormBinding {
 
   def unauthorized(): Action[AnyContent] = Action.async(implicit request => successful(Ok(not_authorized())))
 

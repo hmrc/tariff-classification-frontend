@@ -56,7 +56,8 @@ class ReportingController @Inject() (
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
-    with I18nSupport with WithUnsafeDefaultFormBinding {
+    with I18nSupport
+    with WithUnsafeDefaultFormBinding {
 
   lazy val chooseDatesForm = ReportDateForm.form
   lazy val chooseTeamsForm = ReportTeamForm.form

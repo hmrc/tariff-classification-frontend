@@ -34,7 +34,7 @@ import play.api.data.FormBinding.Implicits.formBinding
 
 class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 
-  private val casesService = mock[CasesService]
+  private val casesService    = mock[CasesService]
   private val createLiability = injector.instanceOf[create_liability]
 
   private def controller(permission: Set[Permission]) = new CreateLiabilityController(

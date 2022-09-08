@@ -36,12 +36,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val fileService  = mock[FileStoreService]
-  private val operator     = Operator(id = "id")
+  private val casesService      = mock[CasesService]
+  private val fileService       = mock[FileStoreService]
+  private val operator          = Operator(id = "id")
   private val suspendCaseReason = app.injector.instanceOf[suspend_case_reason]
-  private val suspendCaseEmail = app.injector.instanceOf[suspend_case_email]
-  private val confirmSuspended = app.injector.instanceOf[confirm_suspended]
+  private val suspendCaseEmail  = app.injector.instanceOf[suspend_case_email]
+  private val confirmSuspended  = app.injector.instanceOf[confirm_suspended]
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
@@ -98,7 +98,9 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.suspended.reason.heading", caseWithStatusOPEN.application.goodsName))
+      bodyOf(result) should include(
+        messages("change_case_status.suspended.reason.heading", caseWithStatusOPEN.application.goodsName)
+      )
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {
@@ -169,7 +171,9 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.suspended.email.heading", caseWithStatusOPEN.application.goodsName))
+      bodyOf(result) should include(
+        messages("change_case_status.suspended.email.heading", caseWithStatusOPEN.application.goodsName)
+      )
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {

@@ -37,7 +37,8 @@ class TabCacheController @Inject() (
   mcc: MessagesControllerComponents
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
-    with Logging with WithUnsafeDefaultFormBinding {
+    with Logging
+    with WithUnsafeDefaultFormBinding {
 
   def post(reference: String, itemType: ApplicationType): Action[AnyContent] =
     identify.async { implicit request =>

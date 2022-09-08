@@ -43,7 +43,7 @@ class AuthenticatedHttpClient @Inject() (
 
     hc.headers(Seq(headerName)) match {
       case header @ Seq(_) => header
-      case _      => Seq(headerName -> config.apiToken)
+      case _               => Seq(headerName -> config.apiToken)
     }
   }
 

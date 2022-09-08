@@ -15,7 +15,7 @@
  */
 
 package views.components
-import models.viewmodels.{AssignedToMeTab, ReferredByMeTab, CompletedByMeTab}
+import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
 import views.ViewMatchers.{containElementWithID, haveAttribute}
 import views.ViewSpec
 import views.html.components.my_cases_secondary_navigation

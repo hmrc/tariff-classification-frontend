@@ -26,11 +26,11 @@ case class CaseHeaderViewModel(
   caseSource: Option[String],
   contact: Contact,
   caseStatus: CaseStatusViewModel,
-  isMigrated : Boolean
+  isMigrated: Boolean
 )
 
 object CaseHeaderViewModel {
-  def fromCase(c: Case): CaseHeaderViewModel = {
+  def fromCase(c: Case): CaseHeaderViewModel =
     CaseHeaderViewModel(
       c.application.`type`,
       c.application.businessName,
@@ -41,5 +41,4 @@ object CaseHeaderViewModel {
       CaseStatusViewModel.fromCase(c),
       c.dateOfExtract.isDefined
     )
-  }
 }

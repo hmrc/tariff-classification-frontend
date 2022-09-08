@@ -157,22 +157,20 @@ class ConstraintsSpec extends ModelsBaseSpec with Constraints {
       def toMillis(date: LocalDate): Long =
         date.atStartOfDay.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
 
-      Gen.choose(toMillis(min), toMillis(max)).map {
-        millis =>
-          Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
+      Gen.choose(toMillis(min), toMillis(max)).map { millis =>
+        Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
       }
     }
 
     "return Valid for a date before or equal to the maximum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        max  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         date <- datesBetween(LocalDate.of(2000, 1, 1), max)
       } yield (max, date)
 
       forAll(gen) {
         case (max, date) =>
-
           val result = maxDate(max, "error.future")(date)
           result shouldEqual Valid
       }
@@ -181,13 +179,12 @@ class ConstraintsSpec extends ModelsBaseSpec with Constraints {
     "return Invalid for a date after the maximum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        max  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         date <- datesBetween(max.plusDays(1), LocalDate.of(3000, 1, 2))
       } yield (max, date)
 
       forAll(gen) {
         case (max, date) =>
-
           val result = maxDate(max, "error.future", "foo")(date)
           result shouldEqual Invalid("error.future", "foo")
       }

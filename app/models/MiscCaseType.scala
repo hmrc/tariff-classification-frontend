@@ -27,12 +27,12 @@ object MiscCaseType extends Enumeration {
   val OTHER          = Value("Other")
 
   def format(caseType: MiscCaseType): String =
-  caseType match {
-    case APPEALS => "Appeals"
-    case HARMONISED => "Harmonised System"
-    case IB => "IB"
-    case NOMENCLATURE => "Nomenclature"
-    case OTHER_GOVT_DEP => "Other government department"
-    case OTHER => "Other"
-  }
+    caseType match {
+      case APPEALS        => "Appeals"
+      case HARMONISED     => "Harmonised System"
+      case IB             => "IB"
+      case NOMENCLATURE   => "Nomenclature"
+      case OTHER_GOVT_DEP => "Other government department"
+      case OTHER          => "Other"
+    }
 }

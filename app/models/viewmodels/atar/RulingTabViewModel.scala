@@ -32,14 +32,14 @@ case class RulingTabViewModel(
 
 object RulingTabViewModel {
   def fromCase(cse: Case): RulingTabViewModel = RulingTabViewModel(
-    caseReference = cse.reference,
-    caseStatus = cse.status,
-    caseCreatedDate = cse.createdDate,
-    caseHasExpiredRuling = cse.hasExpiredRuling,
+    caseReference          = cse.reference,
+    caseStatus             = cse.status,
+    caseCreatedDate        = cse.createdDate,
+    caseHasExpiredRuling   = cse.hasExpiredRuling,
     suggestedCommodityCode = cse.application.asATAR.envisagedCommodityCode,
-    goodsDescription = cse.application.asATAR.goodDescription,
+    goodsDescription       = cse.application.asATAR.goodDescription,
     // Commodity code expiry is not checked until we can integrate with the UK Global Tariff
     bindingCommodityCode = cse.decision.map(_.bindingCommodityCode).map(CommodityCode(_)),
-    decision = cse.decision
+    decision             = cse.decision
   )
 }

@@ -29,4 +29,3 @@ object MessageForm {
     )(MessageFormData.apply)(MessageFormData.unapply)
   )
 }
-

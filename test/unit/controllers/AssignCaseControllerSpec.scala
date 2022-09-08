@@ -35,7 +35,7 @@ class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   private val casesService = mock[CasesService]
   private val operator     = Operator("id")
-  private val assignCase = injector.instanceOf[assign_case]
+  private val assignCase   = injector.instanceOf[assign_case]
 
   override def afterEach(): Unit = {
     super.afterEach()

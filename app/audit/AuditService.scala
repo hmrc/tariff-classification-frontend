@@ -131,15 +131,17 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
       auditPayload   = baseAuditPayload(c, operator) + ("comment" -> "Liability case created")
     )
 
-  def auditCaseUpdated(originalCase: Case, updatedCase: Case, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
+  def auditCaseUpdated(originalCase: Case, updatedCase: Case, operatorUpdating: Operator)(
+    implicit hc: HeaderCarrier
+  ): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseUpdated,
-        auditPayload = Json.obj(
-          "originalCase" -> Json.toJson(originalCase),
-          "operatorUpdating"       -> operatorUpdating.id,
-          "updatedCase"  -> Json.toJson(updatedCase)
-        )
+      auditPayload = Json.obj(
+        "originalCase"     -> Json.toJson(originalCase),
+        "operatorUpdating" -> operatorUpdating.id,
+        "updatedCase"      -> Json.toJson(updatedCase)
       )
+    )
 
   def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)(
     implicit hc: HeaderCarrier
@@ -206,13 +208,15 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     )
   }
 
-  def auditUserUpdated(original: Operator,updatedOperator: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
+  def auditUserUpdated(original: Operator, updatedOperator: Operator, operatorUpdating: Operator)(
+    implicit hc: HeaderCarrier
+  ): Unit =
     sendExplicitAuditEvent(
       auditEventType = UserUpdated,
       auditPayload = Json.obj(
         "originalOperator" -> Json.toJson(original),
         "updatedOperator"  -> Json.toJson(updatedOperator),
-        "operatorUpdating"       -> operatorUpdating.id
+        "operatorUpdating" -> operatorUpdating.id
       )
     )
 
@@ -230,7 +234,8 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     user: Option[Operator],
     teamId: String,
     originalUserId: String,
-    operatorUpdating: String)(implicit hc: HeaderCarrier): Unit = {
+    operatorUpdating: String
+  )(implicit hc: HeaderCarrier): Unit = {
     val operatorId: String = user.map(_.id).getOrElse("")
     sendExplicitAuditEvent(
       auditEventType = UserCasesMoved,

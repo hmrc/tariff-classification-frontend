@@ -36,7 +36,7 @@ case class C592ViewModel(
   caseBoardsFileNumber: Option[String],
   isRepaymentClaim: Boolean = false,
   agentName: Option[String] = None,
-  port: Option[String] = None,
+  port: Option[String]      = None,
   isMigratedCase: Boolean
 )
 

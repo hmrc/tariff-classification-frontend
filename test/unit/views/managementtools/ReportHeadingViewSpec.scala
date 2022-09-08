@@ -25,13 +25,13 @@ class ReportHeadingViewSpec extends ViewSpec {
   "reportHeading view" should {
     "render heading text" in {
       val doc = view(reportHeading("Case count by status", "Report results"))
-      doc should containElementWithClass("govuk-heading-xl")
+      doc                                                should containElementWithClass("govuk-heading-xl")
       doc.getElementsByClass("govuk-heading-xl").first() should containText("Report results")
     }
 
     "render report name caption" in {
       val doc = view(reportHeading("Case count by status", "Report results"))
-      doc should containElementWithID("report-caption")
+      doc                                  should containElementWithID("report-caption")
       doc.getElementById("report-caption") should containText("Case count by status")
     }
   }

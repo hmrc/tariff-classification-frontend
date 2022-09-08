@@ -38,8 +38,8 @@ class SearchControllerSpec extends ControllerBaseSpec {
   private val fileStoreService = mock[FileStoreService]
   private val keywordsService  = mock[KeywordsService]
   private val operator         = Operator(id = "id")
-  private val advancedSearch = app.injector.instanceOf[advanced_search]
-  private val defaultTab = SearchTab.DETAILS
+  private val advancedSearch   = app.injector.instanceOf[advanced_search]
+  private val defaultTab       = SearchTab.DETAILS
 
   private def controller = new SearchController(
     new SuccessfulRequestActions(playBodyParsers, operator),

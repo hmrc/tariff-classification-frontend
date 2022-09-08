@@ -35,7 +35,8 @@ class ChangeCaseStatusController @Inject() (
   val change_case_status: change_case_status,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction with WithUnsafeDefaultFormBinding {
+    with RenderCaseAction
+    with WithUnsafeDefaultFormBinding {
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService

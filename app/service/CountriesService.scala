@@ -22,9 +22,7 @@ class CountriesService {
 
   def getAllCountries: List[Country] = countries
 
-  lazy val getAllCountriesById: Map[String, Country] = countries.map { country =>
-    (country.code, country)
-  }.toMap
+  lazy val getAllCountriesById: Map[String, Country] = countries.map(country => (country.code, country)).toMap
 
   private val countries = List(
     Country("AF", "title.afghanistan", "AF", Nil),

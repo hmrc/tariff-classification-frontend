@@ -33,9 +33,11 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class DatedCacheMap(id: String,
-                         data: Map[String, JsValue],
-                         lastUpdated: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC))
+case class DatedCacheMap(
+  id: String,
+  data: Map[String, JsValue],
+  lastUpdated: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
+)
 
 object DatedCacheMap {
   implicit val dateFormat: Format[LocalDateTime] = MongoJavatimeFormats.localDateTimeFormat
@@ -45,27 +47,30 @@ object DatedCacheMap {
 }
 
 @Singleton
-class SessionRepository @Inject()(config: Configuration, mongoComponent: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[DatedCacheMap](
-    mongoComponent = mongoComponent,
-    collectionName = "api-cache",
-    domainFormat   = DatedCacheMap.formats,
-    indexes        = Seq(
-      IndexModel(
-        keys = ascending("lastUpdated"),
-        indexOptions = IndexOptions()
-          .name("userAnswersExpiry")
-          .expireAfter(config.get[Int]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+class SessionRepository @Inject() (config: Configuration, mongoComponent: MongoComponent)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[DatedCacheMap](
+      mongoComponent = mongoComponent,
+      collectionName = "api-cache",
+      domainFormat   = DatedCacheMap.formats,
+      indexes = Seq(
+        IndexModel(
+          keys = ascending("lastUpdated"),
+          indexOptions = IndexOptions()
+            .name("userAnswersExpiry")
+            .expireAfter(config.get[Int]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+        )
       )
-    )
-  ) {
+    ) {
 
   def upsert(cm: CacheMap): Future[Boolean] =
-    collection.replaceOne(
-      filter = byId(cm.id),
-      replacement = DatedCacheMap(cm),
-      options = ReplaceOptions().upsert(true)
-    ).toFuture().map(_.wasAcknowledged())
+    collection
+      .replaceOne(
+        filter      = byId(cm.id),
+        replacement = DatedCacheMap(cm),
+        options     = ReplaceOptions().upsert(true)
+      )
+      .toFuture()
+      .map(_.wasAcknowledged())
 
   def get(id: String): Future[Option[CacheMap]] =
     collection.find(byId(id)).map(x => CacheMap(x.id, x.data)).headOption()

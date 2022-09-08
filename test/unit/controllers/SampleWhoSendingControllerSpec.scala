@@ -35,8 +35,8 @@ import scala.concurrent.Future
 
 class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val operator     = Operator(id = "id")
+  private val casesService     = mock[CasesService]
+  private val operator         = Operator(id = "id")
   private val changeSampleSend = app.injector.instanceOf[change_sample_send]
 
   private def controller(requestCase: Case) = new SampleWhoSendingController(
@@ -116,7 +116,9 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
       val c = aCase(withReference("reference"), withStatus(CaseStatus.CANCELLED), withDecision())
 
       val result = await(
-        controller(c).updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> ""))
+        controller(c).updateStatus("reference")(
+          newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> "")
+        )
       )
 
       verify(casesService, never())
