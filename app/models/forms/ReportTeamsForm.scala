@@ -20,8 +20,11 @@ import play.api.data.Form
 import play.api.data.Forms._
 
 object ReportTeamForm {
-  val form = Form(single(
-    "allTeams" -> optional(boolean)
-      .verifying("reporting.choose_teams.required", _.nonEmpty).transform(_.get, Some[Boolean](_))
-  ))
+  val form = Form(
+    single(
+      "allTeams" -> optional(boolean)
+        .verifying("reporting.choose_teams.required", _.nonEmpty)
+        .transform(_.get, Some[Boolean](_))
+    )
+  )
 }

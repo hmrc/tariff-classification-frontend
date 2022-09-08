@@ -30,8 +30,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val operator     = Operator(id = "id")
+  private val casesService      = mock[CasesService]
+  private val operator          = Operator(id = "id")
   private val releaseOrSuppress = app.injector.instanceOf[release_or_suppress]
 
   private val caseBTIWithStatusNEW = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)

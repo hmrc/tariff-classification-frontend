@@ -26,7 +26,8 @@ object CorrespondenceContactForm extends Constraints {
 
   def correspondenceContactForm(existingCorrespondence: Case): Form[Case] =
     Form[Case](
-      mapping[Case,
+      mapping[
+        Case,
         Option[String],
         String,
         String,
@@ -38,7 +39,7 @@ object CorrespondenceContactForm extends Constraints {
         Option[String],
         Option[String]
       ](
-  "correspondenceStarter" -> optional(text).verifying("Enter a case source", _.isDefined),
+        "correspondenceStarter" -> optional(text).verifying("Enter a case source", _.isDefined),
         "name"                  -> text,
         "email"                 -> text.verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*),
         "phone"                 -> optional(text),
@@ -46,10 +47,12 @@ object CorrespondenceContactForm extends Constraints {
         "buildingAndStreet"     -> text,
         "townOrCity"            -> text,
         "county"                -> optional(text),
-        "postCode"              -> optional(Forms.text)
-          .verifying(validPostcode("case.liability.error.postcode.valid"),
-            optionalPostCodeMaxLength("case.liability.error.postcode.length")),
-        "agentName"             -> optional(text)
+        "postCode" -> optional(Forms.text)
+          .verifying(
+            validPostcode("case.liability.error.postcode.valid"),
+            optionalPostCodeMaxLength("case.liability.error.postcode.length")
+          ),
+        "agentName" -> optional(text)
       )(form2Correspondence(existingCorrespondence))(correspondence2Form)
     ).fillAndValidate(existingCorrespondence)
 
@@ -88,7 +91,8 @@ object CorrespondenceContactForm extends Constraints {
       )
   }
 
-  private def correspondence2Form(existingCase: Case): Option[(
+  private def correspondence2Form(existingCase: Case): Option[
+    (
       Option[String],
       String,
       String,

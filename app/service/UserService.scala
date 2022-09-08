@@ -26,22 +26,23 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserService @Inject()(
+class UserService @Inject() (
   auditService: AuditService,
   connector: BindingTariffClassificationConnector
 )(implicit ec: ExecutionContext)
     extends Logging {
 
   def getAllUsers(role: Seq[Role], team: String, pagination: Pagination)(
-    implicit hc: HeaderCarrier): Future[Paged[Operator]] =
+    implicit hc: HeaderCarrier
+  ): Future[Paged[Operator]] =
     connector.getAllUsers(role, team, pagination)
 
-  def updateUser(originalOperator: Operator, updatedOperator: Operator ,operatorMakingTheChange: Operator)(
+  def updateUser(originalOperator: Operator, updatedOperator: Operator, operatorMakingTheChange: Operator)(
     implicit hc: HeaderCarrier
   ): Future[Operator] =
     for {
       updated <- connector.updateUser(updatedOperator)
-      _ = auditService.auditUserUpdated(originalOperator,updatedOperator, operatorMakingTheChange)
+      _ = auditService.auditUserUpdated(originalOperator, updatedOperator, operatorMakingTheChange)
     } yield updated
 
   def getUser(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =

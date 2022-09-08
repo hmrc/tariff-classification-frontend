@@ -26,13 +26,7 @@ object MiscDetailsForm extends Constraints {
 
   def miscDetailsForm(existingMisc: Case): Form[Case] =
     Form[Case](
-      mapping[Case,
-        String,
-        String,
-        Option[String],
-        String,
-        Option[String]
-      ](
+      mapping[Case, String, String, Option[String], String, Option[String]](
         "summary"             -> textNonEmpty("Enter a short case description"),
         "contactName"         -> textNonEmpty("Enter a case contact name"),
         "detailedDescription" -> optional(text),
@@ -66,7 +60,8 @@ object MiscDetailsForm extends Constraints {
       )
   }
 
-  private def misc2Form(existingCase: Case): Option[(
+  private def misc2Form(existingCase: Case): Option[
+    (
       String,
       String,
       Option[String],

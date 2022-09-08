@@ -35,7 +35,7 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SampleController @Inject()(
+class SampleController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
   mcc: MessagesControllerComponents,
@@ -44,7 +44,8 @@ class SampleController @Inject()(
   val change_sample_status: change_sample_status,
   val change_correspondence_sending_sample: change_correspondence_sending_sample
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Option[SampleStatus]] with WithUnsafeDefaultFormBinding {
+    with StatusChangeAction[Option[SampleStatus]]
+    with WithUnsafeDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 
@@ -91,7 +92,6 @@ class SampleController @Inject()(
   ): Future[Case] =
     caseService.updateSampleStatus(c, status, operator)
 
-  override protected def onSuccessRedirect(reference: String): Call = {
+  override protected def onSuccessRedirect(reference: String): Call =
     controllers.routes.CaseController.sampleDetails(reference)
-  }
 }

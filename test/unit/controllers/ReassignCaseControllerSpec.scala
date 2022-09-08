@@ -39,9 +39,9 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val queue        = mock[Queue]
   private val operator     = Operator(id = "id")
 
-  private val reassignQueueCase = injector.instanceOf[reassign_queue_case]
+  private val reassignQueueCase   = injector.instanceOf[reassign_queue_case]
   private val confirmReassignCase = injector.instanceOf[confirm_reassign_case]
-  private val resourceNotFound = injector.instanceOf[resource_not_found]
+  private val resourceNotFound    = injector.instanceOf[resource_not_found]
 
   private val caseWithStatusNEW = Cases.caseQueueExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN = Cases.caseQueueExample

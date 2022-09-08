@@ -43,11 +43,11 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private lazy val manage_reports_view = injector.instanceOf[manage_reports_view]
 
   private val summaryReportView = injector.instanceOf[summaryReportView]
-  private val queueReportView = injector.instanceOf[queueReportView]
-  private val caseReportView = injector.instanceOf[caseReportView]
+  private val queueReportView   = injector.instanceOf[queueReportView]
+  private val caseReportView    = injector.instanceOf[caseReportView]
   private val reportChooseDates = injector.instanceOf[reportChooseDates]
   private val reportChooseTeams = injector.instanceOf[reportChooseTeams]
-  private val reportNotFound = injector.instanceOf[report_not_found]
+  private val reportNotFound    = injector.instanceOf[report_not_found]
 
   override protected def afterEach(): Unit = {
     super.afterEach()

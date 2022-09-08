@@ -37,5 +37,4 @@ class CaseDetailsViewSpec extends ViewSpec {
     }
   }
 
-
 }

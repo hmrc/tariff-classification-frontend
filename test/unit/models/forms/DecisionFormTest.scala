@@ -146,7 +146,7 @@ class DecisionFormTest extends ModelsBaseSpec {
     "return commodity code invalid error" when {
       "provided by an invalid commodity code" in {
         val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(
-          validationResultForEmpty  = Valid,
+          validationResultForEmpty       = Valid,
           validationResultForValidLength = Invalid("decision_form.error.bindingCommodityCode.valid")
         )
 
@@ -160,7 +160,7 @@ class DecisionFormTest extends ModelsBaseSpec {
     "return only commodity code empty validation error" when {
       "validation fails both on commodityCodeNonEmpty and commodityCodeValid" in {
         val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(
-          validationResultForEmpty  = Invalid("decision_form.error.bindingCommodityCode.required"),
+          validationResultForEmpty       = Invalid("decision_form.error.bindingCommodityCode.required"),
           validationResultForValidLength = Invalid("decision_form.error.bindingCommodityCode.valid")
         )
 
@@ -174,8 +174,8 @@ class DecisionFormTest extends ModelsBaseSpec {
   }
 
   private def mockCommodityCodeConstraint(
-    validationResultForEmpty: ValidationResult = Valid,
-    validationResultForValidLength: ValidationResult = Valid,
+    validationResultForEmpty: ValidationResult           = Valid,
+    validationResultForValidLength: ValidationResult     = Valid,
     validationResultForValidNumberType: ValidationResult = Valid,
     validationResultForValidEvenDigits: ValidationResult = Valid
   ): CommodityCodeConstraints = {

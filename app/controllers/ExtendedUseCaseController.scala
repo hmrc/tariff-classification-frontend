@@ -40,7 +40,8 @@ class ExtendedUseCaseController @Inject() (
   val change_extended_use_status: change_extended_use_status,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Boolean] with WithUnsafeDefaultFormBinding {
+    with StatusChangeAction[Boolean]
+    with WithUnsafeDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EXTENDED_USE
 

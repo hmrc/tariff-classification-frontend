@@ -23,7 +23,7 @@ import views.html.release_or_suppress
 
 class ReleaseOrSuppressViewSpec extends ViewSpec {
 
-  val form = new CaseStatusRadioInputFormProvider()()
+  val form                                       = new CaseStatusRadioInputFormProvider()()
   val releaseOrSuppressView: release_or_suppress = app.injector.instanceOf[release_or_suppress]
 
   "Release or Suppress view" should {

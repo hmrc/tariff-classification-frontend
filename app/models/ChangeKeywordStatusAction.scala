@@ -24,7 +24,7 @@ object ChangeKeywordStatusAction extends Enumeration {
     status.toUpperCase match {
       case "APPROVE" => APPROVE
       case "REJECT"  => REJECT
-      case "CREATED"  => CREATED
+      case "CREATED" => CREATED
     }
 
 }

@@ -86,8 +86,7 @@ class OpenCasesViewSpec extends ViewSpec {
           Queues.allAtarQueues,
           Seq(Cases.btiCaseExample, Cases.btiCaseExample)
         )
-      )
-      (authenticatedManagerFakeRequest, messages, appConfig)
+      )(authenticatedManagerFakeRequest, messages, appConfig)
     )
 
     doc should containElementWithID("open-cases-sub-nav")

@@ -77,12 +77,11 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       doc.getElementById("app-details-legal-challenges")         should containText("legal proceedings")
     }
 
-
     "Render the correct number of relatedBtiReferences " in {
 
       val `case` = aCase(
         withOptionalApplicationFields(
-          relatedBTIReferences    = List("related BTI 1", "related BTI 2")
+          relatedBTIReferences = List("related BTI 1", "related BTI 2")
         )
       )
 
@@ -93,7 +92,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       //Then
       doc                                                        should containElementWithID("app-details-similar-ruling-reference")
-      doc.getElementById("app-details-similar-ruling-reference") should containText("related BTI 1 related BTI 2" )
+      doc.getElementById("app-details-similar-ruling-reference") should containText("related BTI 1 related BTI 2")
 
     }
   }

@@ -43,7 +43,8 @@ class CompleteCaseController @Inject() (
   val complete_case: complete_case,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction with WithUnsafeDefaultFormBinding {
+    with RenderCaseAction
+    with WithUnsafeDefaultFormBinding {
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService

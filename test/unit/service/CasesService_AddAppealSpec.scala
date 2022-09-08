@@ -43,7 +43,16 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
   private val audit            = mock[AuditService]
 
   private val service =
-    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, realAppConfig)
+    new CasesService(
+      audit,
+      emailService,
+      fileStoreService,
+      countriesService,
+      reportingService,
+      pdfService,
+      connector,
+      rulingConnector
+    )(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

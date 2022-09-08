@@ -28,7 +28,7 @@ class UsersByTeamTableViewSpec extends ViewSpec {
 
   val users: List[Operator] = List(
     Operator("id1", Some("operator 1"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2")),
-    Operator("id2", Some("operator 2"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2", "3", "4")),
+    Operator("id2", Some("operator 2"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2", "3", "4"))
   )
 
   val usersTab: UsersTab = UsersTab(
@@ -41,7 +41,8 @@ class UsersByTeamTableViewSpec extends ViewSpec {
 
   def assignedUsersTableView(
     usersTab: UsersTab                 = usersTab,
-    caseCount: Map[String, List[Case]] = count): HtmlFormat.Appendable =
+    caseCount: Map[String, List[Case]] = count
+  ): HtmlFormat.Appendable =
     usersByTeamTable(usersTab, caseCount)
 
   "usersByTeamTable" should {
@@ -66,7 +67,8 @@ class UsersByTeamTableViewSpec extends ViewSpec {
         doc.getElementById(s"act-user-$index") should containText(user.name.getOrElse("unknown"))
         doc.getElementById(s"act-role-$index") should containText(Role.format(user.role))
         doc.getElementById(s"act-case-$index") should containText(
-          count.get(user.id).getOrElse(List.empty).size.toString)
+          count.get(user.id).getOrElse(List.empty).size.toString
+        )
       }
     }
   }

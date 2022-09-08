@@ -45,9 +45,11 @@ class SearchController @Inject() (
   val advanced_search: html.advanced_search,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithUnsafeDefaultFormBinding {
+    with I18nSupport
+    with WithUnsafeDefaultFormBinding {
 
-  def search(selectedTab: SearchTab,
+  def search(
+    selectedTab: SearchTab,
     addToSearch: Option[Boolean] = None,
     reference: Option[String]    = None,
     search: Search               = Search(),

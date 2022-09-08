@@ -42,7 +42,16 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
   private val audit            = mock[AuditService]
 
   private val service =
-    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, realAppConfig)
+    new CasesService(
+      audit,
+      emailService,
+      fileStoreService,
+      countriesService,
+      reportingService,
+      pdfService,
+      connector,
+      rulingConnector
+    )(global, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -59,9 +68,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
         )
       )
       val caseUpdated = aCase(
-        withDecision(cancellation =
-          Some(Cancellation(reason = CancelReason.ANNULLED))
-        )
+        withDecision(cancellation = Some(Cancellation(reason = CancelReason.ANNULLED)))
       )
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
@@ -129,9 +136,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
       // Given
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase(
-        withDecision(cancellation =
-          Some(Cancellation(reason = CancelReason.ANNULLED))
-        )
+        withDecision(cancellation = Some(Cancellation(reason = CancelReason.ANNULLED)))
       )
       val caseUpdated = aCase(
         withDecision(cancellation =

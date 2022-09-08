@@ -42,8 +42,8 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val fileService  = mock[FileStoreService]
   private val operator     = Operator(id = "id")
 
-  private val referCaseReason = injector.instanceOf[refer_case_reason]
-  private val referCaseEmail = injector.instanceOf[refer_case_email]
+  private val referCaseReason  = injector.instanceOf[refer_case_reason]
+  private val referCaseEmail   = injector.instanceOf[refer_case_email]
   private val confirmReferCase = injector.instanceOf[confirm_refer_case]
 
   private val caseWithStatusNEW      = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
@@ -348,7 +348,9 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("case.referred.confirm_referred", caseWithStatusREFERRED.application.goodsName))
+      bodyOf(result) should include(
+        messages("case.referred.confirm_referred", caseWithStatusREFERRED.application.goodsName)
+      )
     }
   }
 }

@@ -30,7 +30,9 @@ case class Paged[T](results: Seq[T], pageIndex: Int, pageSize: Int, resultCount:
 }
 
 object Paged {
-  def stream[T](initialPagination: Pagination)(fetchPage: Pagination => Future[Paged[T]])(implicit ec: ExecutionContext): Source[T, _] =
+  def stream[T](
+    initialPagination: Pagination
+  )(fetchPage: Pagination => Future[Paged[T]])(implicit ec: ExecutionContext): Source[T, _] =
     Source
       .unfoldAsync(initialPagination) { pagination =>
         fetchPage(pagination).map { page =>

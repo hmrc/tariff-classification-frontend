@@ -342,7 +342,8 @@ class MoveCasesController @Inject() (
               None,
               team,
               request.userAnswers.get[String](OriginalUserPID).get,
-              request.operator.id)
+              request.operator.id
+            )
             for {
               _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())

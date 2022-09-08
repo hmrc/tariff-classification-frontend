@@ -61,21 +61,21 @@ case class Case(
 
   def sampleToBeProvided: Boolean =
     application.`type` match {
-      case ApplicationType.ATAR             => application.asATAR.sampleToBeProvided
+      case ApplicationType.ATAR      => application.asATAR.sampleToBeProvided
       case ApplicationType.LIABILITY => sample.status.isDefined
 
     }
 
   def sampleToBeReturned: Boolean =
     application.`type` match {
-      case ApplicationType.ATAR             => application.asATAR.sampleToBeReturned
+      case ApplicationType.ATAR      => application.asATAR.sampleToBeReturned
       case ApplicationType.LIABILITY => sample.returnStatus.contains(SampleReturn.YES)
     }
 
   def isCaseOverdue: Boolean =
     application.isLiveLiabilityOrder match {
-      case true  if daysElapsed >= 5   => true
-      case false if daysElapsed >= 30  => true
-      case _                           => false
+      case true if daysElapsed >= 5   => true
+      case false if daysElapsed >= 30 => true
+      case _                          => false
     }
 }

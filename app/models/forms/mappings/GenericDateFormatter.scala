@@ -42,47 +42,65 @@ private[mappings] trait GenericDateFormatter extends Formatters with Constraints
 
   protected def getKey(key: String, value: String): String = if (key == null || key.isEmpty) value else s"$key.$value"
 
-  def keyWithError(id: String, error: String): String = {
+  def keyWithError(id: String, error: String): String =
     getKey(id, error)
-  }
 
-  val fields: (String, Map[String, String]) => Map[String, Option[String]] = (key, data) => fieldKeys.map {
-    field =>
-      field -> data.get(getKey(key, field)).filter(_.nonEmpty).map(f => filter(f))
-  }.toMap
+  val fields: (String, Map[String, String]) => Map[String, Option[String]] = (key, data) =>
+    fieldKeys.map(field => field -> data.get(getKey(key, field)).filter(_.nonEmpty).map(f => filter(f))).toMap
 
   lazy val missingFields: (String, Map[String, String]) => List[String] = (key, data) =>
     fields(key, data)
-    .withFilter(_._2.isEmpty)
-    .map(_._1)
-    .toList
+      .withFilter(_._2.isEmpty)
+      .map(_._1)
+      .toList
 
-  lazy val illegalFields: (String, Map[String, String]) => List[String] = (key, data) => fields(key, data)
-    .withFilter(_._2.getOrElse("").matches("""^(.*[^\d].*)+$"""))
-    .map(_._1)
-    .toList
+  lazy val illegalFields: (String, Map[String, String]) => List[String] = (key, data) =>
+    fields(key, data)
+      .withFilter(_._2.getOrElse("").matches("""^(.*[^\d].*)+$"""))
+      .map(_._1)
+      .toList
 
-  lazy val illegalZero: (String, Map[String, String]) => List[String] = (key, data) => fields(key, data)
-    .withFilter(_._2.getOrElse("").matches("""^[0]+$"""))
-    .map(_._1)
-    .toList
+  lazy val illegalZero: (String, Map[String, String]) => List[String] = (key, data) =>
+    fields(key, data)
+      .withFilter(_._2.getOrElse("").matches("""^[0]+$"""))
+      .map(_._1)
+      .toList
 
-  lazy val illegalErrors: (String, Map[String, String], String, Seq[String], (String, Map[String, String]) => List[String]) => Option[FormError] =
-    (key, data, invalidKey, args, validate) => validate(key, data) match {
-      case emptyList if emptyList.isEmpty => None
-      case foundErrors => Some(FormError(keyWithError(key, validate(key, data).head), invalidKey, foundErrors ++ args))
-    }
+  lazy val illegalErrors
+    : (String, Map[String, String], String, Seq[String], (String, Map[String, String]) => List[String]) => Option[
+      FormError
+    ] =
+    (key, data, invalidKey, args, validate) =>
+      validate(key, data) match {
+        case emptyList if emptyList.isEmpty => None
+        case foundErrors =>
+          Some(FormError(keyWithError(key, validate(key, data).head), invalidKey, foundErrors ++ args))
+      }
 
-  def leftErrors(key: String, data: Map[String, String], missingMessage: String, invalidMessage: String, args: Seq[String]): Left[Seq[FormError], Nothing] =
+  def leftErrors(
+    key: String,
+    data: Map[String, String],
+    missingMessage: String,
+    invalidMessage: String,
+    args: Seq[String]
+  ): Left[Seq[FormError], Nothing] =
     Left(
       List(
-        FormError(keyWithError(key, missingFields(key, data).head), missingMessage, missingFields(key, data) ++ args))
-        ++ illegalErrors(key, data, invalidMessage, args, illegalFields)++ illegalErrors(key, data, invalidMessage, args, illegalZero))
+        FormError(keyWithError(key, missingFields(key, data).head), missingMessage, missingFields(key, data) ++ args)
+      )
+        ++ illegalErrors(key, data, invalidMessage, args, illegalFields) ++ illegalErrors(
+        key,
+        data,
+        invalidMessage,
+        args,
+        illegalZero
+      )
+    )
 
   def filter(input: String): String = {
     @tailrec
     def applyFilters(filters: Seq[Pattern], sanitizedOuput: String): String = filters match {
-      case Nil => sanitizedOuput.filterNot(_ == '|')
+      case Nil            => sanitizedOuput.filterNot(_ == '|')
       case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOuput).replaceAll(""))
     }
     applyFilters(filters, input)

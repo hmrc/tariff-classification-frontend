@@ -72,13 +72,12 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       // When
       val response1 = await(requestWithSession("/search?reference=1").withFollowRedirects(false).get())
-      response1.header("Location") shouldBe(Some("/manage-tariff-classifications/cases/1"))
-      response1.status shouldBe SEE_OTHER
-
+      response1.header("Location") shouldBe (Some("/manage-tariff-classifications/cases/1"))
+      response1.status             shouldBe SEE_OTHER
 
       val response2 = await(requestWithSession("/cases/1").withFollowRedirects(false).get())
-      response2.header("Location") shouldBe(Some("/manage-tariff-classifications/cases/v2/1/atar"))
-      response2.status shouldBe SEE_OTHER
+      response2.header("Location") shouldBe (Some("/manage-tariff-classifications/cases/v2/1/atar"))
+      response2.status             shouldBe SEE_OTHER
 
       val response3 = await(requestWithSession("/cases/v2/1/atar").withFollowRedirects(false).get())
 

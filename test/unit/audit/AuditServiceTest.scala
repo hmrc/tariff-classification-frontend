@@ -74,9 +74,9 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseUpdated(originalCase, updatedCase, operator)
 
       val payload = Json.obj(
-        "originalCase" -> Json.toJson(originalCase),
-        "operatorUpdating"  -> operator.id,
-        "updatedCase"  -> Json.toJson(updatedCase)
+        "originalCase"     -> Json.toJson(originalCase),
+        "operatorUpdating" -> operator.id,
+        "updatedCase"      -> Json.toJson(updatedCase)
       )
 
       verify(connector)
@@ -722,7 +722,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
     )
 
   private def sampleSendChangeAudit(
-    caseReference: String,  newSender: String, previousSender: String, operatorId: String
+    caseReference: String,
+    newSender: String,
+    previousSender: String,
+    operatorId: String
   ): Map[String, String] =
     Map[String, String](
       "caseReference"        -> caseReference,

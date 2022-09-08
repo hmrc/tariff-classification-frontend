@@ -39,7 +39,8 @@ class CreateLiabilityController @Inject() (
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithUnsafeDefaultFormBinding {
+    with I18nSupport
+    with WithUnsafeDefaultFormBinding {
 
   private val form: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm
 

@@ -131,7 +131,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
     val initiateRequest = FileStoreInitiateRequest(maxFileSize = 0)
 
     val initiateResponse = FileStoreInitiateResponse(
-      id = "id",
+      id              = "id",
       upscanReference = "ref",
       uploadRequest = UpscanFormTemplate(
         "http://localhost:20001/upscan/upload",
@@ -145,8 +145,6 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       await(service.initiate(initiateRequest)) shouldBe initiateResponse
     }
   }
-
-
 
   "Service 'upload'" should {
 

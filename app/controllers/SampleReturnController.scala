@@ -42,7 +42,8 @@ class SampleReturnController @Inject() (
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Option[SampleReturn]] with WithUnsafeDefaultFormBinding {
+    with StatusChangeAction[Option[SampleReturn]]
+    with WithUnsafeDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 

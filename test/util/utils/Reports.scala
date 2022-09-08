@@ -26,7 +26,7 @@ object Reports {
     QueueResultGroup(4, Some("2"), ApplicationType.ATAR),
     QueueResultGroup(6, Some("2"), ApplicationType.LIABILITY),
     QueueResultGroup(2, Some("3"), ApplicationType.ATAR),
-    QueueResultGroup(1, Some("4"), ApplicationType.LIABILITY),
+    QueueResultGroup(1, Some("4"), ApplicationType.LIABILITY)
   )
 
   val pagedQueueReport = Paged(queueReportResults)

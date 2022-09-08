@@ -27,7 +27,7 @@ class AssignedUsersTableViewSpec extends ViewSpec {
 
   val users: List[Operator] = List(
     Operator("id1", Some("operator 1"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2")),
-    Operator("id2", Some("operator 2"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2", "3", "4")),
+    Operator("id2", Some("operator 2"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2", "3", "4"))
   )
   val usersTab: UsersTab = UsersTab(
     "assigned",
@@ -39,7 +39,8 @@ class AssignedUsersTableViewSpec extends ViewSpec {
 
   def assignedUsersTableView(
     usersTab: UsersTab                 = usersTab,
-    caseCount: Map[String, List[Case]] = count): HtmlFormat.Appendable =
+    caseCount: Map[String, List[Case]] = count
+  ): HtmlFormat.Appendable =
     assignedUsersTable(usersTab, caseCount)
 
   "assignedUsersTable" should {
@@ -66,7 +67,8 @@ class AssignedUsersTableViewSpec extends ViewSpec {
         doc.getElementById(s"assigned-role-$index") should containText(Role.format(user.role))
         doc.getElementById(s"assigned-team-$index") should containText(user.getMemberTeamNames.mkString(", "))
         doc.getElementById(s"assigned-case-$index") should containText(
-          count.get(user.id).getOrElse(List.empty).size.toString)
+          count.get(user.id).getOrElse(List.empty).size.toString
+        )
       }
     }
   }

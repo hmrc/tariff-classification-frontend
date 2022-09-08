@@ -53,7 +53,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
     }
 
     "render correspondence starter when present" in {
-      val c = aCorrespondenceCase()
+      val c                 = aCorrespondenceCase()
       val contactDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
       val doc = view(correspondence_contact_details(contactDetailsTab))
@@ -63,7 +63,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
     }
 
     "render contact name when present" in {
-      val c = aCorrespondenceCase()
+      val c                 = aCorrespondenceCase()
       val contactDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
       val doc = view(correspondence_contact_details(contactDetailsTab))
@@ -73,7 +73,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
     }
 
     "render contact email when present" in {
-      val c = aCorrespondenceCase()
+      val c                 = aCorrespondenceCase()
       val contactDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
       val doc = view(correspondence_contact_details(contactDetailsTab))
@@ -83,7 +83,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
     }
 
     "render contact phone when present" in {
-      val c = aCorrespondenceCase()
+      val c                 = aCorrespondenceCase()
       val contactDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
       val doc = view(correspondence_contact_details(contactDetailsTab))
@@ -93,7 +93,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
     }
 
     "render contact fax when present" in {
-      val c = aCorrespondenceCase()
+      val c                 = aCorrespondenceCase()
       val contactDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
       val doc = view(correspondence_contact_details(contactDetailsTab))
@@ -103,7 +103,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
     }
 
     "render contact address when present" in {
-      val c = aCorrespondenceCase()
+      val c                 = aCorrespondenceCase()
       val contactDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
       val doc = view(correspondence_contact_details(contactDetailsTab))
@@ -113,7 +113,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
     }
 
     "render agent name when present" in {
-      val c = aCorrespondenceCase()
+      val c                 = aCorrespondenceCase()
       val contactDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
       val doc = view(correspondence_contact_details(contactDetailsTab))
@@ -124,4 +124,3 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
 
   }
 }
-

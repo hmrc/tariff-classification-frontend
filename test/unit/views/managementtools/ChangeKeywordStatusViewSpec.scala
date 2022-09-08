@@ -34,7 +34,7 @@ class ChangeKeywordStatusViewSpec extends ViewSpec {
 
     "display the keyword in the header" in {
       val doc = view(changeKeywordStatusView(keyword.name, aCase, KeywordForm.form))
-      doc should containElementWithID("keyword-edit-heading")
+      doc                                        should containElementWithID("keyword-edit-heading")
       doc.getElementById("keyword-edit-heading") should containText("potatoes")
 
     }

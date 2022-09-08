@@ -31,9 +31,9 @@ object AttachmentsTabViewModel {
     val (fromApplicant, fromClassification) = attachments.partition(_.operator.isEmpty)
 
     AttachmentsTabViewModel(
-      caseReference = cse.reference,
-      caseContact = cse.application.contact.name,
-      attachmentsFromApplicant = fromApplicant,
+      caseReference                 = cse.reference,
+      caseContact                   = cse.application.contact.name,
+      attachmentsFromApplicant      = fromApplicant,
       attachmentsFromClassification = fromClassification
     )
   }
