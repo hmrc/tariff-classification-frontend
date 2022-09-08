@@ -41,14 +41,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val appConfig   = mock[AppConfig]
-  private val config      = mock[Configuration]
-  private val environment = mock[Environment]
-  private val connector   = mock[StrideAuthConnector]
+  private val appConfig     = mock[AppConfig]
+  private val config        = mock[Configuration]
+  private val environment   = mock[Environment]
+  private val connector     = mock[StrideAuthConnector]
   private val userConnector = mock[BindingTariffClassificationConnector]
   private val block: AuthenticatedRequest[AnyContent] => Future[Result] =
     mock[AuthenticatedRequest[AnyContent] => Future[Result]]
-  private val result               = mock[Result]
+  private val result = mock[Result]
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -75,17 +75,17 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
         await(action.invokeBlock(FakeRequest(), block)) shouldBe result
 
         val createdUser = theUserCreated()
-        createdUser.id shouldBe "id"
-        createdUser.name shouldBe Some("full name")
-        createdUser.email shouldBe Some("test@example.com")
-        createdUser.role shouldBe Role.CLASSIFICATION_OFFICER
+        createdUser.id      shouldBe "id"
+        createdUser.name    shouldBe Some("full name")
+        createdUser.email   shouldBe Some("test@example.com")
+        createdUser.role    shouldBe Role.CLASSIFICATION_OFFICER
         createdUser.manager shouldBe false
 
         val operator = theAuthenticatedRequest().operator
         operator.id      shouldBe "id"
         operator.name    shouldBe Some("full name")
-        operator.email shouldBe Some("test@example.com")
-        operator.role shouldBe Role.CLASSIFICATION_OFFICER
+        operator.email   shouldBe Some("test@example.com")
+        operator.role    shouldBe Role.CLASSIFICATION_OFFICER
         operator.manager shouldBe false
       }
 
@@ -97,17 +97,17 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
         await(action.invokeBlock(FakeRequest(), block)) shouldBe result
 
         val createdUser = theUserCreated()
-        createdUser.id shouldBe "id"
-        createdUser.name shouldBe None
-        createdUser.email shouldBe Some("test@example.com")
-        createdUser.role shouldBe Role.CLASSIFICATION_OFFICER
+        createdUser.id      shouldBe "id"
+        createdUser.name    shouldBe None
+        createdUser.email   shouldBe Some("test@example.com")
+        createdUser.role    shouldBe Role.CLASSIFICATION_OFFICER
         createdUser.manager shouldBe false
 
         val operator = theAuthenticatedRequest().operator
         operator.id      shouldBe "id"
         operator.name    shouldBe None
-        operator.email shouldBe Some("test@example.com")
-        operator.role shouldBe Role.CLASSIFICATION_OFFICER
+        operator.email   shouldBe Some("test@example.com")
+        operator.role    shouldBe Role.CLASSIFICATION_OFFICER
         operator.manager shouldBe false
       }
 
@@ -119,17 +119,17 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
         await(action.invokeBlock(FakeRequest(), block)) shouldBe result
 
         val createdUser = theUserCreated()
-        createdUser.id shouldBe "id"
-        createdUser.name shouldBe Some("full name")
-        createdUser.email shouldBe Some("test@example.com")
-        createdUser.role shouldBe Role.CLASSIFICATION_MANAGER
+        createdUser.id      shouldBe "id"
+        createdUser.name    shouldBe Some("full name")
+        createdUser.email   shouldBe Some("test@example.com")
+        createdUser.role    shouldBe Role.CLASSIFICATION_MANAGER
         createdUser.manager shouldBe true
 
         val operator = theAuthenticatedRequest().operator
         operator.id      shouldBe "id"
         operator.name    shouldBe Some("full name")
-        operator.email shouldBe Some("test@example.com")
-        operator.role shouldBe Role.CLASSIFICATION_MANAGER
+        operator.email   shouldBe Some("test@example.com")
+        operator.role    shouldBe Role.CLASSIFICATION_MANAGER
         operator.manager shouldBe true
       }
     }
@@ -147,8 +147,8 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
         val operator = theAuthenticatedRequest().operator
         operator.id      shouldBe "id"
         operator.name    shouldBe Some("full name")
-        operator.email shouldBe Some("test@example.com")
-        operator.role shouldBe Role.CLASSIFICATION_OFFICER
+        operator.email   shouldBe Some("test@example.com")
+        operator.role    shouldBe Role.CLASSIFICATION_OFFICER
         operator.manager shouldBe false
       }
 
@@ -160,17 +160,17 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
         await(action.invokeBlock(FakeRequest(), block)) shouldBe result
 
         val updatedUser = theUserUpdated()
-        updatedUser.id shouldBe "id"
-        updatedUser.name shouldBe Some("new name")
-        updatedUser.email shouldBe Some("test@example.com")
-        updatedUser.role shouldBe Role.CLASSIFICATION_OFFICER
+        updatedUser.id      shouldBe "id"
+        updatedUser.name    shouldBe Some("new name")
+        updatedUser.email   shouldBe Some("test@example.com")
+        updatedUser.role    shouldBe Role.CLASSIFICATION_OFFICER
         updatedUser.manager shouldBe false
 
         val operator = theAuthenticatedRequest().operator
         operator.id      shouldBe "id"
         operator.name    shouldBe Some("new name")
-        operator.email shouldBe Some("test@example.com")
-        operator.role shouldBe Role.CLASSIFICATION_OFFICER
+        operator.email   shouldBe Some("test@example.com")
+        operator.role    shouldBe Role.CLASSIFICATION_OFFICER
         operator.manager shouldBe false
       }
 
@@ -182,17 +182,17 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
         await(action.invokeBlock(FakeRequest(), block)) shouldBe result
 
         val updatedUser = theUserUpdated()
-        updatedUser.id shouldBe "id"
-        updatedUser.name shouldBe Some("full name")
-        updatedUser.email shouldBe Some("foo@bar.com")
-        updatedUser.role shouldBe Role.CLASSIFICATION_OFFICER
+        updatedUser.id      shouldBe "id"
+        updatedUser.name    shouldBe Some("full name")
+        updatedUser.email   shouldBe Some("foo@bar.com")
+        updatedUser.role    shouldBe Role.CLASSIFICATION_OFFICER
         updatedUser.manager shouldBe false
 
         val operator = theAuthenticatedRequest().operator
         operator.id      shouldBe "id"
         operator.name    shouldBe Some("full name")
-        operator.email shouldBe Some("foo@bar.com")
-        operator.role shouldBe Role.CLASSIFICATION_OFFICER
+        operator.email   shouldBe Some("foo@bar.com")
+        operator.role    shouldBe Role.CLASSIFICATION_OFFICER
         operator.manager shouldBe false
       }
 
@@ -204,48 +204,50 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
         await(action.invokeBlock(FakeRequest(), block)) shouldBe result
 
         val updatedUser = theUserUpdated()
-        updatedUser.id shouldBe "id"
-        updatedUser.name shouldBe Some("full name")
-        updatedUser.email shouldBe Some("test@example.com")
-        updatedUser.role shouldBe Role.CLASSIFICATION_MANAGER
+        updatedUser.id      shouldBe "id"
+        updatedUser.name    shouldBe Some("full name")
+        updatedUser.email   shouldBe Some("test@example.com")
+        updatedUser.role    shouldBe Role.CLASSIFICATION_MANAGER
         updatedUser.manager shouldBe true
 
         val operator = theAuthenticatedRequest().operator
         operator.id      shouldBe "id"
         operator.name    shouldBe Some("full name")
-        operator.email shouldBe Some("test@example.com")
-        operator.role shouldBe Role.CLASSIFICATION_MANAGER
+        operator.email   shouldBe Some("test@example.com")
+        operator.role    shouldBe Role.CLASSIFICATION_MANAGER
         operator.manager shouldBe true
       }
 
       "preserve the user's assigned teams when updating user info" in {
         givenAuthSuccess(manager = true, name = Name(Some("new name"), Some("name")))
-        givenExistingUser(existingOperator.copy(
-          role = Role.CLASSIFICATION_MANAGER,
-          managerOfTeams = Seq("1"),
-          memberOfTeams = Seq("1")
-        ))
+        givenExistingUser(
+          existingOperator.copy(
+            role           = Role.CLASSIFICATION_MANAGER,
+            managerOfTeams = Seq("1"),
+            memberOfTeams  = Seq("1")
+          )
+        )
         givenTheBlockExecutesSuccessfully()
 
         await(action.invokeBlock(FakeRequest(), block)) shouldBe result
 
         val updatedUser = theUserUpdated()
-        updatedUser.id shouldBe "id"
-        updatedUser.name shouldBe Some("new name")
-        updatedUser.email shouldBe Some("test@example.com")
-        updatedUser.role shouldBe Role.CLASSIFICATION_MANAGER
-        updatedUser.manager shouldBe true
+        updatedUser.id             shouldBe "id"
+        updatedUser.name           shouldBe Some("new name")
+        updatedUser.email          shouldBe Some("test@example.com")
+        updatedUser.role           shouldBe Role.CLASSIFICATION_MANAGER
+        updatedUser.manager        shouldBe true
         updatedUser.managerOfTeams shouldBe Seq("1")
-        updatedUser.memberOfTeams shouldBe Seq("1")
+        updatedUser.memberOfTeams  shouldBe Seq("1")
 
         val operator = theAuthenticatedRequest().operator
-        operator.id      shouldBe "id"
-        operator.name    shouldBe Some("new name")
-        operator.email shouldBe Some("test@example.com")
-        operator.role shouldBe Role.CLASSIFICATION_MANAGER
-        operator.manager shouldBe true
+        operator.id             shouldBe "id"
+        operator.name           shouldBe Some("new name")
+        operator.email          shouldBe Some("test@example.com")
+        operator.role           shouldBe Role.CLASSIFICATION_MANAGER
+        operator.manager        shouldBe true
         operator.managerOfTeams shouldBe Seq("1")
-        operator.memberOfTeams shouldBe Seq("1")
+        operator.memberOfTeams  shouldBe Seq("1")
       }
     }
 
@@ -352,7 +354,8 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )) and AuthProviders(PrivilegedApplication)
     val retrieval: Retrieval[Option[Credentials] ~ Option[Name] ~ Option[String] ~ Enrolments] =
       Retrievals.credentials and Retrievals.name and Retrievals.email and Retrievals.allEnrolments
-    val enrolments: Set[Enrolment] = if (manager) Set(Enrolment("manager-enrolment")) else Set(Enrolment("team-enrolment"))
+    val enrolments: Set[Enrolment] =
+      if (manager) Set(Enrolment("manager-enrolment")) else Set(Enrolment("team-enrolment"))
     val value: Option[Credentials] ~ Option[Name] ~ Option[String] ~ Enrolments =
       new ~(new ~(new ~(Option(Credentials(id, "type")), Option(name)), Option(email)), Enrolments(enrolments))
     given(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(global)))

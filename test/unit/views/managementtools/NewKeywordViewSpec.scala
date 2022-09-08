@@ -39,7 +39,7 @@ class NewKeywordViewSpec extends ViewSpec {
           newKeywordForm = keywordForm
         )
       )
-      doc                                        should containText(messages("management.create-keyword.caption"))
+      doc                                should containText(messages("management.create-keyword.caption"))
       doc.getElementsByTag("h1").first() should containText(messages("management.create-keyword.heading"))
 
     }

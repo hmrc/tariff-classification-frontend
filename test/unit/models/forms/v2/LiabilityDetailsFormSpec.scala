@@ -25,7 +25,7 @@ import utils.Cases
 
 class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 
-  private val appConfig            = mock[AppConfig]
+  private val appConfig = mock[AppConfig]
   private val liabilityDetailsForm =
     new LiabilityDetailsForm(new CommodityCodeConstraints(), appConfig)
 

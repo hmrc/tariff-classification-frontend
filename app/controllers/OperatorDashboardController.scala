@@ -36,22 +36,19 @@ class OperatorDashboardController @Inject() (
   operator_dashboard_classification: operator_dashboard_classification,
   implicit val appConfig: AppConfig
 ) extends FrontendController(mcc)
-    with I18nSupport with WithUnsafeDefaultFormBinding {
+    with I18nSupport
+    with WithUnsafeDefaultFormBinding {
 
   def onPageLoad: Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.VIEW_MY_CASES)).async {
     implicit request: AuthenticatedRequest[AnyContent] =>
       for {
         casesByAssignee <- casesService.getCasesByAssignee(request.operator, NoPagination())
         casesByQueue    <- casesService.countCasesByQueue
-        totalCasesAssignedToMe = casesByAssignee.results.count(c =>
-          c.status == CaseStatus.OPEN
-        )
+        totalCasesAssignedToMe = casesByAssignee.results.count(c => c.status == CaseStatus.OPEN)
         referredCasesAssignedToMe = casesByAssignee.results.count(c =>
           c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED
         )
-        completedCasesAssignedToMe = casesByAssignee.results.count(c =>
-          c.status == CaseStatus.COMPLETED
-        )
+        completedCasesAssignedToMe = casesByAssignee.results.count(c => c.status == CaseStatus.COMPLETED)
       } yield Ok(
         operator_dashboard_classification(
           casesByQueue,

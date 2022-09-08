@@ -29,34 +29,44 @@ import scala.util.Try
 
 object FormDate extends Mappings {
 
-  def date(error: String): Mapping[Instant] = {
+  def date(error: String): Mapping[Instant] =
     localDate(error)
-      .transform(date => date.atStartOfDay(ZoneOffset.UTC).toInstant, instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null))
-  }
+      .transform(
+        date => date.atStartOfDay(ZoneOffset.UTC).toInstant,
+        instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null)
+      )
 
-  def optionalDate(prefix: String= "expiryDate", error: String = "atar.editRuling.expiryDate"): Mapping[Option[Instant]] = {
+  def optionalDate(
+    prefix: String = "expiryDate",
+    error: String  = "atar.editRuling.expiryDate"
+  ): Mapping[Option[Instant]] = {
     val booleanField = "explicitEndDate"
 
     val optionalDateFormat: Formatter[Option[Instant]] = new Formatter[Option[Instant]] {
       def date: Mapping[Option[Instant]] =
         localDate(error)
-          .transform(date => Some(date.atStartOfDay(ZoneOffset.UTC).toInstant), instant => Try(instant.map(_.atZone(ZoneOffset.UTC).toLocalDate).orNull).getOrElse(null))
+          .transform(
+            date => Some(date.atStartOfDay(ZoneOffset.UTC).toInstant),
+            instant => Try(instant.map(_.atZone(ZoneOffset.UTC).toLocalDate).orNull).getOrElse(null)
+          )
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[Instant]] =
-        of[Boolean].binder.bind(s"${Option(stripToNull(key)).map(k => s"$k.").getOrElse("")}$booleanField", data).flatMap { explicitEndDate =>
-          if (explicitEndDate) {
-            date.withPrefix(prefix).bind(data)
-          } else {
-            Right(None)
+        of[Boolean].binder
+          .bind(s"${Option(stripToNull(key)).map(k => s"$k.").getOrElse("")}$booleanField", data)
+          .flatMap { explicitEndDate =>
+            if (explicitEndDate) {
+              date.withPrefix(prefix).bind(data)
+            } else {
+              Right(None)
+            }
           }
-        }
       override def unbind(key: String, value: Option[Instant]): Map[String, String] =
         date.withPrefix(prefix).unbind(value)
     }
 
     mapping(
       booleanField -> Forms.boolean,
-      "" -> of[Option[Instant]](optionalDateFormat)
+      ""           -> of[Option[Instant]](optionalDateFormat)
     )(OptionalDateForm.apply)(OptionalDateForm.unapply)
       .transform(d => d.instant, d => OptionalDateForm(d.isEmpty, d))
 

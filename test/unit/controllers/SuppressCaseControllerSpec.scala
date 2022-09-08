@@ -36,11 +36,11 @@ import scala.concurrent.Future.successful
 
 class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val fileService  = mock[FileStoreService]
-  private val operator     = Operator(id = "id")
-  private val suppressCaseReason = app.injector.instanceOf[suppress_case_reason]
-  private val suppressCaseEmail = app.injector.instanceOf[suppress_case_email]
+  private val casesService          = mock[CasesService]
+  private val fileService           = mock[FileStoreService]
+  private val operator              = Operator(id = "id")
+  private val suppressCaseReason    = app.injector.instanceOf[suppress_case_reason]
+  private val suppressCaseEmail     = app.injector.instanceOf[suppress_case_email]
   private val confirmSuppressedCase = app.injector.instanceOf[confirm_supressed_case]
 
   private val caseWithStatusNEW  = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
@@ -98,7 +98,9 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.suppressed.reason.heading", caseWithStatusOPEN.application.goodsName))
+      bodyOf(result) should include(
+        messages("change_case_status.suppressed.reason.heading", caseWithStatusOPEN.application.goodsName)
+      )
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {
@@ -169,7 +171,9 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("change_case_status.suppressed.email.heading", caseWithStatusOPEN.application.goodsName))
+      bodyOf(result) should include(
+        messages("change_case_status.suppressed.email.heading", caseWithStatusOPEN.application.goodsName)
+      )
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {
@@ -249,7 +253,9 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("suppress_case.confirm.header", caseWithStatusSUPPRESSED.application.goodsName))
+      bodyOf(result) should include(
+        messages("suppress_case.confirm.header", caseWithStatusSUPPRESSED.application.goodsName)
+      )
     }
   }
 }

@@ -31,7 +31,8 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsForm(existingLiability: Case): Form[Case] =
     Form[Case](
-      mapping[Case,
+      mapping[
+        Case,
         Option[Instant],
         String,
         Option[String],
@@ -96,7 +97,8 @@ object LiabilityDetailsForm {
       )
   }
 
-  private def liability2Form(existingCase: Case): Option[(
+  private def liability2Form(existingCase: Case): Option[
+    (
       Option[Instant],
       String,
       Option[String],
@@ -127,7 +129,8 @@ object LiabilityDetailsForm {
 
   def liabilityDetailsCompleteForm(existingLiability: Case): Form[Case] =
     Form[Case](
-      mapping[Case,
+      mapping[
+        Case,
         Option[Instant],
         String,
         Option[String],

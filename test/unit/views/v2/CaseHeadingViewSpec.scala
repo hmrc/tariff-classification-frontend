@@ -54,8 +54,7 @@ class CaseHeadingViewSpec extends ViewSpec {
     "display goods name for Migrated liabilities if it is present" in {
 
       val doc = view(
-        caseHeading(caseHeaderViewModel.copy(isMigrated = true)
-        )
+        caseHeading(caseHeaderViewModel.copy(isMigrated = true))
       )
 
       doc should containElementWithID("case-reference")
@@ -66,17 +65,17 @@ class CaseHeadingViewSpec extends ViewSpec {
 
     "display case reference number for Migrated liabilities if goods name is not present" in {
 
-       val caseHeaderViewModelWithoutGoodsName =
-      CaseHeaderViewModel(
-        ApplicationType.LIABILITY,
-        Some("trader-business-name"),
-        "",
-        "1",
-        Some("case-source"),
-        Contact("name", "email@email.com"),
-        CaseStatusViewModel(None, Some(StatusTagViewModel("OPEN", "red")), None),
-        true
-      )
+      val caseHeaderViewModelWithoutGoodsName =
+        CaseHeaderViewModel(
+          ApplicationType.LIABILITY,
+          Some("trader-business-name"),
+          "",
+          "1",
+          Some("case-source"),
+          Contact("name", "email@email.com"),
+          CaseStatusViewModel(None, Some(StatusTagViewModel("OPEN", "red")), None),
+          true
+        )
 
       val doc = view(
         caseHeading(caseHeaderViewModelWithoutGoodsName)

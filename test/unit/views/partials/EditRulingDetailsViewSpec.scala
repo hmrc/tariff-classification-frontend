@@ -29,7 +29,7 @@ import java.time.Instant
 
 class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
 
-  private val decisionForm = new DecisionForm(mock[CommodityCodeConstraints])
+  private val decisionForm  = new DecisionForm(mock[CommodityCodeConstraints])
   val rulingDetailsEditView = app.injector.instanceOf[ruling_details_edit]
 
   "Edit Ruling Details" should {
@@ -223,7 +223,10 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       // Then
       doc                                          should containElementWithID("attachments-row-0-file")
       doc.getElementById("attachments-row-0-file") should haveTag("a")
-      doc.getElementById("attachments-row-0-file") should haveAttribute("href", s"/manage-tariff-classifications/attachment/${c.reference}/FILE_ID")
+      doc.getElementById("attachments-row-0-file") should haveAttribute(
+        "href",
+        s"/manage-tariff-classifications/attachment/${c.reference}/FILE_ID"
+      )
       doc.getElementById("attachments-row-0-file") should containText("file.txt")
     }
 

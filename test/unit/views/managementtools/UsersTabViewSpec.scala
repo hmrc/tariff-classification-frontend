@@ -28,12 +28,12 @@ class UsersTabViewSpec extends ViewSpec {
 
   val users: List[Operator] = List(
     Operator("id1", Some("operator 1"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2")),
-    Operator("id2", Some("operator 2"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2", "3", "4")),
+    Operator("id2", Some("operator 2"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2", "3", "4"))
   )
 
   val unassignedUsersList: List[Operator] = List(
     Operator("id3", Some("operator 3"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq.empty),
-    Operator("id4", Some("operator 4"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq.empty),
+    Operator("id4", Some("operator 4"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq.empty)
   )
 
   val usersByQueue: UsersTab = UsersTab(
@@ -72,7 +72,8 @@ class UsersTabViewSpec extends ViewSpec {
 
   def usersTabView(
     usersTabViewModel: UsersTabViewModel = usersTabViewModel,
-    caseCount: Map[String, List[Case]]   = count): HtmlFormat.Appendable =
+    caseCount: Map[String, List[Case]]   = count
+  ): HtmlFormat.Appendable =
     users_tab(usersTabViewModel, caseCount)
 
   "usersTabView" should {
@@ -83,7 +84,8 @@ class UsersTabViewSpec extends ViewSpec {
 
       doc should containElementWithID("act_tab")
       doc.getElementById("act_tab") should containText(
-        messages("management.manage-users.tabSubHeading", usersByQueue.tabMessageKey))
+        messages("management.manage-users.tabSubHeading", usersByQueue.tabMessageKey)
+      )
     }
 
     "include assigned users table with correct columns and h2" in {
@@ -92,7 +94,8 @@ class UsersTabViewSpec extends ViewSpec {
 
       doc should containElementWithID("assigned_tab")
       doc.getElementById("assigned_tab") should containText(
-        messages("management.manage-users.tabSubHeading.assigned.h2"))
+        messages("management.manage-users.tabSubHeading.assigned.h2")
+      )
 
     }
 
@@ -102,7 +105,8 @@ class UsersTabViewSpec extends ViewSpec {
 
       doc should containElementWithID("unassigned_tab")
       doc.getElementById("unassigned_tab") should containText(
-        messages("management.manage-users.tabSubHeading.unassigned.h2"))
+        messages("management.manage-users.tabSubHeading.unassigned.h2")
+      )
 
     }
 
@@ -110,7 +114,7 @@ class UsersTabViewSpec extends ViewSpec {
 
       val doc = view(usersTabView(emptyUsersTabViewModel))
 
-      doc should containElementWithID("act_tab")
+      doc                           should containElementWithID("act_tab")
       doc.getElementById("act_tab") should containText("No users in this team")
     }
 
@@ -118,7 +122,7 @@ class UsersTabViewSpec extends ViewSpec {
 
       val doc = view(usersTabView(emptyUsersTabViewModel))
 
-      doc should containElementWithID("assigned_tab")
+      doc                                should containElementWithID("assigned_tab")
       doc.getElementById("assigned_tab") should containText("No users in this team")
     }
 
@@ -126,7 +130,7 @@ class UsersTabViewSpec extends ViewSpec {
 
       val doc = view(usersTabView(emptyUsersTabViewModel))
 
-      doc should containElementWithID("unassigned_tab")
+      doc                                  should containElementWithID("unassigned_tab")
       doc.getElementById("unassigned_tab") should containText("No users in this team")
     }
   }

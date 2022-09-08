@@ -24,6 +24,6 @@ object PseudoCaseStatus extends Enumeration {
   def format(status: PseudoCaseStatus.Value): String = status match {
     case UNDER_APPEAL => "UNDER APPEAL"
     case UNDER_REVIEW => "UNDER REVIEW"
-    case _ => status.toString
+    case _            => status.toString
   }
 }

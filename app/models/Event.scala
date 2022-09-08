@@ -64,7 +64,6 @@ case class CaseCreated(
   override val `type`: EventType = EventType.CASE_CREATED
 }
 
-
 case class CaseStatusChange(
   override val from: CaseStatus,
   override val to: CaseStatus,
@@ -82,7 +81,7 @@ case class RejectCaseStatusChange(
   override val attachmentId: Option[String] = None,
   reason: RejectReason
 ) extends FieldChange[CaseStatus]
-  with OptionalAttachment {
+    with OptionalAttachment {
   override val `type`: EventType.Value = EventType.CASE_REJECTED
 }
 
@@ -224,6 +223,6 @@ object EventType extends Enumeration {
   val CASE_CREATED               = Value
   val EXPERT_ADVICE_RECEIVED     = Value
 
-  def sampleEvents: Set[EventType.Value] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)
+  def sampleEvents: Set[EventType.Value]    = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)
   def nonSampleEvents: Set[EventType.Value] = EventType.values.diff(sampleEvents)
 }

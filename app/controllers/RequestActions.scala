@@ -45,6 +45,9 @@ class RequestActions @Inject() (
   def requireData[B[A] <: OperatorRequest[A]](cacheKey: String): ActionFunction[B, AuthenticatedDataRequest] =
     requireDataActionFactory(cacheKey)
 
-  def requireCaseData[B[A] <: AuthenticatedRequest[A]](reference: String, cacheKey: String): ActionFunction[B, AuthenticatedCaseDataRequest] =
+  def requireCaseData[B[A] <: AuthenticatedRequest[A]](
+    reference: String,
+    cacheKey: String
+  ): ActionFunction[B, AuthenticatedCaseDataRequest] =
     requireCaseDataActionFactory(reference, cacheKey)
 }

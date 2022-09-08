@@ -51,7 +51,8 @@ class SuppressCaseController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with UpscanErrorHandling with WithUnsafeDefaultFormBinding {
+    with UpscanErrorHandling
+    with WithUnsafeDefaultFormBinding {
 
   private val NoteCacheKey = "note"
   private def cacheKey(reference: String) =
@@ -142,7 +143,5 @@ class SuppressCaseController @Inject() (
   def confirmSuppressCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(confirm_supressed_case(request.`case`))
-    }
+      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_supressed_case(request.`case`)))
 }

@@ -50,7 +50,7 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "delegate to connector" in {
       given(connector.updateUser(refEq(updatedUser))(any[HeaderCarrier])) willReturn successful(updatedUser)
 
-      await(service.updateUser(oldUser,updatedUser, manager)) shouldBe updatedUser
+      await(service.updateUser(oldUser, updatedUser, manager)) shouldBe updatedUser
     }
   }
 

@@ -64,7 +64,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
     "Render 'Edit' button for EDIT_RULING users" in {
       // Given
-      val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
+      val c         = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
@@ -73,8 +73,8 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       // Then
-      doc                               should containElementWithID("edit-ruling-button")
-      doc                               should containElementWithID("edit-ruling-buttons")
+      doc should containElementWithID("edit-ruling-button")
+      doc should containElementWithID("edit-ruling-buttons")
 
       val call = controllers.routes.RulingController.editRulingDetails("ref")
       doc.getElementById("edit-ruling-button") should haveAttribute("href", call.url)
@@ -82,7 +82,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
     "Not render 'Edit' button when not permitted" in {
       // Given
-      val c = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
+      val c         = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
@@ -95,7 +95,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
     "Not render Decision details if not present" in {
       // Given
-      val c = aCase(withoutDecision())
+      val c         = aCase(withoutDecision())
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
@@ -311,7 +311,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
     "Render Cancel Ruling when user has CANCEL_CASE permission" in {
       // Given
-      val c = aCase(withReference("ref"), withStatus(CaseStatus.COMPLETED), withDecision())
+      val c         = aCase(withReference("ref"), withStatus(CaseStatus.COMPLETED), withDecision())
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When
@@ -325,7 +325,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
     "Not Render Cancel Ruling when user does not have CANCEL_CASE permission" in {
       // Given
-      val c = aCase(withReference("ref"), withStatus(CaseStatus.COMPLETED), withDecision())
+      val c         = aCase(withReference("ref"), withStatus(CaseStatus.COMPLETED), withDecision())
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
       // When

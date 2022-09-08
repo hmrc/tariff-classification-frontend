@@ -40,8 +40,8 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   private val fileService = mock[FileStoreService]
   private val operator    = Operator(id = "id")
 
-  private val caseNotFound = injector.instanceOf[case_not_found]
-  private val rulingNotFound = injector.instanceOf[ruling_not_found]
+  private val caseNotFound     = injector.instanceOf[case_not_found]
+  private val rulingNotFound   = injector.instanceOf[ruling_not_found]
   private val documentNotFound = injector.instanceOf[document_not_found]
 
   override protected def beforeEach(): Unit =

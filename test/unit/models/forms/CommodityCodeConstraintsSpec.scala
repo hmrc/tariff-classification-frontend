@@ -44,10 +44,10 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
       val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val resultShort = commodityCodeConstraint.commodityCodeLengthValid.apply("12345")
-      val resultLong = commodityCodeConstraint.commodityCodeLengthValid.apply("12345678901234567890123")
+      val resultLong  = commodityCodeConstraint.commodityCodeLengthValid.apply("12345678901234567890123")
 
       resultShort shouldBe Invalid("decision_form.error.bindingCommodityCode.valid.length")
-      resultLong shouldBe Invalid("decision_form.error.bindingCommodityCode.valid.length")
+      resultLong  shouldBe Invalid("decision_form.error.bindingCommodityCode.valid.length")
     }
   }
 
@@ -56,10 +56,10 @@ class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
       val commodityCodeConstraint = new CommodityCodeConstraints()
 
       val resultShort = commodityCodeConstraint.commodityCodeLengthValid.apply("123456")
-      val resultLong = commodityCodeConstraint.commodityCodeLengthValid.apply("1234567890123456789012")
+      val resultLong  = commodityCodeConstraint.commodityCodeLengthValid.apply("1234567890123456789012")
 
       resultShort shouldBe Valid
-      resultLong shouldBe Valid
+      resultLong  shouldBe Valid
     }
   }
 

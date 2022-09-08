@@ -52,7 +52,8 @@ class CancelRulingController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with UpscanErrorHandling with WithUnsafeDefaultFormBinding {
+    with UpscanErrorHandling
+    with WithUnsafeDefaultFormBinding {
 
   private val CancellationCacheKey = "cancellation"
   private def cacheKey(reference: String) =
@@ -144,7 +145,5 @@ class CancelRulingController @Inject() (
   def confirmCancelRuling(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(confirm_cancel_ruling(request.`case`))
-    }
+      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_cancel_ruling(request.`case`)))
 }

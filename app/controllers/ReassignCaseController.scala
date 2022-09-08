@@ -43,7 +43,8 @@ class ReassignCaseController @Inject() (
   val resource_not_found: resource_not_found,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with RenderCaseAction with WithUnsafeDefaultFormBinding {
+    with RenderCaseAction
+    with WithUnsafeDefaultFormBinding {
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 

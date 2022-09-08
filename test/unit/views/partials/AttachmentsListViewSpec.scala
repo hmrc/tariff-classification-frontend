@@ -27,7 +27,7 @@ import views.html.partials.attachments_list
 
 class AttachmentsListViewSpec extends ViewSpec {
 
-  private val caseRef:String = "600000004"
+  private val caseRef: String = "600000004"
 
   "Attachments List" should {
 

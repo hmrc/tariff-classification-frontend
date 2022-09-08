@@ -34,14 +34,15 @@ import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 @Singleton
-class SampleWhoSendingController @Inject()(
+class SampleWhoSendingController @Inject() (
   override val verify: RequestActions,
   override val caseService: CasesService,
   val change_sample_send: change_sample_send,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
 ) extends FrontendController(mcc)
-    with StatusChangeAction[Option[SampleSend]] with WithUnsafeDefaultFormBinding {
+    with StatusChangeAction[Option[SampleSend]]
+    with WithUnsafeDefaultFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 
@@ -66,7 +67,8 @@ class SampleWhoSendingController @Inject()(
     }
 
   override protected def update(c: Case, sampleSender: Option[SampleSend], operator: Operator)(
-    implicit hc: HeaderCarrier): Future[Case] =
+    implicit hc: HeaderCarrier
+  ): Future[Case] =
     caseService.updateWhoSendSample(c, sampleSender, operator)
 
   override protected def onSuccessRedirect(reference: String): Call =

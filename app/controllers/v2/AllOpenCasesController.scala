@@ -56,7 +56,7 @@ class AllOpenCasesController @Inject() (
                            pagination = NoPagination(),
                            forTypes   = Set(applicationType),
                            assignee   = "none"
-        )
+                         )
 
         openCases = CasesTabViewModel.forApplicationType(
           applicationType,

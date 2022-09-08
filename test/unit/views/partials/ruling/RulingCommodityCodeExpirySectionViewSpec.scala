@@ -31,7 +31,7 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
 
     "render nothing" when {
       "commodity code is none" in {
-        val c = aCase(withDecision(bindingCommodityCode = "123"))
+        val c         = aCase(withDecision(bindingCommodityCode = "123"))
         val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
         // When
@@ -42,7 +42,7 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
       }
 
       "commodity code has no expiry" in {
-        val c = aCase()
+        val c         = aCase()
         val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(CommodityCode("123")))
 
         // When
@@ -56,7 +56,9 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
     "render 'expired'" when {
       "commodity code expiry is in the past" in {
         val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(bindingCommodityCode = "123"))
-        val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
+        val rulingTab = RulingTabViewModel
+          .fromCase(c)
+          .copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
 
         // When
         val doc =
@@ -72,7 +74,9 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
     "render 'expiring'" when {
       "commodity code expiry is in the future" in {
         val c = aCase(withStatus(CaseStatus.COMPLETED), withDecision(bindingCommodityCode = "123"))
-        val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.plusSeconds(60)))))
+        val rulingTab = RulingTabViewModel
+          .fromCase(c)
+          .copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.plusSeconds(60)))))
 
         // When
         val doc = view(ruling_commodity_code_expiry_section(rulingTab))
@@ -87,7 +91,9 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
     "not render expiration message" when {
       "case is CANCELLED" in {
         val c = aCase(withStatus(CaseStatus.CANCELLED), withDecision(bindingCommodityCode = "123"))
-        val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
+        val rulingTab = RulingTabViewModel
+          .fromCase(c)
+          .copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
 
         // When
         val doc = view(ruling_commodity_code_expiry_section(rulingTab))
@@ -100,7 +106,9 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
 
       "case is OPEN" in {
         val c = aCase(withStatus(CaseStatus.OPEN), withDecision(bindingCommodityCode = "123"))
-        val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
+        val rulingTab = RulingTabViewModel
+          .fromCase(c)
+          .copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
 
         // When
         val doc = view(ruling_commodity_code_expiry_section(rulingTab))

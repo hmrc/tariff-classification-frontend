@@ -93,28 +93,24 @@ trait Constraints {
         Invalid(errorKey)
     }
 
-  protected def optionalPostCodeMaxLength(errorKey: String): Constraint[Option[String]] = {
+  protected def optionalPostCodeMaxLength(errorKey: String): Constraint[Option[String]] =
     optionalMaxLength(postCodeMaxLength, errorKey)
-  }
 
-  protected def optionalMaxLength(maximum: Int, errorKey: String): Constraint[Option[String]] = {
+  protected def optionalMaxLength(maximum: Int, errorKey: String): Constraint[Option[String]] =
     Constraint {
-      case None => Valid
+      case None                                       => Valid
       case Some(str: String) if str.length <= maximum => Valid
-      case _ => Invalid(errorKey, maximum)
+      case _                                          => Invalid(errorKey, maximum)
     }
-  }
 
   protected def validPostcode(
-                               notValidPostcodeErrorKey: String
-                             ): Constraint[Option[String]] = {
+    notValidPostcodeErrorKey: String
+  ): Constraint[Option[String]] =
     Constraint {
-      case None => Valid
+      case None                                                   => Valid
       case Some(postCode) if PostcodeValidator.validate(postCode) => Valid
-      case _ => Invalid(notValidPostcodeErrorKey)
+      case _                                                      => Invalid(notValidPostcodeErrorKey)
     }
-  }
-
 
   protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {

@@ -40,7 +40,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   private val operator     = Operator(id = "id")
 
   private val appealChooseStatus = injector.instanceOf[appeal_choose_status]
-  private val appealChooseType = injector.instanceOf[appeal_choose_type]
+  private val appealChooseType   = injector.instanceOf[appeal_choose_type]
   private val appealChangeStatus = injector.instanceOf[appeal_change_status]
 
   private def controller(requestCase: Case) = new AppealCaseController(

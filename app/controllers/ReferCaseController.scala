@@ -52,7 +52,8 @@ class ReferCaseController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with UpscanErrorHandling with WithUnsafeDefaultFormBinding {
+    with UpscanErrorHandling
+    with WithUnsafeDefaultFormBinding {
 
   private val ReferralCacheKey = "referral"
   private def cacheKey(reference: String) =
@@ -70,9 +71,7 @@ class ReferCaseController @Inject() (
         ReferCaseForm.form
           .bindFromRequest()
           .fold(
-            formWithErrors => {
-              successful(BadRequest(refer_case_reason(request.`case`, formWithErrors)))
-            } ,
+            formWithErrors => successful(BadRequest(refer_case_reason(request.`case`, formWithErrors))),
             referral => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(ReferralCacheKey, referral)
@@ -156,7 +155,5 @@ class ReferCaseController @Inject() (
   def confirmReferCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES)) { implicit request =>
-      Ok(confirm_refer_case(request.`case`))
-    }
+      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_refer_case(request.`case`)))
 }

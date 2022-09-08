@@ -42,8 +42,8 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   private val operator     = Operator(id = "id")
 
   private val rejectCaseReason = injector.instanceOf[reject_case_reason]
-  private val rejectCaseEmail = injector.instanceOf[reject_case_email]
-  private val confirmRejected = injector.instanceOf[confirm_rejected]
+  private val rejectCaseEmail  = injector.instanceOf[reject_case_email]
+  private val confirmRejected  = injector.instanceOf[confirm_rejected]
 
   private val caseWithStatusNEW      = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.NEW)
   private val caseWithStatusOPEN     = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.OPEN)
@@ -215,9 +215,9 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   "GET reject case" should {
 
     "redirect to confirmation page" in {
-      val cacheKey = s"reject_case-${caseWithStatusOPEN.reference}"
+      val cacheKey  = s"reject_case-${caseWithStatusOPEN.reference}"
       val rejection = CaseRejection(RejectReason.APPLICATION_WITHDRAWN, "some-note")
-      val cacheMap = UserAnswers(cacheKey).set("rejection", rejection).cacheMap
+      val cacheMap  = UserAnswers(cacheKey).set("rejection", rejection).cacheMap
       await(FakeDataCacheConnector.save(cacheMap))
 
       given(

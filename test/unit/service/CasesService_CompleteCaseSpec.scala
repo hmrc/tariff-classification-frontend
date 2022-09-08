@@ -54,7 +54,16 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   private val aLiability       = Cases.liabilityCaseExample
 
   private val service =
-    new CasesService(audit, emailService, fileStoreService, countriesService, reportingService, pdfService, connector, rulingConnector)(global, config)
+    new CasesService(
+      audit,
+      emailService,
+      fileStoreService,
+      countriesService,
+      reportingService,
+      pdfService,
+      connector,
+      rulingConnector
+    )(global, config)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -77,8 +86,10 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
         given(config.decisionLifetimeYears).willReturn(1)
         given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(
-            successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L)))
-        given(pdfService.generatePdf(any[Html])).willReturn(successful(PdfFile(Array.emptyByteArray, "application/pdf")))
+          successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L))
+        )
+        given(pdfService.generatePdf(any[Html]))
+          .willReturn(successful(PdfFile(Array.emptyByteArray, "application/pdf")))
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
           .willReturn(successful(mock[Event]))
@@ -142,9 +153,9 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
         val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
         val atarCase = aBTI.copy(
-              status   = CaseStatus.OPEN,
-              decision = Some(Decision("code", None, Some(date("2022-01-01")), "justification", "goods"))
-            )
+          status   = CaseStatus.OPEN,
+          decision = Some(Decision("code", None, Some(date("2022-01-01")), "justification", "goods"))
+        )
 
         val emailTemplate         = EmailTemplate("plain", "html", "from", "subject", "service")
         val updatedEndDateInstant = Some(date("2022-01-01"))

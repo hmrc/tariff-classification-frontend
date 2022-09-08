@@ -40,7 +40,8 @@ class AttachmentAtarViewSpec extends ViewSpec {
     }
 
     "Render Quarantined attachment" in {
-      val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.FAILED))
+      val stored =
+        Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.FAILED))
 
       // When
       val doc = view(attachment_atar(reference, "MODULE", stored))
@@ -52,7 +53,8 @@ class AttachmentAtarViewSpec extends ViewSpec {
 
     "Render Safe attachment without URL" in {
       val stored =
-        Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = None)
+        Cases.storedAttachment
+          .copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = None)
 
       // When
       val doc = view(attachment_atar(reference, "MODULE", stored))
@@ -76,7 +78,8 @@ class AttachmentAtarViewSpec extends ViewSpec {
       val anchor = doc.getElementById("MODULE-file")
 
       anchor should haveChild("a").containingText("name")
-      anchor should haveChild("a").withAttribute("href", s"/manage-tariff-classifications/attachment/${reference}/FILE_ID")
+      anchor should haveChild("a")
+        .withAttribute("href", s"/manage-tariff-classifications/attachment/$reference/FILE_ID")
     }
 
   }

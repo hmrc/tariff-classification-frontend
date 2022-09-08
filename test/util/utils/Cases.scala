@@ -73,7 +73,8 @@ object Cases {
     Some(Attachment("letter-id", public = true, None, Instant.now()))
   )
   val contactExample: Contact = Contact("name", "email", Some("phone"))
-  val btiApplicationExample: BTIApplication = BTIApplication(eoriDetailsExample,
+  val btiApplicationExample: BTIApplication = BTIApplication(
+    eoriDetailsExample,
     contactExample,
     Some(eoriAgentDetailsExample),
     offline = false,

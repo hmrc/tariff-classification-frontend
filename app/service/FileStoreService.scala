@@ -35,11 +35,10 @@ class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging
 
   def getFileMetadata(id: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] = connector.get(id)
 
-  def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] = {
+  def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] =
     getAttachments(Seq(c))
       .map(group => group.getOrElse(c, Seq.empty))
       .map(_.sortBy(_.timestamp))
-  }
 
   def getAttachments(cases: Seq[Case])(implicit hc: HeaderCarrier): Future[Map[Case, Seq[StoredAttachment]]] = {
     val caseByFileId: Map[String, Case] =

@@ -32,30 +32,85 @@ class ReportFieldViewSpec extends ViewSpec {
 
   "reportField view" should {
     "render with the specified ID" in {
-      val doc = view(withTableWrapper(reportField(ReportField.Chapter, StringResultField(ReportField.Chapter.fieldName, Some("85")), Map.empty, Map.empty, "case-report", 0)))
+      val doc = view(
+        withTableWrapper(
+          reportField(
+            ReportField.Chapter,
+            StringResultField(ReportField.Chapter.fieldName, Some("85")),
+            Map.empty,
+            Map.empty,
+            "case-report",
+            0
+          )
+        )
+      )
       doc should containElementWithID("case-report-chapter-0")
     }
 
     "render date fields correctly" in {
-      val doc = view(withTableWrapper(reportField(ReportField.DateCreated, DateResultField(ReportField.DateCreated.fieldName, Some(Instant.parse("2019-04-24T09:00:00.00Z"))), Map.empty, Map.empty, "case-report", 0)))
-      doc should containElementWithID("case-report-date_created-0")
+      val doc = view(
+        withTableWrapper(
+          reportField(
+            ReportField.DateCreated,
+            DateResultField(ReportField.DateCreated.fieldName, Some(Instant.parse("2019-04-24T09:00:00.00Z"))),
+            Map.empty,
+            Map.empty,
+            "case-report",
+            0
+          )
+        )
+      )
+      doc                                              should containElementWithID("case-report-date_created-0")
       doc.getElementById("case-report-date_created-0") should containText("24 Apr 2019")
     }
 
     "render case type fields correctly" in {
-      val doc = view(withTableWrapper(reportField(ReportField.CaseType, CaseTypeResultField(ReportField.CaseType.fieldName, Some(ApplicationType.ATAR)), Map.empty, Map.empty, "case-report", 0)))
-      doc should containElementWithID("case-report-case_type-0")
+      val doc = view(
+        withTableWrapper(
+          reportField(
+            ReportField.CaseType,
+            CaseTypeResultField(ReportField.CaseType.fieldName, Some(ApplicationType.ATAR)),
+            Map.empty,
+            Map.empty,
+            "case-report",
+            0
+          )
+        )
+      )
+      doc                                           should containElementWithID("case-report-case_type-0")
       doc.getElementById("case-report-case_type-0") should containText("ATaR")
     }
 
     "render status fields correctly" in {
-      val doc = view(withTableWrapper(reportField(ReportField.Status, StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.CANCELLED)), Map.empty, Map.empty, "case-report", 0)))
-      doc should containElementWithID("case-report-status-0")
+      val doc = view(
+        withTableWrapper(
+          reportField(
+            ReportField.Status,
+            StatusResultField(ReportField.Status.fieldName, Some(PseudoCaseStatus.CANCELLED)),
+            Map.empty,
+            Map.empty,
+            "case-report",
+            0
+          )
+        )
+      )
+      doc                                        should containElementWithID("case-report-status-0")
       doc.getElementById("case-report-status-0") should containText("CANCELLED")
     }
     "render total days field correctly" in {
-      val doc = view(withTableWrapper(reportField(ReportField.TotalDays, NumberResultField(ReportField.TotalDays.fieldName, Some(120)), Map.empty, Map.empty, "case-report", 0)))
-      doc should containElementWithID("case-report-total_days-0")
+      val doc = view(
+        withTableWrapper(
+          reportField(
+            ReportField.TotalDays,
+            NumberResultField(ReportField.TotalDays.fieldName, Some(120)),
+            Map.empty,
+            Map.empty,
+            "case-report",
+            0
+          )
+        )
+      )
+      doc                                            should containElementWithID("case-report-total_days-0")
       doc.getElementById("case-report-total_days-0") should containText("120")
       doc.getElementById("case-report-total_days-0").hasClass("live-red-text")
     }

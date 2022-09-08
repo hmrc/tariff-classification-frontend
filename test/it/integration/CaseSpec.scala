@@ -139,7 +139,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/cases/1/ruling").withFollowRedirects(false).get())
 
       // Then
-      response.status shouldBe SEE_OTHER
+      response.status             shouldBe SEE_OTHER
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#ruling_tab"))
     }
 
@@ -177,7 +177,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/cases/1/activity").withFollowRedirects(false).get())
 
       // Then
-      response.status shouldBe SEE_OTHER
+      response.status             shouldBe SEE_OTHER
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#activity_tab"))
     }
 
@@ -212,8 +212,8 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/cases/1/attachments").withFollowRedirects(false).get())
 
       // Then
-      response.status shouldBe SEE_OTHER
-      response.header("Location")  should be(Some("/manage-tariff-classifications/cases/v2/1/atar#attachments_tab"))
+      response.status             shouldBe SEE_OTHER
+      response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#attachments_tab"))
     }
 
     "redirect on auth failure" in {

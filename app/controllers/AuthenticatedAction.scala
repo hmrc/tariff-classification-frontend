@@ -66,9 +66,10 @@ class AuthenticatedAction @Inject() (
       request.session
     )
 
-    authorised(predicate).retrieve(Retrievals.credentials and Retrievals.name and Retrievals.email and Retrievals.allEnrolments) {
+    authorised(predicate).retrieve(
+      Retrievals.credentials and Retrievals.name and Retrievals.email and Retrievals.allEnrolments
+    ) {
       case Some(credentials) ~ name ~ email ~ roles =>
-
         val pid = credentials.providerId
 
         val role = roles.enrolments.map(_.key) match {
@@ -83,22 +84,21 @@ class AuthenticatedAction @Inject() (
           userWithTeams <- userConnector.getUserDetails(pid)
 
           updatedUser <- userWithTeams match {
-            case None =>
-              userConnector.createUser(userFromAuth)
-            case Some(existingUser) =>
-              if (existingUser.withoutTeams != userFromAuth) {
-                userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
-              } else {
-                Future.successful(existingUser)
-              }
-          }
+                          case None =>
+                            userConnector.createUser(userFromAuth)
+                          case Some(existingUser) =>
+                            if (existingUser.withoutTeams != userFromAuth) {
+                              userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
+                            } else {
+                              Future.successful(existingUser)
+                            }
+                        }
 
           permittedUser = updatedUser.copy(permissions = Permission.applyingTo(updatedUser))
 
           result <- block(AuthenticatedRequest(permittedUser, request))
 
         } yield result
-
 
       case _ =>
         throw InternalError("Unable to retrieve user credentials")

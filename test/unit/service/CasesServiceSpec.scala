@@ -141,7 +141,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "delegate to connector" in {
       given(connector.updateCase(refEq(updatedCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-      await(service.updateCase(oldCase,updatedCase, operator)) shouldBe updatedCase
+      await(service.updateCase(oldCase, updatedCase, operator)) shouldBe updatedCase
     }
 
     "Update Case with Auditing" should {
@@ -151,7 +151,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       "delegate to connector" in {
         given(connector.updateCase(refEq(updatedCase))(any[HeaderCarrier])) willReturn successful(updatedCase)
 
-        await(service.updateCase(oldCase,updatedCase, operator)) shouldBe updatedCase
+        await(service.updateCase(oldCase, updatedCase, operator)) shouldBe updatedCase
       }
     }
   }

@@ -35,8 +35,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val casesService = mock[CasesService]
-  private val operator     = Operator(id = "id")
+  private val casesService       = mock[CasesService]
+  private val operator           = Operator(id = "id")
   private val changeSampleReturn = app.injector.instanceOf[change_sample_return]
   private def controller(requestCase: Case) = new SampleReturnController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
@@ -66,10 +66,10 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(controller(c).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
-      bodyOf(result) should include("Should this sample be returned?")
+      status(result)      shouldBe Status.OK
+      contentType(result) shouldBe Some("text/html")
+      charset(result)     shouldBe Some("utf-8")
+      bodyOf(result)      should include("Should this sample be returned?")
     }
 
     "return OK when user has right permissions" in {

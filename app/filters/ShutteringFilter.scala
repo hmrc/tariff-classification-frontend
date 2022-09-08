@@ -40,8 +40,7 @@ class ShutteringFilter @Inject() (
   private def toCall(rh: RequestHeader): Call =
     Call(rh.method, rh.uri)
 
-  override def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = {
+  override def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =
     if (shuttered && !excludedPaths.contains(toCall(rh))) Future.successful(ServiceUnavailable(shutterPage()))
     else next(rh)
-  }
 }

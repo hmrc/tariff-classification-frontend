@@ -46,17 +46,23 @@ class ReportsTabSpec extends ViewSpec {
       val doc = view(manageReportsView)
 
       doc.getElementById(reportingTabViewModel.summaryReportTab.elementId) should containText(
-        messages("reporting.summary.heading"))
+        messages("reporting.summary.heading")
+      )
       doc.getElementById(reportingTabViewModel.statusReportTab.elementId) should containText(
-        messages("reporting.status.heading"))
+        messages("reporting.status.heading")
+      )
       doc.getElementById(reportingTabViewModel.atarReportTab.elementId) should containText(
-        messages("reporting.atar.heading"))
+        messages("reporting.atar.heading")
+      )
       doc.getElementById(reportingTabViewModel.liabilityReportTab.elementId) should containText(
-        messages("reporting.liability.heading"))
+        messages("reporting.liability.heading")
+      )
       doc.getElementById(reportingTabViewModel.correspondenceReportTab.elementId) should containText(
-        messages("reporting.correspondence.heading"))
+        messages("reporting.correspondence.heading")
+      )
       doc.getElementById(reportingTabViewModel.miscReportTab.elementId) should containText(
-        messages("reporting.miscellaneous.heading"))
+        messages("reporting.miscellaneous.heading")
+      )
     }
   }
 }
