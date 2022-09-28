@@ -35,17 +35,8 @@ class AuthenticatedHttpClient @Inject() (
   wsClient: WSClient,
   config: AppConfig,
   actorSystem: ActorSystem
-) extends DefaultHttpClient(configuration, httpAuditing, wsClient, actorSystem) {
-
-  def addAuth(implicit hc: HeaderCarrier): Seq[(String, String)] = {
-
-    val headerName: String = "X-Api-Token"
-
-    hc.headers(Seq(headerName)) match {
-      case header @ Seq(_) => header
-      case _               => Seq(headerName -> config.apiToken)
-    }
-  }
+) extends DefaultHttpClient(configuration, httpAuditing, wsClient, actorSystem)
+    with InjectAuthHeader {
 
   override def doGet(
     url: String,
@@ -78,4 +69,17 @@ class AuthenticatedHttpClient @Inject() (
     headers: Seq[(String, String)]
   )(implicit ec: ExecutionContext): Future[HttpResponse] =
     super.doDelete(url, headers)
+}
+
+trait InjectAuthHeader {
+
+  def authHeaders(config: AppConfig)(implicit hc: HeaderCarrier): Seq[(String, String)] = {
+    val headerName: String = "X-Api-Token"
+
+    hc.headers(Seq(headerName)) match {
+      case header @ Seq(_) => header
+      case _               => Seq(headerName -> config.apiToken)
+    }
+  }
+
 }

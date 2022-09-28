@@ -64,7 +64,7 @@ class FileStoreConnector @Inject() (
         Source(attachments.map(_.id).toList)
           .grouped(BatchSize)
           .mapAsyncUnordered(Runtime.getRuntime().availableProcessors()) { ids =>
-            http.GET[Seq[FileMetadata]](makeQuery(ids), headers = http.addAuth)
+            http.GET[Seq[FileMetadata]](makeQuery(ids), headers = http.authHeaders(appConfig))
           }
           .runFold(Seq.empty[FileMetadata]) {
             case (acc, next) => acc ++ next
@@ -74,7 +74,10 @@ class FileStoreConnector @Inject() (
 
   def get(attachmentId: String)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata-by-id") { _ =>
-      http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId", headers = http.addAuth)
+      http.GET[Option[FileMetadata]](
+        s"${appConfig.fileStoreUrl}/file/$attachmentId",
+        headers = http.authHeaders(appConfig)
+      )
     }
 
   def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
@@ -83,7 +86,7 @@ class FileStoreConnector @Inject() (
         .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](
           s"${appConfig.fileStoreUrl}/file/initiate",
           request,
-          headers = http.addAuth
+          headers = http.authHeaders(appConfig)
         )
     }
 
@@ -99,7 +102,7 @@ class FileStoreConnector @Inject() (
       )
 
       ws.url(s"${appConfig.fileStoreUrl}/file")
-        .withHttpHeaders(http.addAuth(hc): _*)
+        .withHttpHeaders(http.authHeaders(appConfig)(hc): _*)
         .post(Source(List(filePart, dataPart)))
         .flatMap { response =>
           Future.fromTry {
@@ -112,7 +115,7 @@ class FileStoreConnector @Inject() (
     withMetricsTimerAsync("download-file") { _ =>
       val fileStoreResponse = ws
         .url(url)
-        .withHttpHeaders(http.addAuth(hc): _*)
+        .withHttpHeaders(http.authHeaders(appConfig)(hc): _*)
         .get()
 
       fileStoreResponse.flatMap { response =>
@@ -128,7 +131,7 @@ class FileStoreConnector @Inject() (
 
   def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
     withMetricsTimerAsync("delete-file")(_ =>
-      http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId", headers = http.addAuth)
+      http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId", headers = http.authHeaders(appConfig))
     )
 
 }

@@ -36,7 +36,7 @@ class RulingConnector @Inject() (
     withMetricsTimerAsync("notify-rulings-frontend") { _ =>
       http.POSTEmpty[Unit](
         s"${configuration.rulingUrl}/search-for-advance-tariff-rulings/ruling/$id",
-        headers = http.addAuth
+        headers = http.authHeaders(configuration)
       )
     }
 }
