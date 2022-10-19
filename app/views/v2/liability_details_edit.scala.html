@@ -43,9 +43,7 @@
     @error_summary(form.errors, keySwaps = Map("dateOfReceipt" -> "dateOfReceipt_day", "entryDate" -> "entryDate_day"))
 
     <div class="govuk-form-group">
-    @case_heading(
-        c,
-        messageKey = Some("case.v2.liability.c592.edit_details.heading"))
+    @case_heading( c, messageKey = Some("case.v2.liability.c592.edit_details.heading"))
     </div>
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="govuk-form-group">
@@ -63,7 +61,6 @@
                     disableAutoComplete = true
                 )
 
-
                 @input_text(
                     field = form("entryNumber"),
                     label = messages("case.v2.liability.c592.details_edit.entry_number"),
@@ -76,20 +73,23 @@
                     monthField = form("dateOfReceipt.month"),
                     yearField = form("dateOfReceipt.year"),
                     dateField = form("dateOfReceipt"),
-                    fieldsetId = Some("dateOfReceipt"),
+                    fieldsetId = Some("dateOfReceipt-fieldset"),
                     hint = Some(messages("case.v2.liability.c592.details_edit.date_of_receipt_hint")),
                     legend = messages("case.v2.liability.c592.details_edit.date_of_receipt"),
-                    formControlUnBold = true
+                    formControlUnBold = true,
+                    inputClass = Some("width-one-third")
                 )
+
                 @input_date(
                     dayField = form("entryDate.day"),
                     monthField = form("entryDate.month"),
                     yearField = form("entryDate.year"),
                     dateField = form("entryDate"),
-                    fieldsetId = Some("entryDate"),
+                    fieldsetId = Some("entryDate-fieldset"),
                     hint = Some(messages("case.v2.liability.c592.details_edit.date_hint")),
                     legend = messages("case.v2.liability.c592.details_edit.date_p"),
-                    formControlUnBold = true
+                    formControlUnBold = true,
+                    inputClass = Some("width-one-third")
                 )
 
                 @input_text(
@@ -99,7 +99,7 @@
                     disableAutoComplete = true
                 )
 
-                @repayment_input_checkbox(formData = form )
+                @repayment_input_checkbox(formData = form)
 
                 <h3 class="govuk-heading-m">@messages("case.v2.liability.c592.trader_information")</h3>
 

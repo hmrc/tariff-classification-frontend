@@ -19,6 +19,9 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 
+@import views.html.helper.CSPNonce
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.internalheader.InternalHeader
+
 @this(
         config: AppConfig,
         govukLayout: GovukLayout,
@@ -28,7 +31,9 @@
         hmrcScripts: HmrcScripts,
         hmrcLanguageSelect: HmrcLanguageSelect,
         hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
-        twoThirdsMainContent: TwoThirdsMainContent
+        twoThirdsMainContent: TwoThirdsMainContent,
+        hmrcInternalHead: HmrcInternalHead,
+        hmrcInternalHeader: HmrcInternalHeader
 )
 
 @(
@@ -52,12 +57,12 @@
 
 @govukLayout(
     pageTitle = Some(pageTitle),
-    headBlock = Some(hmrcHead(head)),
-    headerBlock = Some(hmrcStandardHeader(
-        serviceUrl = None,
-        serviceName = Some(messages("service.name")),
-        displayHmrcBanner = false
-    )),
+    headBlock = Some(hmrcInternalHead(head, nonce = CSPNonce.get)),
+    headerBlock = Some(hmrcInternalHeader(InternalHeader(
+                    homepageUrl = controllers.routes.OperatorDashboardController.onPageLoad.url,
+                    serviceName = Some(messages("service.name")),
+                    serviceUrl = controllers.routes.OperatorDashboardController.onPageLoad.url,
+    ))),
     beforeContentBlock = beforeContentBlock,
     scriptsBlock = Some(hmrcScripts()),
     footerBlock = Some(hmrcStandardFooter()),

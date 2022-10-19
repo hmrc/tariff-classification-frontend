@@ -143,8 +143,8 @@ class RulingController @Inject() (
   private def editLiabilityRulingView(f: Form[Decision], c: Case)(
     implicit request: AuthenticatedRequest[_]
   ): Future[Result] = {
-    val caseHeaderViewModel = CaseHeaderViewModel.fromCase(c)
 
+    val caseHeaderViewModel  = CaseHeaderViewModel.fromCase(c)
     val traderCommodityCode  = c.application.asLiabilityOrder.traderCommodityCode.getOrElse("")
     val officerCommodityCode = c.application.asLiabilityOrder.officerCommodityCode.getOrElse("")
 

@@ -89,36 +89,39 @@
         <h2 class="govuk-heading-m">@messages("case.decision.ruling-details")</h2>
 
         <dl class="govuk-summary-list govuk-summary-list--no-border">
+
             <div class="govuk-summary-list__row">
-                <div id="start-date-id" class="govuk-summary-list__key">
+                <dt id="start-date-id" class="govuk-summary-list__key">
                     Start date
-                </div>
-                <div class="govuk-summary-list__value" id="start-date-id-text">
+                </dt>
+                <dd class="govuk-summary-list__value" id="start-date-id-text">
                     Start date will be set when case is completed.
-                </div>
+                </dd>
             </div>
 
             <div class="govuk-summary-list__row">
-                <div id="end-date-id" class="govuk-summary-list__key">
+                <dt id="end-date-id" class="govuk-summary-list__key">
                     Expiry date
-                </div>
-                <div class="govuk-summary-list__value" id="end-date-id-text">
+                </dt>
+                <dd class="govuk-summary-list__value" id="end-date-id-text">
                     Expiry date will be set 3 years from start date unless otherwise specified.
-                </div>
+                </dd>
             </div>
         </dl>
 
         @form(action = controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
 
             @CSRF.formField
+
             <dl class="govuk-summary-list govuk-summary-list--no-border">
                 <div class="govuk-summary-list__row">
-                    <div class="govuk-summary-list__key"></div>
-                    <div class="govuk-summary-list__value">
+                    <dt class="govuk-summary-list__key"></dt>
+                    <dd class="govuk-summary-list__value">
                         @edit_ruling_input_checkbox(formData = decisionForm )
-                    </div>
+                    </dd>
                 </div>
             </dl>
+
             @input_text(
                 field = decisionForm("bindingCommodityCode"),
                 label = messages("case.decision.commodity-code"),
@@ -152,8 +155,8 @@
                 label = messages("case.decision.method-exclusion")
             )
 
-
             <div class="govuk-form-group">
+
                 <h2 class="govuk-heading-m">@messages("case.decision.holder.information")</h2>
 
                 @input_textarea(
@@ -190,6 +193,5 @@
                 </p>
             </div>
         }
-    </div>
     }
 }

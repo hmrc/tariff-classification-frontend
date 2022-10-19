@@ -109,14 +109,16 @@
         @advanced_search_keywords(form, keywords)
 
         <div class="govuk-button-group">
-            <button id="advanced_search-search_button" class="govuk-button" type="submit" name="addToSearch" value="false">Search</button>
+            <button id="advanced_search-search_button" class="govuk-button" type="submit" name="addToSearch" value="false" data-prevent-double-click="true">
+                Search
+            </button>
             <a id="advanced_search-reset_button" class="govuk-button govuk-button--secondary" href="@controllers.routes.SearchController.search()">New search</a>
         </div>
 
         @if(results.isEmpty) {
             @*
-            Hack to ensure the checkbox is checked when search results aren't present
-            This is only required for form elements that are rendered when results are present and which need a default value.
+                Hack to ensure the checkbox is checked when search results aren't present
+                This is only required for form elements that are rendered when results are present and which need a default value.
             *@
             <input type="hidden" value="OPEN" name="status[0]"/>
             <input type="hidden" value="LIVE" name="status[1]"/>
@@ -131,7 +133,6 @@
 
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-one-quarter">
-
                         <div class="advanced_search--filters_container">
                             <div class="advanced_search--filters">
                                 @input_checkbox_group(
@@ -198,9 +199,7 @@
                         </div>
                     }
                 </div>
-
             </div>
         }
     }
-
 }
