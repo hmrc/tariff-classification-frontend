@@ -28,14 +28,14 @@
             <ul class="govuk-tabs__list" role="tablist">
                 <li class="govuk-tabs__list-item @if(selectedTab == DETAILS){govuk-tabs__list-item--selected}" role="tab">
                     @if(selectedTab == DETAILS){
-                        <span class="govuk-tabs__tab" id="tab-details" aria-selected="true">Details</span>
+                        <span class="govuk-tabs__tab" id="tab-details">Details</span>
                     }else{
                         <a id="tab-details" class="govuk-tabs__tab" href="@onChange(DETAILS)">Details</a>
                     }
                 </li>
                 <li class="govuk-tabs__list-item @if(selectedTab == IMAGES){govuk-tabs__list-item--selected}" role="tab">
                     @if(selectedTab == IMAGES){
-                        <span class="govuk-tabs__tab" id="tab-images" aria-selected="true">Images</span>
+                        <span class="govuk-tabs__tab" id="tab-images">Images</span>
                     }else{
                         <a class="govuk-tabs__tab" id="tab-images" href="@onChange(IMAGES)">Images</a>
                     }

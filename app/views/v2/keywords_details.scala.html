@@ -63,21 +63,19 @@
 <h3 class="govuk-heading-m">Case keyword list</h3>
 
 @if(ktvm.caseKeywords.size<3){
+
     <p class="govuk-body">
-    @if(3 - ktvm.caseKeywords.size == 1){
-        Add at least @(3-ktvm.caseKeywords.size) more keyword to this case.
-
-    }else{
-        Add at least @(3-ktvm.caseKeywords.size) more keywords to this case.
-
-    }
-
+        @if(3 - ktvm.caseKeywords.size == 1){
+            Add at least @(3-ktvm.caseKeywords.size) more keyword to this case.
+        } else {
+            Add at least @(3-ktvm.caseKeywords.size) more keywords to this case.
+        }
     </p>
-
 }
 
 <div id="keywords-table">
     <dl class="govuk-summary-list">
+
 @for((keyword: String, index: Int) <- ktvm.caseKeywords.toSeq.sorted.zipWithIndex) {
 
         <div class="govuk-summary-list__row">
@@ -87,8 +85,8 @@
             <dd class="govuk-summary-list__value" id="keywords-row-@{index}-message">
                 @if(!ktvm.globalKeywords.contains(keyword)) {
                     @messages("case.v2.liability.keywords.case_only_keyword")
-                }else{
-                        &nbsp
+                } else {
+                    &nbsp
                 }
             </dd>
             @if(request.hasPermission(Permission.KEYWORDS)) {

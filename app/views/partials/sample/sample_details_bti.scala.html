@@ -24,10 +24,10 @@
 @import views.html.partials.sample.sample_status
 @(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @tab_heading("application", messages("case.menu.sample-details"))
+    @tab_heading("sample-application", messages("case.menu.sample-details"))
 
     <dl class="govuk-summary-list">
-        <h3 class="govuk-heading-m" id="trader-submitted-heading">@messages("case.application.sample-info-from-applicant")</h3>
+        <h3 class="govuk-heading-m" id="sample-info-heading">@messages("case.application.sample-info-from-applicant")</h3>
 
         <div id="app-details-sending-samples-answer" class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
