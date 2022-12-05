@@ -80,7 +80,6 @@
                               My cases</a>
                       }
                       </li>
-
                       <li class="moj-primary-navigation__item">
                       @if(selectedTab == OpenCasesTab) {
                           <a id ="primary_nav_open_cases_tab" class="moj-primary-navigation__link govuk-link" aria-current="page" href="@routes.AllOpenCasesController.displayAllOpenCases()">
@@ -106,8 +105,8 @@
         <div class="moj-primary-navigation__search">
             <div class="moj-search moj-search--ondark moj-search--inline">
                 @formWithCSRF(action = controllers.routes.SearchController.search(), 'novalidate -> "novalidate") {
-                <label class="govuk-label moj-search__label govuk-visually-hidden" for="case_search_box-input">Search cases</label>
                 <div class="govuk-form-group">
+                    <label class="govuk-label moj-search__label govuk-visually-hidden" for="case_search_box-input">Search cases</label>
                     <input id="case_search_box-input" class="govuk-input" name="reference" value="" type="text">
                 </div>
                 <button id="search__button" class="govuk-button moj-search__button" data-module="govuk-button" type="submit">Search cases</button>

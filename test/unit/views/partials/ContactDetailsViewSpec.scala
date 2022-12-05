@@ -44,7 +44,7 @@ class ContactDetailsViewSpec extends ViewSpec {
       doc.getElementById("contact-email") should haveTag("a")
       doc.getElementById("contact-email") should haveAttribute(
         "href",
-        "mailto:email@email.com?subject=ATaR application #ref"
+        "mailto:email@email.com?subject=ATaR%20Application%20#ref"
       )
     }
 

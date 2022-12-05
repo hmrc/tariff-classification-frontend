@@ -18,6 +18,7 @@
 
 @import views.html.forms.components.input_checkbox
 @import views.html.forms.components.input_text
+
 @(
         formData: Form[Case],
         value: Boolean = true,
@@ -25,28 +26,35 @@
         hint: Option[String] = None
 )(implicit messages: Messages)
 
+@conditionalInput = @{Html(s"""
+        <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-dvr-number">
+                ${
+                    input_text(
+                        field = formData("dvrNumber"),
+                        label = messages("case.v2.liability.c592.details_edit.dvr_number"),
+                        inputClass = Some("width-one-half"),
+                        customGroupClasses = "",
+                        disableAutoComplete = true
+                    )
+                }
+        </div>
+    """.stripMargin)
+}
+
 @field = @{formData("repaymentClaim")}
 
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset" aria-describedby="expiry-date-hint">
-        <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="@{field.id}" type="checkbox" name="@{field.name}" value="@value" @if(field.hasErrors){aria-describedby="error-message-@{field.id}-input"} @if(field.value.contains(s"$value")){checked="checked"} data-aria-controls="conditional-dvr-number"/>
-                <label class="govuk-label govuk-checkboxes__label" for="@{field.id}">
-                @messages("case.v2.liability.c592.details_edit.repayment_claim")
-                </label>
-            </div>
-            <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-dvr-number">
-                <div class="govuk-form-group">
-                @input_text(
-                    field = formData("dvrNumber"),
-                    label = messages("case.v2.liability.c592.details_edit.dvr_number"),
-                    inputClass = Some("width-one-half"),
-                    customGroupClasses = None,
-                    disableAutoComplete = true
-                )
-                </div>
-            </div>
+
+        <div class="govuk-checkboxes" data-module="govuk-checkboxes" id="repayment-claim">
+            @input_checkbox(
+                field = field,
+                label =  "Repayment claim",
+                data_target = Some("conditional-dvr-number"),
+                value = value,
+                conditionalInputHtml = Some(conditionalInput)
+            )
         </div>
+
     </fieldset>
 </div>

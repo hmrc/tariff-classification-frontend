@@ -32,40 +32,29 @@ class AdvancedSearchViewSpec extends ViewSpec {
   "Advanced Search" should {
 
     "Render No Results" in {
-      // When
-      val doc = view(advancedSearchView(SearchForm.form, None, Seq.empty, defaultTab))
 
-      // Then
+      val doc = view(advancedSearchView(SearchForm.form, None, Seq.empty, defaultTab))
       doc shouldNot containElementWithID("advanced_search-results_and_filters")
     }
 
     "Render Results" in {
-      // When
-      val doc =
-        view(advancedSearchView(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab))
-
-      // Then
+      val results = Some(Paged(Seq(SearchResult(aCase(), Seq.empty))))
+      val doc     = view(advancedSearchView(form, results, Seq.empty, defaultTab))
       doc should containElementWithID("advanced_search-results_and_filters")
     }
 
     "Always Render Input 'status'" in {
-      view(advancedSearchView(form, None, Seq.empty, defaultTab)) should containElementWithAttribute(
-        "name",
-        "status[0]"
-      )
-      view(advancedSearchView(form, None, Seq.empty, defaultTab)) should containElementWithAttribute(
-        "name",
-        "status[1]"
-      )
-      view(advancedSearchView(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute(
-        "name",
-        "status[0]"
-      )
-      view(advancedSearchView(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should containElementWithAttribute(
-        "name",
-        "status[1]"
-      )
+      view(advancedSearchView(form, None, Seq.empty, defaultTab)) should
+        containElementWithAttribute("name", "status[0]")
+
+      view(advancedSearchView(form, None, Seq.empty, defaultTab)) should
+        containElementWithAttribute("name", "status[1]")
+
+      view(advancedSearchView(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should
+        containElementWithAttribute("name", "status[0]")
+
+      view(advancedSearchView(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should
+        containElementWithAttribute("name", "status[1]")
     }
   }
-
 }

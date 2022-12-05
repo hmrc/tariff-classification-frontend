@@ -24,62 +24,67 @@
 @import views.html.partials.sample.sample_status
 @(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @tab_heading("application", messages("case.menu.sample-details"))
+@tab_heading("sample-application", messages("case.menu.sample-details"))
 
-    <dl class="govuk-summary-list">
-        <h3 class="govuk-heading-m" id="trader-submitted-heading">@messages("case.application.sample-info-from-applicant")</h3>
+<h3 class="govuk-heading-m" id="sample-info-heading">@messages("case.application.sample-info-from-applicant")</h3>
 
-        <div id="app-details-sending-samples-answer" class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
+<dl class="govuk-summary-list">
+    <div id="app-details-sending-samples-answer" class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
             @messages("case.application.provide-samples")
-            </dt>
-            <dd class="govuk-summary-list__value">
+        </dt>
+        <dd class="govuk-summary-list__value">
             @if(sample.sampleToBeProvided) {
                 @messages("answer.yes")
             } else {
                 @messages("answer.no")
             }
-            </dd>
-        </div>
+        </dd>
+    </div>
 
-        @if(sample.sampleToBeProvided){
-            <div id="app-details-returning-samples" class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
+    @if(sample.sampleToBeProvided){
+        <div id="app-details-returning-samples" class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
                 @messages("case.application.returning-samples")
-                </dt>
-                <dd class="govuk-summary-list__value">
+            </dt>
+            <dd class="govuk-summary-list__value">
                 @if(sample.sampleToBeReturned) {
                     @messages("answer.yes")
                 } else {
                     @messages("answer.no")
                 }
-                </dd>
-            </div>
-        }
+            </dd>
+        </div>
+    }
+</dl>
 
-        @sample.sampleRequestedBy.map { sampleRequestedBy =>
-            <h3 class="govuk-heading-m" id="sample-requested-heading">@messages("case.sample.request.heading")</h3>
+@sample.sampleRequestedBy.map { sampleRequestedBy =>
 
-            <div id="sample-requested-by" class="govuk-summary-list__row">
-                <dt id="sample-requested-by-value" class="govuk-summary-list__key">
+    <h3 class="govuk-heading-m" id="sample-requested-heading">@messages("case.sample.request.heading")</h3>
+    <dl class="govuk-summary-list">
+        <div id="sample-requested-by" class="govuk-summary-list__row">
+            <dt id="sample-requested-by-value" class="govuk-summary-list__key">
                 @messages("case.sample.request.operator", sampleRequestedBy)
-                </dt>
-            </div>
-            <div id="sample-requested-return" class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
+            </dt>
+        </div>
+        <div id="sample-requested-return" class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
                 @messages("case.sample.request.return")
-                </dt>
-                <dd id="sample-requested-return-value" class="govuk-summary-list__key">
+            </dt>
+            <dd id="sample-requested-return-value" class="govuk-summary-list__key">
                 @sample.sampleReturnStatus
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a id="sample-requested-return-change" tabindex="@startAtTabIndex" href="@routes.SampleReturnController.updateStatus(sample.caseReference)" class="govuk-link">@messages("case.sample.request.change")</a>
-                </dd>
-            </div>
-        }
-
-        @if(sample.sampleToBeProvided || sample.sampleRequestedBy.nonEmpty) {
-            @sample_status(sample, startAtTabIndex)
-        }
-
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                <a id="sample-requested-return-change" tabindex="@startAtTabIndex"
+                href="@routes.SampleReturnController.updateStatus(sample.caseReference)" class="govuk-link">@messages("case.sample.request.change")</a>
+            </dd>
+        </div>
     </dl>
+}
+
+@if(sample.sampleToBeProvided || sample.sampleRequestedBy.nonEmpty) {
+    <dl class="govuk-summary-list">
+        @sample_status(sample, startAtTabIndex)
+    </dl>
+}
+

@@ -50,8 +50,6 @@
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">@messages("complete_case.completed.header", c.application.goodsName, c.application.getType)</h1>
         @if(c.application.isLiabilityOrder|| c.application.isBTI){
-
-
             @c.decision.map(_.effectiveEndDate.map(
                 date => Html(messages("complete_case.completed.subheader", Dates.format(date)))
             )

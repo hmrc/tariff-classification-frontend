@@ -23,15 +23,14 @@
 
 @(goods: GoodsTabViewModel, startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
-    @tab_heading("application", messages("case.menu.application-details"))
+    @tab_heading("goods-application", messages("case.menu.application-details"))
+
+    <h3 class="govuk-heading-m" id="about-the-goods">@messages("case.goods.about")</h3>
 
     <dl class="govuk-summary-list">
-
-        <h3 class="govuk-heading-m" id="about-the-goods">@messages("case.goods.about")</h3>
-
         <div id="app-details-goods-name" class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-            @messages("case.goods.name")
+                @messages("case.goods.name")
             </dt>
             <dd class="govuk-summary-list__value">
                 <span class="pre-wrap">@goods.goodsName</span>
@@ -64,13 +63,11 @@
                     @messages("case.application.has-attachments")
                 </dt>
                 <dd class="govuk-summary-list__value">
-                @if(goods.hasAttachmentsFromApplicant) {
-                    Yes. <a tabindex="@{
-                        startAtTabIndex + 1
-                    }" href="#@Tab.ATTACHMENTS_TAB.name" class="govuk-link">@messages("case.goods.attachments_yes")</a>
-                } else {
-                    @messages("answer.no")
-                }
+                    @if(goods.hasAttachmentsFromApplicant) {
+                        Yes.<a tabindex="@{startAtTabIndex + 1}" href="#@Tab.ATTACHMENTS_TAB.name" class="govuk-link">@messages("case.goods.attachments_yes")</a>
+                    } else {
+                        @messages("answer.no")
+                    }
                 </dd>
             </div>
         }
@@ -78,7 +75,7 @@
         @if(goods.sendingSamples) {
             <div id="app-details-sending-samples" class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                @messages("case.goods.sending_samples")
+                    @messages("case.goods.sending_samples")
                 </dt>
                 <dd class="govuk-summary-list__value">
                     Yes. <a href="#@Tab.SAMPLE_TAB.name" class="govuk-link">@messages("case.goods.sending_samples_yes")</a>
@@ -87,7 +84,7 @@
         }
 
         @goods.suggestedCommodityCode.map { suggestedCommodityCode =>
-            <div id="app-details-envisaged-code"class="govuk-summary-list__row">
+            <div id="app-details-envisaged-code" class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
                     @messages("case.application.suggested-commodity-code")
                 </dt>
@@ -107,49 +104,48 @@
                 </dd>
             </div>
         }
-
     </dl>
 
-    <dl class="govuk-summary-list">
-
-        @if(goods.reissuedBTIReference.nonEmpty || goods.relatedBTIReferences.nonEmpty) {
-            <h3 class="govuk-heading-m" id="about-other-rulings">@messages("case.goods.about_other_rulings")</h3>
-
+    @if(goods.reissuedBTIReference.nonEmpty || goods.relatedBTIReferences.nonEmpty) {
+        <h3 class="govuk-heading-m" id="about-other-rulings">@messages("case.goods.about_other_rulings")</h3>
+        <dl class="govuk-summary-list">
             @goods.reissuedBTIReference.map { reissuedBTIReference =>
                 <div id="app-details-previous-ruling-reference" class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         @messages("case.application.previous_ruling_reference")
                     </dt>
                     <dd class="govuk-summary-list__value">
-                    @reissuedBTIReference
+                        @reissuedBTIReference
                     </dd>
                 </div>
             }
 
             @if(goods.relatedBTIReferences.nonEmpty) {
                 <div id="app-details-similar-ruling-reference" class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                    @messages("case.application.similar_ruling_references")
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        <span class="pre-wrap">@goods.relatedBTIReferences.mkString("\n")</span>
-                    </dd>
+                        <dt class="govuk-summary-list__key">
+                            @messages("case.application.similar_ruling_references")
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="pre-wrap">@goods.relatedBTIReferences.mkString("\n")</span>
+                        </dd>
                 </div>
             }
-        }
+        </dl>
+    }
 
-        @if(goods.otherInformation.isDefined) {
-            <div id="app-details-similar-ruling-reference" class="govuk-summary-list__row">
+    @if(goods.otherInformation.isDefined) {
+        <h3 class="govuk-heading-m" id="other-supporting-information">@messages("case.application.other-information")</h3>
+        <dl class="govuk-summary-list">
+            <div id="app-details-supporting-information" class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                @messages("case.application.supporting-information")
+                    @messages("case.application.supporting-information")
                 </dt>
                 <dd class="govuk-summary-list__value">
                     <span class="pre-wrap">@goods.otherInformation</span>
                 </dd>
             </div>
-        }
-
-    </dl>
+        </dl>
+    }
 
     <div class="govuk-form-group">
         @submitted_application_link(goods.caseReference, Some(startAtTabIndex + 7))

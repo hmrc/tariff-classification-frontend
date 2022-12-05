@@ -111,8 +111,11 @@ object ApplicationType {
   def withName(name: String) = values.find(_.name.equalsIgnoreCase(name)).getOrElse(throw new NoSuchElementException)
 
   case object ATAR extends ApplicationType("BTI")
+
   case object LIABILITY extends ApplicationType("LIABILITY_ORDER")
+
   case object CORRESPONDENCE extends ApplicationType("CORRESPONDENCE")
+
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
 
   implicit def applicationTypePathBindable(
@@ -125,6 +128,7 @@ object ApplicationType {
             ApplicationType.withName(value)
           }
           .leftMap(_ => "Invalid application type")
+
       def unbind(key: String, value: ApplicationType): String =
         stringBindable.unbind(key, value.name)
     }
