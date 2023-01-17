@@ -44,13 +44,13 @@
 @field = @{formData("repaymentClaim")}
 
 <div class="govuk-form-group">
-    <fieldset class="govuk-fieldset" aria-describedby="expiry-date-hint">
+    <fieldset class="govuk-fieldset" aria-describedby="repaymentClaim">
 
         <div class="govuk-checkboxes" data-module="govuk-checkboxes" id="repayment-claim">
             @input_checkbox(
                 field = field,
                 label =  "Repayment claim",
-                data_target = Some("conditional-dvr-number"),
+                data_target = Some("repayment-claim"),
                 value = value,
                 conditionalInputHtml = Some(conditionalInput)
             )
