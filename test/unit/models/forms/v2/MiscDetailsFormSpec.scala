@@ -98,7 +98,7 @@ class MiscDetailsFormSpec extends ModelsBaseSpec {
         val form = MiscDetailsForm.miscDetailsForm(miscCase)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.map { case (fst, snd) => fst -> snd.head }
       }
     }
   }

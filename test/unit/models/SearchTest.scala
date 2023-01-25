@@ -31,7 +31,7 @@ class SearchTest extends ModelsBaseSpec {
 
   /**
     * When we add fields to Search these tests shouldn't need changing, only the field above and vals in each test suite.
-    **/
+    * */
   "Search" should {
     "Return isEmpty = true" in {
       val search = Search()
@@ -65,7 +65,8 @@ class SearchTest extends ModelsBaseSpec {
       "keyword[1]"          -> Seq("K2")
     )
 
-    val emptyParams: Map[String, Seq[String]] = populatedParams.mapValues(_ => Seq(""))
+    val emptyParams: Map[String, Seq[String]] =
+      populatedParams.map { case (fst, _) => fst -> Seq("") }
 
     val populatedQueryParam: Set[String] = Set(
       "decision_details=decision-details",
@@ -99,7 +100,7 @@ class SearchTest extends ModelsBaseSpec {
     }
 
     "Bind populated query string with excessive spaces" in {
-      val extraSpacesParams = populatedParams.mapValues(values => values.map(value => s" $value "))
+      val extraSpacesParams = populatedParams.map { case (fst, snd) => fst -> snd.map(value => s" $value ") }
       Search.binder.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
     }
 

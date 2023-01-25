@@ -81,7 +81,7 @@ class ManageKeywordsController @Inject() (
         val keywordNames = keywords.results.map(_.name)
         KeywordForm
           .formWithAutoReverse(keywordNames)
-          .bindFromRequest
+          .bindFromRequest()
           .fold(
             formWithErrors =>
               for {

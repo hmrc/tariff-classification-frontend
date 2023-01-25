@@ -42,6 +42,11 @@ class DecisionFormTest extends ModelsBaseSpec {
     "methodExclusion"      -> Seq("exclusion")
   )
 
+  private val emptyParams =
+    params.map {
+      case (fst, _) => fst -> Seq("")
+    }
+
   val validDecisionFormData: DecisionFormData = DecisionFormData(
     bindingCommodityCode = "03000000000",
     goodsDescription     = "desc",
@@ -61,7 +66,7 @@ class DecisionFormTest extends ModelsBaseSpec {
         val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
         val form = formProvider(mockedCommodityCodeConstraint)
           .liabilityForm(decision)
-          .bindFromRequest(params.mapValues(_ => Seq("")))
+          .bindFromRequest(emptyParams)
 
         form.hasErrors shouldBe false
       }
@@ -80,7 +85,7 @@ class DecisionFormTest extends ModelsBaseSpec {
         val form                          = formProvider(mockedCommodityCodeConstraint).liabilityForm(decision)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.map { case (fst, snd) => fst -> snd.head }
       }
     }
   }
@@ -100,7 +105,7 @@ class DecisionFormTest extends ModelsBaseSpec {
         val form                          = formProvider(mockedCommodityCodeConstraint).liabilityCompleteForm(decision)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.map { case (fst, snd) => fst -> snd.head }
       }
     }
     "return validation errors" when {
@@ -108,7 +113,7 @@ class DecisionFormTest extends ModelsBaseSpec {
         val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
         val form = formProvider(mockedCommodityCodeConstraint)
           .liabilityCompleteForm(decision)
-          .bindFromRequest(params.mapValues(_ => Seq("")))
+          .bindFromRequest(emptyParams)
 
         form.hasErrors         shouldBe true
         form.errors.size       shouldBe 3

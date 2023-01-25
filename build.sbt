@@ -18,13 +18,14 @@ lazy val microservice = (project in file("."))
   .settings(PlayKeys.playDefaultPort := 9581)
   .settings(
     name := appName,
-    scalaVersion := "2.12.16",
+    scalaVersion := "2.13.10",
     targetJvm := "jvm-1.8",
     libraryDependencies ++= AppDependencies(),
     Test / fork := true,
     retrieveManaged := true,
     // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
-    scalacOptions += "-P:silencer:pathFilters=views;routes",
+    //    scalacOptions += "-P:silencer:pathFilters=views;routes",
+    scalacOptions := Seq("-Wconf:src=routes/.*:s", "-Wconf:cat=unused-imports&src=html/.*:s"),
     scalacOptions ~= { opts =>
       opts.filterNot(
         Set(
@@ -41,7 +42,7 @@ lazy val microservice = (project in file("."))
       (Test / baseDirectory).value / "test/util"
     ),
     Test / resourceDirectory := baseDirectory.value / "test" / "resources",
-//    works only when fork is true
+    //    works only when fork is true
     Test / javaOptions += "-Xmx1G",
     addTestReportOption(Test, "test-reports")
   )
@@ -68,7 +69,7 @@ lazy val microservice = (project in file("."))
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
   .settings(
     IntegrationTest / fork := true,
-//    works only when fork is true
+    //    works only when fork is true
     Test / javaOptions += "-Xmx1G",
     IntegrationTest / unmanagedSourceDirectories := Seq(
       (IntegrationTest / baseDirectory).value / "test/it",
@@ -95,7 +96,8 @@ coverageMinimumStmtTotal := 91
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;"
 
-ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % "always"
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml"          % VersionScheme.Always
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
 
 addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle")

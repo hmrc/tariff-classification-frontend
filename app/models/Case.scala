@@ -36,6 +36,7 @@ case class Case(
   migratedDaysElapsed: Option[Long] = None,
   referredDaysElapsed: Long
 ) {
+
   def hasQueue: Boolean = queueId.isDefined
 
   def hasStatus(statuses: CaseStatus*): Boolean = statuses.contains(status)

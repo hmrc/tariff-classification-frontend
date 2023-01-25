@@ -16,10 +16,10 @@
 
 package models
 
+import models.PseudoCaseStatus.PseudoCaseStatus
+import models.forms.SearchForm
 import play.api.data.Form
 import play.api.mvc.QueryStringBindable
-import forms.SearchForm
-import models.PseudoCaseStatus.PseudoCaseStatus
 
 case class Search(
   caseDetails: Option[String]                   = None,
@@ -44,9 +44,15 @@ object Search {
     new QueryStringBindable[Search] {
 
       override def bind(string: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {
-        val filteredParams: Map[String, Seq[String]] = requestParams
-          .mapValues(_.map(_.trim).filter(_.nonEmpty))
-          .filter(_._2.nonEmpty)
+
+        val filteredParams: Map[String, Seq[String]] = {
+          requestParams
+            .map {
+              case (fst, snd) =>
+                fst -> snd.map(_.trim).filter(_.nonEmpty)
+            }
+            .filter(_._2.nonEmpty)
+        }
 
         val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)
 

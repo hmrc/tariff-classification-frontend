@@ -133,7 +133,7 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
         val form = CorrespondenceContactForm.correspondenceContactForm(correspondenceCase)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.map { case (fst, snd) => fst -> snd.head }
       }
     }
   }
