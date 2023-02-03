@@ -116,9 +116,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 
   private val booleanValues = Seq("repaymentClaim")
 
-  private val emptyParams = (params -- booleanValues).map {
-    case (fst, _) => fst -> Seq("")
-  }
+  private val emptyParams = (params -- booleanValues).view.mapValues(_ => Seq("")).toMap
 
   "Bind from request" should {
     "Bind blank" when {
@@ -168,7 +166,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
         val form = liabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.map { case (fst, snd) => fst -> snd.head }
+        form.data      shouldBe params.view.mapValues(v => v.head).toMap
       }
 
       "using edit form is repayments claim set to true" in {

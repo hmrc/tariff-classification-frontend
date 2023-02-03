@@ -70,7 +70,7 @@ class ReleaseCaseController @Inject() (
             })
         }
 
-      releaseCaseForm.bindFromRequest.fold(onInvalidForm, onValidForm)
+      releaseCaseForm.bindFromRequest().fold(onInvalidForm, onValidForm)
     }
 
   private def releaseCase(f: Form[String], caseRef: String)(

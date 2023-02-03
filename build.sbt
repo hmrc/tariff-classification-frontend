@@ -12,7 +12,6 @@ lazy val microservice = (project in file("."))
   .enablePlugins(plugins: _*)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(scalaSettings: _*)
-  .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(majorVersion := 0)
   .settings(PlayKeys.playDefaultPort := 9581)
@@ -23,9 +22,10 @@ lazy val microservice = (project in file("."))
     libraryDependencies ++= AppDependencies(),
     Test / fork := true,
     retrieveManaged := true,
-    // Use the silencer plugin to suppress warnings from unused imports in compiled twirl templates
-    //    scalacOptions += "-P:silencer:pathFilters=views;routes",
-    scalacOptions := Seq("-Wconf:src=routes/.*:s", "-Wconf:cat=unused-imports&src=html/.*:s"),
+    scalacOptions ++= Seq(
+      "-Wconf:src=routes/.*:s",
+      "-Wconf:cat=unused-imports&src=html/.*:s"
+    ),
     scalacOptions ~= { opts =>
       opts.filterNot(
         Set(
@@ -67,6 +67,7 @@ lazy val microservice = (project in file("."))
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(ScalafmtPlugin.scalafmtConfigSettings))
   .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
+  .settings(integrationTestSettings(): _*)
   .settings(
     IntegrationTest / fork := true,
     //    works only when fork is true
@@ -77,9 +78,6 @@ lazy val microservice = (project in file("."))
     ),
     IntegrationTest / resourceDirectory := baseDirectory.value / "test" / "resources",
     addTestReportOption(IntegrationTest, "int-test-reports")
-  )
-  .settings(
-    resolvers += Resolver.jcenterRepo
   )
   .settings(scalaModuleInfo := scalaModuleInfo.value map {
     _.withOverrideScalaVersion(true)
@@ -95,9 +93,7 @@ lazy val TemplateItTest = config("tit") extend IntegrationTest
 coverageMinimumStmtTotal := 91
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;"
+libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
-ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml"          % VersionScheme.Always
-ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
-
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt test:scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle test:scalastyle")
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle")

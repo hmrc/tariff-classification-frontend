@@ -60,13 +60,15 @@ class CreateMiscellaneousController @Inject() (
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
     implicit request =>
-      form.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(create_misc(formWithErrors))),
-        miscApp =>
-          casesService.createCase(miscApp, request.operator).map { caseCreated: Case =>
-            Redirect(routes.CreateMiscellaneousController.displayQuestion(caseCreated.reference))
-          }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(Ok(create_misc(formWithErrors))),
+          miscApp =>
+            casesService.createCase(miscApp, request.operator).map { caseCreated: Case =>
+              Redirect(routes.CreateMiscellaneousController.displayQuestion(caseCreated.reference))
+            }
+        )
 
   }
 
@@ -121,7 +123,7 @@ class CreateMiscellaneousController @Inject() (
       MiscDetailsForm
         .miscDetailsForm(request.`case`)
         .discardingErrors
-        .bindFromRequest
+        .bindFromRequest()
         .fold(
           errorForm =>
             successful(

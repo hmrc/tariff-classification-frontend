@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-sbt clean compile scalafmtAll scalastyleAll coverage test IntegrationTest/test dependencyUpdates coverageReport
+sbt clean compile scalafmtAll scalastyleAll coverage Test/test IntegrationTest/test dependencyUpdates coverageReport
 

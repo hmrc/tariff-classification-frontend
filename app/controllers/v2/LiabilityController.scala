@@ -166,7 +166,7 @@ class LiabilityController @Inject() (
       liabilityDetailsForm
         .liabilityDetailsForm(request.`case`)
         .discardingErrors
-        .bindFromRequest
+        .bindFromRequest()
         .fold(
           errorForm => successful(Ok(liability_details_edit(request.`case`, errorForm))),
           updatedCase =>

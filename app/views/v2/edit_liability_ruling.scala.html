@@ -46,7 +46,7 @@
  <div class="column-full">
   @c592_information(traderCommodityCode, officerCommodityCode, Some("text-grey"))
 
- @helper.form(action = routes.RulingController.updateRulingDetails(caseHeaderViewModel.referenceNumber), 'id -> "edit_liability_decision-form") {
+ @helper.form(action = routes.RulingController.updateRulingDetails(caseHeaderViewModel.referenceNumber), Symbol("id") -> "edit_liability_decision-form") {
   @helper.CSRF.formField
 
   @input_text(

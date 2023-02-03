@@ -68,9 +68,7 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
     "officerCommodityCode" -> Seq("0100000000")
   )
 
-  private val emptyParams = params.map {
-    case (fst, _) => fst -> Seq("")
-  }
+  private val emptyParams = params.view.mapValues(_ => Seq("")).toMap
 
   "Bind from request" should {
 
@@ -128,14 +126,14 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.map { case (fst, snd) => fst -> snd.head }
+        form.data      shouldBe params.view.mapValues(v => v.head).toMap
       }
 
       "using complete form" in {
         val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.map { case (fst, snd) => fst -> snd.head }
+        form.data      shouldBe params.view.mapValues(v => v.head).toMap
       }
     }
   }

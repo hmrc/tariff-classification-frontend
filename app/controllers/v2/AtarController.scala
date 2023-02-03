@@ -18,11 +18,11 @@ package controllers.v2
 
 import config.AppConfig
 import controllers.{RequestActions, Tab}
+import models._
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
-import models.viewmodels.{ActivityViewModel, CaseViewModel, KeywordsTabViewModel, PrimaryNavigationViewModel}
-import models.{Case, Country, EventType, NoPagination}
+import models.viewmodels.{AppealTabViewModel => _, AttachmentsTabViewModel => _, _}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -65,31 +65,31 @@ class AtarController @Inject() (
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
 
-    val uploadFileId                       = fileId.getOrElse(UUID.randomUUID().toString)
-    val atarCase: Case                     = request.`case`
-    val atarViewModel                      = CaseViewModel.fromCase(atarCase, request.operator)
-    val countryNames: Map[String, Country] = countriesService.getAllCountriesById
-    val applicantTab                       = ApplicantTabViewModel.fromCase(atarCase, countryNames)
-    val goodsTab                           = GoodsTabViewModel.fromCase(atarCase)
-    val rulingTab                          = RulingTabViewModel.fromCase(atarCase)
-    val rulingForm                         = decisionForm.bindFrom(rulingTab.decision)
-    val appealTab                          = AppealTabViewModel.fromCase(atarCase)
+    val uploadFileId: String                       = fileId.getOrElse(UUID.randomUUID().toString)
+    val atarCase: Case                             = request.`case`
+    val atarViewModel: CaseViewModel               = CaseViewModel.fromCase(atarCase, request.operator)
+    val countryNames: Map[String, Country]         = countriesService.getAllCountriesById
+    val applicantTab: ApplicantTabViewModel        = ApplicantTabViewModel.fromCase(atarCase, countryNames)
+    val goodsTab: GoodsTabViewModel                = GoodsTabViewModel.fromCase(atarCase)
+    val rulingTab: RulingTabViewModel              = RulingTabViewModel.fromCase(atarCase)
+    val rulingForm: Option[Form[DecisionFormData]] = decisionForm.bindFrom(rulingTab.decision)
+    val appealTab: Option[AppealTabViewModel]      = AppealTabViewModel.fromCase(atarCase)
 
-    val sampleTabViewModel      = getSampleTab(atarCase)
-    val attachmentsTabViewModel = getAttachmentTab(atarCase)
-    val activityTabViewModel    = getActivityTab(atarCase)
-    val keywordsTabViewModel    = getKeywordsTab(atarCase)
-    val storedAttachments       = fileService.getAttachments(atarCase)
-    val activeNavTab =
+    val sampleTabViewModel: Future[SampleTabViewModel]           = getSampleTab(atarCase)
+    val attachmentsTabViewModel: Future[AttachmentsTabViewModel] = getAttachmentTab(atarCase)
+    val activityTabViewModel: Future[ActivityViewModel]          = getActivityTab(atarCase)
+    val keywordsTabViewModel: Future[KeywordsTabViewModel]       = getKeywordsTab(atarCase)
+    val storedAttachments: Future[Seq[StoredAttachment]]         = fileService.getAttachments(atarCase)
+    val activeNavTab: PrimaryNavigationTab =
       PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
         atarCase.status,
         atarCase.assignee.exists(_.id == request.operator.id)
       )
 
-    val fileUploadSuccessRedirect =
+    val fileUploadSuccessRedirect: String =
       appConfig.host + controllers.routes.CaseController.addAttachment(atarCase.reference, uploadFileId).path
 
-    val fileUploadErrorRedirect =
+    val fileUploadErrorRedirect: String =
       appConfig.host + routes.AtarController
         .displayAtar(atarCase.reference, Some(uploadFileId))
         .withFragment(Tab.ATTACHMENTS_TAB.name)

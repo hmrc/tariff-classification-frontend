@@ -43,9 +43,9 @@
 
     @helper.form(
         action = Call("POST", initiateResponse.uploadRequest.href),
-        'id -> "refer_case",
+        Symbol("id") -> "refer_case",
         'enctype -> "multipart/form-data",
-        'novalidate -> "novalidate"
+        Symbol("novalidate") -> "novalidate"
     ) {
 
         @for((key, value) <- initiateResponse.uploadRequest.fields) {

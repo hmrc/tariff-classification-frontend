@@ -18,7 +18,6 @@ package views.partials.users
 
 import models.Operator
 import models.forms.v2.UserToMoveCaseForm
-import models.viewmodels.ManagerToolsUsersTab
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.users.move_cases_choose_user
@@ -26,8 +25,9 @@ import views.html.partials.users.move_cases_choose_user
 class MoveCasesChooseUserViewSpec extends ViewSpec {
 
   def chooseUser: move_cases_choose_user = injector.instanceOf[move_cases_choose_user]
-  private val chooseUserForm             = UserToMoveCaseForm.form
-  private val operators                  = Seq(Operator("1"))
+
+  private val chooseUserForm = UserToMoveCaseForm.form
+  private val operators      = Seq(Operator("1"))
 
   "Choose user" should {
     "render successfully with one case" in {

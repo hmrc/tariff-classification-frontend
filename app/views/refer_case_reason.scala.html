@@ -57,7 +57,7 @@
 
     @case_heading( c, messageKey = Some("change_case_status.referred.reason.heading"))
 
-    @helper.form(action = routes.ReferCaseController.postReferCaseReason(c.reference), 'id -> "refer_case", 'enctype -> "multipart/form-data", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.ReferCaseController.postReferCaseReason(c.reference), Symbol("id") -> "refer_case", 'enctype -> "multipart/form-data", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_radiogroup(

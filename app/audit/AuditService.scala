@@ -16,7 +16,6 @@
 
 package audit
 
-import javax.inject.{Inject, Singleton}
 import models.AppealStatus.AppealStatus
 import models.ApplicationType.{CORRESPONDENCE, MISCELLANEOUS}
 import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
@@ -26,6 +25,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.DefaultAuditConnector
 import utils.JsonFormatters.{caseFormat, operatorFormat}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
@@ -119,10 +119,9 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
   def auditCaseAppealAdded(c: Case, appeal: Appeal, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseAppealAdded,
-      auditPayload = baseAuditPayload(c, operator) + (
-        "appealType"   -> appeal.`type`.toString,
-        "appealStatus" -> appeal.status.toString
-      )
+      auditPayload = baseAuditPayload(c, operator) +
+        ("appealType"   -> appeal.`type`.toString) +
+        ("appealStatus" -> appeal.status.toString)
     )
 
   def auditCaseCreated(c: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
@@ -148,38 +147,34 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
   ): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseAppealStatusChange,
-      auditPayload = baseAuditPayload(c, operator) + (
-        "appealType"           -> appeal.`type`.toString,
-        "newAppealStatus"      -> newAppealStatus.toString,
-        "previousAppealStatus" -> appeal.status.toString
-      )
+      auditPayload = baseAuditPayload(c, operator) +
+        ("appealType"           -> appeal.`type`.toString) +
+        ("newAppealStatus"      -> newAppealStatus.toString) +
+        ("previousAppealStatus" -> appeal.status.toString)
     )
 
   def auditSampleStatusChange(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseSampleStatusChange,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newSampleStatus"      -> sampleStatus(updatedCase),
-        "previousSampleStatus" -> sampleStatus(oldCase)
-      )
+      auditPayload = baseAuditPayload(updatedCase, operator) +
+        ("newSampleStatus"      -> sampleStatus(updatedCase)) +
+        ("previousSampleStatus" -> sampleStatus(oldCase))
     )
 
   def auditSampleReturnChange(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseSampleReturnChange,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newSampleReturn"      -> sampleReturn(updatedCase),
-        "previousSampleReturn" -> sampleReturn(oldCase)
-      )
+      auditPayload = baseAuditPayload(updatedCase, operator) +
+        ("newSampleReturn"      -> sampleReturn(updatedCase)) +
+        ("previousSampleReturn" -> sampleReturn(oldCase))
     )
 
   def auditSampleSendChange(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseSampleSendChange,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newSampleSender"      -> sampleSend(updatedCase),
-        "previousSampleSender" -> sampleSend(oldCase)
-      )
+      auditPayload = baseAuditPayload(updatedCase, operator) +
+        ("newSampleSender"      -> sampleSend(updatedCase)) +
+        ("previousSampleSender" -> sampleSend(oldCase))
     )
 
   def auditCaseExtendedUseChange(oldCase: Case, updatedCase: Case, operator: Operator)(
@@ -187,10 +182,9 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
   ): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseExtendedUseChange,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "newExtendedUseStatus"      -> extendedUseStatus(updatedCase),
-        "previousExtendedUseStatus" -> extendedUseStatus(oldCase)
-      )
+      auditPayload = baseAuditPayload(updatedCase, operator) +
+        ("newExtendedUseStatus"      -> extendedUseStatus(updatedCase)) +
+        ("previousExtendedUseStatus" -> extendedUseStatus(oldCase))
     )
 
   def auditAddMessage(updatedCase: Case, operator: Operator)(
@@ -202,9 +196,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     }
     sendExplicitAuditEvent(
       auditEventType = CaseMessage,
-      auditPayload = baseAuditPayload(updatedCase, operator) + (
-        "message" -> messageToAudit
-      )
+      auditPayload   = baseAuditPayload(updatedCase, operator) + ("message" -> messageToAudit)
     )
   }
 
@@ -290,10 +282,9 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
     )
 
   private def statusChangeAuditPayload(oldCase: Case, updatedCase: Case, operator: Operator): Map[String, String] =
-    baseAuditPayload(updatedCase, operator) + (
-      "newStatus"      -> updatedCase.status.toString,
-      "previousStatus" -> oldCase.status.toString
-    )
+    baseAuditPayload(updatedCase, operator) +
+      ("newStatus"      -> updatedCase.status.toString) +
+      ("previousStatus" -> oldCase.status.toString)
 
   private def keywordAuditPayload(c: Case, keyword: String, operator: Operator): Map[String, String] =
     baseAuditPayload(c, operator) + ("keyword" -> keyword)

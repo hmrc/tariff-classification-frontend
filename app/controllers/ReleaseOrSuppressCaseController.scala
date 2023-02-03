@@ -54,13 +54,15 @@ class ReleaseOrSuppressCaseController @Inject() (
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHaveOneOf(Seq(Permission.SUPPRESS_CASE, Permission.RELEASE_CASE))) { implicit request =>
-      form.bindFromRequest.fold(
-        hasErrors => Ok(release_or_suppress(request.`case`, hasErrors)), {
-          case CaseStatusRadioInput.Release =>
-            Redirect(routes.ReleaseCaseController.releaseCase(reference))
-          case CaseStatusRadioInput.Suppress =>
-            Redirect(routes.SuppressCaseController.getSuppressCaseReason(reference))
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          hasErrors => Ok(release_or_suppress(request.`case`, hasErrors)), {
+            case CaseStatusRadioInput.Release =>
+              Redirect(routes.ReleaseCaseController.releaseCase(reference))
+            case CaseStatusRadioInput.Suppress =>
+              Redirect(routes.SuppressCaseController.getSuppressCaseReason(reference))
+          }
+        )
     }
 }

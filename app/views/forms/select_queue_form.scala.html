@@ -19,7 +19,7 @@
 
 @(field: Field, queues: Seq[Queue], legend: String, legendClass: Option[String] = None, id: String, postAction: Call, cancelUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-@helper.form(action = postAction, 'id -> s"$id-form", 'novalidate -> "novalidate") {
+@helper.form(action = postAction, Symbol("id") -> s"$id-form", Symbol("novalidate") -> "novalidate") {
     @helper.CSRF.formField
 
     <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}" id="@{field.id}" >

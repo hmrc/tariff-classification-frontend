@@ -77,7 +77,7 @@
     <p class="govuk-body">To narrow your search, enter multiple search terms.<p>
 
     @helper.form(action = controllers.routes.SearchController.search().withFragment("advanced_search-results_and_filters"),
-        'id -> "advanced_search-form", 'novalidate -> "novalidate") {
+        Symbol("id") -> "advanced_search-form", Symbol("novalidate") -> "novalidate") {
         @input_text(
             field = form("case_details"),
             label = "Case details",

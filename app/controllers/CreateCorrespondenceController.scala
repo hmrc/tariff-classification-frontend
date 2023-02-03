@@ -70,13 +70,15 @@ class CreateCorrespondenceController @Inject() (
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
     implicit request =>
-      form.bindFromRequest.fold(
-        formWithErrors => Future.successful(Ok(create_correspondence(formWithErrors))),
-        correspondenceApp =>
-          casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
-            Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
-          }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(Ok(create_correspondence(formWithErrors))),
+          correspondenceApp =>
+            casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
+              Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
+            }
+        )
 
   }
 
@@ -145,7 +147,7 @@ class CreateCorrespondenceController @Inject() (
       CorrespondenceDetailsForm
         .correspondenceDetailsForm(request.`case`)
         .discardingErrors
-        .bindFromRequest
+        .bindFromRequest()
         .fold(
           errorForm => successful(Ok(correspondence_details_edit(request.`case`, errorForm))),
           updatedCase =>
@@ -174,7 +176,7 @@ class CreateCorrespondenceController @Inject() (
       CorrespondenceContactForm
         .correspondenceContactForm(request.`case`)
         .discardingErrors
-        .bindFromRequest
+        .bindFromRequest()
         .fold(
           errorForm => successful(Ok(correspondence_contact_edit(request.`case`, errorForm))),
           updatedCase =>

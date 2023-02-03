@@ -50,7 +50,7 @@
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
         <div class="govuk-form-group">
 
-            @helper.form(action = CreateCorrespondenceController.postCorrespondenceContact(c.reference), 'class -> "form" , 'id -> "contact-details-edit-form", 'novalidate -> "novalidate") {
+            @helper.form(action = CreateCorrespondenceController.postCorrespondenceContact(c.reference), 'class -> "form" , Symbol("id") -> "contact-details-edit-form", Symbol("novalidate") -> "novalidate") {
 
                 @CSRF.formField
 

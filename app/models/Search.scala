@@ -46,12 +46,10 @@ object Search {
       override def bind(string: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {
 
         val filteredParams: Map[String, Seq[String]] = {
-          requestParams
-            .map {
-              case (fst, snd) =>
-                fst -> snd.map(_.trim).filter(_.nonEmpty)
-            }
+          requestParams.view
+            .mapValues(_.map(_.trim).filter(_.nonEmpty))
             .filter(_._2.nonEmpty)
+            .toMap
         }
 
         val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)

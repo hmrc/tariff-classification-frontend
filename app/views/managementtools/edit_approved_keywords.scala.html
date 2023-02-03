@@ -56,7 +56,7 @@
     </span>
     <h1 id="keyword-edit-heading" class="govuk-heading-xl">@keywordName</h1>
 
-    @helper.form(action = controllers.v2.routes.ManageKeywordsController.postEditApprovedKeywords(keywordName), 'id -> "edit-keyword-form", 'novalidate -> "novalidate") {
+    @helper.form(action = controllers.v2.routes.ManageKeywordsController.postEditApprovedKeywords(keywordName), Symbol("id") -> "edit-keyword-form", Symbol("novalidate") -> "novalidate") {
 
         @helper.CSRF.formField
 

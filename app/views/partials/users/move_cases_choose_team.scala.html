@@ -50,7 +50,7 @@
 ) {
     @error_summary(form.errors, keySwaps = Map("team" -> s"move-to-user-team-${queues.headOption.map(q => q.id).getOrElse("")}"))
 
-    @helper.form(action = routes.MoveCasesController.postTeamChoice(), 'id -> "move-to-team", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.MoveCasesController.postTeamChoice(), Symbol("id") -> "move-to-team", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_radiogroup(

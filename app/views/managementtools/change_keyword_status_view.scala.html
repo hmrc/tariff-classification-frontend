@@ -72,7 +72,7 @@
         </div>
     </dl>
 
-    @helper.form(action = controllers.v2.routes.ManageKeywordsController.approveOrRejectKeyword(keywordName, c.reference), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+    @helper.form(action = controllers.v2.routes.ManageKeywordsController.approveOrRejectKeyword(keywordName, c.reference), Symbol("id") -> "user_team_edit-form", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_radiogroup(

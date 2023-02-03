@@ -43,7 +43,7 @@
 
     @appeal_status_heading(appealType)
 
-    @helper.form(action = routes.AppealCaseController.confirmStatus(c.reference, appealType.toString), 'id -> "appeal_status_form", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.AppealCaseController.confirmStatus(c.reference, appealType.toString), Symbol("id") -> "appeal_status_form", Symbol("novalidate") -> "novalidate") {
 
         @helper.CSRF.formField
 

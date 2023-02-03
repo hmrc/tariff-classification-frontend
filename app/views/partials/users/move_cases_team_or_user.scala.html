@@ -49,7 +49,7 @@
 ) {
 
     @error_summary(form.errors, keySwaps = Map("choice" -> s"team-or-user-${TeamOrUser.TEAM.toString}"))
-    @helper.form(action = routes.MoveCasesController.postTeamOrUserChoice(), 'id -> "team-or-user", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.MoveCasesController.postTeamOrUserChoice(), Symbol("id") -> "team-or-user", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_radiogroup(

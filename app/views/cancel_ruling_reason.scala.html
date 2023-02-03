@@ -44,9 +44,9 @@
 
     @helper.form(
         action = CancelRulingController.postCancelRulingReason(c.reference),
-        'id -> "cancel_ruling",
-        'enctype -> "multipart/form-data",
-        'novalidate -> "novalidate"
+        Symbol("id") -> "cancel_ruling",
+        Symbol("enctype") -> "multipart/form-data",
+        Symbol("novalidate") -> "novalidate"
     ) {
         @helper.CSRF.formField
 

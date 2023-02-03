@@ -66,7 +66,7 @@ class SearchTest extends ModelsBaseSpec {
     )
 
     val emptyParams: Map[String, Seq[String]] =
-      populatedParams.map { case (fst, _) => fst -> Seq("") }
+      populatedParams.view.mapValues(_ => Seq("")).toMap
 
     val populatedQueryParam: Set[String] = Set(
       "decision_details=decision-details",
@@ -100,7 +100,9 @@ class SearchTest extends ModelsBaseSpec {
     }
 
     "Bind populated query string with excessive spaces" in {
-      val extraSpacesParams = populatedParams.map { case (fst, snd) => fst -> snd.map(value => s" $value ") }
+      val extraSpacesParams =
+        populatedParams.view.mapValues(values => values.map(value => s" $value ")).toMap
+
       Search.binder.bind("", extraSpacesParams) shouldBe Some(Right(populatedSearch))
     }
 

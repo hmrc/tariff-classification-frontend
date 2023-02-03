@@ -30,7 +30,7 @@
 @error_summary(form.errors, keySwaps = Map("miscCases" -> "miscCases-0"))
 
 <h2 class="govuk-heading-l">@messages("users.user.correspondence.heading")</h2>
-@helper.form(action = MoveCasesController.postMoveMiscCases(userID).withFragment(Tab.MISCELLANEOUS_TAB.name), 'id -> "miscCases", 'novalidate -> "novalidate") {
+@helper.form(action = MoveCasesController.postMoveMiscCases(userID).withFragment(Tab.MISCELLANEOUS_TAB.name), Symbol("id") -> "miscCases", Symbol("novalidate") -> "novalidate") {
 @helper.CSRF.formField
 <div class="govuk-form-group">
  <button id="move-misc-cases" class="govuk-button" type="submit">Move selected cases</button>

@@ -25,7 +25,8 @@ import views.html.partials.users.user_details
 class UserDetailsViewSpec extends ViewSpec {
 
   def userDetails: user_details = injector.instanceOf[user_details]
-  val userWithNoNameAndNoTeam   = Operator("1")
+
+  val userWithNoNameAndNoTeam = Operator("1")
   val userWithAllFields =
     Operator("1", name = Some("Name"), email = Some("Email"), memberOfTeams = Seq(Queues.elm.id))
   "userDetails View" should {

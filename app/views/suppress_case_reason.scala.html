@@ -43,9 +43,9 @@
 
     @helper.form(
         action = routes.SuppressCaseController.postSuppressCaseReason(c.reference),
-        'id -> "suppress-case",
+        Symbol("id") -> "suppress-case",
         'enctype -> "multipart/form-data",
-        'novalidate -> "novalidate"
+        Symbol("novalidate") -> "novalidate"
     ) {
         @helper.CSRF.formField
 

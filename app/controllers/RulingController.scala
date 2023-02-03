@@ -61,7 +61,7 @@ class RulingController @Inject() (
           c.application.`type` match {
             case ApplicationType.ATAR =>
               val formData = mapper.caseToDecisionFormData(c)
-              val df       = decisionForm.btiForm.fill(formData)
+              val df       = decisionForm.btiForm().fill(formData)
               editBTIRulingView(df, c)
 
             case ApplicationType.LIABILITY =>
@@ -102,7 +102,7 @@ class RulingController @Inject() (
             case ApplicationType.ATAR =>
               decisionForm
                 .btiForm()
-                .bindFromRequest
+                .bindFromRequest()
                 .fold(
                   errorForm => editBTIRulingView(errorForm, c),
                   validForm =>
@@ -118,7 +118,7 @@ class RulingController @Inject() (
               val decision = c.decision.getOrElse(Decision())
               decisionForm
                 .liabilityForm(decision)
-                .bindFromRequest
+                .bindFromRequest()
                 .fold(
                   errorForm => editLiabilityRulingView(errorForm, c),
                   updatedDecision =>

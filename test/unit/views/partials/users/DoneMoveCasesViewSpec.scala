@@ -16,9 +16,6 @@
 
 package views.partials.users
 
-import models.forms.v2.TeamToMoveCaseForm
-import models.viewmodels.ManagerToolsUsersTab
-import models.{Operator, Queues}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.users.done_move_cases

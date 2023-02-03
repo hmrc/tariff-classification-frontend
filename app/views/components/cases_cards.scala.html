@@ -38,7 +38,7 @@
     @if(request.operator.manager) {
         <h2 class="govuk-heading-m">@messages("cases.menu.manager_tools")</h2>
         <div class="flex-container govuk-body">
-            <a id="manager-tools-users-id" class="link-text" href="@ManageUserController.displayManageUsers">
+            <a id="manager-tools-users-id" class="link-text" href="@ManageUserController.displayManageUsers()">
                 <div class="card">
                     <h3 class="card-heading govuk-!-font-size-19">@messages("page.title.manager_tools.users")</h3>
                     <p class="card-body">
@@ -46,7 +46,7 @@
                     </p>
                 </div>
             </a>
-            <a id="manager-tools-keywords-id" class="link-text" href="@ManageKeywordsController.displayManageKeywords">
+            <a id="manager-tools-keywords-id" class="link-text" href="@ManageKeywordsController.displayManageKeywords()">
                 <div class="card">
                     <h3 class="card-heading govuk-!-font-size-19">@messages("page.title.manager_tools.keywords")</h3>
                     <p class="card-body">

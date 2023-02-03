@@ -16,7 +16,6 @@
 
 package views.managementtools
 
-import models.viewmodels.ManagerToolsKeywordsTab
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.confirmation_keyword_deleted

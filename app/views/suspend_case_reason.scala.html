@@ -43,9 +43,9 @@
 
     @helper.form(
         action = routes.SuspendCaseController.postSuspendCaseReason(c.reference),
-        'id -> "suspend_case",
+        Symbol("id") -> "suspend_case",
         'enctype -> "multipart/form-data",
-        'novalidate -> "novalidate"
+        Symbol("novalidate") -> "novalidate"
     ) {
         @helper.CSRF.formField
 
