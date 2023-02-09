@@ -26,7 +26,7 @@ import play.api.mvc.Result
 
 import java.nio.charset.Charset
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.language.{implicitConversions, postfixOps}
+import scala.language.postfixOps
 
 trait UnitSpec extends AnyWordSpecLike with Matchers with OptionValues {
 

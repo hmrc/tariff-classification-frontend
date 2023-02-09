@@ -1,7 +1,6 @@
 import play.sbt.PlayScala
 import play.sbt.routes.RoutesKeys
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "tariff-classification-frontend"
 

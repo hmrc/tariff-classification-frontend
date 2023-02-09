@@ -21,7 +21,6 @@ object AppDependencies {
 
   val test: Seq[ModuleID] = Seq(
     "com.typesafe.play"    %% "play-test"              % "2.8.19"             % scope,
-    "org.jsoup"            % "jsoup"                   % "1.15.3"             % scope,
     "org.scalatest"        %% "scalatest"              % "3.2.15"             % scope,
     "org.scalatestplus"    %% "mockito-4-6"            % "3.2.15.0"           % scope,
     "org.scalatestplus"    %% "scalacheck-1-17"        % "3.2.15.0"           % scope,
