@@ -61,7 +61,7 @@ class RulingController @Inject() (
           c.application.`type` match {
             case ApplicationType.ATAR =>
               val formData = mapper.caseToDecisionFormData(c)
-              val df       = decisionForm.btiForm.fill(formData)
+              val df       = decisionForm.btiForm().fill(formData)
               editBTIRulingView(df, c)
 
             case ApplicationType.LIABILITY =>
@@ -100,22 +100,25 @@ class RulingController @Inject() (
         getCaseAndThen(c =>
           c.application.`type` match {
             case ApplicationType.ATAR =>
-              decisionForm.btiForm.bindFromRequest.fold(
-                errorForm => editBTIRulingView(errorForm, c),
-                validForm =>
-                  for {
-                    update <- casesService
-                               .updateCase(request.`case`, mapper.mergeFormIntoCase(c, validForm), request.operator)
-                  } yield Redirect(
-                    v2.routes.AtarController.displayAtar(update.reference).withFragment(Tab.RULING_TAB.name)
-                  )
-              )
+              decisionForm
+                .btiForm()
+                .bindFromRequest()
+                .fold(
+                  errorForm => editBTIRulingView(errorForm, c),
+                  validForm =>
+                    for {
+                      update <- casesService
+                                 .updateCase(request.`case`, mapper.mergeFormIntoCase(c, validForm), request.operator)
+                    } yield Redirect(
+                      v2.routes.AtarController.displayAtar(update.reference).withFragment(Tab.RULING_TAB.name)
+                    )
+                )
 
             case ApplicationType.LIABILITY =>
               val decision = c.decision.getOrElse(Decision())
               decisionForm
                 .liabilityForm(decision)
-                .bindFromRequest
+                .bindFromRequest()
                 .fold(
                   errorForm => editLiabilityRulingView(errorForm, c),
                   updatedDecision =>

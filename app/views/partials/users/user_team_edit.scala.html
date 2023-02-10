@@ -64,7 +64,7 @@
         @messages("users.user.editUserTeams.heading", getUserName)
     </h1>
 
-    @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id), 'id -> "user_team_edit-form", 'novalidate -> "novalidate") {
+    @helper.form(action = ManageUserController.postEditUserTeams(userDetails.id), Symbol("id") -> "user_team_edit-form", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_checkbox_group(

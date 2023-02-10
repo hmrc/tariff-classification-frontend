@@ -68,10 +68,15 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
     "officerCommodityCode" -> Seq("0100000000")
   )
 
+  private val emptyParams = params.view.mapValues(_ => Seq("")).toMap
+
   "Bind from request" should {
+
     "Bind blank" when {
+
       "using edit form" in {
-        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(params.mapValues(_ => Seq("")))
+
+        val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(emptyParams)
 
         form.hasErrors         shouldBe true
         form.errors            should have(size(2))
@@ -80,7 +85,7 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
 
       "using complete form" in {
         val form =
-          LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase).bindFromRequest(params.mapValues(_ => Seq("")))
+          LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase).bindFromRequest(emptyParams)
 
         form.hasErrors shouldBe true
         form.errors    should have(size(9))
@@ -121,14 +126,14 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.view.mapValues(v => v.head).toMap
       }
 
       "using complete form" in {
         val form = LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.view.mapValues(v => v.head).toMap
       }
     }
   }

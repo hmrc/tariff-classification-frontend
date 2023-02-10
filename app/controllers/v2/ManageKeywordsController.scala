@@ -81,7 +81,7 @@ class ManageKeywordsController @Inject() (
         val keywordNames = keywords.results.map(_.name)
         KeywordForm
           .formWithAutoReverse(keywordNames)
-          .bindFromRequest
+          .bindFromRequest()
           .fold(
             formWithErrors =>
               for {
@@ -119,7 +119,7 @@ class ManageKeywordsController @Inject() (
         val keywordNames = keywords.results.map(_.name)
         KeywordForm
           .formWithAuto(keywordNames)
-          .bindFromRequest
+          .bindFromRequest()
           .fold(
             formWithErrors =>
               Future.successful(
@@ -145,51 +145,53 @@ class ManageKeywordsController @Inject() (
       implicit request: AuthenticatedRequest[AnyContent] =>
         casesService.getOne(reference).flatMap {
           case Some(c: Case) => {
-            changeKeywordStatusForm.bindFromRequest.fold(
-              formWithErrors =>
-                Future.successful(
-                  BadRequest(
-                    changeKeywordStatusView(
-                      keywordName,
-                      c,
-                      formWithErrors
-                    )
-                  )
-                ),
-              action =>
-                ChangeKeywordStatusAction.format(action) match {
-                  case ChangeKeywordStatusAction.APPROVE =>
-                    keywordService
-                      .createKeyword(
-                        Keyword(keywordName, approved = true),
-                        request.operator,
-                        ChangeKeywordStatusAction.APPROVE
+            changeKeywordStatusForm
+              .bindFromRequest()
+              .fold(
+                formWithErrors =>
+                  Future.successful(
+                    BadRequest(
+                      changeKeywordStatusView(
+                        keywordName,
+                        c,
+                        formWithErrors
                       )
-                      .map { savedKeyword: Keyword =>
-                        Redirect(
-                          controllers.v2.routes.ManageKeywordsController
-                            .displayKeywordChangeConfirmation(
-                              savedKeyword.name,
-                              savedKeyword.approved,
-                              c.application.goodsName
-                            )
+                    )
+                  ),
+                action =>
+                  ChangeKeywordStatusAction.format(action) match {
+                    case ChangeKeywordStatusAction.APPROVE =>
+                      keywordService
+                        .createKeyword(
+                          Keyword(keywordName, approved = true),
+                          request.operator,
+                          ChangeKeywordStatusAction.APPROVE
                         )
-                      }
-                  case ChangeKeywordStatusAction.REJECT =>
-                    keywordService
-                      .createKeyword(Keyword(keywordName), request.operator, ChangeKeywordStatusAction.REJECT)
-                      .map { savedKeyword: Keyword =>
-                        Redirect(
-                          controllers.v2.routes.ManageKeywordsController
-                            .displayKeywordChangeConfirmation(
-                              savedKeyword.name,
-                              savedKeyword.approved,
-                              c.application.goodsName
-                            )
-                        )
-                      }
-                }
-            )
+                        .map { savedKeyword: Keyword =>
+                          Redirect(
+                            controllers.v2.routes.ManageKeywordsController
+                              .displayKeywordChangeConfirmation(
+                                savedKeyword.name,
+                                savedKeyword.approved,
+                                c.application.goodsName
+                              )
+                          )
+                        }
+                    case ChangeKeywordStatusAction.REJECT =>
+                      keywordService
+                        .createKeyword(Keyword(keywordName), request.operator, ChangeKeywordStatusAction.REJECT)
+                        .map { savedKeyword: Keyword =>
+                          Redirect(
+                            controllers.v2.routes.ManageKeywordsController
+                              .displayKeywordChangeConfirmation(
+                                savedKeyword.name,
+                                savedKeyword.approved,
+                                c.application.goodsName
+                              )
+                          )
+                        }
+                  }
+              )
           }
           case _ => successful(Ok(case_not_found(reference)))
         }

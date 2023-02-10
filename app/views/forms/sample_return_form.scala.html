@@ -24,7 +24,7 @@
 @(c: Case, field: Field)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 
-@helper.form(action = routes.SampleReturnController.updateStatus(c.reference), 'id -> "sample_return_form", 'novalidate -> "novalidate") {
+@helper.form(action = routes.SampleReturnController.updateStatus(c.reference), Symbol("id") -> "sample_return_form", Symbol("novalidate") -> "novalidate") {
     @helper.CSRF.formField
     @input_radiogroup(
         field = field,

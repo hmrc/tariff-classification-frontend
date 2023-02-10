@@ -53,7 +53,7 @@
 ) {
     @error_summary(form.errors, keySwaps = Map("state" -> "remove-user-true"))
 
-    @helper.form(action = routes.ManageUserController.confirmRemoveUser(user.id), 'id -> "remove-user", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.ManageUserController.confirmRemoveUser(user.id), Symbol("id") -> "remove-user", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_yes_no(

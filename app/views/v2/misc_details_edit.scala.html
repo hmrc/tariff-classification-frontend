@@ -43,7 +43,7 @@
 
         @case_heading(caseViewModel.caseHeader, messageKey=Some("case.v2.misc.case-details-edit-header"))
 
-        @helper.form(action = routes.CreateMiscellaneousController.postMiscDetails(c.reference), 'class -> "form" , 'id -> "misc-details-edit-form", 'novalidate -> "novalidate") {
+        @helper.form(action = routes.CreateMiscellaneousController.postMiscDetails(c.reference), 'class -> "form" , Symbol("id") -> "misc-details-edit-form", Symbol("novalidate") -> "novalidate") {
 
             @helper.CSRF.formField
 

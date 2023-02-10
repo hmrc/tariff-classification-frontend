@@ -51,7 +51,7 @@
         @if(c.assignee.isEmpty) {
             <p class="govuk-body">@messages("case.ownership.assign_case.description")</p>
 
-            @helper.form(action = routes.AssignCaseController.post(c.reference), 'id -> "take-ownership") {
+            @helper.form(action = routes.AssignCaseController.post(c.reference), Symbol("id") -> "take-ownership") {
                 @helper.CSRF.formField
 
                 @input_radiogroup(

@@ -82,7 +82,7 @@ class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
         val form = CorrespondenceDetailsForm.correspondenceDetailsForm(correspondenceCase)
 
         form.hasErrors shouldBe false
-        form.data      shouldBe params.mapValues(v => v.head)
+        form.data      shouldBe params.view.mapValues(v => v.head).toMap
       }
     }
   }

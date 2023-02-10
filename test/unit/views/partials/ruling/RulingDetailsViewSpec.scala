@@ -17,13 +17,11 @@
 package views.partials.ruling
 
 import models._
-import play.twirl.api.Html
+import models.viewmodels.atar.RulingTabViewModel
 import utils.Cases._
 import views.ViewMatchers._
+import views.ViewSpec
 import views.html.partials.ruling.ruling_details
-import views.{CaseDetailPage, ViewSpec}
-import controllers.routes.RulingController
-import models.viewmodels.atar.RulingTabViewModel
 
 import java.time.Instant
 

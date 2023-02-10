@@ -54,15 +54,17 @@ class ChangeCaseStatusController @Inject() (
     (verify.authenticated andThen
       verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_RULING)) { implicit request =>
-      form.bindFromRequest.fold(
-        hasErrors => Ok(change_case_status(request.`case`, hasErrors)), {
-          case CaseStatusRadioInput.Complete => Redirect(routes.CompleteCaseController.completeCase(reference))
-          case CaseStatusRadioInput.Refer    => Redirect(routes.ReferCaseController.getReferCaseReason(reference))
-          case CaseStatusRadioInput.Reject   => Redirect(routes.RejectCaseController.getRejectCaseReason(reference))
-          case CaseStatusRadioInput.Suspend  => Redirect(routes.SuspendCaseController.getSuspendCaseReason(reference))
-          case CaseStatusRadioInput.MoveBackToQueue =>
-            Redirect(routes.ReassignCaseController.reassignCase(reference, request.uri))
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          hasErrors => Ok(change_case_status(request.`case`, hasErrors)), {
+            case CaseStatusRadioInput.Complete => Redirect(routes.CompleteCaseController.completeCase(reference))
+            case CaseStatusRadioInput.Refer    => Redirect(routes.ReferCaseController.getReferCaseReason(reference))
+            case CaseStatusRadioInput.Reject   => Redirect(routes.RejectCaseController.getRejectCaseReason(reference))
+            case CaseStatusRadioInput.Suspend  => Redirect(routes.SuspendCaseController.getSuspendCaseReason(reference))
+            case CaseStatusRadioInput.MoveBackToQueue =>
+              Redirect(routes.ReassignCaseController.reassignCase(reference, request.uri))
+          }
+        )
     }
 }

@@ -17,8 +17,6 @@
 package views.partials.users
 
 import models.forms.v2.TeamOrUserForm
-import models.viewmodels.ManagerToolsUsersTab
-import models.{Operator, Role}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.users.move_cases_team_or_user
@@ -26,7 +24,8 @@ import views.html.partials.users.move_cases_team_or_user
 class MoveCasesTeamOrUserViewSpec extends ViewSpec {
 
   def teamOrUser: move_cases_team_or_user = injector.instanceOf[move_cases_team_or_user]
-  private val teamOrUserForm              = TeamOrUserForm.form
+
+  private val teamOrUserForm = TeamOrUserForm.form
 
   "Team or User" should {
     "render successfully with one case" in {

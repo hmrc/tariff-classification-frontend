@@ -47,7 +47,7 @@
     <span class="govuk-caption-xl">@messages("management.create-keyword.caption")</span>
     <h1 class="govuk-heading-xl">@messages("management.create-keyword.heading")</h1>
 
-    @helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), 'id -> "create_new_keyword-form", 'novalidate -> "novalidate") {
+    @helper.form(action = controllers.v2.routes.ManageKeywordsController.createKeyword(), Symbol("id") -> "create_new_keyword-form", Symbol("novalidate") -> "novalidate") {
 
         @helper.CSRF.formField
 

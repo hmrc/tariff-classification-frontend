@@ -16,13 +16,12 @@
 
 package service
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
-import javax.inject.{Inject, Singleton}
 import config.AppConfig
 import models.CommodityCode
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import javax.inject.{Inject, Singleton}
 import scala.io.Source
 
 @Singleton
@@ -39,8 +38,11 @@ class CommodityCodeService @Inject() (appConfig: AppConfig) {
 
   private def padTo10Digits(input: String): String = {
     val trimmed = input.trim
-    if (trimmed.length > padLimit) trimmed.substring(0, padLimit)
-    else trimmed.padTo[Char, String](padLimit, '0').mkString
+    if (trimmed.length > padLimit) {
+      trimmed.substring(0, padLimit)
+    } else {
+      trimmed.padTo(padLimit, '0').mkString
+    }
   }
 
   private lazy val commodityCodesFromFile: Seq[CommodityCode] = {

@@ -39,7 +39,7 @@
 
     <h1 id="create_correspondence-heading" class="govuk-heading-xl">@messages("page.title.create_correspondence.h1")</h1>
 
-    @helper.form(action = routes.CreateCorrespondenceController.post(), 'id -> "create_correspondence-form", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.CreateCorrespondenceController.post(), Symbol("id") -> "create_correspondence-form", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
         @input_text(
             field = form("summary"),

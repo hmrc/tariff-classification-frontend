@@ -81,7 +81,7 @@ class ReassignCaseController @Inject() (
             )
         }
 
-      form.bindFromRequest.fold(onInvalidForm, onValidForm)
+      form.bindFromRequest().fold(onInvalidForm, onValidForm)
     }
 
   def confirmReassignCase(reference: String, origin: String): Action[AnyContent] =

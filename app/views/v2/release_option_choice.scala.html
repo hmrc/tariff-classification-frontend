@@ -40,8 +40,8 @@
 
      @helper.form(
          action = routes.CreateCorrespondenceController.postChoice(c.reference),
-         'id -> "release_choice_form",
-         'novalidate -> "novalidate"
+         Symbol("id") -> "release_choice_form",
+         Symbol("novalidate") -> "novalidate"
     ) {
         @helper.CSRF.formField
 

@@ -30,7 +30,7 @@
  @error_summary(form.errors, keySwaps = Map("liabilityCases" -> "liabilityCases-0"))
 
  <h2 class="govuk-heading-l">@messages("users.user.liability.heading")</h2>
- @helper.form(action = MoveCasesController.postMoveLiabCases(userID).withFragment(Tab.LIABILITY_TAB.name), 'id -> "liabilityCases", 'novalidate -> "novalidate") {
+ @helper.form(action = MoveCasesController.postMoveLiabCases(userID).withFragment(Tab.LIABILITY_TAB.name), Symbol("id") -> "liabilityCases", Symbol("novalidate") -> "novalidate") {
   @helper.CSRF.formField
   <div class="govuk-form-group">
    <button id="move-liab-cases" class="govuk-button" type="submit">Move selected cases</button>

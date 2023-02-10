@@ -40,7 +40,7 @@
 
     @case_heading(c, Some(messages("case.attachments.remove_attachment.heading", fileName)))
 
-    @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName), 'id -> "remove-attachment", 'novalidate -> "novalidate") {
+    @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName), Symbol("id") -> "remove-attachment", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_yes_no(form("state"), "remove-attachment")

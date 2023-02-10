@@ -48,7 +48,7 @@
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="govuk-form-group">
 
-            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , 'id -> "liability-details-edit-form", 'novalidate -> "novalidate") {
+            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , Symbol("id") -> "liability-details-edit-form", Symbol("novalidate") -> "novalidate") {
 
                 @CSRF.formField
 

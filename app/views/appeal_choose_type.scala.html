@@ -44,7 +44,7 @@
 
  <h2 id="appeal_choose_type-heading" class="govuk-heading-l">Choose review or a level of appeal</h2>
 
- @helper.form(action = routes.AppealCaseController.confirmType(c.reference), 'id -> "appeal_type_form", 'novalidate -> "novalidate") {
+ @helper.form(action = routes.AppealCaseController.confirmType(c.reference), Symbol("id") -> "appeal_type_form", Symbol("novalidate") -> "novalidate") {
   @helper.CSRF.formField
   @input_radiogroup(
    field = form("type"),

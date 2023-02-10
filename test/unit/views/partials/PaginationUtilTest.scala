@@ -18,6 +18,7 @@ package views.partials
 
 import views.ViewSpec
 
+// scalastyle:off magic.number
 class PaginationUtilTest extends ViewSpec {
 
   "Surrounding Pages" should {

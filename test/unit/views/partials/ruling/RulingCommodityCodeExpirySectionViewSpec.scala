@@ -25,6 +25,7 @@ import views.ViewSpec
 import views.html.partials.ruling.ruling_commodity_code_expiry_section
 import models.viewmodels.atar.RulingTabViewModel
 
+// scalastyle:off magic.number
 class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
 
   "Ruling Expiry Section" should {

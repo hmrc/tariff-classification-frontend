@@ -44,7 +44,7 @@
 
     <h1 id="create_liability-heading" class="govuk-heading-xl">@messages("page.title.create_liability.h1")</h1>
 
-    @helper.form(action = routes.CreateLiabilityController.post(), 'id -> "create_liability-form", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.CreateLiabilityController.post(), Symbol("id") -> "create_liability-form", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_text(

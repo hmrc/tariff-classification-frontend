@@ -46,7 +46,7 @@
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
         <div class="govuk-form-group">
 
-            @helper.form(action = CreateCorrespondenceController.postCorrespondenceDetails(c.reference), 'class -> "form" , 'id -> "correspondence-details-edit-form", 'novalidate -> "novalidate") {
+            @helper.form(action = CreateCorrespondenceController.postCorrespondenceDetails(c.reference), 'class -> "form" , Symbol("id") -> "correspondence-details-edit-form", Symbol("novalidate") -> "novalidate") {
 
                 @CSRF.formField
 

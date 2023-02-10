@@ -42,7 +42,7 @@
 
     <p class="govuk-body">Before you change this, <a id="change_extended_use_status-attachment_link" class="govuk-link" href="@routes.CaseController.attachmentsDetails(c.reference)">attach</a> any relevant documentation to the case.</p>
 
-    @helper.form(action = routes.ExtendedUseCaseController.updateStatus(c.reference), 'id -> "extended_use_form", 'novalidate -> "novalidate") {
+    @helper.form(action = routes.ExtendedUseCaseController.updateStatus(c.reference), Symbol("id") -> "extended_use_form", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
         @input_radiogroup(
             field = form("state"),

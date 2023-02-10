@@ -17,16 +17,16 @@
 package views.partials.users
 
 import models.forms.v2.UserEditTeamForm
-import models.viewmodels.ManagerToolsUsersTab
 import models.{Operator, Role}
-import views.ViewMatchers.{containElementWithID, containElementWithTag}
+import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.partials.users.user_team_edit
 
 class UserTeamEditViewSpec extends ViewSpec {
 
   def userTeamEdit: user_team_edit = injector.instanceOf[user_team_edit]
-  private val userEditForm         = UserEditTeamForm.editTeamsForm
+
+  private val userEditForm = UserEditTeamForm.editTeamsForm
 
   private val operator = Operator(
     id            = "PID5",

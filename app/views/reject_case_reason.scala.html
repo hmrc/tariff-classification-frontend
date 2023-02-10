@@ -44,8 +44,8 @@
     @helper.form(
         action = routes.RejectCaseController.postRejectCaseReason(c.reference),
         'enctype -> "multipart/form-data",
-        'id -> "reject_case",
-        'novalidate -> "novalidate"
+        Symbol("id") -> "reject_case",
+        Symbol("novalidate") -> "novalidate"
     ) {
 
         @helper.CSRF.formField

@@ -76,7 +76,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm.fill(formData)))
+      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm().fill(formData)))
 
       // Then
       doc                                                should containElementWithID("bindingCommodityCode")
@@ -272,7 +272,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm.fill(formData)))
+      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm().fill(formData)))
 
       // Then
       doc should containElementWithID("bindingCommodityCode")

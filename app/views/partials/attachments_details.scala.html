@@ -39,7 +39,7 @@
         @helper.form(
             action = Call("POST", initiateResponse.uploadRequest.href),
             'enctype -> "multipart/form-data",
-            'id -> "upload-files-form"
+            Symbol("id") -> "upload-files-form"
         ) {
 
             <h3 class="govuk-heading-m">@messages("upload.files.title")</h3>
