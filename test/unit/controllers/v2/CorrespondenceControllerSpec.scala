@@ -36,7 +36,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases, Cases._
 import views.html.v2.correspondence_view
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

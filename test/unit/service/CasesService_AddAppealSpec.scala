@@ -29,7 +29,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 
 import scala.concurrent.Future.{failed, successful}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
@@ -52,7 +51,7 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
       pdfService,
       connector,
       rulingConnector
-    )(global, realAppConfig)
+    )(executionContext, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

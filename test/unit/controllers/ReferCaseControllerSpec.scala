@@ -35,7 +35,6 @@ import utils.JsonFormatters._
 import views.html.{confirm_refer_case, refer_case_email, refer_case_reason}
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val casesService = mock[CasesService]

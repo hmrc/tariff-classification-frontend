@@ -20,15 +20,15 @@ import models.UserAnswers
 import models.request.{IdentifierRequest, OptionalDataRequest}
 import uk.gov.hmrc.http.cache.client.CacheMap
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataRetrievalAction(cacheMapToReturn: Option[CacheMap]) extends DataRetrievalAction {
+class FakeDataRetrievalAction(cacheMapToReturn: Option[CacheMap])(implicit ec: ExecutionContext)
+    extends DataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
     val userAnswers = cacheMapToReturn map (new UserAnswers(_))
     Future.successful(OptionalDataRequest(request.request, request.internalId, userAnswers))
   }
 
-  override protected def executionContext: ExecutionContext = global
+  override lazy val executionContext: ExecutionContext = ec
 }

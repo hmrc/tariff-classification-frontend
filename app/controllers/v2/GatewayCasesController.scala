@@ -28,7 +28,7 @@ import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.gateway_cases_view
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 class GatewayCasesController @Inject() (
   verify: RequestActions,
@@ -36,7 +36,8 @@ class GatewayCasesController @Inject() (
   mcc: MessagesControllerComponents,
   val gatewayCasesView: gateway_cases_view,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit executionContext: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
 
   def displayGatewayCases: Action[AnyContent] =

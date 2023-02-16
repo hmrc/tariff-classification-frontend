@@ -23,9 +23,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.release_or_suppress
+
 import javax.inject.Inject
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future.successful
 
 class ReleaseOrSuppressCaseController @Inject() (
@@ -34,7 +36,8 @@ class ReleaseOrSuppressCaseController @Inject() (
   val release_or_suppress: release_or_suppress,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit val executionContext: ExecutionContext)
+    extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
 

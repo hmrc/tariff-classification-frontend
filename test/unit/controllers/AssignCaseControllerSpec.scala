@@ -29,7 +29,6 @@ import utils.Cases._
 import views.html.assign_case
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class AssignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

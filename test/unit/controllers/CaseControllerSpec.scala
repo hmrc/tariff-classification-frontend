@@ -35,7 +35,7 @@ import utils.Cases
 import utils.Cases._
 
 import java.time.{Clock, Instant}
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.Future
 
 class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

@@ -30,7 +30,6 @@ import utils.Cases
 import views.html.resource_not_found
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReleaseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

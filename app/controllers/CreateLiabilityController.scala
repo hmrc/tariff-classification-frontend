@@ -26,10 +26,9 @@ import service.CasesService
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.create_liability
-import javax.inject.{Inject, Singleton}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CreateLiabilityController @Inject() (
@@ -38,7 +37,8 @@ class CreateLiabilityController @Inject() (
   val create_liability: create_liability,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 

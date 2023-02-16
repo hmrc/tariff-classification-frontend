@@ -23,8 +23,6 @@ import org.apache.http.HttpStatus
 import play.api.libs.json.{Format, OFormat}
 import utils.JsonFormatters
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class EmailConnectorSpec extends ConnectorTest {
 
   private val email =

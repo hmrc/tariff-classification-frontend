@@ -33,7 +33,6 @@ import utils.Cases
 import views.html.view_attachment_unavailable
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -56,7 +55,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       mcc,
       view_attachment_unavailable,
       realAppConfig
-    )
+    )(executionContext)
 
   private def controller(permission: Set[Permission]) =
     new ViewAttachmentController(
@@ -65,7 +64,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       mcc,
       view_attachment_unavailable,
       realAppConfig
-    )
+    )(executionContext)
 
   private def givenFileMetadata(
     fileMetadata: Option[FileMetadata]

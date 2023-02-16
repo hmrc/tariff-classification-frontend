@@ -38,7 +38,6 @@ import utils.Cases
 import views.html.partials.liabilities.attachments_details
 import views.html.v2.remove_attachment
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 

@@ -26,8 +26,6 @@ import service.CasesService
 import utils.Cases
 import views.html.release_or_suppress
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService      = mock[CasesService]

@@ -36,7 +36,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases, Cases._
 import views.html.v2.miscellaneous_view
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

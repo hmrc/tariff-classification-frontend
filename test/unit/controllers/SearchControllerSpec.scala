@@ -30,7 +30,6 @@ import views.SearchTab
 import views.html.advanced_search
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class SearchControllerSpec extends ControllerBaseSpec {
 

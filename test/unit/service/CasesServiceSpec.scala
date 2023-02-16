@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import java.time.Instant
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.Future.{failed, successful}
 
 class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
@@ -60,7 +60,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       pdfService,
       connector,
       rulingConnector
-    )(global, realAppConfig)
+    )(executionContext, realAppConfig)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

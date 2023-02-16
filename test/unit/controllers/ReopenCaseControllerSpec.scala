@@ -28,7 +28,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -57,7 +56,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       casesService,
       mcc,
       realAppConfig
-    )
+    )(executionContext)
 
   private def controller(requestCase: Case, permission: Set[Permission]) =
     new ReopenCaseController(
@@ -65,7 +64,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       casesService,
       mcc,
       realAppConfig
-    )
+    )(executionContext)
 
   "ReopenCaseControllerSpec" should {
 

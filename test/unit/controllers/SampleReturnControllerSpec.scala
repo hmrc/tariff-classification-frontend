@@ -31,7 +31,6 @@ import utils.Cases._
 import views.html.change_sample_return
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

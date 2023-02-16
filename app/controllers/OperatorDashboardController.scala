@@ -24,10 +24,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.operator_dashboard_classification
+
 import javax.inject.Inject
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 class OperatorDashboardController @Inject() (
   verify: RequestActions,
@@ -35,7 +36,8 @@ class OperatorDashboardController @Inject() (
   mcc: MessagesControllerComponents,
   operator_dashboard_classification: operator_dashboard_classification,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 

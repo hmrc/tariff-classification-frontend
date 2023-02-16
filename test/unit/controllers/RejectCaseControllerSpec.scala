@@ -33,7 +33,6 @@ import utils.JsonFormatters._
 import views.html.{confirm_rejected, reject_case_email, reject_case_reason}
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

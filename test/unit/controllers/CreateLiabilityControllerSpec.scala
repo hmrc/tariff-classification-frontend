@@ -28,7 +28,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.create_liability
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future._
 import play.api.data.FormBinding.Implicits.formBinding
 

@@ -30,7 +30,6 @@ import utils.Cases
 import views.html.{confirm_reassign_case, reassign_queue_case, resource_not_found}
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

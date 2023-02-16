@@ -28,8 +28,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.gateway_cases_view
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private lazy val gateway_cases_view = injector.instanceOf[gateway_cases_view]
