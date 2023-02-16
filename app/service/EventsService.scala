@@ -17,7 +17,6 @@
 package service
 
 import java.time.{Clock, Instant}
-
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import audit.AuditService
@@ -26,11 +25,12 @@ import models.EventType.EventType
 import models._
 import models.request.NewEventRequest
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EventsService @Inject() (connector: BindingTariffClassificationConnector, auditService: AuditService) {
+class EventsService @Inject() (connector: BindingTariffClassificationConnector, auditService: AuditService)(
+  implicit ec: ExecutionContext
+) {
 
   def getEvents(reference: String, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Event]] =
     getFilteredEvents(reference, pagination, None)
