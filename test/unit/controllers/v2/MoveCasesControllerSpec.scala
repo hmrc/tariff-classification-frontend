@@ -31,8 +31,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.Cases
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class MoveCasesControllerSpec extends ControllerBaseSpec {
   implicit lazy val materializer: Materializer = app.materializer
   private val casesService                     = mock[CasesService]
@@ -77,7 +75,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       viewUser,
       userNotFound,
       resourceNotFound
-    )(realAppConfig, global)
+    )(realAppConfig, executionContext)
 
   private def controllerWithData(permission: Set[Permission], userAnswers: UserAnswers = userAnswersMock) =
     new MoveCasesController(
@@ -101,7 +99,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       viewUser,
       userNotFound,
       resourceNotFound
-    )(realAppConfig, global)
+    )(realAppConfig, executionContext)
 
   "postMoveATaRCases" should {
 

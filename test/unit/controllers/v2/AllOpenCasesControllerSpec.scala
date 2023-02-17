@@ -29,8 +29,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.open_cases_view
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
   private val casesService  = mock[CasesService]

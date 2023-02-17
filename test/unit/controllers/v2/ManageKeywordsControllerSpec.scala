@@ -35,7 +35,6 @@ import utils.Cases
 import views.html.case_not_found
 import views.html.managementtools._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 

@@ -36,7 +36,6 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -358,7 +357,7 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
       if (manager) Set(Enrolment("manager-enrolment")) else Set(Enrolment("team-enrolment"))
     val value: Option[Credentials] ~ Option[Name] ~ Option[String] ~ Enrolments =
       new ~(new ~(new ~(Option(Credentials(id, "type")), Option(name)), Option(email)), Enrolments(enrolments))
-    given(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(global)))
+    given(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(executionContext)))
       .willReturn(Future.successful(value))
   }
 

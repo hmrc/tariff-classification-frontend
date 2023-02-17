@@ -26,11 +26,11 @@ import service.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.confirmation_case_creation
 import views.html.{release_case, resource_not_found}
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -43,7 +43,8 @@ class ReleaseCaseController @Inject() (
   val confirmation_case_creation: confirmation_case_creation,
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit val executionContext: ExecutionContext)
+    extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
 

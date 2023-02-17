@@ -25,13 +25,13 @@ import models.Case
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import service.CasesService
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 trait RenderCaseAction extends I18nSupport { this: FrontendController =>
 
   protected implicit val config: AppConfig
+  protected implicit val executionContext: ExecutionContext
   protected val caseService: CasesService
 
   protected def redirect: String => Call = routes.CaseController.get

@@ -23,17 +23,16 @@ import models.request.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.cache.client.CacheMap
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRetrievalActionImpl @Inject() (val dataCacheConnector: DataCacheConnector) extends DataRetrievalAction {
+class DataRetrievalActionImpl @Inject() (val dataCacheConnector: DataCacheConnector)(
+  override implicit val executionContext: ExecutionContext
+) extends DataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
     dataCacheConnector.fetch(request.internalId).map { maybeData: Option[CacheMap] =>
       OptionalDataRequest(request.request, request.internalId, maybeData.map(UserAnswers(_)))
     }
-
-  override protected def executionContext: ExecutionContext = global
 }
 
 trait DataRetrievalAction extends ActionTransformer[IdentifierRequest, OptionalDataRequest]

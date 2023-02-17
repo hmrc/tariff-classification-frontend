@@ -26,7 +26,6 @@ import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
@@ -35,7 +34,7 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   private val connector = mock[BindingTariffClassificationConnector]
   private val audit     = mock[AuditService]
 
-  private val service = new UserService(audit, connector)(global)
+  private val service = new UserService(audit, connector)(executionContext)
 
   override protected def afterEach(): Unit = {
     super.afterEach()

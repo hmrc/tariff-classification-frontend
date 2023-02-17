@@ -32,7 +32,6 @@ import utils.Cases
 
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
@@ -64,7 +63,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       pdfService,
       connector,
       rulingConnector
-    )(global, config)
+    )(executionContext, config)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()

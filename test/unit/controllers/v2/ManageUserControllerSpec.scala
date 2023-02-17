@@ -32,7 +32,6 @@ import utils.Cases
 import views.html.managementtools.manage_users_view
 import views.html.partials.users._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 

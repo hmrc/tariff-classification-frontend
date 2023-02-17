@@ -22,12 +22,11 @@ import connector.EmailConnector
 import models.{Case, CaseCompletedEmail, CaseCompletedEmailParameters, EmailTemplate, Operator}
 import utils.JsonFormatters.{emailCompleteParamsFormat, emailFormat}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import utils.Dates
 
 @Singleton
-class EmailService @Inject() (connector: EmailConnector) {
+class EmailService @Inject() (connector: EmailConnector)(implicit ec: ExecutionContext) {
 
   def sendCaseCompleteEmail(c: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[EmailTemplate] = {
     if (!c.application.isBTI) {

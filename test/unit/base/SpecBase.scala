@@ -36,6 +36,8 @@ import com.kenshoo.play.metrics.Metrics
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.PlayBodyParsers
 
+import scala.concurrent.ExecutionContext
+
 trait SpecBase
     extends UnitSpec
     with GuiceOneAppPerSuite
@@ -57,6 +59,7 @@ trait SpecBase
 
   lazy val mcc: MessagesControllerComponents           = cc
   lazy val realAppConfig: AppConfig                    = injector.instanceOf[AppConfig]
+  implicit lazy val executionContext: ExecutionContext = injector.instanceOf[ExecutionContext]
   implicit lazy val hc: HeaderCarrier                  = HeaderCarrier()
   implicit lazy val cc: MessagesControllerComponents   = injector.instanceOf[MessagesControllerComponents]
   lazy val realConfig: Configuration                   = injector.instanceOf[Configuration]

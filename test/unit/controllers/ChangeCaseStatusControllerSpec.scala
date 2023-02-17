@@ -27,8 +27,6 @@ import utils.Cases
 import play.api.mvc.request.RequestTarget
 import views.html.change_case_status
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val casesService       = mock[CasesService]

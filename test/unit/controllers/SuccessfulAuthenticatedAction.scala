@@ -29,6 +29,7 @@ import service.CasesService
 import utils.Cases
 import views.html.case_not_found
 
+import javax.inject.Inject
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -53,7 +54,8 @@ class SuccessfulAuthenticatedAction(
 class SuccessfulCasePermissionsAction(
   operator: Operator           = Operator("0", Some("name")),
   permissions: Set[Permission] = Set.empty
-) extends CheckCasePermissionsAction {
+)(implicit val ec: ExecutionContext)
+    extends CheckCasePermissionsAction {
   override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] =
     successful(Right(new AuthenticatedCaseRequest(operator.copy(permissions = permissions), request, request.`case`)))
 }
@@ -62,7 +64,8 @@ class ExistingCaseActionFactory(requestCase: Case)
     extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService]))(
       mock(classOf[MessagesApi]),
       mock(classOf[AppConfig]),
-      case_not_found = mock(classOf[case_not_found])
+      case_not_found = mock(classOf[case_not_found]),
+      mock(classOf[ExecutionContext])
     ) {
 
   override def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =
@@ -80,25 +83,26 @@ class ExistingCaseActionFactory(requestCase: Case)
     }
 }
 
-class HaveRightPermissionsActionFactory extends MustHavePermissionActionFactory {
+class HaveRightPermissionsActionFactory @Inject() (implicit ec: ExecutionContext)
+    extends MustHavePermissionActionFactory {
 
   override def apply[B[C] <: OperatorRequest[_]](permission: Permission): ActionFilter[B] =
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] =
         successful(None)
 
-      override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
+      override protected def executionContext: ExecutionContext = ec
     }
   override def apply[B[C] <: OperatorRequest[_]](ppermissions: Seq[Permission]): ActionFilter[B] =
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] =
         successful(None)
 
-      override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
+      override protected def executionContext: ExecutionContext = ec
     }
 }
 
-class MustHaveDataActionFactory(userAnswers: UserAnswers)
+class MustHaveDataActionFactory @Inject() (userAnswers: UserAnswers)(implicit ec: ExecutionContext)
     extends RequireDataActionFactory(dataCacheConnector = FakeDataCacheConnector) {
   override def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
     new ActionRefiner[B, AuthenticatedDataRequest] {
@@ -107,7 +111,7 @@ class MustHaveDataActionFactory(userAnswers: UserAnswers)
       ): Future[Either[Result, AuthenticatedDataRequest[A]]] =
         successful(Right(new AuthenticatedDataRequest(request.operator, request, userAnswers)))
 
-      override protected def executionContext: ExecutionContext = ExecutionContext.Implicits.global
+      override protected def executionContext: ExecutionContext = ec
     }
 
 }
@@ -119,7 +123,8 @@ class HaveExistingCaseDataActionFactory(requestCase: Case)
       case_not_found     = mock(classOf[case_not_found])
     )(
       mock(classOf[MessagesApi]),
-      mock(classOf[AppConfig])
+      mock(classOf[AppConfig]),
+      mock(classOf[ExecutionContext])
     ) {
 
   override def apply[B[C] <: AuthenticatedRequest[C]](

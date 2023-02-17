@@ -25,8 +25,6 @@ import play.api.test.Helpers._
 import service.TabCacheService
 import uk.gov.hmrc.http.cache.client.CacheMap
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   private val operator           = Operator(id = "id")

@@ -31,7 +31,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.managementtools.{caseReportView, manage_reports_view, queueReportView, reportChooseDates, reportChooseTeams, summaryReportView}
 import views.html.report_not_found
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

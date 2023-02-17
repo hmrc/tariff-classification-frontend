@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import models._
 import models.forms.ReleaseCaseForm
@@ -28,8 +29,7 @@ import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_reassign_case, reassign_queue_case, resource_not_found}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -42,7 +42,8 @@ class ReassignCaseController @Inject() (
   val confirm_reassign_case: confirm_reassign_case,
   val resource_not_found: resource_not_found,
   override implicit val config: AppConfig
-) extends FrontendController(mcc)
+)(implicit val executionContext: ExecutionContext)
+    extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
 

@@ -31,7 +31,6 @@ import utils.{Cases, Events}
 import views.html.v2.my_cases_view
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

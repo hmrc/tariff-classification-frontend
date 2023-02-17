@@ -23,10 +23,11 @@ import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Notification._
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ReopenCaseController @Inject() (
@@ -34,7 +35,8 @@ class ReopenCaseController @Inject() (
   casesService: CasesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit val executionContext: ExecutionContext)
+    extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
 

@@ -32,7 +32,6 @@ import utils.Cases
 import views.html.{confirm_suspended, suspend_case_email, suspend_case_reason}
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

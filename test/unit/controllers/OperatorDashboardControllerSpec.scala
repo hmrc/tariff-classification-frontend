@@ -28,7 +28,6 @@ import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class OperatorDashboardControllerSpec extends ControllerBaseSpec {

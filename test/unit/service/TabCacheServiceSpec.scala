@@ -17,7 +17,7 @@
 package service
 
 import connector.FakeDataCacheConnector
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import controllers.Tab
 import models.ApplicationType
 import org.scalacheck.Gen

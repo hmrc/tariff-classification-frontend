@@ -35,7 +35,6 @@ import utils.JsonFormatters._
 import views.html.{cancel_ruling_email, cancel_ruling_reason, confirm_cancel_ruling}
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val casesService = mock[CasesService]

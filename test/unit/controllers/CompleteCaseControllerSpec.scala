@@ -32,7 +32,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.{complete_case, confirm_complete_case}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -81,7 +80,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       confirmCompleteCase,
       completeCase,
       realAppConfig
-    )
+    )(executionContext)
 
   private def controller(requestCase: Case, permission: Set[Permission]) =
     new CompleteCaseController(
@@ -93,7 +92,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       confirmCompleteCase,
       completeCase,
       realAppConfig
-    )
+    )(executionContext)
 
   "Complete Case" should {
 

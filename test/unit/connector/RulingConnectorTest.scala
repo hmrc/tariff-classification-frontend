@@ -19,8 +19,6 @@ package connector
 import com.github.tomakehurst.wiremock.client.WireMock._
 import play.api.http.Status
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class RulingConnectorTest extends ConnectorTest {
 
   private val connector = new RulingConnector(mockAppConfig, authenticatedHttpClient, metrics)

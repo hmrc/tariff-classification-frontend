@@ -19,15 +19,16 @@ package controllers.v2
 import com.google.inject.Provider
 import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
+
 import javax.inject.Inject
-import models.forms.{CommodityCodeConstraints, _}
+import models.forms._
 import models.forms.v2.LiabilityDetailsForm
 import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels._
-import models.{Case, _}
+import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, _}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
 import play.api.data.Form
@@ -43,11 +44,12 @@ import utils.{Cases, Events}
 import views.html.partials.liabilities.{attachments_details, attachments_list}
 import views.html.v2.{case_heading, liability_details_edit, liability_view, remove_attachment}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class RequestActionsWithPermissionsProvider @Inject() (implicit parse: PlayBodyParsers)
-    extends Provider[RequestActionsWithPermissions] {
+class RequestActionsWithPermissionsProvider @Inject() (
+  implicit parse: PlayBodyParsers,
+  executionContext: ExecutionContext
+) extends Provider[RequestActionsWithPermissions] {
 
   override def get(): RequestActionsWithPermissions =
     new RequestActionsWithPermissions(

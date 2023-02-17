@@ -30,7 +30,6 @@ import utils.Cases._
 import views.html.change_extended_use_status
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

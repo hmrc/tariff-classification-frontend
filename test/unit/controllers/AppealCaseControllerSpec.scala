@@ -18,7 +18,7 @@ package controllers
 
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
-import models.{Permission, _}
+import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
@@ -32,7 +32,6 @@ import utils.Cases._
 import views.html.{appeal_change_status, appeal_choose_status, appeal_choose_type}
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

@@ -22,8 +22,6 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import views.html.read_only_home
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class IndexControllerSpec extends ControllerBaseSpec {
 
   private val readOnlyHome = injector.instanceOf[read_only_home]

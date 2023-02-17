@@ -28,8 +28,6 @@ import repositories.SessionRepository
 import scala.concurrent.Future
 import uk.gov.hmrc.http.cache.client.CacheMap
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class MongoCacheConnectorSpec
     extends ScalaCheckDrivenPropertyChecks
     with Generators

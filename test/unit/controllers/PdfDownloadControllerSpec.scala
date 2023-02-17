@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import scala.concurrent.Future.successful
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import models.response.FileMetadata
 import akka.stream.scaladsl.Source
 import akka.util.ByteString

@@ -25,7 +25,7 @@ import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
-import play.api.test.Helpers.{redirectLocation, _}
+import play.api.test.Helpers._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -33,7 +33,6 @@ import utils.Cases._
 import views.html.ruling_details_edit
 import views.html.v2.edit_liability_ruling
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

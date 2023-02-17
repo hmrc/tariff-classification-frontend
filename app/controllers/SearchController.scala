@@ -28,11 +28,11 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.SearchTab.SearchTab
 import views.partials.SearchResult
 import views.{SearchTab, html}
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -44,7 +44,8 @@ class SearchController @Inject() (
   mcc: MessagesControllerComponents,
   val advanced_search: html.advanced_search,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit executionContext: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 

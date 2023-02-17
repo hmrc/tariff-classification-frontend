@@ -28,10 +28,11 @@ import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_sample_return
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 @Singleton
@@ -41,7 +42,8 @@ class SampleReturnController @Inject() (
   val change_sample_return: change_sample_return,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
-) extends FrontendController(mcc)
+)(implicit val executionContext: ExecutionContext)
+    extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleReturn]]
     with WithUnsafeDefaultFormBinding {
 

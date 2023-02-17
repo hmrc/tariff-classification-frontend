@@ -24,14 +24,13 @@ import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 
 @Singleton
-class FileStoreService @Inject() (connector: FileStoreConnector) extends Logging {
+class FileStoreService @Inject() (connector: FileStoreConnector)(implicit ec: ExecutionContext) extends Logging {
 
   def getFileMetadata(id: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] = connector.get(id)
 

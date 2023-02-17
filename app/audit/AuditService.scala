@@ -26,10 +26,10 @@ import uk.gov.hmrc.play.audit.DefaultAuditConnector
 import utils.JsonFormatters.{caseFormat, operatorFormat}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditService @Inject() (auditConnector: DefaultAuditConnector) {
+class AuditService @Inject() (auditConnector: DefaultAuditConnector)(implicit ec: ExecutionContext) {
 
   import AuditPayloadType._
 

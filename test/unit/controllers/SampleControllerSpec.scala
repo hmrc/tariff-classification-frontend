@@ -30,7 +30,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.{change_correspondence_sending_sample, change_liablity_sending_sample, change_sample_status}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

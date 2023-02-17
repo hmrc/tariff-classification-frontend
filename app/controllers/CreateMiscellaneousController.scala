@@ -17,6 +17,7 @@
 package controllers
 
 import config.AppConfig
+
 import javax.inject.Inject
 import models.forms.v2.{MiscDetailsForm, MiscellaneousForm}
 import models.request.AuthenticatedRequest
@@ -32,8 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{case_not_found, release_case, resource_not_found}
 import views.html.v2.{confirmation_case_creation, create_misc, misc_details_edit}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
 
 class CreateMiscellaneousController @Inject() (
@@ -48,7 +48,8 @@ class CreateMiscellaneousController @Inject() (
   val case_not_found: case_not_found,
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
-) extends FrontendController(mcc)
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 
@@ -84,11 +85,11 @@ class CreateMiscellaneousController @Inject() (
       case _             => successful(Ok(case_not_found(reference)))
     }
 
-  def displayConfirmation(reference: String) =
+  def displayConfirmation(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         casesService.getOne(reference).flatMap {
-          case Some(c: Case) => {
+          case Some(c: Case) =>
             c.queueId
               .map(id =>
                 queueService.getOneById(id) flatMap {
@@ -97,8 +98,6 @@ class CreateMiscellaneousController @Inject() (
                 }
               )
               .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
-
-          }
           case _ => successful(Ok(case_not_found(reference)))
         }
     }
