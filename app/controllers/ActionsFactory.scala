@@ -32,7 +32,7 @@ import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckCasePermissionsAction @Inject() (implicit ec: ExecutionContext)
+class CheckCasePermissionsAction @Inject() (override implicit val executionContext: ExecutionContext)
     extends ActionRefiner[AuthenticatedCaseRequest, AuthenticatedCaseRequest] {
 
   override protected def refine[A](
@@ -47,8 +47,6 @@ class CheckCasePermissionsAction @Inject() (implicit ec: ExecutionContext)
         )
       )
     )
-
-  override protected def executionContext: ExecutionContext = ec
 }
 
 @Singleton
