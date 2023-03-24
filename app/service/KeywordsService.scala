@@ -21,24 +21,22 @@ import audit.AuditService
 import com.github.blemale.scaffeine.Scaffeine
 import config.AppConfig
 import connector.BindingTariffClassificationConnector
-import javax.inject.{Inject, Singleton}
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class KeywordsService @Inject() (
-  config: AppConfig,
+  val config: AppConfig,
   connector: BindingTariffClassificationConnector,
   auditService: AuditService
-)(
-  implicit mat: Materializer
-) {
+)(implicit mat: Materializer) {
 
   implicit val ec: ExecutionContext = mat.executionContext
 
-  val cacheHeaderCarrier = HeaderCarrier().withExtraHeaders("X-Api-Token" -> config.apiToken)
+  val hc = HeaderCarrier().withExtraHeaders("X-Api-Token" -> config.apiToken)
 
   val KeywordsCacheKey = "allKeywords"
 
@@ -47,7 +45,7 @@ class KeywordsService @Inject() (
     .expireAfterWrite(config.keywordsCacheExpiration)
     .maximumSize(1)
     .buildAsyncFuture[String, Seq[Keyword]] { _ =>
-      connector.findAllKeywords(NoPagination())(cacheHeaderCarrier).map(_.results.filter(_.approved))
+      connector.findAllKeywords(NoPagination())(hc).map(_.results.filter(_.approved))
     }
 
   def addKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =

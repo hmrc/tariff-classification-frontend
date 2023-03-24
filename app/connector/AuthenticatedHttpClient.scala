@@ -18,14 +18,14 @@ package connector
 
 import akka.actor.ActorSystem
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.libs.json.Writes
 import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -33,19 +33,10 @@ class AuthenticatedHttpClient @Inject() (
   configuration: Configuration,
   httpAuditing: HttpAuditing,
   wsClient: WSClient,
-  config: AppConfig,
+  val config: AppConfig,
   actorSystem: ActorSystem
-) extends DefaultHttpClient(configuration, httpAuditing, wsClient, actorSystem) {
-
-  def addAuth(implicit hc: HeaderCarrier): Seq[(String, String)] = {
-
-    val headerName: String = "X-Api-Token"
-
-    hc.headers(Seq(headerName)) match {
-      case header @ Seq(_) => header
-      case _               => Seq(headerName -> config.apiToken)
-    }
-  }
+) extends DefaultHttpClient(configuration, httpAuditing, wsClient, actorSystem)
+with InjectAuthHeaders {
 
   override def doGet(
     url: String,
