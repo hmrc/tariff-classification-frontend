@@ -48,5 +48,12 @@ function fixAnchorInURL(targetURL, csrf) {
     if (anchor.toString() === "") {
         //no anchor in url
         getAnchor(targetURL, csrf)
+    } else if (anchor.includes("&")) {
+        //anchor in url with query params, move it to the end
+        var finalURL = window.location.href
+        let anchorParts = anchor.split("&")
+        let anchorName = anchorParts[0]
+        let url = finalURL.replace(anchorName, "")
+        window.location = url + anchorName
     }
 }
