@@ -29,7 +29,7 @@ trait MockSessionCookie extends Injecting {
   lazy val cookieCrypto: SessionCookieCrypto = inject[SessionCookieCrypto]
   lazy val cookieBaker: SessionCookieBaker   = inject[SessionCookieBaker]
 
-  def mockSessionCookie(sessionId: String) = {
+  def mockSessionCookie(sessionId: String): WSCookie = {
 
     def makeSessionCookie(session: Session): Cookie = {
       val sessionCookie  = cookieBaker.encodeAsCookie(session)

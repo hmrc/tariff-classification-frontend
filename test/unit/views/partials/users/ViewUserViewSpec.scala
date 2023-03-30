@@ -16,22 +16,22 @@
 
 package views.partials.users
 
+import models.Operator
 import models.forms.v2.MoveCasesForm
 import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
-import models.{Operator, Queues, Role}
 import utils.Cases
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.users.view_user
 
 class ViewUserViewSpec extends ViewSpec {
-  private val moveATaRCasesForm = MoveCasesForm.moveCasesForm("atarCases")
-  private val moveLiabCasesForm = MoveCasesForm.moveCasesForm("liabilityCases")
-  private val moveCorrCasesForm = MoveCasesForm.moveCasesForm("corrCases")
-  private val moveMiscCasesForm = MoveCasesForm.moveCasesForm("miscCases")
-  def viewUser: view_user       = injector.instanceOf[view_user]
-  val userWithNoNameAndNoTeam   = Operator("1")
-  val assignedToMeCasesTab =
+  private val moveATaRCasesForm         = MoveCasesForm.moveCasesForm("atarCases")
+  private val moveLiabCasesForm         = MoveCasesForm.moveCasesForm("liabilityCases")
+  private val moveCorrCasesForm         = MoveCasesForm.moveCasesForm("corrCases")
+  private val moveMiscCasesForm         = MoveCasesForm.moveCasesForm("miscCases")
+  def viewUser: view_user               = injector.instanceOf[view_user]
+  val userWithNoNameAndNoTeam: Operator = Operator("1")
+  val assignedToMeCasesTab: ApplicationTabViewModel =
     ApplicationTabViewModel(
       "message key",
       ApplicationsTab

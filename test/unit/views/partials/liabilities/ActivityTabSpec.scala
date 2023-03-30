@@ -16,18 +16,20 @@
 
 package views.partials.liabilities
 
-import java.time.{ZoneOffset, ZonedDateTime}
-
 import controllers.routes
 import models._
 import models.forms.{ActivityForm, ActivityFormData}
+import models.request.AuthenticatedRequest
 import models.viewmodels.ActivityViewModel
 import play.api.data.Form
+import play.api.mvc.AnyContentAsEmpty
 import utils.Cases._
 import utils.{Cases, Events}
 import views.ViewMatchers.{containElementWithID, containText, haveAttribute}
 import views.ViewSpec
 import views.html.partials.liabilities.activity_tab
+
+import java.time.{ZoneOffset, ZonedDateTime}
 
 class ActivityTabSpec extends ViewSpec {
 
@@ -41,13 +43,20 @@ class ActivityTabSpec extends ViewSpec {
 
   private val activityViewModel = Cases.activityTabViewModelWithPermissions
 
-  val requestWithMoveCasePermission = requestWithPermissions(Permission.MOVE_CASE_BACK_TO_QUEUE)
+  val requestWithMoveCasePermission: AuthenticatedRequest[AnyContentAsEmpty.type] = requestWithPermissions(
+    Permission.MOVE_CASE_BACK_TO_QUEUE
+  )
 
-  val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
+  val requestWithAddNotePermission: AuthenticatedRequest[AnyContentAsEmpty.type] = requestWithPermissions(
+    Permission.ADD_NOTE
+  )
 
-  val requestWithViewCaseAssigneePermission = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE)
+  val requestWithViewCaseAssigneePermission: AuthenticatedRequest[AnyContentAsEmpty.type] = requestWithPermissions(
+    Permission.VIEW_CASE_ASSIGNEE
+  )
 
-  val requestWithAddNoteViewCasePermission = requestWithPermissions(Permission.ADD_NOTE, Permission.VIEW_CASE_ASSIGNEE)
+  val requestWithAddNoteViewCasePermission: AuthenticatedRequest[AnyContentAsEmpty.type] =
+    requestWithPermissions(Permission.ADD_NOTE, Permission.VIEW_CASE_ASSIGNEE)
 
   def activityTab: activity_tab = injector.instanceOf[activity_tab]
 

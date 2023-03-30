@@ -25,18 +25,18 @@ import views.html.managementtools.keywords_for_approval_table
 
 class KeywordsForApprovalTableSpec extends ViewSpec {
 
-  val keyword =
+  val keyword: KeywordViewModel =
     KeywordViewModel(
       "reference",
       "FIDGET SPINNER",
       "Alex Smith",
       "Space grade aluminium spinner",
       ApplicationType.LIABILITY,
-      CaseStatusKeywordViewModel(CaseStatus.REFERRED, false),
-      true
+      CaseStatusKeywordViewModel(CaseStatus.REFERRED, overdue = false),
+      approved = true
     )
 
-  val manageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword", Paged(Seq(keyword)))
+  val manageKeywordsTab: ManageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword", Paged(Seq(keyword)))
 
   def manageKeywordsView(): HtmlFormat.Appendable = keywords_for_approval_table(manageKeywordsTab)
 

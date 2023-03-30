@@ -17,12 +17,12 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.{CaseStatus, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{CREATED, OK}
-import models.{CaseStatus, Operator, Role}
-import utils.{CasePayloads, Cases, EventPayloads}
 import utils.JsonFormatters._
+import utils.{CasePayloads, Cases, EventPayloads}
 
 class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
 
@@ -45,7 +45,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
   "Re-Assign Assigned Case" should {
 
     "return status 200 for manager" in {
-      givenAuthSuccess("manager")
+      givenAuthSuccess()
       whenCaseExists(caseAssignedToOwner)
       shouldSucceed
     }
@@ -72,7 +72,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
   "Re-Assign Unassigned Case" should {
 
     "return status 200 for manager" in {
-      givenAuthSuccess("manager")
+      givenAuthSuccess()
       whenCaseExists(caseUnassigned)
       shouldSucceed
     }

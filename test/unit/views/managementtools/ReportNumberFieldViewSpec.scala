@@ -16,7 +16,6 @@
 
 package views.managementtools
 
-import models._
 import models.reporting._
 import play.twirl.api.{Html, StringInterpolation}
 import views.ViewMatchers._

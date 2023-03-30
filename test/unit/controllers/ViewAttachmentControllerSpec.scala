@@ -80,7 +80,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       Some(Source.single(ByteString(fileContent)))
     )
 
-  private def encodedFilename(file: FileMetadata) = file.fileName.map(URLEncoder.encode(_, "UTF-8"))
+  private def encodedFilename(file: FileMetadata)       = file.fileName.map(URLEncoder.encode(_, "UTF-8"))
   private def expectedContentHeader(file: FileMetadata) = encodedFilename(file).map(name => s"filename*=UTF-8''$name")
 
   private val fileReady      = FileMetadata("id", Some("file"), Some("type"), Some("url"), Some(ScanStatus.READY))
@@ -116,13 +116,13 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
 
     "return 200 and file content for safe file found with non ascii name and extension" in {
-      givenFileMetadata(Some(fileWithNonAsciiFileName))
-      givenFileContent(fileWithNonAsciiFileName.url.get, "CONTENT".getBytes())
+      givenFileMetadata(Some(fileWithNonAsciiFileNameWithExtension))
+      givenFileContent(fileWithNonAsciiFileNameWithExtension.url.get, "CONTENT".getBytes())
 
       val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
       status(result)                             shouldBe Status.OK
-      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileWithNonAsciiFileName)
+      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileWithNonAsciiFileNameWithExtension)
       contentAsBytes(result)                     shouldBe ByteString("CONTENT".getBytes)
     }
 

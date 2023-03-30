@@ -17,10 +17,10 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.{CancelReason, Cancellation, CaseStatus}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import models.{CancelReason, Cancellation, CaseStatus}
 import utils.CasePayloads
 import utils.Cases._
 import utils.JsonFormatters._

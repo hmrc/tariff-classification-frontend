@@ -17,8 +17,8 @@
 package utils
 
 import models._
-import utils.JsonFormatters._
 import play.api.libs.json.{Json, Writes}
+import utils.JsonFormatters._
 
 object CasePayloads {
 

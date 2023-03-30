@@ -21,14 +21,14 @@ import models.{CaseStatus, Operator, Pagination, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 import utils.Cases.{aCase, withDecision}
 import utils.JsonFormatters._
+import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
 class AppealCaseSpec extends IntegrationTest with MockitoSugar {
 
-  val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-  val caseWithStatusCOMPLETE =
+  val owner: Some[Operator] = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+  val caseWithStatusCOMPLETE: String =
     CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
 
   "Case Appeal" should {
@@ -138,7 +138,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
 
     "return status 200 for manager" in {
       // Given
-      givenAuthSuccess("manager")
+      givenAuthSuccess()
       shouldSucceed
     }
 

@@ -18,7 +18,6 @@ package views.partials.liabilities
 
 import models._
 import models.viewmodels.CaseViewModel
-import play.twirl.api.Html
 import utils.Cases
 import utils.Cases._
 import views.ViewMatchers.containElementWithID

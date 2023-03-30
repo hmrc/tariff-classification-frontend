@@ -17,10 +17,10 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.SampleStatus
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import models.SampleStatus
 import utils.CasePayloads
 
 class SampleStatusSpec extends IntegrationTest with MockitoSugar {

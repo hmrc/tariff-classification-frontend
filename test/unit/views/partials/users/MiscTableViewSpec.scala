@@ -30,7 +30,7 @@ class MiscTableViewSpec extends ViewSpec {
 
   def miscTable(miscTab: ApplicationsTab): Html = misc_table(miscTab, moveMiscCasesForm, "1")
 
-  val assignedToMeCasesTab =
+  val assignedToMeCasesTab: ApplicationTabViewModel =
     ApplicationTabViewModel(
       "message key",
       ApplicationsTab

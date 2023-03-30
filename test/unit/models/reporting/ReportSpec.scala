@@ -17,10 +17,11 @@
 package models
 package reporting
 
+import cats.data.NonEmptySeq
+import models.ModelsBaseSpec
+
 import java.net.URLDecoder
 import java.time.Instant
-import models.ModelsBaseSpec
-import cats.data.NonEmptySeq
 
 class ReportSpec extends ModelsBaseSpec {
   "Report" should {

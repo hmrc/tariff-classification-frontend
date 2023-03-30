@@ -16,9 +16,8 @@
 
 package views.partials.users
 
+import models.Queues
 import models.forms.v2.TeamToMoveCaseForm
-import models.viewmodels.ManagerToolsUsersTab
-import models.{Operator, Queues}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.users.move_cases_choose_one_from_user_teams
@@ -27,7 +26,6 @@ class MoveCasesChooseOneOfUserTeamsViewSpec extends ViewSpec {
 
   def chooseTeam: move_cases_choose_one_from_user_teams = injector.instanceOf[move_cases_choose_one_from_user_teams]
   private val chooseTeamForm                            = TeamToMoveCaseForm.form
-  private val operators                                 = Seq(Operator("1"))
 
   "Choose one of user teams" should {
     "render successfully" in {

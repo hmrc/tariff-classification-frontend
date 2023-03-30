@@ -24,11 +24,12 @@ import views.html.operator_dashboard_classification
 
 class OperatorDashboardClassificationViewSpec extends ViewSpec {
 
-  val casesCounted: Map[String, Int]    = Map("BTI" -> 2, "Liability" -> 3)
-  val totalCasesAssignedToMe            = 5
-  val casesReferredByMe                 = 3
-  val casesCompletedByMe                = 3
-  val operator_dashboard_classification = app.injector.instanceOf[operator_dashboard_classification]
+  val casesCounted: Map[String, Int] = Map("BTI" -> 2, "Liability" -> 3)
+  val totalCasesAssignedToMe         = 5
+  val casesReferredByMe              = 3
+  val casesCompletedByMe             = 3
+  val operator_dashboard_classification: operator_dashboard_classification =
+    app.injector.instanceOf[operator_dashboard_classification]
 
   val messageKeyPrefix                 = "accessibility"
   val expectTimeoutDialog              = false

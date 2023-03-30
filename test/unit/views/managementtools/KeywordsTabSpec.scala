@@ -19,6 +19,7 @@ package views.managementtools
 import models.forms.KeywordForm
 import models.viewmodels.managementtools._
 import models.{ApplicationType, CaseStatus, Keyword, Paged}
+import play.api.data.Form
 import play.twirl.api.HtmlFormat
 import views.ViewMatchers.containText
 import views.ViewSpec
@@ -26,25 +27,28 @@ import views.html.managementtools.keywords_tab
 
 class KeywordsTabSpec extends ViewSpec {
 
-  val keyword =
+  val keyword: KeywordViewModel =
     KeywordViewModel(
       "reference",
       "FIDGET SPINNER",
       "Alex Smith",
       "Space grade aluminium spinner",
       ApplicationType.LIABILITY,
-      CaseStatusKeywordViewModel(CaseStatus.REFERRED, false),
-      true
+      CaseStatusKeywordViewModel(CaseStatus.REFERRED, overdue = false),
+      approved = true
     )
 
-  val emptyMangageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq.empty))
-  val manageKeywordsTab       = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq(keyword)))
-  val keywordsTabViewModel =
+  val emptyMangageKeywordsTab: ManageKeywordsTab =
+    ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq.empty))
+  val manageKeywordsTab: ManageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq(keyword)))
+  val keywordsTabViewModel: KeywordsTabViewModel =
     KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), Seq("KEYWORD1"))
 
-  val manageKeywordsViewModel = ManageKeywordsViewModel("Manage keywords", manageKeywordsTab, keywordsTabViewModel)
-  val keywords                = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
-  val form                    = KeywordForm.formWithAuto(keywords.map(_.name))
+  val manageKeywordsViewModel: ManageKeywordsViewModel =
+    ManageKeywordsViewModel("Manage keywords", manageKeywordsTab, keywordsTabViewModel)
+  val keywords: Seq[Keyword] =
+    Seq(Keyword("shoes", approved = true), Keyword("hats", approved = true), Keyword("shirts", approved = true))
+  val form: Form[String] = KeywordForm.formWithAuto(keywords.map(_.name))
 
   def manageKeywordsView(t: ManageKeywordsViewModel = manageKeywordsViewModel): HtmlFormat.Appendable =
     keywords_tab(t, form)

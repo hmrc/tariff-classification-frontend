@@ -17,11 +17,11 @@
 package views.partials
 
 import models._
+import models.viewmodels.atar.AppealTabViewModel
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.appeal.appeal_details
-import models.viewmodels.atar.AppealTabViewModel
 
 class AppealDetailsViewSpec extends ViewSpec {
 

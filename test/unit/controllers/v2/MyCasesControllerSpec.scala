@@ -18,8 +18,8 @@ package controllers.v2
 
 import akka.stream.Materializer
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
 import models._
+import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach

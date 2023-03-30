@@ -16,14 +16,12 @@
 
 package views.managementtools
 
-import models._
+import cats.data.NonEmptySeq
+import controllers.routes
 import models.reporting._
 import views.ViewMatchers._
 import views.ViewSpec
-import views.html.managementtools.pseudoCaseStatus
 import views.html.managementtools.reportButtons
-import controllers.routes
-import cats.data.NonEmptySeq
 
 class ReportButtonsViewSpec extends ViewSpec {
   "reportButtons view" should {

@@ -16,12 +16,12 @@
 
 package views.managementtools
 
+import cats.data.NonEmptySeq
 import models._
 import models.reporting._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.caseReportTable
-import cats.data.NonEmptySeq
 
 class CaseReportTableViewSpec extends ViewSpec {
 
@@ -61,7 +61,7 @@ class CaseReportTableViewSpec extends ViewSpec {
 
     "render data for each row" in {
       val doc = view(caseReportTable(report, SearchPagination(), reportResults, Map.empty, Map.empty, "case-report"))
-      for ((row, idx) <- reportResults.results.zipWithIndex) {
+      for ((_, idx) <- reportResults.results.zipWithIndex) {
         doc should containElementWithID(s"case-report-details-$idx")
         doc should containElementWithID(s"case-report-reference-$idx")
         doc should containElementWithID(s"case-report-goods_name-$idx")

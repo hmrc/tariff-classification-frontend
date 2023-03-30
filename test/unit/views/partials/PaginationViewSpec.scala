@@ -24,7 +24,7 @@ import org.mockito.stubbing.Answer
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Call
-import views.ViewMatchers.{containElementWithID, _}
+import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.pagination
 
@@ -35,10 +35,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
   override def beforeEach(): Unit = {
 
     def returnThePage: Answer[Call] =
-      new Answer[Call] {
-        override def answer(invocation: InvocationOnMock): Call =
-          Call(method = "GET", url = "/page=" + invocation.getArgument(0))
-      }
+      (invocation: InvocationOnMock) => Call(method = "GET", url = "/page=" + invocation.getArgument(0))
 
     super.beforeEach()
     given(goToPage.apply(ArgumentMatchers.any[Int])) will returnThePage

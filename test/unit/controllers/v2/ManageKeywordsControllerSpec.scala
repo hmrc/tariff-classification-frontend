@@ -41,7 +41,7 @@ import scala.concurrent.Future.successful
 class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val keyword: Keyword = Keyword("Scarf", approved = true)
-  val keywords = Seq(
+  val keywords: Seq[Keyword] = Seq(
     Keyword("SHOES", approved  = true),
     Keyword("HATS", approved   = true),
     Keyword("SHIRTS", approved = true),

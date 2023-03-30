@@ -16,8 +16,6 @@
 
 package service
 
-import java.time._
-
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
@@ -31,6 +29,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
+import java.time._
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
@@ -88,7 +87,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
           successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L))
         )
         given(pdfService.generatePdf(any[Html]))
-          .willReturn(successful(PdfFile(Array.emptyByteArray, "application/pdf")))
+          .willReturn(successful(PdfFile(Array.emptyByteArray)))
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
           .willReturn(successful(mock[Event]))

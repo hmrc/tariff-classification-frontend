@@ -16,9 +16,9 @@
 
 package models
 
-import java.time.Instant
-
 import models.response.{FileMetadata, ScanStatus}
+
+import java.time.Instant
 
 class StoredAttachmentTest extends ModelsBaseSpec {
 

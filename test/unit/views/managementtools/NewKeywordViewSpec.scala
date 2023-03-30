@@ -18,14 +18,16 @@ package views.managementtools
 
 import models.Keyword
 import models.forms.KeywordForm
+import play.api.data.Form
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.new_keyword_view
 
 class NewKeywordViewSpec extends ViewSpec {
 
-  val keywords    = Seq(Keyword("shoes", true), Keyword("hats", true), Keyword("shirts", true))
-  val keywordForm = KeywordForm.formWithAuto(keywords.map(_.name))
+  val keywords: Seq[Keyword] =
+    Seq(Keyword("shoes", approved = true), Keyword("hats", approved = true), Keyword("shirts", approved = true))
+  val keywordForm: Form[String] = KeywordForm.formWithAuto(keywords.map(_.name))
 
   def newKeywordView: new_keyword_view = injector.instanceOf[new_keyword_view]
 

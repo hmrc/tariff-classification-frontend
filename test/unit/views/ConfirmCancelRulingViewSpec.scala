@@ -17,11 +17,11 @@
 package views
 
 import utils.Cases
-import views.html.{confirm_cancel_ruling, confirm_complete_case}
+import views.html.confirm_cancel_ruling
 
 class ConfirmCancelRulingViewSpec extends ViewSpec {
 
-  val confirmCancelRulingView = app.injector.instanceOf[confirm_cancel_ruling]
+  val confirmCancelRulingView: confirm_cancel_ruling = app.injector.instanceOf[confirm_cancel_ruling]
 
   "Confirm Cancel page" should {
 

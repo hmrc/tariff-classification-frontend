@@ -17,7 +17,6 @@
 package service
 
 import connector.FakeDataCacheConnector
-
 import controllers.Tab
 import models.ApplicationType
 import org.scalacheck.Gen
@@ -26,10 +25,10 @@ import uk.gov.hmrc.http.cache.client.CacheMap
 
 class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyChecks {
 
-  val cacheConnector = FakeDataCacheConnector
-  val service        = new TabCacheService(cacheConnector)
+  val cacheConnector: FakeDataCacheConnector.type = FakeDataCacheConnector
+  val service                                     = new TabCacheService(cacheConnector)
 
-  val tabGenerator = Gen.oneOf(
+  val tabGenerator: Gen[Tab] = Gen.oneOf(
     List(
       Tab.ACTIVITY_TAB,
       Tab.ATTACHMENTS_TAB,
@@ -49,11 +48,11 @@ class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyC
     }
 
     "clear the active tab" in {
-      await(service.clearActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe (())
+      await(service.clearActiveTab("id", "caseRef", ApplicationType.LIABILITY)) shouldBe ()
     }
 
     "set the active tab" in {
-      await(service.setActiveTab("id", "caseRef", ApplicationType.LIABILITY, Tab.ATTACHMENTS_TAB)) shouldBe (())
+      await(service.setActiveTab("id", "caseRef", ApplicationType.LIABILITY, Tab.ATTACHMENTS_TAB)) shouldBe ()
     }
 
     "get back out the tab that you put in" in forAll(tabGenerator, tabGenerator) { (firstTab, secondTab) =>

@@ -24,7 +24,7 @@ import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.usersByTeamTable
 
-class UsersByTeamTableViewSpec extends ViewSpec {
+class UsersByTeamTableSpec extends ViewSpec {
 
   val users: List[Operator] = List(
     Operator("id1", Some("operator 1"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2")),
@@ -67,7 +67,7 @@ class UsersByTeamTableViewSpec extends ViewSpec {
         doc.getElementById(s"act-user-$index") should containText(user.name.getOrElse("unknown"))
         doc.getElementById(s"act-role-$index") should containText(Role.format(user.role))
         doc.getElementById(s"act-case-$index") should containText(
-          count.get(user.id).getOrElse(List.empty).size.toString
+          count.getOrElse(user.id, List.empty).size.toString
         )
       }
     }

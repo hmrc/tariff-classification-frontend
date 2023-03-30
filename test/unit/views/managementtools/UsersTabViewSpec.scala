@@ -54,14 +54,14 @@ class UsersTabViewSpec extends ViewSpec {
     unassignedUsersList
   )
 
-  val usersTabViewModel = UsersTabViewModel(
+  val usersTabViewModel: UsersTabViewModel = UsersTabViewModel(
     "Manage users",
     List(usersByQueue),
     assignedUsers,
     unassignedUsers
   )
 
-  val emptyUsersTabViewModel = UsersTabViewModel(
+  val emptyUsersTabViewModel: UsersTabViewModel = UsersTabViewModel(
     "Manage users",
     List(usersByQueue.copy(searchResult = List.empty)),
     assignedUsers.copy(searchResult   = List.empty),

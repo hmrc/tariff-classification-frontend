@@ -20,11 +20,11 @@ import models.Operator
 import models.request.AuthenticatedRequest
 import models.response.{FileMetadata, ScanStatus}
 import views.ViewMatchers._
-import html.view_attachment_unavailable
+import views.html.view_attachment_unavailable
 
 class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
-  val viewAttachmentUnavailableView = app.injector.instanceOf[view_attachment_unavailable]
+  val viewAttachmentUnavailableView: view_attachment_unavailable = app.injector.instanceOf[view_attachment_unavailable]
 
   "View Attachment Unavailable View" should {
 

@@ -17,8 +17,8 @@
 package views.v2
 
 import models.forms.UploadAttachmentForm
-import models.viewmodels.AttachmentsTabViewModel
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import models.viewmodels.AttachmentsTabViewModel
 import models.{Permission, StoredAttachment}
 import play.twirl.api.HtmlFormat
 import utils.Cases
@@ -29,7 +29,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
 
   lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
 
-  val initiateResponse = FileStoreInitiateResponse(
+  val initiateResponse: FileStoreInitiateResponse = FileStoreInitiateResponse(
     id              = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(

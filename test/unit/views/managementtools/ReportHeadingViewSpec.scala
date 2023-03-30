@@ -16,7 +16,6 @@
 
 package views.managementtools
 
-import models._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.reportHeading

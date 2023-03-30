@@ -16,9 +16,9 @@
 
 package models
 
-import java.util.UUID
-
 import utils.Cases._
+
+import java.util.UUID
 
 class AppealTest extends ModelsBaseSpec {
 

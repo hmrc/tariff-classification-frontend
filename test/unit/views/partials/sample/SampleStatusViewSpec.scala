@@ -17,11 +17,11 @@
 package views.partials.sample
 
 import models._
+import models.viewmodels.atar.SampleTabViewModel
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.sample.sample_status
-import models.viewmodels.atar.SampleTabViewModel
 
 class SampleStatusViewSpec extends ViewSpec {
 

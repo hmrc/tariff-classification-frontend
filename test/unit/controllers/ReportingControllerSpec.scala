@@ -16,7 +16,6 @@
 
 package controllers
 
-import java.time.Instant
 import cats.data.NonEmptySeq
 import models._
 import models.reporting._
@@ -28,9 +27,10 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import service._
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.managementtools.{caseReportView, manage_reports_view, queueReportView, reportChooseDates, reportChooseTeams, summaryReportView}
+import views.html.managementtools._
 import views.html.report_not_found
 
+import java.time.Instant
 import scala.concurrent.Future
 
 class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -111,16 +111,14 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/csv")
-      contentAsString(result) shouldBe (
-        Seq(
-          "Reference,Goods name,Trader name",
-          "123456,Fireworks,Gandalf",
-          "987654,Beer,Barliman Butterbur"
-        ).mkString(
-          "",
-          "\r\n",
-          "\r\n"
-        )
+      contentAsString(result) shouldBe Seq(
+        "Reference,Goods name,Trader name",
+        "123456,Fireworks,Gandalf",
+        "987654,Beer,Barliman Butterbur"
+      ).mkString(
+        "",
+        "\r\n",
+        "\r\n"
       )
     }
 
@@ -160,22 +158,20 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/csv")
-      contentAsString(result) shouldBe (
-        Seq(
-          "Assigned team,Case type,Count",
-          "Gateway,ATaR,4",
-          "Gateway,Liability,3",
-          "Gateway,Correspondence,7",
-          "Gateway,Miscellaneous,1",
-          "ACT,ATaR,8",
-          "ACT,Liability,5",
-          "CAP,Correspondence,1",
-          "CAP,Miscellaneous,2"
-        ).mkString(
-          "",
-          "\r\n",
-          "\r\n"
-        )
+      contentAsString(result) shouldBe Seq(
+        "Assigned team,Case type,Count",
+        "Gateway,ATaR,4",
+        "Gateway,Liability,3",
+        "Gateway,Correspondence,7",
+        "Gateway,Miscellaneous,1",
+        "ACT,ATaR,8",
+        "ACT,Liability,5",
+        "CAP,Correspondence,1",
+        "CAP,Miscellaneous,2"
+      ).mkString(
+        "",
+        "\r\n",
+        "\r\n"
       )
     }
 
@@ -232,18 +228,16 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/csv")
-      contentAsString(result) shouldBe (
-        Seq(
-          "Case status,Count,Elapsed days",
-          "COMPLETED,2,5",
-          "CANCELLED,4,2",
-          "OPEN,6,8",
-          "NEW,7,4"
-        ).mkString(
-          "",
-          "\r\n",
-          "\r\n"
-        )
+      contentAsString(result) shouldBe Seq(
+        "Case status,Count,Elapsed days",
+        "COMPLETED,2,5",
+        "CANCELLED,4,2",
+        "OPEN,6,8",
+        "NEW,7,4"
+      ).mkString(
+        "",
+        "\r\n",
+        "\r\n"
       )
     }
 

@@ -17,22 +17,22 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.{CaseStatus, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import models.{CaseStatus, Operator, Role}
-import utils.{CasePayloads, Cases, EventPayloads}
 import utils.JsonFormatters._
+import utils.{CasePayloads, Cases, EventPayloads}
 
 class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
-  val owner              = Some(Operator("111", role                            = Role.CLASSIFICATION_OFFICER))
-  val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
+  val owner: Some[Operator] = Some(Operator("111", role                            = Role.CLASSIFICATION_OFFICER))
+  val caseWithStatusOPEN: String = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
 
   "Case Suspend" should {
 
     "return status 200 for manager" in {
-      givenAuthSuccess("manager")
+      givenAuthSuccess()
       shouldSucceed
     }
 

@@ -21,16 +21,16 @@ import models.forms.v2.MoveCasesForm
 import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
 import play.twirl.api.Html
 import utils.Cases
+import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.partials.users.atar_table
-import views.ViewMatchers.containElementWithID
 
 class AtarTableViewSpec extends ViewSpec {
   private val moveATaRCasesForm = MoveCasesForm.moveCasesForm("atarCases")
 
   def atarTable(atarTab: ApplicationsTab): Html = atar_table(atarTab, moveATaRCasesForm, "1")
 
-  val assignedToMeCasesTab =
+  val assignedToMeCasesTab: ApplicationTabViewModel =
     ApplicationTabViewModel(
       "message key",
       ApplicationsTab

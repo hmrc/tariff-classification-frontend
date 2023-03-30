@@ -52,7 +52,7 @@ class QueueReportTableViewSpec extends ViewSpec {
 
     "render data for each row" in {
       val doc = view(queueReportTable(report, SearchPagination(), reportResults, Queues.allQueuesById, "queue-report"))
-      for ((row, idx) <- reportResults.results.zipWithIndex) {
+      for ((_, idx) <- reportResults.results.zipWithIndex) {
         doc should containElementWithID(s"queue-report-assigned_team-$idx")
         doc should containElementWithID(s"queue-report-case_type-$idx")
         doc should containElementWithID(s"queue-report-count-$idx")

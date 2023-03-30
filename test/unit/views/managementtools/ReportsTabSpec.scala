@@ -24,7 +24,7 @@ import views.html.managementtools.reports_tab
 
 class ReportsTabSpec extends ViewSpec {
 
-  val reportingTabViewModel = ReportingTabViewModel.reportingTabs()
+  val reportingTabViewModel: ReportingTabViewModel = ReportingTabViewModel.reportingTabs()
 
   def manageReportsView: HtmlFormat.Appendable = reports_tab(reportingTabViewModel)
 

@@ -16,7 +16,7 @@
 
 package controllers
 
-import models.{Permission, _}
+import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito

@@ -23,8 +23,8 @@ import views.html.change_case_status
 
 class ChangeCaseStatusViewSpec extends ViewSpec {
 
-  val form                 = new CaseStatusRadioInputFormProvider()()
-  val changeCaseStatusView = app.injector.instanceOf[change_case_status]
+  val form                                     = new CaseStatusRadioInputFormProvider()()
+  val changeCaseStatusView: change_case_status = app.injector.instanceOf[change_case_status]
 
   "ChangeCaseStatusViewSpec" should {
     "contain a case heading" in {

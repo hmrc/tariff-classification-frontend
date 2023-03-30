@@ -16,12 +16,12 @@
 
 package service
 
-import java.time.{Clock, Instant, LocalDateTime, ZoneOffset}
-
 import config.AppConfig
 import models.CommodityCode
 import org.mockito.BDDMockito._
 import org.scalatest.BeforeAndAfterEach
+
+import java.time.{Clock, Instant, LocalDateTime, ZoneOffset}
 
 class CommodityCodeServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
@@ -33,6 +33,8 @@ class CommodityCodeServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     super.beforeEach()
     given(config.clock) willReturn Clock.fixed(Instant.EPOCH, ZoneOffset.UTC)
   }
+
+  def toInstant(input: String): Instant = LocalDateTime.parse(input).toInstant(ZoneOffset.UTC)
 
   "Commodity code service" should {
 
@@ -83,12 +85,10 @@ class CommodityCodeServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
     "find commodity codes with optional end dates" in {
       given(config.commodityCodePath) willReturn "commodityCodes-local.csv"
-      service.find("0100000000") shouldBe Some(CommodityCode("0100000000", Some("2019-01-01T00:00:00")))
-      service.find("0200000000") shouldBe Some(CommodityCode("0200000000", Some("3000-01-01T00:00:00")))
+      service.find("0100000000") shouldBe Some(CommodityCode("0100000000", Some(toInstant("2019-01-01T00:00:00"))))
+      service.find("0200000000") shouldBe Some(CommodityCode("0200000000", Some(toInstant("3000-01-01T00:00:00"))))
       service.find("0300000000") shouldBe Some(CommodityCode("0300000000", None))
     }
-
-    implicit def str2instant: String => Instant = LocalDateTime.parse(_).toInstant(ZoneOffset.UTC)
 
   }
 

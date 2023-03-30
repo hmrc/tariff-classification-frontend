@@ -21,7 +21,7 @@ import utils.JsonFormatters.keywordFormat
 
 object KeywordsPayloads {
 
-  val pagedKeywords = jsonOf(Keywords.pagedKeywords)
+  val pagedKeywords: String = jsonOf(Keywords.pagedKeywords)
 
   def jsonOf[A: Writes](obj: A): String =
     Json.toJson(obj).toString()

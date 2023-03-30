@@ -18,9 +18,9 @@ package controllers
 
 import connector.BindingTariffClassificationConnector
 import controllers.v2.{AtarController, CorrespondenceController, LiabilityController, MiscellaneousController}
+import models._
 import models.forms.{ActivityFormData, MessageFormData}
 import models.request.AuthenticatedCaseRequest
-import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -35,7 +35,6 @@ import utils.Cases
 import utils.Cases._
 
 import java.time.{Clock, Instant}
-
 import scala.concurrent.Future
 
 class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

@@ -17,11 +17,11 @@
 package views.partials
 
 import models.Contact
+import models.viewmodels.atar.ApplicantTabViewModel
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.contact_details
-import models.viewmodels.atar.ApplicantTabViewModel
 
 class ContactDetailsViewSpec extends ViewSpec {
 

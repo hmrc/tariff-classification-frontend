@@ -16,8 +16,7 @@
 
 package controllers
 
-import java.time.Instant
-import models.{Permission, _}
+import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
@@ -29,6 +28,7 @@ import utils.Cases._
 import views.SearchTab
 import views.html.advanced_search
 
+import java.time.Instant
 import scala.concurrent.Future
 
 class SearchControllerSpec extends ControllerBaseSpec {

@@ -32,7 +32,7 @@ class RulingTabViewSpec extends ViewSpec {
     "justification",
     "method search",
     "exclusions",
-    true,
+    showEditRuling = true,
     "case reference"
   )
 

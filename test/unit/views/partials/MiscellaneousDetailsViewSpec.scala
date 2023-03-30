@@ -16,8 +16,6 @@
 
 package views.partials
 
-import java.time.Instant
-
 import models.Permission
 import models.viewmodels.miscellaneous.DetailsViewModel
 import utils.Cases.aMiscellaneousCase
@@ -25,6 +23,8 @@ import utils.Dates
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.partials.miscellaneous_case_details
+
+import java.time.Instant
 
 class MiscellaneousDetailsViewSpec extends ViewSpec {
 

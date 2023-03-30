@@ -16,20 +16,20 @@
 
 package views.v2
 
-import java.time.Instant
-
 import models._
 import models.forms._
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
+import models.viewmodels._
 import models.viewmodels.atar.AttachmentsTabViewModel
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
-import models.viewmodels._
 import play.api.data.Form
 import utils.Cases
 import utils.Cases._
 import views.ViewMatchers.{containElementWithID, containText}
 import views.ViewSpec
 import views.html.v2.correspondence_view
+
+import java.time.Instant
 
 class CorrespondenceViewSpec extends ViewSpec {
 
@@ -58,7 +58,7 @@ class CorrespondenceViewSpec extends ViewSpec {
     Seq.empty
   )
 
-  val initiateResponse = FileStoreInitiateResponse(
+  val initiateResponse: FileStoreInitiateResponse = FileStoreInitiateResponse(
     id              = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
@@ -74,7 +74,7 @@ class CorrespondenceViewSpec extends ViewSpec {
 
   private val contact: Contact = Contact("Bob Dilan", "bob@gmail.com", Some("545353"))
 
-  private val address: Address = Address("Street building", "Sofia", None, Some("NE2 8PN"));
+  private val address: Address = Address("Street building", "Sofia", None, Some("NE2 8PN"))
 
   private val exampleMessages =
     List(Message("name", Instant.now(), "message"), Message("name2", Instant.now(), "message2"))

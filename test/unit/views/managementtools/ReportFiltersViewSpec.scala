@@ -16,14 +16,14 @@
 
 package views.managementtools
 
-import java.time.Instant
-
+import cats.data.NonEmptySeq
 import models._
 import models.reporting._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.reportFilters
-import cats.data.NonEmptySeq
+
+import java.time.Instant
 
 class ReportFiltersViewSpec extends ViewSpec {
   "reportFilters view" should {

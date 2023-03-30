@@ -17,24 +17,22 @@
 package base
 
 import akka.stream.Materializer
+import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.Injector
-import play.api.inject.bind
+import play.api.inject.{Injector, bind}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFileCreator
 import play.api.libs.ws.WSClient
-import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponents}
+import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import utils.{TestMetrics, UnitSpec}
-import com.kenshoo.play.metrics.Metrics
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.mvc.PlayBodyParsers
 
 import scala.concurrent.ExecutionContext
 

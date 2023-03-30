@@ -16,8 +16,7 @@
 
 package views.partials.users
 
-import models.{ApplicationType, Operator, Queues, Role}
-import views.ViewMatchers.containElementWithID
+import models.{Operator, Queues, Role}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.users.user_details
@@ -26,8 +25,8 @@ class UserDetailsViewSpec extends ViewSpec {
 
   def userDetails: user_details = injector.instanceOf[user_details]
 
-  val userWithNoNameAndNoTeam = Operator("1")
-  val userWithAllFields =
+  val userWithNoNameAndNoTeam: Operator = Operator("1")
+  val userWithAllFields: Operator =
     Operator("1", name = Some("Name"), email = Some("Email"), memberOfTeams = Seq(Queues.elm.id))
   "userDetails View" should {
     "render successfully for a classification officer with no teams, no name or email" in {

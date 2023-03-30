@@ -29,8 +29,8 @@ import java.time.Instant
 
 class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
 
-  private val decisionForm  = new DecisionForm(mock[CommodityCodeConstraints])
-  val rulingDetailsEditView = app.injector.instanceOf[ruling_details_edit]
+  private val decisionForm                       = new DecisionForm(mock[CommodityCodeConstraints])
+  val rulingDetailsEditView: ruling_details_edit = app.injector.instanceOf[ruling_details_edit]
 
   "Edit Ruling Details" should {
 
@@ -41,7 +41,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm))
+      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm()))
 
       // Then
       doc                                               should containElementWithID("envisagedCommodityCodeValue")
@@ -55,7 +55,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm))
+      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm()))
 
       // Then
       doc should containElementWithID("envisagedCommodityCodeValue")
@@ -112,7 +112,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm))
+      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
       // Then
       doc shouldNot containElementWithID("edit-ruling-no_attachments")
@@ -139,7 +139,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm))
+      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
       // Then
       doc should containElementWithID("edit-ruling-no_attachments")
@@ -166,7 +166,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm))
+      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
       // Then
       doc                                  should containElementWithID("attachments[0]")
@@ -192,7 +192,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm))
+      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
       // Then
       doc should containElementWithID("attachments[0]")
@@ -218,7 +218,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm))
+      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
       // Then
       doc                                          should containElementWithID("attachments-row-0-file")
@@ -249,7 +249,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
       )
 
       // When
-      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm))
+      val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
       // Then
       doc                                          should containElementWithID("attachments-row-0-file")

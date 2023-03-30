@@ -32,8 +32,6 @@ class AppConfig @Inject() (
   servicesConfig: ServicesConfig
 ) {
 
-  protected def mode: Mode = environment.mode
-
   private lazy val contactHost                  = config.getOptional[String]("contact-frontend.host").getOrElse("")
   private lazy val contactFormServiceIdentifier = config.get[String]("appName")
 
@@ -83,14 +81,7 @@ class AppConfig @Inject() (
 
   lazy val clock: Clock = Clock.systemUTC()
 
-  def runningAsDev: Boolean = {
-    environment.mode == Mode.Dev
-
-    config
-      .getOptional[String]("run.mode")
-      .map(_.equals(Mode.Dev.toString))
-      .getOrElse(Mode.Dev.equals(environment.mode))
-  }
+  def runningAsDev: Boolean = environment.mode == Mode.Dev
 
   lazy val host: String = config.get[String]("platform-url.host")
 }

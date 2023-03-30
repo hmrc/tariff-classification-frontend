@@ -16,10 +16,9 @@
 
 package controllers
 
-import java.time.Instant
 import models.forms.v2.LiabilityDetailsForm
 import models.forms.{CommodityCodeConstraints, DecisionForm}
-import models.{Permission, _}
+import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -32,6 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.{complete_case, confirm_complete_case}
 
+import java.time.Instant
 import scala.concurrent.Future.successful
 
 class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

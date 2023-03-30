@@ -19,7 +19,7 @@ import models.viewmodels._
 import play.twirl.api.Html
 import views.ViewMatchers.{containElementWithID, haveAttribute}
 import views.ViewSpec
-import views.html.components.{manager_tools_secondary_navigation, open_cases_secondary_navigation}
+import views.html.components.manager_tools_secondary_navigation
 
 class ManagerToolsSecondaryNavigationViewSpec extends ViewSpec {
 

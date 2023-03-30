@@ -16,12 +16,12 @@
 
 package views.managementtools
 
+import cats.data.NonEmptySeq
 import models._
 import models.reporting._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.summaryReportTable
-import cats.data.NonEmptySeq
 
 class SummaryReportTableViewSpec extends ViewSpec {
 
@@ -62,7 +62,7 @@ class SummaryReportTableViewSpec extends ViewSpec {
       val doc =
         view(summaryReportTable(report, SearchPagination(), reportResults, Map.empty, Map.empty, "summary-report"))
 
-      for (field <- (ReportField.Count :: ReportField.Status :: report.maxFields.toList)) {
+      for (field <- ReportField.Count :: ReportField.Status :: report.maxFields.toList) {
         doc should containElementWithID(s"summary-report-${field.fieldName}")
       }
 
@@ -75,7 +75,7 @@ class SummaryReportTableViewSpec extends ViewSpec {
       val doc =
         view(summaryReportTable(report, SearchPagination(), reportResults, Map.empty, Map.empty, "summary-report"))
 
-      for ((row, idx) <- reportResults.results.zipWithIndex) {
+      for ((_, idx) <- reportResults.results.zipWithIndex) {
         doc should containElementWithID(s"summary-report-count-$idx")
         doc should containElementWithID(s"summary-report-status-$idx")
         doc should containElementWithID(s"summary-report-elapsed_days-$idx")

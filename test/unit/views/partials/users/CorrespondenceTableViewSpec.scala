@@ -30,7 +30,7 @@ class CorrespondenceTableViewSpec extends ViewSpec {
 
   def corrTable(corrTab: ApplicationsTab): Html = correspondence_table(corrTab, moveCorrCasesForm, "1")
 
-  val assignedToMeCasesTab =
+  val assignedToMeCasesTab: ApplicationTabViewModel =
     ApplicationTabViewModel(
       "message key",
       ApplicationsTab

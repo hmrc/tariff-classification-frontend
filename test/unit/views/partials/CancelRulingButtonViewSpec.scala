@@ -17,11 +17,11 @@
 package views.partials
 
 import models.CaseStatus
+import models.viewmodels.atar.RulingTabViewModel
 import utils.Cases
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.ruling.cancel_ruling_section
-import models.viewmodels.atar.RulingTabViewModel
 
 class CancelRulingButtonViewSpec extends ViewSpec {
 

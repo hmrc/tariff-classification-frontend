@@ -33,7 +33,8 @@ import play.api.i18n.Messages
 import play.twirl.api.Html
 import service.{EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Cases, Cases._
+import utils.Cases
+import utils.Cases._
 import views.html.v2.miscellaneous_view
 
 import scala.concurrent.Future
@@ -76,7 +77,7 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
   "Miscellaneous Controller" should {
     "display miscellaneous case" in {
       val c = aCase(withReference("reference"), withMiscellaneousApplication)
-      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn (Future.successful(attachments))
+      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(attachments)
 
       when(
         eventService

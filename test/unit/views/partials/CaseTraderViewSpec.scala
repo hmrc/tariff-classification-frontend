@@ -16,17 +16,19 @@
 
 package views.partials
 
+import models.request.AuthenticatedRequest
+import models.viewmodels.atar.ApplicantTabViewModel
 import models.{Permission, SampleStatus}
+import play.api.mvc.AnyContentAsEmpty
 import service.CountriesService
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.case_trader
-import models.viewmodels.atar.ApplicantTabViewModel
 
 class CaseTraderViewSpec extends ViewSpec {
 
-  val requestWithReleaseAndSuppressPermission =
+  val requestWithReleaseAndSuppressPermission: AuthenticatedRequest[AnyContentAsEmpty.type] =
     requestWithPermissions(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)
   val countriesService = new CountriesService
 
@@ -42,7 +44,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
       // When
-      val doc = view(case_trader(applicantTab, 0))
+      val doc = view(case_trader(applicantTab))
 
       // Then
       doc shouldNot containElementWithID("agent-submitted-heading")
@@ -54,7 +56,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
       // When
-      val doc = view(case_trader(applicantTab, 0))
+      val doc = view(case_trader(applicantTab))
 
       // Then
       val boardFileNumber = doc.getElementById("boards-file-number")
@@ -67,7 +69,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
       // When
-      val doc = view(case_trader(applicantTab, 0))
+      val doc = view(case_trader(applicantTab))
 
       // Then
       doc shouldNot containElementWithID("boards-file-number-label")

@@ -30,7 +30,7 @@ class LiabilityTableViewSpec extends ViewSpec {
 
   def liabTable(liabTab: ApplicationsTab): Html = liability_table(liabTab, moveLiabCasesForm, "1")
 
-  val assignedToMeCasesTab =
+  val assignedToMeCasesTab: ApplicationTabViewModel =
     ApplicationTabViewModel(
       "message key",
       ApplicationsTab

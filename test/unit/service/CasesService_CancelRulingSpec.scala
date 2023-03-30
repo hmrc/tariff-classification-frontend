@@ -16,8 +16,6 @@
 
 package service
 
-import java.time._
-
 import audit.AuditService
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, RulingConnector}
@@ -30,6 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
+import java.time._
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 

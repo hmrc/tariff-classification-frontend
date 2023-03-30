@@ -33,7 +33,8 @@ import play.api.i18n.Messages
 import play.twirl.api.Html
 import service.{EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Cases, Cases._
+import utils.Cases
+import utils.Cases._
 import views.html.v2.correspondence_view
 
 import scala.concurrent.Future
@@ -78,7 +79,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "display Correspondence" in {
       val c = aCase(withReference("reference"), withCorrespondenceApplication)
 
-      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn (Future.successful(attachments))
+      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(attachments)
 
       when(
         eventService

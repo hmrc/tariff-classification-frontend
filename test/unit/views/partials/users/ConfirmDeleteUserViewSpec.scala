@@ -26,7 +26,7 @@ import views.html.partials.users.confirm_delete_user
 class ConfirmDeleteUserViewSpec extends ViewSpec {
 
   def confirmDeleteUser: confirm_delete_user = injector.instanceOf[confirm_delete_user]
-  val userWithNoNameAndNoTeam                = Operator("1")
+  val userWithNoNameAndNoTeam: Operator      = Operator("1")
   val form: Form[Boolean]                    = RemoveUserForm.form
 
   "cannotDeleteUser View" should {

@@ -64,10 +64,6 @@ class MiscellaneousViewSpec extends ViewSpec {
 
   private val activityForm: Form[ActivityFormData] = ActivityForm.form
 
-  private val contact: Contact = Contact("Bob Dilan", "bob@gmail.com", Some("545353"))
-
-  private val address: Address = Address("Street building", "Sofia", None, Some("NE2 8PN"));
-
   private val exampleMessages =
     List(Message("name", Instant.now(), "message"), Message("name2", Instant.now(), "message2"))
 
@@ -79,7 +75,7 @@ class MiscellaneousViewSpec extends ViewSpec {
 
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
-  val initiateResponse = FileStoreInitiateResponse(
+  val initiateResponse: FileStoreInitiateResponse = FileStoreInitiateResponse(
     id              = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
