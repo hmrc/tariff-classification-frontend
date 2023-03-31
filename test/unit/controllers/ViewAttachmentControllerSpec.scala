@@ -86,9 +86,9 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private val fileReady      = FileMetadata("id", Some("file"), Some("type"), Some("url"), Some(ScanStatus.READY))
   private val fileFailed     = FileMetadata("id", Some("file"), Some("type"), None, Some(ScanStatus.FAILED))
   private val fileProcessing = FileMetadata("id", Some("file"), Some("type"), None, None)
-  private val fileWithNonAsciiFileName =
+  private val fileReadyWithNonAsciiFileNameWithoutExtension =
     FileMetadata("id", Some("test–file"), Some("type"), Some("url"), Some(ScanStatus.READY))
-  private val fileWithNonAsciiFileNameWithExtension =
+  private val fileReadyWithNonAsciiFileNameWithExtension =
     FileMetadata("id", Some("test–file.pdf"), Some("type"), Some("url"), Some(ScanStatus.READY))
 
   "View Attachment 'GET" should {
@@ -105,24 +105,24 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
 
     "return 200 and file content for safe file found with non ascii name" in {
-      givenFileMetadata(Some(fileWithNonAsciiFileName))
-      givenFileContent(fileWithNonAsciiFileName.url.get, "CONTENT".getBytes())
+      givenFileMetadata(Some(fileReadyWithNonAsciiFileNameWithoutExtension))
+      givenFileContent(fileReadyWithNonAsciiFileNameWithoutExtension.url.get, "CONTENT".getBytes())
 
       val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
       status(result)                             shouldBe Status.OK
-      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileWithNonAsciiFileName)
+      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileReadyWithNonAsciiFileNameWithoutExtension)
       contentAsBytes(result)                     shouldBe ByteString("CONTENT".getBytes)
     }
 
     "return 200 and file content for safe file found with non ascii name and extension" in {
-      givenFileMetadata(Some(fileWithNonAsciiFileNameWithExtension))
-      givenFileContent(fileWithNonAsciiFileNameWithExtension.url.get, "CONTENT".getBytes())
+      givenFileMetadata(Some(fileReadyWithNonAsciiFileNameWithExtension))
+      givenFileContent(fileReadyWithNonAsciiFileNameWithExtension.url.get, "CONTENT".getBytes())
 
       val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
       status(result)                             shouldBe Status.OK
-      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileWithNonAsciiFileNameWithExtension)
+      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileReadyWithNonAsciiFileNameWithExtension)
       contentAsBytes(result)                     shouldBe ByteString("CONTENT".getBytes)
     }
 
