@@ -16,14 +16,14 @@
 
 package views.partials.ruling
 
-import java.time.Instant
-
+import models.viewmodels.atar.RulingTabViewModel
 import models.{CaseStatus, CommodityCode}
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.ruling.ruling_commodity_code_expiry_section
-import models.viewmodels.atar.RulingTabViewModel
+
+import java.time.Instant
 
 // scalastyle:off magic.number
 class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {

@@ -17,12 +17,12 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.{CaseStatus, Decision, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import models.{CaseStatus, Decision, Operator, Role}
-import utils.{CasePayloads, Cases}
 import utils.JsonFormatters._
+import utils.{CasePayloads, Cases}
 
 class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
@@ -81,7 +81,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 
     "return status 200 for manager" in {
       // Given
-      givenAuthSuccess("manager")
+      givenAuthSuccess()
       shouldSucceed
     }
 

@@ -21,7 +21,7 @@ import views.html.confirm_refer_case
 
 class ConfirmReferCaseViewSpec extends ViewSpec {
 
-  val confirmReferCaseView = app.injector.instanceOf[confirm_refer_case]
+  val confirmReferCaseView: confirm_refer_case = app.injector.instanceOf[confirm_refer_case]
 
   "Confirm Refer Case page" should {
 

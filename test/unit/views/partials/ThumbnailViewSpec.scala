@@ -16,13 +16,13 @@
 
 package views.partials
 
-import java.time.Instant
-
 import models.StoredAttachment
 import models.response.ScanStatus
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.thumbnail
+
+import java.time.Instant
 
 class ThumbnailViewSpec extends ViewSpec {
 

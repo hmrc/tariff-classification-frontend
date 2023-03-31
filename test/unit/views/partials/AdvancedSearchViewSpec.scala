@@ -25,9 +25,9 @@ import views.{SearchTab, ViewSpec}
 
 class AdvancedSearchViewSpec extends ViewSpec {
 
-  private val defaultTab = SearchTab.DETAILS
-  private val form       = SearchForm.form.bind(Map("any" -> "any"))
-  val advancedSearchView = app.injector.instanceOf[advanced_search]
+  private val defaultTab                  = SearchTab.DETAILS
+  private val form                        = SearchForm.form.bind(Map("any" -> "any"))
+  val advancedSearchView: advanced_search = app.injector.instanceOf[advanced_search]
 
   "Advanced Search" should {
 

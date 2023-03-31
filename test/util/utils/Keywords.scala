@@ -23,7 +23,7 @@ object Keywords {
   val keyword1: Keyword = Keyword("keyword1")
   val keyword2: Keyword = Keyword("keyword2")
 
-  val keywords                      = Seq(keyword1, keyword2)
+  val keywords: Seq[Keyword]        = Seq(keyword1, keyword2)
   val pagedKeywords: Paged[Keyword] = Paged(keywords)
 
 }

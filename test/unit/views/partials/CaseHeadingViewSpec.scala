@@ -18,7 +18,7 @@ package views.partials
 
 import models._
 import utils.Cases._
-import views.ViewMatchers.{containElementWithID, _}
+import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.case_heading
 

@@ -17,7 +17,7 @@
 package views.v2
 
 import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
-import models.{CaseStatus, CompletedCaseStatusChange, Event, Operator, ReferralCaseStatusChange, ReferralReason}
+import models._
 import utils.Cases
 import views.ViewMatchers.{containElementWithClass, containElementWithID, containText, haveClass}
 import views.ViewSpec
@@ -131,7 +131,7 @@ class MyCasesViewSpec extends ViewSpec {
       )
     )
 
-  val assignedToMeCasesTab =
+  val assignedToMeCasesTab: ApplicationTabViewModel =
     ApplicationTabViewModel(
       "message key",
       ApplicationsTab
@@ -146,7 +146,7 @@ class MyCasesViewSpec extends ViewSpec {
         .applicationTabs
     )
 
-  val referredByMeCasesTab =
+  val referredByMeCasesTab: ApplicationTabViewModel =
     ApplicationTabViewModel(
       "applicationTab.referredByMe",
       ApplicationsTab
@@ -165,7 +165,7 @@ class MyCasesViewSpec extends ViewSpec {
         .applicationTabs
     )
 
-  val completedByMeCasesTab =
+  val completedByMeCasesTab: ApplicationTabViewModel =
     ApplicationTabViewModel(
       "applicationTab.completedByMe",
       ApplicationsTab
@@ -306,7 +306,7 @@ class MyCasesViewSpec extends ViewSpec {
 
       val doc = view(myCasesView(referredByMeCasesTab))
 
-      doc.getElementById("applicationTab.atar-status-refer-to-0").text shouldBe ("Laboratory analyst")
+      doc.getElementById("applicationTab.atar-status-refer-to-0").text shouldBe "Laboratory analyst"
 
     }
 
@@ -314,7 +314,7 @@ class MyCasesViewSpec extends ViewSpec {
 
       val doc = view(myCasesView(referredByMeCasesTab))
 
-      doc.getElementById("applicationTab.liability-status-refer-to-0").text shouldBe ("Trader")
+      doc.getElementById("applicationTab.liability-status-refer-to-0").text shouldBe "Trader"
       doc.getElementById("applicationTab.atar-status-label-1-overdue").text shouldBe "OVERDUE"
       doc.getElementById("applicationTab.atar-elapsed-days-1")              should haveClass("live-red-text")
       doc.getElementById("applicationTab.liability-refer-days-0").text      shouldBe "65"

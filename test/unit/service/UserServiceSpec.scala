@@ -80,9 +80,9 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "return all users" in {
       given(connector.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1"))))
-      await(service.getAllUsers(Seq(models.Role.CLASSIFICATION_OFFICER), "2", NoPagination())) shouldBe (Paged(
+      await(service.getAllUsers(Seq(models.Role.CLASSIFICATION_OFFICER), "2", NoPagination())) shouldBe Paged(
         Seq(Operator("1"))
-      ))
+      )
     }
   }
 }

@@ -16,10 +16,10 @@
 
 package models.forms
 
-import java.time.Instant
-
 import models._
 import utils.Cases
+
+import java.time.Instant
 
 class LiabilityDetailsFormTest extends ModelsBaseSpec {
 

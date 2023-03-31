@@ -25,8 +25,9 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.JsString
 import repositories.SessionRepository
-import scala.concurrent.Future
 import uk.gov.hmrc.http.cache.client.CacheMap
+
+import scala.concurrent.Future
 
 class MongoCacheConnectorSpec
     extends ScalaCheckDrivenPropertyChecks

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.tariffclassificationfrontend.service
+package service
 
 import models.Country
-import service.{CountriesService, ServiceSpecBase}
 
 class CountriesServiceSpec extends ServiceSpecBase {
 
-  val countriesService = injector.instanceOf[CountriesService]
+  val countriesService: CountriesService = injector.instanceOf[CountriesService]
 
-  val expectedCountriesList = List(
+  val expectedCountriesList: List[Country] = List(
     Country("AF", "title.afghanistan", "AF", Nil),
     Country("AL", "title.albania", "AL", Nil),
     Country("DZ", "title.algeria", "DZ", Nil),

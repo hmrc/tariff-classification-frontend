@@ -21,7 +21,7 @@ import connector.DataCacheConnector
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, RequestActionsWithPermissionsAndData}
 import models.Role.Role
 import models._
-import models.forms.v2.{MoveCasesForm, TeamOrUser, TeamOrUserForm, TeamToMoveCaseForm, UserToMoveCaseForm}
+import models.forms.v2._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import play.api.http.Status

@@ -21,10 +21,10 @@ import models._
 import models.forms.CaseStatusRadioInputFormProvider
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
+import play.api.mvc.request.RequestTarget
 import play.api.test.Helpers._
 import service.CasesService
 import utils.Cases
-import play.api.mvc.request.RequestTarget
 import views.html.change_case_status
 
 class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {

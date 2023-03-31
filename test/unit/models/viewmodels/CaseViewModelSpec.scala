@@ -16,24 +16,25 @@
 
 package models.viewmodels
 
-import java.time.Instant
 import models.CaseStatus.CaseStatus
-import models.{ApplicationType, CaseStatus, Contact, ModelsBaseSpec, Permission}
+import models._
 import utils.Cases
+
+import java.time.Instant
 
 class CaseViewModelSpec extends ModelsBaseSpec {
 
-  val openCase                  = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
-  val referredCase              = Cases.liabilityCaseExample.copy(status = CaseStatus.REFERRED)
-  val rejectedCase              = Cases.liabilityCaseExample.copy(status = CaseStatus.REJECTED)
-  val suspendedCase             = Cases.liabilityCaseExample.copy(status = CaseStatus.SUSPENDED)
-  val completedCase             = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
-  val newCase                   = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
-  val cancelledCase             = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
-  val casesWithRulingTab        = Seq(openCase, referredCase, rejectedCase, suspendedCase, completedCase)
-  val casesWithoutRulingTab     = Seq(newCase, cancelledCase)
-  val operator                  = Cases.operatorWithCompleteCasePermission
-  val operatorWithoutPermission = Cases.operatorWithoutCompleteCasePermission
+  val openCase: Case                      = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
+  val referredCase: Case                  = Cases.liabilityCaseExample.copy(status = CaseStatus.REFERRED)
+  val rejectedCase: Case                  = Cases.liabilityCaseExample.copy(status = CaseStatus.REJECTED)
+  val suspendedCase: Case                 = Cases.liabilityCaseExample.copy(status = CaseStatus.SUSPENDED)
+  val completedCase: Case                 = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
+  val newCase: Case                       = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
+  val cancelledCase: Case                 = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
+  val casesWithRulingTab: Seq[Case]       = Seq(openCase, referredCase, rejectedCase, suspendedCase, completedCase)
+  val casesWithoutRulingTab: Seq[Case]    = Seq(newCase, cancelledCase)
+  val operator: Operator                  = Cases.operatorWithCompleteCasePermission
+  val operatorWithoutPermission: Operator = Cases.operatorWithoutCompleteCasePermission
 
   private val caseHeaderViewModel =
     CaseHeaderViewModel(
@@ -44,7 +45,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
       Some("case-source"),
       Contact("name", "email@email.com"),
       CaseStatusViewModel(None, Some(StatusTagViewModel("CANCELLED", "red")), None),
-      false
+      isMigrated = false
     )
 
   def buildLiabilityModel(
@@ -182,7 +183,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
               Some(StatusTagViewModel("CANCELLED", "red")),
               None
             ),
-            false
+            isMigrated = false
           ),
           hasPermissions       = false,
           showChangeCaseStatus = false,

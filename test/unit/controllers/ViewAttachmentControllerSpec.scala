@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.view_attachment_unavailable
 
+import java.net.URLEncoder
 import scala.concurrent.Future
 
 class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -79,9 +80,16 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       Some(Source.single(ByteString(fileContent)))
     )
 
+  private def encodedFilename(file: FileMetadata)       = file.fileName.map(URLEncoder.encode(_, "UTF-8"))
+  private def expectedContentHeader(file: FileMetadata) = encodedFilename(file).map(name => s"filename*=UTF-8''$name")
+
   private val fileReady      = FileMetadata("id", Some("file"), Some("type"), Some("url"), Some(ScanStatus.READY))
   private val fileFailed     = FileMetadata("id", Some("file"), Some("type"), None, Some(ScanStatus.FAILED))
   private val fileProcessing = FileMetadata("id", Some("file"), Some("type"), None, None)
+  private val fileReadyWithNonAsciiFileNameWithoutExtension =
+    FileMetadata("id", Some("test–file"), Some("type"), Some("url"), Some(ScanStatus.READY))
+  private val fileReadyWithNonAsciiFileNameWithExtension =
+    FileMetadata("id", Some("test–file.pdf"), Some("type"), Some("url"), Some(ScanStatus.READY))
 
   "View Attachment 'GET" should {
 
@@ -91,8 +99,31 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
-      status(result)         shouldBe Status.OK
-      contentAsBytes(result) shouldBe ByteString("CONTENT".getBytes)
+      status(result)                             shouldBe Status.OK
+      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileReady)
+      contentAsBytes(result)                     shouldBe ByteString("CONTENT".getBytes)
+    }
+
+    "return 200 and file content for safe file found with non ascii name" in {
+      givenFileMetadata(Some(fileReadyWithNonAsciiFileNameWithoutExtension))
+      givenFileContent(fileReadyWithNonAsciiFileNameWithoutExtension.url.get, "CONTENT".getBytes())
+
+      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
+
+      status(result)                             shouldBe Status.OK
+      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileReadyWithNonAsciiFileNameWithoutExtension)
+      contentAsBytes(result)                     shouldBe ByteString("CONTENT".getBytes)
+    }
+
+    "return 200 and file content for safe file found with non ascii name and extension" in {
+      givenFileMetadata(Some(fileReadyWithNonAsciiFileNameWithExtension))
+      givenFileContent(fileReadyWithNonAsciiFileNameWithExtension.url.get, "CONTENT".getBytes())
+
+      val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
+
+      status(result)                             shouldBe Status.OK
+      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileReadyWithNonAsciiFileNameWithExtension)
+      contentAsBytes(result)                     shouldBe ByteString("CONTENT".getBytes)
     }
 
     "return 404 for file processing" in {

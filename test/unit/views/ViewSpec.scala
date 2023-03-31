@@ -30,7 +30,7 @@ import play.twirl.api.Html
 abstract class ViewSpec extends SpecBase {
 
   implicit val appConfig: AppConfig = realAppConfig
-  protected val errorPrefix         = messages("error.browser.title.prefix")
+  protected val errorPrefix: String = messages("error.browser.title.prefix")
 
   protected val authenticatedOperator: Operator         = Operator("operator-id")
   protected val authenticatedOperatorWithName: Operator = Operator("operator-id", Some("operator name officer"))

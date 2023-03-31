@@ -16,9 +16,10 @@
 
 package models.forms
 
-import java.time.{ZoneOffset, ZonedDateTime}
 import models.ModelsBaseSpec
 import play.api.data.Form
+
+import java.time.{ZoneOffset, ZonedDateTime}
 
 class FormDateTest extends ModelsBaseSpec {
 

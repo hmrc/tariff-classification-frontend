@@ -16,13 +16,13 @@
 
 package integration
 
-import com.github.tomakehurst.wiremock.client.WireMock.{stubFor, _}
+import com.github.tomakehurst.wiremock.client.WireMock._
+import models.{Case, Pagination}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-import models.{Case, Pagination}
 import utils.Cases._
-import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 import utils.JsonFormatters._
+import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
 class LiabilitySpec extends IntegrationTest with MockitoSugar {
 

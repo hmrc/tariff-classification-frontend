@@ -117,8 +117,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           permission = Set(Permission.EDIT_RULING)
         ).editRulingDetails("reference")(newFakeGETRequestWithCSRF())
         status(result) shouldBe Status.OK
-        contentAsString(result) shouldNot (include("edit_liability_decision-heading"))
-        contentAsString(result) should (include("case-heading"))
+        contentAsString(result) shouldNot include("edit_liability_decision-heading")
+        contentAsString(result) should include("case-heading")
       }
 
       "Case is an Liability with incorrect permissions" in {

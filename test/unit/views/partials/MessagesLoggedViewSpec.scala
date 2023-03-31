@@ -16,16 +16,17 @@
 
 package views.partials
 
-import java.time.{Instant, ZoneOffset, ZonedDateTime}
-
+import models._
 import models.forms.MessageForm
+import models.request.AuthenticatedRequest
 import models.viewmodels.MessagesTabViewModel
-import models.{CaseStatus, _}
-import utils.Cases
+import play.api.mvc.AnyContentAsEmpty
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials
+
+import java.time.{ZoneOffset, ZonedDateTime}
 
 class MessagesLoggedViewSpec extends ViewSpec {
 
@@ -33,9 +34,12 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
   private val exampleMessages = List(Message("name", date, "message"), Message("name2", date, "message2"))
 
-  private val messagesTab: MessagesTabViewModel = MessagesTabViewModel("reference", exampleMessages)
-  val requestWithAddNotePermission              = requestWithPermissions(Permission.ADD_NOTE)
-  val requestWithAddMsgPermission               = requestWithPermissions(Permission.ADD_MESSAGE)
+  val requestWithAddNotePermission: AuthenticatedRequest[AnyContentAsEmpty.type] = requestWithPermissions(
+    Permission.ADD_NOTE
+  )
+  val requestWithAddMsgPermission: AuthenticatedRequest[AnyContentAsEmpty.type] = requestWithPermissions(
+    Permission.ADD_MESSAGE
+  )
 
   "case is Correspondence" when {
     "Messages Details" should {

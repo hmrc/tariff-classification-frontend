@@ -38,7 +38,7 @@ class AssigneeViewSpec extends ViewSpec {
       // Given
       val operator_0 = Operator("operator-id", Some("operatorName"))
       // When
-      val doc = await(view(assignee(operator_0, true)))
+      val doc = await(view(assignee(operator_0, capitalise = true)))
       // Then
       doc.body should containText("You")
     }
@@ -47,7 +47,7 @@ class AssigneeViewSpec extends ViewSpec {
       // Given
       val operator_0 = Operator("operator-id", Some("operatorName"))
       // When
-      val doc = await(view(assignee(operator_0, false)))
+      val doc = await(view(assignee(operator_0)))
       // Then
       doc.body should containText("you")
     }

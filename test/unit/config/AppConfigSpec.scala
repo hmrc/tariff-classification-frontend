@@ -16,9 +16,9 @@
 
 package config
 
-import java.time.Clock
-
 import base.SpecBase
+
+import java.time.Clock
 
 class AppConfigSpec extends SpecBase {
 

@@ -16,14 +16,14 @@
 
 package views.v2
 
-import java.time.Instant
-
 import models._
 import models.forms.LiabilityDetailsForm
 import utils.Cases
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.v2.liability_details_edit
+
+import java.time.Instant
 
 class LiabilityDetailsEditViewSpec extends ViewSpec {
 

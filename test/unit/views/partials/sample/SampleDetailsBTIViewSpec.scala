@@ -17,11 +17,11 @@
 package views.partials.sample
 
 import models._
+import models.viewmodels.atar.SampleTabViewModel
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.sample.sample_details_bti
-import models.viewmodels.atar.SampleTabViewModel
 
 class SampleDetailsBTIViewSpec extends ViewSpec {
 
@@ -80,7 +80,7 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
     "not render sample status details of when sample not being provided" in {
       // Given
       val caseWithSample = aCase(
-        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
+        withBTIDetails(),
         withoutAttachments()
       )
 
@@ -95,7 +95,7 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
     "not render sample status activity when sample not being provided" in {
       // Given
       val caseWithSample = aCase(
-        withBTIDetails(sampleToBeProvided = false, sampleToBeReturned = false),
+        withBTIDetails(),
         withoutAttachments()
       )
 

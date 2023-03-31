@@ -15,15 +15,15 @@
  */
 
 package views.managementtools
-import models.{Case, Operator, Role}
 import models.viewmodels.managementtools.UsersTab
+import models.{Case, Operator, Role}
 import play.twirl.api.HtmlFormat
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.assignedUsersTable
 
-class AssignedUsersTableViewSpec extends ViewSpec {
+class AssignedUsersTableSpec extends ViewSpec {
 
   val users: List[Operator] = List(
     Operator("id1", Some("operator 1"), Some("email@operator.com"), Role.CLASSIFICATION_OFFICER, Seq("2")),
@@ -67,7 +67,7 @@ class AssignedUsersTableViewSpec extends ViewSpec {
         doc.getElementById(s"assigned-role-$index") should containText(Role.format(user.role))
         doc.getElementById(s"assigned-team-$index") should containText(user.getMemberTeamNames.mkString(", "))
         doc.getElementById(s"assigned-case-$index") should containText(
-          count.get(user.id).getOrElse(List.empty).size.toString
+          count.getOrElse(user.id, List.empty).size.toString
         )
       }
     }

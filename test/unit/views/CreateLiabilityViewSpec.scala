@@ -27,7 +27,7 @@ class CreateLiabilityViewSpec extends ViewSpec {
 
   private lazy val liabilityOrder: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm
 
-  val createLiabilityView = injector.instanceOf[create_liability]
+  val createLiabilityView: create_liability = injector.instanceOf[create_liability]
 
   private lazy val doc = view(createLiabilityView(liabilityOrder))
 

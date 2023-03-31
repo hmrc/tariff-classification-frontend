@@ -17,10 +17,10 @@
 package controllers
 
 import connector.FakeDataCacheConnector
+import models.ReferralReason.ReferralReason
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
-import models.ReferralReason.ReferralReason
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
@@ -282,7 +282,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val cacheMap = UserAnswers(cacheKey).set("referral", referral).cacheMap
       await(FakeDataCacheConnector.save(cacheMap))
 
-      val captor = ArgumentCaptor.forClass(classOf[Seq[ReferralReason]])
+      val captor: ArgumentCaptor[Seq[ReferralReason]] = ArgumentCaptor.forClass(classOf[Seq[ReferralReason]])
 
       given(
         casesService.referCase(

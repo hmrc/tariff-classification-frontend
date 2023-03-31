@@ -16,14 +16,14 @@
 
 package views.managementtools
 
-import java.time.Instant
-
 import models._
 import models.reporting._
 import play.twirl.api.{Html, StringInterpolation}
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.managementtools.reportField
+
+import java.time.Instant
 
 class ReportFieldViewSpec extends ViewSpec {
   // Jsoup can't parse an isolated <td> tag

@@ -59,7 +59,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
     val section = "section-information"
 
     "contain the classification officer name" in {
-      assertSectionContains(section, rulingCase.assignee.flatMap(x => x.name).getOrElse("Hector Salamanca").toString)
+      assertSectionContains(section, rulingCase.assignee.flatMap(x => x.name).getOrElse("Hector Salamanca"))
     }
 
     "contain the case reference" in {

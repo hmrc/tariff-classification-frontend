@@ -16,12 +16,12 @@
 
 package models.forms.v2
 
-import java.time.{Instant, LocalDate}
-
 import config.AppConfig
 import models._
 import models.forms.CommodityCodeConstraints
 import utils.Cases
+
+import java.time.{Instant, LocalDate}
 
 class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 

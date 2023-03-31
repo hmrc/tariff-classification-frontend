@@ -17,11 +17,11 @@
 package views.partials.sample
 
 import models._
+import models.viewmodels.atar.SampleTabViewModel
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.sample.sample_details
-import models.viewmodels.atar.SampleTabViewModel
 
 class SampleDetailsViewSpec extends ViewSpec {
 
@@ -46,7 +46,7 @@ class SampleDetailsViewSpec extends ViewSpec {
     "render sample status activity when present on case" in {
       // Given
       val caseWithSample = aCase(
-        withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = false),
+        withBTIDetails(sampleToBeProvided = true),
         withoutAttachments()
       )
 

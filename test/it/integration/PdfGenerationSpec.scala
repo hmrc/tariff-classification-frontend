@@ -17,12 +17,12 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import play.api.libs.ws.WSResponse
-import play.api.test.Helpers._
 import models.CaseStatus
 import models.response.FileMetadata
-import utils.{CasePayloads, Cases}
+import play.api.libs.ws.WSResponse
+import play.api.test.Helpers._
 import utils.JsonFormatters._
+import utils.{CasePayloads, Cases}
 
 class PdfGenerationSpec extends IntegrationTest {
 

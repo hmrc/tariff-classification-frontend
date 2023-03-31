@@ -16,24 +16,23 @@
 
 package utils
 
-import play.api.libs.json.Json
 import models.{Event, NoPagination, Paged}
+import play.api.libs.json.{Json, Writes}
 import utils.JsonFormatters.{eventFormat, newEventRequestFormat}
-import play.api.libs.json.Writes
 
 object EventPayloads {
 
-  val event: String        = jsonOf(Events.event)
-  val eventRequest: String = jsonOf(Events.eventRequest)
-  val events: String       = jsonOf(Events.events)
-  val sampleEvents         = jsonOf(Events.sampleEvents)
-  val pagedEvents: String  = jsonOf(Paged(Events.events, NoPagination(), 1))
-  val pagedSampleEvents    = jsonOf(Paged(Events.sampleEvents, NoPagination(), 1))
-  val pagedEmpty: String   = jsonOf(Paged.empty[Event])
-  val completionEvents     = jsonOf(Events.pagedCompletedEvents)
-  val referralEvents       = jsonOf(Events.pagedReferredEvents)
+  val event: String             = jsonOf(Events.event)
+  val eventRequest: String      = jsonOf(Events.eventRequest)
+  val events: String            = jsonOf(Events.events)
+  val sampleEvents: String      = jsonOf(Events.sampleEvents)
+  val pagedEvents: String       = jsonOf(Paged(Events.events, NoPagination(), 1))
+  val pagedSampleEvents: String = jsonOf(Paged(Events.sampleEvents, NoPagination(), 1))
+  val pagedEmpty: String        = jsonOf(Paged.empty[Event])
+  val completionEvents: String  = jsonOf(Events.pagedCompletedEvents)
+  val referralEvents: String    = jsonOf(Events.pagedReferredEvents)
 
-  def emptyMap[A: Writes] = jsonOf(Map.empty[String, A])
+  def emptyMap[A: Writes]: String = jsonOf(Map.empty[String, A])
 
   def jsonOf[A: Writes](obj: A): String =
     Json.toJson(obj).toString()

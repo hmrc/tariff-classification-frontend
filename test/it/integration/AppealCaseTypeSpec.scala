@@ -34,7 +34,7 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
   "Case Review Change" should {
 
     "return status 200 for manager" in {
-      givenAuthSuccess("manager")
+      givenAuthSuccess()
       shouldSucceed()
     }
 

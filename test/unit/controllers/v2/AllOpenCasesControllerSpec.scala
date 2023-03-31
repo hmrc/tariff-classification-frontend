@@ -17,8 +17,8 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models._
 import models.CaseStatus.CaseStatus
+import models._
 import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
@@ -108,7 +108,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).displayAllOpenCases(ATaRTab)(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized.url)
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
 
     }
 

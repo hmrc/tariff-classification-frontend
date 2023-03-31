@@ -41,7 +41,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
         caseReference = "123456",
         appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
-        false
+        permissionForExtendedUse = false
       )
 
       appealTabViewModel shouldBe expected
@@ -59,7 +59,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
         caseReference = "123456",
         appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         Some("Yes"),
-        true
+        permissionForExtendedUse = true
       )
 
       appealTabViewModel shouldBe expected
@@ -77,7 +77,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
         caseReference = "123456",
         appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
-        false
+        permissionForExtendedUse = false
       )
 
       appealTabViewModel shouldBe expected
@@ -95,7 +95,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
         caseReference = "123456",
         appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
-        false
+        permissionForExtendedUse = false
       )
 
       appealTabViewModel shouldBe expected
@@ -121,7 +121,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
         caseReference = "123456",
         appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         Some("No"),
-        true
+        permissionForExtendedUse = true
       )
 
       appealTabViewModel shouldBe expected

@@ -16,9 +16,8 @@
 
 package service
 
-import java.io.File
-import java.time.Instant
-
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import connector.FileStoreConnector
 import models._
 import models.request.FileStoreInitiateRequest
@@ -31,11 +30,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.Cases._
 
+import java.io.File
+import java.nio.file.Path
+import java.time.Instant
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
-import java.nio.file.Path
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
 
 class FileStoreServiceSpec extends ServiceSpecBase {
 

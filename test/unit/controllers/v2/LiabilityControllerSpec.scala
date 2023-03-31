@@ -19,22 +19,20 @@ package controllers.v2
 import com.google.inject.Provider
 import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
-
-import javax.inject.Inject
+import models._
 import models.forms._
 import models.forms.v2.LiabilityDetailsForm
 import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels._
-import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.{Binding, bind}
 import play.api.mvc.{PlayBodyParsers, Result}
 import play.api.test.Helpers._
 import play.twirl.api.{Html, HtmlFormat}
@@ -44,6 +42,7 @@ import utils.{Cases, Events}
 import views.html.partials.liabilities.{attachments_details, attachments_list}
 import views.html.v2.{case_heading, liability_details_edit, liability_view, remove_attachment}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RequestActionsWithPermissionsProvider @Inject() (
@@ -62,7 +61,9 @@ class RequestActionsWithPermissionsProvider @Inject() (
 
 class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val binds = List(
+  val binds: List[Binding[
+    _ >: QueuesService with FileStoreService with case_heading with remove_attachment with attachments_list with KeywordsService with attachments_details with EventsService with liability_view with CasesService <: Object
+  ]] = List(
     //views
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
@@ -77,7 +78,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     bind[CasesService].toInstance(mock[CasesService])
   )
 
-  val defaultRequestActions = List(
+  val defaultRequestActions: List[Binding[RequestActions]] = List(
     //providers
     bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider]
   )

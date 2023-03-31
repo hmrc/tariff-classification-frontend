@@ -19,13 +19,13 @@ package integration
 import akka.util.ByteString
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.CaseStatus
+import models.response.FileMetadata
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import models.response.FileMetadata
-import utils.{CasePayloads, Cases}
 import utils.JsonFormatters.{caseFormat, fileMetaDataFormat}
+import utils.{CasePayloads, Cases}
 
 class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
@@ -38,7 +38,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
   "View Attachment" should {
 
     "return status 200 for manager" in {
-      givenAuthSuccess("manager")
+      givenAuthSuccess()
       shouldSucceed
     }
 

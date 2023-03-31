@@ -19,7 +19,6 @@ package views.components
 import views.ViewMatchers.containElementWithID
 import views.ViewSpec
 import views.html.components.cases_cards
-import models.ApplicationType
 
 class CaseCardsViewSpec extends ViewSpec {
 

@@ -18,7 +18,7 @@ package controllers
 
 import controllers.routes._
 import models.forms.CorrespondenceForm
-import models.{Case, _}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito._
 import org.mockito.Mockito._
@@ -29,8 +29,8 @@ import play.api.test.Helpers._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.{case_not_found, resource_not_found}
 import views.html.v2.create_correspondence
+import views.html.{case_not_found, resource_not_found}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful

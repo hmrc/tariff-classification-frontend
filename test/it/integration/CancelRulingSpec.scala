@@ -22,8 +22,8 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.Cases.{aCase, withDecision}
-import utils.{CasePayloads, EventPayloads}
 import utils.JsonFormatters._
+import utils.{CasePayloads, EventPayloads}
 
 class CancelRulingSpec extends IntegrationTest with MockitoSugar {
 
@@ -35,7 +35,7 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
 
     "return status 200 for manager" in {
       // Given
-      givenAuthSuccess("manager")
+      givenAuthSuccess()
       shouldSucceed
     }
 

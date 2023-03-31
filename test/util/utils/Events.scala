@@ -16,10 +16,10 @@
 
 package utils
 
-import java.time.Instant
-
 import models._
 import models.request.NewEventRequest
+
+import java.time.Instant
 
 object Events {
   val event: Event = Event("id", Note("comment"), Operator("user-id", Some("user name")), "case-ref", Instant.now())
@@ -43,7 +43,7 @@ object Events {
   val pagedCompletedEvents: Paged[Event]       = Paged(Seq(completedEvent, completedEvent))
   val completionEventsById: Map[String, Event] = Map(completedEvent.caseReference -> completedEvent)
 
-  val sampleEvent = Event(
+  val sampleEvent: Event = Event(
     "id",
     SampleStatusChange(None, Some(SampleStatus.SENT_FOR_ANALYSIS)),
     Operator("user-id", Some("user name")),
@@ -51,5 +51,5 @@ object Events {
     Instant.now()
   )
 
-  val sampleEvents = Seq(sampleEvent)
+  val sampleEvents: Seq[Event] = Seq(sampleEvent)
 }

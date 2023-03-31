@@ -20,7 +20,7 @@ import models._
 import models.reporting._
 
 object Reports {
-  val queueReportResults = Seq(
+  val queueReportResults: Seq[QueueResultGroup] = Seq(
     QueueResultGroup(7, None, ApplicationType.ATAR),
     QueueResultGroup(3, None, ApplicationType.LIABILITY),
     QueueResultGroup(4, Some("2"), ApplicationType.ATAR),
@@ -29,5 +29,5 @@ object Reports {
     QueueResultGroup(1, Some("4"), ApplicationType.LIABILITY)
   )
 
-  val pagedQueueReport = Paged(queueReportResults)
+  val pagedQueueReport: Paged[QueueResultGroup] = Paged(queueReportResults)
 }

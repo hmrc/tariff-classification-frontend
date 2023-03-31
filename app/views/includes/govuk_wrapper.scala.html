@@ -19,7 +19,6 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 
-@import views.html.helper.CSPNonce
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.internalheader.InternalHeader
 
 @this(
@@ -57,7 +56,7 @@
 
 @govukLayout(
     pageTitle = Some(pageTitle),
-    headBlock = Some(hmrcInternalHead(head, nonce = CSPNonce.get)),
+    headBlock = Some(hmrcInternalHead(head)),
     headerBlock = Some(hmrcInternalHeader(InternalHeader(
                     homepageUrl = controllers.routes.OperatorDashboardController.onPageLoad.url,
                     serviceName = Some(messages("service.name")),

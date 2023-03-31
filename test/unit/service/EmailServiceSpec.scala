@@ -24,9 +24,8 @@ import org.mockito.Mockito.verify
 import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future.successful
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 class EmailServiceSpec extends ServiceSpecBase {
 
@@ -55,7 +54,7 @@ class EmailServiceSpec extends ServiceSpecBase {
         .of(2021, 1, 1)
         .atStartOfDay()
         .atZone(ZoneOffset.UTC)
-        .toInstant()
+        .toInstant
 
       given(aCase.reference).willReturn("ref")
       given(aCase.application).willReturn(application)

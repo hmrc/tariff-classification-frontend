@@ -16,17 +16,18 @@
 
 package service
 
+import cats.data.NonEmptySeq
 import connector.BindingTariffClassificationConnector
-import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
-import org.mockito.BDDMockito._
-import org.scalatest.BeforeAndAfterEach
 import models._
 import models.reporting._
-import uk.gov.hmrc.http.HeaderCarrier
+import org.mockito.ArgumentMatchers._
+import org.mockito.BDDMockito._
+import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.QueryStringBindable
+import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.Future
-import cats.data.NonEmptySeq
 
 class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 

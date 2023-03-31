@@ -16,11 +16,11 @@
 
 package models
 
-import java.time.{Clock, Instant, ZoneOffset}
-
 import org.scalatest.BeforeAndAfterAll
 import utils.Cases
-import utils.Cases.{aCase, withBTIApplication, _}
+import utils.Cases._
+
+import java.time.{Clock, Instant, ZoneOffset}
 
 class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
 

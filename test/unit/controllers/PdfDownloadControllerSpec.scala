@@ -16,23 +16,22 @@
 
 package controllers
 
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import models._
+import models.response.FileMetadata
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import service.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import views.html.{case_not_found, document_not_found, ruling_not_found}
 
 import scala.concurrent.Future.successful
-
-import models.response.FileMetadata
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
-import org.scalatest.BeforeAndAfterEach
-import views.html.{case_not_found, document_not_found, ruling_not_found}
 
 class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -55,7 +54,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     justification        = "justification-content",
     goodsDescription     = "goods-description",
     methodSearch         = Some("method-to-search"),
-    decisionPdf          = Some(Attachment("id", false, Some(Operator("1", None))))
+    decisionPdf          = Some(Attachment("id", public = false, Some(Operator("1", None))))
   )
 
   private val caseWithDecision          = Cases.btiCaseExample.copy(decision       = Some(decision))
@@ -156,7 +155,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)                        shouldBe OK
       contentAsString(result)               shouldBe "Some content"
       contentType(result)                   shouldBe Some("application/pdf")
-      header("Content-Disposition", result) shouldBe (Some("attachment; filename=some.pdf"))
+      header("Content-Disposition", result) shouldBe Some("attachment; filename=some.pdf")
     }
 
     "return expected pdf for liability case" in {
@@ -168,7 +167,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       status(result)                        shouldBe OK
       contentAsString(result)               shouldBe "Some content"
       contentType(result)                   shouldBe Some("application/pdf")
-      header("Content-Disposition", result) shouldBe (Some("attachment; filename=some.pdf"))
+      header("Content-Disposition", result) shouldBe Some("attachment; filename=some.pdf")
     }
 
     "redirect to ruling when no decision found" in {

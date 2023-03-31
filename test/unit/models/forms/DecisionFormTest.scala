@@ -16,12 +16,12 @@
 
 package models.forms
 
-import java.time.Instant
-
 import models.{Decision, ModelsBaseSpec}
 import org.mockito.BDDMockito._
 import play.api.data.FormError
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
+
+import java.time.Instant
 
 class DecisionFormTest extends ModelsBaseSpec {
 

@@ -29,6 +29,8 @@ import views.html.view_attachment_unavailable
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
+import java.net.URLEncoder
+import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -43,6 +45,16 @@ class ViewAttachmentController @Inject() (
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 
+  /*
+   * This method is used to encode the filename in the Content-Disposition header
+   * url encode the filename and browser will decoded based on the charset you specify
+   * if no filename is provided, generate a random one
+   */
+  private def getEncodedFilenameHeader(fileSubmitted: FileMetadata): String =
+    fileSubmitted.fileName
+      .map(fileName => s"filename*=UTF-8''${URLEncoder.encode(fileName, "UTF-8")}")
+      .getOrElse(UUID.randomUUID().toString)
+
   def get(reference: String, id: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.VIEW_CASES))
       .async { implicit request =>
@@ -54,7 +66,7 @@ class ViewAttachmentController @Inject() (
             } yield Ok
               .streamed(content, None, fileSubmitted.mimeType)
               .withHeaders(
-                "Content-Disposition" -> s"filename=${fileSubmitted.fileName}"
+                "Content-Disposition" -> getEncodedFilenameHeader(fileSubmitted)
               )
             fileStoreResponse.getOrElse(NotFound(view_attachment_unavailable(meta)))
 

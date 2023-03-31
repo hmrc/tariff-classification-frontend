@@ -16,13 +16,11 @@
 
 package views.partials
 
-import models.response.ScanStatus
-import utils.Cases
+import models.viewmodels.atar.GoodsTabViewModel
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.application_details
-import models.viewmodels.atar.GoodsTabViewModel
 
 class ApplicationDetailsViewSpec extends ViewSpec {
 

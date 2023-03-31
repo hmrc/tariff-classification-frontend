@@ -22,6 +22,7 @@ import config.AppConfig
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import play.api.libs.ws.WSClient
+import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 import utils.{ResourceFiles, WiremockTestServer}
 
@@ -37,7 +38,7 @@ trait ConnectorTest extends SpecBase with WiremockTestServer with ResourceFiles 
 
   protected val authenticatedHttpClient =
     new AuthenticatedHttpClient(realConfig, realHttpAudit, wsClient, mockAppConfig, actorSystem)
-  protected val standardHttpClient = new DefaultHttpClient(realConfig, realHttpAudit, wsClient, actorSystem)
+  protected val standardHttpClient: HttpClient = new DefaultHttpClient(realConfig, realHttpAudit, wsClient, actorSystem)
 
   override def beforeAll(): Unit = {
     super.beforeAll()

@@ -18,9 +18,10 @@ package controllers
 
 import models.forms.LiabilityForm
 import models.request.AuthenticatedRequest
-import models.{Permission, _}
+import models._
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status
 import play.api.test.Helpers._
 import service.CasesService
@@ -29,7 +30,6 @@ import utils.Cases._
 import views.html.create_liability
 
 import scala.concurrent.Future._
-import play.api.data.FormBinding.Implicits.formBinding
 
 class CreateLiabilityControllerSpec extends ControllerBaseSpec {
 

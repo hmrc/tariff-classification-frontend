@@ -16,11 +16,11 @@
 
 package utils
 
-import JsonFormatters._
 import play.api.libs.json._
+import utils.JsonFormatters._
 
 object ReportPayloads {
-  val sampleQueueReport = jsonOf(Reports.pagedQueueReport)
+  val sampleQueueReport: String = jsonOf(Reports.pagedQueueReport)
 
   def jsonOf[A: Writes](obj: A): String =
     Json.toJson(obj).toString()

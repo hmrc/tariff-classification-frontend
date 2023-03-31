@@ -16,17 +16,17 @@
 
 package utils
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit.DAYS
-import java.util.UUID
-
 import models.CaseStatus.CaseStatus
 import models.LiabilityStatus.LiabilityStatus
 import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.response.ScanStatus
-import models.viewmodels.{TraderContact, _}
+import models.viewmodels._
+
+import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
+import java.util.UUID
 
 object Cases {
 
@@ -89,7 +89,7 @@ object Cases {
     None,
     sampleToBeProvided = false,
     sampleToBeReturned = false,
-    applicationPdf     = Some(Attachment("id", false, Some(Operator("1", None))))
+    applicationPdf     = Some(Attachment("id", public = false, Some(Operator("1", None))))
   )
   val simpleBtiApplicationExample: BTIApplication = BTIApplication(
     eoriDetailsExample,
@@ -119,7 +119,7 @@ object Cases {
     None,
     Some("denomination"),
     Seq.empty,
-    decisionPdf = Some(Attachment("id", false, Some(Operator("1", None))))
+    decisionPdf = Some(Attachment("id", public = false, Some(Operator("1", None))))
   )
   val incompleteDecision: Decision = Decision(
     "",
@@ -311,10 +311,10 @@ object Cases {
     "",
     "",
     None,
-    false,
+    isRepaymentClaim = false,
     Some("agentName"),
     Some("location name"),
-    false
+    isMigratedCase = false
   )
 
   val rulingViewModel: Option[RulingViewModel] = Some(
@@ -326,7 +326,7 @@ object Cases {
       "justification",
       "method searches",
       "method exclusions",
-      false,
+      showEditRuling = false,
       "case references"
     )
   )

@@ -16,15 +16,15 @@
 
 package views
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit.DAYS
-
 import utils.{Cases, Dates}
 import views.html.confirm_complete_case
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
+
 class ConfirmCompleteCaseViewSpec extends ViewSpec {
 
-  val confirmCompleteCaseView = app.injector.instanceOf[confirm_complete_case]
+  val confirmCompleteCaseView: confirm_complete_case = app.injector.instanceOf[confirm_complete_case]
 
   "Confirm Complete page" should {
 

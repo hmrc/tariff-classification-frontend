@@ -16,10 +16,10 @@
 
 package models
 
-import java.time.Instant
-
 import models.CaseStatus.CaseStatus
 import utils.Cases._
+
+import java.time.Instant
 
 class PermissionTest extends ModelsBaseSpec {
 

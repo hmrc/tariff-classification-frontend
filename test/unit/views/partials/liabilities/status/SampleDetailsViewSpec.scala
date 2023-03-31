@@ -18,7 +18,7 @@ package views.partials.liabilities.status
 
 import models.viewmodels.SampleStatusTabViewModel
 import models.{Event, Paged, Permission, SampleSend}
-import views.ViewMatchers.{containText, _}
+import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.liabilities.sample.sample_details_liability
 

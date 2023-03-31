@@ -33,7 +33,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       Some("case-source"),
       Contact("name", "email@email.com"),
       CaseStatusViewModel(None, Some(StatusTagViewModel("OPEN", "red")), None),
-      false
+      isMigrated = false
     )
 
   def caseHeading: case_heading = injector.instanceOf[case_heading]
@@ -74,7 +74,7 @@ class CaseHeadingViewSpec extends ViewSpec {
           Some("case-source"),
           Contact("name", "email@email.com"),
           CaseStatusViewModel(None, Some(StatusTagViewModel("OPEN", "red")), None),
-          true
+          isMigrated = true
         )
 
       val doc = view(

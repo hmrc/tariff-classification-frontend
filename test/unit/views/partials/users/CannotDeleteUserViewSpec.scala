@@ -24,7 +24,7 @@ import views.html.partials.users.cannot_delete_user
 class CannotDeleteUserViewSpec extends ViewSpec {
 
   def cannotDeleteUser: cannot_delete_user = injector.instanceOf[cannot_delete_user]
-  val userWithNoNameAndNoTeam              = Operator("1")
+  val userWithNoNameAndNoTeam: Operator    = Operator("1")
 
   "cannotDeleteUser View" should {
     "render successfully" in {

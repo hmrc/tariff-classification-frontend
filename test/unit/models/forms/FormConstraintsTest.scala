@@ -16,10 +16,10 @@
 
 package models.forms
 
-import java.util.Calendar
-
 import models.ModelsBaseSpec
 import play.api.data.validation.{Invalid, Valid}
+
+import java.util.Calendar
 
 class FormConstraintsTest extends ModelsBaseSpec {
 

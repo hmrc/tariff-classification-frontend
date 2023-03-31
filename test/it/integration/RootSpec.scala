@@ -17,11 +17,10 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.NoPagination
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.Helpers._
-import models.NoPagination
-import utils.{CasePayloads, CaseQueueBuilder}
-import utils.ReportPayloads
+import utils.{CasePayloads, CaseQueueBuilder, ReportPayloads}
 
 class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
 

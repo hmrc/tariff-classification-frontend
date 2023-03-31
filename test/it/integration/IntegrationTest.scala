@@ -25,8 +25,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{WSClient, WSRequest}
 import play.api.test.Helpers.{OK, UNAUTHORIZED}
-import utils.{ResourceFiles, UnitSpec, WiremockTestServer}
-import utils.TestMetrics
+import utils.{ResourceFiles, TestMetrics, UnitSpec, WiremockTestServer}
 
 trait IntegrationTest
     extends UnitSpec

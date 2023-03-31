@@ -17,7 +17,7 @@
 package controllers
 
 import models.SampleReturn.SampleReturn
-import models.{Permission, SampleReturn, _}
+import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
 import org.mockito.Mockito
