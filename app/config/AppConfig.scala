@@ -81,7 +81,11 @@ class AppConfig @Inject() (
 
   lazy val clock: Clock = Clock.systemUTC()
 
-  def runningAsDev: Boolean = environment.mode == Mode.Dev
+  def runningAsDev: Boolean =
+    config
+      .getOptional[String]("run.mode")
+      .getOrElse("Dev")
+      .equals(Mode.Dev.toString)
 
   lazy val host: String = config.get[String]("platform-url.host")
 }
