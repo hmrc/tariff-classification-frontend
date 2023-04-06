@@ -99,6 +99,14 @@ class CaseController @Inject() (
           Redirect(
             controllers.v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.RULING_TAB.name)
           )
+        case ApplicationType.MISCELLANEOUS =>
+          Redirect(
+            controllers.v2.routes.MiscellaneousController.displayMiscellaneous(reference)
+          )
+        case ApplicationType.CORRESPONDENCE =>
+          Redirect(
+            controllers.v2.routes.CorrespondenceController.displayCorrespondence(reference)
+          )
       }
     }
 
