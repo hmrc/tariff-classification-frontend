@@ -196,6 +196,24 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           v2.routes.LiabilityController.displayLiability("reference").withFragment(Tab.RULING_TAB.name).path
         )
       }
+
+      "case is a Miscellaneous" in {
+        val c      = aCase(withReference("reference"), withMiscellaneousApplication)
+        val result = await(controller(c).rulingDetails("reference")(fakeRequest))
+
+        status(result)     shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(v2.routes.MiscellaneousController.displayMiscellaneous("reference").path)
+      }
+
+      "case is a Correspondence" in {
+        val c      = aCase(withReference("reference"), withCorrespondenceApplication)
+        val result = await(controller(c).rulingDetails("reference")(fakeRequest))
+
+        status(result) shouldBe Status.SEE_OTHER
+        locationOf(result) shouldBe Some(
+          v2.routes.CorrespondenceController.displayCorrespondence("reference").path
+        )
+      }
     }
   }
 

@@ -110,9 +110,11 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
-      status(result)                             shouldBe Status.OK
-      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileReadyWithNonAsciiFileNameWithoutExtension)
-      contentAsBytes(result)                     shouldBe ByteString("CONTENT".getBytes)
+      status(result) shouldBe Status.OK
+      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(
+        fileReadyWithNonAsciiFileNameWithoutExtension
+      )
+      contentAsBytes(result) shouldBe ByteString("CONTENT".getBytes)
     }
 
     "return 200 and file content for safe file found with non ascii name and extension" in {
@@ -121,9 +123,11 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       val result = await(controller().get(reference, "id")(newFakeGETRequestWithCSRF()))
 
-      status(result)                             shouldBe Status.OK
-      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(fileReadyWithNonAsciiFileNameWithExtension)
-      contentAsBytes(result)                     shouldBe ByteString("CONTENT".getBytes)
+      status(result) shouldBe Status.OK
+      headers(result).get("Content-Disposition") shouldBe expectedContentHeader(
+        fileReadyWithNonAsciiFileNameWithExtension
+      )
+      contentAsBytes(result) shouldBe ByteString("CONTENT".getBytes)
     }
 
     "return 404 for file processing" in {

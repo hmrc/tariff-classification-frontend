@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-package views
+package models.response
 
-object CaseDetailPage extends Enumeration {
-  type CaseDetailPage = Value
-  val TRADER              = Value("trader")
-  val RULING              = Value("ruling")
-  val EDIT_RULING         = Value("edit.ruling")
-  val APPLICATION_DETAILS = Value("application")
-  val SAMPLE_DETAILS      = Value("sample")
-  val ACTIVITY            = Value("activity")
-  val ATTACHMENTS         = Value("attachments")
-  val KEYWORDS            = Value("keywords")
-  val APPEAL              = Value("appeal")
+import models._
+import models.response.UploadError.fromErrorCode
+import utils.Cases
+
+class UploadErrorSpec extends ModelsBaseSpec {
+
+  "UploadErrorSpec.fromErrorCode" should {
+
+    "return FileTooLarge error" in {
+      fromErrorCode(FileTooLarge.errorCode) shouldBe FileTooLarge
+    }
+
+    "return NoFileSelected error" in {
+      fromErrorCode(NoFileSelected.errorCode) shouldBe NoFileSelected
+    }
+
+    "return Other error" in {
+      fromErrorCode("test error") shouldBe Other("test error")
+    }
+
+  }
 }

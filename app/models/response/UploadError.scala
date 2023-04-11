@@ -31,7 +31,7 @@ case class Other(
 ) extends UploadError(errorCode, "cases.attachment.upload.error")
 
 object UploadError {
-  val knownErrors: Set[UploadError] = Set(FileTooLarge, NoFileSelected)
+  private val knownErrors: Set[UploadError] = Set(FileTooLarge, NoFileSelected)
 
   def fromErrorCode(errorCode: String): UploadError =
     knownErrors.find(_.errorCode == errorCode).getOrElse(Other(errorCode))
