@@ -26,6 +26,7 @@
 @import models.forms.v2.EditKeywordAction.EditKeywordAction
 @import views.html.includes.main
 @import views.html.partials.back_link
+@import views.html.helper.CSPNonce
 
 @this(
         main: main,
@@ -39,7 +40,7 @@
 }
 
 @additionalJS = {
-    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
 }
 
 @main(

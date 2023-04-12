@@ -135,7 +135,7 @@
     </div>
 }
 
-<script>
+<script @CSPNonce.attr >
         let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.CORRESPONDENCE).url";
         let csrfToken = "@CSRF.getToken.value";
         window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);
