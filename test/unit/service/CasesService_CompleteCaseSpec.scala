@@ -74,7 +74,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   "Complete Case" should {
     "update case status to COMPLETED" when {
       "Liability" in {
-        // Given
+
         val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
         val originalDecision   = Decision("code", None, None, "justification", "goods")
         val originalCase       = aLiability.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
@@ -92,7 +92,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
           .willReturn(successful(mock[Event]))
 
-        // When Then
+         Then
         await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
         verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -108,7 +108,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       }
 
       "BTI" in {
-        // Given
+
         val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
         val originalDecision   = Decision("code", None, None, "justification", "goods")
         val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
@@ -128,7 +128,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
           .willReturn(Future.successful(()))
 
-        // When Then
+         Then
         await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
         verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -176,11 +176,11 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "reject case without a decision" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = None)
 
-      // When Then
+       Then
       intercept[IllegalArgumentException] {
         await(service.completeCase(originalCase, operator))
       }
@@ -210,7 +210,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val originalDecision   = Decision("code", None, None, "justification", "goods")
       val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
@@ -227,7 +227,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(Future.successful(emailTemplate))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
-      // When Then
+       Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -238,7 +238,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "succeed on email send failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalDecision   = Decision("code", None, None, "justification", "goods")
       val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
@@ -253,7 +253,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException("Failed to send Email")))
 
-      // When Then
+       Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -271,7 +271,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "suceed on ruling notify failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalDecision   = Decision("code", None, None, "justification", "goods")
       val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
@@ -289,7 +289,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
         .willReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
 
-      // When Then
+       Then
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])

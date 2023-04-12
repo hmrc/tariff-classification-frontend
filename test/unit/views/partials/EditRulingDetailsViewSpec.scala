@@ -35,34 +35,34 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
   "Edit Ruling Details" should {
 
     "Render Optional Application Fields" in {
-      // Given
+
       val c = aCase(
         withOptionalApplicationFields(envisagedCommodityCode = Some("envisaged code"))
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm()))
 
-      // Then
+
       doc                                               should containElementWithID("envisagedCommodityCodeValue")
       doc.getElementById("envisagedCommodityCodeValue") should containText("envisaged code")
     }
 
     "Render Optional Application Fields when empty" in {
-      // Given
+
       val c = aCase(
         withOptionalApplicationFields(envisagedCommodityCode = None)
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm()))
 
-      // Then
+
       doc should containElementWithID("envisagedCommodityCodeValue")
     }
 
     "Render pre populated Decision details" in {
-      // Given
+
       val c = aCase(
         withStatus(CaseStatus.OPEN)
       )
@@ -75,10 +75,10 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         methodCommercialDenomination = "commercial denomination"
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm().fill(formData)))
 
-      // Then
+
       doc                                                should containElementWithID("bindingCommodityCode")
       doc.getElementById("bindingCommodityCode")         should haveAttribute("value", "commodity code")
       doc                                                should containElementWithID("goodsDescription")
@@ -94,7 +94,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
     }
 
     "Render safe, non-confidential attachments" in {
-      // Given
+
       val c = aCase(
         withDecision()
       )
@@ -111,17 +111,17 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = false
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
-      // Then
+
       doc shouldNot containElementWithID("edit-ruling-no_attachments")
       doc should containElementWithID("attachments-row-0-file")
       doc should containElementWithID("attachments[0]")
     }
 
     "Not render unsafe attachments" in {
-      // Given
+
       val c = aCase(
         withDecision()
       )
@@ -138,17 +138,17 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = false
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
-      // Then
+
       doc should containElementWithID("edit-ruling-no_attachments")
       doc shouldNot containElementWithID("attachments-row-0-file-FILE_ID")
       doc shouldNot containElementWithID("attachments[0]")
     }
 
     "Render publish checkbox as checked when 'shouldPublishToRulings'" in {
-      // Given
+
       val c = aCase(
         withDecision()
       )
@@ -165,16 +165,16 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = true
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
-      // Then
+
       doc                                  should containElementWithID("attachments[0]")
       doc.getElementById("attachments[0]") should haveAttribute("checked", "checked")
     }
 
     "Render publish checkbox unchecked when not 'shouldPublishToRulings'" in {
-      // Given
+
       val c = aCase(
         withDecision()
       )
@@ -191,16 +191,16 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = false
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
-      // Then
+
       doc should containElementWithID("attachments[0]")
       doc.getElementById("attachments[0]") shouldNot haveAttribute("checked", "checked")
     }
 
     "Render as link when URL available" in {
-      // Given
+
       val c = aCase(
         withDecision()
       )
@@ -217,10 +217,10 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = true
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
-      // Then
+
       doc                                          should containElementWithID("attachments-row-0-file")
       doc.getElementById("attachments-row-0-file") should haveTag("a")
       doc.getElementById("attachments-row-0-file") should haveAttribute(
@@ -231,7 +231,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
     }
 
     "Render as text when URL not available" in {
-      // Given
+
       val c = aCase(
         withDecision()
       )
@@ -248,17 +248,17 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = false
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
 
-      // Then
+
       doc                                          should containElementWithID("attachments-row-0-file")
       doc.getElementById("attachments-row-0-file") should haveTag("span")
       doc.getElementById("attachments-row-0-file") should containText("file.txt")
     }
 
     "Render with commodity code autocomplete disabled" in {
-      // Given
+
       val c = aCase(
         withStatus(CaseStatus.OPEN)
       )
@@ -271,10 +271,10 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         methodCommercialDenomination = "commercial denomination"
       )
 
-      // When
+
       val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm().fill(formData)))
 
-      // Then
+
       doc should containElementWithID("bindingCommodityCode")
       val commodityCodeInputField = doc.getElementById("bindingCommodityCode")
       commodityCodeInputField should haveAttribute("value", "commodity code")

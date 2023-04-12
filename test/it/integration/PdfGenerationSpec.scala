@@ -35,7 +35,7 @@ class PdfGenerationSpec extends IntegrationTest {
   "PDF Application" should {
 
     "return status 200" in {
-      // Given
+
       givenAuthSuccess()
 
       stubFor(
@@ -65,24 +65,24 @@ class PdfGenerationSpec extends IntegrationTest {
           )
       )
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession(s"/pdf/application/$caseRef").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   shouldBe "my application pdf content"
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession(s"/pdf/application/$caseRef").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
@@ -92,7 +92,7 @@ class PdfGenerationSpec extends IntegrationTest {
   "PDF Ruling" should {
 
     "return status 200" in {
-      // Given
+
       givenAuthSuccess()
 
       stubFor(
@@ -122,24 +122,24 @@ class PdfGenerationSpec extends IntegrationTest {
           )
       )
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession(s"/pdf/ruling/$caseRef").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   shouldBe "my ruling pdf content"
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession(s"/pdf/ruling/$caseRef").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }

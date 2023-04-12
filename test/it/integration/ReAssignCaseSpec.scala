@@ -110,19 +110,19 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
   }
 
   private def shouldSucceed = {
-    // When
+
     val response: WSResponse = await(requestWithSession("/cases/1/reassign-case?origin=/").get())
 
-    // Then
+
     response.status shouldBe OK
     response.body   should include("Choose a team to move this case to")
   }
 
   private def shouldFail = {
-    // When
+
     val response: WSResponse = await(requestWithSession("/cases/1/reassign-case?origin=/").get())
 
-    // Then
+
     response.status shouldBe OK
     response.body   should include(messages("not_authorised.paragraph1"))
   }

@@ -62,7 +62,7 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
 
   "Refer a Case" should {
     "update case status to REFERRED" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.OPEN)
@@ -73,7 +73,7 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
         .willReturn(successful(mock[Event]))
 
       //referCase(original: Case, referredTo : String, reason: Seq[ReferralReason], f: FileUpload, note: String, operator: Operator)
-      // When Then
+       Then
       await(
         service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), attachment, "note", operator)
       ) shouldBe caseUpdated
@@ -119,7 +119,7 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.OPEN)
@@ -129,7 +129,7 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
+       Then
       await(
         service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), attachment, "note", operator)
       ) shouldBe caseUpdated

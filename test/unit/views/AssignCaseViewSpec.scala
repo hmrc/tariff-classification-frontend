@@ -33,15 +33,15 @@ class AssignCaseViewSpec extends ViewSpec {
   "Assign Case" should {
 
     "Render link to assign - when currently unassigned" in {
-      // Given
+
       val c = aCase(
         withReference("REF"),
         withoutAssignee()
       )
-      // When
+
       val doc = view(assignCaseView(c, form))
 
-      // Then
+
       doc shouldNot containElementWithID("assign_case-assigned_heading")
 
       doc                                  should containElementWithID("take-ownership")
@@ -51,16 +51,16 @@ class AssignCaseViewSpec extends ViewSpec {
     }
 
     "Render message - when currently assigned" in {
-      // Given
+
       val c = aCase(
         withReference("REF"),
         withAssignee(Some(Operator("1")))
       )
 
-      // When
+
       val doc = view(assignCaseView(c, form))
 
-      // Then
+
       doc should containElementWithID("assign_case-assigned_heading")
       doc shouldNot containElementWithID("assign_case-unassigned_heading")
 

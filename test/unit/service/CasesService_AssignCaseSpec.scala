@@ -62,7 +62,7 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
   "Assign a Case" should {
     "update case status to REFERRED" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalCase       = aCase.copy(assignee = None)
       val caseUpdated        = aCase.copy(assignee = Some(operator))
@@ -71,10 +71,10 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When
+
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
 
-      // Then
+
       verify(audit).auditOperatorAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
@@ -100,7 +100,7 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase.copy(assignee = None)
       val caseUpdated        = aCase.copy(assignee = Some(operator))
@@ -109,7 +109,7 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
+       Then
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditOperatorAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -119,17 +119,17 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
     }
 
     "do not create an event when there is no assignee on either of the cases" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase.copy(assignee = None)
       val caseUpdated        = aCase.copy(assignee = None)
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
 
-      // When
+
       await(service.assignCase(originalCase, operator))
 
-      // Then
+
       verify(connector, never()).createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])
     }
   }

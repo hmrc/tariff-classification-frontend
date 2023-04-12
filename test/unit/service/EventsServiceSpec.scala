@@ -67,7 +67,7 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
         )
       )
 
-      // When
+
       given(connector.findFilteredEvents("reference", NoPagination(), Set(EventType.SAMPLE_STATUS_CHANGE))) willReturn Future
         .successful(Paged(filteredEvents, NoPagination(), 1))
 

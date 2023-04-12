@@ -31,10 +31,10 @@ class AttachmentsEditListViewSpec extends ViewSpec {
   "Attachments Edit List" should {
 
     "Render Nothing given no attachments" in {
-      // When
+
       val doc = view(attachments_edit_list("MODULE", Seq.empty, caseRef = caseRef))
 
-      // Then
+
       doc shouldNot containElementWithID("MODULE-div")
       doc should containElementWithID("MODULE-empty-div")
     }
@@ -48,10 +48,10 @@ class AttachmentsEditListViewSpec extends ViewSpec {
         timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
-      // When
+
       val doc = view(attachments_edit_list("MODULE", Seq(attachment), caseRef = caseRef))
 
-      // Then
+
       doc                                      should containElementWithID("MODULE-div")
       doc                                      should containElementWithID("MODULE-row-0")
       doc                                      should containElementWithID("MODULE-row-0-title")

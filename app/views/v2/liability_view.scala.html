@@ -26,6 +26,7 @@
 @import views.html.partials.notification_banner
 @import views.html.includes.main
 @import views.html.layouts.full_main_content_layout
+@import views.html.helper.CSPNonce
 
 @this(
         case_heading: views.html.v2.case_heading,
@@ -73,8 +74,8 @@
 }
 
 @additionalJS = {
-    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/tab_focus.js")" type="text/javascript"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/tab_focus.js")" type="text/javascript"></script>
 }
 
 @main(
@@ -219,7 +220,7 @@
     </div>
 }
 
-<script>
+<script @CSPNonce.attr>
     let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.LIABILITY).url";
     let csrfToken = "@CSRF.getToken.value";
     window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);

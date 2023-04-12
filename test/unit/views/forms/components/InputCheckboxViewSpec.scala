@@ -34,10 +34,10 @@ class InputCheckboxViewSpec extends ViewSpec {
     )
 
     "Render" in {
-      // When
+
       val doc = view(input_checkbox(form("field"), "Label"))
 
-      // Then
+
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "checkbox")
@@ -47,10 +47,10 @@ class InputCheckboxViewSpec extends ViewSpec {
     }
 
     "Render with Optional Fields" in {
-      // When
+
       val doc = view(input_checkbox(form("field"), "Label", value = false, submitOnChange = true))
 
-      // Then
+
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "checkbox")

@@ -26,29 +26,29 @@ class AssigneeViewSpec extends ViewSpec {
   "Assignee view" should {
 
     "Render" in {
-      // Given
+
       val c = Operator("not-your-operator-id", Some("operatorName"))
-      // When
+
       val doc = view(assignee(c))
-      // Then
+
       doc.body should containText("operatorName")
     }
 
     "Render with capitalize flag true" in {
-      // Given
+
       val operator_0 = Operator("operator-id", Some("operatorName"))
-      // When
+
       val doc = await(view(assignee(operator_0, capitalise = true)))
-      // Then
+
       doc.body should containText("You")
     }
 
     "Render with capitalize flag false" in {
-      // Given
+
       val operator_0 = Operator("operator-id", Some("operatorName"))
-      // When
+
       val doc = await(view(assignee(operator_0)))
-      // Then
+
       doc.body should containText("you")
     }
   }

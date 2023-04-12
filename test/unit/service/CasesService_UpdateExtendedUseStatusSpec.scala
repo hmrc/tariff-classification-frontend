@@ -59,7 +59,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
 
   "Update Extended Use Status" should {
     "update case 'extended use' status" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", None)
       val originalCase = aCase(
         withDecision(cancellation =
@@ -74,7 +74,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
+       Then
       await(service.updateExtendedUseStatus(originalCase, status = false, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
@@ -132,7 +132,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val originalCase = aCase(
         withDecision(cancellation = Some(Cancellation(reason = CancelReason.ANNULLED)))
@@ -147,7 +147,7 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
+       Then
       await(service.updateExtendedUseStatus(originalCase, status = true, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(

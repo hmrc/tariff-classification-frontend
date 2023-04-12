@@ -26,29 +26,29 @@ class CaseStatusTabViewSpec extends ViewSpec {
   "Case Status" should {
 
     "render the case status" in {
-      // When
+
       val doc = view(case_status_tab(Cases.btiCaseExample, "id"))
 
-      // Then
+
       doc.text()                      shouldBe "case status OPEN"
       doc.getElementById("id-status") should haveClass("govuk-tag--blue")
     }
 
     "render the live liability case status" in {
-      // When
+
       val doc = view(case_status_tab(Cases.liabilityLiveCaseExample, "id"))
 
-      // Then
+
       doc.text() should include("OPEN")
       doc.text() shouldNot include("OVERDUE")
       doc.getElementById("id-status") should haveClass("govuk-tag--blue")
     }
 
     "render the overdue live liability case status" in {
-      // When
+
       val doc = view(case_status_tab(Cases.liabilityLiveCaseExample.copy(daysElapsed = 7), "id"))
 
-      // Then
+
       doc.text()                       should include("OPEN")
       doc.text()                       should include("OVERDUE")
       doc.getElementById("id-overdue") should haveClass("govuk-tag--red")

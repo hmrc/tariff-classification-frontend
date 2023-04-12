@@ -45,50 +45,50 @@ class MessagesLoggedViewSpec extends ViewSpec {
     "Messages Details" should {
 
       "Render message without operator name" in {
-        // Given
+
         val c = aCorrespondenceCase()
 
         val messagesTab = MessagesTabViewModel.fromCase(c)
 
-        // When
+
         val doc = view(partials.messages_logged(messagesTab, MessageForm.form))
 
-        // Then
+
         doc shouldNot containElementWithID("activity-events-row-0-operator")
       }
 
       "Render 'Add Message' when user has permission" in {
-        // Given
+
         val c = aCorrespondenceCase()
 
         val messagesTab = MessagesTabViewModel.fromCase(c)
 
-        // When
+
 
         val doc =
           view(
             partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddMsgPermission, messages, appConfig)
           )
 
-        // Then
+
         doc should containElementWithID("add-note-submit")
       }
 
       "Render 'Message'" in {
-        // Given
+
 
         val c = aCorrespondenceCase().copy(application = correspondenceExample.copy(messagesLogged = exampleMessages))
 
         val messagesTab = MessagesTabViewModel.fromCase(c)
 
-        // When
+
 
         val doc =
           view(
             partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
           )
 
-        // Then
+
         doc                                                 should containElementWithID("messages-events-row-0-name")
         doc.getElementById("messages-events-row-0-name")    should containText("name")
         doc                                                 should containElementWithID("messages-events-row-0-message")

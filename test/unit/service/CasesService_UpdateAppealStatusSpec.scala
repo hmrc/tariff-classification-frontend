@@ -80,7 +80,7 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
     }
 
     "update appeal status" in {
-      // Given
+
       val existingAppeal     = Appeal("id", AppealStatus.IN_PROGRESS, AppealType.REVIEW)
       val operator: Operator = Operator("operator-id", None)
       val originalCase       = aCase(withDecision(appeal = Seq(existingAppeal)))
@@ -90,7 +90,7 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
+       Then
       await(service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealStatusChange(refEq(caseUpdated), any[Appeal], any[AppealStatus], refEq(operator))(
@@ -136,7 +136,7 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val existingAppeal     = Appeal("id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase(withDecision(appeal = Seq(existingAppeal)))
@@ -146,7 +146,7 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
+       Then
       await(service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealStatusChange(refEq(caseUpdated), any[Appeal], any[AppealStatus], refEq(operator))(

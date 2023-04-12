@@ -78,12 +78,12 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
     }
 
     "succeed on event create failure from status REFERRED" in {
-      // Given
+
       succeededOnCreateFailure(CaseStatus.REFERRED, CaseStatus.OPEN)
     }
 
     "succeed on event create failure from status SUSPENDED" in {
-      // Given
+
       succeededOnCreateFailure(CaseStatus.SUSPENDED, CaseStatus.OPEN)
     }
 
@@ -96,7 +96,7 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
+       Then
       await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseReOpened(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -132,7 +132,7 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
+       Then
       await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseReOpened(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])

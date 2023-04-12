@@ -21,6 +21,7 @@
 @import models.response.FileStoreInitiateResponse
 @import models.viewmodels.{CaseViewModel, ActivityViewModel, KeywordsTabViewModel, MyCasesTab, PrimaryNavigationTab, OpenCasesTab, GatewayCasesTab}
 @import models.viewmodels.atar._
+@import views.html.helper.CSPNonce
 
 @import views.html.partials.{case_trader, application_details, activity_details, attachments_details}
 @import views.html.partials.appeal.appeal_details
@@ -71,8 +72,8 @@
 }
 
 @additionalJS = {
-    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/tab_focus.js")" type="text/javascript"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/tab_focus.js")" type="text/javascript"></script>
 
 }
 
@@ -184,7 +185,7 @@
     </div>
 }
 
-<script>
+<script @CSPNonce.attr>
         let cacheURL = "@routes.TabCacheController.get(caseViewModel.caseHeader.referenceNumber, ApplicationType.ATAR).url";
         let csrfToken = "@CSRF.getToken.value";
         window.addEventListener("load", () => fixAnchorInURL(cacheURL, csrfToken), false);

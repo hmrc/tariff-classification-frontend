@@ -34,7 +34,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
   "Case Appeal" should {
 
     "return status 200 for manager" in {
-      // Given
+
       givenAuthSuccess()
       shouldSucceed
     }
@@ -50,17 +50,17 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
       shouldFail
     }
 
     def shouldFail = {
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/appeal").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body should include(messages("not_authorised.paragraph1"))
     }
@@ -124,11 +124,11 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/v2/1/atar").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body should include("id=\"appeal-heading\"")
     }
@@ -137,7 +137,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
   "Case Appeal Change" should {
 
     "return status 200 for manager" in {
-      // Given
+
       givenAuthSuccess()
       shouldSucceed
     }
@@ -153,7 +153,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
       shouldFail
     }
@@ -168,21 +168,21 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/new-appeal").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body should include("id=\"appeal_choose_type-heading\"")
     }
 
     def shouldFail = {
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/new-appeal").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body should include(messages("not_authorised.paragraph1"))
     }

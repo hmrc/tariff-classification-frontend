@@ -34,7 +34,7 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
     val event = EventPayloads.event
 
     "return status 200 for manager" in {
-      // Given
+
       givenAuthSuccess()
       shouldSucceed
     }
@@ -50,7 +50,7 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
       shouldFail
     }
@@ -73,19 +73,19 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/ruling/cancel-reason").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("Provide details to cancel")
     }
 
     def shouldFail = {
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/ruling/cancel-reason").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }

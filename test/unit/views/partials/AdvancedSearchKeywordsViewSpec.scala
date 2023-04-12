@@ -26,47 +26,47 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
   "Advanced Search" should {
 
     "Render Keyword Input" in {
-      // When
+
       val doc = view(advanced_search_keywords(SearchForm.form, Seq.empty))
 
-      // Then
+
       doc should containElementWithID("keyword-search-wrapper")
     }
 
     "Not render table if empty" in {
-      // When
+
       val doc = view(advanced_search_keywords(SearchForm.form, Seq.empty))
 
-      // Then
+
       doc shouldNot containElementWithID("advanced_search_keywords-list")
     }
 
     "Not render table if keyword blank" in {
-      // Given
+
       val form = SearchForm.form.copy(data =
         Map(
           "keyword[0]" -> ""
         )
       )
 
-      // When
+
       val doc = view(advanced_search_keywords(form, Seq.empty))
 
-      // Then the table should not render
+       the table should not render
       doc shouldNot containElementWithID("advanced_search_keywords-list")
     }
 
     "Populate Keywords in Table with the input box blank" in {
-      // Given
+
       val form = SearchForm.form.copy(data =
         Map(
           "keyword[0]" -> "K1"
         )
       )
 
-      // When
+
       val doc = view(advanced_search_keywords(form, Seq.empty))
-      // Then the table should contain the keyword
+       the table should contain the keyword
       doc                                                             should containElementWithID("advanced_search_keywords-list")
       doc                                                             should containElementWithID("advanced_search_keywords-list-row-1")
       doc                                                             should containElementWithID("advanced_search_keywords-list-row-1-input")
@@ -87,25 +87,25 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
     }
 
     "Contain autocomplete" in {
-      // When
+
       val doc = view(advanced_search_keywords(SearchForm.form, Seq("K1", "K2")))
 
-      // Then
+
       doc.html should include("[\"K1\",\"K2\"]")
     }
 
     "Not contain existing keywords in autocomplete" in {
-      // Given
+
       val form = SearchForm.form.copy(data =
         Map(
           "keyword[0]" -> "K1"
         )
       )
 
-      // When
+
       val doc = view(advanced_search_keywords(form, Seq("K1", "K2")))
 
-      // Then
+
       doc.html should include("[\"K2\"]")
     }
 

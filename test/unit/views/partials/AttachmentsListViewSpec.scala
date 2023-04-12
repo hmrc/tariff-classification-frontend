@@ -32,10 +32,10 @@ class AttachmentsListViewSpec extends ViewSpec {
   "Attachments List" should {
 
     "Render Nothing given no attachments" in {
-      // When
+
       val doc = view(attachments_list("MODULE", Seq.empty, caseRef = caseRef))
 
-      // Then
+
       doc shouldNot containElementWithID("MODULE-table")
       doc should containElementWithID("MODULE-empty-table")
     }
@@ -49,10 +49,10 @@ class AttachmentsListViewSpec extends ViewSpec {
         timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
-      // When
+
       val doc = view(attachments_list("MODULE", Seq(attachment), caseRef = caseRef))
 
-      // Then
+
       doc                                      should containElementWithID("MODULE-table")
       doc                                      should containElementWithID("MODULE-row-0")
       doc                                      should containElementWithID("MODULE-row-0-title")
@@ -65,10 +65,10 @@ class AttachmentsListViewSpec extends ViewSpec {
       val attachment = Cases.storedAttachment
         .copy(id = "FILE_ID", fileName = Some("name"), url = Some("url"), scanStatus = Some(ScanStatus.READY))
 
-      // When
+
       val doc = view(attachments_list("MODULE", Seq(attachment), caseRef = caseRef))
 
-      // Then
+
       doc shouldNot containElementWithID("MODULE-header-uploaded_by")
       doc shouldNot containElementWithID("MODULE-row-FILE_ID-uploaded_by")
     }
@@ -80,10 +80,10 @@ class AttachmentsListViewSpec extends ViewSpec {
         operator = Some(Operator("id", Some("operator name")))
       )
 
-      // When
+
       val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true, caseRef = caseRef))
 
-      // Then
+
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
       doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("operator name")
@@ -96,10 +96,10 @@ class AttachmentsListViewSpec extends ViewSpec {
         operator = None
       )
 
-      // When
+
       val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true, caseRef = caseRef))
 
-      // Then
+
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
       doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
@@ -112,10 +112,10 @@ class AttachmentsListViewSpec extends ViewSpec {
         operator = Some(Operator("id", None))
       )
 
-      // When
+
       val doc = view(attachments_list("MODULE", Seq(attachment), showUploadedBy = true, caseRef = caseRef))
 
-      // Then
+
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
       doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
       doc.getElementById("MODULE-row-0-uploaded_by") should containText("Unknown")
@@ -128,7 +128,7 @@ class AttachmentsListViewSpec extends ViewSpec {
         operator = Some(Operator("id", Some("operator name")))
       )
 
-      // When
+
       val doc = view(
         attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = caseRef)(
           requestWithPermissions(Permission.REMOVE_ATTACHMENTS),
@@ -136,7 +136,7 @@ class AttachmentsListViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc                                       should containElementWithID("MODULE-row-0-remove")
       doc.getElementById("MODULE-row-0-remove") should containText("Remove")
     }
@@ -148,10 +148,10 @@ class AttachmentsListViewSpec extends ViewSpec {
         operator = Some(Operator("id", Some("operator name")))
       )
 
-      // When
+
       val doc = view(attachments_list("MODULE", Seq(attachment), showRemoval = true, caseRef = caseRef))
 
-      // Then
+
       doc shouldNot containElementWithID("MODULE-row-0-remove")
     }
 

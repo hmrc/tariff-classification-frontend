@@ -36,7 +36,7 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
     val caseWithStatusCOMPLETED = CasePayloads.jsonOf(c)
 
     "return status 200" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -47,24 +47,24 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/extended-use/status").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("Do you want to extend the use of this case ruling?")
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/extended-use/status").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }

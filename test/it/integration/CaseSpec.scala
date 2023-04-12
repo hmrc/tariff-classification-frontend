@@ -31,7 +31,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
   "Unknown Case" should {
 
     "return status 200 with Case Not Found" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -41,10 +41,10 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response = await(requestWithSession("/cases/1").get())
 
-      // Then
+
       response.status shouldBe NOT_FOUND
       response.body   should include("Case not found")
     }
@@ -57,7 +57,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
   "Case Summary" should {
 
     "return status 200" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -117,10 +117,10 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response = await(requestWithSession("/cases/v2/1/atar").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("id=\"trader-heading\"")
     }
@@ -133,7 +133,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
   "Case Ruling Details" should {
 
     "return status SEE_OTHER" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -152,10 +152,10 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response = await(requestWithSession("/cases/1/ruling").withFollowRedirects(false).get())
 
-      // Then
+
       response.status             shouldBe SEE_OTHER
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#ruling_tab"))
     }
@@ -168,7 +168,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
   "Case activity details" should {
 
     "return status SEE_OTHER" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -190,10 +190,10 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
             .withBody(EventPayloads.pagedEvents)
         )
       )
-      // When
+
       val response = await(requestWithSession("/cases/1/activity").withFollowRedirects(false).get())
 
-      // Then
+
       response.status             shouldBe SEE_OTHER
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#activity_tab"))
     }
@@ -206,7 +206,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
   "Case attachments details" should {
 
     "return status SEE_OTHER" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -225,10 +225,10 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response = await(requestWithSession("/cases/1/attachments").withFollowRedirects(false).get())
 
-      // Then
+
       response.status             shouldBe SEE_OTHER
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#attachments_tab"))
     }

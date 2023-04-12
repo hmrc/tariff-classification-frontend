@@ -32,25 +32,25 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
     val event              = EventPayloads.event
 
     "return status 200 for manager" in {
-      // Given
+
       givenAuthSuccess()
       shouldSucceed
     }
 
     "return status 200 for case owner" in {
-      // Given
+
       givenAuthSuccess("team")
       shouldSucceed
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
       shouldFail
     }
 
     "redirect for non case owner" in {
-      // Given
+
       givenAuthSuccess("another team member")
       shouldFail
     }
@@ -73,19 +73,19 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/reject-reason").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("Provide details to reject this case")
     }
 
     def shouldFail = {
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/reject-reason").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }

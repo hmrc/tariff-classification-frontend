@@ -15,6 +15,7 @@
  *@
 
 @import play.api.libs.json.Json
+@import views.html.helper.CSPNonce
 
 @(
         field: Field,
@@ -49,7 +50,7 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script @CSPNonce.attr type="text/javascript">
       element = document.querySelector('#keyword-search-wrapper')
       id = 'autocomplete-minLength'
       accessibleAutocomplete({
