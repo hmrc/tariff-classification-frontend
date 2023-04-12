@@ -50,11 +50,11 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/complete").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("Are you sure you want to complete the Laptop case?")
       response.body   should not include "disabled=disabled"
@@ -70,23 +70,23 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/complete").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
 
     "return status 200 for manager" in {
-      // Given
+
       givenAuthSuccess()
       shouldSucceed
     }
 
     "return status 200 for read only" in {
-      // Given
+
       givenAuthSuccess("read-only")
       shouldNotSucceed
     }
@@ -97,23 +97,23 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
       shouldFail
     }
 
     "redirect for non case owner" in {
-      // Given
+
       givenAuthSuccess("another team member")
       shouldFail
     }
 
     def shouldFail = {
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/complete").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
@@ -127,7 +127,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 //    val csrfProvider = injector.instanceOf[TokenProvider]
 //
 //    "return status 200" in {
-//      // Given
+//
 //      givenAuthSuccess()
 //      stubFor(get(urlEqualTo("/cases/1"))
 //        .willReturn(aResponse()
@@ -150,22 +150,22 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 //          .withStatus(HttpStatus.SC_OK))
 //      )
 //
-//      // When
+//
 //      val response: WSResponse = await(requestWithSession(s"/cases/1/complete").post(Map("csrfToken" -> Seq(csrfProvider.generateToken))))
 //
-//      // Then
+//
 //      response.status shouldBe OK
 //      response.body should include("<h3 class=\"heading-large mt-0\">Complete this case</h3>")
 //    }
 //
 //    "redirect on auth failure" in {
-//      // Given
+//
 //      givenAuthFailed()
 //
-//      // When
+//
 //      val response: WSResponse = await(requestWithSession(s"/cases/1/complete").post(Map("csrfToken" -> Seq(csrfProvider.generateToken))))
 //
-//      // Then
+//
 //      response.status shouldBe OK
 //      response.body should include("You are not authorised to access this page.")
 //    }

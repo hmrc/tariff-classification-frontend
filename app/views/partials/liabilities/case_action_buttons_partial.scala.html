@@ -20,6 +20,8 @@
 @import views.html.components.change_case_status_button
 @import views.html.helper.CSRF
 @import views.html.partials.reopen_case_button
+@import views.html.helper.CSPNonce
+
 
 @this()
 
@@ -73,7 +75,7 @@
 }
 
 @if(idOfElement.nonEmpty) {
-    <script>
+    <script @CSPNonce.attr >
         let url = "@routes.TabCacheController.post(caseViewModel.caseHeader.referenceNumber, caseViewModel.caseHeader.caseType).url";
         let csrf = "@CSRF.getToken.value";
         let button = document.getElementById("@idOfElement" + "-button");

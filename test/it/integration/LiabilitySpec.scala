@@ -31,7 +31,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
   "Liability Summary" should {
 
     "return status 200" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -94,10 +94,10 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response = await(requestWithSession("/cases/v2/1/liability").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("id=\"liability-entry-number\"")
     }

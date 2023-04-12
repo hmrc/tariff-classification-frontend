@@ -28,7 +28,7 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
   "Sample Details" should {
 
     "render sample to be returned when sample provided" in {
-      // Given
+
       val caseWithSample = aCase(
         withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true),
         withoutAttachments()
@@ -36,16 +36,16 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
+
       val doc = view(sample_details_bti(sampleTab))
 
-      // Then
+
       doc.getElementById("app-details-sending-samples-answer") should containText(messages("answer.yes"))
       doc.getElementById("app-details-returning-samples")      should containText(messages("answer.yes"))
     }
 
     "not render sample to be returned when sample not provided" in {
-      // Given
+
       val `case` = aCase(
         withBTIDetails(sampleToBeReturned = true),
         withoutAttachments()
@@ -53,16 +53,16 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(`case`, Paged.empty)
 
-      // When
+
       val doc = view(sample_details_bti(sampleTab))
 
-      // Then
+
       doc.getElementById("app-details-sending-samples-answer") should containText(messages("answer.no"))
       doc shouldNot containElementWithID("app-details-returning-samples")
     }
 
     "render sample status details when present on case" in {
-      // Given
+
       val caseWithSample = aCase(
         withSampleStatus(Some(SampleStatus.AWAITING)),
         withBTIDetails(sampleToBeProvided = true, sampleToBeReturned = true),
@@ -71,14 +71,14 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
+
       val doc = view(sample_details_bti(sampleTab))
 
       doc.getElementById("sample-status-value") should containText(SampleStatus.format(Some(SampleStatus.AWAITING)))
     }
 
     "not render sample status details of when sample not being provided" in {
-      // Given
+
       val caseWithSample = aCase(
         withBTIDetails(),
         withoutAttachments()
@@ -86,14 +86,14 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
+
       val doc = view(sample_details_bti(sampleTab))
 
       doc shouldNot containElementWithID("sample-status-value")
     }
 
     "not render sample status activity when sample not being provided" in {
-      // Given
+
       val caseWithSample = aCase(
         withBTIDetails(),
         withoutAttachments()
@@ -101,21 +101,21 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
+
       val doc = view(sample_details_bti(sampleTab))
 
       doc shouldNot containElementWithID("sample-status-events-heading")
     }
 
     "render sample requested when present on case" in {
-      // Given
+
       val caseWithSample = aCase(
         withSampleRequested(Some(Operator("id", name = Some("Tester Op"))), Some(SampleReturn.TO_BE_CONFIRMED))
       )
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
+
       val doc = view(sample_details_bti(sampleTab))
 
       doc.getElementById("sample-requested-by") should containText("Tester Op")
@@ -125,14 +125,14 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
     }
 
     "not render sample requested when not present on case" in {
-      // Given
+
       val caseWithSample = aCase(
         withSampleRequested(None, None)
       )
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
+
       val doc = view(sample_details_bti(sampleTab))
 
       doc shouldNot containElementWithID("sample-requested-by")

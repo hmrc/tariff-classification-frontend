@@ -63,7 +63,7 @@ class CasesService_ReassignCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
   "Reassign Case" should {
     "update case queue_id and status to OPEN" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val originalCase       = aCase.copy(status = CaseStatus.OPEN)
       val caseUpdated        = aCase.copy(queueId = Some("queue_id"))
@@ -73,7 +73,7 @@ class CasesService_ReassignCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
+
       await(service.reassignCase(originalCase, queue, operator)) shouldBe caseUpdated
 
       verify(audit).auditQueueReassigned(refEq(caseUpdated), refEq(operator), refEq(queue))(any[HeaderCarrier])
@@ -99,7 +99,7 @@ class CasesService_ReassignCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase.copy(status = CaseStatus.NEW)
       val caseUpdated        = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
@@ -109,7 +109,7 @@ class CasesService_ReassignCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
+
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseReleased(refEq(originalCase), refEq(caseUpdated), refEq(queue), refEq(operator))(

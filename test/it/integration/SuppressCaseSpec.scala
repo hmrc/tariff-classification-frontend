@@ -31,7 +31,7 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
     val event             = EventPayloads.event
 
     "return status 200" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -50,22 +50,22 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/suppress-reason").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("Provide details to suppress this case")
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
 
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/suppress-reason").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }

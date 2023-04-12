@@ -61,7 +61,7 @@ class CasesService_UpdateSampleWhoSendingSpec extends ServiceSpecBase with Befor
   "Update Sample Who Sending" should {
 
     "update case who is sending the sample" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", None)
       val originalCase       = aCase.copy(sample = aCase.sample.copy(whoIsSending = Some(SampleSend.TRADER)))
       val caseUpdated        = aCase.copy(sample = aCase.sample.copy(whoIsSending = Some(SampleSend.AGENT)))
@@ -70,7 +70,7 @@ class CasesService_UpdateSampleWhoSendingSpec extends ServiceSpecBase with Befor
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
+
       await(service.updateWhoSendSample(originalCase, Some(SampleSend.AGENT), operator)) shouldBe caseUpdated
 
       verify(audit).auditSampleSendChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(

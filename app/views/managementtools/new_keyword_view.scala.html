@@ -19,6 +19,8 @@
 @import views.html.components.input_accessible_auto_complete
 @import views.html.includes.main
 @import views.html.partials.{back_link, error_summary}
+@import views.html.helper.CSPNonce
+
 
 @this(
     govukLayouWrapper: main,
@@ -33,7 +35,7 @@
 }
 
 @additionalJS = {
-    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
 }
 
 @govukLayouWrapper(

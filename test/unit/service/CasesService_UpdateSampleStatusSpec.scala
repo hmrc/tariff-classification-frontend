@@ -61,7 +61,7 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
   "Update Sample Status" should {
 
     "update case sample status to None" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", None)
       val originalCase       = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ACT)))
       val caseUpdated        = aCase.copy(sample = aCase.sample.copy(status = None))
@@ -70,7 +70,6 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
       await(service.updateSampleStatus(originalCase, None, operator)) shouldBe caseUpdated
 
       verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
@@ -86,7 +85,7 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
     }
 
     "update case sample status from None" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", None)
       val originalCase       = aCase.copy(sample = aCase.sample.copy(status = None))
       val caseUpdated        = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.DESTROYED)))
@@ -95,7 +94,7 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
+
       await(service.updateSampleStatus(originalCase, Some(SampleStatus.DESTROYED), operator)) shouldBe caseUpdated
 
       verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
@@ -125,7 +124,7 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase.copy(sample = Sample())
       val caseUpdated        = aCase.copy(sample = Sample())
@@ -134,7 +133,7 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
+
       await(service.updateSampleStatus(originalCase, None, operator)) shouldBe caseUpdated
 
       verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(

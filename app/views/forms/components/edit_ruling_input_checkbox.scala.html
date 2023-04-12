@@ -18,12 +18,8 @@
 @import views.html.forms.components.input_date
 
 @import views.html.forms.components.input_checkbox
-@(
-        formData: Form[DecisionFormData],
-        value: Boolean = true,
-        inputClass: Option[String] = None,
-        hint: Option[String] = None
-)(implicit messages: Messages)
+
+@(formData: Form[DecisionFormData])(implicit messages: Messages, request: RequestHeader)
 
     @conditionalInput = @{Html(s"""
         <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-expiry-date">
@@ -50,7 +46,7 @@
                 data_target = Some("conditional-expiry-date"),
                 value = formData("expiryDate.explicitEndDate").value,
                 conditionalInputHtml = Some(conditionalInput)
-            )
+                )
             </div>
         </fieldset>
     </div>

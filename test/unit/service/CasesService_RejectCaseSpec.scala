@@ -62,7 +62,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
   "Reject a Case" should {
     "update case status to REJECTED" in {
-      // Given
+
       val existingAttachment = mock[Attachment]
 
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
@@ -74,7 +74,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
+
       await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseRejected(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -115,7 +115,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.OPEN)
@@ -125,7 +125,7 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
+
       await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseRejected(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])

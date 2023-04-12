@@ -34,10 +34,10 @@ class InputRadioGroupViewSpec extends ViewSpec {
     )
 
     "Render 'None'" in {
-      // When
+
       val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq.empty, allowNone = true))
 
-      // Then
+
       doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("value", "")
       doc.getElementById("ID-none") should haveAttribute("name", "field")
@@ -47,31 +47,31 @@ class InputRadioGroupViewSpec extends ViewSpec {
     }
 
     "Render 'None' - Preselected when Field is Empty" in {
-      // When
+
       val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq.empty, allowNone = true))
 
-      // Then
+
       doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
     }
 
     "Render 'None' - Preselected when Field is Blank" in {
-      // Given
+
       val filledForm = form.fill(FormData(""))
 
-      // When
+
       val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq.empty, allowNone = true))
 
-      // Then
+
       doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
     }
 
     "Render 'None' - Not Preselected when Field is Blank but preselect is set to false" in {
-      // Given
+
       val filledForm = form.fill(FormData(""))
 
-      // When
+
       val doc = view(
         input_radiogroup(
           id        = "ID",
@@ -82,25 +82,25 @@ class InputRadioGroupViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc should containElementWithID("ID-none")
       doc.getElementById("ID-none") shouldNot haveAttribute("checked", "checked")
     }
 
     "Render 'None' - Unselected when Field is Set" in {
-      // Given
+
       val filledForm = form.fill(FormData("value"))
 
-      // When
+
       val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq.empty, allowNone = true))
 
-      // Then
+
       doc should containElementWithID("ID-none")
       doc.getElementById("ID-none") shouldNot haveAttribute("checked")
     }
 
     "Render Option" in {
-      // When
+
       val doc = view(
         input_radiogroup(
           id        = "ID",
@@ -110,7 +110,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc                            should containElementWithID("ID-VALUE")
       doc.getElementById("ID-VALUE") should haveAttribute("value", "VALUE")
 
@@ -119,23 +119,23 @@ class InputRadioGroupViewSpec extends ViewSpec {
     }
 
     "Render Option - Unselected when Field is Empty" in {
-      // When
+
       val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq(RadioOption("VALUE", "LABEL"))))
 
-      // Then
+
       doc should containElementWithID("ID-VALUE")
       doc.getElementById("ID-VALUE") shouldNot haveAttribute("checked")
     }
 
     "Render Option - Preselected when Field is Set" in {
-      // Given
+
       val filledForm = form.fill(FormData("VALUE"))
 
-      // When
+
       val doc =
         view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq(RadioOption("VALUE", "LABEL"))))
 
-      // Then
+
       doc                            should containElementWithID("ID-VALUE")
       doc.getElementById("ID-VALUE") should haveAttribute("checked", "checked")
     }

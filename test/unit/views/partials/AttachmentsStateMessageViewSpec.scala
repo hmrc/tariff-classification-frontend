@@ -27,95 +27,95 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
   "Attachments State Message" should {
 
     "Render Nothing given no attachments" in {
-      // When
+
       val doc = view(attachments_state_message(Seq.empty))
 
-      // Then
+
       doc shouldNot containElementWithID("attachment-state-message")
     }
 
     "Render Nothing for unprocessed attachments" in {
-      // Given
+
       val attachment = Cases.storedAttachment.copy(scanStatus = None)
 
-      // When
+
       val doc = view(attachments_state_message(Seq(attachment)))
 
-      // Then
+
       doc shouldNot containElementWithID("attachment-state-message")
     }
 
     "Render Nothing for processed attachments" in {
-      // Given
+
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.READY))
 
-      // When
+
       val doc = view(attachments_state_message(Seq(attachment)))
 
-      // Then
+
       doc shouldNot containElementWithID("attachment-state-message")
     }
 
     "Render message for failed attachments" in {
-      // Given
+
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.FAILED))
 
-      // When
+
       val doc = view(attachments_state_message(Seq(attachment)))
 
-      // Then
+
       doc should containElementWithID("attachment-state-message")
     }
 
     "Allow auto-refresh for processing files" in {
-      // Given
+
       val attachment = Cases.storedAttachment.copy(scanStatus = None)
 
-      // When
+
       val doc = view(attachments_state_message(Seq(attachment), autoRefresh = true))
 
-      // Then
+
       doc should containElementWithID("auto-refresh")
     }
 
     "Not auto-refresh for processing files when disabled" in {
-      // Given
+
       val attachment = Cases.storedAttachment.copy(scanStatus = None)
 
-      // When
+
       val doc = view(attachments_state_message(Seq(attachment)))
 
-      // Then
+
       doc shouldNot containElementWithID("auto-refresh")
     }
 
     "Not auto-refresh for no files" in {
-      // When
+
       val doc = view(attachments_state_message(Seq.empty, autoRefresh = true))
 
-      // Then
+
       doc shouldNot containElementWithID("auto-refresh")
     }
 
     "Not auto-refresh for failed files" in {
-      // Given
+
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.FAILED))
 
-      // When
+
       val doc = view(attachments_state_message(Seq(attachment), autoRefresh = true))
 
-      // Then
+
       doc shouldNot containElementWithID("auto-refresh")
     }
 
     "Not auto-refresh for ready files" in {
-      // Given
+
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.READY))
 
-      // When
+
       val doc = view(attachments_state_message(Seq(attachment), autoRefresh = true))
 
-      // Then
+
       doc shouldNot containElementWithID("auto-refresh")
     }
   }

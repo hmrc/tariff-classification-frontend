@@ -26,20 +26,20 @@ class ProgressiveDisclosureViewSpec extends ViewSpec {
   "Progressing Disclosure" should {
 
     "Render title only when body not present" in {
-      // When
+
       val doc = view(progressive_disclosure("MODULE", "summary"))
 
-      // Then
+
       doc should containElementWithID("MODULE-title")
       doc shouldNot containElementWithID("MODULE-body")
       doc.getElementById("MODULE-title") should containText("summary")
     }
 
     "Render drop down when body present" in {
-      // When
+
       val doc = view(progressive_disclosure("MODULE", "summary", Some(Html("body"))))
 
-      // Then
+
       doc                                should containElementWithID("MODULE-title")
       doc                                should containElementWithID("MODULE-body")
       doc.getElementById("MODULE-title") should containText("summary")

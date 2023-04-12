@@ -126,7 +126,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "render results if not empty" in {
-      // Given
+
       val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
       val c      = aCase()
       val attachment =
@@ -150,14 +150,14 @@ class SearchControllerSpec extends ControllerBaseSpec {
       )
       given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
 
-      // When
+
       val request = fakeRequest.withFormUrlEncodedBody(
         "case_source"    -> "trader",
         "commodity_code" -> "00"
       )
       val result = await(controller.search(defaultTab, search = search, page = 2)(request))
 
-      // Then
+
       status(result)                                                shouldBe Status.OK
       contentType(result)                                           shouldBe Some("text/html")
       charset(result)                                               shouldBe Some("utf-8")
@@ -171,16 +171,16 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "render errors if form invalid" in {
-      // Given
+
       val search = Search(caseSource = Some("trader"))
 
       given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
 
-      // When
+
       val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "a")
       val result  = await(controller.search(defaultTab, search = search, page = 2)(request))
 
-      // Then
+
       status(result)          shouldBe Status.OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
@@ -190,7 +190,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "return OK when user has right permissions" in {
-      // Given
+
       val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
       val c      = aCase()
       val attachment =
@@ -214,7 +214,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       )
       given(keywordsService.findAll) willReturn Future.successful(Seq.empty[Keyword])
 
-      // When
+
       val request = fakeRequest.withFormUrlEncodedBody(
         "case_source"    -> "trader",
         "commodity_code" -> "00"
@@ -222,7 +222,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       val result =
         await(controller(Set(Permission.ADVANCED_SEARCH)).search(defaultTab, search = search, page = 2)(request))
 
-      // Then
+
       status(result) shouldBe Status.OK
     }
 

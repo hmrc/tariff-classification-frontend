@@ -22,6 +22,7 @@
 @import views.SearchTab.SearchTab
 @import views.forms.components.CheckOption
 @import views.html.forms.components.{input_checkbox_group, input_text}
+@import views.html.helper.CSPNonce
 
 @import views.html.partials._
 @import views.partials.SearchResult
@@ -59,8 +60,8 @@
 }
 
 @additionalJS = {
-    <script src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/accessible-autocomplete.min.js")" type="text/javascript"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 }
 
 @main(
@@ -135,6 +136,14 @@
                     <div class="govuk-grid-column-one-quarter">
                         <div class="advanced_search--filters_container">
                             <div class="advanced_search--filters">
+                                <script @CSPNonce.attr>
+                                    var replyChange = function(){
+                                        document.getElementById("advanced_search-form").submit();
+                                    }
+                                    window.onload=function(){
+                                        document.querySelectorAll("#application_type-0, #application_type-1, #application_type-2, #application_type-3, #status-0, #status-1, #status-2, #status-3, #status-4, #status-5, #status-6, #status-7, #status-8").forEach(elem => elem.addEventListener("change", replyChange));
+                                    }
+                                </script>
                                 @input_checkbox_group(
                                     field = form("application_type"),
                                     options = Seq(
@@ -144,7 +153,6 @@
                                         CheckOption("Misc", ApplicationType.MISCELLANEOUS.name, checked = formHasApplicationType(ApplicationType.MISCELLANEOUS))
                                     ),
                                     legend = Some("Apply filters"),
-                                    submitOnChange = true,
                                     divClass = Some("advanced_search--filters-checkbox"),
                                     legendClass = Some("govuk-fieldset__legend--m")
                                 )
@@ -162,7 +170,6 @@
                                         CheckOption("Rejected", PseudoCaseStatus.REJECTED.toString, checked = formHasStatus(PseudoCaseStatus.REJECTED)),
                                         CheckOption("Suppressed", PseudoCaseStatus.SUPPRESSED.toString, checked = formHasStatus(PseudoCaseStatus.SUPPRESSED))
                                     ),
-                                    submitOnChange = true,
                                     divClass = Some("advanced_search--filters-checkbox"),
                                     customGroupClasses = Some("border-top")
                                 )

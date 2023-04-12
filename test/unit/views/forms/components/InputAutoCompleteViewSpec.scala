@@ -33,7 +33,7 @@ class InputAutoCompleteViewSpec extends ViewSpec {
     ).fill(FormData("v"))
 
     "Render" in {
-      // When
+
       val doc = view(
         input_accessible_auto_complete(
           field               = form("field"),
@@ -43,7 +43,7 @@ class InputAutoCompleteViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc should containElementWithID("keyword-search-wrapper")
     }
   }

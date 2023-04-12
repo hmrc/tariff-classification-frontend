@@ -28,7 +28,7 @@ class ContactDetailsViewSpec extends ViewSpec {
   "Contact details" should {
 
     "Render valid email with mailto link" in {
-      // Given
+
       val `case` = aCase(
         withReference("ref"),
         withContact(Contact("name", "email@email.com", None))
@@ -36,10 +36,10 @@ class ContactDetailsViewSpec extends ViewSpec {
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-      // When
+
       val doc = view(contact_details(applicantTab))
 
-      // Then
+
       doc                                 should containElementWithID("contact-email")
       doc.getElementById("contact-email") should haveTag("a")
       doc.getElementById("contact-email") should haveAttribute(
@@ -49,7 +49,7 @@ class ContactDetailsViewSpec extends ViewSpec {
     }
 
     "Render invalid email as text" in {
-      // Given
+
       val `case` = aCase(
         withReference("ref"),
         withContact(Contact("name", "email", None))
@@ -57,42 +57,42 @@ class ContactDetailsViewSpec extends ViewSpec {
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-      // When
+
       val doc = view(contact_details(applicantTab))
 
-      // Then
+
       doc                                 should containElementWithID("contact-email")
       doc.getElementById("contact-email") should haveTag("span")
     }
 
     "Render valid phone" in {
-      // Given
+
       val `case` = aCase(
         withContact(Contact("name", "email@email.com", Some("1234")))
       )
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-      // When
+
       val doc = view(contact_details(applicantTab))
 
-      // Then
+
       doc                                     should containElementWithID("contact-telephone")
       doc.getElementById("contact-telephone") should containText("1234")
     }
 
     "Not render missing phone" in {
-      // Given
+
       val `case` = aCase(
         withContact(Contact("name", "email@email.com", None))
       )
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-      // When
+
       val doc = view(contact_details(applicantTab))
 
-      // Then
+
       doc shouldNot containElementWithID("contact-telephone")
     }
 

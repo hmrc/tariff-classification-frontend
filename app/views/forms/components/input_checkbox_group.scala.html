@@ -15,44 +15,49 @@
  *@
 
 @import views.forms.components.CheckOption
+@import views.html.helper.CSPNonce
+
 @(
-        field: Field,
-        options: Iterable[CheckOption],
-        legend: Option[String] = None,
-        inputClass: Option[String] = None,
-        divClass: Option[String] = None,
-        labelClass: Option[String] = None,
-        submitOnChange: Boolean = false,
-        customGroupClasses : Option[String] = None,
-        customGroupId : Option[String] = None,
-        startAtTabIndex : Option[Int] = None,
-        legendClass: Option[String] = None
-)(implicit messages: Messages)
+    field: Field,
+    options: Iterable[CheckOption],
+    legend: Option[String] = None,
+    inputClass: Option[String] = None,
+    divClass: Option[String] = None,
+    labelClass: Option[String] = None,
+    customGroupClasses : Option[String] = None,
+    customGroupId : Option[String] = None,
+    startAtTabIndex : Option[Int] = None,
+    legendClass: Option[String] = None
+)(implicit messages: Messages, request: RequestHeader)
 
 <div class="govuk-form-group @customGroupClasses.getOrElse("")
-    @if(field.hasErrors){govuk-form-group--error}"
-    @{customGroupId.map(x => s"id=$x").getOrElse("")}>
+@if(field.hasErrors){govuk-form-group--error}"
+@{customGroupId.map(x => s"id=$x").getOrElse("")}>
 
-    <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend @if(legendClass.isDefined){@{legendClass.get}}">
-            @legend
-        </legend>
-        @field.errors.map { error =>
-            <span class="govuk-error-message" id="error-message-@{field.id}-input"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@error.message</span>
-        }
-        <div class="govuk-checkboxes @divClass">
+<fieldset class="govuk-fieldset">
+    <legend class="govuk-fieldset__legend @if(legendClass.isDefined){@{legendClass.get}}">
+        @legend
+    </legend>
+    @field.errors.map { error =>
+        <span class="govuk-error-message" id="error-message-@{field.id}-input"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@error.message</span>
+    }
+    <div class="govuk-checkboxes @divClass">
         @for((option: CheckOption, index: Int) <- options.zipWithIndex) {
             @defining(s"${field.id}-$index") { id: String =>
                 <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="@id" name="@{field.name}[@index]" type="checkbox" value="@option.value" @if(field.hasErrors){aria-describedby="error-message-@{id}-input"} @if(submitOnChange) {onChange="this.form.submit()"} @if(option.checked){checked="checked"}/>
+                    <input class="govuk-checkboxes__input" id="@id" name="@{field.name}[@index]" type="checkbox"
+                           value="@option.value"
+                           @if(field.hasErrors){ aria-describedby="error-message-@{id}-input" }
+                           @if(option.checked){checked="checked" }
+                    />
                     <label class="govuk-label govuk-checkboxes__label" for="@id">
-                      <span class="@if(labelClass.nonEmpty){@{labelClass}}">
-                        @option.label
-                      </span>
+                        <span class="@if(labelClass.nonEmpty){@{labelClass}}">
+                            @option.label
+                        </span>
                     </label>
                 </div>
             }
         }
-        </div>
-    </fieldset>
+    </div>
+</fieldset>
 </div>

@@ -43,7 +43,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     val requestWithAddNotePermission = requestWithPermissions(Permission.ADD_NOTE)
 
     "Render event without operator id or name" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -54,16 +54,16 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
     }
 
     "Render event with operator id and name" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -74,16 +74,16 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
     }
 
     "Render event without operator name" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -94,16 +94,16 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
     }
 
     "Render event without operator id " in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -114,16 +114,16 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
     }
 
     "Render 'Add Note' when user has permission" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -135,17 +135,17 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(requestWithAddNotePermission, messages, appConfig)
       )
 
-      // Then
+
       doc should containElementWithID("add-note-submit")
     }
 
     "Not Render 'Add Note' when user has no permissions" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -157,15 +157,15 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form)(operatorRequest, messages, appConfig))
 
-      // Then
+
       doc shouldNot containElementWithID("add-note-submit")
     }
 
     "Render 'Note'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -177,10 +177,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -190,7 +190,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Status Change'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
@@ -207,10 +207,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -227,7 +227,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Cancellation Status Change'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
@@ -244,10 +244,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -268,7 +268,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Referral Status Change'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
@@ -286,10 +286,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -315,7 +315,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
     "Render 'Completed Status Change'" when {
       "Email is present" in {
-        // Given
+
         val c = aCase()
         val e = Event(
           id = "EVENT_ID",
@@ -328,10 +328,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
         val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-        // When
+
         val doc = view(activity_details(activityTab, ActivityForm.form))
 
-        // Then
+
         doc                                                  should containElementWithID("activity-events-row-0-operator")
         doc.getElementById("activity-events-row-0-operator") should containText("name")
         doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -345,7 +345,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       }
 
       "Email is absent" in {
-        // Given
+
         val c = aCase()
         val e = Event(
           id            = "EVENT_ID",
@@ -357,10 +357,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
         val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-        // When
+
         val doc = view(activity_details(activityTab, ActivityForm.form))
 
-        // Then
+
         doc                                                  should containElementWithID("activity-events-row-0-operator")
         doc.getElementById("activity-events-row-0-operator") should containText("name")
         doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -374,7 +374,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Appeal Added'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
@@ -390,10 +390,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -406,7 +406,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Review Added'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
@@ -422,10 +422,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -436,7 +436,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Appeal Status Changed'" in {
-      // Given
+
       val c = aCase(
         withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1))),
         withStatus(CaseStatus.COMPLETED)
@@ -456,10 +456,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -472,7 +472,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Expert advice received'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -484,10 +484,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -498,7 +498,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Extended Use Change'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -510,10 +510,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc                                                  should containElementWithID("activity-events-row-0-content")
@@ -526,7 +526,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Assignment Change'" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -538,10 +538,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
       doc.getElementById("activity-events-row-0-content")  should containText("comment")
@@ -550,7 +550,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
     }
 
     "Render 'Assignment Change' from Some to Some" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id = "EVENT_ID",
@@ -566,16 +566,16 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case reassigned from FROM to TO")
     }
 
     "Render 'Assignment Change' from Some to None" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -587,16 +587,16 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case unassigned from FROM")
     }
 
     "Render 'Assignment Change' from None to Some" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -608,16 +608,16 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case assigned to TO")
     }
 
     "Render 'Assignment Change' from None to None" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -629,39 +629,39 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case assignment changed")
     }
 
     "Not render assigned information if does not have right permissions" in {
-      // Given
+
       val c = aCase(
         withAssignee(Some(authenticatedOperator))
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc shouldNot containElementWithID("activity-events-assignee")
       doc shouldNot containElementWithID("activity-events-assignee-label")
     }
 
     "Render assigned to 'You'" in {
-      // Given
+
       val c = aCase(
         withAssignee(Some(authenticatedOperator))
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-      // When
+
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -670,21 +670,21 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc                                                         should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text()       shouldBe "You"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render assigned to name" in {
-      // Given
+
       val c = aCase(
         withAssignee(Some(Operator("id", Some("name"))))
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-      // When
+
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -693,21 +693,21 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc                                                         should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text()       shouldBe "name"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render assigned to PID" in {
-      // Given
+
       val c = aCase(
         withAssignee(Some(Operator("id")))
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-      // When
+
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -716,14 +716,14 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc                                                         should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text()       shouldBe "PID id"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
     "Render currently in 'TEST'" in {
-      // Given
+
       val c = aCase(
         withAssignee(None),
         withQueue("1")
@@ -731,7 +731,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-      // When
+
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -740,21 +740,21 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc                                                               should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "TEST"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
 
     "Render currently in 'Gateway'" in {
-      // Given
+
       val c = aCase(
         withAssignee(None)
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-      // When
+
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -763,14 +763,14 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc                                                               should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "Gateway"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
 
     "Render currently in 'unknown'" in {
-      // Given
+
       val c = aCase(
         withAssignee(None),
         withQueue("99")
@@ -778,7 +778,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-      // When
+
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -787,14 +787,14 @@ class ActivityDetailsViewSpec extends ViewSpec {
         )
       )
 
-      // Then
+
       doc                                                               should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "unknown"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
 
     "Render 'Queue Change' from Some to Some" in {
-      // Given
+
       val c = aCase()
       val e = Event(
         id            = "EVENT_ID",
@@ -806,17 +806,17 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Name moved this case to the TEST queue")
     }
 
     "Not Render 'Reassign Link' When Case is not assigned" in {
 
-      // Given
+
       val c = aCase(
         withAssignee(None),
         withStatus(CaseStatus.OPEN)
@@ -824,17 +824,17 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-      // When
+
       val doc = view(activity_details(activityTab, ActivityForm.form))
 
-      // Then
+
       doc shouldNot containElementWithID("reassign-queue-link")
     }
 
     "Not render 'Reassign Link' when valid state but no permissions " in {
 
       Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach { status =>
-        // Given
+
         val c = aCase(
           withAssignee(Some(Operator("id"))),
           withStatus(status)
@@ -842,10 +842,10 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
         val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-        // When
+
         val doc = view(activity_details(activityTab, ActivityForm.form)(operatorRequest, messages, appConfig))
 
-        // Then
+
         doc shouldNot containElementWithID("reassign-queue-link")
       }
     }

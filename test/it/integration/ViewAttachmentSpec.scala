@@ -58,16 +58,16 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
     }
 
     def shouldFail = {
-      // When
+
       val response: WSResponse = await(requestWithSession("/attachment/ref/id").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
 
     def shouldSucceed = {
-      // When
+
       stubFor(
         get(urlEqualTo(s"/cases/$caseRef"))
           .willReturn(
@@ -95,10 +95,10 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse = await(requestWithSession(s"/attachment/$caseRef/id").get())
 
-      // Then
+
       response.status      shouldBe OK
       response.bodyAsBytes shouldBe ByteString("FILE_CONTENTS")
     }

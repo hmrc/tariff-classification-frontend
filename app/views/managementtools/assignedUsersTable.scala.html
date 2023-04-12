@@ -23,7 +23,7 @@
 @import play.twirl.api.TemplateMagic.defining
 @import views.html.partials.statuses.case_status
 
-@(usersTab : UsersTab, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(usersTab : UsersTab, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <table id="@{usersTab.tabMessageKey}-table" class="govuk-table">
     <thead class="govuk-table__head">

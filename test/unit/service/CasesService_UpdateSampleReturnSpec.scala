@@ -61,7 +61,7 @@ class CasesService_UpdateSampleReturnSpec extends ServiceSpecBase with BeforeAnd
   "Update Sample Return" should {
 
     "update case sample return" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", None)
       val originalCase       = aCase.copy(sample = aCase.sample.copy(returnStatus = Some(SampleReturn.TO_BE_CONFIRMED)))
       val caseUpdated        = aCase.copy(sample = aCase.sample.copy(returnStatus = Some(SampleReturn.YES)))
@@ -70,7 +70,6 @@ class CasesService_UpdateSampleReturnSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
       await(service.updateSampleReturn(originalCase, Some(SampleReturn.YES), operator)) shouldBe caseUpdated
 
       verify(audit).auditSampleReturnChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(

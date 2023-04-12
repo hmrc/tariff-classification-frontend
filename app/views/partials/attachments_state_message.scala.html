@@ -17,7 +17,10 @@
 @import models.StoredAttachment
 @import models.response.ScanStatus
 @import utils.Dates
-@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false, displayStateMessage : Boolean = true)(implicit messages: Messages)
+@import views.html.helper.CSPNonce
+
+
+@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false, displayStateMessage : Boolean = true)(implicit messages: Messages, request: RequestHeader)
 
 @if(displayStateMessage) {
     @if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {
@@ -29,7 +32,7 @@
 
 @if(attachments.exists(_.scanStatus.isEmpty)) {
     @if(autoRefresh && attachments.exists(a => a.scanStatus.isEmpty)) {
-        <script id="auto-refresh">
+        <script @CSPNonce.attr id="auto-refresh">
                 setTimeout(function () {
                     location.reload();
                 }, 5000)

@@ -18,6 +18,7 @@
 @import models.viewmodels.{NoTabSelected, PrimaryNavigationTab}
 @import views.html.includes.govuk_wrapper
 @import config.AppConfig
+@import views.html.helper.CSPNonce
 
 @this(
         config: AppConfig,
@@ -40,7 +41,7 @@
 @additionalJS.getOrElse({})
   <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/newMain.css")">
 <!--    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLWQQZB" height="0" width="0" style="display: none;visibility: hidden;"></iframe></noscript>-->
-    <script src="@routes.Assets.at("javascripts/ga-tag-manager.js")"></script>
+    <script @CSPNonce.attr src="@routes.Assets.at("javascripts/ga-tag-manager.js")"></script>
 @additionalCSS.getOrElse({})
 }
 

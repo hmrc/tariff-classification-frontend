@@ -28,7 +28,7 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
   "Sample Status'" should {
 
     "Return all options for BTI Case" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -39,16 +39,16 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/sample/status").get())
 
-      // Then
+
       response.status shouldBe OK
       SampleStatus.values.foreach(s => response.body should include(s">${SampleStatus.format(Some(s))}<"))
     }
 
     "Return limited options for Liability Case" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -59,10 +59,10 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/sample/status?options=liability").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(">Yes<")
       response.body   should include(">No<")
