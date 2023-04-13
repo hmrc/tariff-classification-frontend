@@ -47,7 +47,7 @@ legendClass: Option[String] = None
         @defining(s"${field.id}-$index") { id: String =>
         <div class="govuk-checkboxes__item">
 
-            <script @CSPNonce.attr>document.querySelectorAll("#application_type-0, #application_type-1, #application_type-2, #application_type-3").forEach(elem => elem.addEventListener("change", () =>  document.getElementById("advanced_search-form").submit()));</script>
+            <script @CSPNonce.attr>document.querySelectorAll("#application_type-0, #application_type-1, #application_type-2, #application_type-3, #status-0, #status-1, #status-2, #status-3, #status-4, #status-5, #status-6, #status-7, #status-8").forEach(elem => elem.addEventListener("change", () =>  document.getElementById("advanced_search-form").submit()));</script>
             <input @CSPNonce.attr class="govuk-checkboxes__input" id="@id" name="@{field.name}[@index]" type="checkbox"
                    value="@option.value" @if(field.hasErrors){aria-describedby="error-message-@{id}-input" }
                    @if(option.checked){checked="checked" }/>
