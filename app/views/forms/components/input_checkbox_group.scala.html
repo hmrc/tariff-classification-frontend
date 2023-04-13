@@ -44,18 +44,20 @@ legendClass: Option[String] = None
     }
     <div class="govuk-checkboxes @divClass">
         @for((option: CheckOption, index: Int) <- options.zipWithIndex) {
-            @defining(s"${field.id}-$index") { id: String =>
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="@id" name="@{field.name}[@index]" type="checkbox"
-                           value="@option.value" @if(field.hasErrors){aria-describedby="error-message-@{id}-input" }
-                           @if(submitOnChange) {onChange="this.form.submit()" } @if(option.checked){checked="checked" }/>
-                    <label class="govuk-label govuk-checkboxes__label" for="@id">
-                              <span class="@if(labelClass.nonEmpty){@{labelClass}}">
+        @defining(s"${field.id}-$index") { id: String =>
+        <div class="govuk-checkboxes__item">
+
+            <script @CSPNonce.attr>document.querySelectorAll("#application_type-0, #application_type-1, #application_type-2, #application_type-3").forEach(elem => elem.addEventListener("change", () =>  document.getElementById("advanced_search-form").submit()));</script>
+            <input @CSPNonce.attr class="govuk-checkboxes__input" id="@id" name="@{field.name}[@index]" type="checkbox"
+                   value="@option.value" @if(field.hasErrors){aria-describedby="error-message-@{id}-input" }
+                   @if(option.checked){checked="checked" }/>
+            <label class="govuk-label govuk-checkboxes__label" for="@id">
+                <span class="@if(labelClass.nonEmpty){@{labelClass}}">
                                 @option.label
                               </span>
-                    </label>
-                </div>
-            }
+            </label>
+        </div>
+        }
         }
     </div>
 </fieldset>
