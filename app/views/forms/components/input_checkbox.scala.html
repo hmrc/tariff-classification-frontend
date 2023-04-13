@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import views.html.helper.CSPNonce
+
+
 @(
         field: Field,
         label: String,
@@ -24,11 +27,12 @@
         submitOnChange: Boolean = false,
         data_target: Option[String] = None,
         conditionalInputHtml: Option[Html] = None
-)(implicit messages: Messages)
+)(implicit messages: Messages, request: RequestHeader)
 
 <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}">
 
     <div class="govuk-checkboxes__item" @if(data_target.isDefined){data-target="@data_target.get"}>
+<!--        <script @CSPNonce.attr >this.form.submit()</script>-->
         <input
             class="govuk-checkboxes__input @inputClass"
             type="checkbox"
@@ -37,7 +41,7 @@
             value="@value"
             role="checkbox"
             @if(field.value.contains(s"$value")){aria-checked="true"}else{aria-checked="false"}
-            @if(submitOnChange) { onChange="this.form.submit()" }
+            @if(submitOnChange) { onChange="@controllers.routes.SearchController.search()" }
             @if(field.hasErrors){ aria-describedby="error-message-@{field.id}-input" }
             @if(field.value.contains(s"$value")){ checked="checked" }
             @if(data_target.isDefined) { data-aria-controls="@data_target.get" }

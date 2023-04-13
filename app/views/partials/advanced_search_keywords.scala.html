@@ -17,7 +17,8 @@
 @import models.Search
 @import views.html.components.input_accessible_auto_complete
 @import models.ReusableTabIndexer
-@(f: Form[Search], keywords: Seq[String], tabIndexer: ReusableTabIndexer = ReusableTabIndexer())(implicit messages: Messages)
+
+@(f: Form[Search], keywords: Seq[String], tabIndexer: ReusableTabIndexer = ReusableTabIndexer())(implicit messages: Messages, request: RequestHeader)
 
     @moveUnAddedKeywordToTable(form: Form[Search]) = @{
         form.data.get("keyword[0]").filter(_.nonEmpty).map { keyword =>
