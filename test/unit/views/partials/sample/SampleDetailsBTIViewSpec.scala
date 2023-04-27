@@ -36,9 +36,7 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-
       val doc = view(sample_details_bti(sampleTab))
-
 
       doc.getElementById("app-details-sending-samples-answer") should containText(messages("answer.yes"))
       doc.getElementById("app-details-returning-samples")      should containText(messages("answer.yes"))
@@ -53,9 +51,7 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(`case`, Paged.empty)
 
-
       val doc = view(sample_details_bti(sampleTab))
-
 
       doc.getElementById("app-details-sending-samples-answer") should containText(messages("answer.no"))
       doc shouldNot containElementWithID("app-details-returning-samples")
@@ -71,7 +67,6 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-
       val doc = view(sample_details_bti(sampleTab))
 
       doc.getElementById("sample-status-value") should containText(SampleStatus.format(Some(SampleStatus.AWAITING)))
@@ -85,7 +80,6 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
       )
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
-
 
       val doc = view(sample_details_bti(sampleTab))
 
@@ -101,7 +95,6 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-
       val doc = view(sample_details_bti(sampleTab))
 
       doc shouldNot containElementWithID("sample-status-events-heading")
@@ -114,7 +107,6 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
       )
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
-
 
       val doc = view(sample_details_bti(sampleTab))
 
@@ -131,7 +123,6 @@ class SampleDetailsBTIViewSpec extends ViewSpec {
       )
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
-
 
       val doc = view(sample_details_bti(sampleTab))
 

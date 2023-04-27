@@ -33,7 +33,6 @@ class ConfirmCancelRulingViewSpec extends ViewSpec {
         "This ruling has been removed from the Search for Advance Tariff Rulings website"
       lazy val actual = doc.getElementById("main-content").text()
 
-
       actual should include(expected)
     }
 
@@ -43,7 +42,6 @@ class ConfirmCancelRulingViewSpec extends ViewSpec {
       val doc           = view(confirmCancelRulingView(c))
       lazy val expected = "The liability decision has been cancelled"
       lazy val actual   = doc.getElementById("main-content").text()
-
 
       actual should include(expected)
     }

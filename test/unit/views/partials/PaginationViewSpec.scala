@@ -53,7 +53,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-
       doc should containElementWithID("ID-none")
       doc shouldNot containElementWithID("ID-some")
     }
@@ -67,7 +66,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
           onChange = goToPage
         )
       )
-
 
       doc should containElementWithID("ID-one")
       doc shouldNot containElementWithID("ID-some")
@@ -98,7 +96,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-
       doc should containElementWithID("ID-one")
       doc shouldNot containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
@@ -127,7 +124,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
           onChange = goToPage
         )
       )
-
 
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
@@ -160,7 +156,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
           onChange = goToPage
         )
       )
-
 
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
@@ -195,7 +190,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
@@ -229,7 +223,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
           onChange = goToPage
         )
       )
-
 
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
@@ -266,7 +259,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
@@ -302,7 +294,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
           onChange = goToPage
         )
       )
-
 
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")

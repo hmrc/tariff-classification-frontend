@@ -37,7 +37,6 @@ class InputTextViewSpec extends ViewSpec {
 
       val doc = view(input_text(form("field"), "Label"))
 
-
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "text")
@@ -48,7 +47,6 @@ class InputTextViewSpec extends ViewSpec {
     "Disable autocomplete when required" in {
       //When
       val doc = view(input_text(form("field"), "Label", disableAutoComplete = true))
-
 
       doc.getElementById("field") should haveAttribute("autocomplete", "off")
     }

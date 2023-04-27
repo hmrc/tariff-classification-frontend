@@ -54,9 +54,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
@@ -74,9 +72,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -94,9 +90,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
@@ -114,9 +108,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -135,11 +127,9 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(requestWithAddNotePermission, messages, appConfig)
       )
-
 
       doc should containElementWithID("add-note-submit")
     }
@@ -157,9 +147,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form)(operatorRequest, messages, appConfig))
-
 
       doc shouldNot containElementWithID("add-note-submit")
     }
@@ -177,9 +165,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -207,9 +193,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -244,9 +228,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -286,9 +268,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -328,9 +308,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
         val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
         val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
         doc                                                  should containElementWithID("activity-events-row-0-operator")
         doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -357,9 +335,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
         val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
         val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
         doc                                                  should containElementWithID("activity-events-row-0-operator")
         doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -390,9 +366,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -422,9 +396,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -456,9 +428,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -484,9 +454,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -510,9 +478,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -538,9 +504,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -566,9 +530,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case reassigned from FROM to TO")
@@ -587,9 +549,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case unassigned from FROM")
@@ -608,9 +568,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case assigned to TO")
@@ -629,9 +587,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Case assignment changed")
@@ -645,9 +601,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc shouldNot containElementWithID("activity-events-assignee")
       doc shouldNot containElementWithID("activity-events-assignee-label")
@@ -661,7 +615,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -669,7 +622,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc                                                         should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text()       shouldBe "You"
@@ -684,7 +636,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -692,7 +643,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc                                                         should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text()       shouldBe "name"
@@ -707,7 +657,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -715,7 +664,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc                                                         should containElementWithID("activity-events-assignee")
       doc.getElementById("activity-events-assignee").text()       shouldBe "PID id"
@@ -731,7 +679,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -739,7 +686,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc                                                               should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "TEST"
@@ -754,7 +700,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -762,7 +707,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc                                                               should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "Gateway"
@@ -778,7 +722,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
@@ -786,7 +729,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc                                                               should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "unknown"
@@ -806,16 +748,13 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc                                                 should containElementWithID("activity-events-row-0-content")
       doc.getElementById("activity-events-row-0-content") should containText("Name moved this case to the TEST queue")
     }
 
     "Not Render 'Reassign Link' When Case is not assigned" in {
-
 
       val c = aCase(
         withAssignee(None),
@@ -824,9 +763,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
       val doc = view(activity_details(activityTab, ActivityForm.form))
-
 
       doc shouldNot containElementWithID("reassign-queue-link")
     }
@@ -834,7 +771,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
     "Not render 'Reassign Link' when valid state but no permissions " in {
 
       Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach { status =>
-
         val c = aCase(
           withAssignee(Some(Operator("id"))),
           withStatus(status)
@@ -842,9 +778,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
         val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-
         val doc = view(activity_details(activityTab, ActivityForm.form)(operatorRequest, messages, appConfig))
-
 
         doc shouldNot containElementWithID("reassign-queue-link")
       }

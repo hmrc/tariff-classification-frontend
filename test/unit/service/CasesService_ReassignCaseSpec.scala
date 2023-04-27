@@ -73,7 +73,6 @@ class CasesService_ReassignCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.reassignCase(originalCase, queue, operator)) shouldBe caseUpdated
 
       verify(audit).auditQueueReassigned(refEq(caseUpdated), refEq(operator), refEq(queue))(any[HeaderCarrier])
@@ -108,7 +107,6 @@ class CasesService_ReassignCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
-
 
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 

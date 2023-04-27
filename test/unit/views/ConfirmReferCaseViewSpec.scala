@@ -33,7 +33,6 @@ class ConfirmReferCaseViewSpec extends ViewSpec {
         "case has been referred The elapsed days count is paused at 0"
       lazy val actual = doc.getElementById("confirm_complete_id").text()
 
-
       actual should include(expected)
     }
 
@@ -43,7 +42,6 @@ class ConfirmReferCaseViewSpec extends ViewSpec {
       val doc           = view(confirmReferCaseView(c))
       lazy val expected = "case has been referred The elapsed days count is paused at 0"
       lazy val actual   = doc.getElementById("confirm_complete_id").text()
-
 
       actual should include(expected)
     }
@@ -55,7 +53,6 @@ class ConfirmReferCaseViewSpec extends ViewSpec {
       lazy val expected = "case has been referred The elapsed days count is paused at 0"
       lazy val actual   = doc.getElementById("confirm_complete_id").text()
 
-
       actual should include(expected)
     }
 
@@ -65,7 +62,6 @@ class ConfirmReferCaseViewSpec extends ViewSpec {
       val doc           = view(confirmReferCaseView(c))
       lazy val expected = "case has been referred The elapsed days count is paused at 0"
       lazy val actual   = doc.getElementById("confirm_complete_id").text()
-
 
       actual should include(expected)
     }

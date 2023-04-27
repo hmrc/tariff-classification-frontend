@@ -34,7 +34,6 @@ class AttachmentsEditListViewSpec extends ViewSpec {
 
       val doc = view(attachments_edit_list("MODULE", Seq.empty, caseRef = caseRef))
 
-
       doc shouldNot containElementWithID("MODULE-div")
       doc should containElementWithID("MODULE-empty-div")
     }
@@ -48,9 +47,7 @@ class AttachmentsEditListViewSpec extends ViewSpec {
         timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
-
       val doc = view(attachments_edit_list("MODULE", Seq(attachment), caseRef = caseRef))
-
 
       doc                                      should containElementWithID("MODULE-div")
       doc                                      should containElementWithID("MODULE-row-0")

@@ -74,7 +74,6 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.updateExtendedUseStatus(originalCase, status = false, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseExtendedUseChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
@@ -146,7 +145,6 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
-
 
       await(service.updateExtendedUseStatus(originalCase, status = true, operator)) shouldBe caseUpdated
 

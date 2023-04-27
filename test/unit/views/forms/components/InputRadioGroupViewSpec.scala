@@ -37,7 +37,6 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq.empty, allowNone = true))
 
-
       doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("value", "")
       doc.getElementById("ID-none") should haveAttribute("name", "field")
@@ -50,7 +49,6 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq.empty, allowNone = true))
 
-
       doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
     }
@@ -59,9 +57,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val filledForm = form.fill(FormData(""))
 
-
       val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq.empty, allowNone = true))
-
 
       doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
@@ -70,7 +66,6 @@ class InputRadioGroupViewSpec extends ViewSpec {
     "Render 'None' - Not Preselected when Field is Blank but preselect is set to false" in {
 
       val filledForm = form.fill(FormData(""))
-
 
       val doc = view(
         input_radiogroup(
@@ -82,7 +77,6 @@ class InputRadioGroupViewSpec extends ViewSpec {
         )
       )
 
-
       doc should containElementWithID("ID-none")
       doc.getElementById("ID-none") shouldNot haveAttribute("checked", "checked")
     }
@@ -91,9 +85,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val filledForm = form.fill(FormData("value"))
 
-
       val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq.empty, allowNone = true))
-
 
       doc should containElementWithID("ID-none")
       doc.getElementById("ID-none") shouldNot haveAttribute("checked")
@@ -110,7 +102,6 @@ class InputRadioGroupViewSpec extends ViewSpec {
         )
       )
 
-
       doc                            should containElementWithID("ID-VALUE")
       doc.getElementById("ID-VALUE") should haveAttribute("value", "VALUE")
 
@@ -122,7 +113,6 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq(RadioOption("VALUE", "LABEL"))))
 
-
       doc should containElementWithID("ID-VALUE")
       doc.getElementById("ID-VALUE") shouldNot haveAttribute("checked")
     }
@@ -131,10 +121,8 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val filledForm = form.fill(FormData("VALUE"))
 
-
       val doc =
         view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq(RadioOption("VALUE", "LABEL"))))
-
 
       doc                            should containElementWithID("ID-VALUE")
       doc.getElementById("ID-VALUE") should haveAttribute("checked", "checked")

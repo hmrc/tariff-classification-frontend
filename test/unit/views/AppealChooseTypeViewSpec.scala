@@ -33,8 +33,6 @@ class AppealChooseTypeViewSpec extends ViewSpec {
       val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(appealChooseTypeView(c, AppealForm.appealTypeForm))
 
-
-
       AppealType.values.foreach { at =>
         val id = s"appeal_type-$at"
         doc                    should containElementWithID(id)

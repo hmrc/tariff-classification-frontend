@@ -37,7 +37,6 @@ class CaseStatusViewSpec extends ViewSpec {
 
       val doc = view(case_status(c, "id"))
 
-
       doc.text()               shouldBe "CANCELLED"
       doc.getElementById("id") should haveClass("govuk-tag--red")
     }
@@ -51,7 +50,6 @@ class CaseStatusViewSpec extends ViewSpec {
 
       val doc = view(case_status(c, "id"))
 
-
       doc.text()               shouldBe "CANCELLED - 55"
       doc.getElementById("id") should haveClass("govuk-tag--red")
     }
@@ -59,7 +57,6 @@ class CaseStatusViewSpec extends ViewSpec {
     "render EXPIRED for expired rulings" in {
 
       val doc = view(case_status(Cases.btiCaseWithExpiredRuling, "id"))
-
 
       doc.text()               shouldBe "case status EXPIRED"
       doc.getElementById("id") should haveClass("govuk-tag--green")
@@ -69,7 +66,6 @@ class CaseStatusViewSpec extends ViewSpec {
 
       val doc = view(case_status(Cases.btiCaseExample, "id"))
 
-
       doc.text()               shouldBe "case status OPEN"
       doc.getElementById("id") should haveClass("govuk-tag--blue")
     }
@@ -77,7 +73,6 @@ class CaseStatusViewSpec extends ViewSpec {
     "render the live liability case status" in {
 
       val doc = view(case_status(Cases.liabilityLiveCaseExample, "id"))
-
 
       doc.text()                                shouldBe "liability type LIVE case status OPEN"
       doc.getElementById("id-liability-status") should haveClass("govuk-tag--pink")

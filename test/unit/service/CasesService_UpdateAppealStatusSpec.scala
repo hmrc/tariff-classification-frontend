@@ -90,7 +90,6 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealStatusChange(refEq(caseUpdated), any[Appeal], any[AppealStatus], refEq(operator))(
@@ -145,7 +144,6 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
-
 
       await(service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
 

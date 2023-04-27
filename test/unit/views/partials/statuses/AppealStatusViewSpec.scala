@@ -32,9 +32,7 @@ class AppealStatusViewSpec extends ViewSpec {
         withDecision(appeal = Seq.empty)
       )
 
-
       val doc = view(appeal_status(c, "id"))
-
 
       doc.text() shouldBe ""
     }
@@ -51,9 +49,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(appeal_status(c, "id"))
-
 
       doc.text() shouldBe "Under mediation"
     }
@@ -69,9 +65,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(appeal_status(c, "id"))
-
 
       doc.text() shouldBe "Completed"
     }
@@ -87,9 +81,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(appeal_status(c, "id"))
-
 
       doc.text() shouldBe "Completed"
     }
@@ -106,9 +98,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(appeal_status(c, "id"))
-
 
       doc.text() shouldBe "Under review"
     }
@@ -124,9 +114,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(appeal_status(c, "id"))
-
 
       doc.text() shouldBe "Review upheld"
     }
@@ -142,9 +130,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(appeal_status(c, "id"))
-
 
       doc.text() shouldBe "Review overturned"
     }

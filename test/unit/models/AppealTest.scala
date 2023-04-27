@@ -32,9 +32,7 @@ class AppealTest extends ModelsBaseSpec {
         withoutDecision()
       )
 
-
       val res = Appeal.highestAppealFromDecision(c.decision)
-
 
       res shouldBe None
     }
@@ -45,9 +43,7 @@ class AppealTest extends ModelsBaseSpec {
         withDecision(appeal = Seq())
       )
 
-
       val res = Appeal.highestAppealFromDecision(c.decision)
-
 
       res shouldBe None
     }
@@ -63,9 +59,7 @@ class AppealTest extends ModelsBaseSpec {
         )
       )
 
-
       val res = Appeal.highestAppealFromDecision(c.decision)
-
 
       res shouldBe expected
     }
@@ -83,9 +77,7 @@ class AppealTest extends ModelsBaseSpec {
         )
       )
 
-
       val res = Appeal.highestAppealFromDecision(c.decision)
-
 
       res shouldBe expected
     }
@@ -107,9 +99,7 @@ class AppealTest extends ModelsBaseSpec {
         )
       )
 
-
       val res = Appeal.highestAppealFromDecision(c.decision)
-
 
       res shouldBe expected
     }

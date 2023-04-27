@@ -82,7 +82,6 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])
@@ -125,7 +124,6 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
-
 
       await(service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
 

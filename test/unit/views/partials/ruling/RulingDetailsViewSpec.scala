@@ -37,9 +37,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(ruling_details(rulingTab, None, Seq.empty))
-
 
       doc                                               should containElementWithID("envisagedCommodityCodeValue")
       doc.getElementById("envisagedCommodityCodeValue") should containText("envisaged code")
@@ -53,9 +51,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(ruling_details(rulingTab, None, Seq.empty))
-
 
       doc shouldNot containElementWithID("envisagedCommodityCodeValue")
     }
@@ -65,11 +61,9 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c         = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(
         ruling_details(rulingTab, None, Seq.empty)(requestWithPermissions(Permission.EDIT_RULING), messages, appConfig)
       )
-
 
       doc should containElementWithID("edit-ruling-button")
       doc should containElementWithID("edit-ruling-buttons")
@@ -83,9 +77,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c         = aCase(withReference("ref"), withStatus(CaseStatus.OPEN))
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(ruling_details(rulingTab, None, Seq.empty)(operatorRequest, messages, appConfig))
-
 
       doc shouldNot containElementWithID("ruling_edit_details")
       doc shouldNot containElementWithID("ruling_edit")
@@ -96,9 +88,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c         = aCase(withoutDecision())
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(ruling_details(rulingTab, None, Seq.empty))
-
 
       doc shouldNot containElementWithID("ruling_bindingCommodityCode")
       doc shouldNot containElementWithID("ruling_itemDescription")
@@ -124,7 +114,6 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
-
       val doc = view(
         ruling_details(rulingTab, None, Seq.empty)(
           requestWithPermissions(Permission.COMPLETE_CASE),
@@ -132,7 +121,6 @@ class RulingDetailsViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc shouldNot containElementWithID("ruling_bindingCommodityCodeValue_expired")
     }
@@ -150,7 +138,6 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
-
       val doc = view(
         ruling_details(rulingTab, None, Seq.empty)(
           requestWithPermissions(Permission.COMPLETE_CASE),
@@ -158,7 +145,6 @@ class RulingDetailsViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc shouldNot containElementWithID("ruling_bindingCommodityCodeValue_expiring")
     }
@@ -177,7 +163,6 @@ class RulingDetailsViewSpec extends ViewSpec {
 
         val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
-
         val doc = view(
           ruling_details(rulingTab, None, Seq.empty)(
             requestWithPermissions(Permission.COMPLETE_CASE),
@@ -185,7 +170,6 @@ class RulingDetailsViewSpec extends ViewSpec {
             appConfig
           )
         )
-
 
         doc should containElementWithID("ruling_commodity_code_expiry_section")
       }
@@ -204,7 +188,6 @@ class RulingDetailsViewSpec extends ViewSpec {
 
         val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
-
         val doc = view(
           ruling_details(rulingTab, None, Seq.empty)(
             requestWithPermissions(Permission.COMPLETE_CASE),
@@ -212,7 +195,6 @@ class RulingDetailsViewSpec extends ViewSpec {
             appConfig
           )
         )
-
 
         doc should containElementWithID("ruling_commodity_code_expiry_section")
       }
@@ -230,7 +212,6 @@ class RulingDetailsViewSpec extends ViewSpec {
 
         val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
-
         val doc = view(
           ruling_details(rulingTab, None, Seq.empty)(
             requestWithPermissions(Permission.COMPLETE_CASE),
@@ -238,7 +219,6 @@ class RulingDetailsViewSpec extends ViewSpec {
             appConfig
           )
         )
-
 
         doc should containElementWithID("ruling_commodity_code_expiry_section")
       }
@@ -258,7 +238,6 @@ class RulingDetailsViewSpec extends ViewSpec {
 
         val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(commodityCode))
 
-
         val doc = view(
           ruling_details(rulingTab, None, Seq.empty)(
             requestWithPermissions(Permission.COMPLETE_CASE),
@@ -266,7 +245,6 @@ class RulingDetailsViewSpec extends ViewSpec {
             appConfig
           )
         )
-
 
         doc shouldNot containElementWithID("ruling_commodity_code_expiry_section")
       }
@@ -288,9 +266,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(ruling_details(rulingTab, None, Seq.empty)(operatorRequest, messages, appConfig))
-
 
       doc                                                            should containElementWithID("ruling_bindingCommodityCodeValue")
       doc.getElementById("ruling_bindingCommodityCodeValue")         should containText("commodity code")
@@ -312,11 +288,9 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c         = aCase(withReference("ref"), withStatus(CaseStatus.COMPLETED), withDecision())
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(
         ruling_details(rulingTab, None, Seq.empty)(requestWithPermissions(Permission.CANCEL_CASE), messages, appConfig)
       )
-
 
       doc should containElementWithID("cancel-ruling-button")
     }
@@ -326,9 +300,7 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c         = aCase(withReference("ref"), withStatus(CaseStatus.COMPLETED), withDecision())
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(ruling_details(rulingTab, None, Seq.empty)(operatorRequest, messages, appConfig))
-
 
       doc shouldNot containElementWithID("cancel-ruling-button")
     }
@@ -354,9 +326,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(ruling_details(rulingTab, None, Seq(stored)))
-
 
       doc should containElementWithID("attachments-row-0-file")
     }
@@ -382,9 +352,7 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
       val doc = view(ruling_details(rulingTab, None, Seq(stored)))
-
 
       doc shouldNot containElementWithID("attachments-file-FILE_ID")
     }

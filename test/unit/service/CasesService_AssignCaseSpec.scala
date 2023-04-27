@@ -71,9 +71,7 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
-
 
       verify(audit).auditOperatorAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
@@ -109,7 +107,6 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditOperatorAssigned(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -126,9 +123,7 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
 
-
       await(service.assignCase(originalCase, operator))
-
 
       verify(connector, never()).createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier])
     }

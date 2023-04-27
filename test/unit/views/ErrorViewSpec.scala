@@ -27,9 +27,7 @@ class ErrorViewSpec extends ViewSpec {
 
     "render empty list of cases" in {
 
-
       val doc = view(errorTemplateView("Title", "Heading", "Message"))
-
 
       doc should containText("Title")
       doc should containText("Heading")

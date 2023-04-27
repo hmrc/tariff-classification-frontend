@@ -29,14 +29,12 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
 
       val doc = view(advanced_search_keywords(SearchForm.form, Seq.empty))
 
-
       doc should containElementWithID("keyword-search-wrapper")
     }
 
     "Not render table if empty" in {
 
       val doc = view(advanced_search_keywords(SearchForm.form, Seq.empty))
-
 
       doc shouldNot containElementWithID("advanced_search_keywords-list")
     }
@@ -49,7 +47,6 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(advanced_search_keywords(form, Seq.empty))
       doc shouldNot containElementWithID("advanced_search_keywords-list")
     }
@@ -61,7 +58,6 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
           "keyword[0]" -> "K1"
         )
       )
-
 
       val doc = view(advanced_search_keywords(form, Seq.empty))
 
@@ -84,7 +80,6 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
 
       val doc = view(advanced_search_keywords(SearchForm.form, Seq("K1", "K2")))
 
-
       doc.html should include("[\"K1\",\"K2\"]")
     }
 
@@ -96,9 +91,7 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(advanced_search_keywords(form, Seq("K1", "K2")))
-
 
       doc.html should include("[\"K2\"]")
     }

@@ -74,7 +74,6 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.suppressCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseSuppressed(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])

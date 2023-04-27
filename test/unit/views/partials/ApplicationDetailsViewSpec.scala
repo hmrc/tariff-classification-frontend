@@ -35,9 +35,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val goodsTab = GoodsTabViewModel.fromCase(`case`)
 
-
       val doc = view(application_details(goodsTab))
-
 
       doc.getElementById("app-details-confidential-info") shouldNot containText(messages("answer.none"))
       doc shouldNot containElementWithID("app-details-related-reference")
@@ -60,9 +58,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val goodsTab = GoodsTabViewModel.fromCase(`case`)
 
-
       val doc = view(application_details(goodsTab))
-
 
       doc                                                        should containElementWithID("app-details-previous-ruling-reference")
       doc                                                        should containElementWithID("app-details-envisaged-code")
@@ -84,7 +80,6 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       )
 
       val goodsTab = GoodsTabViewModel.fromCase(`case`)
-
 
       val doc = view(application_details(goodsTab))
 

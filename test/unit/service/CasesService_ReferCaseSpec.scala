@@ -129,7 +129,6 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-
       await(
         service.referCase(originalCase, "APPLICANT", Seq(ReferralReason.REQUEST_SAMPLE), attachment, "note", operator)
       ) shouldBe caseUpdated

@@ -36,9 +36,7 @@ class ContactDetailsViewSpec extends ViewSpec {
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-
       val doc = view(contact_details(applicantTab))
-
 
       doc                                 should containElementWithID("contact-email")
       doc.getElementById("contact-email") should haveTag("a")
@@ -57,9 +55,7 @@ class ContactDetailsViewSpec extends ViewSpec {
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-
       val doc = view(contact_details(applicantTab))
-
 
       doc                                 should containElementWithID("contact-email")
       doc.getElementById("contact-email") should haveTag("span")
@@ -73,9 +69,7 @@ class ContactDetailsViewSpec extends ViewSpec {
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-
       val doc = view(contact_details(applicantTab))
-
 
       doc                                     should containElementWithID("contact-telephone")
       doc.getElementById("contact-telephone") should containText("1234")
@@ -89,9 +83,7 @@ class ContactDetailsViewSpec extends ViewSpec {
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-
       val doc = view(contact_details(applicantTab))
-
 
       doc shouldNot containElementWithID("contact-telephone")
     }

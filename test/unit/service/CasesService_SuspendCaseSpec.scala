@@ -74,7 +74,6 @@ class CasesService_SuspendCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.suspendCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseSuspended(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -118,7 +117,6 @@ class CasesService_SuspendCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
-
 
       await(service.suspendCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 

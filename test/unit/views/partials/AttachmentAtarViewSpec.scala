@@ -31,9 +31,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
     "Render Pending attachment" in {
       val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = None)
 
-
       val doc = view(attachment_atar(reference, "MODULE", stored))
-
 
       doc                               should containElementWithID("MODULE-file")
       doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
@@ -43,9 +41,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
       val stored =
         Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.FAILED))
 
-
       val doc = view(attachment_atar(reference, "MODULE", stored))
-
 
       doc                               should containElementWithID("MODULE-file")
       doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
@@ -56,9 +52,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
         Cases.storedAttachment
           .copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = None)
 
-
       val doc = view(attachment_atar(reference, "MODULE", stored))
-
 
       doc                               should containElementWithID("MODULE-file")
       doc.getElementById("MODULE-file") should haveChild("span").containingText("name")
@@ -68,9 +62,7 @@ class AttachmentAtarViewSpec extends ViewSpec {
       val stored = Cases.storedAttachment
         .copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = Some("url"))
 
-
       val doc = view(attachment_atar(reference, "MODULE", stored))
-
 
       doc should containElementWithID("MODULE-file")
       doc shouldNot containElementWithID("MODULE-file-status")

@@ -20,9 +20,11 @@ import controllers.routes.IndexController
 import org.scalatest.OptionValues
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.FakeRequest
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.{FakeHeaders, FakeRequest}
 import play.api.test.Helpers._
 import views.html.shutterPage
+import play.api.test.CSRFTokenHelper._
 
 class ShutteringFilterSpec extends IntegrationTest with OptionValues {
 
@@ -33,6 +35,10 @@ class ShutteringFilterSpec extends IntegrationTest with OptionValues {
     )
     .build()
 
+  val request: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty).withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
   "a shuttering filter" should {
 
     "shutter" when {
@@ -42,7 +48,7 @@ class ShutteringFilterSpec extends IntegrationTest with OptionValues {
         val result = route(app, FakeRequest(GET, IndexController.get().url)).get
 
         status(result)          shouldBe SERVICE_UNAVAILABLE
-        contentAsString(result) shouldBe view().toString
+        contentAsString(result) shouldBe view()(request).toString
       }
     }
 

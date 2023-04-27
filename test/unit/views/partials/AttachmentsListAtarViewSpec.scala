@@ -36,7 +36,6 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq.empty)
       val doc         = view(attachments_list_atar("MODULE", attachments))
 
-
       doc shouldNot containElementWithID("MODULE-table")
       doc should containElementWithID("MODULE-empty-table")
     }
@@ -53,9 +52,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
-
       val doc = view(attachments_list_atar("MODULE", attachments))
-
 
       doc                                      should containElementWithID("MODULE-table")
       doc                                      should containElementWithID("MODULE-row-0")
@@ -73,9 +70,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
-
       val doc = view(attachments_list_atar("MODULE", attachments))
-
 
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
       doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
@@ -97,14 +92,12 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment, attachment_trader))
 
-
       val doc = view(
         attachments_list_atar(
           "MODULE",
           attachments
         )
       )
-
 
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
       doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
@@ -122,9 +115,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
-
       val doc = view(attachments_list_atar("MODULE", attachments))
-
 
       doc                                            should containElementWithID("MODULE-header-uploaded_by")
       doc                                            should containElementWithID("MODULE-row-0-uploaded_by")
@@ -145,9 +136,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
-
       val doc = view(attachments_list_atar("MODULE", attachments))
-
 
       doc should containText(messages("case.attachment.upload.status-published"))
     }
@@ -165,9 +154,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
-
       val doc = view(attachments_list_atar("MODULE", attachments))
-
 
       doc should containText(messages("case.attachment.upload.status-confidential"))
 
@@ -186,9 +173,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
       val c           = Cases.btiCaseExample
       val attachments = AttachmentsTabViewModel.fromCase(c, attachments = Seq(attachment))
 
-
       val doc = view(attachments_list_atar("MODULE", attachments))
-
 
       doc should containText(messages("case.attachment.upload.status-failed"))
 

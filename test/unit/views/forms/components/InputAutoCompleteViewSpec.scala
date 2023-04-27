@@ -43,7 +43,6 @@ class InputAutoCompleteViewSpec extends ViewSpec {
         )
       )
 
-
       doc should containElementWithID("keyword-search-wrapper")
     }
   }

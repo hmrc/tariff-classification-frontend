@@ -92,7 +92,6 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
           .willReturn(successful(mock[Event]))
 
-
         await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
         verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -127,7 +126,6 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
           .willReturn(Future.successful(emailTemplate))
         given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
           .willReturn(Future.successful(()))
-
 
         await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
@@ -180,7 +178,6 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       val operator: Operator = Operator("operator-id")
       val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = None)
 
-
       intercept[IllegalArgumentException] {
         await(service.completeCase(originalCase, operator))
       }
@@ -227,7 +224,6 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(Future.successful(emailTemplate))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
-
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseCompleted(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -252,7 +248,6 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(successful(mock[Event]))
       given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException("Failed to send Email")))
-
 
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 
@@ -288,7 +283,6 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(Future.successful(emailTemplate))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
         .willReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
-
 
       await(service.completeCase(originalCase, operator)) shouldBe caseUpdated
 

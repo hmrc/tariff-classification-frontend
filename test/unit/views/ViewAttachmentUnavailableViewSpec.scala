@@ -32,7 +32,6 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
       val fileMetadata = None
 
-
       val doc = view(
         viewAttachmentUnavailableView(fileMetadata)(
           AuthenticatedRequest(Operator("0", Some("name")), request),
@@ -40,7 +39,6 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
           appConfig
         )
       )
-
 
       doc should containElementWithID("attachment-not_found")
 
@@ -53,7 +51,6 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
     val fileMetadata = Some(FileMetadata("id", Some("filename"), Some("mimetype"), None, Some(ScanStatus.FAILED)))
 
-
     val doc = view(
       viewAttachmentUnavailableView(fileMetadata)(
         AuthenticatedRequest(Operator("0", Some("name")), request),
@@ -61,7 +58,6 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
         appConfig
       )
     )
-
 
     doc should containElementWithID("attachment-scan_failed")
 
@@ -73,7 +69,6 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
 
     val fileMetadata = Some(FileMetadata("id", Some("filename"), Some("mimetype"), None, None))
 
-
     val doc = view(
       viewAttachmentUnavailableView(fileMetadata)(
         AuthenticatedRequest(Operator("0", Some("name")), request),
@@ -81,7 +76,6 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
         appConfig
       )
     )
-
 
     doc should containElementWithID("attachment-processing")
 

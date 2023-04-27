@@ -35,9 +35,7 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
         val c         = aCase(withDecision(bindingCommodityCode = "123"))
         val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = None)
 
-
         val doc = view(ruling_commodity_code_expiry_section(rulingTab))
-
 
         doc shouldNot containElementWithID("ruling_commodity_code_expiry_section")
       }
@@ -46,9 +44,7 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
         val c         = aCase()
         val rulingTab = RulingTabViewModel.fromCase(c).copy(bindingCommodityCode = Some(CommodityCode("123")))
 
-
         val doc = view(ruling_commodity_code_expiry_section(rulingTab))
-
 
         doc shouldNot containElementWithID("ruling_commodity_code_expiry_section")
       }
@@ -61,10 +57,8 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
           .fromCase(c)
           .copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
 
-
         val doc =
           view(ruling_commodity_code_expiry_section(rulingTab))
-
 
         doc should containElementWithID("ruling_commodity_code_expiry_section")
         doc should containElementWithID("ruling_commodity_code_expiry_section-warning_expired")
@@ -79,9 +73,7 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
           .fromCase(c)
           .copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.plusSeconds(60)))))
 
-
         val doc = view(ruling_commodity_code_expiry_section(rulingTab))
-
 
         doc should containElementWithID("ruling_commodity_code_expiry_section")
         doc should containElementWithID("ruling_commodity_code_expiry_section-warning_expiring")
@@ -96,9 +88,7 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
           .fromCase(c)
           .copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
 
-
         val doc = view(ruling_commodity_code_expiry_section(rulingTab))
-
 
         doc should containElementWithID("ruling_commodity_code_expiry_section")
         doc should containElementWithID("ruling_commodity_code_expiry_section-warning_expired")
@@ -111,9 +101,7 @@ class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
           .fromCase(c)
           .copy(bindingCommodityCode = Some(CommodityCode("123", Some(Instant.now.minusSeconds(60)))))
 
-
         val doc = view(ruling_commodity_code_expiry_section(rulingTab))
-
 
         doc should containElementWithID("ruling_commodity_code_expiry_section")
         doc should containElementWithID("ruling_commodity_code_expiry_section-warning_expired")

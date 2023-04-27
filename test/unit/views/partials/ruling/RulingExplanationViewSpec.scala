@@ -32,9 +32,7 @@ class RulingExplanationViewSpec extends ViewSpec {
         withoutDecision()
       )
 
-
       val doc = view(ruling_explanation(c.decision))
-
 
       doc shouldNot containElementWithID("information-for-holder")
     }
@@ -47,9 +45,7 @@ class RulingExplanationViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(ruling_explanation(c.decision))
-
 
       doc shouldNot containElementWithID("holder_explanationValue")
     }
@@ -59,9 +55,7 @@ class RulingExplanationViewSpec extends ViewSpec {
         withStatus(CaseStatus.OPEN)
       )
 
-
       val doc = view(ruling_explanation(c.decision))
-
 
       doc shouldNot containElementWithID("holder_explanationValue")
     }
@@ -74,9 +68,7 @@ class RulingExplanationViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(ruling_explanation(c.decision))
-
 
       doc                                          should containElementWithID("information-for-holder")
       doc                                          should containElementWithID("holder_explanationValue")
@@ -92,9 +84,7 @@ class RulingExplanationViewSpec extends ViewSpec {
         )
       )
 
-
       val doc = view(ruling_explanation(c.decision))
-
 
       doc.getElementById("binding-commodity-code") should containText(
         messages("case.decision.explanation.commodityCode")

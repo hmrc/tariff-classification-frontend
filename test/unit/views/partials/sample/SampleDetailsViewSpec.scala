@@ -35,9 +35,7 @@ class SampleDetailsViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-
       val doc = view(sample_details(sampleTab))
-
 
       doc should containElementWithID("app-details-sending-samples-answer")
       doc shouldNot containElementWithID("liability-sending-samples")
@@ -66,7 +64,6 @@ class SampleDetailsViewSpec extends ViewSpec {
       val sampleStatusActivity: Seq[Event] = Seq(event1, event2, event3)
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged(sampleStatusActivity, NoPagination(), 3))
-
 
       val doc = view(sample_details(sampleTab))
 

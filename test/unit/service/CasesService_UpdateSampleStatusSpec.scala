@@ -94,7 +94,6 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.updateSampleStatus(originalCase, Some(SampleStatus.DESTROYED), operator)) shouldBe caseUpdated
 
       verify(audit).auditSampleStatusChange(refEq(originalCase), refEq(caseUpdated), refEq(operator))(
@@ -132,7 +131,6 @@ class CasesService_UpdateSampleStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
-
 
       await(service.updateSampleStatus(originalCase, None, operator)) shouldBe caseUpdated
 

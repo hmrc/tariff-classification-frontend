@@ -29,7 +29,6 @@ class CaseStatusTabViewSpec extends ViewSpec {
 
       val doc = view(case_status_tab(Cases.btiCaseExample, "id"))
 
-
       doc.text()                      shouldBe "case status OPEN"
       doc.getElementById("id-status") should haveClass("govuk-tag--blue")
     }
@@ -37,7 +36,6 @@ class CaseStatusTabViewSpec extends ViewSpec {
     "render the live liability case status" in {
 
       val doc = view(case_status_tab(Cases.liabilityLiveCaseExample, "id"))
-
 
       doc.text() should include("OPEN")
       doc.text() shouldNot include("OVERDUE")
@@ -47,7 +45,6 @@ class CaseStatusTabViewSpec extends ViewSpec {
     "render the overdue live liability case status" in {
 
       val doc = view(case_status_tab(Cases.liabilityLiveCaseExample.copy(daysElapsed = 7), "id"))
-
 
       doc.text()                       should include("OPEN")
       doc.text()                       should include("OVERDUE")

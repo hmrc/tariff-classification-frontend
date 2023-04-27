@@ -43,9 +43,7 @@ class ThumbnailViewSpec extends ViewSpec {
         shouldPublishToRulings = true
       )
 
-
       val doc = view(thumbnail("some-id", "some-case-reference", storedAttachment))
-
 
       doc                           should containElementWithID("some-id")
       doc.getElementById("some-id") should haveTag("img")

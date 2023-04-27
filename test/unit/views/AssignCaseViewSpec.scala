@@ -41,7 +41,6 @@ class AssignCaseViewSpec extends ViewSpec {
 
       val doc = view(assignCaseView(c, form))
 
-
       doc shouldNot containElementWithID("assign_case-assigned_heading")
 
       doc                                  should containElementWithID("take-ownership")
@@ -57,9 +56,7 @@ class AssignCaseViewSpec extends ViewSpec {
         withAssignee(Some(Operator("1")))
       )
 
-
       val doc = view(assignCaseView(c, form))
-
 
       doc should containElementWithID("assign_case-assigned_heading")
       doc shouldNot containElementWithID("assign_case-unassigned_heading")

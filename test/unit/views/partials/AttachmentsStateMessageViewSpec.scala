@@ -30,7 +30,6 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val doc = view(attachments_state_message(Seq.empty))
 
-
       doc shouldNot containElementWithID("attachment-state-message")
     }
 
@@ -38,9 +37,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = None)
 
-
       val doc = view(attachments_state_message(Seq(attachment)))
-
 
       doc shouldNot containElementWithID("attachment-state-message")
     }
@@ -49,9 +46,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.READY))
 
-
       val doc = view(attachments_state_message(Seq(attachment)))
-
 
       doc shouldNot containElementWithID("attachment-state-message")
     }
@@ -60,9 +55,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.FAILED))
 
-
       val doc = view(attachments_state_message(Seq(attachment)))
-
 
       doc should containElementWithID("attachment-state-message")
     }
@@ -71,9 +64,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = None)
 
-
       val doc = view(attachments_state_message(Seq(attachment), autoRefresh = true))
-
 
       doc should containElementWithID("auto-refresh")
     }
@@ -82,9 +73,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = None)
 
-
       val doc = view(attachments_state_message(Seq(attachment)))
-
 
       doc shouldNot containElementWithID("auto-refresh")
     }
@@ -93,7 +82,6 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val doc = view(attachments_state_message(Seq.empty, autoRefresh = true))
 
-
       doc shouldNot containElementWithID("auto-refresh")
     }
 
@@ -101,9 +89,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.FAILED))
 
-
       val doc = view(attachments_state_message(Seq(attachment), autoRefresh = true))
-
 
       doc shouldNot containElementWithID("auto-refresh")
     }
@@ -112,9 +98,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.READY))
 
-
       val doc = view(attachments_state_message(Seq(attachment), autoRefresh = true))
-
 
       doc shouldNot containElementWithID("auto-refresh")
     }

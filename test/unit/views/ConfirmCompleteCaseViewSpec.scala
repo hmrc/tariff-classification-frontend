@@ -37,7 +37,6 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
           .format(Instant.now().plus(-10, DAYS))} Next steps Back to home Back to open ATaR cases"
       lazy val actual = doc.getElementById("main-content").text()
 
-
       actual should startWith(expected)
     }
 
@@ -48,7 +47,6 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
       lazy val expected =
         "The good-name Liability case has been completed Next steps Back to home Back to open Liability cases"
       lazy val actual = doc.getElementById("main-content").text()
-
 
       actual should startWith(expected)
     }
@@ -61,7 +59,6 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
         "The A short summary Correspondence case has been completed Next steps Back to home Back to open Correspondence cases"
       lazy val actual = doc.getElementById("main-content").text()
 
-
       actual should startWith(expected)
     }
 
@@ -72,7 +69,6 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
       lazy val expected =
         "The name Miscellaneous case has been completed Next steps Back to home Back to open Miscellaneous cases"
       lazy val actual = doc.getElementById("main-content").text()
-
 
       actual should startWith(expected)
     }

@@ -94,7 +94,6 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(successful(mock[Event]))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
-
       await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -125,7 +124,6 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       val operator: Operator = Operator("operator-id")
       val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.COMPLETED, decision = None)
-
 
       intercept[IllegalArgumentException] {
         await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
@@ -168,7 +166,6 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(failed(new RuntimeException("Failed to create Event")))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
-
       await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -192,7 +189,6 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(successful(mock[Event]))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
         .willReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
-
 
       await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 

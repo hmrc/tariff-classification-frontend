@@ -74,7 +74,6 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-
       await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseRejected(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -124,7 +123,6 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
-
 
       await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator)) shouldBe caseUpdated
 

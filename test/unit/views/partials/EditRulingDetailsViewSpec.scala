@@ -40,9 +40,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withOptionalApplicationFields(envisagedCommodityCode = Some("envisaged code"))
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm()))
-
 
       doc                                               should containElementWithID("envisagedCommodityCodeValue")
       doc.getElementById("envisagedCommodityCodeValue") should containText("envisaged code")
@@ -54,9 +52,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withOptionalApplicationFields(envisagedCommodityCode = None)
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm()))
-
 
       doc should containElementWithID("envisagedCommodityCodeValue")
     }
@@ -75,9 +71,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         methodCommercialDenomination = "commercial denomination"
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm().fill(formData)))
-
 
       doc                                                should containElementWithID("bindingCommodityCode")
       doc.getElementById("bindingCommodityCode")         should haveAttribute("value", "commodity code")
@@ -111,9 +105,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = false
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
-
 
       doc shouldNot containElementWithID("edit-ruling-no_attachments")
       doc should containElementWithID("attachments-row-0-file")
@@ -138,9 +130,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = false
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
-
 
       doc should containElementWithID("edit-ruling-no_attachments")
       doc shouldNot containElementWithID("attachments-row-0-file-FILE_ID")
@@ -165,9 +155,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = true
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
-
 
       doc                                  should containElementWithID("attachments[0]")
       doc.getElementById("attachments[0]") should haveAttribute("checked", "checked")
@@ -191,9 +179,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = false
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
-
 
       doc should containElementWithID("attachments[0]")
       doc.getElementById("attachments[0]") shouldNot haveAttribute("checked", "checked")
@@ -217,9 +203,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = true
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
-
 
       doc                                          should containElementWithID("attachments-row-0-file")
       doc.getElementById("attachments-row-0-file") should haveTag("a")
@@ -248,9 +232,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         shouldPublishToRulings = false
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq(stored), decisionForm.btiForm()))
-
 
       doc                                          should containElementWithID("attachments-row-0-file")
       doc.getElementById("attachments-row-0-file") should haveTag("span")
@@ -271,9 +253,7 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         methodCommercialDenomination = "commercial denomination"
       )
 
-
       val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm().fill(formData)))
-
 
       doc should containElementWithID("bindingCommodityCode")
       val commodityCodeInputField = doc.getElementById("bindingCommodityCode")
