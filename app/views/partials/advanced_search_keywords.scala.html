@@ -71,17 +71,7 @@
                         <input id="advanced_search_keywords-list-row-@{index}-input" name="@{field.name}" type="hidden" value="@keyword"/>
                     }
                     </dd>
-                    <script @CSPNonce.attr>
-                         var tbody = document.getElementById("advanced_search_keywords-list");
-                         var row = document.getElementById("advanced_search_keywords-list-row-" + @index);
-                         var reply_click = function(){
-                             tbody.removeChild(row);
-                             document.getElementById("advanced_search-form").submit();
-                         }
-                         window.onload=function(){
-                            document.getElementById("advanced_search_keywords-list-row-@{index}-remove_button").addEventListener("click", reply_click);
-                         }
-                    </script>
+                    <script @CSPNonce.attr>advancedSearch.removeKeyword(@index)</script>
                     <dd class="govuk-summary-list__actions">
                         <a tabindex="@{tabIndexer.nextTabIndex()}" id="advanced_search_keywords-list-row-@{index}-remove_button" type="link" class="govuk-link" href="#">Remove <span class="govuk-visually-hidden">@keyword</span></a>
                     </dd>
