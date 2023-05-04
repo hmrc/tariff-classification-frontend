@@ -21,11 +21,4 @@ case class CaseReferral(
   reasons: List[ReferralReason.Value],
   note: String,
   referManually: Option[String]
-) {
-
-  val function1 = (x: Int) => x + 1
-
-
-  Option()
-
-}
+)
