@@ -28,7 +28,7 @@
     customGroupId : Option[String] = None,
     startAtTabIndex : Option[Int] = None,
     legendClass: Option[String] = None
-)(implicit messages: Messages, request: RequestHeader)
+)(implicit messages: Messages)
 
 <div class="govuk-form-group @customGroupClasses.getOrElse("")
 @if(field.hasErrors){govuk-form-group--error}"

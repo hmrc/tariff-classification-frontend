@@ -22,7 +22,7 @@
 @(
         formData: Form[Case],
         value: Boolean = true,
-)(implicit messages: Messages, request: RequestHeader)
+)(implicit messages: Messages)
 
 @conditionalInput = @{Html(s"""
         <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-dvr-number">

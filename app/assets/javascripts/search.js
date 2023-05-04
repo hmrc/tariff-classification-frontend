@@ -10,10 +10,7 @@ const advancedSearch = {
             const element = document.getElementById(`advanced_search_keywords-list-row-${index}-remove_button`)
               element.addEventListener('click', reply_click, false);
         });
-    }
-};
-
-const checkboxes = {
+    },
     filterCases: function() {
       const replyChange = function(){
         document.getElementById("advanced_search-form").submit();
@@ -26,5 +23,7 @@ const checkboxes = {
           .forEach(elem => elem.addEventListener("change", replyChange));
       });
     }
-}
+};
+
+
 
