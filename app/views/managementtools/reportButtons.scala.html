@@ -16,11 +16,12 @@
 
 @import controllers.routes.ReportingController
 @import models.reporting
+@import views.html.helper.CSPNonce
 
 @(
   report: reporting.Report,
   id: String
-)(implicit messages: Messages)
+)(implicit messages: Messages, request:RequestHeader)
 
 @downloadLink = {
   @report match {
@@ -38,12 +39,14 @@
 
 <div id="@{id}-buttons" class="govuk-form-group">
 
-    <a id="@{id}-print-button" class="govuk-button govuk-button--secondary govuk-!-margin-right-2" href="javascript:window.print()">
+    <a id="@{id}-print-button" class="govuk-button govuk-button--secondary govuk-!-margin-right-2">
       @messages("reporting.view_report.print")
     </a>
 
     <a id="@{id}-download-button" class="govuk-button govuk-button--secondary" href="@downloadLink">
       @messages("reporting.view_report.download")
     </a>
+
+    <script @{CSPNonce.attr}>document.getElementById("@{id}-print-button").addEventListener("click", () => window.print());</script>
 
 </div>
