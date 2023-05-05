@@ -45,7 +45,7 @@
 @main(
     pageTitle = messages("Manage user"),
     optCustomLayout = Some(fullMainContent(_)),
-    backLink = Some(backLink("Back to manage users", s"${routes.ManageUserController.displayManageUsers}")),
+    backLink = Some(backLink("Back to manage users", Some(s"${routes.ManageUserController.displayManageUsers}"))),
     customPrimaryNavTab = ManagerToolsTab,
     subNavigationTab = Some(manager_tools_secondary_navigation(activeSubNav))
 ) {

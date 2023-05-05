@@ -21,10 +21,22 @@
 
 @this(govukBackLink: GovukBackLink)
 
-@(messageKey: String = "errors.all.back")(implicit messages: Messages, request:RequestHeader)
+@(
+    messageKey: String = "errors.all.back",
+    linkLocation: Option[String] = None
+)(implicit messages: Messages, request:RequestHeader)
 
-@govukBackLink(
-    BackLink(content = Text(messages(messageKey)),attributes = Map("class" -> "govuk-back-link", "id" -> "back-link"))
-)
 
-<script @{CSPNonce.attr}>document.getElementById("back-link").addEventListener("click", () => window.history.go(-1));</script>
+@if(linkLocation.isDefined) {
+ @govukBackLink(
+   BackLink(href = linkLocation.get, content = Text(messages(messageKey)),attributes = Map("class" -> "govuk-back-link", "id" -> "back-link"))
+ )
+} else {
+ @govukBackLink(
+   BackLink(content = Text(messages(messageKey)),attributes = Map("class" -> "govuk-back-link", "id" -> "back-link"))
+ )
+ <script @{CSPNonce.attr}>document.getElementById("back-link").addEventListener("click", () => window.history.go(-1));</script>
+}
+
+
+
