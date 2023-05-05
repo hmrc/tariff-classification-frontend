@@ -31,10 +31,8 @@ class AttachmentViewSpec extends ViewSpec {
     "Render Pending attachment" in {
       val stored = Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = None)
 
-      // When
       val doc = view(attachment("MODULE", stored, caseRef))
 
-      // Then
       doc                                      should containElementWithID("MODULE-file")
       doc                                      should containElementWithID("MODULE-file-status")
       doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
@@ -45,10 +43,8 @@ class AttachmentViewSpec extends ViewSpec {
       val stored =
         Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.FAILED))
 
-      // When
       val doc = view(attachment("MODULE", stored, caseRef))
 
-      // Then
       doc                                      should containElementWithID("MODULE-file")
       doc                                      should containElementWithID("MODULE-file-status")
       doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
@@ -60,10 +56,8 @@ class AttachmentViewSpec extends ViewSpec {
         Cases.storedAttachment
           .copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = None)
 
-      // When
       val doc = view(attachment("MODULE", stored, caseRef))
 
-      // Then
       doc                                      should containElementWithID("MODULE-file")
       doc                                      should containElementWithID("MODULE-file-status")
       doc.getElementById("MODULE-file")        should haveChild("span").containingText("name")
@@ -74,10 +68,8 @@ class AttachmentViewSpec extends ViewSpec {
       val stored = Cases.storedAttachment
         .copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = Some("url"))
 
-      // When
       val doc = view(attachment("MODULE", stored, caseRef))
 
-      // Then
       doc should containElementWithID("MODULE-file")
       doc shouldNot containElementWithID("MODULE-file-status")
 

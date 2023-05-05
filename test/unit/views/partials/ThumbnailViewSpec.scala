@@ -29,7 +29,7 @@ class ThumbnailViewSpec extends ViewSpec {
   "Thumbnail" should {
 
     "Render thumbnail for attachment" in {
-      // Given
+
       val storedAttachment = StoredAttachment(
         "id",
         public                 = true,
@@ -43,10 +43,8 @@ class ThumbnailViewSpec extends ViewSpec {
         shouldPublishToRulings = true
       )
 
-      // When
       val doc = view(thumbnail("some-id", "some-case-reference", storedAttachment))
 
-      // Then
       doc                           should containElementWithID("some-id")
       doc.getElementById("some-id") should haveTag("img")
       doc.getElementById("some-id") should haveAttribute("src", "some/file/url")

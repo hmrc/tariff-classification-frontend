@@ -25,19 +25,21 @@ import views.html.forms.components.{input_checkbox, input_text}
 
 class InputCheckboxViewSpec extends ViewSpec {
 
-  "Input Checkbox" should {
-    case class FormData(text: String)
-    val form = Form(
+  case class FormData(text: String)
+
+  val form =
+    Form(
       mapping(
         "field" -> text
       )(FormData.apply)(FormData.unapply)
     )
 
-    "Render" in {
-      // When
+  "Input Checkbox" should {
+
+    "render" in {
+
       val doc = view(input_checkbox(form("field"), "Label"))
 
-      // Then
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "checkbox")
@@ -46,18 +48,17 @@ class InputCheckboxViewSpec extends ViewSpec {
       doc.getElementById("field") shouldNot haveAttribute("onChange", "this.form.submit()")
     }
 
-    "Render with Optional Fields" in {
-      // When
-      val doc = view(input_checkbox(form("field"), "Label", value = false, submitOnChange = true))
+    "render with Optional Fields" in {
 
-      // Then
+      val doc = view(input_checkbox(form("field"), "Label", value = false))
+
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "checkbox")
       doc.getElementById("field") should haveAttribute("name", "field")
       doc.getElementById("field") should haveAttribute("value", "false")
-      doc.getElementById("field") should haveAttribute("onChange", "this.form.submit()")
     }
+
     "show an error in the value field's label" in {
       lazy val emptyForm = Map[String, String]()
       val formWithError  = form.bind(emptyForm).apply("field")
@@ -65,5 +66,4 @@ class InputCheckboxViewSpec extends ViewSpec {
       doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
     }
   }
-
 }

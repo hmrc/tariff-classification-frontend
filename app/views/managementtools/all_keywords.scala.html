@@ -20,7 +20,7 @@
 @import views.html.components.input_accessible_auto_complete
 @import views.html.partials.error_summary
 
-@(keywordsTabViewModel: KeywordsTabViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(keywordsTabViewModel: KeywordsTabViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <div id="keyword_search_edit-table">
 @error_summary(keywordForm.errors)

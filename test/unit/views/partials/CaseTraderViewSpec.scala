@@ -35,7 +35,7 @@ class CaseTraderViewSpec extends ViewSpec {
   "Case Trader" should {
 
     "Not render agent details when not present" in {
-      // Given
+
       val `case` = aCase(
         withReference("ref"),
         withoutAgent()
@@ -43,35 +43,29 @@ class CaseTraderViewSpec extends ViewSpec {
 
       val applicantTab = ApplicantTabViewModel.fromCase(`case`, Map.empty)
 
-      // When
       val doc = view(case_trader(applicantTab))
 
-      // Then
       doc shouldNot containElementWithID("agent-submitted-heading")
     }
 
     "render boards file number when present" in {
-      // Given
+
       val c            = aCase().copy(caseBoardsFileNumber = Some("file 123"))
       val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
-      // When
       val doc = view(case_trader(applicantTab))
 
-      // Then
       val boardFileNumber = doc.getElementById("boards-file-number")
       boardFileNumber.text() shouldBe "file 123"
     }
 
     "not show boards file number when not present" in {
-      // Given
+
       val c            = aCase()
       val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
-      // When
       val doc = view(case_trader(applicantTab))
 
-      // Then
       doc shouldNot containElementWithID("boards-file-number-label")
       doc shouldNot containElementWithID("boards-file-number")
     }

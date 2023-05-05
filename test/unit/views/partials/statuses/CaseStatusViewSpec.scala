@@ -29,7 +29,7 @@ class CaseStatusViewSpec extends ViewSpec {
   "Case Status" should {
 
     "render CANCELLED without the reason code" in {
-      // When
+
       val c = aCase(
         withStatus(CANCELLED),
         withDecision(cancellation = None)
@@ -37,13 +37,12 @@ class CaseStatusViewSpec extends ViewSpec {
 
       val doc = view(case_status(c, "id"))
 
-      // Then
       doc.text()               shouldBe "CANCELLED"
       doc.getElementById("id") should haveClass("govuk-tag--red")
     }
 
     "render CANCELLED and the reason code" in {
-      // When
+
       val c = aCase(
         withStatus(CANCELLED),
         withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED)))
@@ -51,34 +50,30 @@ class CaseStatusViewSpec extends ViewSpec {
 
       val doc = view(case_status(c, "id"))
 
-      // Then
       doc.text()               shouldBe "CANCELLED - 55"
       doc.getElementById("id") should haveClass("govuk-tag--red")
     }
 
     "render EXPIRED for expired rulings" in {
-      // When
+
       val doc = view(case_status(Cases.btiCaseWithExpiredRuling, "id"))
 
-      // Then
       doc.text()               shouldBe "case status EXPIRED"
       doc.getElementById("id") should haveClass("govuk-tag--green")
     }
 
     "render the case status" in {
-      // When
+
       val doc = view(case_status(Cases.btiCaseExample, "id"))
 
-      // Then
       doc.text()               shouldBe "case status OPEN"
       doc.getElementById("id") should haveClass("govuk-tag--blue")
     }
 
     "render the live liability case status" in {
-      // When
+
       val doc = view(case_status(Cases.liabilityLiveCaseExample, "id"))
 
-      // Then
       doc.text()                                shouldBe "liability type LIVE case status OPEN"
       doc.getElementById("id-liability-status") should haveClass("govuk-tag--pink")
     }

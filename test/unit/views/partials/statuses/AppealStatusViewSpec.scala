@@ -32,16 +32,14 @@ class AppealStatusViewSpec extends ViewSpec {
         withDecision(appeal = Seq.empty)
       )
 
-      // When
       val doc = view(appeal_status(c, "id"))
 
-      // Then
       doc.text() shouldBe ""
     }
 
     //ADR
     "render under mediation for IN_PROGRESS ADR" in {
-      // Given
+
       val c = aCase(
         withReference("ref"),
         withDecision(appeal =
@@ -51,15 +49,13 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      // When
       val doc = view(appeal_status(c, "id"))
 
-      // Then
       doc.text() shouldBe "Under mediation"
     }
 
     "render completed for ALLOWED ADR" in {
-      // Given
+
       val c = aCase(
         withReference("ref"),
         withDecision(appeal =
@@ -69,15 +65,13 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      // When
       val doc = view(appeal_status(c, "id"))
 
-      // Then
       doc.text() shouldBe "Completed"
     }
 
     "render complected for DISMISSED ADR" in {
-      // Given
+
       val c = aCase(
         withReference("ref"),
         withDecision(appeal =
@@ -87,16 +81,14 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      // When
       val doc = view(appeal_status(c, "id"))
 
-      // Then
       doc.text() shouldBe "Completed"
     }
 
     //REVIEW
     "render under review for IN_PROGRESS REVIEW" in {
-      // Given
+
       val c = aCase(
         withReference("ref"),
         withDecision(appeal =
@@ -106,15 +98,13 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      // When
       val doc = view(appeal_status(c, "id"))
 
-      // Then
       doc.text() shouldBe "Under review"
     }
 
     "render review upheld for ALLOWED REVIEW" in {
-      // Given
+
       val c = aCase(
         withReference("ref"),
         withDecision(appeal =
@@ -124,15 +114,13 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      // When
       val doc = view(appeal_status(c, "id"))
 
-      // Then
       doc.text() shouldBe "Review upheld"
     }
 
     "render review overturned for DISMISSED REVIEW" in {
-      // Given
+
       val c = aCase(
         withReference("ref"),
         withDecision(appeal =
@@ -142,10 +130,8 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      // When
       val doc = view(appeal_status(c, "id"))
 
-      // Then
       doc.text() shouldBe "Review overturned"
     }
 

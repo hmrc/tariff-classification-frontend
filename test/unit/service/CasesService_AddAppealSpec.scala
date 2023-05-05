@@ -72,7 +72,7 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
     }
 
     "update case with new appeal" in {
-      // Given
+
       val existingAppeal     = mock[Appeal]
       val operator: Operator = Operator("operator-id", None)
       val originalCase       = aCase(withDecision(appeal = Seq(existingAppeal)))
@@ -82,7 +82,6 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
       await(service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])
@@ -117,7 +116,7 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase(withDecision())
       val caseUpdated        = mock[Case]
@@ -126,7 +125,6 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
       await(service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])

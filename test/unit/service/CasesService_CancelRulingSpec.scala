@@ -80,7 +80,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
 
   "Cancel Ruling" should {
     "update case status to CANCELLED and decision end date" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
@@ -94,7 +94,6 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(successful(mock[Event]))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
-      // When Then
       await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -121,12 +120,11 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "reject case without a decision" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.COMPLETED, decision = None)
 
-      // When Then
       intercept[IllegalArgumentException] {
         await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
       }
@@ -154,7 +152,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
@@ -168,7 +166,6 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(failed(new RuntimeException("Failed to create Event")))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
-      // When Then
       await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -178,7 +175,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "succeed on ruling store notify failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
       val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
@@ -193,7 +190,6 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
         .willReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
 
-      // When Then
       await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])

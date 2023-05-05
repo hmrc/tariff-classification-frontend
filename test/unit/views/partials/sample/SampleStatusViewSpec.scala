@@ -28,32 +28,28 @@ class SampleStatusViewSpec extends ViewSpec {
   "Sample Details" should {
 
     "render change status link when user has permission" in {
-      // Given
+
       val caseWithSample = aCase(
         withBTIDetails()
       )
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
       val doc = view(sample_status(sampleTab)(requestWithPermissions(Permission.EDIT_SAMPLE), messages, appConfig))
 
-      // Then
       doc should containElementWithID("change-sample-status")
     }
 
     "not render change status link when user does not have permission" in {
-      // Given
+
       val caseWithSample = aCase(
         withBTIDetails()
       )
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
       val doc = view(sample_status(sampleTab)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
 
-      // Then
       doc shouldNot containElementWithID("change-sample-status")
     }
   }

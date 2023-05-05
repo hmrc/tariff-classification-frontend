@@ -36,7 +36,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
     val event = EventPayloads.event
 
     "return status 200" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -55,24 +55,24 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession(s"/cases/1/release").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("Choose a team to release this case to")
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
 
-      // When
+
       val response: WSResponse =
         await(requestWithSession("/cases/1/release").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
@@ -85,7 +85,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 //    val token = fakeApplication().injector.instanceOf[TokenProvider].generateToken
 //
 //    "return status 200" in {
-//      // Given
+//
 //      stubFor(get(urlEqualTo("/cases/1"))
 //        .willReturn(aResponse()
 //          .withStatus(OK)
@@ -97,10 +97,10 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 //          .withBody(caseWithStatusOPEN))
 //      )
 //
-//      // When
+//
 //      val response: WSResponse = await(requestWithSession(s"http://localhost:$port/manage-tariff-classifications/cases/1/release").post(Map("queue" -> Seq("cars"), "csrfToken" -> Seq(token))))
 //
-//      // Then
+//
 //      response.status shouldBe OK
 //      response.body should include("<h3 class=\"heading-medium mt-0\">This case has been released to the Cars queue</h3>")
 //    }

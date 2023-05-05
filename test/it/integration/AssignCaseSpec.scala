@@ -30,7 +30,7 @@ class AssignCaseSpec extends IntegrationTest with MockitoSugar {
     val event              = EventPayloads.event
 
     "return status 200" in {
-      // Given
+
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
@@ -49,22 +49,22 @@ class AssignCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include("assign_case-heading")
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
 
-      // When
+
       val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }

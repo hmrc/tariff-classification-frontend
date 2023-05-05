@@ -62,7 +62,7 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
   "Suppress a Case" should {
     "update case status to SUPPRESSED" in {
-      // Given
+
       val existingAttachment = mock[Attachment]
 
       val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
@@ -74,7 +74,6 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      // When Then
       await(service.suppressCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseSuppressed(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -109,7 +108,7 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     }
 
     "succeed on event create failure" in {
-      // Given
+
       val operator: Operator = Operator("operator-id")
       val attachment         = Attachment("id", operator = Some(operator))
       val originalCase       = aCase.copy(status = CaseStatus.NEW)
@@ -119,7 +118,6 @@ class CasesService_SuppressCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      // When Then
       await(service.suppressCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 
       verify(audit).auditCaseSuppressed(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])

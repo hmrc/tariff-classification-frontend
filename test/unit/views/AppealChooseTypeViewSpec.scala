@@ -29,11 +29,9 @@ class AppealChooseTypeViewSpec extends ViewSpec {
   "Appeal Choose Type" should {
 
     "Render value for each AppealType" in {
-      // When
+
       val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(appealChooseTypeView(c, AppealForm.appealTypeForm))
-
-      // Then
 
       AppealType.values.foreach { at =>
         val id = s"appeal_type-$at"

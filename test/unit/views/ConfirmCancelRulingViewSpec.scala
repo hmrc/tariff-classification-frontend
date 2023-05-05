@@ -26,25 +26,23 @@ class ConfirmCancelRulingViewSpec extends ViewSpec {
   "Confirm Cancel page" should {
 
     "Render text for BTI" in {
-      // When
+
       val c   = Cases.btiCaseWithExpiredRuling
       val doc = view(confirmCancelRulingView(c))
       lazy val expected =
         "This ruling has been removed from the Search for Advance Tariff Rulings website"
       lazy val actual = doc.getElementById("main-content").text()
 
-      // Then
       actual should include(expected)
     }
 
     "Render text for Liability" in {
-      // When
+
       val c             = Cases.aLiabilityCase()
       val doc           = view(confirmCancelRulingView(c))
       lazy val expected = "The liability decision has been cancelled"
       lazy val actual   = doc.getElementById("main-content").text()
 
-      // Then
       actual should include(expected)
     }
 

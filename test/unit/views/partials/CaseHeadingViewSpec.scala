@@ -27,16 +27,14 @@ class CaseHeadingViewSpec extends ViewSpec {
   "Case Heading" should {
 
     "Render" in {
-      // Given
+
       val c = aCase(
         withReference("ref"),
         withStatus(CaseStatus.OPEN)
       )
 
-      // When
       val doc = view(case_heading(c))
 
-      // Then
       doc                                  should containElementWithID("case-reference")
       doc.getElementById("case-reference") should containText("ATaR case ref")
       doc                                  should containElementWithID("case-status")
@@ -44,28 +42,24 @@ class CaseHeadingViewSpec extends ViewSpec {
     }
 
     "Render without Optional Statuses" in {
-      // Given
+
       val c = aCase(
         withoutDecision()
       )
 
-      // When
       val doc = view(case_heading(c))
 
-      // Then
       doc shouldNot containElementWithID("appeal-status")
     }
 
     "Render with 'Appeal Status'" in {
-      // Given
+
       val c = aCase(
         withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)))
       )
 
-      // When
       val doc = view(case_heading(c))
 
-      // Then
       doc                                 should containElementWithID("appeal-status")
       doc.getElementById("appeal-status") should containText("Appeal allowed")
     }

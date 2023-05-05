@@ -49,17 +49,17 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
     }
 
     "redirect on auth failure" in {
-      // Given
+
       givenAuthFailed()
       shouldFail
     }
 
     def shouldFail = {
-      // When
+
       val response: WSResponse =
         await(requestWithSession(s"/cases/1/new-appeal/ANY").get())
 
-      // Then
+
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
@@ -75,11 +75,11 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
       )
 
       AppealType.values.foreach { appealType =>
-        // When
+
         val response: WSResponse =
           await(requestWithSession(s"/cases/1/new-appeal/$appealType").get())
 
-        // Then
+
         response.status shouldBe OK
         response.body   should include("id=\"appeal_choose_status-heading\"")
       }

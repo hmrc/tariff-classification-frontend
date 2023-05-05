@@ -28,23 +28,21 @@ class SampleDetailsViewSpec extends ViewSpec {
   "Sample Details" should {
 
     "render bti details" in {
-      // Given
+
       val caseWithSample = aCase(
         withBTIDetails()
       )
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      // When
       val doc = view(sample_details(sampleTab))
 
-      // Then
       doc should containElementWithID("app-details-sending-samples-answer")
       doc shouldNot containElementWithID("liability-sending-samples")
     }
 
     "render sample status activity when present on case" in {
-      // Given
+
       val caseWithSample = aCase(
         withBTIDetails(sampleToBeProvided = true),
         withoutAttachments()
@@ -67,7 +65,6 @@ class SampleDetailsViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged(sampleStatusActivity, NoPagination(), 3))
 
-      // When
       val doc = view(sample_details(sampleTab))
 
       doc.getElementById("sample-status-events-row-0-title") should containText(

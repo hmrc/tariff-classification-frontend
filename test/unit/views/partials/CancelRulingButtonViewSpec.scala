@@ -33,10 +33,8 @@ class CancelRulingButtonViewSpec extends ViewSpec {
       val c         = Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED)
       val rulingTab = RulingTabViewModel.fromCase(c)
 
-      // When
       val doc = view(cancel_ruling_section(rulingTab))
 
-      // Then
       doc should containElementWithID(cancelButtonId)
       doc.getElementById(cancelButtonId) should haveAttribute(
         "href",
@@ -48,10 +46,8 @@ class CancelRulingButtonViewSpec extends ViewSpec {
       val c         = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
       val rulingTab = RulingTabViewModel.fromCase(c)
 
-      // When
       val doc = view(cancel_ruling_section(rulingTab))
 
-      // Then
       doc shouldNot containElementWithID(cancelButtonId)
     }
 
@@ -59,10 +55,8 @@ class CancelRulingButtonViewSpec extends ViewSpec {
       val c         = Cases.btiCaseWithExpiredRuling
       val rulingTab = RulingTabViewModel.fromCase(c)
 
-      // When
       val doc = view(cancel_ruling_section(rulingTab))
 
-      // Then
       doc shouldNot containElementWithID(cancelButtonId)
     }
   }

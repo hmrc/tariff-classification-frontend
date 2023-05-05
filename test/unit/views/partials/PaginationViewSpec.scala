@@ -44,7 +44,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
   "Pagination" should {
 
     "Render empty page" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -53,13 +53,12 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-none")
       doc shouldNot containElementWithID("ID-some")
     }
 
     "Render 1 page" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -68,7 +67,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-one")
       doc shouldNot containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
@@ -89,7 +87,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
     }
 
     "Render 1 partially full page" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -98,7 +96,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-one")
       doc shouldNot containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
@@ -119,7 +116,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
     }
 
     "Render 2 pages" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -128,7 +125,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
@@ -152,7 +148,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
     }
 
     "Render 3 pages" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -161,7 +157,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
@@ -186,7 +181,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
     }
 
     "Render 4 pages" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -195,7 +190,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
@@ -221,7 +215,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
     }
 
     "Render 5 pages" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -230,7 +224,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
@@ -257,7 +250,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
     }
 
     "Render more pages" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -266,7 +259,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 
@@ -294,7 +286,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
     }
 
     "Render 1 previous page" in {
-      // When
+
       val doc = view(
         pagination(
           id       = "ID",
@@ -303,7 +295,6 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
         )
       )
 
-      // Then
       doc should containElementWithID("ID-some")
       doc shouldNot containElementWithID("ID-none")
 

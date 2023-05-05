@@ -17,18 +17,26 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.BackLink
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.helper.CSPNonce
 
-@this(
-        govukBackLink: GovukBackLink
-)
+@this(govukBackLink: GovukBackLink)
 
 @(
-        messageKey: String = "errors.all.back",
-        linkLocation: String = "javascript: window.history.go(-1)"
-)(implicit messages: Messages)
+    messageKey: String = "errors.all.back",
+    linkLocation: Option[String] = None
+)(implicit messages: Messages, request:RequestHeader)
 
-@govukBackLink(BackLink(
-    href=linkLocation,
-    content = Text(messages(messageKey)),
-    attributes = Map("class" -> "govuk-back-link", "id" -> "back-link")
-))
+
+@if(linkLocation.isDefined) {
+ @govukBackLink(
+   BackLink(href = linkLocation.get, content = Text(messages(messageKey)),attributes = Map("class" -> "govuk-back-link", "id" -> "back-link"))
+ )
+} else {
+ @govukBackLink(
+   BackLink(content = Text(messages(messageKey)),attributes = Map("class" -> "govuk-back-link", "id" -> "back-link"))
+ )
+ <script @{CSPNonce.attr}>document.getElementById("back-link").addEventListener("click", () => window.history.go(-1));</script>
+}
+
+
+

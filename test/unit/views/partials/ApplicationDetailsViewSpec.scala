@@ -27,7 +27,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
   "Application Details" should {
 
     "not render default negative text on optional fields when not present" in {
-      // Given
+
       val `case` = aCase(
         withOptionalApplicationFields(),
         withoutAttachments()
@@ -35,17 +35,15 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val goodsTab = GoodsTabViewModel.fromCase(`case`)
 
-      // When
       val doc = view(application_details(goodsTab))
 
-      // Then
       doc.getElementById("app-details-confidential-info") shouldNot containText(messages("answer.none"))
       doc shouldNot containElementWithID("app-details-related-reference")
       doc.getElementById("app-details-legal-proceedings") shouldNot containText(messages("answer.no"))
     }
 
     "Render optional fields when present" in {
-      // Given
+
       val `case` = aCase(
         withOptionalApplicationFields(
           confidentialInformation = Some("confidential info"),
@@ -60,10 +58,8 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val goodsTab = GoodsTabViewModel.fromCase(`case`)
 
-      // When
       val doc = view(application_details(goodsTab))
 
-      // Then
       doc                                                        should containElementWithID("app-details-previous-ruling-reference")
       doc                                                        should containElementWithID("app-details-envisaged-code")
       doc.getElementById("app-details-envisaged-code")           should containText("envisaged code")
@@ -85,7 +81,6 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val goodsTab = GoodsTabViewModel.fromCase(`case`)
 
-      // When
       val doc = view(application_details(goodsTab))
 
       //Then

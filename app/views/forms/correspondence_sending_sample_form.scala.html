@@ -22,7 +22,7 @@
 @import views.html.components.confirm_or_cancel_buttons
 @import views.html.forms.components.input_radiogroup
 
-@(c: Case, field: Field)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, field: Field)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @helper.form(action = routes.SampleController.updateStatus(c.reference, Some("correspondence")), Symbol("id") -> "sample_status_form", Symbol("novalidate") -> "novalidate") {
     @helper.CSRF.formField

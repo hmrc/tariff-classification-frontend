@@ -34,10 +34,9 @@ class InputTextViewSpec extends ViewSpec {
     ).fill(FormData("v"))
 
     "Render" in {
-      // When
+
       val doc = view(input_text(form("field"), "Label"))
 
-      // Then
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
       doc.getElementById("field") should haveAttribute("type", "text")
@@ -49,7 +48,6 @@ class InputTextViewSpec extends ViewSpec {
       //When
       val doc = view(input_text(form("field"), "Label", disableAutoComplete = true))
 
-      // Then
       doc.getElementById("field") should haveAttribute("autocomplete", "off")
     }
     "enable an error prefix for screen reader" in {

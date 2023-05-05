@@ -22,8 +22,6 @@
 @(
         formData: Form[Case],
         value: Boolean = true,
-        inputClass: Option[String] = None,
-        hint: Option[String] = None
 )(implicit messages: Messages)
 
 @conditionalInput = @{Html(s"""

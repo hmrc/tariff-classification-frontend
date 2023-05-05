@@ -29,9 +29,8 @@ class AdvancedSearchResultImagesViewSpec extends ViewSpec {
 
     "Render No Results" in {
 
-      // When
       val doc = view(advanced_search_results_images(Paged.empty[SearchResult]))
-      // Then
+
       doc should containElementWithID("advanced_search_results-empty")
       doc shouldNot containElementWithID("advanced_search_images-results")
     }
@@ -53,10 +52,8 @@ class AdvancedSearchResultImagesViewSpec extends ViewSpec {
       )
       val searchResult = SearchResult(c, storedAttachments)
 
-      // When
       val doc = view(advanced_search_results_images(Paged(Seq(searchResult))))
 
-      // Then
       doc shouldNot containElementWithID("advanced_search_results-empty")
       doc should containElementWithID("advanced_search_images-results")
       doc should containElementWithID("thumbnail-advanced_search_results-row-0-attachments-0")
