@@ -21,10 +21,7 @@
 
 @this(govukBackLink: GovukBackLink)
 
-@(
-    messageKey: String = "errors.all.back",
-    linkLocation: String = "javascript: window.history.go(-1)"
-)(implicit messages: Messages, request:RequestHeader)
+@(messageKey: String = "errors.all.back")(implicit messages: Messages, request:RequestHeader)
 
 @govukBackLink(
     BackLink(content = Text(messages(messageKey)),attributes = Map("class" -> "govuk-back-link", "id" -> "back-link"))
