@@ -27,6 +27,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.Cases
 import views.html.v2.create_misc
 import views.html.{case_not_found, resource_not_found}
@@ -71,7 +72,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       val result =
         await(controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES)).get()(newFakeGETRequestWithCSRF()))
 
-      status(result)      shouldBe Status.OK
+      status(result)      shouldBe OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
     }
@@ -82,7 +83,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .get()(newFakeGETRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
+      status(result)          shouldBe OK
       contentType(result)     shouldBe Some("text/html")
       charset(result)         shouldBe Some("utf-8")
       contentAsString(result) should include(messages("page.title.create_misc.h1"))
@@ -94,7 +95,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .get()(newFakeGETRequestWithCSRF())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)               shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -112,9 +113,25 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
               )
           )
       )
-
+      status(result)          shouldBe OK
       contentAsString(result) should include(messages("page.title.create_misc.h1"))
+    }
 
+    "display Case created page when form has no errors POST" in {
+      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.miscellaneousCaseExample))
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .post()(
+            newFakePOSTRequestWithCSRF().withFormUrlEncodedBody(
+              "name"        -> "bob",
+              "contactName" -> "bob 2",
+              "caseType"    -> "Other"
+            )
+          )
+      )
+
+      status(result) shouldBe SEE_OTHER
     }
 
     "display no results found when a queue is not found GET" in {
@@ -131,7 +148,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
+      status(result)          shouldBe OK
       contentAsString(result) should include("Case Queue not found.")
     }
 
@@ -149,8 +166,70 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
+      status(result)          shouldBe OK
       contentAsString(result) should include("We could not find a Case with reference: reference")
+    }
+
+    "display confirmation of case created with no queue id " in {
+      given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some(""))))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.miscellaneousCaseExample)))
+
+      given(queuesService.getOneById(any[String]))
+        .willReturn(successful(Some(Queue("", "", "queue"))))
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .displayConfirmation("1")(newFakePOSTRequestWithCSRF())
+      )
+
+      status(result)          shouldBe OK
+      contentAsString(result) should include("The Miscellaneous case has been created")
+    }
+
+    "display confirmation of case created" in {
+      given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
+        .willReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
+
+      given(queuesService.getOneById(any[String]))
+        .willReturn(successful(Some(Queue("1", "", "queue"))))
+
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
+          .displayConfirmation("1")(newFakePOSTRequestWithCSRF())
+      )
+
+      status(result)          shouldBe OK
+      contentAsString(result) should include("The case status is now </br><strong>OPEN</strong>")
+    }
+
+    "displayQuestion return the expected result when request has permissions " in {
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(None))
+
+      val reference = "reference"
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.RELEASE_CASE))
+          .displayQuestion(reference)(newFakeGETRequestWithCSRF())
+      )
+
+      status(result) shouldBe OK
+    }
+
+    "displayQuestion return the expected result when request does not have permissions " in {
+      given(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .willReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
+
+      val reference = "123456"
+      val result = await(
+        controller(caseWithStatusOPEN, Set(Permission.RELEASE_CASE))
+          .displayQuestion(reference)(newFakeGETRequestWithCSRF())
+      )
+
+      status(result) shouldBe SEE_OTHER
     }
 
     "editMiscDetails" should {

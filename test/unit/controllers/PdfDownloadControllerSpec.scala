@@ -54,7 +54,8 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
     justification        = "justification-content",
     goodsDescription     = "goods-description",
     methodSearch         = Some("method-to-search"),
-    decisionPdf          = Some(Attachment("id", public = false, Some(Operator("1", None))))
+    decisionPdf          = Some(Attachment("id", public = false, Some(Operator("1", None)))),
+    letterPdf            = Some(Attachment("id", public = false, Some(Operator("1", None))))
   )
 
   private val caseWithDecision          = Cases.btiCaseExample.copy(decision       = Some(decision))
@@ -198,6 +199,68 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       givenNotFoundPdf()
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
+
+      status(result)          shouldBe Status.NOT_FOUND
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a ruling certificate document for case reference")
+    }
+  }
+
+  "PdfDownloadController Letter" should {
+
+    "return expected pdf" in {
+      givenCompletedCase()
+      givenValidStoredPdf()
+
+      val result = await(controller.getLetterPdf(caseWithDecision.reference)(fakeRequest))
+
+      status(result)                        shouldBe OK
+      contentAsString(result)               shouldBe "Some content"
+      contentType(result)                   shouldBe Some("application/pdf")
+      header("Content-Disposition", result) shouldBe Some("attachment; filename=some.pdf")
+    }
+
+    "return expected pdf for liability case" in {
+      givenCompletedLiabilityCase()
+      givenValidStoredPdf()
+
+      val result = await(controller.getLetterPdf(liabilityCaseWithDecision.reference)(fakeRequest))
+
+      status(result)                        shouldBe OK
+      contentAsString(result)               shouldBe "Some content"
+      contentType(result)                   shouldBe Some("application/pdf")
+      header("Content-Disposition", result) shouldBe Some("attachment; filename=some.pdf")
+    }
+
+    "redirect to ruling when no decision found" in {
+      givenNonDecisionCase()
+      givenValidStoredPdf()
+
+      val result = await(controller.getLetterPdf(caseWithDecision.reference)(fakeRequest))
+
+      status(result)          shouldBe Status.NOT_FOUND
+      locationOf(result)      shouldBe None
+      contentAsString(result) should include("We could not find a ruling with case reference")
+    }
+
+    "error when case not found" in {
+      givenNotFoundCase()
+
+      val result = await(controller.getLetterPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
+
+      status(result)          shouldBe Status.NOT_FOUND
+      contentType(result)     shouldBe Some("text/html")
+      charset(result)         shouldBe Some("utf-8")
+      contentAsString(result) should include("We could not find a Case with reference")
+    }
+
+    "error when document not found" in {
+      givenCompletedCase()
+      givenCaseWithoutAttachments()
+      givenNotFoundPdf()
+
+      val result = await(controller.getLetterPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
 
       status(result)          shouldBe Status.NOT_FOUND
       contentType(result)     shouldBe Some("text/html")
