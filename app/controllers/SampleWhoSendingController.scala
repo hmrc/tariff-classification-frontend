@@ -25,14 +25,13 @@ import play.api.mvc._
 import play.twirl.api.Html
 import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_sample_send
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
-
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SampleWhoSendingController @Inject() (

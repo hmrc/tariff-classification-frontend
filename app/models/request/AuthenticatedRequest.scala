@@ -16,9 +16,8 @@
 
 package models.request
 
+import models.{Case, Operator, Permission, UserAnswers}
 import play.api.mvc.{Request, WrappedRequest}
-import models.{Case, Operator, Permission}
-import models.UserAnswers
 
 abstract class OperatorRequest[A](_operator: Operator, _request: Request[A]) extends WrappedRequest[A](_request) {
   val operator: Operator

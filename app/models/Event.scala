@@ -16,8 +16,6 @@
 
 package models
 
-import java.time.Instant
-
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models.CancelReason.CancelReason
@@ -28,6 +26,8 @@ import models.RejectReason.RejectReason
 import models.SampleReturn.SampleReturn
 import models.SampleSend.SampleSend
 import models.SampleStatus.SampleStatus
+
+import java.time.Instant
 
 case class Event(
   id: String,

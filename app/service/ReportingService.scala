@@ -16,13 +16,12 @@
 
 package service
 
-import javax.inject.{Inject, Singleton}
-
 import connector.BindingTariffClassificationConnector
 import models._
 import models.reporting._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton

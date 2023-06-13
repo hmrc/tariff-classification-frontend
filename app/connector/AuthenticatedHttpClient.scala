@@ -18,7 +18,6 @@ package connector
 
 import akka.actor.ActorSystem
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.libs.json.Writes
 import play.api.libs.ws.WSClient
@@ -26,6 +25,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

@@ -23,11 +23,9 @@ import org.mockito.BDDMockito._
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
-import play.api.http.Status
 import play.api.test.Helpers._
 import service.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.CacheMap
 import utils.Cases
 import views.html.v2.create_misc
 import views.html.{case_not_found, resource_not_found}

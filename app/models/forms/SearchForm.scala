@@ -16,12 +16,12 @@
 
 package models.forms
 
-import play.api.data.Form
-import play.api.data.Forms._
+import models.PseudoCaseStatus.PseudoCaseStatus
 import models.forms.FormConstraints._
 import models.forms.FormUtils._
-import models.PseudoCaseStatus.PseudoCaseStatus
 import models.{ApplicationType, PseudoCaseStatus, Search}
+import play.api.data.Form
+import play.api.data.Forms._
 
 object SearchForm {
 

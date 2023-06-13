@@ -18,16 +18,15 @@ package connector
 
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
-import javax.inject.Singleton
 import metrics.HasMetrics
-import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.auth.core.PlayAuthConnector
-import uk.gov.hmrc.http.CorePost
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{CorePost, HeaderCarrier, HttpClient}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.Singleton
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StrideAuthConnector @Inject() (

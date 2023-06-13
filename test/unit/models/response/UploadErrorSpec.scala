@@ -18,7 +18,6 @@ package models.response
 
 import models._
 import models.response.UploadError.fromErrorCode
-import utils.Cases
 
 class UploadErrorSpec extends ModelsBaseSpec {
 

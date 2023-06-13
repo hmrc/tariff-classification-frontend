@@ -16,12 +16,12 @@
 
 package models.forms
 
-import play.api.data.Form
-import play.api.data.Forms._
+import models.LiabilityStatus.LiabilityStatus
+import models.forms.FormUtils._
 import models.forms.mappings.FormMappings._
 import models.{Contact, LiabilityOrder, LiabilityStatus}
-import FormUtils._
-import models.LiabilityStatus.LiabilityStatus
+import play.api.data.Form
+import play.api.data.Forms._
 
 object LiabilityForm {
 

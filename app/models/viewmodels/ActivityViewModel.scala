@@ -16,9 +16,9 @@
 
 package models.viewmodels
 
-import java.time.Instant
+import models._
 
-import models.{Case, Event, Operator, Paged, Queue}
+import java.time.Instant
 
 case class ActivityViewModel(
   referenceNumber: String,

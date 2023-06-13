@@ -21,11 +21,11 @@ import config.AppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{case_not_found, document_not_found, ruling_not_found}
-import javax.inject.Inject
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
+import javax.inject.Inject
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 

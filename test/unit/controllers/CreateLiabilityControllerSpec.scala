@@ -16,9 +16,9 @@
 
 package controllers
 
+import models._
 import models.forms.LiabilityForm
 import models.request.AuthenticatedRequest
-import models._
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import play.api.data.FormBinding.Implicits.formBinding

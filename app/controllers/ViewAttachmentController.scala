@@ -23,14 +23,13 @@ import models.response.FileMetadata
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.FileStoreService
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.view_attachment_unavailable
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
-
 import java.net.URLEncoder
 import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

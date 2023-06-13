@@ -17,9 +17,9 @@
 package models.forms.v2
 
 import models.Queues
+import models.forms.mappings.FormMappings._
 import play.api.data.Form
 import play.api.data.Forms.mapping
-import models.forms.mappings.FormMappings._
 
 object TeamToMoveCaseForm {
 

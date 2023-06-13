@@ -16,9 +16,10 @@
 
 package models
 
-import java.time.Instant
 import models.BinderUtil._
 import play.api.mvc.QueryStringBindable
+
+import java.time.Instant
 
 case class InstantRange(
   min: Instant,

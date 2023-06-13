@@ -16,21 +16,20 @@
 
 package repositories
 
-import java.time.{LocalDateTime, ZoneOffset}
-import java.util.concurrent.TimeUnit
-
-import javax.inject.{Inject, Singleton}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.model.{IndexModel, IndexOptions, ReplaceOptions}
 import org.mongodb.scala.model.Sorts.ascending
-import play.api.libs.json.{Format, JsValue, Json, OFormat}
+import org.mongodb.scala.model.{IndexModel, IndexOptions, ReplaceOptions}
 import play.api.Configuration
+import play.api.libs.json.{Format, JsValue, Json, OFormat}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
+import java.time.{LocalDateTime, ZoneOffset}
+import java.util.concurrent.TimeUnit
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 case class DatedCacheMap(

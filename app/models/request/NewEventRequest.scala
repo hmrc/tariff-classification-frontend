@@ -16,9 +16,9 @@
 
 package models.request
 
-import java.time.Instant
-
 import models.{Details, Operator}
+
+import java.time.Instant
 
 case class NewEventRequest(
   details: Details,

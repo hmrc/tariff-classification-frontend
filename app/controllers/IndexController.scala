@@ -22,10 +22,11 @@ import models.Role
 import models.request.AuthenticatedRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.read_only_home
+
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
 @Singleton
 class IndexController @Inject() (

@@ -16,9 +16,9 @@
 
 package models.forms
 
+import models.forms.mappings.FormMappings.textNonEmpty
 import play.api.data.Form
 import play.api.data.Forms._
-import models.forms.mappings.FormMappings.textNonEmpty
 
 object AddNoteForm {
 

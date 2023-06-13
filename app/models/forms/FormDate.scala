@@ -18,13 +18,12 @@ package models.forms
 
 import models.forms.mappings.Mappings
 import org.apache.commons.lang3.StringUtils.stripToNull
-
-import java.time.{Instant, ZoneOffset}
 import play.api.data.Forms.{mapping, of}
 import play.api.data.format.Formats.booleanFormat
 import play.api.data.format.Formatter
 import play.api.data.{FormError, Forms, Mapping}
 
+import java.time.{Instant, ZoneOffset}
 import scala.util.Try
 
 object FormDate extends Mappings {

@@ -16,8 +16,6 @@
 
 package models
 
-import java.time.Instant
-
 import cats.data.EitherT
 import models.CaseStatus.CaseStatus
 import models.LiabilityStatus.LiabilityStatus
@@ -25,6 +23,7 @@ import models.PseudoCaseStatus.PseudoCaseStatus
 import models.SortDirection.SortDirection
 import play.api.mvc.QueryStringBindable
 
+import java.time.Instant
 import scala.util.Try
 
 object BinderUtil {

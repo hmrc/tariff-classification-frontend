@@ -16,9 +16,9 @@
 
 package models.forms
 
+import models.forms.mappings.FormMappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.forms.mappings.FormMappings
 
 object KeywordForm {
   val form: Form[String] = Form(

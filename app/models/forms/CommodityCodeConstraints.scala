@@ -16,9 +16,10 @@
 
 package models.forms
 
-import javax.inject.{Inject, Singleton}
 import models.forms.mappings.Constraints
 import play.api.data.validation.{Constraint, Invalid, Valid}
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CommodityCodeConstraints @Inject() () extends Constraints {

@@ -18,12 +18,11 @@ package service
 
 import audit.AuditService
 import connector.BindingTariffClassificationConnector
+import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

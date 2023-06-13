@@ -18,15 +18,15 @@ package controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import config.AppConfig
+import _root_.config.AppConfig
 import models.Case
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import play.twirl.api.HtmlFormat
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 trait RenderCaseAction extends I18nSupport { this: FrontendController =>
 

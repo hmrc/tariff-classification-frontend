@@ -21,10 +21,10 @@ import audit.AuditService
 import com.github.blemale.scaffeine.Scaffeine
 import config.AppConfig
 import connector.BindingTariffClassificationConnector
-import javax.inject.{Inject, Singleton}
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

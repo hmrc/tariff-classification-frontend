@@ -16,12 +16,12 @@
 
 package models
 
-import java.time.Instant
-
 import cats.syntax.either._
 import models.LiabilityStatus.LiabilityStatus
 import models.MiscCaseType.MiscCaseType
 import play.api.mvc.PathBindable
+
+import java.time.Instant
 
 sealed trait Application {
   val `type`: ApplicationType

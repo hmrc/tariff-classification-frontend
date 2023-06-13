@@ -21,12 +21,11 @@ import models.forms.CaseStatusRadioInputFormProvider
 import models.{CaseStatusRadioInput, Permission}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_case_status
 
 import javax.inject.Inject
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
-
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future.successful
 

@@ -27,13 +27,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_suspended, suspend_case_email, suspend_case_reason}
+
 import java.util.UUID
-
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
-
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 

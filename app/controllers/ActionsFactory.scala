@@ -18,7 +18,6 @@ package controllers
 
 import config.AppConfig
 import connector.DataCacheConnector
-import javax.inject.{Inject, Singleton}
 import models.request._
 import models.{Case, Permission, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,6 +27,7 @@ import service.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 

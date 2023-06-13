@@ -16,7 +16,7 @@
 
 package models.viewmodels
 
-import models.{CaseStatus, _}
+import models._
 
 case class ApplicationsTab(
   tabMessageKey: String,

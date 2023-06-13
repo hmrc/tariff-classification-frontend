@@ -31,10 +31,9 @@ import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
 import views.html.{confirm_rejected, reject_case_email, reject_case_reason}
+
 import java.util.UUID
-
 import javax.inject.{Inject, Singleton}
-
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 

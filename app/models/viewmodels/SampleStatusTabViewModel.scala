@@ -18,8 +18,8 @@ package models.viewmodels
 
 import models.SampleReturn.SampleReturn
 import models.SampleSend.SampleSend
-import models.{Event, Paged, Sample}
 import models.SampleStatus._
+import models.{Event, Paged, Sample}
 
 case class SampleStatusTabViewModel(
   caseReference: String,

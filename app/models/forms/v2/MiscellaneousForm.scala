@@ -16,10 +16,10 @@
 
 package models.forms.v2
 
+import models.forms.mappings.FormMappings._
 import models.{Contact, MiscApplication, MiscCaseType}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.forms.mappings.FormMappings._
 
 object MiscellaneousForm {
 

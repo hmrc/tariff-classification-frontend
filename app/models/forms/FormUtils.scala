@@ -16,8 +16,8 @@
 
 package models.forms
 
-import play.api.data.Mapping
 import models.forms.mappings.FormMappings.fieldNonEmpty
+import play.api.data.Mapping
 
 import scala.util.Try
 

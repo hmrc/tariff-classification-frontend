@@ -18,12 +18,12 @@ package service
 
 import audit.AuditService
 import connector.BindingTariffClassificationConnector
-import javax.inject.Inject
 import models.Role.Role
 import models.{Operator, Paged, Pagination}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class UserService @Inject() (

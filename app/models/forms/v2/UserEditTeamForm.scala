@@ -16,8 +16,8 @@
 
 package models.forms.v2
 
-import play.api.data.Forms._
 import play.api.data.Form
+import play.api.data.Forms._
 
 object UserEditTeamForm {
 

@@ -16,11 +16,11 @@
 
 package models.forms
 
-import play.api.data.{Form, Forms, Mapping}
-import models.forms.FormUtils.textTransformingTo
 import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
+import models.forms.FormUtils.textTransformingTo
 import models.{AppealStatus, AppealType}
+import play.api.data.{Form, Forms, Mapping}
 
 object AppealForm {
 

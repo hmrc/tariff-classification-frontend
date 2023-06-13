@@ -18,12 +18,13 @@ package connector
 
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
-import javax.inject.Singleton
 import metrics.HasMetrics
 import play.api.libs.json.Format
 import repositories.SessionRepository
-import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.http.cache.client.CacheMap
+
+import javax.inject.Singleton
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MongoCacheConnector @Inject() (

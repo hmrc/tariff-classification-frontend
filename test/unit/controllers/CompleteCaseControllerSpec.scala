@@ -16,9 +16,9 @@
 
 package controllers
 
+import models._
 import models.forms.v2.LiabilityDetailsForm
 import models.forms.{CommodityCodeConstraints, DecisionForm}
-import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

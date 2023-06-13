@@ -16,10 +16,11 @@
 
 package models.forms
 
-import javax.inject.Inject
-import play.api.data.Form
-import models.forms.mappings.Mappings
 import models.CaseStatusRadioInput
+import models.forms.mappings.Mappings
+import play.api.data.Form
+
+import javax.inject.Inject
 
 class CaseStatusRadioInputFormProvider @Inject() extends Mappings {
 

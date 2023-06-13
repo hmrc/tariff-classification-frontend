@@ -16,14 +16,14 @@
 
 package models.forms
 
-import java.time.{Instant, LocalDate, ZoneOffset}
 import models.InstantRange
 import models.forms.mappings.Mappings
-import play.api.data.{Form, FormError, Mapping}
 import play.api.data.Forms._
-import play.api.data.format.Formatter
 import play.api.data.format.Formats._
+import play.api.data.format.Formatter
+import play.api.data.{Form, FormError, Mapping}
 
+import java.time.{Instant, LocalDate, ZoneOffset}
 import scala.util.Try
 
 case class ReportDateFormData(

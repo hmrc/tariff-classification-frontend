@@ -17,11 +17,11 @@
 package utils
 
 import cats.data.NonEmptySeq
+import models.LiabilityStatus.LiabilityStatus
 import models._
 import models.reporting._
 import models.request.NewEventRequest
 import models.response.{FileMetadata, ScanStatus}
-import models.LiabilityStatus.LiabilityStatus
 import play.api.libs.json._
 import uk.gov.hmrc.play.json.Union
 

@@ -16,14 +16,15 @@
 
 package models.forms
 
-import java.time.Instant
-import javax.inject.Inject
-import play.api.data.Form
-import play.api.data.Forms._
-import models.forms.FormConstraints._
-import models.forms.mappings.Constraints
 import models.Decision
 import models.constraints.StopOnFirstFail
+import models.forms.FormConstraints._
+import models.forms.mappings.Constraints
+import play.api.data.Form
+import play.api.data.Forms._
+
+import java.time.Instant
+import javax.inject.Inject
 
 case class DecisionFormData(
   bindingCommodityCode: String         = "",

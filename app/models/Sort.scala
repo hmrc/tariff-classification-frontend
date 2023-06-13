@@ -16,9 +16,9 @@
 
 package models
 
-import play.api.mvc.QueryStringBindable
 import models.SortDirection.SortDirection
 import models.SortField.SortField
+import play.api.mvc.QueryStringBindable
 
 object SortDirection extends Enumeration {
   type SortDirection = Value
