@@ -23,7 +23,6 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.Clock
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
-import scala.annotation.unused
 import scala.concurrent.duration.FiniteDuration
 
 @Singleton

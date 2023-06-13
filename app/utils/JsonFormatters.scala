@@ -25,8 +25,6 @@ import models.response.{FileMetadata, ScanStatus}
 import play.api.libs.json._
 import uk.gov.hmrc.play.json.Union
 
-import scala.annotation.unused
-
 object JsonFormatters {
   implicit def formatNonEmptySeq[A: Format]: Format[NonEmptySeq[A]] = Format(
     Reads.list[A].filter(JsonValidationError("error.empty"))(_.nonEmpty).map(NonEmptySeq.fromSeqUnsafe(_)),

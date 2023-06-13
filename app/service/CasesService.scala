@@ -43,7 +43,6 @@ import java.nio.file.{Files, StandardOpenOption}
 import java.time.LocalDate
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
-import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

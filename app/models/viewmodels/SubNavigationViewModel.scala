@@ -18,8 +18,6 @@ package models.viewmodels
 
 import play.api.mvc.QueryStringBindable
 
-import scala.annotation.unused
-
 sealed abstract class SubNavigationTab(val id: String) extends Product with Serializable
 
 object SubNavigationTab {

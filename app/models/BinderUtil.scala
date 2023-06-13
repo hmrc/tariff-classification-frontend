@@ -24,7 +24,6 @@ import models.SortDirection.SortDirection
 import play.api.mvc.QueryStringBindable
 
 import java.time.Instant
-import scala.annotation.unused
 import scala.util.Try
 
 object BinderUtil {

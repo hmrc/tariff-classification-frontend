@@ -19,7 +19,6 @@ package models.forms
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import java.time.{Clock, Instant, LocalDateTime, ZoneId}
-import scala.annotation.unused
 import scala.util.matching.Regex
 
 object FormConstraints {

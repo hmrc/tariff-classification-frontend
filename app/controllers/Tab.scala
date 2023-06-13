@@ -16,8 +16,6 @@
 
 package controllers
 
-import scala.annotation.unused
-
 sealed abstract class Tab(val name: String) extends Product with Serializable
 
 object Tab {
