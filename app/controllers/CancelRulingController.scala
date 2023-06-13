@@ -80,7 +80,7 @@ class CancelRulingController @Inject() (
           )
       }
 
-  def renderCancelRulingEmail(
+  private def renderCancelRulingEmail(
     fileId: Option[String]   = None,
     uploadForm: Form[String] = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {

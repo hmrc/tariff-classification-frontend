@@ -326,7 +326,7 @@ class CasesService @Inject() (
     } yield updatedCase
   }
 
-  def uploadCaseDocuments(
+  private def uploadCaseDocuments(
     completedCase: Case,
     decision: Decision,
     operator: Operator

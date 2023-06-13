@@ -67,7 +67,7 @@ class AppConfig @Inject() (
   lazy val betaFeedbackUnauthenticatedUrl =
     s"$contactHost/contact/beta-feedback-unauthenticated?service=$contactFormServiceIdentifier"
 
-  lazy val accessibilityBaseUrl: String             = config.get[String](s"accessibility-statement.baseUrl")
+  private lazy val accessibilityBaseUrl: String     = config.get[String](s"accessibility-statement.baseUrl")
   lazy private val accessibilityRedirectUrl: String = config.get[String](s"accessibility-statement.redirectUrl")
   def accessibilityStatementUrl(referrer: String) =
     s"$accessibilityBaseUrl/accessibility-statement$accessibilityRedirectUrl?referrerUrl=${SafeRedirectUrl(accessibilityBaseUrl + referrer).encodedUrl}"

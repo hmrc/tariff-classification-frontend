@@ -409,7 +409,7 @@ class MoveCasesController @Inject() (
     }
 
   private def findChosenCasesInAssignedCases(assignedCases: Seq[Case], chosenCaseRefs: Set[String]) =
-    chosenCaseRefs.map(ref => assignedCases.find(c => c.reference == ref)).flatten
+    chosenCaseRefs.flatMap(ref => assignedCases.find(c => c.reference == ref))
 
   private def redirectBasedOnCaseStatus(chosenCases: Set[Case]) =
     if (chosenCases.exists(c =>

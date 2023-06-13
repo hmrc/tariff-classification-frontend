@@ -57,7 +57,7 @@ object BinderUtil {
 
   def bindable[T](implicit binder: QueryStringBindable[T]) = binder
 
-  def subKey(parentKey: String, childKey: String) =
+  private def subKey(parentKey: String, childKey: String) =
     Seq(parentKey, childKey).filterNot(_.isEmpty).mkString("_")
 
   def bind[T](parentKey: String, childKey: String, params: Map[String, Seq[String]])(

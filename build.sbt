@@ -1,6 +1,6 @@
 import play.sbt.PlayScala
 import play.sbt.routes.RoutesKeys
-import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings.*
 
 val appName = "tariff-classification-frontend"
 
@@ -8,10 +8,10 @@ lazy val plugins: Seq[Plugins] =
   Seq(PlayScala, SbtDistributablesPlugin)
 
 lazy val microservice = (project in file("."))
-  .enablePlugins(plugins: _*)
+  .enablePlugins(plugins *)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-  .settings(scalaSettings: _*)
-  .settings(defaultSettings(): _*)
+  .settings(scalaSettings *)
+  .settings(defaultSettings() *)
   .settings(majorVersion := 0)
   .settings(PlayKeys.playDefaultPort := 9581)
   .settings(
@@ -33,7 +33,7 @@ lazy val microservice = (project in file("."))
       )
     }
   )
-  .settings(inConfig(TemplateTest)(Defaults.testSettings): _*)
+  .settings(inConfig(TemplateTest)(Defaults.testSettings) *)
   .settings(
     Test / unmanagedSourceDirectories := Seq(
       (Test / baseDirectory).value / "test/unit",
@@ -64,8 +64,8 @@ lazy val microservice = (project in file("."))
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(ScalafmtPlugin.scalafmtConfigSettings))
-  .settings(inConfig(TemplateItTest)(Defaults.itSettings): _*)
-  .settings(integrationTestSettings(): _*)
+  .settings(inConfig(TemplateItTest)(Defaults.itSettings) *)
+  .settings(integrationTestSettings() *)
   .settings(
     IntegrationTest / fork := true,
     //    works only when fork is true

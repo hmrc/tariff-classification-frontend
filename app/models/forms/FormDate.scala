@@ -71,5 +71,5 @@ object FormDate extends Mappings {
 
   }
 
-  case class OptionalDateForm(explicitEndDate: Boolean, instant: Option[Instant])
+  private case class OptionalDateForm(explicitEndDate: Boolean, instant: Option[Instant])
 }

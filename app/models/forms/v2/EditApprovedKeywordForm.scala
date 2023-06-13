@@ -29,7 +29,7 @@ object EditKeywordAction extends Enumeration {
 }
 
 object EditApprovedKeywordForm {
-  def keyWordFormat(allKeywords: Seq[Keyword]): Formatter[String] =
+  private def keyWordFormat(allKeywords: Seq[Keyword]): Formatter[String] =
     new Formatter[String] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
 

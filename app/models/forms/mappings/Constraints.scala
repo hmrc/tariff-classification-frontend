@@ -77,7 +77,7 @@ trait Constraints {
 
   protected def customNonEmpty(errorKey: String): Constraint[String] =
     Constraint {
-      case str if str.length > 0 =>
+      case str if str.nonEmpty =>
         Valid
       case _ =>
         Invalid(errorKey)
@@ -87,7 +87,7 @@ trait Constraints {
     Constraint {
       case str if str.isEmpty =>
         Valid
-      case email if !email.isEmpty && emailRegex.findFirstMatchIn(email.trim).nonEmpty =>
+      case email if email.nonEmpty && emailRegex.findFirstMatchIn(email.trim).nonEmpty =>
         Valid
       case _ =>
         Invalid(errorKey)
@@ -96,7 +96,7 @@ trait Constraints {
   protected def optionalPostCodeMaxLength(errorKey: String): Constraint[Option[String]] =
     optionalMaxLength(postCodeMaxLength, errorKey)
 
-  protected def optionalMaxLength(maximum: Int, errorKey: String): Constraint[Option[String]] =
+  private def optionalMaxLength(maximum: Int, errorKey: String): Constraint[Option[String]] =
     Constraint {
       case None                                       => Valid
       case Some(str: String) if str.length <= maximum => Valid
