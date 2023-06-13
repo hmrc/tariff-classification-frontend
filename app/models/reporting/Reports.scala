@@ -21,14 +21,14 @@ import play.api.i18n.Messages
 import utils.Dates
 
 object Reports {
-  def formatUserForPid(pid: String, users: Map[String, Operator])(implicit messages: Messages): String =
+  private def formatUserForPid(pid: String, users: Map[String, Operator])(implicit messages: Messages): String =
     users
       .get(pid)
       .flatMap(_.name)
       .filterNot(_.isEmpty)
       .getOrElse(messages("reporting.user.unknown", pid))
 
-  def formatTeamForId(teamId: String, teams: Map[String, Queue])(implicit messages: Messages): String =
+  private def formatTeamForId(teamId: String, teams: Map[String, Queue])(implicit messages: Messages): String =
     teams
       .get(teamId)
       .map(_.name)

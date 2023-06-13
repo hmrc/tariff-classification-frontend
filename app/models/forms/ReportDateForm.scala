@@ -43,14 +43,14 @@ object ReportDateForm extends Mappings {
         instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null)
       )
 
-  def endDateInclusive: Mapping[Instant] =
+  private def endDateInclusive: Mapping[Instant] =
     localDate("reporting.endDate")
       .transform(
         date => date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant,
         instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null)
       )
 
-  val optionalDateRangeFormat: Formatter[InstantRange] = new Formatter[InstantRange] {
+  private val optionalDateRangeFormat: Formatter[InstantRange] = new Formatter[InstantRange] {
 
     private def min(key: String) = s"$key.min"
     private def max(key: String) = s"$key.max"

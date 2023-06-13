@@ -28,6 +28,7 @@ import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.gateway_cases_view
 
+import scala.annotation.unused
 import scala.concurrent.ExecutionContext
 
 class GatewayCasesController @Inject() (

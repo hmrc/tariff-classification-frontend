@@ -68,7 +68,7 @@ sealed trait Application {
       case ApplicationType.ATAR           => Some(asATAR.holder.businessName)
       case ApplicationType.LIABILITY      => Some(asLiabilityOrder.traderName)
       case ApplicationType.CORRESPONDENCE => asCorrespondence.correspondenceStarter
-      case ApplicationType.MISCELLANEOUS  => Some(asMisc.caseType.toString())
+      case ApplicationType.MISCELLANEOUS  => Some(asMisc.caseType.toString)
       case _                              => None
     }
 
@@ -106,9 +106,10 @@ sealed abstract class ApplicationType(val name: String) extends Product with Ser
 }
 
 object ApplicationType {
-  val values = Set(ATAR, LIABILITY, CORRESPONDENCE, MISCELLANEOUS)
+  val values: Set[ApplicationType] = Set(ATAR, LIABILITY, CORRESPONDENCE, MISCELLANEOUS)
 
-  def withName(name: String) = values.find(_.name.equalsIgnoreCase(name)).getOrElse(throw new NoSuchElementException)
+  def withName(name: String): ApplicationType =
+    values.find(_.name.equalsIgnoreCase(name)).getOrElse(throw new NoSuchElementException)
 
   case object ATAR extends ApplicationType("BTI")
 

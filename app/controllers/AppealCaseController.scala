@@ -54,11 +54,10 @@ class AppealCaseController @Inject() (
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
           successful(Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.APPEALS_TAB.name)))
-        case ApplicationType.LIABILITY => {
+        case ApplicationType.LIABILITY =>
           successful(
             Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.APPEALS_TAB.name))
           )
-        }
       }
     }
 

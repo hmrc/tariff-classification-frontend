@@ -27,7 +27,7 @@ case class InstantRange(
 )
 
 object InstantRange {
-  val allTime = InstantRange(Instant.MIN, Instant.MAX)
+  val allTime: InstantRange = InstantRange(Instant.MIN, Instant.MAX)
 
   implicit def bindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[InstantRange] =
     new QueryStringBindable[InstantRange] {

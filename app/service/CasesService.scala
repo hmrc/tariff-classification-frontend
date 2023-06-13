@@ -43,6 +43,7 @@ import java.nio.file.{Files, StandardOpenOption}
 import java.time.LocalDate
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -528,7 +529,7 @@ class CasesService @Inject() (
     operatorUpdating: String
   )(
     implicit hc: HeaderCarrier
-  ) =
+  ): Future[Unit] =
     for {
       assignedCases <- getCasesByAssignee(Operator(originalUserId), NoPagination())
       casesToUpdate = assignedCases.results.filter(c => refs.contains(c.reference))

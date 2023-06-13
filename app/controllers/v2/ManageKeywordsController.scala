@@ -56,8 +56,8 @@ class ManageKeywordsController @Inject() (
     extends FrontendController(mcc)
     with I18nSupport
     with Logging {
-  val keywordForm: Form[String]             = KeywordForm.form
-  val changeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
+  val keywordForm: Form[String]                     = KeywordForm.form
+  private val changeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
 
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
@@ -132,7 +132,11 @@ class ManageKeywordsController @Inject() (
               ),
             keyword =>
               keywordService
-                .createKeyword(Keyword(keyword.toUpperCase, true), request.operator, ChangeKeywordStatusAction.CREATED)
+                .createKeyword(
+                  Keyword(keyword.toUpperCase, approved = true),
+                  request.operator,
+                  ChangeKeywordStatusAction.CREATED
+                )
                 .map { saveKeyword: Keyword =>
                   Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
                 }
@@ -144,7 +148,7 @@ class ManageKeywordsController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         casesService.getOne(reference).flatMap {
-          case Some(c: Case) => {
+          case Some(c: Case) =>
             changeKeywordStatusForm
               .bindFromRequest()
               .fold(
@@ -192,7 +196,6 @@ class ManageKeywordsController @Inject() (
                         }
                   }
               )
-          }
           case _ => successful(Ok(case_not_found(reference)))
         }
     }
@@ -249,7 +252,11 @@ class ManageKeywordsController @Inject() (
                   )
               case (EditKeywordAction.RENAME, keywordToRename) =>
                 keywordService
-                  .renameKeyword(Keyword(keywordName, true), Keyword(keywordToRename, true), request.operator)
+                  .renameKeyword(
+                    Keyword(keywordName, approved     = true),
+                    Keyword(keywordToRename, approved = true),
+                    request.operator
+                  )
                   .map { updatedKeyword: Keyword =>
                     Redirect(
                       routes.ManageKeywordsController

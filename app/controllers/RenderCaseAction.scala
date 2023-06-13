@@ -46,12 +46,12 @@ trait RenderCaseAction extends I18nSupport { this: FrontendController =>
       case _                                  => successful(Redirect(redirect(caseReference)))
     }
 
-  protected def defaultRedirect(
+  private def defaultRedirect(
     reference: Option[String] = None
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
     successful(Redirect(redirect(reference.getOrElse(request.`case`.reference))))
 
-  protected def defaultRedirectAndEdit(
+  private def defaultRedirectAndEdit(
     reference: Option[String] = None
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
     successful(Redirect(routes.RulingController.validateBeforeComplete(reference.getOrElse(request.`case`.reference))))

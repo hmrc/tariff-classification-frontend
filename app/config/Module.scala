@@ -20,6 +20,8 @@ import com.google.inject.AbstractModule
 import connector.{DataCacheConnector, MongoCacheConnector}
 import controllers.actions._
 
+import scala.annotation.unused
+
 class Module extends AbstractModule {
 
   override def configure(): Unit = {

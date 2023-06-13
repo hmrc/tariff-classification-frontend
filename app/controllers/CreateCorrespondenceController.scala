@@ -110,10 +110,10 @@ class CreateCorrespondenceController @Inject() (
         )
     }
 
-  def displayConfirmation(reference: String) =
+  def displayConfirmation(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async { implicit request =>
       casesService.getOne(reference).flatMap {
-        case Some(c: Case) => {
+        case Some(c: Case) =>
           c.queueId
             .map(id =>
               queueService.getOneById(id) flatMap {
@@ -122,8 +122,6 @@ class CreateCorrespondenceController @Inject() (
               }
             )
             .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
-
-        }
         case _ => successful(Ok(case_not_found(reference)))
       }
     }

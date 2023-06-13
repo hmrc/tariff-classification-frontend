@@ -29,5 +29,5 @@ object Dates {
   def format(instant: Option[Instant]): String =
     instant.map(format).getOrElse("None")
 
-  def daysCount(instant: Instant) = Duration.between(instant, Instant.now()).toDays
+  def daysCount(instant: Instant): Long = Duration.between(instant, Instant.now()).toDays
 }

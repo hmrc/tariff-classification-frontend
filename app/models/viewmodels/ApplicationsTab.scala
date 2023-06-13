@@ -35,7 +35,7 @@ object ApplicationsTab {
     searchResult: Paged[Case]                  = Paged.empty,
     referralEvent: Option[Map[String, Event]]  = None,
     completedEvent: Option[Map[String, Event]] = None
-  ) =
+  ): ApplicationsTab =
     ApplicationsTab(
       "applicationTab.atar",
       ApplicationType.ATAR,
@@ -49,7 +49,7 @@ object ApplicationsTab {
     searchResult: Paged[Case]                  = Paged.empty,
     referralEvent: Option[Map[String, Event]]  = None,
     completedEvent: Option[Map[String, Event]] = None
-  ) =
+  ): ApplicationsTab =
     ApplicationsTab(
       "applicationTab.liability",
       ApplicationType.LIABILITY,
@@ -63,7 +63,7 @@ object ApplicationsTab {
     searchResult: Paged[Case]                  = Paged.empty,
     referralEvent: Option[Map[String, Event]]  = None,
     completedEvent: Option[Map[String, Event]] = None
-  ) =
+  ): ApplicationsTab =
     ApplicationsTab(
       "applicationTab.correspondence",
       ApplicationType.CORRESPONDENCE,
@@ -77,7 +77,7 @@ object ApplicationsTab {
     searchResult: Paged[Case]                  = Paged.empty,
     referralEvent: Option[Map[String, Event]]  = None,
     completedEvent: Option[Map[String, Event]] = None
-  ) =
+  ): ApplicationsTab =
     ApplicationsTab(
       "applicationTab.miscellaneous",
       ApplicationType.MISCELLANEOUS,
@@ -159,7 +159,7 @@ object ApplicationsTab {
     )
   }
 
-  def gateway(cases: Seq[Case]) = {
+  def gateway(cases: Seq[Case]): ApplicationTabViewModel = {
 
     val gatewayCases =
       cases.filter(aCase => aCase.status == CaseStatus.NEW)

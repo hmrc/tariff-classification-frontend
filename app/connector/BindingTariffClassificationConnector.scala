@@ -180,7 +180,7 @@ class BindingTariffClassificationConnector @Inject() (
       val batchSize = (appConfig.maxUriLength.intValue - appConfig.bindingTariffClassificationUrl.length - 250) / 10
       Source(references)
         .grouped(batchSize)
-        .mapAsync(Runtime.getRuntime().availableProcessors()) { ids =>
+        .mapAsync(Runtime.getRuntime.availableProcessors()) { ids =>
           val searchParam = s"case_reference=${ids.mkString(",")}&type=${EventType.CASE_REFERRAL}"
           val url =
             s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
@@ -201,7 +201,7 @@ class BindingTariffClassificationConnector @Inject() (
       val batchSize = (appConfig.maxUriLength.intValue - appConfig.bindingTariffClassificationUrl.length - 250) / 10
       Source(references)
         .grouped(batchSize)
-        .mapAsync(Runtime.getRuntime().availableProcessors()) { ids =>
+        .mapAsync(Runtime.getRuntime.availableProcessors()) { ids =>
           val searchParam = s"case_reference=${ids.mkString(",")}&type=${EventType.CASE_COMPLETED}"
           val url =
             s"${appConfig.bindingTariffClassificationUrl}/events?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"

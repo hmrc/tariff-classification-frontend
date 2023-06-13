@@ -836,23 +836,4 @@ object Cases {
     Some(5),
     referredDaysElapsed = 0
   )
-
-  val miscellaneousCaseWIthQueueIDExample: Case = Case(
-    "1",
-    CaseStatus.OPEN,
-    Instant.now(),
-    0,
-    Some("SOC/554/2015/JN"),
-    None,
-    None,
-    miscExample,
-    None,
-    Seq(),
-    Set.empty,
-    Sample(),
-    Some(Instant.now()),
-    Some(5),
-    referredDaysElapsed = 0
-  )
-
 }

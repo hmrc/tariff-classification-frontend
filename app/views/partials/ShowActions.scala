@@ -20,6 +20,8 @@ import models.CaseStatus.CaseStatus
 import models.Permission
 import models.request.AuthenticatedRequest
 
+import scala.annotation.unused
+
 class ShowActions(caseStatus: CaseStatus)(implicit request: AuthenticatedRequest[_]) {
 
   def refer: Boolean = request.hasPermission(Permission.REFER_CASE)

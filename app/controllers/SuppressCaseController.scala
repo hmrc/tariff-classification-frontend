@@ -81,7 +81,7 @@ class SuppressCaseController @Inject() (
           )
       }
 
-  def renderSuppressCaseEmail(
+  private def renderSuppressCaseEmail(
     fileId: Option[String]   = None,
     uploadForm: Form[String] = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {

@@ -22,8 +22,8 @@ import play.api.mvc.QueryStringBindable
 
 object SortDirection extends Enumeration {
   type SortDirection = Value
-  val DESCENDING = Value("desc")
-  val ASCENDING  = Value("asc")
+  val DESCENDING: models.SortDirection.Value = Value("desc")
+  val ASCENDING: models.SortDirection.Value  = Value("asc")
 
   implicit val bindable: QueryStringBindable.Parsing[SortDirection] = new QueryStringBindable.Parsing[SortDirection](
     value => SortDirection.values.find(_.toString == value).getOrElse(throw new IllegalArgumentException),
@@ -34,7 +34,7 @@ object SortDirection extends Enumeration {
 
 object SortField extends Enumeration {
   type SortField = Value
-  val COMMODITY_CODE = Value("commodity-code")
+  val COMMODITY_CODE: models.SortField.Value = Value("commodity-code")
 
   implicit val bindable: QueryStringBindable.Parsing[SortField] = new QueryStringBindable.Parsing[SortField](
     value => SortField.values.find(_.toString == value).getOrElse(throw new IllegalArgumentException),
@@ -49,8 +49,8 @@ case class Sort(
 )
 
 object Sort {
-  val sort_direction = "sort_direction"
-  val sort_field     = "sort_by"
+  val sort_direction     = "sort_direction"
+  private val sort_field = "sort_by"
 
   implicit def bindable: QueryStringBindable[Sort] = new QueryStringBindable[Sort] {
 

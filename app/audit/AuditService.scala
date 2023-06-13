@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.audit.DefaultAuditConnector
 import utils.JsonFormatters.{caseFormat, operatorFormat}
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.ExecutionContext
 
 @Singleton

@@ -63,7 +63,7 @@ class FileStoreConnector @Inject() (
       } else {
         Source(attachments.map(_.id).toList)
           .grouped(BatchSize)
-          .mapAsyncUnordered(Runtime.getRuntime().availableProcessors()) { ids =>
+          .mapAsyncUnordered(Runtime.getRuntime.availableProcessors()) { ids =>
             http.GET[Seq[FileMetadata]](makeQuery(ids), headers = http.addAuth)
           }
           .runFold(Seq.empty[FileMetadata]) {

@@ -453,7 +453,7 @@ class MoveCasesController @Inject() (
     caseRefs: Set[String]
   )(implicit hc: HeaderCarrier, request: AuthenticatedDataRequest[_]) =
     userService.getUser(pid).flatMap {
-      case Some(u) => {
+      case Some(u) =>
         val userAnswersWithNewUser = request.userAnswers.set(ChosenUserPID, pid)
         if (u.memberOfTeams.filterNot(_ == Queues.gateway.id).size == 1) {
           casesService.updateCases(
@@ -475,7 +475,6 @@ class MoveCasesController @Inject() (
             _ <- dataCacheConnector.save(userAnswersWithNewUser.cacheMap)
           } yield Redirect(routes.MoveCasesController.chooseOneOfUsersTeams())
         }
-      }
       case _ => successful(NotFound(user_not_found(pid)))
     }
 

@@ -178,7 +178,7 @@ case class SampleStatusChange(
 
       s"Sending sample changed from ${yesNo(from)} to ${yesNo(to)}"
     } else {
-      s"Sample status changed from ${SampleStatus.format(from, false)} to ${SampleStatus.format(to, false)}"
+      s"Sample status changed from ${SampleStatus.format(from, initialCaps = false)} to ${SampleStatus.format(to, initialCaps = false)}"
     }
 }
 
@@ -206,22 +206,22 @@ case class ExpertAdviceReceived(
 
 object EventType extends Enumeration {
   type EventType = Value
-  val CASE_STATUS_CHANGE         = Value
-  val CASE_REFERRAL              = Value
-  val CASE_REJECTED              = Value
-  val CASE_CANCELLATION          = Value
-  val CASE_COMPLETED             = Value
-  val APPEAL_STATUS_CHANGE       = Value
-  val APPEAL_ADDED               = Value
-  val EXTENDED_USE_STATUS_CHANGE = Value
-  val ASSIGNMENT_CHANGE          = Value
-  val QUEUE_CHANGE               = Value
-  val NOTE                       = Value
-  val SAMPLE_STATUS_CHANGE       = Value
-  val SAMPLE_RETURN_CHANGE       = Value
-  val SAMPLE_SEND_CHANGE         = Value
-  val CASE_CREATED               = Value
-  val EXPERT_ADVICE_RECEIVED     = Value
+  val CASE_STATUS_CHANGE: models.EventType.Value         = Value
+  val CASE_REFERRAL: models.EventType.Value              = Value
+  val CASE_REJECTED: models.EventType.Value              = Value
+  val CASE_CANCELLATION: models.EventType.Value          = Value
+  val CASE_COMPLETED: models.EventType.Value             = Value
+  val APPEAL_STATUS_CHANGE: models.EventType.Value       = Value
+  val APPEAL_ADDED: models.EventType.Value               = Value
+  val EXTENDED_USE_STATUS_CHANGE: models.EventType.Value = Value
+  val ASSIGNMENT_CHANGE: models.EventType.Value          = Value
+  val QUEUE_CHANGE: models.EventType.Value               = Value
+  val NOTE: models.EventType.Value                       = Value
+  val SAMPLE_STATUS_CHANGE: models.EventType.Value       = Value
+  val SAMPLE_RETURN_CHANGE: models.EventType.Value       = Value
+  val SAMPLE_SEND_CHANGE: models.EventType.Value         = Value
+  val CASE_CREATED: models.EventType.Value               = Value
+  val EXPERT_ADVICE_RECEIVED: models.EventType.Value     = Value
 
   def sampleEvents: Set[EventType.Value]    = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)
   def nonSampleEvents: Set[EventType.Value] = EventType.values.diff(sampleEvents)

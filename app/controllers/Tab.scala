@@ -16,6 +16,8 @@
 
 package controllers
 
+import scala.annotation.unused
+
 sealed abstract class Tab(val name: String) extends Product with Serializable
 
 object Tab {
@@ -28,24 +30,24 @@ object Tab {
   case object APPEALS_TAB extends Tab("appeal_tab")
 
   // ATaRs
-  case object APPLICANT_TAB extends Tab("applicant_tab")
-  case object GOODS_TAB extends Tab("goods_tab")
+  private case object APPLICANT_TAB extends Tab("applicant_tab")
+  private case object GOODS_TAB extends Tab("goods_tab")
 
   // Liabilities
   case object C592_TAB extends Tab("c592_tab")
 
   //Correspondence
-  case object CASE_DETAILS_TAB extends Tab("case_details_tab")
+  private case object CASE_DETAILS_TAB extends Tab("case_details_tab")
   case object CONTACT_TAB extends Tab("contact_details_tab")
   case object MESSAGES_TAB extends Tab("messages_tab")
 
-  case object USER_DETAIS_TAB extends Tab("user_details_tab")
+  private case object USER_DETAIS_TAB extends Tab("user_details_tab")
   case object ATAR_TAB extends Tab("atar_tab")
   case object LIABILITY_TAB extends Tab("liability_tab")
   case object CORRESPONDENCE_TAB extends Tab("correspondence_tab")
   case object MISCELLANEOUS_TAB extends Tab("miscellaneous_tab")
 
-  val values =
+  val values: Set[Tab] =
     Set(
       SAMPLE_TAB,
       ATTACHMENTS_TAB,
@@ -61,7 +63,7 @@ object Tab {
       MESSAGES_TAB
     )
 
-  val userTabs = Set(
+  val userTabs: Set[Tab] = Set(
     USER_DETAIS_TAB,
     ATAR_TAB,
     LIABILITY_TAB,

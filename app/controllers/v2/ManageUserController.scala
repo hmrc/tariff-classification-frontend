@@ -67,13 +67,13 @@ class ManageUserController @Inject() (
   private val moveCorrCasesForm                  = MoveCasesForm.moveCasesForm("corrCases")
   private val moveMiscCasesForm                  = MoveCasesForm.moveCasesForm("miscCases")
 
-  val assignedCases           = "some"
-  val AssignedCasesPagination = SearchPagination(pageSize = 1000)
+  val assignedCases                   = "some"
+  private val AssignedCasesPagination = SearchPagination(pageSize = 1000)
 
   def displayManageUsers(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       userService.getUser(request.operator.id).flatMap {
-        case Some(manager) => {
+        case Some(manager) =>
           val managerQueues = manager.memberOfTeams.flatMap(id => Queues.queueById(id))
 
           for {
@@ -94,7 +94,6 @@ class ManageUserController @Inject() (
             usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
 
           } yield Ok(manageUsersView(activeSubNav, usersTabViewModel, usersWithCount))
-        }
         case _ => Future(NotFound(user_not_found(request.operator.id)))
       }
     }

@@ -23,7 +23,11 @@ case class CasesTab(tabMessageKey: String, elementId: String, searchResult: Page
 case class CasesTabViewModel(headingMessageKey: String, caseType: ApplicationType, casesTabs: List[CasesTab])
 
 object CasesTabViewModel {
-  def forApplicationType(applicationType: ApplicationType, queuesForType: List[Queue], allQueueCases: Seq[Case]) = {
+  def forApplicationType(
+    applicationType: ApplicationType,
+    queuesForType: List[Queue],
+    allQueueCases: Seq[Case]
+  ): CasesTabViewModel = {
     val matchingCases = allQueueCases.filter(_.application.`type` == applicationType)
     CasesTabViewModel(
       s"cases.opencases.${applicationType.prettyName.toLowerCase}.heading",

@@ -17,15 +17,15 @@
 package models
 
 object Queues {
-  val gateway = Queue("1", "gateway", "Gateway")
-  val act     = Queue("2", "act", "ACT")
-  val cap     = Queue("3", "cap", "CAP")
-  val car     = Queue("4", "car", "CAR")
-  val elm     = Queue("5", "elm", "ELM")
-  val flex    = Queue("6", "flex", "FLEX")
-  val tta     = Queue("7", "tta", "TT-A")
-  val ttb     = Queue("8", "ttb", "TT-B")
-  val ttc     = Queue("9", "ttc", "TT-C")
+  val gateway: Queue = Queue("1", "gateway", "Gateway")
+  val act: Queue     = Queue("2", "act", "ACT")
+  private val cap    = Queue("3", "cap", "CAP")
+  private val car    = Queue("4", "car", "CAR")
+  val elm: Queue     = Queue("5", "elm", "ELM")
+  private val flex   = Queue("6", "flex", "FLEX")
+  private val tta    = Queue("7", "tta", "TT-A")
+  private val ttb    = Queue("8", "ttb", "TT-B")
+  private val ttc    = Queue("9", "ttc", "TT-C")
 
   def allAtarQueues: List[Queue]       = List(act, car, elm, flex, tta, ttb, ttc)
   def allLiabilityQueues: List[Queue]  = List(act, cap, elm, flex, tta, ttb, ttc)

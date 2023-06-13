@@ -27,7 +27,7 @@ case class ApplicantTabViewModel(
 )
 
 object ApplicantTabViewModel {
-  def fromCase(cse: Case, countryNames: Map[String, Country]) =
+  def fromCase(cse: Case, countryNames: Map[String, Country]): ApplicantTabViewModel =
     ApplicantTabViewModel(
       caseReference        = cse.reference,
       eoriDetails          = cse.application.asATAR.holder,

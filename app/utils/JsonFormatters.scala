@@ -25,6 +25,8 @@ import models.response.{FileMetadata, ScanStatus}
 import play.api.libs.json._
 import uk.gov.hmrc.play.json.Union
 
+import scala.annotation.unused
+
 object JsonFormatters {
   implicit def formatNonEmptySeq[A: Format]: Format[NonEmptySeq[A]] = Format(
     Reads.list[A].filter(JsonValidationError("error.empty"))(_.nonEmpty).map(NonEmptySeq.fromSeqUnsafe(_)),
@@ -215,27 +217,4 @@ object EnumJson {
 
   implicit def format[E <: Enumeration](`enum`: E): Format[E#Value] =
     Format(Reads.enumNameReads(enum), Writes.enumNameWrites)
-
-  def readsMap[E, B](implicit erds: Reads[E], brds: Reads[B]): JsValue => JsResult[Map[E, B]] = (js: JsValue) => {
-    val maprds: Reads[Map[String, B]] = Reads.mapReads[B]
-    Json
-      .fromJson[Map[String, B]](js)(maprds)
-      .map(_.map {
-        case (key, value) => erds.reads(JsString(key)).get -> value
-      })
-  }
-
-  // TODO: Figure out why we do this; seems really dodgy as it uses toString
-  def writesMap[E, B](implicit bwrts: Writes[B]): Map[E, B] => JsObject =
-    (map: Map[E, B]) =>
-      Json.toJsObject(map.map {
-        case (group, value) =>
-          group.toString -> value
-      })
-
-  def formatMap[E, B](implicit efmt: Format[E], bfmt: Format[B]): OFormat[Map[E, B]] = OFormat(
-    read  = readsMap(efmt, bfmt),
-    write = writesMap(bfmt)
-  )
-
 }

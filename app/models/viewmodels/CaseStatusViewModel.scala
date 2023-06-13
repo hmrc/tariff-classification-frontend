@@ -35,7 +35,7 @@ object StatusTagViewModel {
 
   def liabilityType(application: Application): Option[StatusTagViewModel] =
     if (application.isLiabilityOrder && application.asLiabilityOrder.isLiveLiabilityOrder) {
-      Some(StatusTagViewModel(application.asLiabilityOrder.status.toString(), "pink"))
+      Some(StatusTagViewModel(application.asLiabilityOrder.status.toString, "pink"))
     } else {
       None
     }
@@ -53,7 +53,7 @@ case class CaseStatusViewModel(
 )
 
 object CaseStatusViewModel {
-  def fromCase(c: Case) = CaseStatusViewModel(
+  def fromCase(c: Case): CaseStatusViewModel = CaseStatusViewModel(
     StatusTagViewModel.liabilityType(c.application),
     Some(StatusTagViewModel.caseStatus(c)),
     StatusTagViewModel.appealStatus(c.decision)

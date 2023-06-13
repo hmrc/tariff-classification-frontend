@@ -23,7 +23,7 @@ case class AttachmentsTabViewModel(
   attachmentsFromApplicant: Seq[StoredAttachment],
   attachmentsFromClassification: Seq[StoredAttachment]
 ) {
-  def allAttachments = attachmentsFromApplicant ++ attachmentsFromClassification
+  def allAttachments: Seq[StoredAttachment] = attachmentsFromApplicant ++ attachmentsFromClassification
 }
 
 object AttachmentsTabViewModel {
