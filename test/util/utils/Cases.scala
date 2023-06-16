@@ -836,5 +836,4 @@ object Cases {
     Some(5),
     referredDaysElapsed = 0
   )
-
 }

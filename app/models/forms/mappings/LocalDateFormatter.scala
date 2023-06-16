@@ -28,11 +28,11 @@ private[mappings] class LocalDateFormatter(
 ) extends Formatter[LocalDate]
     with GenericDateFormatter {
 
-  val invalidKey: String = s"$messagePrefix.error.invalid"
-  val allRequiredKey     = s"$messagePrefix.error.required.all"
-  val twoRequiredKey     = s"$messagePrefix.error.required.two"
-  val requiredKey        = s"$messagePrefix.error.required.one"
-  val nonNumericKey      = s"$messagePrefix.error.nonNumeric"
+  val invalidKey: String     = s"$messagePrefix.error.invalid"
+  private val allRequiredKey = s"$messagePrefix.error.required.all"
+  private val twoRequiredKey = s"$messagePrefix.error.required.two"
+  val requiredKey            = s"$messagePrefix.error.required.one"
+  val nonNumericKey          = s"$messagePrefix.error.nonNumeric"
 
   val fieldKeys: List[String] = List("day", "month", "year")
 

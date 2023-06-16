@@ -16,15 +16,12 @@
 
 package controllers
 
-import java.util.UUID
-
-import javax.inject.{Inject, Singleton}
-import connector.DataCacheConnector
 import config.AppConfig
+import connector.DataCacheConnector
 import controllers.v2.UpscanErrorHandling
-import models.{Attachment, Permission, UserAnswers}
 import models.forms.{AddNoteForm, UploadAttachmentForm}
 import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
+import models.{Attachment, Permission, UserAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -34,8 +31,10 @@ import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_supressed_case, suppress_case_email, suppress_case_reason}
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SuppressCaseController @Inject() (
@@ -82,7 +81,7 @@ class SuppressCaseController @Inject() (
           )
       }
 
-  def renderSuppressCaseEmail(
+  private def renderSuppressCaseEmail(
     fileId: Option[String]   = None,
     uploadForm: Form[String] = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {

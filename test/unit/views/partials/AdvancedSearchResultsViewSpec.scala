@@ -31,7 +31,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
   private def instant(date: String): Instant = LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)
 
-  private def hasLink(id: String, text: String, attributes: Seq[(String, String)])(implicit doc: Document) =
+  private def hasLink(id: String, text: String, attributes: Seq[(String, String)])(implicit doc: Document): Unit =
     s"render LINK with ID: $id, Text: $text, Attributes: $attributes" in {
       doc.getElementById(id).text() shouldBe text
       doc.getElementById(id)        should haveTag("a")

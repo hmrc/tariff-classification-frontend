@@ -42,8 +42,9 @@ case class Operator(
   def addPermissions(addedPermissions: Set[Permission]): Operator =
     this.copy(permissions = permissions ++ addedPermissions)
 
-  def withoutTeams                   = copy(memberOfTeams = Seq.empty, managerOfTeams           = Seq.empty)
-  def withTeamsFrom(other: Operator) = copy(memberOfTeams = other.memberOfTeams, managerOfTeams = other.managerOfTeams)
+  def withoutTeams: Operator = copy(memberOfTeams = Seq.empty, managerOfTeams = Seq.empty)
+  def withTeamsFrom(other: Operator): Operator =
+    copy(memberOfTeams = other.memberOfTeams, managerOfTeams = other.managerOfTeams)
 
   def getMemberTeamNames: Seq[String] = memberOfTeams.flatMap(teamId => Queues.queueById(teamId).map(_.name))
 

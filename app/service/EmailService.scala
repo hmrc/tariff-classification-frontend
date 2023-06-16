@@ -16,14 +16,14 @@
 
 package service
 
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
 import connector.EmailConnector
-import models.{Case, CaseCompletedEmail, CaseCompletedEmailParameters, EmailTemplate, Operator}
+import models._
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.Dates
 import utils.JsonFormatters.{emailCompleteParamsFormat, emailFormat}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import utils.Dates
 
 @Singleton
 class EmailService @Inject() (connector: EmailConnector)(implicit ec: ExecutionContext) {

@@ -21,12 +21,11 @@ import models.Permission
 import models.request.AuthenticatedCaseRequest
 import play.api.mvc._
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Notification._
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
-
 import scala.concurrent.ExecutionContext
 
 @Singleton

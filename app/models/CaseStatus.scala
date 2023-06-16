@@ -22,7 +22,7 @@ object CaseStatus extends Enumeration {
 
   val openStatuses: Set[Value] = Set(OPEN, REFERRED, SUSPENDED)
 
-  def formatCancellation(cse: Case) = cse.status match {
+  def formatCancellation(cse: Case): String = cse.status match {
     case CaseStatus.CANCELLED =>
       val cancellationCode = cse.decision
         .flatMap(_.cancellation)

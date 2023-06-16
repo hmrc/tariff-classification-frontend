@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.AppConfig
 import models._
 import models.request._
 import org.mockito.ArgumentMatchers.any
@@ -32,7 +33,7 @@ import scala.concurrent.Future
 
 class OperatorDashboardControllerSpec extends ControllerBaseSpec {
 
-  implicit val appConfig = realAppConfig
+  implicit val appConfig: AppConfig = realAppConfig
 
   implicit def authenticatedRequest[A](
     implicit

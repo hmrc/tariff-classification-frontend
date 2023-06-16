@@ -16,11 +16,11 @@
 
 package service
 
-import javax.inject.{Inject, Singleton}
-import play.twirl.api.Html
 import connector.PdfGeneratorServiceConnector
 import models._
+import play.twirl.api.Html
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton

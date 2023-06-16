@@ -16,15 +16,13 @@
 
 package models.forms
 
-import java.time.{Clock, Instant, LocalDateTime, ZoneId}
-
 import play.api.data.validation.{Constraint, Invalid, Valid}
 
+import java.time.{Clock, Instant, LocalDateTime, ZoneId}
 import scala.util.matching.Regex
 
 object FormConstraints {
 
-  val numbersOnlyRegex: Regex       = """^\d+$""".r
   val numbersAndLettersRegex: Regex = """[A-Za-z0-9]+""".r
   val btiRefRegex: Regex            = """[0-9]{6,22}""".r
 

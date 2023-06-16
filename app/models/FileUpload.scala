@@ -16,8 +16,8 @@
 
 package models
 
-import play.api.mvc.MultipartFormData.FilePart
 import play.api.libs.Files.TemporaryFile
+import play.api.mvc.MultipartFormData.FilePart
 
 case class FileUpload(
   content: TemporaryFile,

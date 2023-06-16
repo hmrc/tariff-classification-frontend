@@ -16,17 +16,17 @@
 
 package models.forms.v2
 
-import java.time.Instant
 import config.AppConfig
-
-import javax.inject.Inject
 import models._
 import models.forms.FormConstraints._
-import models.forms.{CommodityCodeConstraints, FormDate}
-import models.forms.mappings.{Constraints, Mappings}
 import models.forms.mappings.FormMappings._
-import play.api.data.{Form, Forms, Mapping}
+import models.forms.mappings.{Constraints, Mappings}
+import models.forms.{CommodityCodeConstraints, FormDate}
 import play.api.data.Forms._
+import play.api.data.{Form, Forms, Mapping}
+
+import java.time.Instant
+import javax.inject.Inject
 
 class LiabilityDetailsForm @Inject() (
   commodityCodeConstraints: CommodityCodeConstraints,

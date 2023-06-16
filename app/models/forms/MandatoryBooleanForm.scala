@@ -16,10 +16,9 @@
 
 package models.forms
 
-import play.api.data.Forms._
-import play.api.data.Form
-
 import models.forms.FormConstraints.defined
+import play.api.data.Form
+import play.api.data.Forms._
 
 object MandatoryBooleanForm {
 

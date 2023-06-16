@@ -18,8 +18,9 @@ package metrics
 
 import com.codahale.metrics.{MetricRegistry, Timer}
 import com.kenshoo.play.metrics.Metrics
-import java.util.concurrent.atomic.AtomicBoolean
 import play.api.mvc.{Action, MessagesBaseController, Result}
+
+import java.util.concurrent.atomic.AtomicBoolean
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
@@ -43,20 +44,20 @@ trait HasMetrics {
 
   def metrics: Metrics
 
-  lazy val registry: MetricRegistry = metrics.defaultRegistry
+  private lazy val registry: MetricRegistry = metrics.defaultRegistry
 
   val localMetrics = new LocalMetrics
 
   class LocalMetrics {
-    def startTimer(metric: Metric)                    = registry.timer(s"$metric-timer").time()
-    def stopTimer(context: Timer.Context)             = context.stop()
+    def startTimer(metric: Metric): Timer.Context     = registry.timer(s"$metric-timer").time()
+    def stopTimer(context: Timer.Context): Long       = context.stop()
     def incrementSuccessCounter(metric: Metric): Unit = registry.counter(s"$metric-success-counter").inc()
     def incrementFailedCounter(metric: Metric): Unit  = registry.counter(s"$metric-failed-counter").inc()
   }
 
   class MetricsTimer(metric: Metric) {
-    val timer        = localMetrics.startTimer(metric)
-    val timerRunning = new AtomicBoolean(true)
+    val timer: Timer.Context = localMetrics.startTimer(metric)
+    private val timerRunning = new AtomicBoolean(true)
 
     def completeWithSuccess(): Unit =
       if (timerRunning.compareAndSet(true, false)) {

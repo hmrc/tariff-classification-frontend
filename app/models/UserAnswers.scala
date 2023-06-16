@@ -16,8 +16,8 @@
 
 package models
 
-import uk.gov.hmrc.http.cache.client.CacheMap
 import play.api.libs.json.{Json, Reads, Writes}
+import uk.gov.hmrc.http.cache.client.CacheMap
 
 case class UserAnswers(cacheMap: CacheMap) {
   def get[A](key: String)(implicit rds: Reads[A]): Option[A] =

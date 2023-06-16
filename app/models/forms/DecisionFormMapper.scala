@@ -58,7 +58,7 @@ class DecisionFormMapper {
 
   private def amendDecision(decision: Decision, form: DecisionFormData): Decision =
     decision.copy(
-      bindingCommodityCode         = form.bindingCommodityCode.toString,
+      bindingCommodityCode         = form.bindingCommodityCode,
       goodsDescription             = form.goodsDescription,
       methodSearch                 = Some(form.methodSearch),
       justification                = form.justification,
@@ -70,7 +70,7 @@ class DecisionFormMapper {
 
   private def from(form: DecisionFormData): Decision =
     Decision(
-      bindingCommodityCode         = form.bindingCommodityCode.toString,
+      bindingCommodityCode         = form.bindingCommodityCode,
       goodsDescription             = form.goodsDescription,
       methodSearch                 = Some(form.methodSearch),
       justification                = form.justification,

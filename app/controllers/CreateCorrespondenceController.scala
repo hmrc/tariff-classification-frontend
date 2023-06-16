@@ -34,8 +34,8 @@ import views.html.v2._
 import views.html.{case_not_found, release_case, resource_not_found}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CreateCorrespondenceController @Inject() (
@@ -110,10 +110,10 @@ class CreateCorrespondenceController @Inject() (
         )
     }
 
-  def displayConfirmation(reference: String) =
+  def displayConfirmation(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async { implicit request =>
       casesService.getOne(reference).flatMap {
-        case Some(c: Case) => {
+        case Some(c: Case) =>
           c.queueId
             .map(id =>
               queueService.getOneById(id) flatMap {
@@ -122,8 +122,6 @@ class CreateCorrespondenceController @Inject() (
               }
             )
             .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
-
-        }
         case _ => successful(Ok(case_not_found(reference)))
       }
     }

@@ -16,9 +16,10 @@
 
 package models
 
-import java.time.Instant
 import models.BinderUtil._
 import play.api.mvc.QueryStringBindable
+
+import java.time.Instant
 
 case class InstantRange(
   min: Instant,
@@ -26,7 +27,7 @@ case class InstantRange(
 )
 
 object InstantRange {
-  val allTime = InstantRange(Instant.MIN, Instant.MAX)
+  val allTime: InstantRange = InstantRange(Instant.MIN, Instant.MAX)
 
   implicit def bindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[InstantRange] =
     new QueryStringBindable[InstantRange] {

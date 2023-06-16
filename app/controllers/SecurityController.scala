@@ -19,11 +19,11 @@ package controllers
 import config.AppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.not_authorized
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
 
 @Singleton

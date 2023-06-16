@@ -33,10 +33,10 @@ case class ReportingTabViewModel(
 )
 
 object ReportingTabViewModel {
-  def reportImplemented(row: ReportTabRow) =
+  private def reportImplemented(row: ReportTabRow) =
     Report.byId.contains(row.reportId)
 
-  def summaryTabRows: List[ReportTabRow] =
+  private def summaryTabRows: List[ReportTabRow] =
     List(
       ReportTabRow("number-of-new-cases", "number-of-new-cases"),
       ReportTabRow("new-and-open-cases", "new-and-open-cases"),
@@ -49,7 +49,7 @@ object ReportingTabViewModel {
       ReportTabRow("liabilities-summary", "liabilities-summary")
     ).filter(reportImplemented)
 
-  def statusTabRows: List[ReportTabRow] =
+  private def statusTabRows: List[ReportTabRow] =
     List(
       ReportTabRow("case-status", "case-count-by-status"),
       ReportTabRow("suppressed-cases", "suppressed-cases"),
@@ -66,14 +66,14 @@ object ReportingTabViewModel {
       ReportTabRow("cancelled-cases-by-assigned-user", "cancelled-cases-by-assigned-user")
     ).filter(reportImplemented)
 
-  def atarTabRows: List[ReportTabRow] =
+  private def atarTabRows: List[ReportTabRow] =
     List(
       ReportTabRow("new-atar-cases", "new-atar-cases"),
       ReportTabRow("atar-summary", "atar-summary"),
       ReportTabRow("calendar-days-atar-cases", "calendar-days-atar-cases")
     ).filter(reportImplemented)
 
-  def liabilityTabRows: List[ReportTabRow] =
+  private def liabilityTabRows: List[ReportTabRow] =
     List(
       ReportTabRow("liabilities-cases", "liabilities-cases"),
       ReportTabRow("new-liabilities-cases-non-live", "new-liabilities-cases-non-live"),
@@ -82,12 +82,12 @@ object ReportingTabViewModel {
       ReportTabRow("working-days-non-live-liabilities", "working-days-non-live-liabilities")
     ).filter(reportImplemented)
 
-  def correspondenceTabRows: List[ReportTabRow] =
+  private def correspondenceTabRows: List[ReportTabRow] =
     List(
       ReportTabRow("correspondence-cases", "correspondence-cases")
     ).filter(reportImplemented)
 
-  def miscTabRows: List[ReportTabRow] =
+  private def miscTabRows: List[ReportTabRow] =
     List(
       ReportTabRow("miscellaneous-cases", "miscellaneous-cases")
     ).filter(reportImplemented)

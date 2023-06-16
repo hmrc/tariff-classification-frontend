@@ -16,10 +16,10 @@
 
 package models.forms
 
-import play.api.data.Form
-import play.api.data.Forms._
 import models.forms.mappings.FormMappings.{oneOf, textNonEmpty}
 import models.{CancelReason, RulingCancellation}
+import play.api.data.Form
+import play.api.data.Forms._
 
 object CancelRulingForm {
 

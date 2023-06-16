@@ -23,7 +23,7 @@ import play.api.data.format.Formatter
 import play.api.data.{Form, FormError, Mapping}
 
 object ReferCaseForm {
-  val referentSpecified: Formatter[Option[String]] = new Formatter[Option[String]] {
+  private val referentSpecified: Formatter[Option[String]] = new Formatter[Option[String]] {
     def optionalMapping(key: String): Mapping[Option[String]] =
       single(key -> optional(text))
 
@@ -43,7 +43,7 @@ object ReferCaseForm {
       optionalMapping(key).unbind(value)
   }
 
-  val reasonSpecified: Formatter[List[ReferralReason.Value]] = new Formatter[List[ReferralReason.Value]] {
+  private val reasonSpecified: Formatter[List[ReferralReason.Value]] = new Formatter[List[ReferralReason.Value]] {
     def optionalMapping(key: String): Mapping[List[ReferralReason.Value]] =
       single(key -> list(text.transform[ReferralReason.Value](ReferralReason.withName, _.toString)))
 

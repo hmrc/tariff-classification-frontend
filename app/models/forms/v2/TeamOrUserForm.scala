@@ -17,6 +17,7 @@
 package models.forms.v2
 
 import models.forms.mappings.FormMappings._
+import models.forms.v2
 import models.forms.v2.TeamOrUser.TeamOrUser
 import play.api.data.Form
 import play.api.data.Forms.mapping
@@ -34,8 +35,8 @@ object TeamOrUserForm {
 object TeamOrUser extends Enumeration {
   type TeamOrUser = Value
 
-  val USER = Value("USER")
-  val TEAM = Value("TEAM")
+  val USER: v2.TeamOrUser.Value = Value("USER")
+  val TEAM: v2.TeamOrUser.Value = Value("TEAM")
 
   def format(choiceType: TeamOrUser): String =
     choiceType match {

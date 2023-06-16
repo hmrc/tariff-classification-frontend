@@ -16,14 +16,14 @@
 
 package models.forms
 
-import java.time.{Instant, LocalDate, ZoneOffset}
 import models.InstantRange
 import models.forms.mappings.Mappings
-import play.api.data.{Form, FormError, Mapping}
 import play.api.data.Forms._
-import play.api.data.format.Formatter
 import play.api.data.format.Formats._
+import play.api.data.format.Formatter
+import play.api.data.{Form, FormError, Mapping}
 
+import java.time.{Instant, LocalDate, ZoneOffset}
 import scala.util.Try
 
 case class ReportDateFormData(
@@ -43,14 +43,14 @@ object ReportDateForm extends Mappings {
         instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null)
       )
 
-  def endDateInclusive: Mapping[Instant] =
+  private def endDateInclusive: Mapping[Instant] =
     localDate("reporting.endDate")
       .transform(
         date => date.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant,
         instant => Try(instant.atZone(ZoneOffset.UTC).toLocalDate).getOrElse(null)
       )
 
-  val optionalDateRangeFormat: Formatter[InstantRange] = new Formatter[InstantRange] {
+  private val optionalDateRangeFormat: Formatter[InstantRange] = new Formatter[InstantRange] {
 
     private def min(key: String) = s"$key.min"
     private def max(key: String) = s"$key.max"

@@ -16,18 +16,18 @@
 
 package service
 
-import javax.inject.{Inject, Singleton}
-import play.api.Logging
-import uk.gov.hmrc.http.HeaderCarrier
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 import connector.FileStoreConnector
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
+import play.api.Logging
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FileStoreService @Inject() (connector: FileStoreConnector)(implicit ec: ExecutionContext) extends Logging {

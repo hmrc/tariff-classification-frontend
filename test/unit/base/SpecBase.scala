@@ -23,8 +23,8 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.{Injector, bind}
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.{Injector, bind}
 import play.api.libs.Files.TemporaryFileCreator
 import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponents, PlayBodyParsers}

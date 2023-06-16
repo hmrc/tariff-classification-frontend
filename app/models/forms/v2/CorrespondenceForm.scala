@@ -15,10 +15,10 @@
  */
 
 package models.forms
+import models.forms.mappings.FormMappings._
 import models.{Address, Contact, CorrespondenceApplication}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.forms.mappings.FormMappings._
 
 object CorrespondenceForm {
 

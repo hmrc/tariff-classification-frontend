@@ -18,14 +18,15 @@ package connector
 
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
 import metrics.HasMetrics
 import models.PdfFile
 import play.api.http.Status.OK
 import play.api.libs.ws.WSClient
 import play.twirl.api.Html
-import scala.concurrent.{ExecutionContext, Future}
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PdfGeneratorServiceConnector @Inject() (

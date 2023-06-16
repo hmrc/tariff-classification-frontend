@@ -21,10 +21,10 @@ import audit.AuditService
 import com.github.blemale.scaffeine.Scaffeine
 import config.AppConfig
 import connector.BindingTariffClassificationConnector
-import javax.inject.{Inject, Singleton}
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,11 +38,11 @@ class KeywordsService @Inject() (
 
   implicit val ec: ExecutionContext = mat.executionContext
 
-  val cacheHeaderCarrier = HeaderCarrier().withExtraHeaders("X-Api-Token" -> config.apiToken)
+  private val cacheHeaderCarrier = HeaderCarrier().withExtraHeaders("X-Api-Token" -> config.apiToken)
 
-  val KeywordsCacheKey = "allKeywords"
+  private val KeywordsCacheKey = "allKeywords"
 
-  val keywordsCache = Scaffeine()
+  private val keywordsCache = Scaffeine()
     .executor(mat.executionContext)
     .expireAfterWrite(config.keywordsCacheExpiration)
     .maximumSize(1)

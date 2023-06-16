@@ -21,7 +21,7 @@ import java.time.{Duration, Instant, LocalDateTime, ZoneOffset}
 
 object Dates {
 
-  val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+  private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
   def format(instant: Instant): String =
     formatter.format(LocalDateTime.ofInstant(instant, ZoneOffset.UTC))
@@ -29,5 +29,5 @@ object Dates {
   def format(instant: Option[Instant]): String =
     instant.map(format).getOrElse("None")
 
-  def daysCount(instant: Instant) = Duration.between(instant, Instant.now()).toDays
+  def daysCount(instant: Instant): Long = Duration.between(instant, Instant.now()).toDays
 }

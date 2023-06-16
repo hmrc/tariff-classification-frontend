@@ -49,7 +49,7 @@ object ManageKeywordsViewModel {
           caseHeader.assignee
             .map { assignee =>
               assignee.name match {
-                case Some(s) if !s.trim.isEmpty => s
+                case Some(s) if s.trim.nonEmpty => s
                 case _                          => assignee.id
               }
             }

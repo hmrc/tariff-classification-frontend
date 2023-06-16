@@ -28,9 +28,9 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 trait UpscanErrorHandling { self: FrontendBaseController =>
-  val UpscanErrorCodeKey        = "errorCode"
-  val UpscanErrorMessageKey     = "errorMessage"
-  val UploadAttachmentFormField = "file"
+  private val UpscanErrorCodeKey        = "errorCode"
+  val UpscanErrorMessageKey             = "errorMessage"
+  private val UploadAttachmentFormField = "file"
 
   def handleUploadErrorAndRender(
     renderView: Form[String] => Future[Html]

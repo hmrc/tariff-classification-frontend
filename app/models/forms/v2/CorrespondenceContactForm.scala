@@ -19,8 +19,8 @@ package models.forms.v2
 import models._
 import models.forms.FormConstraints.emptyOr
 import models.forms.mappings.Constraints
-import play.api.data.{Form, Forms}
 import play.api.data.Forms._
+import play.api.data.{Form, Forms}
 
 object CorrespondenceContactForm extends Constraints {
 

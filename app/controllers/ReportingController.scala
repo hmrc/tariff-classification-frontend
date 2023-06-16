@@ -28,15 +28,14 @@ import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{QueuesService, ReportingService, UserService}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools._
 import views.html.report_not_found
+
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
-
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -59,14 +58,14 @@ class ReportingController @Inject() (
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 
-  lazy val chooseDatesForm = ReportDateForm.form
-  lazy val chooseTeamsForm = ReportTeamForm.form
+  private lazy val chooseDatesForm = ReportDateForm.form
+  private lazy val chooseTeamsForm = ReportTeamForm.form
 
-  val DownloadPageSize               = 1000
-  val DownloadPagination: Pagination = SearchPagination(pageSize = DownloadPageSize)
-  val LocalDateFormatter             = DateTimeFormatter.ISO_LOCAL_DATE
+  private val DownloadPageSize               = 1000
+  private val DownloadPagination: Pagination = SearchPagination(pageSize = DownloadPageSize)
+  val LocalDateFormatter: DateTimeFormatter  = DateTimeFormatter.ISO_LOCAL_DATE
 
-  def downloadCaseReport(report: CaseReport) =
+  def downloadCaseReport(report: CaseReport): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
       val dateString = LocalDateFormatter.format(dateTime)
@@ -90,7 +89,7 @@ class ReportingController @Inject() (
       }
     }
 
-  def downloadSummaryReport(report: SummaryReport) =
+  def downloadSummaryReport(report: SummaryReport): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
       val dateString = LocalDateFormatter.format(dateTime)
@@ -114,7 +113,7 @@ class ReportingController @Inject() (
       }
     }
 
-  def downloadQueueReport(report: QueueReport) =
+  def downloadQueueReport(report: QueueReport): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       val dateTime   = appConfig.clock.instant().atZone(ZoneOffset.UTC)
       val dateString = LocalDateFormatter.format(dateTime)
@@ -134,14 +133,14 @@ class ReportingController @Inject() (
       }
     }
 
-  def showChangeDateFilter(report: Report, pagination: Pagination) =
+  def showChangeDateFilter(report: Report, pagination: Pagination): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       val specificDates = report.dateRange != InstantRange.allTime
       val currentData   = ReportDateFormData(specificDates, report.dateRange)
       Ok(reportChooseDates(chooseDatesForm.fill(currentData), report, pagination))
     }
 
-  def postChangeDateFilter(report: Report, pagination: Pagination) =
+  def postChangeDateFilter(report: Report, pagination: Pagination): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       chooseDatesForm
         .bindFromRequest()
@@ -169,12 +168,12 @@ class ReportingController @Inject() (
         )
     }
 
-  def showChangeTeamsFilter(report: Report, pagination: Pagination) =
+  def showChangeTeamsFilter(report: Report, pagination: Pagination): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       Ok(reportChooseTeams(chooseTeamsForm.fill(report.teams.isEmpty), report, pagination))
     }
 
-  def postChangeTeamsFilter(report: Report, pagination: Pagination) =
+  def postChangeTeamsFilter(report: Report, pagination: Pagination): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       chooseTeamsForm
         .bindFromRequest()
@@ -203,7 +202,7 @@ class ReportingController @Inject() (
         )
     }
 
-  def caseReport(report: CaseReport, pagination: Pagination) =
+  def caseReport(report: CaseReport, pagination: Pagination): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       val getReport = reportingService.caseReport(report, pagination)
       val getUsers  = usersService.getAllUsers(Seq.empty, "", NoPagination())
@@ -217,7 +216,7 @@ class ReportingController @Inject() (
       } yield Ok(caseReportView(report, pagination, results, usersByPid, teamsById))
     }
 
-  def summaryReport(report: SummaryReport, pagination: Pagination) =
+  def summaryReport(report: SummaryReport, pagination: Pagination): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       val getReport = reportingService.summaryReport(report, pagination)
       val getUsers  = usersService.getAllUsers(Seq.empty, "", NoPagination())
@@ -231,7 +230,7 @@ class ReportingController @Inject() (
       } yield Ok(summaryReportView(report, pagination, results, usersByPid, teamsById))
     }
 
-  def queueReport(report: QueueReport, pagination: Pagination) =
+  def queueReport(report: QueueReport, pagination: Pagination): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)).async { implicit request =>
       val getReport = reportingService.queueReport(report, pagination)
       val getTeams  = queuesService.getAllById
@@ -242,7 +241,7 @@ class ReportingController @Inject() (
       } yield Ok(queueReportView(report, pagination, results, teamsById))
     }
 
-  def getReportByName(reportName: String) =
+  def getReportByName(reportName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS)) { implicit request =>
       Report.byId
         .get(reportName)

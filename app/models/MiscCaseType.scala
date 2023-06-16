@@ -19,12 +19,12 @@ package models
 object MiscCaseType extends Enumeration {
   type MiscCaseType = Value
 
-  val APPEALS        = Value("Appeals")
-  val HARMONISED     = Value("Harmonised systems")
-  val IB             = Value("IB")
-  val NOMENCLATURE   = Value("Nomenclature")
-  val OTHER_GOVT_DEP = Value("Other government dept")
-  val OTHER          = Value("Other")
+  private val APPEALS                           = Value("Appeals")
+  val HARMONISED: models.MiscCaseType.Value     = Value("Harmonised systems")
+  val IB: models.MiscCaseType.Value             = Value("IB")
+  val NOMENCLATURE: models.MiscCaseType.Value   = Value("Nomenclature")
+  val OTHER_GOVT_DEP: models.MiscCaseType.Value = Value("Other government dept")
+  val OTHER: models.MiscCaseType.Value          = Value("Other")
 
   def format(caseType: MiscCaseType): String =
     caseType match {

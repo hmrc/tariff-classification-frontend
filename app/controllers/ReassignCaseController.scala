@@ -17,8 +17,6 @@
 package controllers
 
 import config.AppConfig
-
-import javax.inject.{Inject, Singleton}
 import models._
 import models.forms.ReleaseCaseForm
 import models.request.AuthenticatedCaseRequest
@@ -29,8 +27,9 @@ import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_reassign_case, reassign_queue_case, resource_not_found}
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReassignCaseController @Inject() (

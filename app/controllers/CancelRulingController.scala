@@ -27,14 +27,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
 import views.html.{cancel_ruling_email, cancel_ruling_reason, confirm_cancel_ruling}
+
 import java.util.UUID
-
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
-
 import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -81,7 +80,7 @@ class CancelRulingController @Inject() (
           )
       }
 
-  def renderCancelRulingEmail(
+  private def renderCancelRulingEmail(
     fileId: Option[String]   = None,
     uploadForm: Form[String] = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {

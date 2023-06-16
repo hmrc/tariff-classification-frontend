@@ -19,8 +19,8 @@ package service
 import audit.AuditService
 import connector.{BindingTariffClassificationConnector, RulingConnector}
 import models.CaseStatus.CaseStatus
-import models.request.NewEventRequest
 import models._
+import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}

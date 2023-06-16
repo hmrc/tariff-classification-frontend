@@ -16,13 +16,13 @@
 
 package models.forms
 
-import java.time.Instant
-
-import play.api.data.Form
-import play.api.data.Forms._
 import models.forms.FormConstraints.dateMustBeInThePast
 import models.forms.mappings.FormMappings._
 import models.{Case, Contact}
+import play.api.data.Form
+import play.api.data.Forms._
+
+import java.time.Instant
 
 object LiabilityDetailsForm {
 

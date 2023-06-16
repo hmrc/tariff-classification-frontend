@@ -16,9 +16,9 @@
 
 package models.forms
 
+import models.forms.mappings.FormMappings.textNonEmpty
 import play.api.data.Form
 import play.api.data.Forms.mapping
-import models.forms.mappings.FormMappings.textNonEmpty
 
 case class ActivityFormData(note: String)
 

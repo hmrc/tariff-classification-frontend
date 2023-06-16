@@ -19,15 +19,16 @@ package connector
 import com.google.inject.Inject
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
-import javax.inject.Singleton
 import metrics.HasMetrics
-import play.api.libs.json.{Format, Writes}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import models.{Email, EmailTemplate}
-import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json.{Format, Writes}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.Base64Utils
 import utils.JsonFormatters.emailTemplateFormat
-import uk.gov.hmrc.http.HttpReads.Implicits._
+
+import javax.inject.Singleton
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailConnector @Inject() (

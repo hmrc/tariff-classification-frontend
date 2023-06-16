@@ -42,5 +42,5 @@ case class CaseCompletedEmailParameters(
 
 object EmailType extends Enumeration {
   type EmailType = Value
-  val COMPLETE = Value("digital_tariffs_case_completed")
+  val COMPLETE: models.EmailType.Value = Value("digital_tariffs_case_completed")
 }

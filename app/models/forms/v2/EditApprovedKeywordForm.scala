@@ -19,8 +19,7 @@ package models.forms.v2
 import models.Keyword
 import models.forms.mappings.FormMappings.oneOf
 import models.forms.v2.EditKeywordAction.EditKeywordAction
-import play.api.data.Forms.tuple
-import play.api.data.Forms.of
+import play.api.data.Forms.{of, tuple}
 import play.api.data.format.Formatter
 import play.api.data.{Form, FormError}
 
@@ -30,7 +29,7 @@ object EditKeywordAction extends Enumeration {
 }
 
 object EditApprovedKeywordForm {
-  def keyWordFormat(allKeywords: Seq[Keyword]): Formatter[String] =
+  private def keyWordFormat(allKeywords: Seq[Keyword]): Formatter[String] =
     new Formatter[String] {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
 

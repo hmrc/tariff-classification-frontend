@@ -16,11 +16,12 @@
 
 package models
 
-import java.time.Instant
 import models.response.FileMetadata
 import models.response.ScanStatus.ScanStatus
 import play.twirl.api.Html
 import utils.Dates
+
+import java.time.Instant
 
 case class StoredAttachment(
   id: String,

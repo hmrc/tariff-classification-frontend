@@ -28,8 +28,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.assign_case
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AssignCaseController @Inject() (

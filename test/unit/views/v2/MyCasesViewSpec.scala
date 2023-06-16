@@ -16,8 +16,8 @@
 
 package views.v2
 
-import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
 import models._
+import models.viewmodels.{ApplicationTabViewModel, ApplicationsTab}
 import utils.Cases
 import views.ViewMatchers.{containElementWithClass, containElementWithID, containText, haveClass}
 import views.ViewSpec

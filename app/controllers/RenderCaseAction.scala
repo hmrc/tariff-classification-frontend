@@ -18,15 +18,15 @@ package controllers
 
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import config.AppConfig
+import _root_.config.AppConfig
 import models.Case
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
+import play.twirl.api.HtmlFormat
 import service.CasesService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 trait RenderCaseAction extends I18nSupport { this: FrontendController =>
 
@@ -46,12 +46,12 @@ trait RenderCaseAction extends I18nSupport { this: FrontendController =>
       case _                                  => successful(Redirect(redirect(caseReference)))
     }
 
-  protected def defaultRedirect(
+  private def defaultRedirect(
     reference: Option[String] = None
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
     successful(Redirect(redirect(reference.getOrElse(request.`case`.reference))))
 
-  protected def defaultRedirectAndEdit(
+  private def defaultRedirectAndEdit(
     reference: Option[String] = None
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
     successful(Redirect(routes.RulingController.validateBeforeComplete(reference.getOrElse(request.`case`.reference))))

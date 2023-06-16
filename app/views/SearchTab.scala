@@ -20,15 +20,15 @@ import play.api.mvc.QueryStringBindable
 
 object SearchTab extends Enumeration {
   type SearchTab = Value
-  val DETAILS    = Value("details")
-  val IMAGES     = Value("images")
-  val SEARCH_BOX = Value("searchbox")
+  val DETAILS: views.SearchTab.Value    = Value("details")
+  val IMAGES: views.SearchTab.Value     = Value("images")
+  val SEARCH_BOX: views.SearchTab.Value = Value("searchbox")
 
   implicit object searchTypeQueryStringBinder
       extends QueryStringBindable.Parsing[SearchTab.SearchTab](
         withName,
         _.toString,
-        (k: String, e: Exception) => "Cannot parse %s as SearchTab: %s".format(k, e.getMessage())
+        (k: String, e: Exception) => "Cannot parse %s as SearchTab: %s".format(k, e.getMessage)
       )
 
 }

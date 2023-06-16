@@ -118,7 +118,7 @@ class LiabilityController @Inject() (
     )
   }
 
-  def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]) =
+  private def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]) =
     for {
       events <- eventsService
                  .getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))

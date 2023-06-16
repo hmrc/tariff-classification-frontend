@@ -25,6 +25,7 @@ import utils.Cases.{aCase, withDecision}
 import utils.JsonFormatters._
 import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
+//noinspection ScalaStyle
 class AppealCaseSpec extends IntegrationTest with MockitoSugar {
 
   val owner: Some[Operator] = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))

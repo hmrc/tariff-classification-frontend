@@ -16,15 +16,15 @@
 
 package service
 
-import java.time.{Clock, Instant}
-import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
 import audit.AuditService
 import connector.BindingTariffClassificationConnector
 import models.EventType.EventType
 import models._
 import models.request.NewEventRequest
+import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.{Clock, Instant}
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

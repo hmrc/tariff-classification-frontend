@@ -17,14 +17,14 @@
 package service
 
 import cats.data.OptionT
-import controllers.Tab
 import connector.DataCacheConnector
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
+import controllers.Tab
 import models.ApplicationType
-import uk.gov.hmrc.http.cache.client.CacheMap
 import play.api.libs.json.JsString
+import uk.gov.hmrc.http.cache.client.CacheMap
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TabCacheService @Inject() (

@@ -16,7 +16,7 @@
 
 package models.viewmodels
 
-import models.{Appeal, Case, CaseStatus, Operator, Permission}
+import models._
 
 case class AppealTabViewModel(
   caseReference: String,
