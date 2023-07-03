@@ -92,7 +92,7 @@ case class CancellationCaseStatusChange(
   reason: CancelReason
 ) extends FieldChange[CaseStatus]
     with OptionalAttachment {
-  override val to: CaseStatus          = CaseStatus.CANCELLED
+  override val to: CaseStatus    = CaseStatus.CANCELLED
   override val `type`: EventType = EventType.CASE_CANCELLATION
 }
 
@@ -104,7 +104,7 @@ case class ReferralCaseStatusChange(
   reason: Seq[ReferralReason]
 ) extends FieldChange[CaseStatus]
     with OptionalAttachment {
-  override val to: CaseStatus          = CaseStatus.REFERRED
+  override val to: CaseStatus    = CaseStatus.REFERRED
   override val `type`: EventType = EventType.CASE_REFERRAL
 }
 
@@ -113,7 +113,7 @@ case class CompletedCaseStatusChange(
   override val comment: Option[String] = None,
   email: Option[String]
 ) extends FieldChange[CaseStatus] {
-  override val to: CaseStatus          = CaseStatus.COMPLETED
+  override val to: CaseStatus    = CaseStatus.COMPLETED
   override val `type`: EventType = EventType.CASE_COMPLETED
 }
 
@@ -225,7 +225,7 @@ case class ExpertAdviceReceived(
 
 object EventType extends Enumeration {
   type EventType = Value
-  val CASE_STATUS_CHANGE: EventType = Value
+  val CASE_STATUS_CHANGE: EventType         = Value
   val CASE_REFERRAL: EventType              = Value
   val CASE_REJECTED: EventType              = Value
   val CASE_CANCELLATION: EventType          = Value
@@ -241,6 +241,9 @@ object EventType extends Enumeration {
   val SAMPLE_SEND_CHANGE: EventType         = Value
   val CASE_CREATED: EventType               = Value
   val EXPERT_ADVICE_RECEIVED: EventType     = Value
+
+  def isSampleEvents(eventType: EventType): Boolean =
+    eventType == SAMPLE_STATUS_CHANGE || eventType == SAMPLE_RETURN_CHANGE || eventType == SAMPLE_SEND_CHANGE
 
   def sampleEvents: Set[EventType]    = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)
   def nonSampleEvents: Set[EventType] = EventType.values.diff(sampleEvents)

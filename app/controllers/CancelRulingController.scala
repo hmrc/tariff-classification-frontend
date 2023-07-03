@@ -136,9 +136,9 @@ class CancelRulingController @Inject() (
 
           } yield Redirect(routes.CancelRulingController.confirmCancelRuling(reference))
         }
-        .getOrElse {
-          successful(Redirect(routes.SecurityController.unauthorized()))
-        }
+        .getOrElse(
+          Future(Redirect(routes.SecurityController.unauthorized()))
+        )
     }
 
   def confirmCancelRuling(reference: String): Action[AnyContent] =

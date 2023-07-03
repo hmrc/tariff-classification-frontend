@@ -28,7 +28,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.assign_case
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -47,7 +46,7 @@ class AssignCaseController @Inject() (
 
   def get(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
-      .async(implicit request => getCaseAndRenderView(reference, c => successful(assignCase(c, takeOwnershipForm))))
+      .async(implicit request => getCaseAndRenderView(reference, c => Future(assignCase(c, takeOwnershipForm))))
 
   def post(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
@@ -56,19 +55,17 @@ class AssignCaseController @Inject() (
           case c: Case if c.assignee.isEmpty =>
             caseService.assignCase(c, request.operator).map(_ => Redirect(routes.CaseController.get(reference)))
           case _ =>
-            successful(Redirect(routes.AssignCaseController.get(reference)))
+            Future(Redirect(routes.AssignCaseController.get(reference)))
         }
 
         takeOwnershipForm
           .bindFromRequest()
           .fold(
-            formWithErrors => getCaseAndRenderView(reference, c => successful(assignCase(c, formWithErrors))), {
+            formWithErrors => getCaseAndRenderView(reference, c => Future(assignCase(c, formWithErrors))), {
               case true =>
                 getCaseAndRespond(reference, respond)
               case _ =>
-                successful(
-                  Redirect(controllers.routes.CaseController.get(reference))
-                )
+                Future(Redirect(controllers.routes.CaseController.get(reference)))
             }
           )
 

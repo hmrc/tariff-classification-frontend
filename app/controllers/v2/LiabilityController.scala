@@ -85,9 +85,6 @@ class LiabilityController @Inject() (
         .withFragment(Tab.ATTACHMENTS_TAB.name)
         .path
 
-    val isSampleEvents = (eventType: EventType) =>
-      eventType == SAMPLE_STATUS_CHANGE || eventType == SAMPLE_RETURN_CHANGE || eventType == SAMPLE_SEND_CHANGE
-
     for {
       allEvents <- eventsService
                     .getFilteredEvents(
@@ -134,13 +131,6 @@ class LiabilityController @Inject() (
       activeNavTab
     )
   }
-
-//  private def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]) =
-//    for {
-//      events <- eventsService
-//                 .getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
-//      queues <- queuesService.getAll
-//    } yield (events, queues)
 
   private def getAttachmentTab(
     liabilityCase: Case

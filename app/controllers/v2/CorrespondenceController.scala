@@ -18,6 +18,7 @@ package controllers.v2
 
 import config.AppConfig
 import controllers.{RequestActions, Tab}
+import models.EventType._
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
@@ -36,7 +37,6 @@ import views.html.v2.correspondence_view
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
 @Singleton
 class CorrespondenceController @Inject() (
   verify: RequestActions,
@@ -65,14 +65,14 @@ class CorrespondenceController @Inject() (
     val correspondenceCase: Case = request.`case`
     val uploadFileId             = fileId.getOrElse(UUID.randomUUID().toString)
 
-    val correspondenceViewModel          = CaseViewModel.fromCase(correspondenceCase, request.operator)
-    val caseDetailsTab                   = CaseDetailsViewModel.fromCase(correspondenceCase)
-    val contactDetailsTab                = ContactDetailsTabViewModel.fromCase(correspondenceCase)
-    val messagesTab                      = MessagesTabViewModel.fromCase(correspondenceCase)
-    val attachmentsTabViewModel          = getAttachmentTab(correspondenceCase)
-    val activityTabViewModel             = getActivityTab(correspondenceCase)
-    val storedAttachments                = fileService.getAttachments(correspondenceCase)
-    val correspondenceSampleTabViewModel = getSampleTab(correspondenceCase)
+    val correspondenceViewModel = CaseViewModel.fromCase(correspondenceCase, request.operator)
+    val caseDetailsTab          = CaseDetailsViewModel.fromCase(correspondenceCase)
+    val contactDetailsTab       = ContactDetailsTabViewModel.fromCase(correspondenceCase)
+    val messagesTab             = MessagesTabViewModel.fromCase(correspondenceCase)
+    val attachmentsTabViewModel = getAttachmentTab(correspondenceCase)
+//    val activityTabViewModel             = getActivityTab(correspondenceCase)
+    val storedAttachments = fileService.getAttachments(correspondenceCase)
+//    val correspondenceSampleTabViewModel = getSampleTab(correspondenceCase)
     val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
       correspondenceCase.status,
       correspondenceCase.assignee.exists(_.id == request.operator.id)
@@ -88,10 +88,18 @@ class CorrespondenceController @Inject() (
         .path
 
     for {
+      allEvents <- eventsService
+                    .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.allEvents))
+      queues         <- queuesService.getAll
       attachmentsTab <- attachmentsTabViewModel
-      activityTab    <- activityTabViewModel
-      attachments    <- storedAttachments
-      sampleTab      <- correspondenceSampleTabViewModel
+      activityTab = ActivityViewModel
+        .fromCase(correspondenceCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
+      attachments <- storedAttachments
+      sampleTab = SampleStatusTabViewModel(
+        correspondenceCase.reference,
+        correspondenceCase.sample,
+        allEvents.filter(event => isSampleEvents(event.details.`type`))
+      )
       initiateResponse <- fileService.initiate(
                            FileStoreInitiateRequest(
                              id              = Some(uploadFileId),
@@ -117,23 +125,23 @@ class CorrespondenceController @Inject() (
     )
   }
 
-  private def getSampleTab(correspondenceCase: Case)(implicit request: AuthenticatedRequest[_]) =
-    eventsService.getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.sampleEvents)).map {
-      sampleEvents => SampleStatusTabViewModel(correspondenceCase.reference, correspondenceCase.sample, sampleEvents)
-    }
+//  private def getSampleTab(correspondenceCase: Case)(implicit request: AuthenticatedRequest[_]) =
+//    eventsService.getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.sampleEvents)).map {
+//      sampleEvents => SampleStatusTabViewModel(correspondenceCase.reference, correspondenceCase.sample, sampleEvents)
+//    }
 
   private def getAttachmentTab(correspondenceCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
     fileService
       .getAttachments(correspondenceCase)
       .map(attachments => AttachmentsTabViewModel.fromCase(correspondenceCase, attachments))
 
-  private def getActivityTab(
-    correspondenceCase: Case
-  )(implicit request: AuthenticatedRequest[_]): Future[ActivityViewModel] =
-    for {
-      events <- eventsService
-                 .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.nonSampleEvents))
-      queues <- queuesService.getAll
-    } yield ActivityViewModel.fromCase(correspondenceCase, events, queues)
+//  private def getActivityTab(
+//    correspondenceCase: Case
+//  )(implicit request: AuthenticatedRequest[_]): Future[ActivityViewModel] =
+//    for {
+//      events <- eventsService
+//                 .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.nonSampleEvents))
+//      queues <- queuesService.getAll
+//    } yield ActivityViewModel.fromCase(correspondenceCase, events, queues)
 
 }

@@ -101,12 +101,10 @@ class CreateCorrespondenceController @Inject() (
       formReleaseChoice
         .bindFromRequest()
         .fold(
-          errors => getCaseAndRenderChoiceView(reference, errors),
-          (choice: String) =>
-            choice match {
-              case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
-              case _     => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
-            }
+          errors => getCaseAndRenderChoiceView(reference, errors), {
+            case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
+            case _     => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
+          }
         )
     }
 
@@ -187,5 +185,4 @@ class CreateCorrespondenceController @Inject() (
               )
         )
     }
-
 }
