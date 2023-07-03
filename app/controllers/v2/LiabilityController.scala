@@ -18,6 +18,7 @@ package controllers.v2
 
 import config.AppConfig
 import controllers.{RequestActions, Tab, v2}
+import models.EventType._
 import models._
 import models.forms._
 import models.forms.v2.LiabilityDetailsForm
@@ -34,7 +35,6 @@ import views.html.v2.{liability_details_edit, liability_view}
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -66,6 +66,7 @@ class LiabilityController @Inject() (
     uploadForm: Form[String]             = UploadAttachmentForm.form,
     keywordForm: Form[String]            = KeywordForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+
     val liabilityCase: Case = request.`case`
     val uploadFileId        = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -84,12 +85,28 @@ class LiabilityController @Inject() (
         .withFragment(Tab.ATTACHMENTS_TAB.name)
         .path
 
+    val isSampleEvents = (eventType: EventType) =>
+      eventType == SAMPLE_STATUS_CHANGE || eventType == SAMPLE_RETURN_CHANGE || eventType == SAMPLE_SEND_CHANGE
+
     for {
-      (activityEvents, queues) <- liabilityViewActivityDetails(liabilityCase.reference)
-      attachmentsTab           <- getAttachmentTab(liabilityCase)
-      sampleTab                <- getSampleTab(liabilityCase)
-      c592        = Some(C592ViewModel.fromCase(liabilityCase))
-      activityTab = Some(ActivityViewModel.fromCase(liabilityCase, activityEvents, queues))
+      allEvents <- eventsService
+                    .getFilteredEvents(
+                      liabilityCase.reference,
+                      NoPagination(),
+                      Some(EventType.values.diff(EventType.sampleEvents))
+                    )
+      queues         <- queuesService.getAll
+      attachmentsTab <- getAttachmentTab(liabilityCase)
+      sampleTab = SampleStatusTabViewModel(
+        liabilityCase.reference,
+        liabilityCase.sample,
+        allEvents.filter(event => isSampleEvents(event.details.`type`))
+      )
+      activityTab = Some(
+        ActivityViewModel
+          .fromCase(liabilityCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
+      )
+      c592 = Some(C592ViewModel.fromCase(liabilityCase))
       keywordsTab <- keywordsService.findAll.map(kws =>
                       KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name))
                     )
@@ -118,12 +135,12 @@ class LiabilityController @Inject() (
     )
   }
 
-  private def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]) =
-    for {
-      events <- eventsService
-                 .getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
-      queues <- queuesService.getAll
-    } yield (events, queues)
+//  private def liabilityViewActivityDetails(reference: String)(implicit request: AuthenticatedRequest[_]) =
+//    for {
+//      events <- eventsService
+//                 .getFilteredEvents(reference, NoPagination(), Some(EventType.values.diff(EventType.sampleEvents)))
+//      queues <- queuesService.getAll
+//    } yield (events, queues)
 
   private def getAttachmentTab(
     liabilityCase: Case
@@ -133,15 +150,6 @@ class LiabilityController @Inject() (
       letter      <- fileService.getLetterOfAuthority(liabilityCase)
     } yield Some(AttachmentsTabViewModel(liabilityCase.reference, attachments, letter))
 
-  private def getSampleTab(c: Case)(implicit request: AuthenticatedRequest[_]) =
-    eventsService.getFilteredEvents(c.reference, NoPagination(), Some(EventType.sampleEvents)).map { sampleEvents =>
-      SampleStatusTabViewModel(
-        c.reference,
-        c.sample,
-        sampleEvents
-      )
-    }
-
   def editLiabilityDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.EDIT_LIABILITY)).async { implicit request =>
@@ -149,7 +157,7 @@ class LiabilityController @Inject() (
         request.`case`.status,
         request.`case`.assignee.exists(_.id == request.operator.id)
       )
-      successful(
+      Future(
         Ok(
           liability_details_edit(
             request.`case`,
@@ -168,7 +176,7 @@ class LiabilityController @Inject() (
         .discardingErrors
         .bindFromRequest()
         .fold(
-          errorForm => successful(Ok(liability_details_edit(request.`case`, errorForm))),
+          errorForm => Future(Ok(liability_details_edit(request.`case`, errorForm))),
           updatedCase =>
             casesService
               .updateCase(request.`case`, updatedCase, request.operator)

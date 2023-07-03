@@ -53,8 +53,6 @@ class AtarController @Inject() (
     with UpscanErrorHandling
     with I18nSupport {
 
-  //TODO: Activity Tab and Samples Tab and Liabilities controller tabs
-
   def displayAtar(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
@@ -139,12 +137,4 @@ class AtarController @Inject() (
       )
     }
   }
-
-//  private def getAttachmentTab(atarCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
-//    fileService.getAttachments(atarCase).map(attachments => AttachmentsTabViewModel.fromCase(atarCase, attachments))
-
-//  private def getKeywordsTab(atarCase: Case): Future[KeywordsTabViewModel] =
-//    keywordsService.findAll.map { globalKeywords =>
-//      KeywordsTabViewModel.fromCase(atarCase, globalKeywords.map(_.name))
-//    }
 }
