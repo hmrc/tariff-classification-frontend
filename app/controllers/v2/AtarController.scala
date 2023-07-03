@@ -53,6 +53,8 @@ class AtarController @Inject() (
     with UpscanErrorHandling
     with I18nSupport {
 
+  //TODO: Activity Tab and Samples Tab and Liabilities controller tabs
+
   def displayAtar(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))

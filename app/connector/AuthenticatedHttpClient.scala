@@ -37,15 +37,23 @@ class AuthenticatedHttpClient @Inject() (
   actorSystem: ActorSystem
 ) extends DefaultHttpClient(configuration, httpAuditing, wsClient, actorSystem) {
 
-  def addAuth(implicit hc: HeaderCarrier): Seq[(String, String)] = {
+//  def addAuth(implicit hc: HeaderCarrier): Seq[(String, String)] = {
+//
+//    val headerName: String = "X-Api-Token"
+//
+//    hc.headers(Seq(headerName)) match {
+//      case header @ Seq(_) => header
+//      case _               => Seq(headerName -> config.apiToken)
+//    }
+//  }
 
-    val headerName: String = "X-Api-Token"
+  private val headerName: String = "X-Api-Token"
 
+  def addAuth(implicit hc: HeaderCarrier): Seq[(String, String)] =
     hc.headers(Seq(headerName)) match {
-      case header @ Seq(_) => header
-      case _               => Seq(headerName -> config.apiToken)
+      case Seq(_) => Seq.empty // dont add extra headers if our header already exist in HC
+      case _      => Seq(headerName -> config.apiToken)
     }
-  }
 
   override def doGet(
     url: String,
