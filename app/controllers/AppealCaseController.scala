@@ -53,9 +53,9 @@ class AppealCaseController @Inject() (
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
       request.`case`.application.`type` match {
         case ApplicationType.ATAR =>
-          successful(Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.APPEALS_TAB.name)))
+          Future(Redirect(v2.routes.AtarController.displayAtar(reference).withFragment(Tab.APPEALS_TAB.name)))
         case ApplicationType.LIABILITY =>
-          successful(
+          Future(
             Redirect(v2.routes.LiabilityController.displayLiability(reference).withFragment(Tab.APPEALS_TAB.name))
           )
       }
@@ -66,7 +66,7 @@ class AppealCaseController @Inject() (
       andThen verify.mustHave(Permission.APPEAL_CASE)).async { implicit request =>
       getCaseAndRenderView(
         reference,
-        c => successful(appeal_choose_type(c, typeForm))
+        c => Future(appeal_choose_type(c, typeForm))
       )
     }
 
@@ -79,10 +79,9 @@ class AppealCaseController @Inject() (
           typeForm
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(Ok(appeal_choose_type(`case`, formWithErrors))),
+              formWithErrors => Future(Ok(appeal_choose_type(`case`, formWithErrors))),
               appealType =>
-                Future
-                  .successful(Redirect(routes.AppealCaseController.chooseStatus(`case`.reference, appealType.toString)))
+                Future(Redirect(routes.AppealCaseController.chooseStatus(`case`.reference, appealType.toString)))
             )
       )
     }
@@ -104,8 +103,8 @@ class AppealCaseController @Inject() (
         reference,
         c =>
           c.findAppeal(appealId) match {
-            case Some(appeal) => successful(Ok(appeal_change_status(c, appeal, statusForm)))
-            case None         => successful(Redirect(routes.AppealCaseController.appealDetails(reference)))
+            case Some(appeal) => Future(Ok(appeal_change_status(c, appeal, statusForm)))
+            case None         => Future(Redirect(routes.AppealCaseController.appealDetails(reference)))
           }
       )
     }
@@ -120,7 +119,7 @@ class AppealCaseController @Inject() (
           statusForm
             .bindFromRequest()
             .fold(
-              formWithErrors => successful(Ok(appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
+              formWithErrors => Future(Ok(appeal_choose_status(`case`, appealTypeFound, formWithErrors))),
               appealStatus =>
                 caseService
                   .addAppeal(`case`, appealTypeFound, appealStatus, request.operator)
@@ -140,13 +139,13 @@ class AppealCaseController @Inject() (
               statusForm
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => successful(Ok(appeal_change_status(`case`, appeal, formWithErrors))),
+                  formWithErrors => Future(Ok(appeal_change_status(`case`, appeal, formWithErrors))),
                   appealStatus =>
                     caseService
                       .updateAppealStatus(`case`, appeal, appealStatus, request.operator)
                       .map(_ => Redirect(routes.AppealCaseController.appealDetails(reference)))
                 )
-            case None => successful(Redirect(redirect(request.`case`.reference)))
+            case None => Future(Redirect(redirect(request.`case`.reference)))
           }
       )
     }

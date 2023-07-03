@@ -131,14 +131,12 @@ class CancelRulingController @Inject() (
                     rulingCancellation.note,
                     request.operator
                   )
-
             _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
-
           } yield Redirect(routes.CancelRulingController.confirmCancelRuling(reference))
         }
-        .getOrElse {
-          successful(Redirect(routes.SecurityController.unauthorized()))
-        }
+        .getOrElse(
+          Future(Redirect(routes.SecurityController.unauthorized()))
+        )
     }
 
   def confirmCancelRuling(reference: String): Action[AnyContent] =

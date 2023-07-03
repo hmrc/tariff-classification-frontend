@@ -18,6 +18,7 @@ package controllers.v2
 
 import config.AppConfig
 import controllers.{RequestActions, Tab}
+import models.EventType.{allEvents, isSampleEvents}
 import models._
 import models.forms._
 import models.request._
@@ -28,7 +29,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import service._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.atar_view
 
@@ -75,11 +75,6 @@ class AtarController @Inject() (
     val rulingForm: Option[Form[DecisionFormData]] = decisionForm.bindFrom(rulingTab.decision)
     val appealTab: Option[AppealTabViewModel]      = AppealTabViewModel.fromCase(atarCase)
 
-    val sampleTabViewModel: Future[SampleTabViewModel]           = getSampleTab(atarCase)
-    val attachmentsTabViewModel: Future[AttachmentsTabViewModel] = getAttachmentTab(atarCase)
-    val activityTabViewModel: Future[ActivityViewModel]          = getActivityTab(atarCase)
-    val keywordsTabViewModel: Future[KeywordsTabViewModel]       = getKeywordsTab(atarCase)
-    val storedAttachments: Future[Seq[StoredAttachment]]         = fileService.getAttachments(atarCase)
     val activeNavTab: PrimaryNavigationTab =
       PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
         atarCase.status,
@@ -96,11 +91,12 @@ class AtarController @Inject() (
         .path
 
     for {
-      sampleTab      <- sampleTabViewModel
-      attachmentsTab <- attachmentsTabViewModel
-      activityTab    <- activityTabViewModel
-      keywordsTab    <- keywordsTabViewModel
-      attachments    <- storedAttachments
+      allEvents <- eventsService
+                    .getFilteredEvents(
+                      reference      = atarCase.reference,
+                      pagination     = NoPagination(),
+                      onlyEventTypes = Some(allEvents)
+                    )
       initiateResponse <- fileService.initiate(
                            FileStoreInitiateRequest(
                              id              = Some(uploadFileId),
@@ -109,44 +105,33 @@ class AtarController @Inject() (
                              maxFileSize     = appConfig.fileUploadMaxSize
                            )
                          )
+      queues         <- queuesService.getAll
+      attachments    <- fileService.getAttachments(atarCase)
+      globalKeywords <- keywordsService.findAll
+      sampleTab = SampleTabViewModel.fromCase(atarCase, allEvents.filter(event => isSampleEvents(event.details.`type`)))
+      activityTab = ActivityViewModel
+        .fromCase(atarCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
+      attachmentsTab = AttachmentsTabViewModel.fromCase(atarCase, attachments)
+      keywordsTab    = KeywordsTabViewModel.fromCase(atarCase, globalKeywords.map(_.name))
     } yield {
       atarView(
-        atarViewModel,
-        applicantTab,
-        goodsTab,
-        sampleTab,
-        attachmentsTab,
-        uploadForm,
-        initiateResponse,
-        activityTab,
-        activityForm,
-        keywordsTab,
-        keywordForm,
-        rulingTab,
-        rulingForm,
-        attachments,
-        appealTab,
-        activeNavTab
+        caseViewModel    = atarViewModel,
+        applicantTab     = applicantTab,
+        goodsTab         = goodsTab,
+        sampleTab        = sampleTab,
+        attachmentsTab   = attachmentsTab,
+        uploadForm       = uploadForm,
+        initiateResponse = initiateResponse,
+        activityTab      = activityTab,
+        activityForm     = activityForm,
+        keywordsTab      = keywordsTab,
+        keywordForm      = keywordForm,
+        rulingTab        = rulingTab,
+        rulingForm       = rulingForm,
+        attachments      = attachments,
+        appealTab        = appealTab,
+        primaryNavTab    = activeNavTab
       )
     }
   }
-
-  private def getSampleTab(atarCase: Case)(implicit request: AuthenticatedRequest[_]) =
-    eventsService.getFilteredEvents(atarCase.reference, NoPagination(), Some(EventType.sampleEvents)).map { events =>
-      SampleTabViewModel.fromCase(atarCase, events)
-    }
-
-  private def getAttachmentTab(atarCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
-    fileService.getAttachments(atarCase).map(attachments => AttachmentsTabViewModel.fromCase(atarCase, attachments))
-
-  private def getActivityTab(atarCase: Case)(implicit request: AuthenticatedRequest[_]): Future[ActivityViewModel] =
-    for {
-      events <- eventsService.getFilteredEvents(atarCase.reference, NoPagination(), Some(EventType.nonSampleEvents))
-      queues <- queuesService.getAll
-    } yield ActivityViewModel.fromCase(atarCase, events, queues)
-
-  private def getKeywordsTab(atarCase: Case): Future[KeywordsTabViewModel] =
-    keywordsService.findAll.map { globalKeywords =>
-      KeywordsTabViewModel.fromCase(atarCase, globalKeywords.map(_.name))
-    }
 }

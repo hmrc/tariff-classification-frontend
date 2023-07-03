@@ -31,6 +31,7 @@ case class ActivityViewModel(
 )
 
 object ActivityViewModel {
+
   def fromCase(c: Case, events: Paged[Event], queues: Seq[Queue]): ActivityViewModel = {
 
     def getQueueName =
