@@ -204,25 +204,6 @@ case class ExpertAdviceReceived(
   override val `type`: EventType = EventType.EXPERT_ADVICE_RECEIVED
 }
 
-//sealed trait EventType
-//
-//case object CASE_STATUS_CHANGE extends EventType
-//case object CASE_REFERRAL extends EventType
-//case object CASE_REJECTED extends EventType
-//case object CASE_CANCELLATION extends EventType
-//case object CASE_COMPLETED extends EventType
-//case object APPEAL_STATUS_CHANGE extends EventType
-//case object APPEAL_ADDED extends EventType
-//case object EXTENDED_USE_STATUS_CHANGE extends EventType
-//case object ASSIGNMENT_CHANGE extends EventType
-//case object QUEUE_CHANGE extends EventType
-//case object NOTE extends EventType
-//case object SAMPLE_STATUS_CHANGE extends EventType
-//case object SAMPLE_RETURN_CHANGE extends EventType
-//case object SAMPLE_SEND_CHANGE extends EventType
-//case object CASE_CREATED extends EventType
-//case object EXPERT_ADVICE_RECEIVED extends EventType
-
 object EventType extends Enumeration {
   type EventType = Value
   val CASE_STATUS_CHANGE: EventType         = Value
@@ -246,7 +227,7 @@ object EventType extends Enumeration {
     eventType == SAMPLE_STATUS_CHANGE || eventType == SAMPLE_RETURN_CHANGE || eventType == SAMPLE_SEND_CHANGE
 
   def sampleEvents: Set[EventType]    = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)
-  def nonSampleEvents: Set[EventType] = EventType.values.diff(sampleEvents)
+
   def allEvents: Set[EventType] =
     Set(
       CASE_STATUS_CHANGE,
