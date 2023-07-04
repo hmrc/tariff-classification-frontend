@@ -32,22 +32,18 @@ class KeywordsService @Inject() (
   config: AppConfig,
   connector: BindingTariffClassificationConnector,
   auditService: AuditService
-)(
-  implicit mat: Materializer
-) {
+)(implicit mat: Materializer) {
 
   implicit val ec: ExecutionContext = mat.executionContext
 
-  private val cacheHeaderCarrier = HeaderCarrier().withExtraHeaders("X-Api-Token" -> config.apiToken)
-
   private val KeywordsCacheKey = "allKeywords"
 
-  private val keywordsCache = Scaffeine()
+  private def keywordsCache()(implicit hc: HeaderCarrier) = Scaffeine()
     .executor(mat.executionContext)
     .expireAfterWrite(config.keywordsCacheExpiration)
     .maximumSize(1)
     .buildAsyncFuture[String, Seq[Keyword]] { _ =>
-      connector.findAllKeywords(NoPagination())(cacheHeaderCarrier).map(_.results.filter(_.approved))
+      connector.findAllKeywords(NoPagination())(hc).map(_.results.filter(_.approved))
     }
 
   def addKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
@@ -72,6 +68,6 @@ class KeywordsService @Inject() (
       Future.successful(c)
     }
 
-  def findAll: Future[Seq[Keyword]] =
+  def findAll()(implicit hc: HeaderCarrier): Future[Seq[Keyword]] =
     keywordsCache.get(KeywordsCacheKey)
 }

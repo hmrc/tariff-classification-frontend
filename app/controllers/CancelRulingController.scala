@@ -131,12 +131,9 @@ class CancelRulingController @Inject() (
                     rulingCancellation.note,
                     request.operator
                   )
-
             _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
-
           } yield Redirect(routes.CancelRulingController.confirmCancelRuling(reference))
-        }
-        .getOrElse(
+        }.getOrElse(
           Future(Redirect(routes.SecurityController.unauthorized()))
         )
     }

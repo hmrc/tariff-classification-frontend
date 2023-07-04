@@ -30,7 +30,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import service._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.correspondence_view
 
@@ -69,14 +68,11 @@ class CorrespondenceController @Inject() (
     val caseDetailsTab          = CaseDetailsViewModel.fromCase(correspondenceCase)
     val contactDetailsTab       = ContactDetailsTabViewModel.fromCase(correspondenceCase)
     val messagesTab             = MessagesTabViewModel.fromCase(correspondenceCase)
-    val attachmentsTabViewModel = getAttachmentTab(correspondenceCase)
-//    val activityTabViewModel             = getActivityTab(correspondenceCase)
-    val storedAttachments = fileService.getAttachments(correspondenceCase)
-//    val correspondenceSampleTabViewModel = getSampleTab(correspondenceCase)
-    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
-      correspondenceCase.status,
-      correspondenceCase.assignee.exists(_.id == request.operator.id)
-    )
+    val activeNavTab =
+      PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+        correspondenceCase.status,
+        correspondenceCase.assignee.exists(_.id == request.operator.id)
+      )
 
     val fileUploadSuccessRedirect =
       appConfig.host + controllers.routes.CaseController.addAttachment(correspondenceCase.reference, uploadFileId).path
@@ -90,11 +86,11 @@ class CorrespondenceController @Inject() (
     for {
       allEvents <- eventsService
                     .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.allEvents))
-      queues         <- queuesService.getAll
-      attachmentsTab <- attachmentsTabViewModel
+      queues      <- queuesService.getAll
+      attachments <- fileService.getAttachments(correspondenceCase)
       activityTab = ActivityViewModel
         .fromCase(correspondenceCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
-      attachments <- storedAttachments
+      attachmentsTab = AttachmentsTabViewModel.fromCase(correspondenceCase, attachments)
       sampleTab = SampleStatusTabViewModel(
         correspondenceCase.reference,
         correspondenceCase.sample,
@@ -124,24 +120,4 @@ class CorrespondenceController @Inject() (
       activeNavTab
     )
   }
-
-//  private def getSampleTab(correspondenceCase: Case)(implicit request: AuthenticatedRequest[_]) =
-//    eventsService.getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.sampleEvents)).map {
-//      sampleEvents => SampleStatusTabViewModel(correspondenceCase.reference, correspondenceCase.sample, sampleEvents)
-//    }
-
-  private def getAttachmentTab(correspondenceCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
-    fileService
-      .getAttachments(correspondenceCase)
-      .map(attachments => AttachmentsTabViewModel.fromCase(correspondenceCase, attachments))
-
-//  private def getActivityTab(
-//    correspondenceCase: Case
-//  )(implicit request: AuthenticatedRequest[_]): Future[ActivityViewModel] =
-//    for {
-//      events <- eventsService
-//                 .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.nonSampleEvents))
-//      queues <- queuesService.getAll
-//    } yield ActivityViewModel.fromCase(correspondenceCase, events, queues)
-
 }

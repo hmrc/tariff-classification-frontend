@@ -135,7 +135,7 @@ class SuppressCaseController @Inject() (
           } yield Redirect(routes.SuppressCaseController.confirmSuppressCase(reference))
         }
         .getOrElse {
-          successful(Redirect(routes.SecurityController.unauthorized()))
+          Future(Redirect(routes.SecurityController.unauthorized()))
         }
     }
 

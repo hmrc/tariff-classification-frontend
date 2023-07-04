@@ -30,7 +30,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.Html
 import service._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.miscellaneous_view
 
@@ -63,18 +62,18 @@ class MiscellaneousController @Inject() (
     messageForm: Form[MessageFormData]   = MessageForm.form,
     uploadForm: Form[String]             = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+
     val miscellaneousCase: Case = request.`case`
     val uploadFileId            = fileId.getOrElse(UUID.randomUUID().toString)
 
-    val miscellaneousViewModel  = CaseViewModel.fromCase(miscellaneousCase, request.operator)
-    val caseDetailsTab          = DetailsViewModel.fromCase(miscellaneousCase)
-    val messagesTab             = MessagesTabViewModel.fromCase(miscellaneousCase)
-    val attachmentsTabViewModel = getAttachmentTab(miscellaneousCase)
-    val storedAttachments       = fileService.getAttachments(miscellaneousCase)
-    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
-      miscellaneousCase.status,
-      miscellaneousCase.assignee.exists(_.id == request.operator.id)
-    )
+    val miscellaneousViewModel = CaseViewModel.fromCase(miscellaneousCase, request.operator)
+    val caseDetailsTab         = DetailsViewModel.fromCase(miscellaneousCase)
+    val messagesTab            = MessagesTabViewModel.fromCase(miscellaneousCase)
+    val activeNavTab =
+      PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(
+        miscellaneousCase.status,
+        miscellaneousCase.assignee.exists(_.id == request.operator.id)
+      )
 
     val fileUploadSuccessRedirect =
       appConfig.host + controllers.routes.CaseController.addAttachment(miscellaneousCase.reference, uploadFileId).path
@@ -89,7 +88,6 @@ class MiscellaneousController @Inject() (
       allEvents <- eventsService
                     .getFilteredEvents(miscellaneousCase.reference, NoPagination(), Some(EventType.allEvents))
       queues <- queuesService.getAll
-
       activityTab = ActivityViewModel
         .fromCase(miscellaneousCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
       sampleTab = SampleStatusTabViewModel(
@@ -97,8 +95,8 @@ class MiscellaneousController @Inject() (
         miscellaneousCase.sample,
         allEvents.filter(event => isSampleEvents(event.details.`type`))
       )
-      attachments    <- storedAttachments
-      attachmentsTab <- attachmentsTabViewModel
+      attachments <- fileService.getAttachments(miscellaneousCase)
+      attachmentsTab = AttachmentsTabViewModel.fromCase(miscellaneousCase, attachments)
       initiateResponse <- fileService.initiate(
                            FileStoreInitiateRequest(
                              id              = Some(uploadFileId),
@@ -122,10 +120,4 @@ class MiscellaneousController @Inject() (
       activeNavTab
     )
   }
-
-  private def getAttachmentTab(miscellaneousCase: Case)(implicit hc: HeaderCarrier): Future[AttachmentsTabViewModel] =
-    fileService
-      .getAttachments(miscellaneousCase)
-      .map(attachments => AttachmentsTabViewModel.fromCase(miscellaneousCase, attachments))
-
 }

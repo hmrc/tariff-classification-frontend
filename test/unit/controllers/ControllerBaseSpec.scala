@@ -40,6 +40,10 @@ class ControllerBaseSpec extends SpecBase {
     FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsEmpty).withCSRFToken
       .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
+  protected def newFakeGETRequestWithCSRF(extraHeaders: (String, String)*): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken") ++ extraHeaders), AnyContentAsEmpty).withCSRFToken
+      .asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
   protected def newFakePOSTRequestWithCSRF(body: String): FakeRequest[AnyContentAsText] =
     FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsText)
       .withTextBody(body)

@@ -18,7 +18,7 @@ package controllers.v2
 
 import config.AppConfig
 import controllers.{RequestActions, Tab}
-import models.EventType.{EventType, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE, SAMPLE_STATUS_CHANGE, allEvents}
+import models.EventType.{EventType, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE, SAMPLE_STATUS_CHANGE, allEvents, isSampleEvents}
 import models._
 import models.forms._
 import models.request._
@@ -89,9 +89,6 @@ class AtarController @Inject() (
         .displayAtar(atarCase.reference, Some(uploadFileId))
         .withFragment(Tab.ATTACHMENTS_TAB.name)
         .path
-
-    val isSampleEvents = (eventType: EventType) =>
-      eventType == SAMPLE_STATUS_CHANGE || eventType == SAMPLE_RETURN_CHANGE || eventType == SAMPLE_SEND_CHANGE
 
     for {
       allEvents <- eventsService

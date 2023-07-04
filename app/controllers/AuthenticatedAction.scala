@@ -89,7 +89,7 @@ class AuthenticatedAction @Inject() (
                             if (existingUser.withoutTeams != userFromAuth) {
                               userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
                             } else {
-                              Future.successful(existingUser)
+                              Future(existingUser)
                             }
                         }
 
