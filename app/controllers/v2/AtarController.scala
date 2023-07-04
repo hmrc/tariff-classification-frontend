@@ -18,7 +18,7 @@ package controllers.v2
 
 import config.AppConfig
 import controllers.{RequestActions, Tab}
-import models.EventType.{EventType, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE, SAMPLE_STATUS_CHANGE, allEvents, isSampleEvents}
+import models.EventType.{allEvents, isSampleEvents}
 import models._
 import models.forms._
 import models.request._

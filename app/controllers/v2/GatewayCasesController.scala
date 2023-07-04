@@ -43,7 +43,6 @@ class GatewayCasesController @Inject() (
   def displayGatewayCases: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.VIEW_QUEUE_CASES)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
-
         val types: Set[ApplicationType] = ApplicationType.values
 
         for {

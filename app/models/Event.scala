@@ -226,7 +226,7 @@ object EventType extends Enumeration {
   def isSampleEvents(eventType: EventType): Boolean =
     eventType == SAMPLE_STATUS_CHANGE || eventType == SAMPLE_RETURN_CHANGE || eventType == SAMPLE_SEND_CHANGE
 
-  def sampleEvents: Set[EventType]    = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)
+  def sampleEvents: Set[EventType] = Set(SAMPLE_STATUS_CHANGE, SAMPLE_RETURN_CHANGE, SAMPLE_SEND_CHANGE)
 
   def allEvents: Set[EventType] =
     Set(
