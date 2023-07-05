@@ -89,7 +89,7 @@
         @notification_banner()(request.flash, messages)
     }
     <div class="column-two-thirds operation-dashboard-header">
-    @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
+        @case_heading(caseViewModel.caseHeader, messageKey = Some("case.heading.details"))
     </div>
     <div class="govuk-button-group">
         @case_action_buttons_partial(caseViewModel)

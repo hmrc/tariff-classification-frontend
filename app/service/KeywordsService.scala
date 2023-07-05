@@ -18,7 +18,7 @@ package service
 
 import akka.stream.Materializer
 import audit.AuditService
-import com.github.blemale.scaffeine.Scaffeine
+import com.github.blemale.scaffeine.{Cache, Scaffeine}
 import config.AppConfig
 import connector.BindingTariffClassificationConnector
 import models._
@@ -32,23 +32,18 @@ class KeywordsService @Inject() (
   config: AppConfig,
   connector: BindingTariffClassificationConnector,
   auditService: AuditService
-)(
-  implicit mat: Materializer
-) {
+)(implicit mat: Materializer) {
 
   implicit val ec: ExecutionContext = mat.executionContext
 
-  private val cacheHeaderCarrier = HeaderCarrier().withExtraHeaders("X-Api-Token" -> config.apiToken)
-
   private val KeywordsCacheKey = "allKeywords"
 
-  private val keywordsCache = Scaffeine()
-    .executor(mat.executionContext)
-    .expireAfterWrite(config.keywordsCacheExpiration)
-    .maximumSize(1)
-    .buildAsyncFuture[String, Seq[Keyword]] { _ =>
-      connector.findAllKeywords(NoPagination())(cacheHeaderCarrier).map(_.results.filter(_.approved))
-    }
+  private val keywordsCache: Cache[String, Seq[Keyword]] =
+    Scaffeine()
+      .executor(mat.executionContext)
+      .expireAfterWrite(config.keywordsCacheExpiration)
+      .maximumSize(1)
+      .build[String, Seq[Keyword]]()
 
   def addKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     if (c.keywords.contains(keyword.toUpperCase)) {
@@ -72,6 +67,16 @@ class KeywordsService @Inject() (
       Future.successful(c)
     }
 
-  def findAll: Future[Seq[Keyword]] =
-    keywordsCache.get(KeywordsCacheKey)
+  def findAll()(implicit hc: HeaderCarrier): Future[Seq[Keyword]] =
+    keywordsCache.getIfPresent(KeywordsCacheKey) match {
+      case Some(value) => Future(value)
+      case None =>
+        connector
+          .findAllKeywords(NoPagination())(hc)
+          .map(_.results.filter(_.approved))
+          .map { value =>
+            keywordsCache.put(KeywordsCacheKey, value)
+            value
+          }
+    }
 }

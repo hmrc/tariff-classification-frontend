@@ -51,19 +51,18 @@ class AllOpenCasesController @Inject() (
 
       for {
         queuesForType <- queueService.getAllForCaseType(applicationType)
-
         casesForQueues <- casesService.getCasesByAllQueues(
                            queue      = queuesForType,
                            pagination = NoPagination(),
                            forTypes   = Set(applicationType),
                            assignee   = "none"
                          )
-
-        openCases = CasesTabViewModel.forApplicationType(
-          applicationType,
-          queuesForType,
-          casesForQueues.results
-        )
+        openCases = CasesTabViewModel
+          .forApplicationType(
+            applicationType,
+            queuesForType,
+            casesForQueues.results
+          )
 
       } yield Ok(openCasesView(openCases, activeSubNav))
     }

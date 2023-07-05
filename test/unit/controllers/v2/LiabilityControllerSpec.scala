@@ -16,6 +16,7 @@
 
 package controllers.v2
 
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.google.inject.Provider
 import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
@@ -160,7 +161,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     when(fileStoreService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(
       letterOfAuthority
     )
-    when(keywordsService.findAll) thenReturn Future(Seq(keyword1, keyword2))
+    when(keywordsService.findAll()(any[HeaderCarrier])) thenReturn Future(Seq(keyword1, keyword2))
     when(keywordsService.addKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])) thenReturn Future(
       Cases.liabilityLiveCaseExample
     )
@@ -215,6 +216,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "Calling /manage-tariff-classifications/cases/v2/:reference/liability " should {
 
     "return a 200 status" in {
+
       mockLiabilityController()
 
       val fakeReq                = newFakeGETRequestWithCSRF()

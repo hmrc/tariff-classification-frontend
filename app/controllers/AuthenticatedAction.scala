@@ -82,7 +82,6 @@ class AuthenticatedAction @Inject() (
 
         for {
           userWithTeams <- userConnector.getUserDetails(pid)
-
           updatedUser <- userWithTeams match {
                           case None =>
                             userConnector.createUser(userFromAuth)
@@ -90,19 +89,15 @@ class AuthenticatedAction @Inject() (
                             if (existingUser.withoutTeams != userFromAuth) {
                               userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
                             } else {
-                              Future.successful(existingUser)
+                              Future(existingUser)
                             }
                         }
 
           permittedUser = updatedUser.copy(permissions = Permission.applyingTo(updatedUser))
-
           result <- block(AuthenticatedRequest(permittedUser, request))
-
         } yield result
-
       case _ =>
         throw InternalError("Unable to retrieve user credentials")
-
     } recover {
       case _: NoActiveSession =>
         toStrideLogin(

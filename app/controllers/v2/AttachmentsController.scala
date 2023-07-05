@@ -30,8 +30,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.remove_attachment
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 import scala.concurrent.Future.successful
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AttachmentsController @Inject() (
@@ -56,7 +56,7 @@ class AttachmentsController @Inject() (
     )).async { implicit request =>
       validateAndRenderView { c =>
         val header = CaseHeaderViewModel.fromCase(c)
-        successful(remove_attachment(header, removeAttachmentForm, fileId, fileName))
+        Future(remove_attachment(header, removeAttachmentForm, fileId, fileName))
       }
     }
 
@@ -70,8 +70,7 @@ class AttachmentsController @Inject() (
           errors =>
             validateAndRenderView { c =>
               val header = CaseHeaderViewModel.fromCase(c)
-
-              successful(remove_attachment(header, errors, fileId, fileName))
+              Future(remove_attachment(header, errors, fileId, fileName))
             }, {
             case true =>
               getCaseAndRespond(
@@ -81,7 +80,7 @@ class AttachmentsController @Inject() (
                   .map(_ => Redirect(controllers.routes.CaseController.attachmentsDetails(reference)))
               )
             case _ =>
-              successful(
+              Future(
                 Redirect(controllers.routes.CaseController.attachmentsDetails(reference))
               )
           }

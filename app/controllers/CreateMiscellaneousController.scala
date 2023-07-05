@@ -32,7 +32,7 @@ import views.html.v2.{confirmation_case_creation, create_misc, misc_details_edit
 import views.html.{case_not_found, release_case, resource_not_found}
 
 import javax.inject.Inject
-import scala.concurrent.Future.successful
+import scala.concurrent.Future
 import scala.concurrent.{ExecutionContext, Future}
 
 class CreateMiscellaneousController @Inject() (
@@ -55,7 +55,7 @@ class CreateMiscellaneousController @Inject() (
   private val form: Form[MiscApplication] = MiscellaneousForm.newMiscForm
 
   def get(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
-    implicit request => Future.successful(Ok(create_misc(form)))
+    implicit request => Future(Ok(create_misc(form)))
   }
 
   def post(): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.CREATE_CASES)).async {
@@ -63,7 +63,7 @@ class CreateMiscellaneousController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(Ok(create_misc(formWithErrors))),
+          formWithErrors => Future(Ok(create_misc(formWithErrors))),
           miscApp =>
             casesService.createCase(miscApp, request.operator).map { caseCreated: Case =>
               Redirect(routes.CreateMiscellaneousController.displayQuestion(caseCreated.reference))
@@ -80,8 +80,8 @@ class CreateMiscellaneousController @Inject() (
     reference: String
   )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
-      case Some(_: Case) => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
-      case _             => successful(Ok(case_not_found(reference)))
+      case Some(_: Case) => Future(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
+      case _             => Future(Ok(case_not_found(reference)))
     }
 
   def displayConfirmation(reference: String): Action[AnyContent] =
@@ -92,19 +92,19 @@ class CreateMiscellaneousController @Inject() (
             c.queueId
               .map(id =>
                 queueService.getOneById(id) flatMap {
-                  case Some(queue) => Future.successful(Ok(confirmation_case_creation(c, queue.name)))
-                  case None        => Future.successful(Ok(resource_not_found(s"Case Queue")))
+                  case Some(queue) => Future(Ok(confirmation_case_creation(c, queue.name)))
+                  case None        => Future(Ok(resource_not_found(s"Case Queue")))
                 }
               )
-              .getOrElse(Future.successful(Ok(confirmation_case_creation(c, ""))))
-          case _ => successful(Ok(case_not_found(reference)))
+              .getOrElse(Future(Ok(confirmation_case_creation(c, ""))))
+          case _ => Future(Ok(case_not_found(reference)))
         }
     }
 
   def editMiscDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
       verify.mustHave(Permission.EDIT_MISCELLANEOUS)).async { implicit request =>
-      successful(
+      Future(
         Ok(
           misc_details_edit(
             request.`case`,
@@ -124,7 +124,7 @@ class CreateMiscellaneousController @Inject() (
         .bindFromRequest()
         .fold(
           errorForm =>
-            successful(
+            Future(
               Ok(misc_details_edit(request.`case`, errorForm, CaseViewModel.fromCase(request.`case`, request.operator)))
             ),
           updatedCase =>

@@ -47,9 +47,7 @@ class GatewayCasesController @Inject() (
 
         for {
           cases <- casesService.getCasesByQueue(Queues.gateway, NoPagination(), types)
-          gatewayCases = {
-            ApplicationsTab.gateway(cases.results)
-          }
+          gatewayCases = ApplicationsTab.gateway(cases.results)
         } yield Ok(gatewayCasesView(gatewayCases))
     }
 

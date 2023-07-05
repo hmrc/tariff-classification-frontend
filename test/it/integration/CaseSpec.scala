@@ -41,9 +41,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/cases/1").get())
-
 
       response.status shouldBe NOT_FOUND
       response.body   should include("Case not found")
@@ -85,10 +83,18 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           urlEqualTo(
             "/events?case_reference=1" +
               "&type=EXPERT_ADVICE_RECEIVED&type=CASE_REJECTED" +
-              "&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE" +
-              "&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED" +
-              "&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE" +
+              "&type=SAMPLE_SEND_CHANGE" +
+              "&type=EXTENDED_USE_STATUS_CHANGE" +
+              "&type=CASE_STATUS_CHANGE" +
+              "&type=CASE_REFERRAL" +
+              "&type=NOTE" +
+              "&type=CASE_COMPLETED" +
+              "&type=CASE_CANCELLATION" +
+              "&type=SAMPLE_STATUS_CHANGE" +
+              "&type=CASE_CREATED&type=ASSIGNMENT_CHANGE" +
               "&type=QUEUE_CHANGE&type=APPEAL_ADDED" +
+              "&type=APPEAL_STATUS_CHANGE" +
+              "&type=SAMPLE_RETURN_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
@@ -117,9 +123,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/cases/v2/1/atar").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"trader-heading\"")
@@ -152,9 +156,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/cases/1/ruling").withFollowRedirects(false).get())
-
 
       response.status             shouldBe SEE_OTHER
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#ruling_tab"))
@@ -182,7 +184,12 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       stubFor(
         get(
           urlEqualTo(
-            s"/events?case_reference=1&type=EXPERT_ADVICE_RECEIVED&type=CASE_REJECTED&type=QUEUE_CHANGE&type=APPEAL_ADDED&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE&page=1&page_size=${Pagination.unlimited}"
+            s"/events?case_reference=1" +
+              s"&type=EXPERT_ADVICE_RECEIVED&type=CASE_REJECTED" +
+              "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&type=SAMPLE_SEND_CHANGE" +
+              s"&type=QUEUE_CHANGE&type=APPEAL_ADDED&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE" +
+              s"&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION" +
+              s"&type=CASE_CREATED&type=ASSIGNMENT_CHANGE&page=1&page_size=${Pagination.unlimited}"
           )
         ).willReturn(
           aResponse()
@@ -192,7 +199,6 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
 
       val response = await(requestWithSession("/cases/1/activity").withFollowRedirects(false).get())
-
 
       response.status             shouldBe SEE_OTHER
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#activity_tab"))
@@ -225,9 +231,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/cases/1/attachments").withFollowRedirects(false).get())
-
 
       response.status             shouldBe SEE_OTHER
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#attachments_tab"))
