@@ -55,10 +55,8 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse =
         await(requestWithSession(s"/cases/1/release").get())
-
 
       response.status shouldBe OK
       response.body   should include("Choose a team to release this case to")
@@ -68,10 +66,8 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthFailed()
 
-
       val response: WSResponse =
         await(requestWithSession("/cases/1/release").get())
-
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))

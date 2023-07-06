@@ -73,9 +73,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse = await(requestWithSession("/cases/1/reject-reason").get())
-
 
       response.status shouldBe OK
       response.body   should include("Provide details to reject this case")
@@ -84,7 +82,6 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldFail = {
 
       val response: WSResponse = await(requestWithSession("/cases/1/reject-reason").get())
-
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))

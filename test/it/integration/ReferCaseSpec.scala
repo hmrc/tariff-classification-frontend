@@ -73,9 +73,7 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse = await(requestWithSession("/cases/1/refer-reason").get())
-
 
       response.status shouldBe OK
       response.body   should include("Provide details to refer")
@@ -85,7 +83,6 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldFail = {
 
       val response: WSResponse = await(requestWithSession("/cases/1/refer-reason").get())
-
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))

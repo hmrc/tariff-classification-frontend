@@ -50,9 +50,7 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse = await(requestWithSession("/cases/1/suppress-reason").get())
-
 
       response.status shouldBe OK
       response.body   should include("Provide details to suppress this case")
@@ -62,9 +60,7 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthFailed()
 
-
       val response: WSResponse = await(requestWithSession("/cases/1/suppress-reason").get())
-
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))

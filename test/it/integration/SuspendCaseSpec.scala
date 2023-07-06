@@ -26,8 +26,9 @@ import utils.{CasePayloads, Cases, EventPayloads}
 
 class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
-  val owner: Some[Operator] = Some(Operator("111", role                            = Role.CLASSIFICATION_OFFICER))
-  val caseWithStatusOPEN: String = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
+  val owner: Some[Operator] = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+  val caseWithStatusOPEN: String =
+    CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
 
   "Case Suspend" should {
 
@@ -55,7 +56,6 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
       val response: WSResponse = await(requestWithSession("/cases/1/suspend-reason").get())
 
-
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
@@ -79,9 +79,7 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse = await(requestWithSession("/cases/1/suspend-reason").get())
-
 
       response.status shouldBe OK
       response.body   should include("Provide details to suspend this case")

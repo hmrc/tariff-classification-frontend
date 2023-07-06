@@ -59,7 +59,6 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
       val response: WSResponse =
         await(requestWithSession(s"/cases/1/new-appeal/ANY").get())
 
-
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
@@ -75,10 +74,8 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
       )
 
       AppealType.values.foreach { appealType =>
-
         val response: WSResponse =
           await(requestWithSession(s"/cases/1/new-appeal/$appealType").get())
-
 
         response.status shouldBe OK
         response.body   should include("id=\"appeal_choose_status-heading\"")
