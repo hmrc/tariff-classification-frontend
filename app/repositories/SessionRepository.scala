@@ -21,13 +21,13 @@ import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Sorts.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions, ReplaceOptions}
 import play.api.Configuration
-import play.api.libs.json.{Format, JsValue, Json, OFormat}
+import play.api.libs.json.{Format, JsValue, Json, OFormat, Reads, Writes, __}
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,12 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 case class DatedCacheMap(
   id: String,
   data: Map[String, JsValue],
-  lastUpdated: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
+  lastUpdated: Instant = Instant.now()
 )
 
 object DatedCacheMap {
-  implicit val dateFormat: Format[LocalDateTime] = MongoJavatimeFormats.localDateTimeFormat
-  implicit val formats: OFormat[DatedCacheMap]   = Json.format[DatedCacheMap]
+  implicit val dateFormat: Format[Instant]     = MongoJavatimeFormats.instantFormat
+  implicit val formats: OFormat[DatedCacheMap] = Json.format[DatedCacheMap]
 
   def apply(cacheMap: CacheMap): DatedCacheMap = DatedCacheMap(cacheMap.id, cacheMap.data)
 }

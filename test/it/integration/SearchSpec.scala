@@ -95,7 +95,6 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response1 = await(requestWithSession("/search?reference=1").withFollowRedirects(false).get())
       response1.header("Location") shouldBe Some("/manage-tariff-classifications/cases/1")
       response1.status             shouldBe SEE_OTHER
@@ -105,7 +104,6 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       response2.status             shouldBe SEE_OTHER
 
       val response3 = await(requestWithSession("/cases/v2/1/atar").withFollowRedirects(false).get())
-
 
       response3.status shouldBe OK
       response3.body   should include("trader-heading")
@@ -118,9 +116,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthSuccess()
 
-
       val response = await(requestWithSession("/search?case_source=").get())
-
 
       response.status shouldBe OK
       response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
@@ -138,9 +134,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?case_source=1").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")
@@ -153,9 +147,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthSuccess()
 
-
       val response = await(requestWithSession("/search?commodity_code=").get())
-
 
       response.status shouldBe OK
       response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
@@ -173,9 +165,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?commodity_code=11").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")
@@ -188,9 +178,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthSuccess()
 
-
       val response = await(requestWithSession("/search?decision_details=").get())
-
 
       response.status shouldBe OK
       response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
@@ -208,9 +196,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?decision_details=1").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")
@@ -223,9 +209,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthSuccess()
 
-
       val response = await(requestWithSession("/search?keyword[0]=").get())
-
 
       response.status shouldBe OK
       response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
@@ -243,9 +227,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?keyword[0]=k1&keyword[1]=k2").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")
@@ -260,9 +242,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthSuccess()
 
-
       val response = await(requestWithSession("/search?live_rulings_only=").get())
-
 
       response.status shouldBe OK
       response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
@@ -272,9 +252,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthSuccess()
 
-
       val response = await(requestWithSession("/search?live_rulings_only=true").get())
-
 
       response.status shouldBe OK
       response.body shouldNot include("id=\"advanced_search-results_and_filters\"")
@@ -294,9 +272,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?case_source=1&live_rulings_only=true").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")
@@ -315,9 +291,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?case_source=1").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")
@@ -335,9 +309,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?case_source=1&live_rulings_only=false").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")
@@ -358,9 +330,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?case_source=1").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")
@@ -378,9 +348,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response = await(requestWithSession("/search?sort_by=commodity-code&sort_direction=desc&case_source=1").get())
-
 
       response.status shouldBe OK
       response.body   should include("id=\"advanced_search-results_and_filters\"")

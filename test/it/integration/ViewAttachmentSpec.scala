@@ -61,7 +61,6 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
       val response: WSResponse = await(requestWithSession("/attachment/ref/id").get())
 
-
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
@@ -95,9 +94,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse = await(requestWithSession(s"/attachment/$caseRef/id").get())
-
 
       response.status      shouldBe OK
       response.bodyAsBytes shouldBe ByteString("FILE_CONTENTS")

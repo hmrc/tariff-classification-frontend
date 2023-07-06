@@ -65,10 +65,8 @@ class PdfGenerationSpec extends IntegrationTest {
           )
       )
 
-
       val response: WSResponse =
         await(requestWithSession(s"/pdf/application/$caseRef").get())
-
 
       response.status shouldBe OK
       response.body   shouldBe "my application pdf content"
@@ -78,10 +76,8 @@ class PdfGenerationSpec extends IntegrationTest {
 
       givenAuthFailed()
 
-
       val response: WSResponse =
         await(requestWithSession(s"/pdf/application/$caseRef").get())
-
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
@@ -122,10 +118,8 @@ class PdfGenerationSpec extends IntegrationTest {
           )
       )
 
-
       val response: WSResponse =
         await(requestWithSession(s"/pdf/ruling/$caseRef").get())
-
 
       response.status shouldBe OK
       response.body   shouldBe "my ruling pdf content"
@@ -135,10 +129,8 @@ class PdfGenerationSpec extends IntegrationTest {
 
       givenAuthFailed()
 
-
       val response: WSResponse =
         await(requestWithSession(s"/pdf/ruling/$caseRef").get())
-
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))

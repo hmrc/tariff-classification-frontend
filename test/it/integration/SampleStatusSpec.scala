@@ -39,9 +39,7 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse = await(requestWithSession("/cases/1/sample/status").get())
-
 
       response.status shouldBe OK
       SampleStatus.values.foreach(s => response.body should include(s">${SampleStatus.format(Some(s))}<"))
@@ -59,9 +57,7 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse = await(requestWithSession("/cases/1/sample/status?options=liability").get())
-
 
       response.status shouldBe OK
       response.body   should include(">Yes<")

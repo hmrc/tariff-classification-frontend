@@ -47,10 +47,8 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-
       val response: WSResponse =
         await(requestWithSession("/cases/1/extended-use/status").get())
-
 
       response.status shouldBe OK
       response.body   should include("Do you want to extend the use of this case ruling?")
@@ -60,10 +58,8 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
 
       givenAuthFailed()
 
-
       val response: WSResponse =
         await(requestWithSession("/cases/1/extended-use/status").get())
-
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
