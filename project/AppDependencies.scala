@@ -1,11 +1,11 @@
 import sbt.*
 object AppDependencies {
 
-  private val bootstrapPlayVersion = "7.19.0"
+  private val bootstrapPlayVersion = "7.21.0"
   private val hmrcMongoPlayVersion = "1.3.0"
 
   val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"                  %% "play-frontend-hmrc"         % "7.14.0-play-28",
+    "uk.gov.hmrc"                  %% "play-frontend-hmrc"         % "7.16.0-play-28",
     "uk.gov.hmrc"                  %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
     "uk.gov.hmrc.mongo"            %% "hmrc-mongo-play-28"         % hmrcMongoPlayVersion,
     "uk.gov.hmrc"                  %% "http-caching-client"        % "10.0.0-play-28",
