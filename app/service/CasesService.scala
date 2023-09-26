@@ -37,7 +37,8 @@ import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.templates.{cover_letter_template, decision_template, ruling_template}
+// import views.html.templates.{cover_letter_template, decision_template, ruling_template}
+import views.html.templates.{cover_letter_template, decision_template, ruling_template_v2}
 
 import java.nio.file.{Files, StandardOpenOption}
 import java.time.LocalDate
@@ -353,10 +354,33 @@ class CasesService @Inject() (
       FileUpload(tempFile, s"LiabilityDecision_${completedCase.reference}.pdf", pdf.contentType)
     }
 
+    def stringSplitter(s: String): List[String] = {
+      val head: String            = s.take(2000)
+      val remainder: List[String] = s.drop(2000).grouped(3000).toList
+
+      head +: remainder
+    }
+
     def generatePdf: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
+        val goodDescriptionSplitted: Option[List[String]] =
+          completedCase.decision.map(d => stringSplitter(d.goodsDescription))
+        val methodCommercialDenominationSplitted: Option[List[String]] =
+          completedCase.decision.flatMap(d => d.methodCommercialDenomination.map(s => stringSplitter(s)))
+        val justificationSplitted: Option[List[String]] =
+          completedCase.decision.map(d => stringSplitter(d.justification))
+
         pdfService
-          .generatePdf(ruling_template(completedCase, decision, getCountryName))
+          .generatePdf(
+            ruling_template_v2(
+              completedCase,
+              decision,
+              getCountryName,
+              goodDescriptionSplitted,
+              methodCommercialDenominationSplitted,
+              justificationSplitted
+            )
+          )
           .map(createRulingPdf)
       case LIABILITY =>
         pdfService
