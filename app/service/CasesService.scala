@@ -370,6 +370,21 @@ class CasesService @Inject() (
         val justificationSplitted: Option[List[String]] =
           completedCase.decision.map(d => stringSplitter(d.justification))
 
+        println(goodDescriptionSplitted)
+        println(methodCommercialDenominationSplitted)
+        println(justificationSplitted)
+
+        println(
+          ruling_template_v2(
+            completedCase,
+            decision,
+            getCountryName,
+            goodDescriptionSplitted,
+            methodCommercialDenominationSplitted,
+            justificationSplitted
+          )
+        )
+
         pdfService
           .generatePdf(
             ruling_template_v2(
@@ -382,6 +397,15 @@ class CasesService @Inject() (
             )
           )
           .map(createRulingPdf)
+//        pdfService
+//          .generatePdf(
+//            ruling_template(
+//              completedCase,
+//              decision,
+//              getCountryName
+//            )
+//          )
+//          .map(createRulingPdf)
       case LIABILITY =>
         pdfService
           .generatePdf(decision_template(completedCase, decision))
@@ -396,10 +420,11 @@ class CasesService @Inject() (
     }
 
     if (completedCase.application.`type` == ATAR) {
+      println("here")
       for {
         // Generate the decision PDF
         pdfFile <- generatePdf
-
+        _ = println("hello")
         // Upload the decision PDF to the filestore
         pdfStored <- fileService.upload(pdfFile)
 
