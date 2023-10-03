@@ -26,7 +26,7 @@
     getCountryName: String => Option[String]
 )(implicit messages: Messages)
 
-<div id="ruling-certificate" class="print-document page-break">
+<div id="ruling-certificate" class="print-document">
 
     <div class="logo-margins column-full">
 
@@ -86,7 +86,7 @@
             </div>
         </div>
 
-        <div class="column-full mt-2">
+        <div class="column-full mt-2 mb-2">
             <h3 class="govuk-heading-m">@messages("pdf.ruling.section.ruling.legalInformation.section1.label")</h3>
             <p class="govuk-body-s">@messages("pdf.ruling.section.ruling.legalInformation.paragraph", Dates.format(d.effectiveStartDate), Dates.format(d.effectiveEndDate))</p>
         </div>

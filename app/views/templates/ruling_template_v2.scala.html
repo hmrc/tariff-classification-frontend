@@ -23,7 +23,6 @@
 @import models.request.AuthenticatedRequest
 
 @this(
-main: main
 )
 
 @(
@@ -35,7 +34,7 @@ methodCommercialDenominationSplitted: Option[List[String]],
 justificationSplitted: Option[List[String]]
 )(implicit messages: Messages, appConfig: AppConfig)
 
-<html>
+<html lang="en">
 <head>
     <style>
 
@@ -61,47 +60,13 @@ justificationSplitted: Option[List[String]]
 
 .print-document {
   width: 210mm;
+}
 
-  .govuk-grid-column-one-quarter,
-  .govuk-grid-column-three-quarters {
-    width: 25%;
-    float: left;
-  }
-  .govuk-grid-column-three-quarters {
-    width: 75%;
-  }
-
-  .govuk-\!-width-two-thirds {
-    width: 66.66% !important;
-  }
-
-  .govuk-grid-row {
+.govuk-grid-row {
     clear: both;
     padding: 10px 0;
     overflow: hidden;
-  }
-
-  .print-header {
-    margin-bottom: 10px;
-  }
-
-  .print-hmrc-logo {
-    display: block;
-    font-size: 1.1875rem;
-    margin: 5px 0 0;
-    line-height: 1.1;
-    font-weight: 600;
-  }
-
-  .print-service-name {
-    display: block;
-    text-align: right;
-    margin-top: 2em;
-    font-size: 1.2em;
-    color: #00703C;
-    font-weight: 600;
-  }
- }
+}
 
 .govuk-heading-xl {
     font-weight: 700;
@@ -116,40 +81,38 @@ justificationSplitted: Option[List[String]]
 }
 
 .govuk-heading-m {
-              font-weight: 700;
-              font-size: 1.5em;
-              font-family: Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.5em;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .govuk-heading-s {
-              font-weight: 700;
-              font-size: 25px;
-              font-family: Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .govuk-body-s {
-              font-weight: 500;
-              font-size: 20px;
-              font-family: Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .govuk-caption-xl {
-              font-weight: 700;
-              font-size: 35px;
-              font-family: Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 35px;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .govuk-caption-l {
-              font-weight: 700;
-              font-size: 25px;
-              font-family: Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .print-document {
-    padding: 0px 0px;
     position: relative;
     margin-bottom: 15em;
-    zoom: 100%;
     width: 210mm;
     height: auto;
 }
@@ -157,22 +120,6 @@ justificationSplitted: Option[List[String]]
 .green-text {
     font-weight: 600;
     color: #00703C;
-}
-
-.page-break {
-        page-break-after: always;
-}
-
-.page-break-2 {
-    page-break-after  : always;
-}
-
-.ruling-cert-2-tail {
-    margin-top: 120px;
-}
-
-.ruling-cert-3-first {
-    page-break-after: always;
 }
 
 .ruling-cert-3-middle {
@@ -192,36 +139,6 @@ justificationSplitted: Option[List[String]]
     width: 100%;
     border: none;
     border-top: solid 2px #aaa;
-}
-
-.print-document .logotype {
-    font-size: 1.4em;
-    font-weight: normal;
-    margin: 0;
-    line-height: 1.6;
-    padding-top: 15px;
-}
-
-.print-document__information-box-no-border {
-    display: block;
-    margin-bottom: 1em;
-    padding: 4mm;
-    width: 100%;
-    background-color: #e1f3f1;
-    text-align: left;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-    -webkit-print-color-adjust: exact
-}
-
-.body-text {
-   margin-top: .26316em;
-   margin-bottom: 1.05263em;
-}
-
-.stack {
-    margin-inline-start: 0;
 }
 
 .logo-h2 {
@@ -290,14 +207,12 @@ justificationSplitted: Option[List[String]]
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
-    display: block;
 }
 
 .print-document .information-box-no-colour {
     border: none;
     overflow-wrap: break-word;
     border-radius: 15px;
-    display: block;
     margin-bottom: 1em;
     padding: 5px 10px;
     width: 100%;
@@ -317,7 +232,6 @@ justificationSplitted: Option[List[String]]
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
-    -webkit-print-color-adjust: exact
 }
 
 .print-document .hero-text {
@@ -349,181 +263,36 @@ justificationSplitted: Option[List[String]]
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
-    -webkit-print-color-adjust: exact
 }
 
 .date-of-result, .decision-service-version {
     border-bottom: 2px solid #00703C
 }
 
-.date-of-result h2 {
-    color: #333;
-    text-align: left;
-}
-.about-this-result-box {
-    background: #e1f3f1;
-    padding: 1px 10px;
-    font-size: 15px;
-    -webkit-print-color-adjust: exact;
-    margin-bottom: 20px;
-}
-.about-this-result-box-do-not-send {
-    height: 480px;
-}
-.about-this-result, .date-of-result {
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
 
 .mt-2 {
-    margin-top: 2rem !important;
+    margin-top: 2rem;
 }
 
 .mb-2 {
-    margin-bottom: 2rem !important;
+    margin-bottom: 2rem;
 }
 
 .bold {
     font-weight: 700;
 }
-.print-pages {
-    -webkit-transform-origin:  top left;
-    -moz-transform-origin:  top left;
-    -ms-transform-origin:  top left;
-    -o-transform-origin:  top left;
-    transform-origin:  top left;
-}
-.section-heading {
-    color: #005EA5;
-    margin-top: 1em;
-}
 
-.govuk-summary-list__key {
-    float: left;
-    width: 50%;
-}
-.govuk-summary-list__key p {
-    margin-top: 0.5em;
-}
-.govuk-summary-list__key p strong {
-    font-weight: 700;
-}
-.govuk-summary-list__value {
-    float: left;
-    width: 50%;
-}
-.govuk-summary-list__value p {
-    margin-top: 0.5em;
-    padding-left: 1em;
-}
-.print-header, .header-space,
-.print-footer, .footer-space {
-    height: 25mm;
-}
-.govuk-summary-list.govuk-summary-list__key {
-    width: 100%;
-}
-.govuk-summary-list {
-    display: table;
-}
-.govuk-summary-list > * {
-    display: table-row;
-    border-bottom-width: 0;
-}
-.govuk-summary-list > * {
-    position: relative;
-    border-bottom: 1px solid #bfc1c3;
-}
-.govuk-summary-list.govuk-summary-list__key .govuk-summary-list__key {
-    width: 30%;
-}
-.govuk-summary-list > *:first-child .govuk-summary-list__key {
-    margin-top: 0;
-}
-.govuk-summary-list .govuk-summary-list__key {
-    font-weight: bold;
-    margin: 0.63158em 4em 0.21053em 0;
-}
-.govuk-summary-list .govuk-summary-list__value {
-    padding-bottom: 0.47368em;
-}
-.govuk-summary-list > *:first-child > * {
-    padding-top: 0;
-}
-.govuk-summary-list__value {
-  word-wrap: break-word;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-.govuk-summary-list__key {
-    font-weight: bold;
-    margin: .63158em 4em .21053em 0;
-    width: 50%;
-  }
-
-.govuk-summary-list__value {
-    padding-bottom: .47368em;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    width: 50%;
-}
-
-.govuk-summary-list>*>* {
-    display: table-cell;
-    border-bottom: 1px solid #bfc1c3;
-    padding: .63158em 1.05263em .47368em 0;
-    margin: 0;
-}
-  > *:first-child .govuk-summary-list__key {
-    margin-top: 0;
-  }
-  .notice .icon {
-    position: absolute;
-    left: 0;
-    margin-top: 0px;
-    margin-right: 10px;
-}
-
-.notice strong {
-    display: block;
-    padding-left: 65px;
-    margin-left: -15px;
-}
-
-.icon-important_ {
-    width: 35px;
-    height: 35px;
-}
-
-.panel {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    clear: both;
-    border-left-style: solid;
-    border-color: #bfc1c3;
-    padding: .78947em;
-    margin-bottom: .78947em;
-}
-.panel-border-wide {
-    border-left-width: 10px;
-}
 .mt-2 {
-    margin-top: 2rem !important;
+    margin-top: 2rem;
 }
 .icon {
     display: inline-block;
     background-position: 0 0;
     background-repeat: no-repeat;
 }
-address {
-    font-style: normal;
-}
-.pre-wrap {
-    white-space: pre-wrap;
-}
 
 .hidden-print {
-  display: none !important;
+  display: none;
 }
 
 .column-full {
@@ -551,19 +320,19 @@ address {
     margin-right: -15px;
 }
 
-    </style>
+
+</style>
     <title>@messages("pdf.ruling.title")</title>
 </head>
 <body>
-<div>
+    <main>
 
-    @rulingCertificatePart1(caseModel, decision, caseModel.application.asATAR, getCountryName)
+        @rulingCertificatePart1(caseModel, decision, caseModel.application.asATAR, getCountryName)
 
-    @rulingCertificatePart2(caseModel, decision, caseModel.application.asATAR, goodDescriptionSplitted, methodCommercialDenominationSplitted)
+        @rulingCertificatePart2(caseModel, decision, caseModel.application.asATAR, goodDescriptionSplitted, methodCommercialDenominationSplitted)
 
-    @rulingCertificatePart3(caseModel, decision, caseModel.application.asATAR, justificationSplitted)
+        @rulingCertificatePart3(caseModel, decision, caseModel.application.asATAR, justificationSplitted)
 
-</div>
-
+    </main>
 </body>
 </html>

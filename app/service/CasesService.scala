@@ -36,6 +36,7 @@ import models.request.{AuthenticatedRequest, NewEventRequest}
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.templates._
 
@@ -391,6 +392,31 @@ class CasesService @Inject() (
           .generatePdf(decision_template(completedCase, decision))
           .map(createLiabilityDecisionPdf)
     }
+
+    def generatePdfView(): HtmlFormat.Appendable =
+      completedCase.application.`type` match {
+      case ATAR =>
+        val goodDescriptionSplitted: Option[List[String]] =
+          completedCase.decision.map(d => stringSplitter(d.goodsDescription))
+        val methodCommercialDenominationSplitted: Option[List[String]] =
+          completedCase.decision.flatMap(d => d.methodCommercialDenomination.map(s => stringSplitter(s)))
+        val justificationSplitted: Option[List[String]] =
+          completedCase.decision.map(d => stringSplitter(d.justification))
+
+        println(goodDescriptionSplitted)
+        println(methodCommercialDenominationSplitted)
+        println(justificationSplitted)
+
+        ruling_template_v2(
+          completedCase,
+          decision,
+          getCountryName,
+          goodDescriptionSplitted,
+          methodCommercialDenominationSplitted,
+          justificationSplitted
+        )
+    }
+
 
     def generateLetter: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>

@@ -30,12 +30,10 @@
 
 <div id="ruling-certificate-2">
 
-    <div class="govuk-grid-row">
-
+    <div>
         @goodDescriptionSplitted.map { listOfStrings =>
 
-            <div class="page-break">
-
+            <div class="govuk-grid-row">
                 <div class="govuk-grid-column-one-third">
                     <p>
                         <strong id="goods-details-description-label-first" class="govuk-heading-m goods-details-description">
@@ -53,16 +51,18 @@
                 @hr()
             </div>
 
-            @listOfStrings.drop(1).dropRight(1).map{ sections =>
+            @listOfStrings.drop(1).map{ sections =>
 
-                <div>
+                <div class="govuk-grid-row">
                     <div class="column-one-third">
-                        <strong id="goods-details-description-label" class="govuk-heading-m goods-details-description">
-                            <span></span>
-                        </strong>
+                        <p>
+                            <strong id="goods-details-description-label" class="govuk-heading-m goods-details-description">
+                                @messages("pdf.ruling.section.ruling.description.label.continued")
+                            </strong>
+                        </p>
                     </div>
 
-                    <div>
+                    <div class="govuk-grid-column-two-thirds">
                         <div class="information-box-no-colour">
                             <p id="goods-details-description" class="govuk-body-s">@sections</p>
                         </div>
@@ -71,27 +71,13 @@
                     @hr()
                 </div>
             }
-
-            <div>
-                <div class="column-one-third">
-                <strong id="goods-details-description-label-last" class="govuk-heading-m goods-details-description">
-                    <span></span>
-                </strong>
-            </div>
-
-                <div>
-                    <div class="information-box-no-colour">
-                        <p id="goods-details-description-last" class="govuk-body-s">@listOfStrings.takeRight(1)</p>
-                    </div>
-                </div>
-
-                @hr()
-            </div>
         }
+    </div>
 
+    <div>
         @methodCommercialDenominationSplitted.map { listOfStrings =>
 
-            <div>
+            <div class="govuk-grid-row">
                 <div class="govuk-grid-column-one-third">
                     <p>
                         <strong id="commercial-denomination-label-first" class="govuk-heading-m goods-details-description">
@@ -111,12 +97,13 @@
 
             @listOfStrings.drop(1).dropRight(1).map{ sections =>
 
-                <div>
-
+                <div class="govuk-grid-row">
                     <div class="govuk-grid-column-one-third">
-                        <strong id="commercial-denomination-label" class="govuk-heading-m goods-details-description">
-                            <span></span>
-                        </strong>
+                        <p>
+                            <strong id="commercial-denomination-label" class="govuk-heading-m goods-details-description">
+                                @messages("pdf.ruling.section.ruling.commercialDenomination.label.continued")
+                            </strong>
+                        </p>
                     </div>
 
                     <div class="govuk-grid-column-two-thirds">
@@ -127,24 +114,7 @@
 
                     @hr()
                 </div>
-        }
-
-                <div>
-
-                    <div class="govuk-grid-column-one-third">
-                        <strong id="commercial-denomination-label-last" class="govuk-heading-m goods-details-description">
-                            <span></span>
-                        </strong>
-                    </div>
-
-                    <div class="govuk-grid-column-two-thirds">
-                        <div class="information-box-no-colour">
-                            <p id="commercial-denomination-last" class="govuk-body-s">@listOfStrings.takeRight(1)</p>
-                        </div>
-                    </div>
-
-                    @hr()
-                </div>
+            }
         }
     </div>
 </div>
