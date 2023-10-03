@@ -15,11 +15,31 @@
  *@
 
 @import config.AppConfig
+@import models.{Case, BTIApplication, Decision}
 @import utils.Dates
+@import views.html.printLetter.rulingCertificateParts._
+@import views.html.printLetter._
+@import views.html.layouts.gov_layout
+@import models.request.AuthenticatedRequest
 
-@(h1Message:String, subheading:String)(implicit messages: Messages)
+@this(
+    gov_layout: gov_layout
+)
 
-<div class="column-full">
-    <span class="govuk-caption-l">@subheading</span>
-    <h1 class="govuk-heading-l">@h1Message</h1>
-</div>
+@(
+    caseModel: Case,
+    decision: Decision,
+    getCountryName: String => Option[String],
+    goodDescriptionSplitted: Option[List[String]],
+    methodCommercialDenominationSplitted: Option[List[String]],
+    justificationSplitted: Option[List[String]]
+)(implicit request:RequestHeader messages: Messages, appConfig: AppConfig)
+
+gov_layout("Mikey"){
+
+
+
+
+
+
+}

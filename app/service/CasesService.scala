@@ -32,13 +32,12 @@ import models.SampleSend.SampleSend
 import models.SampleStatus.SampleStatus
 import models._
 import models.reporting._
-import models.request.NewEventRequest
+import models.request.{AuthenticatedRequest, NewEventRequest}
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
 import uk.gov.hmrc.http.HeaderCarrier
-// import views.html.templates.{cover_letter_template, decision_template, ruling_template}
-import views.html.templates.{cover_letter_template, decision_template, ruling_template_v2}
+import views.html.templates._
 
 import java.nio.file.{Files, StandardOpenOption}
 import java.time.LocalDate
@@ -55,7 +54,8 @@ class CasesService @Inject() (
   reportingService: ReportingService,
   pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
-  rulingConnector: RulingConnector
+  rulingConnector: RulingConnector,
+  ruling_template_v2: ruling_template_v2
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
@@ -361,7 +361,7 @@ class CasesService @Inject() (
       head +: remainder
     }
 
-    def generatePdf: Future[FileUpload] = completedCase.application.`type` match {
+    def generatePdf(): Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
         val goodDescriptionSplitted: Option[List[String]] =
           completedCase.decision.map(d => stringSplitter(d.goodsDescription))
@@ -373,17 +373,6 @@ class CasesService @Inject() (
         println(goodDescriptionSplitted)
         println(methodCommercialDenominationSplitted)
         println(justificationSplitted)
-
-        println(
-          ruling_template_v2(
-            completedCase,
-            decision,
-            getCountryName,
-            goodDescriptionSplitted,
-            methodCommercialDenominationSplitted,
-            justificationSplitted
-          )
-        )
 
         pdfService
           .generatePdf(
@@ -397,15 +386,6 @@ class CasesService @Inject() (
             )
           )
           .map(createRulingPdf)
-//        pdfService
-//          .generatePdf(
-//            ruling_template(
-//              completedCase,
-//              decision,
-//              getCountryName
-//            )
-//          )
-//          .map(createRulingPdf)
       case LIABILITY =>
         pdfService
           .generatePdf(decision_template(completedCase, decision))

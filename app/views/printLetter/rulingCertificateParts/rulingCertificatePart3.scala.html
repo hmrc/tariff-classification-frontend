@@ -29,15 +29,11 @@
 
 <div id="ruling-certificate-3" class="print-document">
 
-    @letterLogo()
-
-    @letterh1(messages("pdf.ruling.section.ruling.details", application.goodsName), messages("pdf.ruling.certificate.rulingFor", c.reference))
-
     <div class="govuk-grid-row">
 
         @justificationSplitted.map{ listOfStrings =>
 
-            <div class="page-break">
+            <div>
                 <div class="govuk-grid-column-one-third">
                     <strong id="justification-description-label-first" class="govuk-heading-m goods-details-description">
                         @messages("pdf.ruling.section.ruling.justification.label")
@@ -53,10 +49,9 @@
 
             @listOfStrings.drop(1).dropRight(1).map{ sections =>
 
-                <div class="page-break-2">
+                <div>
                     <div class="govuk-grid-column-one-third">
                     <strong id="justification-description-label" class="govuk-heading-m goods-details-description">
-<!--                        @messages("pdf.ruling.section.ruling.justification.label")-->
                     </strong>
                 </div>
                     <div class="govuk-grid-column-two-thirds">
@@ -69,7 +64,7 @@
                 </div>
             }
 
-            <div class="ruling-cert-2-tail">
+            <div>
 
                 <div class="govuk-grid-column-one-third">
                     <strong id="justification-description-label-last" class="govuk-heading-m goods-details-description">
@@ -86,13 +81,13 @@
             </div>
         }
 
-        <div class="govuk-grid-column-one-third govuk-!-padding-top-8">
+        <div class="govuk-grid-column-one-third">
             <strong id="keywords-label" class="govuk-heading-m goods-details-description">
                 @messages("pdf.ruling.section.ruling.keywords.label")
             </strong>
         </div>
 
-        <div class="govuk-grid-column-two-thirds govuk-!-padding-top-8">
+        <div class="govuk-grid-column-two-thirds">
             <div class="information-box-no-colour">
                 <p id="keywords-description" class="govuk-body-s">
                     @for(keyword <- c.keywords){

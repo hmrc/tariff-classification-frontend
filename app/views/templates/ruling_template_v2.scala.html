@@ -19,47 +19,151 @@
 @import utils.Dates
 @import views.html.printLetter.rulingCertificateParts._
 @import views.html.printLetter._
+@import views.html.includes.main
+@import models.request.AuthenticatedRequest
+
+@this(
+main: main
+)
 
 @(
-    caseModel: Case,
-    decision: Decision,
-    getCountryName: String => Option[String],
-    goodDescriptionSplitted: Option[List[String]],
-    methodCommercialDenominationSplitted: Option[List[String]],
-    justificationSplitted: Option[List[String]]
+caseModel: Case,
+decision: Decision,
+getCountryName: String => Option[String],
+goodDescriptionSplitted: Option[List[String]],
+methodCommercialDenominationSplitted: Option[List[String]],
+justificationSplitted: Option[List[String]]
 )(implicit messages: Messages, appConfig: AppConfig)
 
-@defining(caseModel.application.asATAR) { btiApp: BTIApplication =>
 <html>
-    <head>
-        <style>
+<head>
+    <style>
 
-body {
-    width: auto;
-    height: auto;
-    margin: 0;
+.govuk-grid-column-one-third,
+.govuk-grid-column-two-thirds {
+  width: 33.3333%;
+  float: left;
+}
+
+.govuk-grid-column-two-thirds {
+  width: 66.6666%
+}
+
+.govuk-grid-column-one-half-left {
+  width: 50.00%;
+  float: left;
+}
+
+.govuk-grid-column-one-half-right {
+  width: 50.00%;
+  float: right;
 }
 
 .print-document {
-    padding: 50px 50px;
+  width: 210mm;
+
+  .govuk-grid-column-one-quarter,
+  .govuk-grid-column-three-quarters {
+    width: 25%;
+    float: left;
+  }
+  .govuk-grid-column-three-quarters {
+    width: 75%;
+  }
+
+  .govuk-\!-width-two-thirds {
+    width: 66.66% !important;
+  }
+
+  .govuk-grid-row {
+    clear: both;
+    padding: 10px 0;
+    overflow: hidden;
+  }
+
+  .print-header {
+    margin-bottom: 10px;
+  }
+
+  .print-hmrc-logo {
+    display: block;
+    font-size: 1.1875rem;
+    margin: 5px 0 0;
+    line-height: 1.1;
+    font-weight: 600;
+  }
+
+  .print-service-name {
+    display: block;
+    text-align: right;
+    margin-top: 2em;
+    font-size: 1.2em;
+    color: #00703C;
+    font-weight: 600;
+  }
+ }
+
+.govuk-heading-xl {
+    font-weight: 700;
+    font-size: 60px;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.govuk-heading-l {
+    font-weight: 700;
+    font-size: 50px;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.govuk-heading-m {
+              font-weight: 700;
+              font-size: 1.5em;
+              font-family: Helvetica, Arial, sans-serif;
+}
+
+.govuk-heading-s {
+              font-weight: 700;
+              font-size: 25px;
+              font-family: Helvetica, Arial, sans-serif;
+}
+
+.govuk-body-s {
+              font-weight: 500;
+              font-size: 20px;
+              font-family: Helvetica, Arial, sans-serif;
+}
+
+.govuk-caption-xl {
+              font-weight: 700;
+              font-size: 35px;
+              font-family: Helvetica, Arial, sans-serif;
+}
+
+.govuk-caption-l {
+              font-weight: 700;
+              font-size: 25px;
+              font-family: Helvetica, Arial, sans-serif;
+}
+
+.print-document {
+    padding: 0px 0px;
     position: relative;
     margin-bottom: 15em;
-    zoom: 80%;
+    zoom: 100%;
     width: 210mm;
     height: auto;
 }
 
-.greenText {
+.green-text {
+    font-weight: 600;
     color: #00703C;
 }
 
 .page-break {
-    page-break-after  : always;
+        page-break-after: always;
 }
 
 .page-break-2 {
-    margin-top: 120px;
-    margin-bottom: 15em;
     page-break-after  : always;
 }
 
@@ -68,24 +172,23 @@ body {
 }
 
 .ruling-cert-3-first {
-    page-break-after  : always;
+    page-break-after: always;
 }
 
 .ruling-cert-3-middle {
     margin-top: 120px;
     margin-bottom: 15em;
-    page-break-after  : always;
+    page-break-after: always;
 }
 
 .ruling-cert-3-tail {
     margin-top: 120px;
 }
 
-.print-document .hr-gray {
+.hr-gray {
     display: block;
     height: 2px;
     background: transparent;
-    background-color: #4AB37C;
     width: 100%;
     border: none;
     border-top: solid 2px #aaa;
@@ -97,10 +200,6 @@ body {
     margin: 0;
     line-height: 1.6;
     padding-top: 15px;
-}
-
-.print-document {
-    page-break-after  : always;
 }
 
 .print-document__information-box-no-border {
@@ -125,25 +224,11 @@ body {
     margin-inline-start: 0;
 }
 
-.print-document table td {
-    border: none;
-    padding: 0;
-    margin: 0;
-}
-
-.print-document h2 {
+.logo-h2 {
     text-align: right;
-    margin-top: 2em;
-    font-size: 1.2em;
+    font-size: 1.5em;
     color: #00703C;
     font-weight: 600;
-}
-
-.crown-logo-atar{
-    height: 100px;
-    width:auto;
-    padding-left: 0px;
-    margin-right: -15px;
 }
 
 .print-document .print-header {
@@ -163,6 +248,11 @@ body {
     font-size: 1.2em;
     color: #00703C;
     font-weight: 600;
+}
+
+.logo-margins {
+    margin-top: 2em;
+    margin-bottom: 2em;
 }
 
 .hmrc-logo {
@@ -284,9 +374,15 @@ body {
     margin-top: 1em;
     margin-bottom: 1em;
 }
-.mb-2 {
-    margin-bottom: 1rem !important;
+
+.mt-2 {
+    margin-top: 2rem !important;
 }
+
+.mb-2 {
+    margin-bottom: 2rem !important;
+}
+
 .bold {
     font-weight: 700;
 }
@@ -301,12 +397,7 @@ body {
     color: #005EA5;
     margin-top: 1em;
 }
-.govuk-summary-list {
-    display: table;
-    margin-top: 1em;
-    page-break-inside: avoid !important;
-    width: 100%;
-}
+
 .govuk-summary-list__key {
     float: left;
     width: 50%;
@@ -377,17 +468,16 @@ body {
     width: 50%;
 }
 
-.govuk-summary-list {
+.govuk-summary-list>*>* {
     display: table-cell;
     border-bottom: 1px solid #bfc1c3;
     padding: .63158em 1.05263em .47368em 0;
     margin: 0;
 }
-.first-child .govuk-summary-list__key {
+  > *:first-child .govuk-summary-list__key {
     margin-top: 0;
-}
-
-.notice .icon {
+  }
+  .notice .icon {
     position: absolute;
     left: 0;
     margin-top: 0px;
@@ -435,19 +525,45 @@ address {
 .hidden-print {
   display: none !important;
 }
-        </style>
-        <title>@messages("pdf.ruling.title")</title>
-    </head>
-    <body>
-        <div class="printable">
 
-            @rulingCertificatePart1(caseModel, decision, btiApp, getCountryName)
-
-            @rulingCertificatePart2(caseModel, decision, btiApp, goodDescriptionSplitted, methodCommercialDenominationSplitted)
-
-            @rulingCertificatePart3(caseModel, decision, btiApp, justificationSplitted)
-
-        </div>
-    </body>
-</html>
+.column-full {
+    clear: both;
+    float: left;
+    width: 100%;
 }
+.column-one-half {
+    width: 50%;
+    float: left;
+}
+.column-one-third {
+    width: 33%;
+    float: left;
+}
+.column-two-thirds {
+    width: 66%;
+    float: left;
+}
+
+.crown-logo-atar{
+    height: 100px;
+    width:auto;
+    padding-left: 0px;
+    margin-right: -15px;
+}
+
+    </style>
+    <title>@messages("pdf.ruling.title")</title>
+</head>
+<body>
+<div>
+
+    @rulingCertificatePart1(caseModel, decision, caseModel.application.asATAR, getCountryName)
+
+    @rulingCertificatePart2(caseModel, decision, caseModel.application.asATAR, goodDescriptionSplitted, methodCommercialDenominationSplitted)
+
+    @rulingCertificatePart3(caseModel, decision, caseModel.application.asATAR, justificationSplitted)
+
+</div>
+
+</body>
+</html>

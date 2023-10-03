@@ -5,11 +5,17 @@ body {
     margin: 0;
 }
 
+
+.govuk-heading-xl {
+    font-weight: 700;
+    font-size: 48px;
+}
+
 .print-document {
-    padding: 50px 50px;
+    padding: 0px 0px;
     position: relative;
-    margin-bottom: 15em;
-    zoom: 80%;
+    margin-bottom: 5em;
+    zoom: 100%;
     width: 210mm;
     height: auto;
 }
