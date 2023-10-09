@@ -32,7 +32,6 @@ import views.html.v2.{confirmation_case_creation, create_misc, misc_details_edit
 import views.html.{case_not_found, release_case, resource_not_found}
 
 import javax.inject.Inject
-import scala.concurrent.Future
 import scala.concurrent.{ExecutionContext, Future}
 
 class CreateMiscellaneousController @Inject() (
