@@ -24,14 +24,6 @@ class AppConfigSpec extends SpecBase {
 
   "Config" should {
 
-    "Build analytics token" in {
-      realAppConfig.analyticsToken shouldBe "N/A"
-    }
-
-    "Build analytics host" in {
-      realAppConfig.analyticsHost shouldBe "auto"
-    }
-
     "Build report url" in {
       realAppConfig.reportAProblemPartialUrl shouldBe "http://localhost:9250/contact/problem_reports_ajax?service=tariff-classification-frontend"
     }
