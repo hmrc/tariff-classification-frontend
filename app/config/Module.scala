@@ -19,7 +19,6 @@ package config
 import com.google.inject.AbstractModule
 import connector.{DataCacheConnector, MongoCacheConnector}
 import controllers.actions._
-import uk.gov.hmrc.http.HeaderCarrier
 
 class Module extends AbstractModule {
 
