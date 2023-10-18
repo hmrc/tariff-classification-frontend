@@ -107,7 +107,7 @@ class AtarController @Inject() (
                          )
       queues         <- queuesService.getAll
       attachments    <- fileService.getAttachments(atarCase)
-      globalKeywords <- keywordsService.findAll
+      globalKeywords <- keywordsService.findAll()
       sampleTab = SampleTabViewModel.fromCase(atarCase, allEvents.filter(event => isSampleEvents(event.details.`type`)))
       activityTab = ActivityViewModel
         .fromCase(atarCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)

@@ -18,7 +18,7 @@ package controllers.actions
 
 import models.UserAnswers
 import models.request.{IdentifierRequest, OptionalDataRequest}
-import uk.gov.hmrc.http.cache.client.CacheMap
+import models.cache.CacheMap
 
 import scala.concurrent.{ExecutionContext, Future}
 

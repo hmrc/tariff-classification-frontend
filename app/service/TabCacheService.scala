@@ -20,8 +20,8 @@ import cats.data.OptionT
 import connector.DataCacheConnector
 import controllers.Tab
 import models.ApplicationType
+import models.cache.CacheMap
 import play.api.libs.json.JsString
-import uk.gov.hmrc.http.cache.client.CacheMap
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

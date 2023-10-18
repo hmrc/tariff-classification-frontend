@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.google.inject.Provider
 import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
@@ -62,9 +61,7 @@ class RequestActionsWithPermissionsProvider @Inject() (
 
 class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val binds: List[Binding[
-    _ >: QueuesService with FileStoreService with case_heading with remove_attachment with attachments_list with KeywordsService with attachments_details with EventsService with liability_view with CasesService <: Object
-  ]] = List(
+  val binds: List[Binding[_]] = List(
     //views
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
