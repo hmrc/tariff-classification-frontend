@@ -104,9 +104,11 @@ class LiabilityController @Inject() (
           .fromCase(liabilityCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
       )
       c592 = Some(C592ViewModel.fromCase(liabilityCase))
-      keywordsTab <- keywordsService.findAll.map(kws =>
-                      KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name))
-                    )
+      keywordsTab <- keywordsService
+                      .findAll()
+                      .map(kws =>
+                        KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name))
+                      )
       initiateResponse <- fileService.initiate(
                            FileStoreInitiateRequest(
                              id              = Some(uploadFileId),

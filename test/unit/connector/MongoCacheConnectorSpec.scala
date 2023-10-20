@@ -25,7 +25,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.JsString
 import repositories.SessionRepository
-import uk.gov.hmrc.http.cache.client.CacheMap
+import models.cache.CacheMap
 
 import scala.concurrent.Future
 

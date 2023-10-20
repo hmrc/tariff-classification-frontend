@@ -33,12 +33,12 @@ class RemoveAttachmentViewSpec extends ViewSpec {
 
   def renderWithoutError: HtmlFormat.Appendable = {
     val header = CaseHeaderViewModel.fromCase(caseOne)
-    remove_attachment(header, RemoveAttachmentForm.form, "file test", "name test")
+    removeAttachment(header, RemoveAttachmentForm.form, "file test", "name test")
   }
 
   def renderWithError: HtmlFormat.Appendable = {
     val header = CaseHeaderViewModel.fromCase(caseOne)
-    remove_attachment(
+    removeAttachment(
       header,
       RemoveAttachmentForm.form.copy(errors = Seq(FormError("remove_attachment", "Test error"))),
       "file test",
@@ -46,7 +46,7 @@ class RemoveAttachmentViewSpec extends ViewSpec {
     )
   }
 
-  def remove_attachment: remove_attachment = injector.instanceOf[remove_attachment]
+  def removeAttachment: remove_attachment = injector.instanceOf[remove_attachment]
 
   "Remove attachment View" should {
 

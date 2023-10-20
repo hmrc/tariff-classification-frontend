@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
 import service.TabCacheService
-import uk.gov.hmrc.http.cache.client.CacheMap
+import models.cache.CacheMap
 
 class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

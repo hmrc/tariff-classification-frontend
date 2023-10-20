@@ -21,7 +21,7 @@ import controllers.Tab
 import models.ApplicationType
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import uk.gov.hmrc.http.cache.client.CacheMap
+import models.cache.CacheMap
 
 class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyChecks {
 

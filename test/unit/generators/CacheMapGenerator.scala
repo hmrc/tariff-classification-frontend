@@ -18,7 +18,7 @@ package generators
 
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.cache.client.CacheMap
+import models.cache.CacheMap
 
 trait CacheMapGenerator {
   self: Generators =>

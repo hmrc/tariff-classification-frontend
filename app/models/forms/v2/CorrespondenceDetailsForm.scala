@@ -56,14 +56,7 @@ object CorrespondenceDetailsForm extends Constraints {
       )
   }
 
-  private def correspondence2Form(existingCase: Case): Option[
-    (
-      String,
-      String,
-      Option[String],
-      Option[String]
-    )
-  ] = {
+  private def correspondence2Form(existingCase: Case): Option[(String, String, Option[String], Option[String])] = {
     val existingCorrespondence = existingCase.application.asCorrespondence
 
     Some(

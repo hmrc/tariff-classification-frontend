@@ -126,7 +126,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "return a list of keywords" in {
       given(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])) willReturn successful(Paged(Seq(keyword)))
 
-      await(service.findAll) shouldBe Seq.empty[Keyword]
+      await(service.findAll()) shouldBe Seq.empty[Keyword]
     }
   }
 

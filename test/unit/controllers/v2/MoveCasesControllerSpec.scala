@@ -28,7 +28,7 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import service.{CasesService, QueuesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.cache.client.CacheMap
+import models.cache.CacheMap
 import utils.Cases
 
 class MoveCasesControllerSpec extends ControllerBaseSpec {

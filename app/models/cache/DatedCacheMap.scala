@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package models.cache
 
-import play.api.libs.json.{Json, Reads, Writes}
-import models.cache.CacheMap
+import play.api.libs.json.{Format, JsValue, Json, OFormat}
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-case class UserAnswers(cacheMap: CacheMap) {
-  def get[A](key: String)(implicit rds: Reads[A]): Option[A] =
-    cacheMap.getEntry[A](key)
+import java.time.Instant
 
-  def set[A](key: String, value: A)(implicit writes: Writes[A]): UserAnswers =
-    UserAnswers(cacheMap.copy(data = cacheMap.data + (key -> Json.toJson(value))))
+case class DatedCacheMap(
+  id: String,
+  data: Map[String, JsValue],
+  lastUpdated: Instant = Instant.now()
+)
 
-  def remove[A](key: String): UserAnswers =
-    UserAnswers(cacheMap.copy(data = cacheMap.data - key))
-}
+object DatedCacheMap {
+  implicit val dateFormat: Format[Instant]     = MongoJavatimeFormats.instantFormat
+  implicit val formats: OFormat[DatedCacheMap] = Json.format[DatedCacheMap]
 
-object UserAnswers {
-  def apply(cacheId: String): UserAnswers =
-    UserAnswers(new CacheMap(cacheId, Map()))
+  def apply(cacheMap: CacheMap): DatedCacheMap = DatedCacheMap(cacheMap.id, cacheMap.data)
 }

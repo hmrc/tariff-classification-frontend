@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package models
+package models.cache
 
-import play.api.libs.json.{Json, Reads, Writes}
-import models.cache.CacheMap
+import play.api.libs.json.{JsValue, Json, OFormat, Reads}
 
-case class UserAnswers(cacheMap: CacheMap) {
-  def get[A](key: String)(implicit rds: Reads[A]): Option[A] =
-    cacheMap.getEntry[A](key)
+case class CacheMap(id: String, data: Map[String, JsValue]) {
 
-  def set[A](key: String, value: A)(implicit writes: Writes[A]): UserAnswers =
-    UserAnswers(cacheMap.copy(data = cacheMap.data + (key -> Json.toJson(value))))
-
-  def remove[A](key: String): UserAnswers =
-    UserAnswers(cacheMap.copy(data = cacheMap.data - key))
+  def getEntry[T](key: String)(implicit fjs: Reads[T]): Option[T] =
+    data
+      .get(key)
+      .map(json =>
+        json
+          .validate[T]
+          .fold(
+            errors => throw new KeyStoreEntryValidationException(key, json, errors),
+            valid => valid
+          )
+      )
 }
 
-object UserAnswers {
-  def apply(cacheId: String): UserAnswers =
-    UserAnswers(new CacheMap(cacheId, Map()))
+object CacheMap {
+  implicit val formats: OFormat[CacheMap] = Json.format[CacheMap]
 }

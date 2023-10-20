@@ -16,7 +16,7 @@
 
 package config
 
-import play.api.{Configuration, Environment, Mode}
+import play.api.{Configuration, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.Clock
@@ -25,11 +25,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.FiniteDuration
 
 @Singleton
-class AppConfig @Inject() (
-  config: Configuration,
-  environment: Environment,
-  servicesConfig: ServicesConfig
-) {
+class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
 
   private lazy val contactHost                  = config.getOptional[String]("contact-frontend.host").getOrElse("")
   private lazy val contactFormServiceIdentifier = config.get[String]("appName")
@@ -49,7 +45,6 @@ class AppConfig @Inject() (
   lazy val decisionLifetimeYears: Int             = config.get[Int]("app.decision-lifetime-years")
   lazy val decisionLifetimeDays: Int              = config.get[Int]("app.decision-lifetime-days")
   lazy val fileUploadMaxSize: Int                 = config.get[String]("fileupload.maxSize").toInt
-  lazy val fileUploadMimeTypes: Set[String]       = config.get[String]("fileupload.mimeTypes").split(",").map(_.trim).toSet
   lazy val apiToken: String                       = config.get[String]("auth.api-token")
   lazy val activeDaysElapsedSlaLimit: Int         = config.get[Int]("app.active-days-elapsed-sla-limit")
   lazy val commodityCodePath: String              = config.get[String]("app.commodity-code-path")
