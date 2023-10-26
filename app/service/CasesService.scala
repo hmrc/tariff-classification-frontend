@@ -32,12 +32,13 @@ import models.SampleSend.SampleSend
 import models.SampleStatus.SampleStatus
 import models._
 import models.reporting._
-import models.request.NewEventRequest
+import models.request.{AuthenticatedRequest, NewEventRequest}
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.templates.{cover_letter_template, decision_template, ruling_template}
+import views.html.templates._
 
 import java.nio.file.{Files, StandardOpenOption}
 import java.time.LocalDate
@@ -54,7 +55,8 @@ class CasesService @Inject() (
   reportingService: ReportingService,
   pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
-  rulingConnector: RulingConnector
+  rulingConnector: RulingConnector,
+  ruling_template_v2: ruling_template_v2
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
@@ -353,16 +355,68 @@ class CasesService @Inject() (
       FileUpload(tempFile, s"LiabilityDecision_${completedCase.reference}.pdf", pdf.contentType)
     }
 
-    def generatePdf: Future[FileUpload] = completedCase.application.`type` match {
+    def stringSplitter(s: String): List[String] = {
+      val head: String            = s.take(2000)
+      val remainder: List[String] = s.drop(2000).grouped(3000).toList
+
+      head +: remainder
+    }
+
+    def generatePdf(): Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
+        val goodDescriptionSplitted: Option[List[String]] =
+          completedCase.decision.map(d => stringSplitter(d.goodsDescription))
+        val methodCommercialDenominationSplitted: Option[List[String]] =
+          completedCase.decision.flatMap(d => d.methodCommercialDenomination.map(s => stringSplitter(s)))
+        val justificationSplitted: Option[List[String]] =
+          completedCase.decision.map(d => stringSplitter(d.justification))
+
+        println(goodDescriptionSplitted)
+        println(methodCommercialDenominationSplitted)
+        println(justificationSplitted)
+
         pdfService
-          .generatePdf(ruling_template(completedCase, decision, getCountryName))
+          .generatePdf(
+            ruling_template_v2(
+              completedCase,
+              decision,
+              getCountryName,
+              goodDescriptionSplitted,
+              methodCommercialDenominationSplitted,
+              justificationSplitted
+            )
+          )
           .map(createRulingPdf)
       case LIABILITY =>
         pdfService
           .generatePdf(decision_template(completedCase, decision))
           .map(createLiabilityDecisionPdf)
     }
+
+    def generatePdfView(): HtmlFormat.Appendable =
+      completedCase.application.`type` match {
+      case ATAR =>
+        val goodDescriptionSplitted: Option[List[String]] =
+          completedCase.decision.map(d => stringSplitter(d.goodsDescription))
+        val methodCommercialDenominationSplitted: Option[List[String]] =
+          completedCase.decision.flatMap(d => d.methodCommercialDenomination.map(s => stringSplitter(s)))
+        val justificationSplitted: Option[List[String]] =
+          completedCase.decision.map(d => stringSplitter(d.justification))
+
+        println(goodDescriptionSplitted)
+        println(methodCommercialDenominationSplitted)
+        println(justificationSplitted)
+
+        ruling_template_v2(
+          completedCase,
+          decision,
+          getCountryName,
+          goodDescriptionSplitted,
+          methodCommercialDenominationSplitted,
+          justificationSplitted
+        )
+    }
+
 
     def generateLetter: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
@@ -372,10 +426,11 @@ class CasesService @Inject() (
     }
 
     if (completedCase.application.`type` == ATAR) {
+      println("here")
       for {
         // Generate the decision PDF
         pdfFile <- generatePdf
-
+        _ = println("hello")
         // Upload the decision PDF to the filestore
         pdfStored <- fileService.upload(pdfFile)
 
