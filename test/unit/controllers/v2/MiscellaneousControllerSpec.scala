@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
+import controllers.{ControllerBaseSpec, RedirectController, RequestActionsWithPermissions}
 import models._
 import models.forms._
 import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
@@ -70,6 +70,7 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
     queueService,
     fileService,
     mcc,
+    redirectController,
     miscellaneousView,
     realAppConfig
   )

@@ -18,7 +18,7 @@ package controllers.v2
 
 import com.google.inject.Provider
 import config.AppConfig
-import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
+import controllers.{ControllerBaseSpec, RedirectController, RequestActions, RequestActionsWithPermissions}
 import models._
 import models.forms._
 import models.forms.v2.LiabilityDetailsForm
@@ -203,6 +203,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       keywordsService,
       mcc,
       new LiabilityDetailsForm(new CommodityCodeConstraints(), realAppConfig),
+      redirectController,
       liability_view,
       liability_details_edit,
       realAppConfig

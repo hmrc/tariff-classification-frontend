@@ -19,6 +19,7 @@ package base
 import akka.stream.Materializer
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
+import controllers.RedirectController
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -56,6 +57,7 @@ trait SpecBase
       .build()
 
   lazy val mcc: MessagesControllerComponents           = cc
+  lazy val redirectController: RedirectController      = injector.instanceOf[RedirectController]
   lazy val realAppConfig: AppConfig                    = injector.instanceOf[AppConfig]
   implicit lazy val executionContext: ExecutionContext = injector.instanceOf[ExecutionContext]
   implicit lazy val hc: HeaderCarrier                  = HeaderCarrier()

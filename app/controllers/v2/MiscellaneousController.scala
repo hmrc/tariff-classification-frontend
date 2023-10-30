@@ -17,14 +17,14 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{RequestActions, Tab}
+import controllers.{RedirectController, RequestActions, Tab}
 import models.EventType.isSampleEvents
 import models.forms._
 import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.miscellaneous.DetailsViewModel
 import models.viewmodels.{AttachmentsTabViewModel => _, _}
-import models.{Case, EventType, NoPagination}
+import models.{ApplicationType, Case, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -44,6 +44,7 @@ class MiscellaneousController @Inject() (
   queuesService: QueuesService,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
+  redirectController: RedirectController,
   val miscellaneousView: miscellaneous_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -53,7 +54,12 @@ class MiscellaneousController @Inject() (
 
   def displayMiscellaneous(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+      request.`case`.application.`type` match {
+        case ApplicationType.MISCELLANEOUS =>
+          handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+        case _ =>
+          Future.successful(redirectController.redirectApplication(reference, fileId))
+      }
     }
 
   def renderView(

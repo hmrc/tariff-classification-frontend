@@ -71,6 +71,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     queueService,
     fileService,
     mcc,
+    redirectController,
     correspondenceView,
     realAppConfig
   )

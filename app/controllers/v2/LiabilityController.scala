@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{RequestActions, Tab, v2}
+import controllers.{RedirectController, RequestActions, Tab, v2}
 import models.EventType._
 import models._
 import models.forms._
@@ -47,6 +47,7 @@ class LiabilityController @Inject() (
   keywordsService: KeywordsService,
   mcc: MessagesControllerComponents,
   liabilityDetailsForm: LiabilityDetailsForm,
+  redirectController: RedirectController,
   val liability_view: liability_view,
   val liability_details_edit: liability_details_edit,
   implicit val appConfig: AppConfig
@@ -57,7 +58,12 @@ class LiabilityController @Inject() (
 
   def displayLiability(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+      request.`case`.application.`type` match {
+        case ApplicationType.LIABILITY =>
+          handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+        case _ =>
+          Future.successful(redirectController.redirectApplication(reference, fileId))
+      }
     }
 
   def renderView(
