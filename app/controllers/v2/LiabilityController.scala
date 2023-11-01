@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{RedirectController, RequestActions, Tab, v2}
+import controllers.{RequestActions, Tab, v2}
 import models.EventType._
 import models._
 import models.forms._
@@ -47,7 +47,7 @@ class LiabilityController @Inject() (
   keywordsService: KeywordsService,
   mcc: MessagesControllerComponents,
   liabilityDetailsForm: LiabilityDetailsForm,
-  redirectController: RedirectController,
+  redirectService: RedirectService,
   val liability_view: liability_view,
   val liability_details_edit: liability_details_edit,
   implicit val appConfig: AppConfig
@@ -62,7 +62,7 @@ class LiabilityController @Inject() (
         case ApplicationType.LIABILITY =>
           handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
         case _ =>
-          Future.successful(redirectController.redirectApplication(reference, fileId))
+          Future.successful(redirectService.redirectApplication(reference, fileId))
       }
     }
 

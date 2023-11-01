@@ -19,7 +19,6 @@ package base
 import akka.stream.Materializer
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
-import controllers.RedirectController
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -31,6 +30,7 @@ import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
+import service.RedirectService
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import utils.{TestMetrics, UnitSpec}
@@ -57,7 +57,7 @@ trait SpecBase
       .build()
 
   lazy val mcc: MessagesControllerComponents           = cc
-  lazy val redirectController: RedirectController      = injector.instanceOf[RedirectController]
+  lazy val redirectService: RedirectService            = injector.instanceOf[RedirectService]
   lazy val realAppConfig: AppConfig                    = injector.instanceOf[AppConfig]
   implicit lazy val executionContext: ExecutionContext = injector.instanceOf[ExecutionContext]
   implicit lazy val hc: HeaderCarrier                  = HeaderCarrier()

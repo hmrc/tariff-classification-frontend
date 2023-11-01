@@ -71,7 +71,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     queueService,
     fileService,
     mcc,
-    redirectController,
+    redirectService,
     correspondenceView,
     realAppConfig
   )
@@ -117,6 +117,16 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result) shouldBe Status.OK
     }
 
+    "redirect to correct controller when case is different application type" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+
+      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
+        .displayCorrespondence("reference")(newFakeGETRequestWithCSRF())
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some(
+        controllers.v2.routes.LiabilityController.displayLiability("reference").path
+      )
+    }
   }
 
 }

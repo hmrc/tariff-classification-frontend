@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{RedirectController, RequestActions, Tab}
+import controllers.{RequestActions, Tab}
 import models.EventType.{allEvents, isSampleEvents}
 import models._
 import models.forms._
@@ -46,7 +46,7 @@ class AtarController @Inject() (
   countriesService: CountriesService,
   decisionForm: DecisionForm,
   mcc: MessagesControllerComponents,
-  redirectController: RedirectController,
+  redirectService: RedirectService,
   val atarView: atar_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -60,7 +60,7 @@ class AtarController @Inject() (
         case ApplicationType.ATAR =>
           handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
         case _ =>
-          Future.successful(redirectController.redirectApplication(reference, fileId))
+          Future.successful(redirectService.redirectApplication(reference, fileId))
       }
     }
 

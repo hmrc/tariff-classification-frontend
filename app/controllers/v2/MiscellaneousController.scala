@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{RedirectController, RequestActions, Tab}
+import controllers.{RequestActions, Tab}
 import models.EventType.isSampleEvents
 import models.forms._
 import models.request._
@@ -44,7 +44,7 @@ class MiscellaneousController @Inject() (
   queuesService: QueuesService,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
-  redirectController: RedirectController,
+  redirectService: RedirectService,
   val miscellaneousView: miscellaneous_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -58,7 +58,7 @@ class MiscellaneousController @Inject() (
         case ApplicationType.MISCELLANEOUS =>
           handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
         case _ =>
-          Future.successful(redirectController.redirectApplication(reference, fileId))
+          Future.successful(redirectService.redirectApplication(reference, fileId))
       }
     }
 

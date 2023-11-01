@@ -17,7 +17,7 @@
 package controllers.v2
 
 import config.AppConfig
-import controllers.{RedirectController, RequestActions, Tab}
+import controllers.{RequestActions, Tab}
 import models.EventType._
 import models.forms._
 import models.request._
@@ -43,7 +43,7 @@ class CorrespondenceController @Inject() (
   queuesService: QueuesService,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
-  redirectController: RedirectController,
+  redirectService: RedirectService,
   val correspondenceView: correspondence_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -57,7 +57,7 @@ class CorrespondenceController @Inject() (
         case ApplicationType.CORRESPONDENCE =>
           handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
         case _ =>
-          Future.successful(redirectController.redirectApplication(reference, fileId))
+          Future.successful(redirectService.redirectApplication(reference, fileId))
       }
     }
 

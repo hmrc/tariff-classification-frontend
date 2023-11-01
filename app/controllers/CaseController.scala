@@ -44,7 +44,7 @@ class CaseController @Inject() (
   atarController: AtarController,
   correspondenceController: CorrespondenceController,
   miscellaneousController: MiscellaneousController,
-  redirectController: RedirectController,
+  redirectService: RedirectService,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -53,7 +53,7 @@ class CaseController @Inject() (
 
   def get(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
-      redirectController.redirectApplication(reference, fileId)
+      redirectService.redirectApplication(reference, fileId)
     }
 
   def sampleDetails(reference: String): Action[AnyContent] =
