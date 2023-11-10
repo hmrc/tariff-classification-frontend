@@ -73,6 +73,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     atarController,
     correspondenceController,
     miscellaneousController,
+    redirectService,
     realAppConfig
   )
 
@@ -86,6 +87,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     atarController,
     correspondenceController,
     miscellaneousController,
+    redirectService,
     realAppConfig
   )
 

@@ -24,7 +24,7 @@ import models.request._
 import models.viewmodels.atar._
 import models.viewmodels.correspondence.{CaseDetailsViewModel, ContactDetailsTabViewModel}
 import models.viewmodels.{AttachmentsTabViewModel => _, _}
-import models.{Case, EventType, NoPagination}
+import models.{ApplicationType, Case, EventType, NoPagination}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -43,6 +43,7 @@ class CorrespondenceController @Inject() (
   queuesService: QueuesService,
   fileService: FileStoreService,
   mcc: MessagesControllerComponents,
+  redirectService: RedirectService,
   val correspondenceView: correspondence_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -52,7 +53,12 @@ class CorrespondenceController @Inject() (
 
   def displayCorrespondence(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+      request.`case`.application.`type` match {
+        case ApplicationType.CORRESPONDENCE =>
+          handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+        case _ =>
+          Future.successful(redirectService.redirectApplication(reference, fileId))
+      }
     }
 
   def renderView(

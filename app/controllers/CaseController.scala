@@ -44,27 +44,17 @@ class CaseController @Inject() (
   atarController: AtarController,
   correspondenceController: CorrespondenceController,
   miscellaneousController: MiscellaneousController,
+  redirectService: RedirectService,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 
-  def get(reference: String): Action[AnyContent] = (verify.authenticated andThen verify.casePermissions(reference)) {
-    implicit request =>
-      request.`case`.application.`type` match {
-        case ApplicationType.ATAR =>
-          Redirect(controllers.v2.routes.AtarController.displayAtar(reference)).flashing(request2flash)
-        case ApplicationType.LIABILITY =>
-          Redirect(controllers.v2.routes.LiabilityController.displayLiability(reference)).flashing(request2flash)
-        case ApplicationType.CORRESPONDENCE =>
-          Redirect(controllers.v2.routes.CorrespondenceController.displayCorrespondence(reference))
-            .flashing(request2flash)
-        case ApplicationType.MISCELLANEOUS =>
-          Redirect(controllers.v2.routes.MiscellaneousController.displayMiscellaneous(reference))
-            .flashing(request2flash)
-      }
-  }
+  def get(reference: String, fileId: Option[String] = None): Action[AnyContent] =
+    (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>
+      redirectService.redirectApplication(reference, fileId)
+    }
 
   def sampleDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)) { implicit request =>

@@ -29,7 +29,6 @@ import scala.util.control.NonFatal
 
 trait UpscanErrorHandling { self: FrontendBaseController =>
   private val UpscanErrorCodeKey        = "errorCode"
-  val UpscanErrorMessageKey             = "errorMessage"
   private val UploadAttachmentFormField = "file"
 
   def handleUploadErrorAndRender(

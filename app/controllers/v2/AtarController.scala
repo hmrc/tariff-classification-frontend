@@ -46,6 +46,7 @@ class AtarController @Inject() (
   countriesService: CountriesService,
   decisionForm: DecisionForm,
   mcc: MessagesControllerComponents,
+  redirectService: RedirectService,
   val atarView: atar_view,
   implicit val appConfig: AppConfig
 )(implicit ec: ExecutionContext)
@@ -55,7 +56,12 @@ class AtarController @Inject() (
 
   def displayAtar(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference)).async { implicit request =>
-      handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+      request.`case`.application.`type` match {
+        case ApplicationType.ATAR =>
+          handleUploadErrorAndRender(uploadForm => renderView(fileId = fileId, uploadForm = uploadForm))
+        case _ =>
+          Future.successful(redirectService.redirectApplication(reference, fileId))
+      }
     }
 
   def renderView(

@@ -70,6 +70,7 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
     queueService,
     fileService,
     mcc,
+    redirectService,
     miscellaneousView,
     realAppConfig
   )
@@ -110,6 +111,17 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
       val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
         .displayMiscellaneous("reference")(newFakeGETRequestWithCSRF())
       status(result) shouldBe Status.OK
+    }
+
+    "redirect to correct controller when case is different application type" in {
+      val c = aCase(withReference("reference"), withLiabilityApplication())
+
+      val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
+        .displayMiscellaneous("reference")(newFakeGETRequestWithCSRF())
+      status(result) shouldBe Status.SEE_OTHER
+      locationOf(result) shouldBe Some(
+        controllers.v2.routes.LiabilityController.displayLiability("reference").path
+      )
     }
 
   }
