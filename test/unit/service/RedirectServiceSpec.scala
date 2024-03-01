@@ -32,8 +32,8 @@ class RedirectServiceSpec extends ServiceSpecBase {
   private val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
   implicit def testRequest(`case`: Case) = new AuthenticatedCaseRequest(
-    operator = Operator("operator-id"),
-    request = request,
+    operator      = Operator("operator-id"),
+    request       = request,
     requestedCase = `case`
   )
 
@@ -44,7 +44,7 @@ class RedirectServiceSpec extends ServiceSpecBase {
 
       val result = await(service.redirectApplication(`case`.reference)(testRequest(`case`)))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(controllers.v2.routes.AtarController.displayAtar(`case`.reference).url)
     }
 
@@ -53,7 +53,7 @@ class RedirectServiceSpec extends ServiceSpecBase {
 
       val result = await(service.redirectApplication(`case`.reference)(testRequest(`case`)))
 
-      status(result) shouldBe Status.SEE_OTHER
+      status(result)     shouldBe Status.SEE_OTHER
       locationOf(result) shouldBe Some(controllers.v2.routes.LiabilityController.displayLiability(`case`.reference).url)
     }
 
@@ -63,7 +63,9 @@ class RedirectServiceSpec extends ServiceSpecBase {
       val result = await(service.redirectApplication(`case`.reference)(testRequest(`case`)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(controllers.v2.routes.CorrespondenceController.displayCorrespondence(`case`.reference).url)
+      locationOf(result) shouldBe Some(
+        controllers.v2.routes.CorrespondenceController.displayCorrespondence(`case`.reference).url
+      )
     }
 
     "call miscellaneous Controller based on case's application type" in {
@@ -72,7 +74,9 @@ class RedirectServiceSpec extends ServiceSpecBase {
       val result = await(service.redirectApplication(`case`.reference)(testRequest(`case`)))
 
       status(result) shouldBe Status.SEE_OTHER
-      locationOf(result) shouldBe Some(controllers.v2.routes.MiscellaneousController.displayMiscellaneous(`case`.reference).url)
+      locationOf(result) shouldBe Some(
+        controllers.v2.routes.MiscellaneousController.displayMiscellaneous(`case`.reference).url
+      )
     }
   }
 
