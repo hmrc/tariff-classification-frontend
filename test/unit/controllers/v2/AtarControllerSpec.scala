@@ -27,15 +27,15 @@ import service.{CountriesService, EventsService, FileStoreService, KeywordsServi
 import views.html.v2.atar_view
 
 class AtarControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
-  private val queueService = mock[QueuesService]
-  private val eventService = mock[EventsService]
-  private val fileService = mock[FileStoreService]
-  private val event                              = mock[Event]
+  private val queueService             = mock[QueuesService]
+  private val eventService             = mock[EventsService]
+  private val fileService              = mock[FileStoreService]
+  private val event                    = mock[Event]
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
   private val decisionForm             = new DecisionForm(commodityCodeConstraints)
-  private val keywordsService  = mock[KeywordsService]
-  private val countriesService = mock[CountriesService]
-  private val atarView                  = mock[atar_view]
+  private val keywordsService          = mock[KeywordsService]
+  private val countriesService         = mock[CountriesService]
+  private val atarView                 = mock[atar_view]
 
   override protected def beforeEach(): Unit =
     reset(
