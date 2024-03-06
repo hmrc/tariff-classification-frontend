@@ -16,7 +16,7 @@
 
 package integration
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.CaseStatus
 import models.response.FileMetadata

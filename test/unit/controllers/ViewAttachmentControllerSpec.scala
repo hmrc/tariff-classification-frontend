@@ -16,8 +16,8 @@
 
 package controllers
 
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.util.ByteString
 import models.response.{FileMetadata, ScanStatus}
 import models.{Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}

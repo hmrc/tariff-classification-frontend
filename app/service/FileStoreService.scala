@@ -16,8 +16,8 @@
 
 package service
 
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.util.ByteString
 import connector.FileStoreConnector
 import models._
 import models.request.FileStoreInitiateRequest

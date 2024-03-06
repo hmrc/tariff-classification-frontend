@@ -16,7 +16,7 @@
 
 package controllers.v2
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import connector.DataCacheConnector
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, RequestActionsWithPermissionsAndData}
 import models.Role.Role

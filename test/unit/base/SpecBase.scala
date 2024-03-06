@@ -16,7 +16,7 @@
 
 package base
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}

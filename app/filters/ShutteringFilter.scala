@@ -16,7 +16,7 @@
 
 package filters
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc.Results.ServiceUnavailable
 import play.api.mvc._
