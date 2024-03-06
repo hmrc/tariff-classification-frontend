@@ -16,7 +16,7 @@
 
 package connector
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import base.SpecBase
 import config.AppConfig
 import org.mockito.Mockito.when

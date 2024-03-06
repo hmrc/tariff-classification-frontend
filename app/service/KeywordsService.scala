@@ -16,7 +16,7 @@
 
 package service
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import audit.AuditService
 import com.github.blemale.scaffeine.{Cache, Scaffeine}
 import config.AppConfig

@@ -16,7 +16,7 @@
 
 package controllers.v2
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}

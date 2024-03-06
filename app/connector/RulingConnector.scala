@@ -16,10 +16,10 @@
 
 package connector
 
-import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import metrics.HasMetrics
+import com.kenshoo.play.metrics.Metrics
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
