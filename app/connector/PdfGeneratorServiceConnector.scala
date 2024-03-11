@@ -16,7 +16,6 @@
 
 package connector
 
-//import com..play.metrics.Metrics
 import com.codahale.metrics.MetricRegistry
 import config.AppConfig
 import metrics.HasMetrics

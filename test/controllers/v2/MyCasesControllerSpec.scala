@@ -16,10 +16,10 @@
 
 package controllers.v2
 
-import org.apache.pekko.stream.Materializer
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
+import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach

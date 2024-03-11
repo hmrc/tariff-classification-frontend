@@ -53,7 +53,7 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val entryDateYearLowerBound: Int           = 2010
   lazy val dateOfReceiptYearLowerBound: Int       = 2010
 
-  lazy val maxUriLength: Long = config.underlying.getBytes("akka.http.parsing.max-uri-length")
+  lazy val maxUriLength: Long = config.underlying.getBytes("pekko.http.parsing.max-uri-length")
 
   lazy val keywordsCacheExpiration: FiniteDuration = {
     val javaDuration = config.underlying.getDuration("keywords-cache.expiration")

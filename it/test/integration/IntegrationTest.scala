@@ -17,16 +17,13 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-//import com..play.metrics.Metrics
-import com.codahale.metrics.MetricRegistry
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
-import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{WSClient, WSRequest}
 import play.api.test.Helpers.{OK, UNAUTHORIZED}
-import utils.{ResourceFiles, TestMetrics, UnitSpec, WiremockTestServer}
+import utils.{ResourceFiles, UnitSpec, WiremockTestServer}
 
 trait IntegrationTest
     extends UnitSpec
@@ -39,15 +36,12 @@ trait IntegrationTest
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .overrides(bind[MetricRegistry].toInstance(new TestMetrics))
       .configure(
         Map(
           "microservice.services.binding-tariff-classification.port" -> wirePort,
           "microservice.services.binding-tariff-filestore.port"      -> wirePort,
           "microservice.services.auth.port"                          -> wirePort,
           "microservice.services.pdf-generator-service.port"         -> wirePort
-//          "platform-url.host" -> s"http://localhost:$port",
-          // "play.filters.https.redirectEnabled" -> "false"
         )
       )
       .build()

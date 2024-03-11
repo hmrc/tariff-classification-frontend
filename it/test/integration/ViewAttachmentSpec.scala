@@ -16,10 +16,10 @@
 
 package integration
 
-import org.apache.pekko.util.ByteString
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.CaseStatus
 import models.response.FileMetadata
+import org.apache.pekko.util.ByteString
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse

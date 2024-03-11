@@ -16,16 +16,15 @@
 
 package base
 
-import org.apache.pekko.stream.Materializer
-//import com..play.metrics.Metrics
 import com.codahale.metrics.MetricRegistry
 import config.AppConfig
+import org.apache.pekko.stream.Materializer
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.inject.{Injector, bind}
+import play.api.inject.Injector
 import play.api.libs.Files.TemporaryFileCreator
 import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponents, PlayBodyParsers}
@@ -34,7 +33,7 @@ import play.api.{Application, Configuration, Environment}
 import service.RedirectService
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
-import utils.{TestMetrics, UnitSpec}
+import utils.UnitSpec
 
 import scala.concurrent.ExecutionContext
 
@@ -54,7 +53,6 @@ trait SpecBase
         //app related feature flag
         "toggle.new-liability-details" -> true
       )
-      .overrides(bind[MetricRegistry].toInstance(new TestMetrics))
       .build()
 
   lazy val mcc: MessagesControllerComponents           = cc
@@ -69,7 +67,7 @@ trait SpecBase
   lazy val playBodyParsers: PlayBodyParsers            = injector.instanceOf[PlayBodyParsers]
   lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
   lazy val injector: Injector                          = app.injector
-  lazy val metrics: MetricRegistry                     = new TestMetrics
+  lazy val metrics: MetricRegistry                     = new MetricRegistry
 
   lazy val ws: WSClient = injector.instanceOf[WSClient]
 

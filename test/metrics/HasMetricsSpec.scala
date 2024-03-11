@@ -16,9 +16,7 @@
 
 package metrics
 
-import com.codahale.metrics.Timer
-//import com..play.metrics.Metrics
-import com.codahale.metrics.MetricRegistry
+import com.codahale.metrics.{MetricRegistry, Timer}
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito
 import org.mockito.Mockito._

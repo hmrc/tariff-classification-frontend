@@ -19,7 +19,6 @@ package connector
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import metrics.HasMetrics
-//import com..play.metrics.Metrics
 import com.codahale.metrics.MetricRegistry
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.http.HeaderCarrier

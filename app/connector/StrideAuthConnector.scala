@@ -17,7 +17,6 @@
 package connector
 
 import com.google.inject.Inject
-//import com..play.metrics.Metrics
 import com.codahale.metrics.MetricRegistry
 import metrics.HasMetrics
 import uk.gov.hmrc.auth.core.PlayAuthConnector

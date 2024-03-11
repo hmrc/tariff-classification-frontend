@@ -17,7 +17,6 @@
 package metrics
 
 import com.codahale.metrics.{MetricRegistry, Timer}
-//import com..play.metrics.Metrics
 import play.api.mvc.{Action, MessagesBaseController, Result}
 
 import java.util.concurrent.atomic.AtomicBoolean

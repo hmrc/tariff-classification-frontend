@@ -219,7 +219,9 @@ object EnumJson {
     case JsString(s) =>
       Try(JsSuccess(enum.withName(s))).recover {
         case _: NoSuchElementException =>
-          JsError(s"Expected an enumeration of type: '${enum.getClass}', but it does not contain the name: '$s'")
+          JsError(
+            s"Expected an enumeration of type: '${enum.getClass.getSimpleName}', but it does not contain the name: '$s'"
+          )
       }.get
 
     case _ => JsError("String value is expected")

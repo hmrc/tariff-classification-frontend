@@ -16,9 +16,9 @@
 
 package connector
 
-import org.apache.pekko.actor.ActorSystem
 import base.SpecBase
 import config.AppConfig
+import org.apache.pekko.actor.ActorSystem
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
 import play.api.libs.ws.WSClient

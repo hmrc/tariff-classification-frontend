@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-import org.apache.pekko.stream.Materializer
 import connector.DataCacheConnector
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, RequestActionsWithPermissionsAndData}
 import models.Role.Role
@@ -29,6 +28,7 @@ import play.api.test.Helpers._
 import service.{CasesService, QueuesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import models.cache.CacheMap
+import org.apache.pekko.stream.Materializer
 import utils.Cases
 
 class MoveCasesControllerSpec extends ControllerBaseSpec {
