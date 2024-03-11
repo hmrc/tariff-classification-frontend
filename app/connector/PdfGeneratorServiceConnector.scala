@@ -16,7 +16,8 @@
 
 package connector
 
-import com.kenshoo.play.metrics.Metrics
+//import com..play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import config.AppConfig
 import metrics.HasMetrics
 import models.PdfFile
@@ -32,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PdfGeneratorServiceConnector @Inject() (
   configuration: AppConfig,
   ws: WSClient,
-  val metrics: Metrics
+  val metrics: MetricRegistry
 )(implicit ec: ExecutionContext)
     extends HasMetrics {
 

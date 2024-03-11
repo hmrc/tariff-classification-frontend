@@ -18,6 +18,7 @@ package controllers
 
 import config.AppConfig
 import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
+import controllers.auth.AuthRedirects
 import models.request.AuthenticatedRequest
 import models.{Operator, Permission, Role}
 import play.api.mvc.Results._
@@ -28,7 +29,6 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}

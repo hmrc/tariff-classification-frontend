@@ -17,7 +17,8 @@
 package metrics
 
 import com.codahale.metrics.Timer
-import com.kenshoo.play.metrics.Metrics
+//import com..play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito
 import org.mockito.Mockito._
@@ -40,7 +41,7 @@ class HasMetricsSpec
 
   trait MockHasMetrics { self: HasMetrics =>
     val timer: Timer.Context                = mock[Timer.Context]
-    val metrics: Metrics                    = mock[Metrics]
+    val metrics: MetricRegistry             = mock[MetricRegistry]
     override val localMetrics: LocalMetrics = mock[LocalMetrics]
     when(localMetrics.startTimer(anyString())) thenReturn timer
   }

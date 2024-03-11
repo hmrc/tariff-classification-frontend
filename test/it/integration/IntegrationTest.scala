@@ -17,7 +17,8 @@
 package integration
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.kenshoo.play.metrics.Metrics
+//import com..play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi}
@@ -38,8 +39,7 @@ trait IntegrationTest
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .disable[com.kenshoo.play.metrics.PlayModule]
-      .overrides(bind[Metrics].toInstance(new TestMetrics))
+      .overrides(bind[MetricRegistry].toInstance(new TestMetrics))
       .configure(
         Map(
           "microservice.services.binding-tariff-classification.port" -> wirePort,

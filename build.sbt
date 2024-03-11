@@ -9,6 +9,7 @@ lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(PlayKeys.playDefaultPort := 9581)
+  .settings(CodeCoverageSettings.settings)
   .settings(
     name := appName,
     libraryDependencies ++= AppDependencies(),

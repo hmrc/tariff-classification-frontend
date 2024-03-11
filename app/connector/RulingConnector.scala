@@ -19,7 +19,8 @@ package connector
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import metrics.HasMetrics
-import com.kenshoo.play.metrics.Metrics
+//import com..play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -28,7 +29,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 class RulingConnector @Inject() (
   configuration: AppConfig,
   http: AuthenticatedHttpClient,
-  val metrics: Metrics
+  val metrics: MetricRegistry
 )(implicit ec: ExecutionContext)
     extends HasMetrics {
 

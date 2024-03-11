@@ -16,7 +16,7 @@
 
 package controllers
 
-import akka.stream.alpakka.csv.scaladsl.CsvFormatting
+import org.apache.pekko.stream.connectors.csv.scaladsl.CsvFormatting
 import org.apache.pekko.stream.scaladsl.Source
 import cats.syntax.all._
 import config.AppConfig

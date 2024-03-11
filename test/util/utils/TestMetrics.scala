@@ -17,9 +17,10 @@
 package utils
 
 import com.codahale.metrics.MetricRegistry
-import com.kenshoo.play.metrics.Metrics
+//import com..play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 
-class TestMetrics extends Metrics {
+class TestMetrics extends MetricRegistry {
   override def defaultRegistry: MetricRegistry = new MetricRegistry
   override def toJson: String                  = ""
 }
