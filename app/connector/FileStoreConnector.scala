@@ -20,6 +20,8 @@ import org.apache.pekko.stream.scaladsl.{FileIO, Source}
 import org.apache.pekko.stream.{IOResult, Materializer}
 import org.apache.pekko.util.ByteString
 import com.google.inject.Inject
+//import com..play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import config.AppConfig
 import javax.inject.Singleton
 import metrics.HasMetrics
@@ -41,7 +43,7 @@ class FileStoreConnector @Inject() (
   appConfig: AppConfig,
   http: AuthenticatedHttpClient,
   ws: WSClient,
-  val metrics: Metrics
+  val metrics: MetricRegistry
 )(implicit mat: Materializer)
     extends HasMetrics {
 

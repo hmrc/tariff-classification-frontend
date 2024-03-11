@@ -17,7 +17,8 @@
 package base
 
 import org.apache.pekko.stream.Materializer
-import com.kenshoo.play.metrics.Metrics
+//import com..play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import config.AppConfig
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
@@ -53,7 +54,7 @@ trait SpecBase
         //app related feature flag
         "toggle.new-liability-details" -> true
       )
-      .overrides(bind[Metrics].toInstance(new TestMetrics))
+      .overrides(bind[MetricRegistry].toInstance(new TestMetrics))
       .build()
 
   lazy val mcc: MessagesControllerComponents           = cc
@@ -68,7 +69,7 @@ trait SpecBase
   lazy val playBodyParsers: PlayBodyParsers            = injector.instanceOf[PlayBodyParsers]
   lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
   lazy val injector: Injector                          = app.injector
-  lazy val metrics: Metrics                            = new TestMetrics
+  lazy val metrics: MetricRegistry                     = new TestMetrics
 
   lazy val ws: WSClient = injector.instanceOf[WSClient]
 

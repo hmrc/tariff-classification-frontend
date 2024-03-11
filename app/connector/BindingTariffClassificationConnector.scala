@@ -19,7 +19,8 @@ package connector
 import org.apache.pekko.stream.Materializer
 import org.apache.pekko.stream.scaladsl.Source
 import com.google.inject.Inject
-import com.kenshoo.play.metrics.Metrics
+//import com..play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import config.AppConfig
 import metrics.HasMetrics
 import models.CaseStatus._
@@ -40,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BindingTariffClassificationConnector @Inject() (
   appConfig: AppConfig,
   client: AuthenticatedHttpClient,
-  val metrics: Metrics
+  val metrics: MetricRegistry
 )(implicit mat: Materializer)
     extends HasMetrics {
 
