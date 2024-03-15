@@ -869,6 +869,28 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   }
 
+  "casesDueToExpire" should {
+
+    val reportName = "cases-due-to-expire"
+
+    "return 303 SEE_OTHER and redirect to correct report url" in {
+
+      val result = await(controller(Set(Permission.VIEW_REPORTS)).getReportByName(reportName)(fakeRequest))
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(
+        controllers.routes.ReportingController.caseReport(Report.casesDueToExpire).path()
+      )
+    }
+
+    "return unauthorised with no permissions" in {
+
+      val result = await(controller(Set()).getReportByName(reportName)(fakeRequest))
+      status(result)           shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
+    }
+
+  }
+
   "cancelledCasesByChapter" should {
 
     val reportName = "cancelled-cases-by-chapter"

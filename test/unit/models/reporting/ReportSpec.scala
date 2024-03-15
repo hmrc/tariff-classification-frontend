@@ -95,7 +95,8 @@ class ReportSpec extends ModelsBaseSpec {
           "&status=" +
           "&liability_status=" +
           "&team=" +
-          "&fields=reference,status,elapsed_days,total_days"
+          "&fields=reference,status,elapsed_days,total_days" +
+          "&due_to_expire=false"
       )
 
       URLDecoder.decode(Report.reportQueryStringBindable.unbind("", QueueReport()), "UTF-8") shouldBe (
@@ -200,7 +201,8 @@ class ReportSpec extends ModelsBaseSpec {
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
-            )
+            ),
+            dueToExpireReport = true
           )
         ),
         "UTF-8"
@@ -214,7 +216,8 @@ class ReportSpec extends ModelsBaseSpec {
           "&team=1,3" +
           "&min_date=2020-03-21T12:03:15Z" +
           "&max_date=2021-03-21T12:03:15Z" +
-          "&fields=reference"
+          "&fields=reference" +
+          "&due_to_expire=true"
       )
 
       URLDecoder.decode(
@@ -241,7 +244,8 @@ class ReportSpec extends ModelsBaseSpec {
           "&status=COMPLETED,REJECTED" +
           "&liability_status=NON_LIVE" +
           "&team=4,5" +
-          "&fields=reference,status,elapsed_days,total_days"
+          "&fields=reference,status,elapsed_days,total_days" +
+          "&due_to_expire=false"
       )
     }
   }

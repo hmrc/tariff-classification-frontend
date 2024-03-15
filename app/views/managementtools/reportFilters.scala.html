@@ -36,7 +36,11 @@
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key" id="report_chosen_dates">
-                @if(report.dateRange == InstantRange.allTime) {
+                @if(report.name.contains("due to expire") && report.dateRange == InstantRange.allTime) {
+                    @messages("reporting.view_report.date_range.due_to_expire.all_time")
+                } else if(report.name.contains("due to expire")) {
+                    @messages("reporting.view_report.date_range_for_expiry_date", Dates.format(report.dateRange.min), Dates.format(report.dateRange.max))
+                } else if(report.dateRange == InstantRange.allTime) {
                     @messages("reporting.view_report.date_range.all_time")
                 } else {
                     @messages("reporting.view_report.date_range", Dates.format(report.dateRange.min), Dates.format(report.dateRange.max))
