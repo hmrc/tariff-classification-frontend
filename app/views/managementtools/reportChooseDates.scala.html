@@ -53,7 +53,13 @@
 
     @input_radiogroup(
       field = form("specificDates"),
-      hint = Some(messages("reporting.choose_date.description")),
+      hint = Some(
+        if(report.name.contains("due to expire")) {
+            messages("reporting.choose_date.expiry_or_due_to_expire.description")
+        } else {
+            messages("reporting.choose_date.description")
+        }
+      ),
       options = Seq(
         RadioOption(
           "false",

@@ -22,6 +22,9 @@ import cats.syntax.all._
 import models.BinderUtil._
 import play.api.mvc.QueryStringBindable
 
+import java.time.temporal.TemporalAdjusters.{firstDayOfMonth, lastDayOfMonth}
+import java.time.{LocalDate, LocalTime, ZoneOffset}
+
 sealed abstract class Report extends Product with Serializable {
   def name: String
   def sortBy: ReportField[_]
@@ -216,6 +219,32 @@ object Report {
     statuses  = Set(PseudoCaseStatus.CANCELLED)
   )
 
+  private val calculateDueToExpireDateRange: InstantRange = {
+    val now = LocalDate.now()
+    val firstDay = now.minusMonths(1).`with`(firstDayOfMonth())
+    val lastDay = now.`with`(lastDayOfMonth())
+    InstantRange(
+      min = firstDay.atStartOfDay(ZoneOffset.UTC).toInstant,
+      max = lastDay.atTime(LocalTime.MAX).atZone(ZoneOffset.UTC).toInstant
+    )
+  }
+
+  val casesDueToExpire: CaseReport = CaseReport(
+    name = "Cases expired / due to expire",
+    fields = NonEmptySeq.of(
+      ReportField.Reference,
+      ReportField.DateCreated,
+      ReportField.DateExpired,
+      ReportField.BusinessName,
+      ReportField.ContactName,
+      ReportField.ContactEmail
+    ),
+    sortBy    = ReportField.DateExpired,
+    sortOrder = SortDirection.ASCENDING,
+    statuses  = Set(PseudoCaseStatus.COMPLETED),
+    dateRange = calculateDueToExpireDateRange
+  )
+
   val cancelledCasesByChapter: SummaryReport = SummaryReport(
     name      = "Cancelled cases by chapter",
     groupBy   = NonEmptySeq.one(ReportField.Chapter),
@@ -358,7 +387,8 @@ object Report {
     "under-review-cases-by-chapter"       -> casesUnderReviewByChapter,
     "under-review-cases-by-assigned-user" -> casesUnderReviewByUser,
     "under-appeal-cases-by-chapter"       -> casesUnderAppealByChapter,
-    "under-appeal-cases-by-assigned-user" -> casesUnderAppealByUser
+    "under-appeal-cases-by-assigned-user" -> casesUnderAppealByUser,
+    "cases-due-to-expire"                 -> casesDueToExpire
   )
 
   private val groupByKey      = "group_by"
@@ -498,7 +528,8 @@ case class CaseReport(
   statuses: Set[PseudoCaseStatus.Value]         = Set.empty,
   liabilityStatuses: Set[LiabilityStatus.Value] = Set.empty,
   teams: Set[String]                            = Set.empty,
-  dateRange: InstantRange                       = InstantRange.allTime
+  dateRange: InstantRange                       = InstantRange.allTime,
+  dueToExpireReport: Boolean                    = false
 ) extends Report
 
 object CaseReport {
@@ -511,11 +542,13 @@ object CaseReport {
   private val fieldsKey            = "fields"
   private val statusesKey          = "status"
   private val liabilityStatusesKey = "liability_status"
+  private val dueToExpireReportKey = "due_to_expire"
 
   implicit def caseReportQueryStringBindable(
     implicit
     stringBindable: QueryStringBindable[String],
-    rangeBindable: QueryStringBindable[InstantRange]
+    rangeBindable: QueryStringBindable[InstantRange],
+    booleanBindable: QueryStringBindable[Boolean]
   ): QueryStringBindable[CaseReport] = new QueryStringBindable[CaseReport] {
     override def bind(key: String, requestParams: Map[String, Seq[String]]): Option[Either[String, CaseReport]] = {
       val reportName = stringBindable.bind(nameKey, requestParams)
@@ -550,7 +583,8 @@ object CaseReport {
             liabilityStatuses = liabilityStatuses,
             teams             = teams,
             dateRange         = range,
-            fields            = fields
+            fields            = fields,
+            dueToExpireReport = name.contains("due to expire")
           )
       }
     }
@@ -565,7 +599,8 @@ object CaseReport {
         stringBindable.unbind(liabilityStatusesKey, value.liabilityStatuses.map(_.toString).mkString(",")),
         stringBindable.unbind(teamsKey, value.teams.mkString(",")),
         rangeBindable.unbind(dateRangeKey, value.dateRange),
-        stringBindable.unbind(fieldsKey, value.fields.map(_.fieldName).mkString_(","))
+        stringBindable.unbind(fieldsKey, value.fields.map(_.fieldName).mkString_(",")),
+        booleanBindable.unbind(dueToExpireReportKey, value.dueToExpireReport)
       ).filterNot(_.isEmpty).mkString("&")
   }
 }

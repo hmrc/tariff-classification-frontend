@@ -43,7 +43,7 @@ object Reports {
     case CaseTypeResultField(_, data) =>
       data.map(_.prettyName).getOrElse(messages("reporting.result.unknown"))
     case DateResultField(_, data) =>
-      Dates.format(data)
+      data.map(Dates.format).getOrElse(messages("reporting.date.undefined"))
     case NumberResultField(_, data) =>
       data.map(_.toString).getOrElse("0")
     case StatusResultField(_, data) =>

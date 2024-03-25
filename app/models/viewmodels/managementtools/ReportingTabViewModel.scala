@@ -63,7 +63,8 @@ object ReportingTabViewModel {
       ReportTabRow("under-appeal-cases-by-chapter", "under-appeal-cases-by-chapter"),
       ReportTabRow("under-appeal-cases-by-assigned-user", "under-appeal-cases-by-assigned-user"),
       ReportTabRow("cancelled-cases-by-chapter", "cancelled-cases-by-chapter"),
-      ReportTabRow("cancelled-cases-by-assigned-user", "cancelled-cases-by-assigned-user")
+      ReportTabRow("cancelled-cases-by-assigned-user", "cancelled-cases-by-assigned-user"),
+      ReportTabRow("cases-due-to-expire", "cases-due-to-expire")
     ).filter(reportImplemented)
 
   private def atarTabRows: List[ReportTabRow] =

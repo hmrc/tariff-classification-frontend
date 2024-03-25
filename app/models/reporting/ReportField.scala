@@ -41,14 +41,18 @@ object ReportField {
   val Chapter: ChapterField                 = ChapterField("chapter")
   val GoodsName: StringField                = StringField("goods_name")
   val TraderName: StringField               = StringField("trader_name")
+  val BusinessName: StringField             = StringField("business_name")
   val User: StringField                     = StringField("assigned_user")
   val Team: StringField                     = StringField("assigned_team")
   val DateCreated: DateField                = DateField("date_created")
   private val DateCompleted                 = DateField("date_completed")
+  val DateExpired: DateField                = DateField("date_expired")
   val ElapsedDays: NumberField              = NumberField("elapsed_days")
   val TotalDays: DaysSinceField             = DaysSinceField("total_days")
   private val ReferredDays                  = NumberField("referred_days")
   val LiabilityStatus: LiabilityStatusField = LiabilityStatusField("liability_status")
+  val ContactName: StringField              = StringField("contact_name")
+  val ContactEmail: StringField             = StringField("contact_email")
 
   val fields: Map[String, ReportField[_]] = List(
     Count,
@@ -60,13 +64,17 @@ object ReportField {
     Chapter,
     GoodsName,
     TraderName,
+    BusinessName,
     User,
     Team,
     DateCreated,
     DateCompleted,
+    DateExpired,
     ElapsedDays,
     TotalDays,
     ReferredDays,
-    LiabilityStatus
+    LiabilityStatus,
+    ContactName,
+    ContactEmail
   ).map(field => field.fieldName -> field).toMap
 }

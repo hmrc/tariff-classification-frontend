@@ -54,7 +54,7 @@ object CaseViewModel {
 
   def fromCase(c: Case, operator: Operator): CaseViewModel = {
 
-    def releaseOrSuppressPermissions(): Boolean =
+    def releaseOrSuppressPermissions: Boolean =
       operator.permissions.contains(Permission.RELEASE_CASE) || operator.permissions.contains(Permission.SUPPRESS_CASE)
 
     def completeCasePermission: Boolean =
