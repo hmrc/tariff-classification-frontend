@@ -19,7 +19,6 @@ package controllers.v2
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.Role.Role
 import models._
-import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.when
@@ -60,7 +59,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       confirm_delete_user,
       done_delete_user,
       userNotFound
-    )(realAppConfig, injector.instanceOf[Materializer])
+    )(realAppConfig, mat)
 
   "displayUserDetails" should {
 

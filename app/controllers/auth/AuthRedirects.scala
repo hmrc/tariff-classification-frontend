@@ -23,9 +23,6 @@ import uk.gov.hmrc.http.SessionKeys
 
 trait AuthRedirects {
 
-  /* Since this is a library for Play >= 2.5 we avoid depending on global configuration/environment
-   * and thus do not depend on the play-config API which still uses the deprecated globals. */
-
   def config: Configuration
 
   def env: Environment
@@ -51,10 +48,6 @@ trait AuthRedirects {
 
   def ggLoginUrl: String = host("bas-gateway-frontend") + "/bas-gateway/sign-in"
 
-  def verifyLoginUrl: String = host("citizen-auth-frontend") + "/ida/login"
-
-  def personalIVUrl: String = host("identity-verification-frontend") + "/mdtp/uplift"
-
   def strideLoginUrl: String = host("stride-auth-frontend") + "/stride/sign-in"
 
   final lazy val defaultOrigin: String = {
@@ -74,11 +67,6 @@ trait AuthRedirects {
         "origin"       -> Seq(origin)
       )
     )
-
-  def toVerifyLogin(continueUrl: String): Result = Redirect(verifyLoginUrl).withSession(
-    SessionKeys.redirect    -> continueUrl,
-    SessionKeys.loginOrigin -> origin
-  )
 
   def toStrideLogin(successUrl: String, failureUrl: Option[String] = None): Result =
     Redirect(

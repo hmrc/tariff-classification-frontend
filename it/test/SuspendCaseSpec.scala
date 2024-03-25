@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package integration
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{CaseStatus, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
@@ -24,38 +22,44 @@ import play.api.test.Helpers._
 import utils.JsonFormatters._
 import utils.{CasePayloads, Cases, EventPayloads}
 
-class RejectCaseSpec extends IntegrationTest with MockitoSugar {
+class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
-  "Case Reject" should {
-    val owner              = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
-    val event              = EventPayloads.event
+  val owner: Some[Operator] = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+  val caseWithStatusOPEN: String =
+    CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
+
+  "Case Suspend" should {
 
     "return status 200 for manager" in {
-
       givenAuthSuccess()
       shouldSucceed
     }
 
     "return status 200 for case owner" in {
-
       givenAuthSuccess("team")
       shouldSucceed
     }
 
     "redirect on auth failure" in {
-
       givenAuthFailed()
       shouldFail
     }
 
-    "redirect for non case owner" in {
-
+    "redirect on for non-case owner" in {
       givenAuthSuccess("another team member")
       shouldFail
     }
 
+    def shouldFail = {
+
+      val response: WSResponse = await(requestWithSession("/cases/1/suspend-reason").get())
+
+      response.status shouldBe OK
+      response.body   should include(messages("not_authorised.paragraph1"))
+    }
+
     def shouldSucceed = {
+
       stubFor(
         get(urlEqualTo("/cases/1"))
           .willReturn(
@@ -69,22 +73,14 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
           .willReturn(
             aResponse()
               .withStatus(CREATED)
-              .withBody(event)
+              .withBody(EventPayloads.event)
           )
       )
 
-      val response: WSResponse = await(requestWithSession("/cases/1/reject-reason").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/suspend-reason").get())
 
       response.status shouldBe OK
-      response.body   should include("Provide details to reject this case")
-    }
-
-    def shouldFail = {
-
-      val response: WSResponse = await(requestWithSession("/cases/1/reject-reason").get())
-
-      response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body   should include("Provide details to suspend this case")
     }
   }
 

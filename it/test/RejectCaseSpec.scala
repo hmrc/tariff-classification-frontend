@@ -14,31 +14,52 @@
  * limitations under the License.
  */
 
-package integration
-
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.CaseStatus
+import models.{CaseStatus, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.JsonFormatters._
 import utils.{CasePayloads, Cases, EventPayloads}
 
-class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
+class RejectCaseSpec extends IntegrationTest with MockitoSugar {
 
-  "Case Suppress" should {
-    val caseWithStatusNEW = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.NEW))
-    val event             = EventPayloads.event
+  "Case Reject" should {
+    val owner              = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
+    val event              = EventPayloads.event
 
-    "return status 200" in {
+    "return status 200 for manager" in {
 
       givenAuthSuccess()
+      shouldSucceed
+    }
+
+    "return status 200 for case owner" in {
+
+      givenAuthSuccess("team")
+      shouldSucceed
+    }
+
+    "redirect on auth failure" in {
+
+      givenAuthFailed()
+      shouldFail
+    }
+
+    "redirect for non case owner" in {
+
+      givenAuthSuccess("another team member")
+      shouldFail
+    }
+
+    def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
           .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(caseWithStatusNEW)
+              .withBody(caseWithStatusOPEN)
           )
       )
       stubFor(
@@ -50,17 +71,15 @@ class SuppressCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      val response: WSResponse = await(requestWithSession("/cases/1/suppress-reason").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/reject-reason").get())
 
       response.status shouldBe OK
-      response.body   should include("Provide details to suppress this case")
+      response.body   should include("Provide details to reject this case")
     }
 
-    "redirect on auth failure" in {
+    def shouldFail = {
 
-      givenAuthFailed()
-
-      val response: WSResponse = await(requestWithSession("/cases/1/suppress-reason").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/reject-reason").get())
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))

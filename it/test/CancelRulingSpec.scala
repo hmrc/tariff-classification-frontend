@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package integration
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{CaseStatus, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
+import utils.Cases.{aCase, withDecision}
 import utils.JsonFormatters._
-import utils.{CasePayloads, Cases, EventPayloads}
+import utils.{CasePayloads, EventPayloads}
 
-class ReferCaseSpec extends IntegrationTest with MockitoSugar {
+class CancelRulingSpec extends IntegrationTest with MockitoSugar {
 
-  "Case Refer" should {
-    val owner              = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
-    val event              = EventPayloads.event
+  "Cancel Ruling" should {
+    val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+    val caseWithStatusCOMPLETE =
+      CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
+    val event = EventPayloads.event
 
     "return status 200 for manager" in {
 
@@ -37,9 +37,13 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
       shouldSucceed
     }
 
-    "return status 200 for case owner" in {
-
+    "return status 200 for team member" in {
       givenAuthSuccess("team")
+      shouldSucceed
+    }
+
+    "return status 200 for another team member" in {
+      givenAuthSuccess("another team member")
       shouldSucceed
     }
 
@@ -49,19 +53,13 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
       shouldFail
     }
 
-    "redirect for non case owner" in {
-
-      givenAuthSuccess("another team member")
-      shouldFail
-    }
-
     def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
           .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(caseWithStatusOPEN)
+              .withBody(caseWithStatusCOMPLETE)
           )
       )
       stubFor(
@@ -73,16 +71,15 @@ class ReferCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      val response: WSResponse = await(requestWithSession("/cases/1/refer-reason").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/ruling/cancel-reason").get())
 
       response.status shouldBe OK
-      response.body   should include("Provide details to refer")
-
+      response.body   should include("Provide details to cancel")
     }
 
     def shouldFail = {
 
-      val response: WSResponse = await(requestWithSession("/cases/1/refer-reason").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/ruling/cancel-reason").get())
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))

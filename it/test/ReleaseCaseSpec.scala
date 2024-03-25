@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package integration
-
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.CaseStatus
 import org.scalatestplus.mockito.MockitoSugar

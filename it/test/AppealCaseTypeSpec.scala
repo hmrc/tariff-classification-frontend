@@ -14,39 +14,36 @@
  * limitations under the License.
  */
 
-package integration
-
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{CaseStatus, Operator, Role}
+import models.{AppealType, CaseStatus, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
+import utils.CasePayloads
 import utils.Cases.{aCase, withDecision}
 import utils.JsonFormatters._
-import utils.{CasePayloads, EventPayloads}
 
-class CancelRulingSpec extends IntegrationTest with MockitoSugar {
+class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
 
-  "Cancel Ruling" should {
-    val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
-    val caseWithStatusCOMPLETE =
-      CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
-    val event = EventPayloads.event
+  val owner: Option[Operator] = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+  val caseWithStatusCOMPLETE: String =
+    CasePayloads.jsonOf(aCase(withDecision()).copy(assignee = owner, status = CaseStatus.COMPLETED))
+
+  "Case Review Change" should {
 
     "return status 200 for manager" in {
-
       givenAuthSuccess()
-      shouldSucceed
+      shouldSucceed()
     }
 
     "return status 200 for team member" in {
       givenAuthSuccess("team")
-      shouldSucceed
+      shouldSucceed()
     }
 
     "return status 200 for another team member" in {
       givenAuthSuccess("another team member")
-      shouldSucceed
+      shouldSucceed()
     }
 
     "redirect on auth failure" in {
@@ -55,7 +52,16 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
       shouldFail
     }
 
-    def shouldSucceed = {
+    def shouldFail = {
+
+      val response: WSResponse =
+        await(requestWithSession(s"/cases/1/new-appeal/ANY").get())
+
+      response.status shouldBe OK
+      response.body   should include(messages("not_authorised.paragraph1"))
+    }
+
+    def shouldSucceed(): Unit = {
       stubFor(
         get(urlEqualTo("/cases/1"))
           .willReturn(
@@ -64,29 +70,14 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
               .withBody(caseWithStatusCOMPLETE)
           )
       )
-      stubFor(
-        post(urlEqualTo("/cases/1/events"))
-          .willReturn(
-            aResponse()
-              .withStatus(CREATED)
-              .withBody(event)
-          )
-      )
 
-      val response: WSResponse = await(requestWithSession("/cases/1/ruling/cancel-reason").get())
+      AppealType.values.foreach { appealType =>
+        val response: WSResponse =
+          await(requestWithSession(s"/cases/1/new-appeal/$appealType").get())
 
-      response.status shouldBe OK
-      response.body   should include("Provide details to cancel")
+        response.status shouldBe OK
+        response.body   should include("id=\"appeal_choose_status-heading\"")
+      }
     }
-
-    def shouldFail = {
-
-      val response: WSResponse = await(requestWithSession("/cases/1/ruling/cancel-reason").get())
-
-      response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
-    }
-
   }
-
 }

@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package integration
-
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{CancelReason, Cancellation, CaseStatus}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
-import utils.CasePayloads
-import utils.Cases._
 import utils.JsonFormatters._
+import utils.{CasePayloads, Cases, EventPayloads}
 
-class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
+class AssignCaseSpec extends IntegrationTest with MockitoSugar {
 
-  "Case Extended Use Change" should {
-    val c = aCase(
-      withReference("1"),
-      withStatus(CaseStatus.CANCELLED),
-      withDecision(cancellation = Some(Cancellation(reason = CancelReason.ANNULLED, applicationForExtendedUse = true)))
-    )
-    val caseWithStatusCOMPLETED = CasePayloads.jsonOf(c)
+  "Case Assign" should {
+    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(queueId = Some("1"), assignee = None))
+    val event              = EventPayloads.event
 
     "return status 200" in {
 
@@ -43,23 +35,29 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
           .willReturn(
             aResponse()
               .withStatus(OK)
-              .withBody(caseWithStatusCOMPLETED)
+              .withBody(caseWithStatusOPEN)
+          )
+      )
+      stubFor(
+        post(urlEqualTo("/cases/1/events"))
+          .willReturn(
+            aResponse()
+              .withStatus(CREATED)
+              .withBody(event)
           )
       )
 
-      val response: WSResponse =
-        await(requestWithSession("/cases/1/extended-use/status").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
 
       response.status shouldBe OK
-      response.body   should include("Do you want to extend the use of this case ruling?")
+      response.body   should include("assign_case-heading")
     }
 
     "redirect on auth failure" in {
 
       givenAuthFailed()
 
-      val response: WSResponse =
-        await(requestWithSession("/cases/1/extended-use/status").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))

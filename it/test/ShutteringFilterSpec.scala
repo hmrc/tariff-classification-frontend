@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package integration
-
 import controllers.routes.IndexController
 import org.scalatest.OptionValues
 import play.api.Application

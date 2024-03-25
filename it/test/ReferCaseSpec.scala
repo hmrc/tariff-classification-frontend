@@ -14,24 +14,46 @@
  * limitations under the License.
  */
 
-package integration
-
 import com.github.tomakehurst.wiremock.client.WireMock._
+import models.{CaseStatus, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.JsonFormatters._
 import utils.{CasePayloads, Cases, EventPayloads}
 
-class AssignCaseSpec extends IntegrationTest with MockitoSugar {
+class ReferCaseSpec extends IntegrationTest with MockitoSugar {
 
-  "Case Assign" should {
-    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(queueId = Some("1"), assignee = None))
+  "Case Refer" should {
+    val owner              = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
+    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN, assignee = owner))
     val event              = EventPayloads.event
 
-    "return status 200" in {
+    "return status 200 for manager" in {
 
       givenAuthSuccess()
+      shouldSucceed
+    }
+
+    "return status 200 for case owner" in {
+
+      givenAuthSuccess("team")
+      shouldSucceed
+    }
+
+    "redirect on auth failure" in {
+
+      givenAuthFailed()
+      shouldFail
+    }
+
+    "redirect for non case owner" in {
+
+      givenAuthSuccess("another team member")
+      shouldFail
+    }
+
+    def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
           .willReturn(
@@ -49,21 +71,21 @@ class AssignCaseSpec extends IntegrationTest with MockitoSugar {
           )
       )
 
-      val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/refer-reason").get())
 
       response.status shouldBe OK
-      response.body   should include("assign_case-heading")
+      response.body   should include("Provide details to refer")
+
     }
 
-    "redirect on auth failure" in {
+    def shouldFail = {
 
-      givenAuthFailed()
-
-      val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
+      val response: WSResponse = await(requestWithSession("/cases/1/refer-reason").get())
 
       response.status shouldBe OK
       response.body   should include(messages("not_authorised.paragraph1"))
     }
+
   }
 
 }

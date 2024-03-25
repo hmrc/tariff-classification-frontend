@@ -28,17 +28,16 @@ import play.api.test.Helpers._
 import service.{CasesService, QueuesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import models.cache.CacheMap
-import org.apache.pekko.stream.Materializer
 import utils.Cases
 
 class MoveCasesControllerSpec extends ControllerBaseSpec {
-  implicit lazy val materializer: Materializer = app.materializer
-  private val casesService                     = mock[CasesService]
-  private val userService                      = mock[UserService]
-  private val queueService                     = mock[QueuesService]
-  private val dataCacheConnector               = mock[DataCacheConnector]
-  private val teamOrUserPage                   = injector.instanceOf[views.html.partials.users.move_cases_team_or_user]
-  private val chooseTeamPage                   = injector.instanceOf[views.html.partials.users.move_cases_choose_team]
+  implicit lazy val materializer = mat
+  private val casesService       = mock[CasesService]
+  private val userService        = mock[UserService]
+  private val queueService       = mock[QueuesService]
+  private val dataCacheConnector = mock[DataCacheConnector]
+  private val teamOrUserPage     = injector.instanceOf[views.html.partials.users.move_cases_team_or_user]
+  private val chooseTeamPage     = injector.instanceOf[views.html.partials.users.move_cases_choose_team]
   private val chooseTeamToChooseUsersFromPage =
     injector.instanceOf[views.html.partials.users.move_cases_choose_user_team]
   private val chooseUserPage     = injector.instanceOf[views.html.partials.users.move_cases_choose_user]
