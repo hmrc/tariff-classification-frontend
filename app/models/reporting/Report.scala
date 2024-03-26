@@ -242,7 +242,8 @@ object Report {
     sortBy    = ReportField.DateExpired,
     sortOrder = SortDirection.ASCENDING,
     statuses  = Set(PseudoCaseStatus.COMPLETED),
-    dateRange = calculateDueToExpireDateRange
+    dateRange = calculateDueToExpireDateRange,
+    dueToExpireReport = true
   )
 
   val cancelledCasesByChapter: SummaryReport = SummaryReport(
