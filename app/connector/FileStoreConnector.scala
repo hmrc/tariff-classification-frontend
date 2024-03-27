@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package connector
 
-import akka.stream.scaladsl.{FileIO, Source}
-import akka.stream.{IOResult, Materializer}
-import akka.util.ByteString
+import org.apache.pekko.stream.scaladsl.{FileIO, Source}
+import org.apache.pekko.stream.{IOResult, Materializer}
+import org.apache.pekko.util.ByteString
 import com.google.inject.Inject
-import com.kenshoo.play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import config.AppConfig
 import javax.inject.Singleton
 import metrics.HasMetrics
@@ -42,7 +42,7 @@ class FileStoreConnector @Inject() (
   appConfig: AppConfig,
   http: AuthenticatedHttpClient,
   ws: WSClient,
-  val metrics: Metrics
+  val metrics: MetricRegistry
 )(implicit mat: Materializer)
     extends HasMetrics {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val entryDateYearLowerBound: Int           = 2010
   lazy val dateOfReceiptYearLowerBound: Int       = 2010
 
-  lazy val maxUriLength: Long = config.underlying.getBytes("akka.http.parsing.max-uri-length")
+  lazy val maxUriLength: Long = config.underlying.getBytes("pekko.http.parsing.max-uri-length")
 
   lazy val keywordsCacheExpiration: FiniteDuration = {
     val javaDuration = config.underlying.getDuration("keywords-cache.expiration")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package connector
 
-import com.kenshoo.play.metrics.Metrics
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import metrics.HasMetrics
+import com.codahale.metrics.MetricRegistry
 import scala.concurrent.{ExecutionContext, Future}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 class RulingConnector @Inject() (
   configuration: AppConfig,
   http: AuthenticatedHttpClient,
-  val metrics: Metrics
+  val metrics: MetricRegistry
 )(implicit ec: ExecutionContext)
     extends HasMetrics {
 

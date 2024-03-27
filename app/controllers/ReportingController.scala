@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package controllers
 
-import akka.stream.alpakka.csv.scaladsl.CsvFormatting
-import akka.stream.scaladsl.Source
+import org.apache.pekko.stream.connectors.csv.scaladsl.CsvFormatting
+import org.apache.pekko.stream.scaladsl.Source
 import cats.syntax.all._
 import config.AppConfig
 import models._

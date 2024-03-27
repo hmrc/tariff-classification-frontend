@@ -81,7 +81,7 @@ Run `sm2 --start PDF_GENERATOR_SERVICE:1.20.0`
 
 Run `./run_all_tests.sh`. This also runs Scalastyle and does coverage testing.
 
-or `sbt test it:test` to run the tests only.
+or `sbt test it/test` to run the tests only.
 
 ### License
 
