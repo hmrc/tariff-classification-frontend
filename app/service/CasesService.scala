@@ -40,7 +40,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.templates.{cover_letter_template, decision_template, ruling_template}
 
 import java.nio.file.{Files, StandardOpenOption}
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -236,9 +236,10 @@ class CasesService @Inject() (
 
     def setCaseCompleted(original: Case): Case = original.application.`type` match {
       case ApplicationType.ATAR | ApplicationType.LIABILITY =>
-        val startDate = LocalDate
-          .now(appConfig.clock)
-          .atStartOfDay(appConfig.clock.getZone)
+        val startDateTime: LocalDateTime =
+          LocalDateTime
+            .now(appConfig.clock)
+        // .atStartOfDay(appConfig.clock.getZone)
 
         val decision: Decision = original.decision
           .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
@@ -246,25 +247,32 @@ class CasesService @Inject() (
         val endDate =
           (original.application.isBTI, decision.effectiveEndDate.isDefined) match {
             case (false, _) => None
-            case (_, true)  => decision.effectiveEndDate
+//            case (_, true)  =>
+//              // decision.effectiveEndDate
+//              Some(
+//                startDateTime
+//                  .plusYears(appConfig.decisionLifetimeYears)
+//                  .minusDays(appConfig.decisionLifetimeDays)
+//                  .toInstant(ZoneOffset.ofHours(0))
+//              )
             case _ =>
               Some(
-                startDate
+                startDateTime
                   .plusYears(appConfig.decisionLifetimeYears)
                   .minusDays(appConfig.decisionLifetimeDays)
-                  .toInstant
+                  .toInstant(ZoneOffset.ofHours(0))
               )
           }
 
         val decisionWithDates: Decision = decision
-          .copy(effectiveStartDate = Some(startDate.toInstant), effectiveEndDate = endDate)
+          .copy(effectiveStartDate = Some(startDateTime.toInstant(ZoneOffset.ofHours(0))), effectiveEndDate = endDate)
 
         if (original.application.`type`
               .equals(ApplicationType.LIABILITY)) {
           if (original.application.asLiabilityOrder.repaymentClaim.isDefined) {
             val repaymentClaim =
               original.application.asLiabilityOrder.repaymentClaim.get
-                .copy(dateForRepayment = Some(startDate.toInstant))
+                .copy(dateForRepayment = Some(startDateTime.toInstant(ZoneOffset.ofHours(0))))
             val updatedApplication = original.application.asLiabilityOrder.copy(repaymentClaim = Some(repaymentClaim))
             original
               .copy(application = updatedApplication, status = CaseStatus.COMPLETED, decision = Some(decisionWithDates))
