@@ -39,12 +39,8 @@ class AuthRedirectsSpec extends AnyWordSpec with ScalaFutures with Matchers {
   trait BaseUri {
     val ggLoginService = "http://localhost:9553"
     val ggLoginPath    = "/bas-gateway/sign-in"
-
-    val ivService = "http://localhost:9938"
-    val ivPath    = "/mdtp/uplift"
-
-    val strideService = "http://localhost:9041"
-    val stridePath    = "/stride/sign-in"
+    val strideService  = "http://localhost:9041"
+    val stridePath     = "/stride/sign-in"
   }
 
   trait Setup extends WithApplication with BaseUri {

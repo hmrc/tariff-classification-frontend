@@ -31,7 +31,6 @@ import models.cache.CacheMap
 import utils.Cases
 
 class MoveCasesControllerSpec extends ControllerBaseSpec {
-  implicit lazy val materializer = mat
   private val casesService       = mock[CasesService]
   private val userService        = mock[UserService]
   private val queueService       = mock[QueuesService]

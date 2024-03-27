@@ -28,9 +28,7 @@ import play.api.mvc._
 import service.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.remove_attachment
-
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
