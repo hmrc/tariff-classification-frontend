@@ -40,6 +40,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.templates.{cover_letter_template, decision_template, ruling_template}
 
 import java.nio.file.{Files, StandardOpenOption}
+import java.time.temporal.TemporalAdjusters
 import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
@@ -239,7 +240,6 @@ class CasesService @Inject() (
         val startDateTime: LocalDateTime =
           LocalDateTime
             .now(appConfig.clock)
-        // .atStartOfDay(appConfig.clock.getZone)
 
         val decision: Decision = original.decision
           .getOrElse(throw new IllegalArgumentException("Cannot Complete a Case without a Decision"))
@@ -247,20 +247,16 @@ class CasesService @Inject() (
         val endDate =
           (original.application.isBTI, decision.effectiveEndDate.isDefined) match {
             case (false, _) => None
-//            case (_, true)  =>
-//              // decision.effectiveEndDate
-//              Some(
-//                startDateTime
-//                  .plusYears(appConfig.decisionLifetimeYears)
-//                  .minusDays(appConfig.decisionLifetimeDays)
-//                  .toInstant(ZoneOffset.ofHours(0))
-//              )
+            case (_, true)  =>
+               decision.effectiveEndDate
             case _ =>
               Some(
                 startDateTime
+                  .toLocalDate
+                  .atStartOfDay(appConfig.clock.getZone)
                   .plusYears(appConfig.decisionLifetimeYears)
                   .minusDays(appConfig.decisionLifetimeDays)
-                  .toInstant(ZoneOffset.ofHours(0))
+                  .toInstant
               )
           }
 
