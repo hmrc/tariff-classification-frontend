@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package connector
 
 import com.google.inject.Inject
-import com.kenshoo.play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import metrics.HasMetrics
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class StrideAuthConnector @Inject() (
   client: HttpClient,
   servicesConfig: ServicesConfig,
-  val metrics: Metrics
+  val metrics: MetricRegistry
 ) extends PlayAuthConnector
     with HasMetrics {
   override val serviceUrl: String = servicesConfig.baseUrl("auth")

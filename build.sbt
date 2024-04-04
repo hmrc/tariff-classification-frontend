@@ -1,40 +1,24 @@
-import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
+import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 val appName = "tariff-classification-frontend"
 
-lazy val microservice = (project in file("."))
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.13"
+
+lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-  .settings(majorVersion := 0)
-  .settings(PlayKeys.playDefaultPort := 9581)
   .settings(
-    name := appName,
-    scalaVersion := "2.13.13",
+    PlayKeys.playDefaultPort := 9581,
     libraryDependencies ++= AppDependencies(),
-    Test / fork := true,
-    scalacOptions ++= Seq(
-      "-Wconf:src=routes/.*:s",
-      "-Wconf:cat=unused-imports&src=html/.*:s"
-    ),
-    scalacOptions ~= { opts =>
-      opts.filterNot(
-        Set(
-          "-Xfatal-warnings",
-          "-Ywarn-value-discard"
-        )
-      )
-    }
+    CodeCoverageSettings.settings
   )
-  .settings(inConfig(TemplateTest)(Defaults.testSettings) *)
   .settings(
-    Test / unmanagedSourceDirectories := Seq(
-      (Test / baseDirectory).value / "test/unit",
-      (Test / baseDirectory).value / "test/util"
-    ),
+    Test / fork := true,
+    Test / unmanagedSourceDirectories += baseDirectory.value / "test/util",
     Test / resourceDirectory := baseDirectory.value / "test" / "resources",
     //    works only when fork is true
-    Test / javaOptions += "-Xmx1G",
-    addTestReportOption(Test, "test-reports")
+    Test / javaOptions += "-Xmx1G"
   )
   .settings(
     TwirlKeys.templateImports ++= Seq(
@@ -54,35 +38,29 @@ lazy val microservice = (project in file("."))
       "models.viewmodels.ManagerToolsKeywordsTab"
     )
   )
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(ScalafmtPlugin.scalafmtConfigSettings))
-  .settings(inConfig(TemplateItTest)(Defaults.itSettings) *)
-  .settings(
-    IntegrationTest / fork := true,
-    //    works only when fork is true
-    Test / javaOptions += "-Xmx1G",
-    IntegrationTest / unmanagedSourceDirectories := Seq(
-      (IntegrationTest / baseDirectory).value / "test/it",
-      (IntegrationTest / baseDirectory).value / "test/util"
-    ),
-    IntegrationTest / resourceDirectory := baseDirectory.value / "test" / "resources",
-    addTestReportOption(IntegrationTest, "int-test-reports")
-  )
-  .settings(scalaModuleInfo := scalaModuleInfo.value map {
-    _.withOverrideScalaVersion(true)
-  })
+  .settings(scalacOptionsSettings)
 
-lazy val allPhases   = "tt->test;test->test;test->compile;compile->compile"
-lazy val allItPhases = "tit->it;it->it;it->compile;compile->compile"
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(itSettings())
+  .settings(libraryDependencies ++= AppDependencies.itDependencies)
+  .settings(scalacOptionsSettings)
 
-lazy val TemplateTest   = config("tt") extend Test
-lazy val TemplateItTest = config("tit") extend IntegrationTest
+lazy val scalacOptionsSettings: Seq[Setting[?]] = Seq(
+  scalacOptions ++= Seq(
+    "-Wconf:src=routes/.*:s",
+    "-Wconf:cat=unused-imports&src=views/.*:s"
+  ),
+  scalacOptions ~= { opts =>
+    opts.filterNot(
+      Set(
+        "-Xfatal-warnings",
+        "-Ywarn-value-discard"
+      )
+    )
+  }
+)
 
-// Coverage configuration
-coverageMinimumStmtTotal := 92
-coverageFailOnMinimum := true
-coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;"
-libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
-
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt IntegrationTest/scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle")
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt it/Test/scalafmt")
+addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle it/Test/scalastyle")

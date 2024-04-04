@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package connector
 
-import akka.stream.Materializer
-import akka.stream.scaladsl.Source
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl.Source
 import com.google.inject.Inject
-import com.kenshoo.play.metrics.Metrics
+import com.codahale.metrics.MetricRegistry
 import config.AppConfig
 import metrics.HasMetrics
 import models.CaseStatus._
@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BindingTariffClassificationConnector @Inject() (
   appConfig: AppConfig,
   client: AuthenticatedHttpClient,
-  val metrics: Metrics
+  val metrics: MetricRegistry
 )(implicit mat: Materializer)
     extends HasMetrics {
 

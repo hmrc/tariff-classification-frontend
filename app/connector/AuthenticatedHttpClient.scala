@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package connector
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import config.AppConfig
 import play.api.Configuration
 import play.api.libs.json.Writes
