@@ -378,14 +378,55 @@ suspend_case.form.state.required=Select yes if you have contacted the applicant
 pdf.ruling.title=Advance Tariff Ruling
 pdf.ruling.certificate.title=Advance Tariff Ruling Certificate
 pdf.ruling.coverLetter.title=Advance Tariff Ruling Certificate
+
 pdf.ruling.section.ifYouDisagree.title=What to do if you disagree with this decision
-pdf.ruling.issuedBy.label=Issued by
-pdf.ruling.issuedBy.text=HMRC Classification Team
+pdf.ruling.section.ifYouDisagree=If you disagree with this decision, you can either:
+pdf.ruling.section.ifYouDisagree.1=ask for a review with HMRC
+pdf.ruling.section.ifYouDisagree.2=appeal to an independent tribunal
+pdf.ruling.section.ifYouDisagree.within=You must do so within 30 days of the date of this letter.
+pdf.ruling.section.ifYouDisagree.cannot=You cannot ask for a review with HMRC and an appeal with an independent tribunal at the same time. However, you can appeal to an independent tribunal if you disagree with the outcome of your review. If you first appeal to a tribunal, a review cannot be offered.
+
+pdf.ruling.section.askForReview.title=Asking for a review with HMRC
+pdf.ruling.section.askForReview.reviewOfficer=A review officer, who is impartial, will look at the decision. The review outcome will be issued to you within 45 days.
+pdf.ruling.section.askForReview.ifYouDisagree=If you disagree with the outcome of the review, you can still appeal to the tribunal. You must do this within 30 days of the date of the letter telling you the outcome of the review. Once a review has commenced, you cannot appeal to a tribunal until the review officer tells you the outcome of their review.
+pdf.ruling.section.askForReview.furtherInfo=For further information about reviews, please see the following page.
+pdf.ruling.section.askForReview.guidance.url=<a class="govuk-link" href="https://www.gov.uk/guidance/how-to-get-a-review-of-an-hmrc-decision" target="_blank">www.gov.uk/guidance/how-to-get-a-review-of-an-hmrc-decision</a>
+pdf.ruling.section.askForReview.requestReview=To request a review, please email, or write to, HMRC's Solicitors Office and Legal Services directly. You'll find the email and postal addresses below.
+pdf.ruling.section.askForReview.solsTeam=Because the SOLS team is a separate part of HMRC, they'll need the following information to identify your case and undertake the review:
+pdf.ruling.section.askForReview.solsTeam.1=your name, or business name, as shown on the top of this letter,
+pdf.ruling.section.askForReview.solsTeam.2=all references used at the top of this letter,
+pdf.ruling.section.askForReview.solsTeam.3=the name of the HMRC officer or team named at the end of this letter,
+pdf.ruling.section.askForReview.solsTeam.4=any new information,
+pdf.ruling.section.askForReview.solsTeam.5=reasons why you disagree with the decision.
+pdf.ruling.section.askForReview.solsTeam.cannotWrite=If there is a reason why you cannot write to the SOLS team within 30 days from the date of this letter, you will need a reasonable excuse for the delay to obtain an extension. You will need to write to the SOLS team as soon as possible to explain the delay in accepting the offer of a review. If you do not have a reasonable excuse, the review cannot be undertaken. You can ask a tribunal to accept a late appeal.
+pdf.ruling.section.askForReview.solsTeam.email=The SOLS team email address is: <a class="govuk-link" href="mailto:reviews@hmrc.gov.uk">reviews@hmrc.gov.uk</a> If you decide to use email to correspond, please see the important information at the end of this letter. If you want to contact the team in writing the address is –
+
+pdf.ruling.section.appealForIndependentTribunal.title=If you want to appeal to an independent tribunal
+pdf.ruling.section.appealForIndependentTribunal.appealImmediately=If you would prefer, you can appeal immediately to an independent tribunal. You can also progress to a tribunal appeal once you have received the review outcome and disagree with the decision.
+pdf.ruling.section.appealForIndependentTribunal.courtsAndTribunals=Your request must reach HM Courts and Tribunals service within 30 days of the date of this letter, or within 30 days of the date of the letter that tells you the outcome of the review.
+pdf.ruling.section.appealForIndependentTribunal.requestRequirements=The request should include copies of:
+pdf.ruling.section.appealForIndependentTribunal.requestRequirements.1=this letter, or review outcome letter
+pdf.ruling.section.appealForIndependentTribunal.requestRequirements.2=any assessment
+pdf.ruling.section.appealForIndependentTribunal.relevantInfo=If you do not send the relevant information, HM Courts and Tribunals may reject your appeal.
+pdf.ruling.section.appealForIndependentTribunal.tribunalsInfo=For more information about tribunals go to the page below or call 0300 123 1024.
+pdf.ruling.section.appealForIndependentTribunal.page=<a class="govuk-link" href="https://www.gov.uk/tax-tribunal" target="_blank">www.gov.uk/tax-tribunal</a>
+
+pdf.ruling.section.appealsAndReviews.title=More information about appeals and reviews
+pdf.ruling.section.appealsAndReviews.moreInfo=For more information about your appeal and review rights, go to the following page:
+pdf.ruling.section.appealsAndReviews.page=<a class="govuk-link" href="https://www.gov.uk/guidance/how-to-get-a-review-of-an-hmrc-decision" target="_blank">www.gov.uk/guidance/how-to-get-a-review-of-an-hmrc-decision</a>
+pdf.ruling.section.appealsAndReviews.copy=You can ask for a copy of the HMRC1 document by calling 0300 200 3610.
+
+pdf.ruling.section.communicatingByEmail.title=Important information about communicating by email
+pdf.ruling.section.communicatingByEmail.tellUs=If you want to correspond by email, you must first tell us that you understand and accept the risks of using email. These are detailed in our factsheet CC/FS72 DSC1, ''Corresponding with HMRC by email''.  To find this factsheet, go to this page:
+pdf.ruling.section.communicatingByEmail.page=<a class="govuk-link" href="https://www.gov.uk/government/publications/corresponding-with-hmrc-by-email-ccfs72" target="_blank">www.gov.uk/government/publications/corresponding-with-hmrc-by-email-ccfs72</a>
+pdf.ruling.section.communicatingByEmail.copy=You can ask for a copy of the factsheet DSC1 by calling 0300 200 3610.
+
+pdf.ruling.section.acknowledgement.title=If you understand and accept the risks of using email, please include this acknowledgement within any initial correspondence.
+pdf.ruling.section.acknowledgement=We will only contact you by email about a tax matter where you have already given us permission to do so. If you have any doubt about the authenticity of an email which claims to come from HMRC, then do not click on any links, give any personal details, or reply to the email. Please forward the email to us at: <a class="govuk-link" href="mailto:phishing@hmrc.gov.uk">phishing@hmrc.gov.uk</a>
+
 pdf.ruling.section.holder.heading=Holder details
 pdf.ruling.section.date.submitted=Date submitted
 pdf.ruling.section.date.expiry=Expiry date
-pdf.ruling.section.holder.note.label=Note:
-pdf.ruling.section.holder.note.text=These holder details are not included in the published ruling
 pdf.ruling.section.holder.name.label=Name
 pdf.ruling.section.holder.address.label=Address
 pdf.ruling.section.holder.eori.label=EORI number
@@ -397,20 +438,11 @@ pdf.ruling.section.ruling.validTo.label=Expires on
 pdf.ruling.section.ruling.description.label=Goods description
 pdf.ruling.section.ruling.keywords.label=Keywords
 pdf.ruling.section.ruling.commercialDenomination.label=Commercial denomination
-pdf.ruling.section.ruling.commercialDenomination.sublabel=(confidential information not included in the published ruling)
 pdf.ruling.section.ruling.justification.label=Justification
 pdf.ruling.section.ruling.legalInformation.section1.label=Legal information about this ruling
 pdf.ruling.section.ruling.legalInformation.paragraph=This ruling is valid from {0} to {1} and has been issued under section 24 of The Taxation (Cross-border Trade) Act 2018 by HM Revenue & Customs. The holder has the right to request a review or submit an appeal of this ruling.
-pdf.ruling.section.ruling.legalInformation.section1.paragraph1=This ruling is valid for 3 years and has been issued under the authority of HM Revenue & Customs. The holder has the right to appeal against this ruling.
-pdf.ruling.section.ruling.legalInformation.section1.paragraph2=The information provided in the application, including photographs, documents and images will be stored on a UK database.
-pdf.ruling.section.ruling.legalInformation.section2.label=Publishing this ruling on ‘Search for Advance Tariff Rulings’
-pdf.ruling.section.ruling.legalInformation.section2.paragraph1=We will not publish:
-pdf.ruling.section.ruling.legalInformation.section2.paragraph1.listitem1=the holder details
-pdf.ruling.section.ruling.legalInformation.section2.paragraph1.listitem2=commercial denomination information (confidential information about the goods)
-pdf.ruling.section.ruling.legalInformation.section2.paragraph2=We might publish:
-pdf.ruling.section.ruling.legalInformation.section2.paragraph2.listitem1=information about the goods that is not confidential
-pdf.ruling.created.label=File created
 pdf.ruling.email=tariffclassification@hmrc.gov.uk
+
 pdf.decision.title=Liability decision for {0}
 pdf.decision.section.c592.heading=Liability details from C592
 pdf.decision.section.c592.liability.type.label=Liability type
@@ -465,6 +497,7 @@ pdf.application.footer.sendingSamples.heading=Sending samples
 pdf.application.footer.sendingSamples.html=<p>You must label your sample with the application reference number.</p><p>If you are sending samples the application will not be processed until they have been received.</p><p>Get more information on samples on GOV.UK by searching for Binding Tariff Information (Notice 600).</p>
 pdf.application.footer.sendingSamplesTo.heading=Send your samples to
 pdf.application.footer.confirmation.sendingSamples.address=Tariff Classification Service<br> HMRC Customs Policy & Strategy<br> 3rd Floor, Stratford RC<br> 14 Westfield Avenue<br> Stratford<br> E20 1HZ
+pdf.application.footer.solicitors.office.and.legal.services.address=Solicitors Office and Legal Services<br> HM Revenue and Customs<br> BX9 1ZT
 caseReference.format={0}
 site.no=No
 site.yes=Yes
