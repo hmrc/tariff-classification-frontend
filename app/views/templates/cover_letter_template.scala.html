@@ -399,13 +399,7 @@ border: 1px solid #00703C;
             <div class="column-two-thirds"><p></p></div>
             <div class="column-one-third align-right">
                 <p class="govuk-body-s">
-                    HM Revenue and Customs<br/>
-                    Tariff Classification Service<br/>
-                    Alexander House<br/>
-                    21 Victoria Avenue<br/>
-                    Southend-on-Sea<br/>
-                    Essex<br/>
-                    SS99 1AA
+                    @Html(messages("pdf.application.footer.confirmation.sendingSamples.address"))
                 </p>
                 <p class="govuk-body-s">@Dates.format(d.effectiveStartDate)</p>
             </div>
@@ -435,7 +429,7 @@ border: 1px solid #00703C;
                     You asked for an Advance Tariff Ruling for <strong>@c.application.goodsName</strong>. This ruling certificate is for you to keep for your records. This tells you the commodity code I have decided is appropriate for your goods and the reasons for the decision.
                 </p>
                 <p class="govuk-body-s">
-                    Information that has not been marked as confidential will be visible on the <a href="https://www.tax.service.gov.uk/search-for-advance-tariff-rulings">Search for Advance Tariff Rulings</a> website.
+                    @Html(messages("pdf.ruling.markedConfidential"))
                 </p>
             </div>
 
@@ -496,40 +490,97 @@ border: 1px solid #00703C;
             <div class="column-full">
                 <h3 class="heading-medium">@messages("pdf.ruling.section.ifYouDisagree.title")</h3>
                 <p class="govuk-body-s">
-                    If you disagree with this decision, you can either:
+                    @messages("pdf.ruling.section.ifYouDisagree")
                 </p>
-                <ul class="list list-bullet">
-                    <li>ask for a review with HMRC</li>
-                    <li>appeal to an independent tribunal</li>
+                <ul class="govuk-list govuk-list--bullet govuk-body-s">
+                    <li>@messages("pdf.ruling.section.ifYouDisagree.1")</li>
+                    <li>@messages("pdf.ruling.section.ifYouDisagree.2")</li>
                 </ul>
                 <p class="govuk-body-s">
-                    You cannot ask for a review with HMRC and an appeal with an independent tribunal at the same time. However, you can appeal to an independent tribunal if you disagree with the outcome of your review.
+                    @messages("pdf.ruling.section.ifYouDisagree.within")
                 </p>
                 <p class="govuk-body-s">
-                    To find more information about reviews and appeals you can <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/877291/HMRC1.pdf">read the HMRC1 document</a> or phone 0300 200 3700.
+                    @messages("pdf.ruling.section.ifYouDisagree.cannot")
                 </p>
-                <h4 class="heading-small">Asking for a review with HMRC</h4>
+                <h4 class="heading-small">@messages("pdf.ruling.section.askForReview.title")</h4>
                 <p class="govuk-body-s">
-                    Email <strong>@messages("pdf.ruling.email")</strong> asking for a review and give your reasons within 30 days of receiving your ruling email.
-                </p>
-                <p class="govuk-body-s">
-                    If you accept an offer for a review of the ruling decision, it will be carried out by an HMRC officer who has not been involved in your case. You will be able to give any evidence and further information and the review officer will email you to tell you the outcome of the review.
-                </p>
-                <h4 class="heading-small">Appealing to an independent tribunal</h4>
-                <p class="govuk-body-s">
-                    You must contact the tribunal within 30 days of your ruling email to discuss your case. If you disagree with your review from HMRC, then you must contact the tribunal within 30 days of that outcome.
+                    @messages("pdf.ruling.section.askForReview.reviewOfficer")
                 </p>
                 <p class="govuk-body-s">
-                    HMRC is not able to give a 3 month extension for this appeal, it can only be given by the independent tribunal.
-                </p>
-                <p class="govuk-body-s mt-40">
-                    Yours sincerely,
+                    @messages("pdf.ruling.section.askForReview.ifYouDisagree")
                 </p>
                 <p class="govuk-body-s">
-                    @c.assignee.map(_.name).getOrElse("")
+                    @messages("pdf.ruling.section.askForReview.furtherInfo")
+                </p>
+                <h4 class="heading-small">@Html(messages("pdf.ruling.section.askForReview.guidance.url"))</h4>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.askForReview.requestReview")
                 </p>
                 <p class="govuk-body-s">
-                    HMRC Tariff Classification Service
+                    @messages("pdf.ruling.section.askForReview.solsTeam")
+                </p>
+                <ul class="govuk-list govuk-list--bullet govuk-body-s">
+                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.1")</li>
+                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.2")</li>
+                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.3")</li>
+                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.4")</li>
+                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.5")</li>
+                </ul>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.askForReview.solsTeam.cannotWrite")
+                </p>
+                <p class="govuk-body-s">
+                    @Html(messages("pdf.ruling.section.askForReview.solsTeam.email"))
+                </p>
+                <p class="govuk-body-s">
+                    @Html(messages("pdf.application.footer.solicitors.office.and.legal.services.address"))
+                </p>
+                <h4 class="heading-small">@messages("pdf.ruling.section.appealForIndependentTribunal.title")</h4>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.appealForIndependentTribunal.appealImmediately")
+                </p>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.appealForIndependentTribunal.courtsAndTribunals")
+                </p>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements")
+                </p>
+                <ul class="govuk-list govuk-list--bullet govuk-body-s">
+                    <li>@messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements.1")</li>
+                    <li>@messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements.2")</li>
+                </ul>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.appealForIndependentTribunal.relevantInfo")
+                </p>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.appealForIndependentTribunal.tribunalsInfo")
+                </p>
+                <p class="govuk-body-s">
+                    @Html(messages("pdf.ruling.section.appealForIndependentTribunal.page"))
+                </p>
+                <h4 class="heading-small">@messages("pdf.ruling.section.appealsAndReviews.title")</h4>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.appealsAndReviews.moreInfo")
+                </p>
+                <p class="govuk-body-s">
+                    @Html(messages("pdf.ruling.section.appealsAndReviews.page"))
+                </p>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.appealsAndReviews.copy")
+                </p>
+                <h4 class="heading-small">@messages("pdf.ruling.section.communicatingByEmail.title")</h4>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.communicatingByEmail.tellUs")
+                </p>
+                <p class="govuk-body-s">
+                    @Html(messages("pdf.ruling.section.communicatingByEmail.page"))
+                </p>
+                <p class="govuk-body-s">
+                    @messages("pdf.ruling.section.communicatingByEmail.copy")
+                </p>
+                <h4 class="heading-small">@messages("pdf.ruling.section.acknowledgement.title")</h4>
+                <p class="govuk-body-s">
+                    @Html(messages("pdf.ruling.section.acknowledgement"))
                 </p>
             </div></div>
     </div>
