@@ -220,9 +220,9 @@ object Report {
   )
 
   private val calculateDueToExpireDateRange: InstantRange = {
-    val now = LocalDate.now()
+    val now      = LocalDate.now()
     val firstDay = now.minusMonths(1).`with`(firstDayOfMonth())
-    val lastDay = now.`with`(lastDayOfMonth())
+    val lastDay  = now.`with`(lastDayOfMonth())
     InstantRange(
       min = firstDay.atStartOfDay(ZoneOffset.UTC).toInstant,
       max = lastDay.atTime(LocalTime.MAX).atZone(ZoneOffset.UTC).toInstant
@@ -239,10 +239,10 @@ object Report {
       ReportField.ContactName,
       ReportField.ContactEmail
     ),
-    sortBy    = ReportField.DateExpired,
-    sortOrder = SortDirection.ASCENDING,
-    statuses  = Set(PseudoCaseStatus.COMPLETED),
-    dateRange = calculateDueToExpireDateRange,
+    sortBy            = ReportField.DateExpired,
+    sortOrder         = SortDirection.ASCENDING,
+    statuses          = Set(PseudoCaseStatus.COMPLETED),
+    dateRange         = calculateDueToExpireDateRange,
     dueToExpireReport = true
   )
 
