@@ -1,7 +1,7 @@
 import sbt.*
 object AppDependencies {
 
-  private val bootstrapPlayVersion = "8.5.0"
+  private val bootstrapPlayVersion = "8.6.0"
   private val hmrcMongoPlayVersion = "1.8.0"
 
   val compile: Seq[ModuleID] = Seq(
@@ -9,7 +9,7 @@ object AppDependencies {
     "uk.gov.hmrc"                  %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
     "uk.gov.hmrc.mongo"            %% "hmrc-mongo-play-30"         % hmrcMongoPlayVersion,
     "uk.gov.hmrc"                  %% "play-json-union-formatter"  % "1.21.0",
-    "org.typelevel"                %% "cats-core"                  % "2.10.0",
+    "org.typelevel"                %% "cats-core"                  % "2.12.0",
     "com.github.blemale"           %% "scaffeine"                  % "5.2.1",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.17.0",
     "org.apache.pekko"             %% "pekko-connectors-csv"       % "1.0.2"
