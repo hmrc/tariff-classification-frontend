@@ -101,7 +101,7 @@ class ManageKeywordsController @Inject() (
       }
     )
 
-  def newKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def newKeyword: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
         keywords <- keywordService.findAll(NoPagination())
@@ -113,7 +113,7 @@ class ManageKeywordsController @Inject() (
       )
     }
 
-  def createKeyword(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def createKeyword: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       keywordService.findAll(NoPagination()).flatMap { keywords =>
         val keywordNames = keywords.results.map(_.name)
@@ -200,10 +200,7 @@ class ManageKeywordsController @Inject() (
         }
     }
 
-  def displayConfirmKeyword(
-    saveKeyword: String,
-    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
-  ): Action[AnyContent] =
+  def displayConfirmKeyword(saveKeyword: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         keywordCreatedConfirm(saveKeyword)
@@ -268,7 +265,7 @@ class ManageKeywordsController @Inject() (
       }
     )
 
-  def displayConfirmationKeywordDeleted(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def displayConfirmationKeywordDeleted: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         confirmKeywordDeletedView()

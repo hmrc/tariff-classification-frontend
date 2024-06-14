@@ -98,7 +98,7 @@ class ManageUserController @Inject() (
       }
     }
 
-  def displayUserDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def displayUserDetails(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {
@@ -112,7 +112,7 @@ class ManageUserController @Inject() (
           .getOrElse(NotFound(user_not_found(pid)))
     }
 
-  def deleteUser(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def deleteUser(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         for {
@@ -164,12 +164,12 @@ class ManageUserController @Inject() (
         )
     )
 
-  def doneDeleteUser(userName: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def doneDeleteUser(userName: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)) {
       implicit request: AuthenticatedRequest[AnyContent] => Ok(doneDeleteUserPage(userName))
     }
 
-  def editUserTeamDetails(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def editUserTeamDetails(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async {
       implicit request: AuthenticatedRequest[AnyContent] =>
         userService
@@ -181,7 +181,7 @@ class ManageUserController @Inject() (
           }
     }
 
-  def postEditUserTeams(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postEditUserTeams(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       userEditTeamForm
         .bindFromRequest()
