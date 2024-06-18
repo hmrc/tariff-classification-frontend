@@ -73,7 +73,7 @@ class MoveCasesController @Inject() (
   private val chooseTeamForm    = TeamToMoveCaseForm.form
   private val chooseUserForm    = UserToMoveCaseForm.form
 
-  def postMoveATaRCases(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postMoveATaRCases(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       val userAnswers = UserAnswers(MoveCasesCacheKey)
       moveATaRCasesForm
@@ -84,7 +84,7 @@ class MoveCasesController @Inject() (
         )
     }
 
-  def postMoveLiabCases(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postMoveLiabCases(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       val userAnswers = UserAnswers(MoveCasesCacheKey)
       moveLiabCasesForm
@@ -95,7 +95,7 @@ class MoveCasesController @Inject() (
         )
     }
 
-  def postMoveCorrCases(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postMoveCorrCases(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       val userAnswers = UserAnswers(MoveCasesCacheKey)
       moveCorrCasesForm
@@ -106,7 +106,7 @@ class MoveCasesController @Inject() (
         )
     }
 
-  def postMoveMiscCases(pid: String, activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postMoveMiscCases(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       val userAnswers = UserAnswers(MoveCasesCacheKey)
       moveMiscCasesForm
@@ -117,7 +117,7 @@ class MoveCasesController @Inject() (
         )
     }
 
-  def chooseUserOrTeam(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def chooseUserOrTeam: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )) { implicit request =>
@@ -125,7 +125,7 @@ class MoveCasesController @Inject() (
       Ok(teamOrUserPage(caseNumber, teamOrUserForm))
     }
 
-  def postTeamOrUserChoice(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postTeamOrUserChoice: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )) { implicit request =>
@@ -134,17 +134,15 @@ class MoveCasesController @Inject() (
         .bindFromRequest()
         .fold(
           errors => Ok(teamOrUserPage(caseNumber, errors)),
-          choice =>
-            choice match {
-              case TeamOrUser.TEAM => Redirect(routes.MoveCasesController.chooseTeamToMoveCases())
-              case _               => Redirect(routes.MoveCasesController.chooseUserToMoveCases())
-            }
+          {
+            case TeamOrUser.TEAM => Redirect(routes.MoveCasesController.chooseTeamToMoveCases())
+            case _ => Redirect(routes.MoveCasesController.chooseUserToMoveCases())
+          }
         )
     }
 
   def chooseUserToMoveCases(
-    teamId: Option[String]         = None,
-    activeSubNav: SubNavigationTab = ManagerToolsUsersTab
+    teamId: Option[String]         = None
   ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
@@ -169,8 +167,7 @@ class MoveCasesController @Inject() (
     }
 
   def postUserChoice(
-    teamId: Option[String]         = None,
-    activeSubNav: SubNavigationTab = ManagerToolsUsersTab
+    teamId: Option[String]         = None
   ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
@@ -197,15 +194,14 @@ class MoveCasesController @Inject() (
               .sequence(usersOfManagedTeams)
               .map(_.flatten)
               .flatMap(users => successful(Ok(chooseUserPage(caseRefs.size, users.distinct, errors, teamId)))),
-          userPid =>
-            userPid match {
-              case "OTHER" => successful(Redirect(routes.MoveCasesController.chooseUserFromAnotherTeam()))
-              case _       => moveToUser(userPid, caseRefs)
-            }
+          {
+            case "OTHER" => successful(Redirect(routes.MoveCasesController.chooseUserFromAnotherTeam()))
+            case userPid => moveToUser(userPid, caseRefs)
+          }
         )
     }
 
-  def chooseOneOfUsersTeams(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def chooseOneOfUsersTeams: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async(implicit request =>
@@ -236,7 +232,7 @@ class MoveCasesController @Inject() (
         .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
     )
 
-  def postChooseOneOfUsersTeams(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postChooseOneOfUsersTeams: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async(implicit request =>
@@ -288,7 +284,7 @@ class MoveCasesController @Inject() (
         )
     )
 
-  def chooseUserFromAnotherTeam(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def chooseUserFromAnotherTeam: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async(implicit request =>
@@ -297,7 +293,7 @@ class MoveCasesController @Inject() (
       } yield Ok(chooseTeamToChooseUsersFromPage(chooseTeamForm, nonGatewayQueues))
     )
 
-  def postChooseUserFromAnotherTeam(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postChooseUserFromAnotherTeam: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async { implicit request =>
@@ -312,7 +308,7 @@ class MoveCasesController @Inject() (
         )
     }
 
-  def chooseTeamToMoveCases(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def chooseTeamToMoveCases: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async { implicit request =>
@@ -322,7 +318,7 @@ class MoveCasesController @Inject() (
       } yield Ok(chooseTeamPage(caseNumber, chooseTeamForm, queues))
     }
 
-  def postTeamChoice(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def postTeamChoice: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async { implicit request =>
@@ -351,7 +347,7 @@ class MoveCasesController @Inject() (
         )
     }
 
-  def casesMovedToTeamDone(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def casesMovedToTeamDone: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async { implicit request =>
@@ -375,7 +371,7 @@ class MoveCasesController @Inject() (
         .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
     }
 
-  def casesMovedToUserDone(activeSubNav: SubNavigationTab = ManagerToolsUsersTab): Action[AnyContent] =
+  def casesMovedToUserDone: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
     )).async { implicit request =>

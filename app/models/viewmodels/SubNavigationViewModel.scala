@@ -73,5 +73,3 @@ case object ManagerToolsUsersTab extends SubNavigationTab("sub_nav_manager_tools
 case object ManagerToolsKeywordsTab extends SubNavigationTab("sub_nav_manager_tools_keywords_tab")
 
 case object ManagerToolsReportsTab extends SubNavigationTab("sub_nav_manager_tools_reports_tab")
-
-case class SubNavigationViewModel(selectedTab: SubNavigationTab)
