@@ -42,7 +42,7 @@ object StatusTagViewModel {
 
   def appealStatus(decision: Option[Decision]): Option[StatusTagViewModel] =
     Appeal.highestAppealFromDecision(decision).map { appeal =>
-      StatusTagViewModel(AppealStatus.format(appeal.`type`, appeal.status), "red")
+      StatusTagViewModel(AppealStatus.format(appeal.`type`, appeal.status).toUpperCase, "red")
     }
 }
 

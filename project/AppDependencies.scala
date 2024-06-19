@@ -11,7 +11,7 @@ object AppDependencies {
     "uk.gov.hmrc"                  %% "play-json-union-formatter"  % "1.21.0",
     "org.typelevel"                %% "cats-core"                  % "2.12.0",
     "com.github.blemale"           %% "scaffeine"                  % "5.2.1",
-    "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.17.0",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.17.1",
     "org.apache.pekko"             %% "pekko-connectors-csv"       % "1.0.2"
   )
 

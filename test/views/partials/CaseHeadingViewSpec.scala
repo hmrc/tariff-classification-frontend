@@ -61,7 +61,7 @@ class CaseHeadingViewSpec extends ViewSpec {
       val doc = view(case_heading(c))
 
       doc                                 should containElementWithID("appeal-status")
-      doc.getElementById("appeal-status") should containText("Appeal allowed")
+      doc.getElementById("appeal-status") should containText("APPEAL ALLOWED")
     }
 
   }

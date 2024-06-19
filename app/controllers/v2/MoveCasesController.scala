@@ -133,16 +133,15 @@ class MoveCasesController @Inject() (
       teamOrUserForm
         .bindFromRequest()
         .fold(
-          errors => Ok(teamOrUserPage(caseNumber, errors)),
-          {
+          errors => Ok(teamOrUserPage(caseNumber, errors)), {
             case TeamOrUser.TEAM => Redirect(routes.MoveCasesController.chooseTeamToMoveCases())
-            case _ => Redirect(routes.MoveCasesController.chooseUserToMoveCases())
+            case _               => Redirect(routes.MoveCasesController.chooseUserToMoveCases())
           }
         )
     }
 
   def chooseUserToMoveCases(
-    teamId: Option[String]         = None
+    teamId: Option[String] = None
   ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
@@ -167,7 +166,7 @@ class MoveCasesController @Inject() (
     }
 
   def postUserChoice(
-    teamId: Option[String]         = None
+    teamId: Option[String] = None
   ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
@@ -193,8 +192,7 @@ class MoveCasesController @Inject() (
             Future
               .sequence(usersOfManagedTeams)
               .map(_.flatten)
-              .flatMap(users => successful(Ok(chooseUserPage(caseRefs.size, users.distinct, errors, teamId)))),
-          {
+              .flatMap(users => successful(Ok(chooseUserPage(caseRefs.size, users.distinct, errors, teamId)))), {
             case "OTHER" => successful(Redirect(routes.MoveCasesController.chooseUserFromAnotherTeam()))
             case userPid => moveToUser(userPid, caseRefs)
           }

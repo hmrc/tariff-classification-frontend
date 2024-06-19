@@ -51,7 +51,7 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val doc = view(appeal_status(c, "id"))
 
-      doc.text() shouldBe "Under mediation"
+      doc.text() shouldBe "UNDER MEDIATION"
     }
 
     "render completed for ALLOWED ADR" in {
@@ -67,7 +67,7 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val doc = view(appeal_status(c, "id"))
 
-      doc.text() shouldBe "Completed"
+      doc.text() shouldBe "COMPLETED"
     }
 
     "render complected for DISMISSED ADR" in {
@@ -83,7 +83,7 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val doc = view(appeal_status(c, "id"))
 
-      doc.text() shouldBe "Completed"
+      doc.text() shouldBe "COMPLETED"
     }
 
     //REVIEW
@@ -100,7 +100,7 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val doc = view(appeal_status(c, "id"))
 
-      doc.text() shouldBe "Under review"
+      doc.text() shouldBe "UNDER REVIEW"
     }
 
     "render review upheld for ALLOWED REVIEW" in {
@@ -116,7 +116,7 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val doc = view(appeal_status(c, "id"))
 
-      doc.text() shouldBe "Review upheld"
+      doc.text() shouldBe "REVIEW UPHELD"
     }
 
     "render review overturned for DISMISSED REVIEW" in {
@@ -132,7 +132,7 @@ class AppealStatusViewSpec extends ViewSpec {
 
       val doc = view(appeal_status(c, "id"))
 
-      doc.text() shouldBe "Review overturned"
+      doc.text() shouldBe "REVIEW OVERTURNED"
     }
 
   }
