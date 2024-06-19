@@ -31,6 +31,7 @@ class ErrorHandler @Inject() (
 ) extends FrontendErrorHandler {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(
-    implicit request: Request[_]): Html =
+    implicit request: Request[_]
+  ): Html =
     error_template(pageTitle, heading, message)
 }

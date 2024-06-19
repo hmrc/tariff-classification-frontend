@@ -22,7 +22,7 @@
 
     @if(appeal.isDefined) {
         <span id="@id" class="govuk-tag govuk-tag--red">
-        @AppealStatus.format(appeal.get.`type`, appeal.get.status)
+        @AppealStatus.format(appeal.get.`type`, appeal.get.status).toUpperCase
         </span>
     }
 

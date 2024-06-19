@@ -166,7 +166,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         Seq(
           "advanced_search_results-row-0-business_name" -> "business-name",
           "advanced_search_results-row-0-status"        -> "OPEN",
-          "advanced_search_results-row-0-appeal_status" -> "Under appeal",
+          "advanced_search_results-row-0-appeal_status" -> "UNDER APPEAL",
           "advanced_search_results-row-0-ruling_end"    -> "01 Feb 2019",
           "advanced_search_results-row-0-decision_code" -> "commodity-code"
         )
