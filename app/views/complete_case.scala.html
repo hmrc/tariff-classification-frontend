@@ -20,6 +20,7 @@
 @import models.viewmodels.NoTabSelected
 @import models.{BTIApplication, Case}
 @import views.forms.components.RadioOption
+@import views.html.components.warning
 @import views.html.forms.components.input_radiogroup
 @import views.html.includes.main
 @import views.html.partials.{case_heading, back_link, error_summary}
@@ -29,7 +30,8 @@
 
 @this(
         main: main,
-        backLink: back_link
+        backLink: back_link,
+        warning: warning
 )
 
 
@@ -62,13 +64,7 @@
             <li>an entry will be added to the case activity tab</li>
         </ul>
 
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                Once this ruling is completed it cannot be undone.
-            </strong>
-        </div>
+        @warning(messages("complete_case.warning"))
 
         @helper.form(action = CompleteCaseController.postCompleteCase(c.reference), 'class -> "form", Symbol("id") -> "complete-case", Symbol("novalidate") -> "novalidate") {
             @helper.CSRF.formField

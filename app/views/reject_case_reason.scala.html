@@ -27,7 +27,8 @@
 
 @this(
         main: main,
-        backLink: back_link
+        backLink: back_link,
+        warning: warning
 )
 
 @(c: Case, form: Form[CaseRejection])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -70,10 +71,7 @@
             customErrorMessage = Some(messages("error.empty.reject.note"))
         )
 
-        @warning(
-            "This case cannot be reopened after it has been rejected.",
-            containerClass = "govuk-form-group"
-        )
+        @warning(messages("change_case_status.rejected.warning"))
 
         @confirm_or_cancel_buttons(
             id = "reject_case",

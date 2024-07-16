@@ -19,13 +19,15 @@
 @import models.Operator
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.NoTabSelected
+@import views.html.components.warning
 @import views.html.forms.components.input_yes_no
 @import views.html.includes.main
 @import views.html.partials.{back_link, error_summary}
 
 @this(
         main: main,
-        backLink: back_link
+        backLink: back_link,
+        warning: warning
 )
 
 
@@ -36,14 +38,7 @@
 
 @content = @{
         Html(s"""<p class="govuk-body">${messages("users.user.delete.confirm.message")}</p>
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                This action cannot be undone.
-            </strong>
-        </div>"""
-        )
+        ${warning(messages("users.user.delete.warning"))}""")
 }
 
 @main(

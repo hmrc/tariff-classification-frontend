@@ -27,7 +27,8 @@
 
 @this(
         main: main,
-        backLink: back_link
+        backLink: back_link,
+        warning: warning
 )
 
 @(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -55,7 +56,7 @@
         @status_change_upload(uploadForm("file"), "suppressing")
 
         @warning(
-            "This case cannot be reopened after it has been suppressed."
+            messages("change_case_status.suppressed.email.warning")
         )
 
         @confirm_or_cancel_buttons(
