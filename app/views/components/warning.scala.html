@@ -14,12 +14,14 @@
  * limitations under the License.
  *@
 
-@(message: String, containerClass: String = "")
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, WarningText}
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
 
-<div class="govuk-warning-text @containerClass">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-        <span class="govuk-warning-text__assistive">Warning</span>
-        @message
-    </strong>
-</div>
+@this(govukWarningText: GovukWarningText)
+
+@(message: String)(implicit messages: Messages)
+
+@govukWarningText(WarningText(
+    iconFallbackText = Some(messages("site.warning")),
+    content = Text(message)
+))

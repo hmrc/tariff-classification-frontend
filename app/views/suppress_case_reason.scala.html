@@ -26,7 +26,8 @@
 
 @this(
         main: main,
-        backLink: back_link
+        backLink: back_link,
+        warning: warning
 )
 
 @(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -58,7 +59,7 @@
         )
 
         @warning(
-            messages("change_case_status.to.suppressed.warning")
+            messages("change_case_status.suppressed.reason.warning")
         )
 
         @confirm_or_cancel_buttons(

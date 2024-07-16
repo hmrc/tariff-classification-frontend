@@ -27,7 +27,8 @@
 
 @this(
         main: main,
-        backLink: back_link
+        backLink: back_link,
+        warning: warning
 )
 
 
@@ -55,10 +56,7 @@
 
         @status_change_upload(uploadForm("file"), "rejecting")
 
-        @warning(
-            "This case cannot be reopened after it has been rejected.",
-            containerClass = "govuk-layout-wrapper"
-        )
+        @warning(messages("change_case_status.rejected.warning"))
 
         @confirm_or_cancel_buttons(
             id = "reject_case",

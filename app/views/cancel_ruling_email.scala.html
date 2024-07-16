@@ -27,7 +27,8 @@
 
 @this(
         main: main,
-        backLink: back_link
+        backLink: back_link,
+        warning: warning
 )
 
 @(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
@@ -57,10 +58,10 @@
 
         @warning(
             if(c.application.isBTI) {
-                "Cancelling this ATaR ruling cannot be reversed."
+                messages("change_case_status.cancelled.atar.ruling.warning")
             }
             else {
-                "Cancelling this liability decision cannot be reversed."
+                messages("change_case_status.cancelled.liability.decision.warning")
             }
         )
 
