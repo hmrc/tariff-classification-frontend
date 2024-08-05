@@ -21,7 +21,6 @@ import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.verify
-import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.{LocalDate, ZoneOffset}
@@ -64,9 +63,9 @@ class EmailServiceSpec extends ServiceSpecBase {
       given(application.contact).willReturn(contact)
       given(application.goodName).willReturn("item")
 
-      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Email[_]]]))
+      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier]))
         .willReturn(successful((): Unit))
-      given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]]))
+      given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier]))
         .willReturn(successful(template))
 
       await(service.sendCaseCompleteEmail(aCase, anOperator))
@@ -77,14 +76,14 @@ class EmailServiceSpec extends ServiceSpecBase {
             Seq("email"),
             CaseCompletedEmailParameters(
               recipientName_line1 = "name",
-              reference           = "ref",
-              goodsName           = "item",
-              officerName         = "officer",
-              dateSubmitted       = "01 Jan 2021"
+              reference = "ref",
+              goodsName = "item",
+              officerName = "officer",
+              dateSubmitted = "01 Jan 2021"
             )
           )
         )
-      )(any[HeaderCarrier], any[Writes[Email[_]]])
+      )(any[HeaderCarrier])
     }
   }
 

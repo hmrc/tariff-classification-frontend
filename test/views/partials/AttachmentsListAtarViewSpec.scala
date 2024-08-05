@@ -42,11 +42,11 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Render attachments" in {
       val attachment = Cases.storedAttachment.copy(
-        id         = "FILE_ID",
-        fileName   = Some("name"),
-        url        = Some("url"),
+        id = "FILE_ID",
+        fileName = Some("name"),
+        url = Some("url"),
         scanStatus = Some(ScanStatus.READY),
-        timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
+        timestamp = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
       val c           = Cases.btiCaseExample
@@ -62,7 +62,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Render 'Added by'" in {
       val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("name"),
         operator = Some(Operator("id", Some("operator name")))
       )
@@ -79,13 +79,13 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Render 'Added by' with unknown operator and with the applicant name" in {
       val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("fileName_attachment"),
         operator = None
       )
 
       val attachment_trader = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("fileName")
       )
 
@@ -107,7 +107,7 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
 
     "Render 'Added by' with unknown operator name" in {
       val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("name"),
         operator = Some(Operator("id", None))
       )
@@ -126,10 +126,10 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
     "Status should display PUBLISHED if the file is public" in {
       val attachment = Cases.storedAttachment
         .copy(
-          id         = "FILE_ID",
-          public     = true,
-          fileName   = Some("name"),
-          url        = Some("url"),
+          id = "FILE_ID",
+          public = true,
+          fileName = Some("name"),
+          url = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
 
@@ -144,10 +144,10 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
     "Status should display CONFIDENTIAL if the file is not public" in {
       val attachment = Cases.storedAttachment
         .copy(
-          id         = "FILE_ID",
-          public     = false,
-          fileName   = Some("name"),
-          url        = Some("url"),
+          id = "FILE_ID",
+          public = false,
+          fileName = Some("name"),
+          url = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
 
@@ -163,10 +163,10 @@ class AttachmentsListAtarViewSpec extends ViewSpec {
     "Status should display UPLOAD FAILED if the file is a virus" in {
       val attachment = Cases.storedAttachment
         .copy(
-          id         = "FILE_ID",
-          public     = false,
-          fileName   = Some("name"),
-          url        = Some("url"),
+          id = "FILE_ID",
+          public = false,
+          fileName = Some("name"),
+          url = Some("url"),
           scanStatus = Some(ScanStatus.FAILED)
         )
 

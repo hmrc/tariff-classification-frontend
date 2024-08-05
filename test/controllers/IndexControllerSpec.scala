@@ -39,7 +39,7 @@ class IndexControllerSpec extends ControllerBaseSpec {
       val result = await(controller(Role.READ_ONLY).get()(fakeRequest))
 
       status(result)                                                shouldBe OK
-      bodyOf(result)                                                should include("read_only_home-heading")
+      bodyOf(result)                                                  should include("read_only_home-heading")
       session(result).get(SessionKeys.backToQueuesLinkLabel)        shouldBe Some("")
       session(result).get(SessionKeys.backToQueuesLinkUrl)          shouldBe Some("/manage-tariff-classifications")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe None

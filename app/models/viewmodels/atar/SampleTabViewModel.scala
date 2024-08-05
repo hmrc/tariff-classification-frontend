@@ -32,13 +32,13 @@ object SampleTabViewModel {
     val atarApplication = cse.application.asATAR
 
     SampleTabViewModel(
-      caseReference      = cse.reference,
+      caseReference = cse.reference,
       sampleToBeProvided = atarApplication.sampleToBeProvided,
       sampleToBeReturned = atarApplication.sampleToBeReturned,
-      sampleRequestedBy  = cse.sample.requestedBy.flatMap(_.name),
+      sampleRequestedBy = cse.sample.requestedBy.flatMap(_.name),
       sampleReturnStatus = SampleReturn.format(cse.sample.returnStatus),
-      sampleStatus       = SampleStatus.format(cse.sample.status),
-      sampleActivity     = activity
+      sampleStatus = SampleStatus.format(cse.sample.status),
+      sampleActivity = activity
     )
   }
 }

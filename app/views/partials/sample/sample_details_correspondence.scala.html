@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.request.AuthenticatedRequest
 @import models.Permission
@@ -26,7 +25,7 @@
         sample_status_events_table: views.html.partials.liabilities.sample.sample_status_events_table
 )
 
-@(s: SampleStatusTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(s: SampleStatusTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @tab_heading("samples", messages("case.v2.liability.sample_status_tab.tab_title"), Some(messages("case.v2.liability.sample_status_tab.hint")))
 

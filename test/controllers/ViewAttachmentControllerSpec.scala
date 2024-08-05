@@ -138,7 +138,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result)      shouldBe Status.NOT_FOUND
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-      bodyOf(result)      should include("attachment-processing")
+      bodyOf(result)        should include("attachment-processing")
     }
 
     "return 404 for un-safe file found" in {
@@ -149,7 +149,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result)      shouldBe Status.NOT_FOUND
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-      bodyOf(result)      should include("attachment-scan_failed")
+      bodyOf(result)        should include("attachment-scan_failed")
     }
 
     "return 404 when there is no file metadata" in {
@@ -163,7 +163,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result)      shouldBe Status.NOT_FOUND
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-      bodyOf(result)      should include("attachment-scan_failed")
+      bodyOf(result)        should include("attachment-scan_failed")
     }
 
     "redirect unauthorised when does not have right permissions" in {
@@ -172,7 +172,7 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           .get(reference, "id")(newFakeGETRequestWithCSRF())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

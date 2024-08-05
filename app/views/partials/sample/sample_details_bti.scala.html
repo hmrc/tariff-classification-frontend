@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.{Case, SampleReturn}
 @import models.request.AuthenticatedRequest
@@ -22,7 +21,7 @@
 @import views.html.partials._
 
 @import views.html.partials.sample.sample_status
-@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @tab_heading("sample-application", messages("case.menu.sample-details"))
 

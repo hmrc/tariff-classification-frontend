@@ -31,9 +31,9 @@ case class Case(
   application: Application,
   decision: Option[Decision],
   attachments: Seq[Attachment],
-  keywords: Set[String]             = Set.empty,
-  sample: Sample                    = Sample(),
-  dateOfExtract: Option[Instant]    = None,
+  keywords: Set[String] = Set.empty,
+  sample: Sample = Sample(),
+  dateOfExtract: Option[Instant] = None,
   migratedDaysElapsed: Option[Long] = None,
   referredDaysElapsed: Long
 ) {

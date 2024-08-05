@@ -34,8 +34,8 @@ object SubNavigationTab {
     ManagerToolsReportsTab
   )
 
-  implicit def subNavigationTabQueryStringBindable(
-    implicit stringBindable: QueryStringBindable[String]
+  implicit def subNavigationTabQueryStringBindable(implicit
+    stringBindable: QueryStringBindable[String]
   ): QueryStringBindable[SubNavigationTab] =
     new QueryStringBindable[SubNavigationTab] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, SubNavigationTab]] =

@@ -90,9 +90,9 @@ class SearchControllerSpec extends ControllerBaseSpec {
       given(keywordsService.findAll()(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[Keyword])
       val result = await(controller.search(defaultTab, reference = Some("reference"), page = 2)(fakeRequest))
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) shouldNot include("advanced_search_results")
     }
@@ -101,15 +101,17 @@ class SearchControllerSpec extends ControllerBaseSpec {
       given(keywordsService.findAll()(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[Keyword])
       val result = await(controller.search(defaultTab, reference = Some(" "), page = 2)(fakeRequest))
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) shouldNot include("advanced_search_results")
     }
 
     "not render results if empty" in {
-      given(casesService.search(refEq(Search()), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future
+      given(
+        casesService.search(refEq(Search()), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])
+      ) willReturn Future
         .successful(Paged.empty[Case])
       given(fileStoreService.getAttachments(refEq(Seq.empty))(any[HeaderCarrier])) willReturn Future.successful(
         Map.empty[Case, Seq[StoredAttachment]]
@@ -118,9 +120,9 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
       val result = await(controller.search(defaultTab, search = Search(), page = 2)(fakeRequest))
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) shouldNot include("advanced_search_results")
     }
@@ -143,7 +145,9 @@ class SearchControllerSpec extends ControllerBaseSpec {
           shouldPublishToRulings = true
         )
 
-      given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future
+      given(
+        casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])
+      ) willReturn Future
         .successful(Paged(Seq(c)))
       given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(
         Map(c -> Seq(attachment))
@@ -159,8 +163,8 @@ class SearchControllerSpec extends ControllerBaseSpec {
       status(result)                                                shouldBe Status.OK
       contentType(result)                                           shouldBe Some("text/html")
       charset(result)                                               shouldBe Some("utf-8")
-      contentAsString(result)                                       should include("advanced_search-heading")
-      contentAsString(result)                                       should include("advanced_search_results")
+      contentAsString(result)                                         should include("advanced_search-heading")
+      contentAsString(result)                                         should include("advanced_search_results")
       session(result).get(SessionKeys.backToSearchResultsLinkLabel) shouldBe Some("search results")
       session(result).get(SessionKeys.backToSearchResultsLinkUrl) shouldBe
         Some(
@@ -177,9 +181,9 @@ class SearchControllerSpec extends ControllerBaseSpec {
       val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "a")
       val result  = await(controller.search(defaultTab, search = search, page = 2)(request))
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("advanced_search-heading")
       contentAsString(result) should include("error-summary")
       contentAsString(result) shouldNot include("advanced_search_results")
@@ -203,7 +207,9 @@ class SearchControllerSpec extends ControllerBaseSpec {
           shouldPublishToRulings = true
         )
 
-      given(casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])) willReturn Future
+      given(
+        casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])
+      ) willReturn Future
         .successful(Paged(Seq(c)))
       given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(
         Map(c -> Seq(attachment))
@@ -228,7 +234,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       )
       val result = await(controller(Set.empty).search(defaultTab, search = search, page = 2)(request))
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 

@@ -30,7 +30,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
   lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
 
   val initiateResponse: FileStoreInitiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -62,7 +62,7 @@ class AttachmentsDetailsViewSpec extends ViewSpec {
       initiateResponse,
       AttachmentsTabViewModel("ref", Seq(attachment), None),
       showUploadAttachments = true
-    )(requestWithPermissions(Permission.REMOVE_ATTACHMENTS), messages, appConfig)
+    )(requestWithPermissions(Permission.REMOVE_ATTACHMENTS), messages)
 
   "Attachments Details View" should {
 

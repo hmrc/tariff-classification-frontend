@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.v2.routes
 @import models.forms.v2.TeamOrUser
 @import models.forms.v2.TeamOrUser.TeamOrUser
@@ -34,7 +33,7 @@
 @(
         numberOfCases:Integer,
         form: Form[TeamOrUser]
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @heading = @{if(numberOfCases == 1){
     messages("users.move_cases.team_or_user.header.single")

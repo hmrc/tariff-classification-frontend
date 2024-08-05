@@ -52,9 +52,9 @@ class SearchController @Inject() (
   def search(
     selectedTab: SearchTab,
     addToSearch: Option[Boolean] = None,
-    reference: Option[String]    = None,
-    search: Search               = Search(),
-    sort: Sort                   = Sort(),
+    reference: Option[String] = None,
+    search: Search = Search(),
+    sort: Sort = Sort(),
     page: Int
   ): Action[AnyContent] = (verify.authenticated andThen verify.mustHave(Permission.ADVANCED_SEARCH)).async {
     implicit request =>
@@ -88,7 +88,7 @@ class SearchController @Inject() (
                 Future.successful(Results.Ok(advanced_search(formWithErrors, None, keywords.map(_.name), focus))),
               data =>
                 for {
-                  cases: Paged[Case]                            <- casesService.search(search, sort, SearchPagination(page))
+                  cases: Paged[Case] <- casesService.search(search, sort, SearchPagination(page))
                   attachments: Map[Case, Seq[StoredAttachment]] <- fileStoreService.getAttachments(cases.results)
                   results: Paged[SearchResult] = cases.map(c => SearchResult(c, attachments.getOrElse(c, Seq.empty)))
                 } yield Results

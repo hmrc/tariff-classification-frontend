@@ -49,7 +49,7 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/extended-use/status").get())
 
       response.status shouldBe OK
-      response.body   should include("Do you want to extend the use of this case ruling?")
+      response.body     should include("Do you want to extend the use of this case ruling?")
     }
 
     "redirect on auth failure" in {
@@ -60,7 +60,7 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/extended-use/status").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
   }
 

@@ -39,16 +39,16 @@ sealed abstract class Report extends Product with Serializable {
 
 object Report {
   val caseCountByStatus: SummaryReport = SummaryReport(
-    name      = "Case count by status",
-    groupBy   = NonEmptySeq.one(ReportField.Status),
-    sortBy    = ReportField.Status,
+    name = "Case count by status",
+    groupBy = NonEmptySeq.one(ReportField.Status),
+    sortBy = ReportField.Status,
     sortOrder = SortDirection.ASCENDING
   )
 
   val suppressedCaseCount: CaseReport = CaseReport(
-    name      = "Suppressed cases count",
-    statuses  = Set(PseudoCaseStatus.SUPPRESSED),
-    sortBy    = ReportField.ElapsedDays,
+    name = "Suppressed cases count",
+    statuses = Set(PseudoCaseStatus.SUPPRESSED),
+    sortBy = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     fields = NonEmptySeq.of(
       ReportField.Reference,
@@ -61,9 +61,9 @@ object Report {
   )
 
   val openCasesCount: CaseReport = CaseReport(
-    name      = "Open cases count",
-    statuses  = Set(PseudoCaseStatus.OPEN),
-    sortBy    = ReportField.ElapsedDays,
+    name = "Open cases count",
+    statuses = Set(PseudoCaseStatus.OPEN),
+    sortBy = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     fields = NonEmptySeq.of(
       ReportField.Reference,
@@ -78,16 +78,16 @@ object Report {
   )
 
   val rejectedCaseCountByUser: SummaryReport = SummaryReport(
-    name      = "Rejected cases breakdown by user",
-    statuses  = Set(PseudoCaseStatus.REJECTED),
-    groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.Count,
+    name = "Rejected cases breakdown by user",
+    statuses = Set(PseudoCaseStatus.REJECTED),
+    groupBy = NonEmptySeq.one(ReportField.User),
+    sortBy = ReportField.Count,
     sortOrder = SortDirection.DESCENDING
   )
 
   val calendarAtarCases: CaseReport = CaseReport(
-    name      = "120 calendar days for ATaR",
-    sortBy    = ReportField.TotalDays,
+    name = "120 calendar days for ATaR",
+    sortBy = ReportField.TotalDays,
     sortOrder = SortDirection.ASCENDING,
     caseTypes = Set(ApplicationType.ATAR),
     fields = NonEmptySeq.of(
@@ -103,38 +103,38 @@ object Report {
   )
 
   val numberOfNewLiabilityCases: SummaryReport = SummaryReport(
-    name      = "New Liabilities",
-    groupBy   = NonEmptySeq.one(ReportField.LiabilityStatus),
-    sortBy    = ReportField.LiabilityStatus,
-    statuses  = Set(PseudoCaseStatus.NEW),
+    name = "New Liabilities",
+    groupBy = NonEmptySeq.one(ReportField.LiabilityStatus),
+    sortBy = ReportField.LiabilityStatus,
+    statuses = Set(PseudoCaseStatus.NEW),
     caseTypes = Set(ApplicationType.LIABILITY)
   )
 
   val numberOfNewLiveLiabilityCases: SummaryReport = SummaryReport(
-    name              = "New liabilities (live) cases",
-    groupBy           = NonEmptySeq.one(ReportField.LiabilityStatus),
-    sortBy            = ReportField.LiabilityStatus,
-    statuses          = Set(PseudoCaseStatus.NEW),
+    name = "New liabilities (live) cases",
+    groupBy = NonEmptySeq.one(ReportField.LiabilityStatus),
+    sortBy = ReportField.LiabilityStatus,
+    statuses = Set(PseudoCaseStatus.NEW),
     liabilityStatuses = Set(LiabilityStatus.LIVE),
-    caseTypes         = Set(ApplicationType.LIABILITY)
+    caseTypes = Set(ApplicationType.LIABILITY)
   )
 
   val numberOfNewNonLiveLiabilityCases: SummaryReport = SummaryReport(
-    name              = "New liabilities (non-live) cases",
-    groupBy           = NonEmptySeq.one(ReportField.LiabilityStatus),
-    sortBy            = ReportField.LiabilityStatus,
-    statuses          = Set(PseudoCaseStatus.NEW),
+    name = "New liabilities (non-live) cases",
+    groupBy = NonEmptySeq.one(ReportField.LiabilityStatus),
+    sortBy = ReportField.LiabilityStatus,
+    statuses = Set(PseudoCaseStatus.NEW),
     liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
-    caseTypes         = Set(ApplicationType.LIABILITY)
+    caseTypes = Set(ApplicationType.LIABILITY)
   )
 
   val calendarDaysNonLiveLiabilitiesCases: CaseReport = CaseReport(
-    name              = "Working days liability (non-live) cases",
-    sortBy            = ReportField.ElapsedDays,
-    sortOrder         = SortDirection.DESCENDING,
-    caseTypes         = Set(ApplicationType.LIABILITY),
+    name = "Working days liability (non-live) cases",
+    sortBy = ReportField.ElapsedDays,
+    sortOrder = SortDirection.DESCENDING,
+    caseTypes = Set(ApplicationType.LIABILITY),
     liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
-    statuses          = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN, PseudoCaseStatus.REFERRED, PseudoCaseStatus.SUSPENDED),
+    statuses = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN, PseudoCaseStatus.REFERRED, PseudoCaseStatus.SUSPENDED),
     fields = NonEmptySeq.of(
       ReportField.Reference,
       ReportField.GoodsName,
@@ -147,8 +147,8 @@ object Report {
   )
 
   val correspondenceCases: CaseReport = CaseReport(
-    name      = "Correspondence cases count",
-    sortBy    = ReportField.ElapsedDays,
+    name = "Correspondence cases count",
+    sortBy = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.CORRESPONDENCE),
     fields = NonEmptySeq.of(
@@ -164,8 +164,8 @@ object Report {
   )
 
   val miscellaneousCases: CaseReport = CaseReport(
-    name      = "Miscellaneous cases count",
-    sortBy    = ReportField.ElapsedDays,
+    name = "Miscellaneous cases count",
+    sortBy = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.MISCELLANEOUS),
     fields = NonEmptySeq.of(
@@ -181,42 +181,42 @@ object Report {
   )
 
   val numberOfOpenCases: SummaryReport = SummaryReport(
-    name      = "Number of open cases",
-    groupBy   = NonEmptySeq.one(ReportField.Team),
-    sortBy    = ReportField.Team,
+    name = "Number of open cases",
+    groupBy = NonEmptySeq.one(ReportField.Team),
+    sortBy = ReportField.Team,
     sortOrder = SortDirection.ASCENDING,
-    statuses  = Set(PseudoCaseStatus.OPEN)
+    statuses = Set(PseudoCaseStatus.OPEN)
   )
 
   val completedCasesByTeam: SummaryReport = SummaryReport(
-    name      = "Completed cases by team",
-    groupBy   = NonEmptySeq.one(ReportField.Team),
-    sortBy    = ReportField.Team,
+    name = "Completed cases by team",
+    groupBy = NonEmptySeq.one(ReportField.Team),
+    sortBy = ReportField.Team,
     sortOrder = SortDirection.ASCENDING,
-    statuses  = Set(PseudoCaseStatus.COMPLETED)
+    statuses = Set(PseudoCaseStatus.COMPLETED)
   )
 
   val completedCasesByAssignedUser: SummaryReport = SummaryReport(
-    name      = "Completed cases by assigned user",
-    groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.Count,
+    name = "Completed cases by assigned user",
+    groupBy = NonEmptySeq.one(ReportField.User),
+    sortBy = ReportField.Count,
     sortOrder = SortDirection.DESCENDING,
-    statuses  = Set(PseudoCaseStatus.COMPLETED)
+    statuses = Set(PseudoCaseStatus.COMPLETED)
   )
 
   val numberOfCasesPerUser: SummaryReport = SummaryReport(
-    name      = "Number of cases per user",
-    groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.Count,
+    name = "Number of cases per user",
+    groupBy = NonEmptySeq.one(ReportField.User),
+    sortBy = ReportField.Count,
     sortOrder = SortDirection.DESCENDING
   )
 
   val cancelledCasesPerUser: SummaryReport = SummaryReport(
-    name      = "Cancelled cases by assigned user",
-    groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.Count,
+    name = "Cancelled cases by assigned user",
+    groupBy = NonEmptySeq.one(ReportField.User),
+    sortBy = ReportField.Count,
     sortOrder = SortDirection.DESCENDING,
-    statuses  = Set(PseudoCaseStatus.CANCELLED)
+    statuses = Set(PseudoCaseStatus.CANCELLED)
   )
 
   private val calculateDueToExpireDateRange: InstantRange = {
@@ -239,24 +239,24 @@ object Report {
       ReportField.ContactName,
       ReportField.ContactEmail
     ),
-    sortBy            = ReportField.DateExpired,
-    sortOrder         = SortDirection.ASCENDING,
-    statuses          = Set(PseudoCaseStatus.COMPLETED),
-    dateRange         = calculateDueToExpireDateRange,
+    sortBy = ReportField.DateExpired,
+    sortOrder = SortDirection.ASCENDING,
+    statuses = Set(PseudoCaseStatus.COMPLETED),
+    dateRange = calculateDueToExpireDateRange,
     dueToExpireReport = true
   )
 
   val cancelledCasesByChapter: SummaryReport = SummaryReport(
-    name      = "Cancelled cases by chapter",
-    groupBy   = NonEmptySeq.one(ReportField.Chapter),
-    sortBy    = ReportField.Chapter,
+    name = "Cancelled cases by chapter",
+    groupBy = NonEmptySeq.one(ReportField.Chapter),
+    sortBy = ReportField.Chapter,
     sortOrder = SortDirection.ASCENDING,
-    statuses  = Set(PseudoCaseStatus.CANCELLED)
+    statuses = Set(PseudoCaseStatus.CANCELLED)
   )
 
   val liabilitiesSummary: CaseReport = CaseReport(
-    name      = "Liabilities summary",
-    sortBy    = ReportField.ElapsedDays,
+    name = "Liabilities summary",
+    sortBy = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.LIABILITY),
     fields = NonEmptySeq.of(
@@ -272,8 +272,8 @@ object Report {
   )
 
   val atarSummary: CaseReport = CaseReport(
-    name      = "ATaR summary",
-    sortBy    = ReportField.ElapsedDays,
+    name = "ATaR summary",
+    sortBy = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.ATAR),
     fields = NonEmptySeq.of(
@@ -289,8 +289,8 @@ object Report {
   )
 
   val liabilitiesCases: CaseReport = CaseReport(
-    name      = "Liabilities cases",
-    sortBy    = ReportField.ElapsedDays,
+    name = "Liabilities cases",
+    sortBy = ReportField.ElapsedDays,
     sortOrder = SortDirection.DESCENDING,
     caseTypes = Set(ApplicationType.LIABILITY),
     fields = NonEmptySeq.of(
@@ -305,24 +305,24 @@ object Report {
   )
 
   val numberOfNewAtarCases: SummaryReport = SummaryReport(
-    name      = "New ATaR cases",
-    groupBy   = NonEmptySeq.one(ReportField.CaseType),
-    sortBy    = ReportField.CaseType,
-    statuses  = Set(PseudoCaseStatus.NEW),
+    name = "New ATaR cases",
+    groupBy = NonEmptySeq.one(ReportField.CaseType),
+    sortBy = ReportField.CaseType,
+    statuses = Set(PseudoCaseStatus.NEW),
     caseTypes = Set(ApplicationType.ATAR)
   )
 
   val numberOfNewCases: SummaryReport = SummaryReport(
-    name     = "Number of new cases",
-    groupBy  = NonEmptySeq.one(ReportField.CaseType),
-    sortBy   = ReportField.CaseType,
+    name = "Number of new cases",
+    groupBy = NonEmptySeq.one(ReportField.CaseType),
+    sortBy = ReportField.CaseType,
     statuses = Set(PseudoCaseStatus.NEW)
   )
 
   val numberOfNewAndOpenCases: SummaryReport = SummaryReport(
-    name     = "New and open cases",
-    groupBy  = NonEmptySeq.one(ReportField.CaseType),
-    sortBy   = ReportField.ElapsedDays,
+    name = "New and open cases",
+    groupBy = NonEmptySeq.one(ReportField.CaseType),
+    sortBy = ReportField.ElapsedDays,
     statuses = Set(PseudoCaseStatus.NEW, PseudoCaseStatus.OPEN)
   )
 
@@ -331,33 +331,33 @@ object Report {
   )
 
   val casesUnderReviewByChapter: SummaryReport = SummaryReport(
-    name     = "Cases under review by chapter",
-    groupBy  = NonEmptySeq.one(ReportField.Chapter),
-    sortBy   = ReportField.Chapter,
+    name = "Cases under review by chapter",
+    groupBy = NonEmptySeq.one(ReportField.Chapter),
+    sortBy = ReportField.Chapter,
     statuses = Set(PseudoCaseStatus.UNDER_REVIEW)
   )
 
   val casesUnderReviewByUser: SummaryReport = SummaryReport(
-    name      = "Cases under review by assigned user",
-    groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.Count,
+    name = "Cases under review by assigned user",
+    groupBy = NonEmptySeq.one(ReportField.User),
+    sortBy = ReportField.Count,
     sortOrder = SortDirection.DESCENDING,
-    statuses  = Set(PseudoCaseStatus.UNDER_REVIEW)
+    statuses = Set(PseudoCaseStatus.UNDER_REVIEW)
   )
 
   val casesUnderAppealByChapter: SummaryReport = SummaryReport(
-    name     = "Cases under appeal by chapter",
-    groupBy  = NonEmptySeq.one(ReportField.Chapter),
-    sortBy   = ReportField.Chapter,
+    name = "Cases under appeal by chapter",
+    groupBy = NonEmptySeq.one(ReportField.Chapter),
+    sortBy = ReportField.Chapter,
     statuses = Set(PseudoCaseStatus.UNDER_APPEAL)
   )
 
   val casesUnderAppealByUser: SummaryReport = SummaryReport(
-    name      = "Cases under appeal by assigned user",
-    groupBy   = NonEmptySeq.one(ReportField.User),
-    sortBy    = ReportField.Count,
+    name = "Cases under appeal by assigned user",
+    groupBy = NonEmptySeq.one(ReportField.User),
+    sortBy = ReportField.Count,
     sortOrder = SortDirection.DESCENDING,
-    statuses  = Set(PseudoCaseStatus.UNDER_APPEAL)
+    statuses = Set(PseudoCaseStatus.UNDER_APPEAL)
   )
 
   val byId: Map[String, Report] = Map[String, Report](
@@ -423,14 +423,14 @@ case class SummaryReport(
   name: String,
   groupBy: NonEmptySeq[ReportField[_]],
   sortBy: ReportField[_],
-  sortOrder: SortDirection.Value                = SortDirection.ASCENDING,
-  caseTypes: Set[ApplicationType]               = Set.empty,
-  statuses: Set[PseudoCaseStatus.Value]         = Set.empty,
+  sortOrder: SortDirection.Value = SortDirection.ASCENDING,
+  caseTypes: Set[ApplicationType] = Set.empty,
+  statuses: Set[PseudoCaseStatus.Value] = Set.empty,
   liabilityStatuses: Set[LiabilityStatus.Value] = Set.empty,
-  teams: Set[String]                            = Set.empty,
-  dateRange: InstantRange                       = InstantRange.allTime,
-  maxFields: Seq[ReportField[Long]]             = Seq.empty,
-  includeCases: Boolean                         = false
+  teams: Set[String] = Set.empty,
+  dateRange: InstantRange = InstantRange.allTime,
+  maxFields: Seq[ReportField[Long]] = Seq.empty,
+  includeCases: Boolean = false
 ) extends Report {
   override val fields: NonEmptySeq[ReportField[_]] =
     groupBy.append(ReportField.Count).concat(maxFields.toList)
@@ -449,8 +449,7 @@ object SummaryReport {
   private val statusesKey          = "status"
   private val liabilityStatusesKey = "liability_status"
 
-  implicit def summaryReportQueryStringBindable(
-    implicit
+  implicit def summaryReportQueryStringBindable(implicit
     stringBindable: QueryStringBindable[String],
     boolBindable: QueryStringBindable[Boolean],
     rangeBindable: QueryStringBindable[InstantRange]
@@ -460,8 +459,8 @@ object SummaryReport {
       val includeCases = boolBindable.bind(includeCasesKey, requestParams).getOrElse(Right(false))
       val dateRange    = rangeBindable.bind(dateRangeKey, requestParams).getOrElse(Right(InstantRange.allTime))
       val sortBy       = param(sortByKey)(requestParams).flatMap(ReportField.fields.get)
-      val sortOrder    = param(sortOrderKey)(requestParams).flatMap(bindSortDirection).getOrElse(SortDirection.ASCENDING)
-      val teams        = params(teamsKey)(requestParams).getOrElse(Set.empty)
+      val sortOrder = param(sortOrderKey)(requestParams).flatMap(bindSortDirection).getOrElse(SortDirection.ASCENDING)
+      val teams     = params(teamsKey)(requestParams).getOrElse(Set.empty)
       val groupBy = orderedParams(groupByKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get))
         .flatMap(NonEmptySeq.fromSeq[ReportField[_]])
@@ -481,25 +480,24 @@ object SummaryReport {
         }))
         .getOrElse(Seq.empty)
 
-      (reportName, groupBy, sortBy).mapN {
-        case (reportName, groupBy, sortBy) =>
-          for {
-            name    <- reportName
-            range   <- dateRange
-            include <- includeCases
-          } yield SummaryReport(
-            name              = name,
-            dateRange         = range,
-            groupBy           = groupBy,
-            sortBy            = sortBy,
-            sortOrder         = sortOrder,
-            caseTypes         = caseTypes,
-            statuses          = statuses,
-            liabilityStatuses = liabilityStatuses,
-            teams             = teams,
-            maxFields         = maxFields,
-            includeCases      = include
-          )
+      (reportName, groupBy, sortBy).mapN { case (reportName, groupBy, sortBy) =>
+        for {
+          name    <- reportName
+          range   <- dateRange
+          include <- includeCases
+        } yield SummaryReport(
+          name = name,
+          dateRange = range,
+          groupBy = groupBy,
+          sortBy = sortBy,
+          sortOrder = sortOrder,
+          caseTypes = caseTypes,
+          statuses = statuses,
+          liabilityStatuses = liabilityStatuses,
+          teams = teams,
+          maxFields = maxFields,
+          includeCases = include
+        )
       }
     }
 
@@ -523,14 +521,14 @@ object SummaryReport {
 case class CaseReport(
   name: String,
   fields: NonEmptySeq[ReportField[_]],
-  sortBy: ReportField[_]                        = ReportField.Reference,
-  sortOrder: SortDirection.Value                = SortDirection.ASCENDING,
-  caseTypes: Set[ApplicationType]               = Set.empty,
-  statuses: Set[PseudoCaseStatus.Value]         = Set.empty,
+  sortBy: ReportField[_] = ReportField.Reference,
+  sortOrder: SortDirection.Value = SortDirection.ASCENDING,
+  caseTypes: Set[ApplicationType] = Set.empty,
+  statuses: Set[PseudoCaseStatus.Value] = Set.empty,
   liabilityStatuses: Set[LiabilityStatus.Value] = Set.empty,
-  teams: Set[String]                            = Set.empty,
-  dateRange: InstantRange                       = InstantRange.allTime,
-  dueToExpireReport: Boolean                    = false
+  teams: Set[String] = Set.empty,
+  dateRange: InstantRange = InstantRange.allTime,
+  dueToExpireReport: Boolean = false
 ) extends Report
 
 object CaseReport {
@@ -545,8 +543,7 @@ object CaseReport {
   private val liabilityStatusesKey = "liability_status"
   private val dueToExpireReportKey = "due_to_expire"
 
-  implicit def caseReportQueryStringBindable(
-    implicit
+  implicit def caseReportQueryStringBindable(implicit
     stringBindable: QueryStringBindable[String],
     rangeBindable: QueryStringBindable[InstantRange],
     booleanBindable: QueryStringBindable[Boolean]
@@ -570,23 +567,22 @@ object CaseReport {
         .map(_.flatMap(ReportField.fields.get))
         .flatMap(NonEmptySeq.fromSeq)
 
-      (reportName, fields).mapN {
-        case (reportName, fields) =>
-          for {
-            name  <- reportName
-            range <- dateRange
-          } yield CaseReport(
-            name              = name,
-            sortBy            = sortBy,
-            sortOrder         = sortOrder,
-            caseTypes         = caseTypes,
-            statuses          = statuses,
-            liabilityStatuses = liabilityStatuses,
-            teams             = teams,
-            dateRange         = range,
-            fields            = fields,
-            dueToExpireReport = name.contains("due to expire")
-          )
+      (reportName, fields).mapN { case (reportName, fields) =>
+        for {
+          name  <- reportName
+          range <- dateRange
+        } yield CaseReport(
+          name = name,
+          sortBy = sortBy,
+          sortOrder = sortOrder,
+          caseTypes = caseTypes,
+          statuses = statuses,
+          liabilityStatuses = liabilityStatuses,
+          teams = teams,
+          dateRange = range,
+          fields = fields,
+          dueToExpireReport = name.contains("due to expire")
+        )
       }
     }
 
@@ -607,14 +603,14 @@ object CaseReport {
 }
 
 case class QueueReport(
-  sortBy: ReportField[_]                        = ReportField.Team,
-  sortOrder: SortDirection.Value                = SortDirection.ASCENDING,
-  caseTypes: Set[ApplicationType]               = Set.empty,
-  statuses: Set[PseudoCaseStatus.Value]         = Set.empty,
+  sortBy: ReportField[_] = ReportField.Team,
+  sortOrder: SortDirection.Value = SortDirection.ASCENDING,
+  caseTypes: Set[ApplicationType] = Set.empty,
+  statuses: Set[PseudoCaseStatus.Value] = Set.empty,
   liabilityStatuses: Set[LiabilityStatus.Value] = Set.empty,
-  teams: Set[String]                            = Set.empty,
-  assignee: Option[String]                      = Option.empty,
-  dateRange: InstantRange                       = InstantRange.allTime
+  teams: Set[String] = Set.empty,
+  assignee: Option[String] = Option.empty,
+  dateRange: InstantRange = InstantRange.allTime
 ) extends Report {
   override val name = "Number of cases in queues"
   override val fields: NonEmptySeq[ReportField[_]] =
@@ -632,8 +628,7 @@ object QueueReport {
   private val assigneeKey          = "assigned_user"
   private val liabilityStatusesKey = "liability_status"
 
-  implicit def queueReportQueryStringBindable(
-    implicit
+  implicit def queueReportQueryStringBindable(implicit
     stringBindable: QueryStringBindable[String],
     rangeBindable: QueryStringBindable[InstantRange]
   ): QueryStringBindable[QueueReport] = new QueryStringBindable[QueueReport] {
@@ -655,14 +650,14 @@ object QueueReport {
 
       Some(dateRange.map { range =>
         QueueReport(
-          sortBy            = sortBy,
-          sortOrder         = sortOrder,
-          caseTypes         = caseTypes,
-          statuses          = statuses,
+          sortBy = sortBy,
+          sortOrder = sortOrder,
+          caseTypes = caseTypes,
+          statuses = statuses,
           liabilityStatuses = liabilityStatuses,
-          teams             = teams,
-          dateRange         = range,
-          assignee          = assignee
+          teams = teams,
+          dateRange = range,
+          assignee = assignee
         )
       })
     }

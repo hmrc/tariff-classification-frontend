@@ -94,12 +94,12 @@ class SearchFormTest extends ModelsBaseSpec {
           )
         )
         .get shouldBe Search(
-        caseSource      = Some("trader-name"),
-        commodityCode   = Some("00"),
+        caseSource = Some("trader-name"),
+        commodityCode = Some("00"),
         decisionDetails = Some("decision-details"),
-        status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+        status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
         applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY)),
-        keywords        = Some(Set("X", "Y"))
+        keywords = Some(Set("X", "Y"))
       )
     }
 
@@ -107,12 +107,12 @@ class SearchFormTest extends ModelsBaseSpec {
       SearchForm.form
         .fill(
           Search(
-            caseSource      = Some("trader-name"),
-            commodityCode   = Some("00"),
+            caseSource = Some("trader-name"),
+            commodityCode = Some("00"),
             decisionDetails = Some("decision-details"),
-            status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+            status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
             applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY)),
-            keywords        = Some(Set("X", "Y"))
+            keywords = Some(Set("X", "Y"))
           )
         )
         .data shouldBe Map[String, String](

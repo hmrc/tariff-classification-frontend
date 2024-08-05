@@ -67,8 +67,8 @@ class SampleWhoSendingController @Inject() (
       )
     }
 
-  override protected def update(c: Case, sampleSender: Option[SampleSend], operator: Operator)(
-    implicit hc: HeaderCarrier
+  override protected def update(c: Case, sampleSender: Option[SampleSend], operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     caseService.updateWhoSendSample(c, sampleSender, operator)
 

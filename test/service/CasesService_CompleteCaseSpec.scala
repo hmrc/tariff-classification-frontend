@@ -47,9 +47,9 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   private val pdfService       = mock[PdfService]
   private val audit            = mock[AuditService]
   private val config           = mock[AppConfig]
-  private val clock            = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
-  private val aBTI             = Cases.btiCaseExample
-  private val aLiability       = Cases.liabilityCaseExample
+  private val clock      = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
+  private val aBTI       = Cases.btiCaseExample
+  private val aLiability = Cases.liabilityCaseExample
 
   private val service =
     new CasesService(
@@ -66,7 +66,13 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(connector, audit, queue, oneCase, manyCases, config, emailService)
+    reset(connector)
+    reset(audit)
+    reset(queue)
+    reset(oneCase)
+    reset(manyCases)
+    reset(config)
+    reset(emailService)
 
     given(config.clock).willReturn(clock)
   }
@@ -149,7 +155,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
 
         val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
         val atarCase = aBTI.copy(
-          status   = CaseStatus.OPEN,
+          status = CaseStatus.OPEN,
           decision = Some(Decision("code", None, Some(date("2022-01-01")), "justification", "goods"))
         )
 

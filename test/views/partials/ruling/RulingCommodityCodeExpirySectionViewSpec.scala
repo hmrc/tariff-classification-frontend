@@ -25,7 +25,6 @@ import views.html.partials.ruling.ruling_commodity_code_expiry_section
 
 import java.time.Instant
 
-// scalastyle:off magic.number
 class RulingCommodityCodeExpirySectionViewSpec extends ViewSpec {
 
   "Ruling Expiry Section" should {

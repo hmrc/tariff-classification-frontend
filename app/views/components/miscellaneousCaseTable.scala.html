@@ -15,12 +15,11 @@
  *@
 
 @import models.request.AuthenticatedRequest
-@import config.AppConfig
 @import  models.viewmodels.CasesTab
 
 
 @import views.html.v2.case_status_tab
-@(caseTab : CasesTab, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(caseTab : CasesTab, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
  <table id="@{caseTab.tabMessageKey}-table" class="govuk-table">
   <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">@messages(captionMessage)</caption>

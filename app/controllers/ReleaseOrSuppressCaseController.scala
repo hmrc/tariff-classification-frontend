@@ -59,7 +59,8 @@ class ReleaseOrSuppressCaseController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          hasErrors => Ok(release_or_suppress(request.`case`, hasErrors)), {
+          hasErrors => Ok(release_or_suppress(request.`case`, hasErrors)),
+          {
             case CaseStatusRadioInput.Release =>
               Redirect(routes.ReleaseCaseController.releaseCase(reference))
             case CaseStatusRadioInput.Suppress =>

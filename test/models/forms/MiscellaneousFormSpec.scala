@@ -26,7 +26,7 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
       val form = MiscellaneousForm.newMiscForm.bindFromRequest(Map())
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(3))
+      form.errors      should have(size(3))
     }
 
     "Bind a blank form" in {
@@ -39,7 +39,7 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(3))
+      form.errors      should have(size(3))
     }
 
     "Bind a valid form" in {
@@ -53,14 +53,14 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
 
       form.hasErrors shouldBe false
       form.get shouldBe MiscApplication(
-        contact             = Contact("", "", None),
-        name                = "example",
-        contactName         = Some("example"),
-        caseType            = MiscCaseType.withName("Other government dept"),
+        contact = Contact("", "", None),
+        name = "example",
+        contactName = Some("example"),
+        caseType = MiscCaseType.withName("Other government dept"),
         detailedDescription = None,
-        sampleToBeProvided  = false,
-        sampleToBeReturned  = false,
-        messagesLogged      = List.empty
+        sampleToBeProvided = false,
+        sampleToBeReturned = false,
+        messagesLogged = List.empty
       )
     }
 
@@ -74,7 +74,7 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
       )
 
       form.hasErrors           shouldBe true
-      form.errors              should have(size(1))
+      form.errors                should have(size(1))
       form.errors.head.message shouldBe "error.empty.misc.shortDesc"
     }
 
@@ -88,7 +88,7 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
       )
 
       form.hasErrors           shouldBe true
-      form.errors              should have(size(1))
+      form.errors                should have(size(1))
       form.errors.head.message shouldBe "error.empty.misc.contactName"
     }
   }
@@ -98,14 +98,14 @@ class MiscellaneousFormSpec extends ModelsBaseSpec {
     "populate a correct form" in {
       val form = MiscellaneousForm.newMiscForm.fill(
         MiscApplication(
-          contact             = Contact("example", "", None),
-          name                = "example",
-          contactName         = Some("example"),
-          caseType            = MiscCaseType.withName("Other government dept"),
+          contact = Contact("example", "", None),
+          name = "example",
+          contactName = Some("example"),
+          caseType = MiscCaseType.withName("Other government dept"),
           detailedDescription = None,
-          sampleToBeProvided  = false,
-          sampleToBeReturned  = false,
-          messagesLogged      = List.empty
+          sampleToBeProvided = false,
+          sampleToBeReturned = false,
+          messagesLogged = List.empty
         )
       )
 

@@ -17,7 +17,6 @@
 package service
 
 import cats.data.OptionT
-import connector.DataCacheConnector
 import controllers.Tab
 import models.ApplicationType
 import models.cache.CacheMap
@@ -28,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TabCacheService @Inject() (
-  dataCacheConnector: DataCacheConnector
+  dataCacheConnector: DataCacheService
 )(implicit ec: ExecutionContext) {
 
   private def cacheKey(reference: String, appType: ApplicationType) =

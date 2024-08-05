@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.request.AuthenticatedRequest
 @import views.forms.components.RadioOption
@@ -28,7 +27,7 @@
         backLink: back_link
 )
 
-@(form: Form[MiscApplication])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[MiscApplication])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.create_misc.h1"),

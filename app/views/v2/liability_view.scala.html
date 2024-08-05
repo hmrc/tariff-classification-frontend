@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-
 @import models.ApplicationType
 @import models.forms.ActivityFormData
 @import models.request.AuthenticatedRequest
@@ -67,7 +65,7 @@
         appealTabViewModel: Option[AppealTabViewModel],
         primaryNavTab: PrimaryNavigationTab = MyCasesTab
 
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @additionalCSS ={
     <link rel="stylesheet" href='@routes.Assets.at("stylesheets/autocomplete.css")'/>

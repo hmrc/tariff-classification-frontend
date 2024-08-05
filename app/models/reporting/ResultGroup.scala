@@ -35,5 +35,5 @@ case class CaseResultGroup(
   count: Long,
   groupKey: NonEmptySeq[ReportResultField[_]],
   maxFields: List[NumberResultField] = List.empty,
-  cases: List[Case]                  = List.empty
+  cases: List[Case] = List.empty
 ) extends ResultGroup

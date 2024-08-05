@@ -27,7 +27,7 @@ class DecisionTemplateViewSpec extends ViewSpec {
   private val rulingCase = Cases.liabilityCaseWithDecisionExample
   private val liability  = rulingCase.application.asLiabilityOrder
   private val ruling     = rulingCase.decision.getOrElse(throw new Exception("Bad test data"))
-  private val doc        = view(decision_template(rulingCase, ruling)(messages, appConfig))
+  private val doc        = view(decision_template(rulingCase, ruling)(messages))
 
   "Decision pdf c592 section" should {
 

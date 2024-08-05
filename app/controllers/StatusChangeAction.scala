@@ -36,8 +36,8 @@ trait StatusChangeAction[T] extends RenderCaseAction { this: FrontendController 
 
   protected def status(c: Case): T
 
-  protected def chooseStatusView(c: Case, preFilledForm: Form[T], options: Option[String] = None)(
-    implicit request: AuthenticatedRequest[_]
+  protected def chooseStatusView(c: Case, preFilledForm: Form[T], options: Option[String] = None)(implicit
+    request: AuthenticatedRequest[_]
   ): Html
 
   protected def update(c: Case, status: T, operator: Operator)(implicit hc: HeaderCarrier): Future[Case]

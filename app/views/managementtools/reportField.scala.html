@@ -14,15 +14,13 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.reporting._
-@import models.request.AuthenticatedRequest
 @import utils.Dates
 @import views.html.partials.statuses.case_status
-
 @import views.html.managementtools.pseudoCaseStatus
 @import views.html.managementtools.liabilityStatus
+
 @(
   field: ReportField[_],
   result: ReportResultField[_],
@@ -30,7 +28,7 @@
   teams: Map[String, Queue],
   id: String,
   index: Int
-)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+)(implicit messages: Messages)
 
 @result match {
   case StringResultField(_, data) if field == ReportField.Reference => {

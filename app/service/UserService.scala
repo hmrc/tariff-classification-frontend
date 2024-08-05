@@ -32,13 +32,13 @@ class UserService @Inject() (
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  def getAllUsers(role: Seq[Role], team: String, pagination: Pagination)(
-    implicit hc: HeaderCarrier
+  def getAllUsers(role: Seq[Role], team: String, pagination: Pagination)(implicit
+    hc: HeaderCarrier
   ): Future[Paged[Operator]] =
     connector.getAllUsers(role, team, pagination)
 
-  def updateUser(originalOperator: Operator, updatedOperator: Operator, operatorMakingTheChange: Operator)(
-    implicit hc: HeaderCarrier
+  def updateUser(originalOperator: Operator, updatedOperator: Operator, operatorMakingTheChange: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Operator] =
     for {
       updated <- connector.updateUser(updatedOperator)
@@ -50,8 +50,8 @@ class UserService @Inject() (
       userDetails <- connector.getUserDetails(id).map(_.filterNot(_.deleted))
     } yield userDetails
 
-  def markDeleted(user: Operator, operatorMakingTheChange: Operator)(
-    implicit hc: HeaderCarrier
+  def markDeleted(user: Operator, operatorMakingTheChange: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Operator] =
     for {
       deleted <- connector.markDeleted(user)

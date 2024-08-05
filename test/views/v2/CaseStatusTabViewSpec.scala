@@ -29,7 +29,7 @@ class CaseStatusTabViewSpec extends ViewSpec {
 
       val doc = view(case_status_tab(Cases.btiCaseExample, "id"))
 
-      doc.text()                      shouldBe "case status OPEN"
+      doc.text()                    shouldBe "case status OPEN"
       doc.getElementById("id-status") should haveClass("govuk-tag--blue")
     }
 

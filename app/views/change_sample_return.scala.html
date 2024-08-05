@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.Case
 @import models.SampleReturn.SampleReturn
 @import models.request.AuthenticatedRequest
@@ -29,7 +28,7 @@
 )
 
 
-@(c: Case, form: Form[Option[SampleReturn]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[Option[SampleReturn]])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.change.sample.return"),

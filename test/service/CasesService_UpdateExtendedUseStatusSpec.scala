@@ -54,7 +54,8 @@ class CasesService_UpdateExtendedUseStatusSpec extends ServiceSpecBase with Befo
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit)
+    reset(connector)
+    reset(audit)
   }
 
   "Update Extended Use Status" should {

@@ -72,20 +72,19 @@ class ReportingController @Inject() (
       val getUsers   = usersService.getAllUsers(Seq.empty, "", NoPagination())
       val getTeams   = queuesService.getAllById
 
-      (getUsers, getTeams).mapN {
-        case (users, teamsById) =>
-          val usersByPid = users.results.map(user => user.id -> user).toMap
+      (getUsers, getTeams).mapN { case (users, teamsById) =>
+        val usersByPid = users.results.map(user => user.id -> user).toMap
 
-          val fileData = Paged
-            .stream(DownloadPagination)(reportingService.caseReport(report, _))
-            .map(Reports.formatCaseReport(report, usersByPid, teamsById))
-            .prepend(Source.single(Reports.formatHeaders(report)))
-            .via(CsvFormatting.format[List[String]]())
+        val fileData = Paged
+          .stream(DownloadPagination)(reportingService.caseReport(report, _))
+          .map(Reports.formatCaseReport(report, usersByPid, teamsById))
+          .prepend(Source.single(Reports.formatHeaders(report)))
+          .via(CsvFormatting.format[List[String]]())
 
-          Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
-            .withHeaders(
-              "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
-            )
+        Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
+          .withHeaders(
+            "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
+          )
       }
     }
 
@@ -96,20 +95,19 @@ class ReportingController @Inject() (
       val getUsers   = usersService.getAllUsers(Seq.empty, "", NoPagination())
       val getTeams   = queuesService.getAllById
 
-      (getUsers, getTeams).mapN {
-        case (users, teamsById) =>
-          val usersByPid = users.results.map(user => user.id -> user).toMap
+      (getUsers, getTeams).mapN { case (users, teamsById) =>
+        val usersByPid = users.results.map(user => user.id -> user).toMap
 
-          val fileData = Paged
-            .stream(DownloadPagination)(reportingService.summaryReport(report, _))
-            .map(Reports.formatSummaryReport(report, usersByPid, teamsById))
-            .prepend(Source.single(Reports.formatHeaders(report)))
-            .via(CsvFormatting.format[List[String]]())
+        val fileData = Paged
+          .stream(DownloadPagination)(reportingService.summaryReport(report, _))
+          .map(Reports.formatSummaryReport(report, usersByPid, teamsById))
+          .prepend(Source.single(Reports.formatHeaders(report)))
+          .via(CsvFormatting.format[List[String]]())
 
-          Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
-            .withHeaders(
-              "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
-            )
+        Ok.streamed(fileData, contentLength = None, contentType = Some("text/csv"))
+          .withHeaders(
+            "Content-Disposition" -> s"attachment; filename=${report.name.replaceAll("\\s+", "-")}-$dateString.csv"
+          )
       }
     }
 

@@ -50,21 +50,21 @@ class CaseViewModelSpec extends ModelsBaseSpec {
 
   def buildLiabilityModel(
     caseHeaderViewModel: CaseHeaderViewModel = caseHeaderViewModel,
-    hasPermissions: Boolean                  = false,
-    showChangeCaseStatus: Boolean            = false,
-    showTakeOffReferral: Boolean             = false,
-    showReopen: Boolean                      = false,
-    showAppeal: Boolean                      = false,
+    hasPermissions: Boolean = false,
+    showChangeCaseStatus: Boolean = false,
+    showTakeOffReferral: Boolean = false,
+    showReopen: Boolean = false,
+    showAppeal: Boolean = false,
     status: CaseStatus
   ): CaseViewModel =
     CaseViewModel(
-      caseHeader           = caseHeaderViewModel,
-      hasPermissions       = hasPermissions,
+      caseHeader = caseHeaderViewModel,
+      hasPermissions = hasPermissions,
       showChangeCaseStatus = showChangeCaseStatus,
-      showTakeOffReferral  = showTakeOffReferral,
-      showReopen           = showReopen,
-      showAppealTab        = showAppeal,
-      caseStatus           = status
+      showTakeOffReferral = showTakeOffReferral,
+      showReopen = showReopen,
+      showAppealTab = showAppeal,
+      caseStatus = status
     )
 
   "showActionThisCase" should {
@@ -161,11 +161,11 @@ class CaseViewModelSpec extends ModelsBaseSpec {
       val op              = Cases.operatorWithoutPermissions
 
       val c = Cases.liabilityCaseExample.copy(
-        status  = CaseStatus.CANCELLED,
+        status = CaseStatus.CANCELLED,
         queueId = Some("queueId"),
         application = Cases.liabilityCaseExample.application.asLiabilityOrder
           .copy(entryDate = Some(Instant.parse("2020-03-03T10:15:30.00Z"))),
-        assignee    = Some(op),
+        assignee = Some(op),
         createdDate = createdDateTime
       )
 
@@ -185,11 +185,11 @@ class CaseViewModelSpec extends ModelsBaseSpec {
             ),
             isMigrated = false
           ),
-          hasPermissions       = false,
+          hasPermissions = false,
           showChangeCaseStatus = false,
-          showTakeOffReferral  = false,
-          showReopen           = false,
-          showAppealTab        = false,
+          showTakeOffReferral = false,
+          showReopen = false,
+          showAppealTab = false,
           c.status
         )
       )
@@ -286,7 +286,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
 
     "create a viewModel with showAppealTab flag true if case is COMPLETED and has the required permission" in {
 
-      val c  = Cases.liabilityCaseExample.copy(status         = CaseStatus.COMPLETED)
+      val c  = Cases.liabilityCaseExample.copy(status = CaseStatus.COMPLETED)
       val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
 
       assert(CaseViewModel.fromCase(c, op).showAppealTab === true)
@@ -294,7 +294,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
 
     "create a viewModel with showAppealTab flag false if case is not COMPLETED or CANCELLED and has the required permission" in {
 
-      val c  = Cases.liabilityCaseExample.copy(status         = CaseStatus.OPEN)
+      val c  = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
       val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
 
       assert(CaseViewModel.fromCase(c, op).showAppealTab === false)
@@ -302,7 +302,7 @@ class CaseViewModelSpec extends ModelsBaseSpec {
 
     "create a viewModel with showAppealTab flag false if case is CANCELLED and does not have the required permission" in {
 
-      val c  = Cases.liabilityCaseExample.copy(status         = CaseStatus.CANCELLED)
+      val c  = Cases.liabilityCaseExample.copy(status = CaseStatus.CANCELLED)
       val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.VIEW_CASES))
 
       assert(CaseViewModel.fromCase(c, op).showAppealTab === false)

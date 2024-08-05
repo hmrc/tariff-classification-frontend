@@ -20,8 +20,7 @@ import models.SampleReturn.SampleReturn
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito
-import org.mockito.Mockito.{never, verify}
+import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -55,7 +54,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   override def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(casesService)
+    reset(casesService)
   }
 
   "Sample - Choose Return" should {
@@ -68,7 +67,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-      bodyOf(result)      should include("Should this sample be returned?")
+      bodyOf(result)        should include("Should this sample be returned?")
     }
 
     "return OK when user has right permissions" in {
@@ -85,7 +84,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
       val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -137,7 +136,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       verify(casesService, never())
         .updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier])
 
-      status(result)          shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentAsString(result) should include("error-message-return-input")
     }
 
@@ -164,7 +163,7 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("return" -> "NO"))
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.Case
 @import models.request.AuthenticatedRequest
 @import views.forms.components.RadioOption
@@ -28,7 +27,7 @@
         backLink: back_link
 )
 
-@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 @main(
     pageTitle = messages("action_this_corr.case.page.title"),
     backLink = Some(backLink())

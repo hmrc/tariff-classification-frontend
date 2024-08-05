@@ -14,12 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
-
 @import models.viewmodels.managementtools._
 
-@(summaryReportTab: ReportTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(summaryReportTab: ReportTab)(implicit messages: Messages)
 
 <dl class="govuk-summary-list">
 

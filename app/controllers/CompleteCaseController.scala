@@ -73,7 +73,8 @@ class CompleteCaseController @Inject() (
         completeCaseForm
           .bindFromRequest()
           .fold(
-            errors => validateAndRespond(c => successful(Ok(complete_case(c, errors)))), {
+            errors => validateAndRespond(c => successful(Ok(complete_case(c, errors)))),
+            {
               case true =>
                 validateAndRedirect(
                   casesService

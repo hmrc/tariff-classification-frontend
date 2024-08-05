@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,16 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import controllers.routes.CreateLiabilityController
-@import models.{Case, CaseStatus}
-@import models.request.AuthenticatedRequest
-@import models.Permission
-@(clazz: String = "")(implicit request: AuthenticatedRequest[_], messages: Messages)
+package connector
 
-@if(request.hasPermission(Permission.CREATE_CASES)) {
- <a role="button" class="button button-gray @clazz" id="create_liability-button" href="@CreateLiabilityController.get()">
-  Create new liability case
- </a>
+import config.AppConfig
+import uk.gov.hmrc.http.HeaderCarrier
+
+trait InjectAuthHeader {
+
+  def authHeaders(config: AppConfig)(implicit hc: HeaderCarrier): Seq[(String, String)] = {
+    val headerName: String = "X-Api-Token"
+
+    hc.headers(Seq(headerName)) match {
+      case header @ Seq(_) => header
+      case _               => Seq(headerName -> config.apiToken)
+    }
+  }
+
 }

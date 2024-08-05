@@ -16,35 +16,35 @@
 
 package connector
 
-import org.apache.pekko.stream.scaladsl.{FileIO, Source}
-import org.apache.pekko.stream.{IOResult, Materializer}
-import org.apache.pekko.util.ByteString
-import com.google.inject.Inject
 import com.codahale.metrics.MetricRegistry
+import com.google.inject.Inject
 import config.AppConfig
-import javax.inject.Singleton
 import metrics.HasMetrics
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
-import play.api.libs.json.{JsResult, Json}
-import play.api.libs.ws.WSClient
+import org.apache.pekko.stream.scaladsl.{FileIO, Source}
+import org.apache.pekko.stream.{IOResult, Materializer}
+import org.apache.pekko.util.ByteString
+import play.api.libs.json.Json
 import play.api.mvc.MultipartFormData
 import play.api.mvc.MultipartFormData.FilePart
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.JsonFormatters.fileMetaDataFormat
 
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FileStoreConnector @Inject() (
   appConfig: AppConfig,
-  http: AuthenticatedHttpClient,
-  ws: WSClient,
+  http: HttpClientV2,
   val metrics: MetricRegistry
 )(implicit mat: Materializer)
-    extends HasMetrics {
+    extends HasMetrics
+    with InjectAuthHeader {
 
   implicit val ec: ExecutionContext = mat.executionContext
 
@@ -56,7 +56,7 @@ class FileStoreConnector @Inject() (
     s"${appConfig.fileStoreUrl}/file$query"
   }
 
-  def get(attachments: Seq[Attachment])(implicit headerCarrier: HeaderCarrier): Future[Seq[FileMetadata]] =
+  def get(attachments: Seq[Attachment])(implicit hc: HeaderCarrier): Future[Seq[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata") { _ =>
       if (attachments.isEmpty) {
         Future.successful(Seq.empty)
@@ -64,27 +64,36 @@ class FileStoreConnector @Inject() (
         Source(attachments.map(_.id).toList)
           .grouped(BatchSize)
           .mapAsyncUnordered(Runtime.getRuntime.availableProcessors()) { ids =>
-            http.GET[Seq[FileMetadata]](makeQuery(ids), headers = http.addAuth)
+            http
+              .get(url"${makeQuery(ids)}")
+              .setHeader(authHeaders(appConfig)(hc): _*)
+              .execute[Seq[FileMetadata]]
           }
-          .runFold(Seq.empty[FileMetadata]) {
-            case (acc, next) => acc ++ next
+          .runFold(Seq.empty[FileMetadata]) { case (acc, next) =>
+            acc ++ next
           }
       }
     }
 
-  def get(attachmentId: String)(implicit headerCarrier: HeaderCarrier): Future[Option[FileMetadata]] =
+  def get(attachmentId: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata-by-id") { _ =>
-      http.GET[Option[FileMetadata]](s"${appConfig.fileStoreUrl}/file/$attachmentId", headers = http.addAuth)
+      val fullURL = s"${appConfig.fileStoreUrl}/file/$attachmentId"
+
+      http
+        .get(url"$fullURL")
+        .setHeader(authHeaders(appConfig)(hc): _*)
+        .execute[Option[FileMetadata]]
     }
 
   def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
     withMetricsTimerAsync("initiate-file-upload") { _ =>
+      val fullURL = s"${appConfig.fileStoreUrl}/file/initiate"
+
       http
-        .POST[FileStoreInitiateRequest, FileStoreInitiateResponse](
-          s"${appConfig.fileStoreUrl}/file/initiate",
-          request,
-          headers = http.addAuth
-        )
+        .post(url"$fullURL")
+        .setHeader(authHeaders(appConfig)(hc): _*)
+        .withBody(Json.toJson(request))
+        .execute[FileStoreInitiateResponse]
     }
 
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileMetadata] =
@@ -98,37 +107,39 @@ class FileStoreConnector @Inject() (
         FileIO.fromPath(fileUpload.content.path)
       )
 
-      ws.url(s"${appConfig.fileStoreUrl}/file")
-        .withHttpHeaders(http.addAuth(hc): _*)
-        .post(Source(List(filePart, dataPart)))
+      http
+        .post(url"${appConfig.fileStoreUrl}/file")
+        .setHeader(authHeaders(appConfig)(hc): _*)
+        .withBody(Source(List(filePart, dataPart)))
+        .execute[FileMetadata]
+    }
+
+  def downloadFile(fileURL: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
+    withMetricsTimerAsync("download-file") { _ =>
+      http
+        .get(url"$fileURL")
+        .setHeader(authHeaders(appConfig): _*)
+        .execute[HttpResponse]
         .flatMap { response =>
-          Future.fromTry {
-            JsResult.toTry(Json.fromJson[FileMetadata](Json.parse(response.body)))
+          if (response.status / 100 == 2) {
+            Future.successful(Some(response.bodyAsSource))
+          } else if (response.status / 100 > 4) {
+            Future.failed(new RuntimeException("Unable to retrieve file from filestore"))
+          } else {
+            Future.successful(None)
           }
         }
     }
 
-  def downloadFile(url: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
-    withMetricsTimerAsync("download-file") { _ =>
-      val fileStoreResponse = ws
-        .url(url)
-        .withHttpHeaders(http.addAuth(hc): _*)
-        .get()
-
-      fileStoreResponse.flatMap { response =>
-        if (response.status / 100 == 2) {
-          Future.successful(Some(response.bodyAsSource))
-        } else if (response.status / 100 > 4) {
-          Future.failed(new RuntimeException("Unable to retrieve file from filestore"))
-        } else {
-          Future.successful(None)
-        }
-      }
-    }
-
   def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
-    withMetricsTimerAsync("delete-file")(_ =>
-      http.DELETE[Unit](s"${appConfig.fileStoreUrl}/file/$fileId", headers = http.addAuth)
-    )
+    withMetricsTimerAsync("delete-file") { _ =>
+      val fullURL = s"${appConfig.fileStoreUrl}/file/$fileId"
+
+      http
+        .delete(url"$fullURL")
+        .setHeader(authHeaders(appConfig)(hc): _*)
+        .execute[HttpResponse]
+        .map(_ => ())
+    }
 
 }

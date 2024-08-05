@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.v2.routes.AllOpenCasesController
 @import models.Case
 @import models.request.AuthenticatedRequest
@@ -28,7 +27,7 @@
 )
 
 
-@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 
 @callToRedirect =@{

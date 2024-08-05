@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
 @import controllers.routes
 @import models.{Paged, StoredAttachment}
 @import models.response.ScanStatus
@@ -23,7 +21,7 @@
 @import views.html.partials.statuses._
 @import views.html.partials.thumbnail
 @import views.partials.SearchResult
-@(results: Paged[SearchResult])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(results: Paged[SearchResult])
 
 <div id="advanced_search_results">
     @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {

@@ -55,7 +55,8 @@ class CasesService_UpdateSampleReturnSpec extends ServiceSpecBase with BeforeAnd
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit)
+    reset(connector)
+    reset(audit)
   }
 
   "Update Sample Return" should {

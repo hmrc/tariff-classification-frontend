@@ -80,16 +80,14 @@ object Reports {
   )(
     row: ResultGroup
   )(implicit messages: Messages): List[String] = {
-    val group = report.groupBy.zipWith(row.groupKey) {
-      case (groupBy, groupKey) =>
-        formatField(groupBy, groupKey, usersByPid, teamsById)
+    val group = report.groupBy.zipWith(row.groupKey) { case (groupBy, groupKey) =>
+      formatField(groupBy, groupKey, usersByPid, teamsById)
     }
 
     val count = row.count.toString
 
-    val maxFields = report.maxFields.zip(row.maxFields).map {
-      case (field, result) =>
-        formatField(field, result, usersByPid, teamsById)
+    val maxFields = report.maxFields.zip(row.maxFields).map { case (field, result) =>
+      formatField(field, result, usersByPid, teamsById)
     }
 
     (group.toSeq ++ Seq(count) ++ maxFields).toList

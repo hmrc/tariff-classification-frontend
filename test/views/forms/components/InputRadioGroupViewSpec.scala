@@ -69,9 +69,9 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val doc = view(
         input_radiogroup(
-          id        = "ID",
-          field     = filledForm("field"),
-          options   = Seq.empty,
+          id = "ID",
+          field = filledForm("field"),
+          options = Seq.empty,
           allowNone = true,
           preSelect = false
         )
@@ -95,9 +95,9 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val doc = view(
         input_radiogroup(
-          id        = "ID",
-          field     = form("field"),
-          options   = Seq(RadioOption("VALUE", "LABEL")),
+          id = "ID",
+          field = form("field"),
+          options = Seq(RadioOption("VALUE", "LABEL")),
           allowNone = true
         )
       )

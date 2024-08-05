@@ -45,7 +45,7 @@ object SortField extends Enumeration {
 
 case class Sort(
   direction: SortDirection = SortDirection.ASCENDING,
-  field: SortField         = SortField.COMMODITY_CODE
+  field: SortField = SortField.COMMODITY_CODE
 )
 
 object Sort {
@@ -56,8 +56,8 @@ object Sort {
 
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Sort]] = {
       val direction: Option[SortDirection] =
-        SortDirection.bindable.bind(sort_direction, params).filter(_.isRight).map(_.right.get)
-      val field: Option[SortField] = SortField.bindable.bind(sort_field, params).filter(_.isRight).map(_.right.get)
+        SortDirection.bindable.bind(sort_direction, params).filter(_.isRight).flatMap(_.toOption)
+      val field: Option[SortField] = SortField.bindable.bind(sort_field, params).filter(_.isRight).flatMap(_.toOption)
 
       (direction, field) match {
         case (Some(d), Some(f)) => Some(Right(Sort(direction = d, field = f)))

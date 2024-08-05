@@ -52,12 +52,10 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    reset(
-      casesService,
-      fileService,
-      mapper,
-      commodityCodeConstraints
-    )
+    reset(casesService)
+    reset(fileService)
+    reset(mapper)
+    reset(commodityCodeConstraints)
   }
 
   private def controller(c: Case) = new RulingController(
@@ -100,9 +98,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           .willReturn(Future.successful(Seq(attachment)))
 
         val result = controller(btiCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF())
-        status(result)          shouldBe Status.OK
-        contentType(result)     shouldBe Some("text/html")
-        charset(result)         shouldBe Some("utf-8")
+        status(result)        shouldBe Status.OK
+        contentType(result)   shouldBe Some("text/html")
+        charset(result)       shouldBe Some("utf-8")
         contentAsString(result) should (include("Ruling") and include("<form"))
       }
       "Case is a Liability" in {
@@ -132,7 +130,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
           liabilityCaseWithStatusOPEN,
           permission = Set.empty[Permission]
         ).editRulingDetails("reference")(newFakeGETRequestWithCSRF())
-        status(result)               shouldBe Status.SEE_OTHER
+        status(result)             shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
     }
@@ -150,7 +148,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result = controller(btiCaseWithStatusOPEN, Set.empty)
         .editRulingDetails("reference")(newFakeGETRequestWithCSRF())
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -249,9 +247,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
         val result = controller(caseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF())
         verify(casesService, never()).updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])
-        status(result)          shouldBe Status.OK
-        contentType(result)     shouldBe Some("text/html")
-        charset(result)         shouldBe Some("utf-8")
+        status(result)        shouldBe Status.OK
+        contentType(result)   shouldBe Some("text/html")
+        charset(result)       shouldBe Some("utf-8")
         contentAsString(result) should include("error-summary")
         contentAsString(result) should (include("Ruling") and include("<form"))
       }
@@ -266,9 +264,9 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         val result =
           controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF())
         verify(casesService, never()).updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])
-        status(result)          shouldBe Status.OK
-        contentType(result)     shouldBe Some("text/html")
-        charset(result)         shouldBe Some("utf-8")
+        status(result)        shouldBe Status.OK
+        contentType(result)   shouldBe Some("text/html")
+        charset(result)       shouldBe Some("utf-8")
         contentAsString(result) should include("error-summary")
         contentAsString(result) should (include("Liability") and include("<form"))
       }
@@ -277,7 +275,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "redirect unauthorised when does not have right permissions" in {
       val result = controller(caseWithStatusOPEN, Set.empty).updateRulingDetails("reference")(aValidForm)
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

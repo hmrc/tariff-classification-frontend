@@ -63,10 +63,10 @@ class MiscellaneousController @Inject() (
     }
 
   def renderView(
-    fileId: Option[String]               = None,
+    fileId: Option[String] = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
-    messageForm: Form[MessageFormData]   = MessageForm.form,
-    uploadForm: Form[String]             = UploadAttachmentForm.form
+    messageForm: Form[MessageFormData] = MessageForm.form,
+    uploadForm: Form[String] = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
 
     val miscellaneousCase: Case = request.`case`
@@ -92,25 +92,26 @@ class MiscellaneousController @Inject() (
 
     for {
       allEvents <- eventsService
-                    .getFilteredEvents(miscellaneousCase.reference, NoPagination(), Some(EventType.allEvents))
+                     .getFilteredEvents(miscellaneousCase.reference, NoPagination(), Some(EventType.allEvents))
       queues <- queuesService.getAll
-      activityTab = ActivityViewModel
-        .fromCase(miscellaneousCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
+      activityTab =
+        ActivityViewModel
+          .fromCase(miscellaneousCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
       sampleTab = SampleStatusTabViewModel(
-        miscellaneousCase.reference,
-        miscellaneousCase.sample,
-        allEvents.filter(event => isSampleEvents(event.details.`type`))
-      )
+                    miscellaneousCase.reference,
+                    miscellaneousCase.sample,
+                    allEvents.filter(event => isSampleEvents(event.details.`type`))
+                  )
       attachments <- fileService.getAttachments(miscellaneousCase)
       attachmentsTab = AttachmentsTabViewModel.fromCase(miscellaneousCase, attachments)
       initiateResponse <- fileService.initiate(
-                           FileStoreInitiateRequest(
-                             id              = Some(uploadFileId),
-                             successRedirect = Some(fileUploadSuccessRedirect),
-                             errorRedirect   = Some(fileUploadErrorRedirect),
-                             maxFileSize     = appConfig.fileUploadMaxSize
-                           )
-                         )
+                            FileStoreInitiateRequest(
+                              id = Some(uploadFileId),
+                              successRedirect = Some(fileUploadSuccessRedirect),
+                              errorRedirect = Some(fileUploadErrorRedirect),
+                              maxFileSize = appConfig.fileUploadMaxSize
+                            )
+                          )
     } yield miscellaneousView(
       miscellaneousViewModel,
       caseDetailsTab,

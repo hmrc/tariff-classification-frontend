@@ -81,9 +81,9 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .get()(newFakeGETRequestWithCSRF())
       )
 
-      status(result)          shouldBe OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("page.title.create_misc.h1"))
     }
 
@@ -93,7 +93,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .get()(newFakeGETRequestWithCSRF())
       )
 
-      status(result)               shouldBe SEE_OTHER
+      status(result)             shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -111,7 +111,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
               )
           )
       )
-      status(result)          shouldBe OK
+      status(result)        shouldBe OK
       contentAsString(result) should include(messages("page.title.create_misc.h1"))
     }
 
@@ -146,7 +146,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe OK
+      status(result)        shouldBe OK
       contentAsString(result) should include("Case Queue not found.")
     }
 
@@ -164,7 +164,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe OK
+      status(result)        shouldBe OK
       contentAsString(result) should include("We could not find a Case with reference: reference")
     }
 
@@ -182,7 +182,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .displayConfirmation("1")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe OK
+      status(result)        shouldBe OK
       contentAsString(result) should include("The Miscellaneous case has been created")
     }
 
@@ -200,7 +200,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           .displayConfirmation("1")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe OK
+      status(result)        shouldBe OK
       contentAsString(result) should include("The case status is now </br><strong>OPEN</strong>")
     }
 
@@ -246,7 +246,7 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
           controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
             .editMiscDetails("reference")(newFakePOSTRequestWithCSRF())
         )
-        status(result)               shouldBe SEE_OTHER
+        status(result)             shouldBe SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
     }

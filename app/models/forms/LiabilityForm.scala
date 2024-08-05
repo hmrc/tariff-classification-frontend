@@ -39,8 +39,8 @@ object LiabilityForm {
       "trader-name" -> textNonEmpty("error.empty.trader-name"),
       "liability-status" -> textTransformingTo[LiabilityStatus](
         errorKey = "error.empty.liability-status",
-        reader   = LiabilityStatus.withName,
-        writer   = _.toString
+        reader = LiabilityStatus.withName,
+        writer = _.toString
       )
     )(form2Liability)(liability2Form)
   )

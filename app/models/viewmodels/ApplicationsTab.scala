@@ -23,7 +23,7 @@ case class ApplicationsTab(
   applicationType: ApplicationType,
   elementId: String,
   searchResult: Paged[Case],
-  referralEvent: Option[Map[String, Event]]  = None,
+  referralEvent: Option[Map[String, Event]] = None,
   completedEvent: Option[Map[String, Event]] = None
 )
 
@@ -32,8 +32,8 @@ case class ApplicationTabViewModel(headingMessageKey: String, applicationTabs: L
 object ApplicationsTab {
 
   def atar(
-    searchResult: Paged[Case]                  = Paged.empty,
-    referralEvent: Option[Map[String, Event]]  = None,
+    searchResult: Paged[Case] = Paged.empty,
+    referralEvent: Option[Map[String, Event]] = None,
     completedEvent: Option[Map[String, Event]] = None
   ): ApplicationsTab =
     ApplicationsTab(
@@ -46,8 +46,8 @@ object ApplicationsTab {
     )
 
   def liability(
-    searchResult: Paged[Case]                  = Paged.empty,
-    referralEvent: Option[Map[String, Event]]  = None,
+    searchResult: Paged[Case] = Paged.empty,
+    referralEvent: Option[Map[String, Event]] = None,
     completedEvent: Option[Map[String, Event]] = None
   ): ApplicationsTab =
     ApplicationsTab(
@@ -60,8 +60,8 @@ object ApplicationsTab {
     )
 
   def correspondence(
-    searchResult: Paged[Case]                  = Paged.empty,
-    referralEvent: Option[Map[String, Event]]  = None,
+    searchResult: Paged[Case] = Paged.empty,
+    referralEvent: Option[Map[String, Event]] = None,
     completedEvent: Option[Map[String, Event]] = None
   ): ApplicationsTab =
     ApplicationsTab(
@@ -74,8 +74,8 @@ object ApplicationsTab {
     )
 
   def miscellaneous(
-    searchResult: Paged[Case]                  = Paged.empty,
-    referralEvent: Option[Map[String, Event]]  = None,
+    searchResult: Paged[Case] = Paged.empty,
+    referralEvent: Option[Map[String, Event]] = None,
     completedEvent: Option[Map[String, Event]] = None
   ): ApplicationsTab =
     ApplicationsTab(

@@ -55,8 +55,8 @@ class ExtendedUseCaseController @Inject() (
     implicit request: AuthenticatedRequest[_]
   ): Html = change_extended_use_status(c, preFilledForm)
 
-  override protected def update(c: Case, status: Boolean, operator: Operator)(
-    implicit hc: HeaderCarrier
+  override protected def update(c: Case, status: Boolean, operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     caseService.updateExtendedUseStatus(c, status, operator)
 

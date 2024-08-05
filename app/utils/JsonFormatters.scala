@@ -60,30 +60,30 @@ object JsonFormatters {
   implicit val formatRepaymentClaim: OFormat[RepaymentClaim]             = Json.format[RepaymentClaim]
   implicit val formatAddress: OFormat[Address]                           = Json.format[Address]
   implicit val formatTraderContactDetails: OFormat[TraderContactDetails] = Json.format[TraderContactDetails]
-  implicit val operatorFormat: Format[Operator]                          = Json.using[Json.WithDefaultValues].format[Operator]
-  implicit val formatNewUserRequest: OFormat[NewUserRequest]             = Json.using[Json.WithDefaultValues].format[NewUserRequest]
-  implicit val scanStatusFormat: Format[ScanStatus.Value]                = EnumJson.format(ScanStatus)
-  implicit val appealStatusFormat: Format[AppealStatus.Value]            = EnumJson.format(AppealStatus)
-  implicit val sampleStatusFormat: Format[SampleStatus.Value]            = EnumJson.format(SampleStatus)
-  implicit val sampleReturnFormat: Format[SampleReturn.Value]            = EnumJson.format(SampleReturn)
-  implicit val sampleSendFormat: Format[SampleSend.Value]                = EnumJson.format(SampleSend)
-  implicit val appealTypeFormat: Format[AppealType.Value]                = EnumJson.format(AppealType)
-  implicit val cancelReasonFormat: Format[CancelReason.Value]            = EnumJson.format(CancelReason)
-  implicit val caseStatusFormat: Format[CaseStatus.Value]                = EnumJson.format(CaseStatus)
-  implicit val attachmentFormat: OFormat[Attachment]                     = Json.using[Json.WithDefaultValues].format[Attachment]
-  implicit val appealFormat: OFormat[Appeal]                             = Json.format[Appeal]
-  implicit val cancellationFormat: OFormat[Cancellation]                 = Json.using[Json.WithDefaultValues].format[Cancellation]
-  implicit val contactFormat: OFormat[Contact]                           = Json.format[Contact]
-  implicit val eoriDetailsFormat: OFormat[EORIDetails]                   = Json.format[EORIDetails]
-  implicit val decisionFormat: OFormat[Decision]                         = Json.using[Json.WithDefaultValues].format[Decision]
-  implicit val sampleFormat: OFormat[Sample]                             = Json.format[Sample]
-  implicit val agentDetailsFormat: OFormat[AgentDetails]                 = Json.format[AgentDetails]
-  implicit val messageLoggedFormat: OFormat[Message]                     = Json.format[Message]
-  implicit val keywordFormat: OFormat[Keyword]                           = Json.format[Keyword]
-  implicit val liabilityOrderFormat: OFormat[LiabilityOrder]             = Json.format[LiabilityOrder]
-  implicit val correspondenceFormat: OFormat[CorrespondenceApplication]  = Json.format[CorrespondenceApplication]
-  implicit val miscFormat: OFormat[MiscApplication]                      = Json.format[MiscApplication]
-  implicit val btiApplicationFormat: OFormat[BTIApplication]             = Json.using[Json.WithDefaultValues].format[BTIApplication]
+  implicit val operatorFormat: Format[Operator]              = Json.using[Json.WithDefaultValues].format[Operator]
+  implicit val formatNewUserRequest: OFormat[NewUserRequest] = Json.using[Json.WithDefaultValues].format[NewUserRequest]
+  implicit val scanStatusFormat: Format[ScanStatus.Value]    = EnumJson.format(ScanStatus)
+  implicit val appealStatusFormat: Format[AppealStatus.Value] = EnumJson.format(AppealStatus)
+  implicit val sampleStatusFormat: Format[SampleStatus.Value] = EnumJson.format(SampleStatus)
+  implicit val sampleReturnFormat: Format[SampleReturn.Value] = EnumJson.format(SampleReturn)
+  implicit val sampleSendFormat: Format[SampleSend.Value]     = EnumJson.format(SampleSend)
+  implicit val appealTypeFormat: Format[AppealType.Value]     = EnumJson.format(AppealType)
+  implicit val cancelReasonFormat: Format[CancelReason.Value] = EnumJson.format(CancelReason)
+  implicit val caseStatusFormat: Format[CaseStatus.Value]     = EnumJson.format(CaseStatus)
+  implicit val attachmentFormat: OFormat[Attachment]          = Json.using[Json.WithDefaultValues].format[Attachment]
+  implicit val appealFormat: OFormat[Appeal]                  = Json.format[Appeal]
+  implicit val cancellationFormat: OFormat[Cancellation]      = Json.using[Json.WithDefaultValues].format[Cancellation]
+  implicit val contactFormat: OFormat[Contact]                = Json.format[Contact]
+  implicit val eoriDetailsFormat: OFormat[EORIDetails]        = Json.format[EORIDetails]
+  implicit val decisionFormat: OFormat[Decision]              = Json.using[Json.WithDefaultValues].format[Decision]
+  implicit val sampleFormat: OFormat[Sample]                  = Json.format[Sample]
+  implicit val agentDetailsFormat: OFormat[AgentDetails]      = Json.format[AgentDetails]
+  implicit val messageLoggedFormat: OFormat[Message]          = Json.format[Message]
+  implicit val keywordFormat: OFormat[Keyword]                = Json.format[Keyword]
+  implicit val liabilityOrderFormat: OFormat[LiabilityOrder]  = Json.format[LiabilityOrder]
+  implicit val correspondenceFormat: OFormat[CorrespondenceApplication] = Json.format[CorrespondenceApplication]
+  implicit val miscFormat: OFormat[MiscApplication]                     = Json.format[MiscApplication]
+  implicit val btiApplicationFormat: OFormat[BTIApplication] = Json.using[Json.WithDefaultValues].format[BTIApplication]
   implicit val applicationFormat: Format[Application] = Union
     .from[Application]("type")
     .and[BTIApplication](ApplicationType.ATAR.name)
@@ -215,13 +215,14 @@ object JsonFormatters {
 
 object EnumJson {
 
+  import scala.language.implicitConversions
+
   private def enumReads[E <: Enumeration](`enum`: E): Reads[E#Value] = {
     case JsString(s) =>
-      Try(JsSuccess(enum.withName(s))).recover {
-        case _: NoSuchElementException =>
-          JsError(
-            s"Expected an enumeration of type: '${enum.getClass.getSimpleName}', but it does not contain the name: '$s'"
-          )
+      Try(JsSuccess(enum.withName(s))).recover { case _: NoSuchElementException =>
+        JsError(
+          s"Expected an enumeration of type: '${enum.getClass.getSimpleName}', but it does not contain the name: '$s'"
+        )
       }.get
 
     case _ => JsError("String value is expected")

@@ -96,11 +96,11 @@ object ReportingTabViewModel {
   def reportingTabs(): ReportingTabViewModel =
     ReportingTabViewModel(
       "Reporting dashboard",
-      summaryReportTab        = ReportTab("summary", "summary_report_tab", summaryTabRows),
-      statusReportTab         = ReportTab("status", "status_report_tab", statusTabRows),
-      atarReportTab           = ReportTab("atar", "atar_report_tab", atarTabRows),
-      liabilityReportTab      = ReportTab("liability", "liability_report_tab", liabilityTabRows),
+      summaryReportTab = ReportTab("summary", "summary_report_tab", summaryTabRows),
+      statusReportTab = ReportTab("status", "status_report_tab", statusTabRows),
+      atarReportTab = ReportTab("atar", "atar_report_tab", atarTabRows),
+      liabilityReportTab = ReportTab("liability", "liability_report_tab", liabilityTabRows),
       correspondenceReportTab = ReportTab("correspondence", "correspondence_report_tab", correspondenceTabRows),
-      miscReportTab           = ReportTab("miscellaneous", "misc_report_tab", miscTabRows)
+      miscReportTab = ReportTab("miscellaneous", "misc_report_tab", miscTabRows)
     )
 }

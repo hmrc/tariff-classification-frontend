@@ -78,7 +78,7 @@ class PdfGenerationSpec extends IntegrationTest {
         await(requestWithSession(s"/pdf/application/$caseRef").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
 
   }
@@ -131,7 +131,7 @@ class PdfGenerationSpec extends IntegrationTest {
         await(requestWithSession(s"/pdf/ruling/$caseRef").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
 
   }

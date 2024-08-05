@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.AppealStatus.AppealStatus
 @import models.{Appeal, Case}
@@ -30,7 +29,7 @@
 )
 
 
-@(c: Case, appeal: Appeal, form: Form[AppealStatus])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, appeal: Appeal, form: Form[AppealStatus])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.change.appeal.status"),

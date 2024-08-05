@@ -38,7 +38,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(MissingBearerToken())
 
-        status(result)               shouldBe SEE_OTHER
+        status(result)             shouldBe SEE_OTHER
         redirectLocation(result).get should beTheLoginPage
       }
     }
@@ -47,7 +47,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(BearerTokenExpired())
 
-        status(result)               shouldBe SEE_OTHER
+        status(result)             shouldBe SEE_OTHER
         redirectLocation(result).get should beTheLoginPage
       }
     }
@@ -56,7 +56,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(InvalidBearerToken())
 
-        status(result)               shouldBe SEE_OTHER
+        status(result)             shouldBe SEE_OTHER
         redirectLocation(result).get should beTheLoginPage
       }
     }
@@ -65,7 +65,7 @@ class AuthActionSpec extends ControllerBaseSpec {
       "redirect the user to log in " in {
         val result: Future[Result] = handleAuthError(SessionRecordNotFound())
 
-        status(result)               shouldBe SEE_OTHER
+        status(result)             shouldBe SEE_OTHER
         redirectLocation(result).get should beTheLoginPage
       }
     }

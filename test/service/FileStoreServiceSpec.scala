@@ -130,7 +130,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
     val initiateRequest = FileStoreInitiateRequest(maxFileSize = 0)
 
     val initiateResponse = FileStoreInitiateResponse(
-      id              = "id",
+      id = "id",
       upscanReference = "ref",
       uploadRequest = UpscanFormTemplate(
         "http://localhost:20001/upscan/upload",
@@ -199,15 +199,15 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   private def aStoredAttachmentWithId(id: String): StoredAttachment =
     StoredAttachment(
-      id                     = id,
-      public                 = true,
-      operator               = None,
-      url                    = Some(s"url-$id"),
-      fileName               = Some(s"name-$id"),
-      mimeType               = Some(s"type-$id"),
-      scanStatus             = Some(ScanStatus.READY),
-      timestamp              = Instant.EPOCH,
-      description            = Some("test description"),
+      id = id,
+      public = true,
+      operator = None,
+      url = Some(s"url-$id"),
+      fileName = Some(s"name-$id"),
+      mimeType = Some(s"type-$id"),
+      scanStatus = Some(ScanStatus.READY),
+      timestamp = Instant.EPOCH,
+      description = Some("test description"),
       shouldPublishToRulings = true
     )
 
@@ -219,11 +219,11 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   private def withAnAttachmentWithId(id: String): Case => Case = c => {
     val attachments: Seq[Attachment] = c.attachments :+ Attachment(
-      id     = id,
+      id = id,
       public = true,
       None,
-      timestamp              = Instant.EPOCH,
-      description            = Some("test description"),
+      timestamp = Instant.EPOCH,
+      description = Some("test description"),
       shouldPublishToRulings = true
     )
     c.copy(attachments = attachments)
@@ -237,11 +237,11 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   private def anAttachmentWithId(id: String): Attachment =
     Attachment(
-      id     = id,
+      id = id,
       public = true,
       None,
-      timestamp              = Instant.EPOCH,
-      description            = Some("test description"),
+      timestamp = Instant.EPOCH,
+      description = Some("test description"),
       shouldPublishToRulings = true
     )
 
@@ -258,10 +258,10 @@ class FileStoreServiceSpec extends ServiceSpecBase {
 
   private def someMetadataWithId(id: String): FileMetadata =
     FileMetadata(
-      id         = id,
-      fileName   = Some(s"name-$id"),
-      mimeType   = Some(s"type-$id"),
-      url        = Some(s"url-$id"),
+      id = id,
+      fileName = Some(s"name-$id"),
+      mimeType = Some(s"type-$id"),
+      url = Some(s"url-$id"),
       scanStatus = Some(ScanStatus.READY)
     )
 

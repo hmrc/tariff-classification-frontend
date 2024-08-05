@@ -17,7 +17,6 @@
 package controllers.v2
 
 import com.google.inject.Provider
-import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActions, RequestActionsWithPermissions}
 import models._
 import models.forms._
@@ -30,6 +29,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
 import play.api.data.Form
+import play.api.http.Status
 import play.api.i18n.Messages
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.{Binding, bind}
@@ -42,13 +42,12 @@ import utils.Cases.{aCase, withCorrespondenceApplication, withLiabilityApplicati
 import utils.{Cases, Events}
 import views.html.partials.liabilities.{attachments_details, attachments_list}
 import views.html.v2.{case_heading, liability_details_edit, liability_view, remove_attachment}
-import play.api.http.Status
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RequestActionsWithPermissionsProvider @Inject() (
-  implicit parse: PlayBodyParsers,
+class RequestActionsWithPermissionsProvider @Inject() (implicit
+  parse: PlayBodyParsers,
   executionContext: ExecutionContext
 ) extends Provider[RequestActionsWithPermissions] {
 
@@ -56,7 +55,7 @@ class RequestActionsWithPermissionsProvider @Inject() (
     new RequestActionsWithPermissions(
       parse,
       Set(Permission.ADD_NOTE),
-      c  = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
+      c = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions)),
       op = Cases.operatorWithPermissions
     )
 }
@@ -96,23 +95,21 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
     .build()
 
-  private lazy val pagedEvent: Paged[Event]           = Paged(Seq(Events.event), 1, 1, 1)
-  private lazy val queues: List[Queue]                = List(Queue("", "", ""))
-  private lazy val eventService                       = mock[EventsService]
-  private lazy val queueService                       = mock[QueuesService]
-  private lazy val fileService                        = mock[FileStoreService]
-  private lazy val attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment)
-  private lazy val liability_view                     = mock[liability_view]
-  private lazy val liability_details_edit             = injector.instanceOf[liability_details_edit]
-  private lazy val fileStoreService                   = mock[FileStoreService]
-  private lazy val keywordsService                    = mock[KeywordsService]
-  private lazy val casesService                       = mock[CasesService]
+  private lazy val pagedEvent: Paged[Event] = Paged(Seq(Events.event), 1, 1, 1)
+  private lazy val queues: List[Queue]      = List(Queue("", "", ""))
+  private lazy val eventService             = mock[EventsService]
+  private lazy val queueService             = mock[QueuesService]
+  private lazy val liability_view           = mock[liability_view]
+  private lazy val liability_details_edit   = injector.instanceOf[liability_details_edit]
+  private lazy val fileStoreService         = mock[FileStoreService]
+  private lazy val keywordsService          = mock[KeywordsService]
+  private lazy val casesService             = mock[CasesService]
 
   private val keyword1: Keyword = Keyword("keyword1")
   private val keyword2: Keyword = Keyword("keyword2")
 
   private val initiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -120,14 +117,14 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
   )
 
-  override def beforeEach(): Unit =
-    reset(
-      liability_view,
-      eventService,
-      queueService,
-      fileStoreService,
-      keywordsService
-    )
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(liability_view)
+    reset(eventService)
+    reset(queueService)
+    reset(fileStoreService)
+    reset(keywordsService)
+  }
 
   private def checkLiabilityView(timesInvoked: Int = 1): HtmlFormat.Appendable =
     verify(liability_view, times(timesInvoked)).apply(
@@ -144,12 +141,12 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       any[Form[String]],
       any[Option[AppealTabViewModel]],
       any[PrimaryNavigationTab]
-    )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
+    )(any[AuthenticatedRequest[_]], any[Messages])
 
   private def mockLiabilityController(
-    pagedEvent: Paged[Event]                    = pagedEvent,
-    queues: List[Queue]                         = queues,
-    attachments: Seq[StoredAttachment]          = Seq(Cases.storedAttachment),
+    pagedEvent: Paged[Event] = pagedEvent,
+    queues: List[Queue] = queues,
+    attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment),
     letterOfAuthority: Option[StoredAttachment] = Some(Cases.letterOfAuthority)
   ): Any = {
     when(
@@ -188,7 +185,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         any[Form[String]],
         any[Option[AppealTabViewModel]],
         any[PrimaryNavigationTab]
-      )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
+      )(any[AuthenticatedRequest[_]], any[Messages])
     ) thenReturn Html("body")
   }
 
@@ -197,7 +194,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       new RequestActionsWithPermissions(
         playBodyParsers,
         permissions,
-        c  = c,
+        c = c,
         op = Cases.operatorWithPermissions
       ),
       casesService,
@@ -262,7 +259,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val fakeReq                = newFakeGETRequestWithCSRF()
       val result: Future[Result] = controller(c, Set()).editLiabilityDetails(caseReference).apply(fakeReq)
 
-      status(result)               shouldBe SEE_OTHER
+      status(result)             shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

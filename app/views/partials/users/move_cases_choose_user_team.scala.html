@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.v2.routes
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.NoTabSelected
@@ -32,7 +31,7 @@
 @(
         form: Form[String],
         queues: List[Queue]
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @heading = @{messages("users.move_cases.choose_users_team.header")}
 

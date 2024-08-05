@@ -40,7 +40,7 @@ class UsersByTeamTableSpec extends ViewSpec {
   val count: Map[String, List[Case]] = Map("id1" -> List(aCase(), aCase()), "id2" -> List(aCase(), aCase()))
 
   def assignedUsersTableView(
-    usersTab: UsersTab                 = usersTab,
+    usersTab: UsersTab = usersTab,
     caseCount: Map[String, List[Case]] = count
   ): HtmlFormat.Appendable =
     usersByTeamTable(usersTab, caseCount)
@@ -58,7 +58,7 @@ class UsersByTeamTableSpec extends ViewSpec {
       doc.getElementById("act-case") should containText("Case")
     }
 
-    for ((user, index) <- usersTab.searchResult.zipWithIndex) {
+    for ((user, index) <- usersTab.searchResult.zipWithIndex)
       s"populate users by team table with user id: ${user.id}" in {
 
         val doc = view(assignedUsersTableView())
@@ -70,6 +70,5 @@ class UsersByTeamTableSpec extends ViewSpec {
           count.getOrElse(user.id, List.empty).size.toString
         )
       }
-    }
   }
 }

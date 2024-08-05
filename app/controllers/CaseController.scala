@@ -180,14 +180,13 @@ class CaseController @Inject() (
           renderView.map(BadRequest(_))
         }
 
-        def onSuccess: ActivityFormData => Future[Result] = validForm => {
+        def onSuccess: ActivityFormData => Future[Result] = validForm =>
           eventsService
             .addNote(request.`case`, validForm.note, request.operator)
             .map(_ =>
               Redirect(routes.CaseController.activityDetails(reference))
                 .flashing(success("case.activity.note.success.text"))
             )
-        }
 
         ActivityForm.form.bindFromRequest().fold(onError, onSuccess)
       }
@@ -208,8 +207,8 @@ class CaseController @Inject() (
 
         def onSuccess: MessageFormData => Future[Result] = validForm => {
           val messageToLog = Message(
-            name    = request.operator.name.getOrElse(""),
-            date    = Instant.now(),
+            name = request.operator.name.getOrElse(""),
+            date = Instant.now(),
             message = validForm.message
           )
           caseService
@@ -234,14 +233,13 @@ class CaseController @Inject() (
           renderView.map(BadRequest(_))
         }
 
-        def onSuccess: String => Future[Result] = validForm => {
+        def onSuccess: String => Future[Result] = validForm =>
           keywordsService
             .addKeyword(request.`case`, validForm, request.operator)
             .map(_ =>
               Redirect(routes.CaseController.keywordsDetails(reference))
                 .flashing(success("notification.success.keywords.add"))
             )
-        }
 
         KeywordForm.form.bindFromRequest().fold(onError, onSuccess)
       }

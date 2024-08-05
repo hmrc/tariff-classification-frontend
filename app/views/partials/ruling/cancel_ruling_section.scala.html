@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes.CancelRulingController
 @import models.{Case, CaseStatus}
 @import models.viewmodels.atar.RulingTabViewModel
 
-@(ruling: RulingTabViewModel, useTabIndex : Option[Int] = None)(implicit messages: Messages, appConfig: AppConfig)
+@(ruling: RulingTabViewModel, useTabIndex : Option[Int] = None)
 
 @if(ruling.caseStatus == CaseStatus.COMPLETED && !ruling.caseHasExpiredRuling) {
 

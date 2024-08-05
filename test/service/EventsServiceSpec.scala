@@ -42,7 +42,8 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, event)
+    reset(connector)
+    reset(event)
   }
 
   "Get Events by reference" should {
@@ -67,10 +68,14 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
         )
       )
 
-      given(connector.findFilteredEvents("reference", NoPagination(), Set(EventType.SAMPLE_STATUS_CHANGE))) willReturn Future
+      given(
+        connector.findFilteredEvents("reference", NoPagination(), Set(EventType.SAMPLE_STATUS_CHANGE))
+      ) willReturn Future
         .successful(Paged(filteredEvents, NoPagination(), 1))
 
-      await(service.getFilteredEvents("reference", NoPagination(), Some(Set(EventType.SAMPLE_STATUS_CHANGE)))) shouldBe Paged(
+      await(
+        service.getFilteredEvents("reference", NoPagination(), Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
+      ) shouldBe Paged(
         filteredEvents,
         NoPagination(),
         1

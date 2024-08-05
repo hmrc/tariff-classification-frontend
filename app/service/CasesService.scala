@@ -58,8 +58,8 @@ class CasesService @Inject() (
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
-  def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(
-    implicit hc: HeaderCarrier
+  def updateExtendedUseStatus(original: Case, status: Boolean, operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] = {
     val decision = original.decision.getOrElse(
       throw new IllegalArgumentException("Cannot change the Extended Use status of a case without a Decision")
@@ -76,14 +76,14 @@ class CasesService @Inject() (
     } yield updated
   }
 
-  def addAppeal(original: Case, appealType: AppealType, appealStatus: AppealStatus, operator: Operator)(
-    implicit hc: HeaderCarrier
+  def addAppeal(original: Case, appealType: AppealType, appealStatus: AppealStatus, operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] = {
     val decision = original.decision.getOrElse(
       throw new IllegalArgumentException("Cannot change the Appeal state of a case without a Decision")
     )
     val appeal = Appeal(
-      id     = UUID.randomUUID().toString,
+      id = UUID.randomUUID().toString,
       status = appealStatus,
       `type` = appealType
     )
@@ -113,8 +113,8 @@ class CasesService @Inject() (
     } yield updated
   }
 
-  def updateSampleStatus(original: Case, status: Option[SampleStatus], operator: Operator)(
-    implicit hc: HeaderCarrier
+  def updateSampleStatus(original: Case, status: Option[SampleStatus], operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     for {
       updated <- connector.updateCase(original.copy(sample = original.sample.copy(status = status)))
@@ -122,8 +122,8 @@ class CasesService @Inject() (
       _ = auditService.auditSampleStatusChange(original, updated, operator)
     } yield updated
 
-  def updateSampleReturn(original: Case, status: Option[SampleReturn], operator: Operator)(
-    implicit hc: HeaderCarrier
+  def updateSampleReturn(original: Case, status: Option[SampleReturn], operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     for {
       updated <- connector.updateCase(original.copy(sample = original.sample.copy(returnStatus = status)))
@@ -131,8 +131,8 @@ class CasesService @Inject() (
       _ = auditService.auditSampleReturnChange(original, updated, operator)
     } yield updated
 
-  def updateWhoSendSample(original: Case, sampleSend: Option[SampleSend], operator: Operator)(
-    implicit hc: HeaderCarrier
+  def updateWhoSendSample(original: Case, sampleSend: Option[SampleSend], operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     for {
       updated <- connector.updateCase(original.copy(sample = original.sample.copy(whoIsSending = sampleSend)))
@@ -150,8 +150,8 @@ class CasesService @Inject() (
   def reassignCase(original: Case, queue: Queue, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     for {
       updated <- connector.updateCase(
-                  original.copy(queueId = Some(queue.id), assignee = None)
-                )
+                   original.copy(queueId = Some(queue.id), assignee = None)
+                 )
       _ <- addQueueChangeEvent(original, updated, operator)
       _ <- addAssignmentChangeEvent(original, updated, operator)
       _ = auditService.auditQueueReassigned(updated, operator, queue)
@@ -189,16 +189,16 @@ class CasesService @Inject() (
 
     for {
       updated <- connector.updateCase(
-                  original.addAttachment(attachment).copy(status = CaseStatus.REFERRED, sample = sample)
-                )
+                   original.addAttachment(attachment).copy(status = CaseStatus.REFERRED, sample = sample)
+                 )
       _ <- addReferStatusChangeEvent(original, updated, operator, Some(note), referredTo, reason, Some(attachment))
       _ = auditService.auditCaseReferred(original, updated, operator)
       _ = processChangedSampleStatus(original, updated, operator)
     } yield updated
   }
 
-  private def processChangedSampleStatus(original: Case, updated: Case, operator: Operator)(
-    implicit hc: HeaderCarrier
+  private def processChangedSampleStatus(original: Case, updated: Case, operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Unit =
     if (updated.sample.status != original.sample.status) {
       addSampleStatusChangeEvent(original, updated, operator)
@@ -214,8 +214,8 @@ class CasesService @Inject() (
       _ = auditService.auditCaseRejected(original, updated, operator)
     } yield updated
 
-  def suspendCase(original: Case, attachment: Attachment, note: String, operator: Operator)(
-    implicit hc: HeaderCarrier
+  def suspendCase(original: Case, attachment: Attachment, note: String, operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     for {
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUSPENDED))
@@ -223,8 +223,8 @@ class CasesService @Inject() (
       _ = auditService.auditCaseSuspended(original, updated, operator)
     } yield updated
 
-  def suppressCase(original: Case, attachment: Attachment, note: String, operator: Operator)(
-    implicit hc: HeaderCarrier
+  def suppressCase(original: Case, attachment: Attachment, note: String, operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     for {
       updated <- connector.updateCase(original.addAttachment(attachment).copy(status = CaseStatus.SUPPRESSED))
@@ -259,8 +259,10 @@ class CasesService @Inject() (
         val decisionWithDates: Decision = decision
           .copy(effectiveStartDate = Some(startDate.toInstant), effectiveEndDate = endDate)
 
-        if (original.application.`type`
-              .equals(ApplicationType.LIABILITY)) {
+        if (
+          original.application.`type`
+            .equals(ApplicationType.LIABILITY)
+        ) {
           if (original.application.asLiabilityOrder.repaymentClaim.isDefined) {
             val repaymentClaim =
               original.application.asLiabilityOrder.repaymentClaim.get
@@ -287,10 +289,9 @@ class CasesService @Inject() (
           .sendCaseCompleteEmail(updated, operator)
           .map { email: EmailTemplate =>
             Some(s"- Subject: ${email.subject}\n- Body: ${email.plain}")
-          } recover {
-          case t: Throwable =>
-            logger.error("Failed to send email", t)
-            Some("Attempted to send an email to the applicant which failed")
+          } recover { case t: Throwable =>
+          logger.error("Failed to send email", t)
+          Some("Attempted to send an email to the applicant which failed")
         }
       }
 
@@ -299,10 +300,10 @@ class CasesService @Inject() (
     for {
 
       caseWithPdf <- completedCase.decision
-                      .map(decision => uploadCaseDocuments(completedCase, decision, operator))
-                      .getOrElse {
-                        Future.successful(completedCase)
-                      }
+                       .map(decision => uploadCaseDocuments(completedCase, decision, operator))
+                       .getOrElse {
+                         Future.successful(completedCase)
+                       }
 
       // Update the case
       updatedCase: Case <- connector.updateCase(caseWithPdf)
@@ -318,10 +319,10 @@ class CasesService @Inject() (
 
       // Notify the Ruling store
       _ = if (original.application.isBTI) {
-        rulingConnector
-          .notify(original.reference)
-          .recover(loggingARulingErrorFor(original.reference))
-      }
+            rulingConnector
+              .notify(original.reference)
+              .recover(loggingARulingErrorFor(original.reference))
+          }
 
     } yield updatedCase
   }
@@ -384,8 +385,8 @@ class CasesService @Inject() (
         letterStored <- fileService.upload(letter)
         pdfLetterAttachment = Attachment(id = letterStored.id, operator = Some(operator))
         caseWithPdf = completedCase.copy(decision =
-          Some(decision.copy(decisionPdf = Some(pdfAttachment), letterPdf = Some(pdfLetterAttachment)))
-        )
+                        Some(decision.copy(decisionPdf = Some(pdfAttachment), letterPdf = Some(pdfLetterAttachment)))
+                      )
 
       } yield caseWithPdf
     } else {
@@ -396,7 +397,7 @@ class CasesService @Inject() (
         // Upload the decision PDF to the filestore
         pdfStored <- fileService.upload(pdfFile)
 
-        pdfAttachment = Attachment(id               = pdfStored.id, operator = Some(operator))
+        pdfAttachment = Attachment(id = pdfStored.id, operator = Some(operator))
         caseWithPdf   = completedCase.copy(decision = Some(decision.copy(decisionPdf = Some(pdfAttachment))))
 
       } yield caseWithPdf
@@ -413,16 +414,16 @@ class CasesService @Inject() (
       .getOrElse(throw new IllegalArgumentException("Cannot Cancel a Case without a Decision"))
       .copy(
         effectiveEndDate = Some(updatedEndDate.toInstant),
-        cancellation     = Some(Cancellation(reason = reason))
+        cancellation = Some(Cancellation(reason = reason))
       )
 
     for {
       // Update the case
       updated: Case <- connector.updateCase(
-                        original
-                          .addAttachment(attachment)
-                          .copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating))
-                      )
+                         original
+                           .addAttachment(attachment)
+                           .copy(status = CaseStatus.CANCELLED, decision = Some(decisionUpdating))
+                       )
       // Create the event
       _ <- addCancelStatusChangeEvent(original, updated, operator, Some(note), reason, Some(attachment))
       // Audit
@@ -450,7 +451,7 @@ class CasesService @Inject() (
     queue: Seq[Queue],
     pagination: Pagination,
     forTypes: Set[ApplicationType] = ApplicationType.values,
-    forStatuses: Set[CaseStatus]   = CaseStatus.openStatuses,
+    forStatuses: Set[CaseStatus] = CaseStatus.openStatuses,
     assignee: String
   )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAllQueues(queue, pagination, forTypes, forStatuses, assignee)
@@ -458,28 +459,25 @@ class CasesService @Inject() (
   def countCasesByQueue(implicit hc: HeaderCarrier): Future[Map[(Option[String], ApplicationType), Int]] =
     for {
       countByQueue <- reportingService.queueReport(
-                       QueueReport(statuses =
-                         Set(
-                           PseudoCaseStatus.NEW,
-                           PseudoCaseStatus.OPEN,
-                           PseudoCaseStatus.REFERRED,
-                           PseudoCaseStatus.SUSPENDED
-                         )
-                       ),
-                       NoPagination()
-                     )
+                        QueueReport(statuses =
+                          Set(
+                            PseudoCaseStatus.NEW,
+                            PseudoCaseStatus.OPEN,
+                            PseudoCaseStatus.REFERRED,
+                            PseudoCaseStatus.SUSPENDED
+                          )
+                        ),
+                        NoPagination()
+                      )
 
       casesByQueue = countByQueue.results.map { resultGroup =>
-        (resultGroup.team, resultGroup.caseType) -> resultGroup.count.toInt
-      }.toMap
+                       (resultGroup.team, resultGroup.caseType) -> resultGroup.count.toInt
+                     }.toMap
 
     } yield casesByQueue
 
   def getCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     connector.findCasesByAssignee(assignee, pagination)
-
-  def getAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
-    connector.findAssignedCases(pagination)
 
   def updateCase(originalCase: Case, caseToUpdate: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     for {
@@ -502,8 +500,8 @@ class CasesService @Inject() (
       connector.updateCase(c.copy(attachments = c.attachments.filter(_.id != fileId)))
     }
 
-  def addMessage(original: Case, message: Message, operator: Operator)(
-    implicit hc: HeaderCarrier
+  def addMessage(original: Case, message: Message, operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] = {
     val applicationToUpdate = original.application.`type` match {
       case CORRESPONDENCE =>
@@ -526,15 +524,15 @@ class CasesService @Inject() (
     teamId: String,
     originalUserId: String,
     operatorUpdating: String
-  )(
-    implicit hc: HeaderCarrier
+  )(implicit
+    hc: HeaderCarrier
   ): Future[Unit] =
     for {
       assignedCases <- getCasesByAssignee(Operator(originalUserId), NoPagination())
       casesToUpdate = assignedCases.results.filter(c => refs.contains(c.reference))
       updatedCases <- casesToUpdate.toList.traverse { c =>
-                       updateCase(c, c.copy(assignee = user, queueId = Some(teamId)), Operator(operatorUpdating))
-                     }
+                        updateCase(c, c.copy(assignee = user, queueId = Some(teamId)), Operator(operatorUpdating))
+                      }
       _ = auditService.auditUserCaseMoved(updatedCases.map(_.reference), user, teamId, originalUserId, operatorUpdating)
     } yield ()
 
@@ -573,9 +571,9 @@ class CasesService @Inject() (
     attachment: Option[Attachment] = None
   )(implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CaseStatusChange(
-      from         = original.status,
-      to           = updated.status,
-      comment      = comment,
+      from = original.status,
+      to = updated.status,
+      comment = comment,
       attachmentId = attachment.map(_.id)
     )
     addEvent(original, updated, details, operator)
@@ -590,11 +588,11 @@ class CasesService @Inject() (
     reason: RejectReason
   )(implicit hc: HeaderCarrier): Future[Unit] = {
     val details = RejectCaseStatusChange(
-      from         = original.status,
-      to           = updated.status,
-      comment      = comment,
+      from = original.status,
+      to = updated.status,
+      comment = comment,
       attachmentId = attachment.map(_.id),
-      reason       = reason
+      reason = reason
     )
     addEvent(original, updated, details, operator)
   }
@@ -608,9 +606,9 @@ class CasesService @Inject() (
     attachment: Option[Attachment]
   )(implicit hc: HeaderCarrier): Future[Unit] = {
     val details = CancellationCaseStatusChange(
-      from         = original.status,
-      reason       = reason,
-      comment      = comment,
+      from = original.status,
+      reason = reason,
+      comment = comment,
       attachmentId = attachment.map(_.id)
     )
     addEvent(original, updated, details, operator)
@@ -626,11 +624,11 @@ class CasesService @Inject() (
     attachment: Option[Attachment]
   )(implicit hc: HeaderCarrier): Future[Unit] = {
     val details = ReferralCaseStatusChange(
-      from         = original.status,
-      comment      = comment,
+      from = original.status,
+      comment = comment,
       attachmentId = attachment.map(_.id),
-      referredTo   = referredTo,
-      reason       = reason
+      referredTo = referredTo,
+      reason = reason
     )
     addEvent(original, updated, details, operator)
   }
@@ -703,7 +701,7 @@ class CasesService @Inject() (
   )(implicit hc: HeaderCarrier): Future[Unit] =
     (original.assignee, updated.assignee) match {
       case (None, None) => Future.successful(())
-      case _            => addEvent(original, updated, AssignmentChange(original.assignee, updated.assignee, comment), operator)
+      case _ => addEvent(original, updated, AssignmentChange(original.assignee, updated.assignee, comment), operator)
     }
 
   private def addExtendedUseStatusChangeEvent(
@@ -724,18 +722,18 @@ class CasesService @Inject() (
   private def extendedUseStatus: Case => Boolean =
     _.decision.flatMap(_.cancellation).map(_.applicationForExtendedUse).get
 
-  private def addEvent(original: Case, updated: Case, details: Details, operator: Operator)(
-    implicit hc: HeaderCarrier
+  private def addEvent(original: Case, updated: Case, details: Details, operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Unit] = {
     val event = NewEventRequest(details, operator)
-    connector.createEvent(updated, event) recover {
-      case t: Throwable =>
-        logger.error(s"Could not create Event for case [${original.reference}] with payload [${event.details}]", t)
-    } map (_ => ())
+    connector.createEvent(updated, event).map(_ => ()) recover { case t: Throwable =>
+      logger.error(s"Could not create Event for case [${original.reference}] with payload [${event.details}]", t)
+      ()
+    }
   }
 
-  private def loggingARulingErrorFor(reference: String): PartialFunction[Throwable, Unit] = {
-    case t: Throwable => logger.error(s"Failed to notify the ruling store for case $reference", t)
+  private def loggingARulingErrorFor(reference: String): PartialFunction[Throwable, Unit] = { case t: Throwable =>
+    logger.error(s"Failed to notify the ruling store for case $reference", t)
   }
 
 }

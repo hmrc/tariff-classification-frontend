@@ -43,8 +43,7 @@ class OperatorDashboardClassificationViewSpec extends ViewSpec {
     () =>
       operator_dashboard_classification(Map.empty, totalCasesAssignedToMe, casesReferredByMe, casesCompletedByMe)(
         authenticatedManagerFakeRequest,
-        messages,
-        appConfig
+        messages
       )
 
   "OperatorDashboardClassificationView view" must {

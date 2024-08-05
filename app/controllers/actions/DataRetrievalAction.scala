@@ -17,15 +17,15 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import connector.DataCacheConnector
 import models.UserAnswers
 import models.request.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import models.cache.CacheMap
+import service.DataCacheService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRetrievalActionImpl @Inject() (val dataCacheConnector: DataCacheConnector)(
+class DataRetrievalActionImpl @Inject() (val dataCacheConnector: DataCacheService)(
   override implicit val executionContext: ExecutionContext
 ) extends DataRetrievalAction {
 

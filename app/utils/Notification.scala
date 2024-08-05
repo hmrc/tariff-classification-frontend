@@ -25,6 +25,9 @@ object NotificationType extends Enumeration {
 }
 
 object Notification {
+
+  import scala.language.implicitConversions
+
   def success(key: String, args: Any*)(implicit messages: Messages): (NotificationType, String) =
     NotificationType.Success -> messages(key, args: _*)
 

@@ -79,12 +79,12 @@ object CaseViewModel {
 
     CaseViewModel(
       CaseHeaderViewModel.fromCase(c),
-      hasPermissions       = releaseOrSuppressPermissions,
+      hasPermissions = releaseOrSuppressPermissions,
       showChangeCaseStatus = changeCaseStatus,
-      showTakeOffReferral  = takeOffReferral,
-      showReopen           = showReopenButton,
-      showAppealTab        = showAppeal,
-      caseStatus           = c.status
+      showTakeOffReferral = takeOffReferral,
+      showReopen = showReopenButton,
+      showAppealTab = showAppeal,
+      caseStatus = c.status
     )
   }
 }

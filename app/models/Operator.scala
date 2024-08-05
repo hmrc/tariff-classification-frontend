@@ -20,13 +20,13 @@ import models.Role.Role
 
 case class Operator(
   id: String,
-  name: Option[String]         = None,
-  email: Option[String]        = None,
-  role: Role                   = Role.CLASSIFICATION_OFFICER,
-  memberOfTeams: Seq[String]   = Seq.empty,
-  managerOfTeams: Seq[String]  = Seq.empty, //being a member is the same as being the manager, don't use this
+  name: Option[String] = None,
+  email: Option[String] = None,
+  role: Role = Role.CLASSIFICATION_OFFICER,
+  memberOfTeams: Seq[String] = Seq.empty,
+  managerOfTeams: Seq[String] = Seq.empty, //being a member is the same as being the manager, don't use this
   permissions: Set[Permission] = Set.empty,
-  deleted: Boolean             = false
+  deleted: Boolean = false
 ) {
 
   def manager: Boolean = role == Role.CLASSIFICATION_MANAGER

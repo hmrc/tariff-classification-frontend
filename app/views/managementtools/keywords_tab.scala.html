@@ -17,13 +17,12 @@
 @import views.html.managementtools.{keywords_for_approval_table, all_keywords}
 @import views.html.components.heading
 @import models.request.AuthenticatedRequest
-@import config.AppConfig
 @import models.viewmodels.managementtools._
 @import controllers.v2.routes._
 
 @import views.html.components.change_case_status_button
 
-@(manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+@(manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @heading(messages("management.manage-keywords.heading"))
 

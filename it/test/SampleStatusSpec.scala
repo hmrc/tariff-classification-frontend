@@ -58,9 +58,9 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
       val response: WSResponse = await(requestWithSession("/cases/1/sample/status?options=liability").get())
 
       response.status shouldBe OK
-      response.body   should include(">Yes<")
-      response.body   should include(">No<")
-      response.body   should include("AWAITING")
+      response.body     should include(">Yes<")
+      response.body     should include(">No<")
+      response.body     should include("AWAITING")
 
       response.body shouldNot include(s">${SampleStatus.format(Some(SampleStatus.RETURNED_APPLICANT))}<")
     }

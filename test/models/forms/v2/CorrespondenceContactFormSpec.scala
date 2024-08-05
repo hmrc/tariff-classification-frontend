@@ -22,7 +22,7 @@ import utils.Cases
 class CorrespondenceContactFormSpec extends ModelsBaseSpec {
 
   private val correspondenceCase = Cases.correspondenceCaseExample
-  private val sampleEmptyCase    = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)
+  private val sampleEmptyCase = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)
 
   private val emptyCaseWithEmail = sampleEmptyCase.copy(
     application = Cases.corrExampleWithMissingFields.copy(contact = Contact("name", "valid@email", Some("123")))
@@ -37,8 +37,8 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
     application = Cases.corrExampleWithMissingFields
       .copy(
         correspondenceStarter = Some("case-source"),
-        contact               = Contact("name", "valid@email", Some("123")),
-        address               = Address("buildingAndStreet", "townOrCity", Some("county"), Some("1234567890"))
+        contact = Contact("name", "valid@email", Some("123")),
+        address = Address("buildingAndStreet", "townOrCity", Some("county"), Some("1234567890"))
       )
   )
 
@@ -84,9 +84,9 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
           .correspondenceContactForm(emptyCaseWithEmail)
           .fold(
             form => {
-              form.hasErrors         shouldBe true
-              form.errors.size       shouldBe 1
-              form.errors.map(_.key) shouldBe Seq("correspondenceStarter")
+              form.hasErrors                                    shouldBe true
+              form.errors.size                                  shouldBe 1
+              form.errors.map(_.key)                            shouldBe Seq("correspondenceStarter")
               form.error("correspondenceStarter").map(_.message shouldBe "Enter a case source")
 
             },
@@ -100,9 +100,9 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
           .correspondenceContactForm(emptyCaseWithInvalidEmail)
           .fold(
             form => {
-              form.hasErrors         shouldBe true
-              form.errors.size       shouldBe 1
-              form.errors.map(_.key) shouldBe Seq("email")
+              form.hasErrors                    shouldBe true
+              form.errors.size                  shouldBe 1
+              form.errors.map(_.key)            shouldBe Seq("email")
               form.error("email").map(_.message shouldBe "case.liability.error.trader.email")
             },
             _ => "form should not succeed"

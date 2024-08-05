@@ -61,7 +61,8 @@ class AssignCaseController @Inject() (
         takeOwnershipForm
           .bindFromRequest()
           .fold(
-            formWithErrors => getCaseAndRenderView(reference, c => Future(assignCase(c, formWithErrors))), {
+            formWithErrors => getCaseAndRenderView(reference, c => Future(assignCase(c, formWithErrors))),
+            {
               case true =>
                 getCaseAndRespond(reference, respond)
               case _ =>

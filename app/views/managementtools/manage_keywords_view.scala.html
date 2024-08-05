@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{ManagerToolsKeywordsTab, ManagerToolsTab, SubNavigationTab}
 @import models.viewmodels.managementtools._
@@ -31,7 +30,7 @@
 )
 
 
-@(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @additionalCSS = {
     <link rel="stylesheet" href='@routes.Assets.at("stylesheets/autocomplete.css")'/>

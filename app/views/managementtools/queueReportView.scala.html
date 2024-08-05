@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.reporting._
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.ManagerToolsTab
@@ -35,7 +34,7 @@
   pagination: Pagination,
   results: Paged[QueueResultGroup],
   teams: Map[String, Queue]
-)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("reporting.view_report.title"),

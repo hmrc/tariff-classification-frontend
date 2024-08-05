@@ -65,9 +65,9 @@ class MiscDetailsFormSpec extends ModelsBaseSpec {
           .miscDetailsForm(sampleEmptyCase)
           .fold(
             form => {
-              form.hasErrors         shouldBe true
-              form.errors.size       shouldBe 1
-              form.errors.map(_.key) shouldBe Seq("summary")
+              form.hasErrors                      shouldBe true
+              form.errors.size                    shouldBe 1
+              form.errors.map(_.key)              shouldBe Seq("summary")
               form.error("summary").map(_.message shouldBe "Enter a summary")
 
             },
@@ -82,9 +82,9 @@ class MiscDetailsFormSpec extends ModelsBaseSpec {
           .copy(data = Map("caseType" -> "unrecognised"))
           .fold(
             form => {
-              form.hasErrors         shouldBe true
-              form.errors.size       shouldBe 1
-              form.errors.map(_.key) shouldBe Seq("caseType")
+              form.hasErrors                      shouldBe true
+              form.errors.size                    shouldBe 1
+              form.errors.map(_.key)              shouldBe Seq("caseType")
               form.error("summary").map(_.message shouldBe "error.empty.miscCaseType")
 
             },
