@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.v2.routes
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.NoTabSelected
@@ -27,7 +26,7 @@
 
 @(
         user: String
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages("users.user.delete.done", user),

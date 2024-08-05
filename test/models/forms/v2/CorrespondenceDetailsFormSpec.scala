@@ -22,7 +22,7 @@ import utils.Cases
 class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
 
   private val correspondenceCase = Cases.correspondenceCaseExample
-  private val sampleEmptyCase    = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)
+  private val sampleEmptyCase = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)
 
   private val caseWithoutSummary =
     correspondenceCase.copy(application = Cases.corrExampleWithMissingFields.copy(summary = ""))
@@ -65,9 +65,9 @@ class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
           .correspondenceDetailsForm(caseWithoutSummary)
           .fold(
             form => {
-              form.hasErrors         shouldBe true
-              form.errors.size       shouldBe 1
-              form.errors.map(_.key) shouldBe Seq("summary")
+              form.hasErrors                      shouldBe true
+              form.errors.size                    shouldBe 1
+              form.errors.map(_.key)              shouldBe Seq("summary")
               form.error("summary").map(_.message shouldBe "Enter a summary")
 
             },

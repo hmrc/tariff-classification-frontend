@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.Case
 @import models.request.AuthenticatedRequest
@@ -30,7 +29,7 @@
 )
 
 
-@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.suspend.case.reason"),
@@ -44,7 +43,7 @@
     @helper.form(
         action = routes.SuspendCaseController.postSuspendCaseReason(c.reference),
         Symbol("id") -> "suspend_case",
-        'enctype -> "multipart/form-data",
+        Symbol("enctype") -> "multipart/form-data",
         Symbol("novalidate") -> "novalidate"
     ) {
         @helper.CSRF.formField

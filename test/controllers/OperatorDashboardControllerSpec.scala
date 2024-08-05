@@ -35,8 +35,7 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
 
   implicit val appConfig: AppConfig = realAppConfig
 
-  implicit def authenticatedRequest[A](
-    implicit
+  implicit def authenticatedRequest[A](implicit
     operator: Operator,
     request: Request[A]
   ): AuthenticatedRequest[A] =
@@ -78,7 +77,7 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
 
       val result = controller(Set(Permission.VIEW_CASES)).onPageLoad()(fakeRequest)
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 

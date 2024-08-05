@@ -21,7 +21,7 @@ import play.api.http.Status
 
 class RulingConnectorTest extends ConnectorTest {
 
-  private val connector = new RulingConnector(mockAppConfig, authenticatedHttpClient, metrics)
+  private val connector = new RulingConnector(mockAppConfig, standardHttpClient, metrics)
 
   "Connector Publish" should {
 

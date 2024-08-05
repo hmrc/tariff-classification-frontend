@@ -56,7 +56,8 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit)
+    reset(connector)
+    reset(audit)
   }
 
   "Update Appeal Status" should {
@@ -90,7 +91,9 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      await(service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
+      await(
+        service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.ALLOWED, operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealStatusChange(refEq(caseUpdated), any[Appeal], any[AppealStatus], refEq(operator))(
         any[HeaderCarrier]
@@ -98,15 +101,15 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
 
       val caseUpdating   = theCaseUpdating(connector)
       val appealsUpdated = caseUpdating.decision.map(_.appeal).getOrElse(Seq.empty)
-      appealsUpdated                                                                                should have(size(1))
+      appealsUpdated should have(size(1))
       appealsUpdated.exists(a => a.status == AppealStatus.ALLOWED && a.`type` == AppealType.REVIEW) shouldBe true
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
       eventCreated.operator shouldBe Operator("operator-id")
       eventCreated.details shouldBe AppealStatusChange(
         appealType = AppealType.REVIEW,
-        from       = AppealStatus.IN_PROGRESS,
-        to         = AppealStatus.ALLOWED
+        from = AppealStatus.IN_PROGRESS,
+        to = AppealStatus.ALLOWED
       )
 
       val appealStatusAudited = theAppealStatusChangeAudited()
@@ -145,7 +148,9 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      await(service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
+      await(
+        service.updateAppealStatus(originalCase, existingAppeal, AppealStatus.DISMISSED, operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealStatusChange(refEq(caseUpdated), any[Appeal], any[AppealStatus], refEq(operator))(
         any[HeaderCarrier]
@@ -153,8 +158,10 @@ class CasesService_UpdateAppealStatusSpec extends ServiceSpecBase with BeforeAnd
 
       val caseUpdating   = theCaseUpdating(connector)
       val appealsUpdated = caseUpdating.decision.map(_.appeal).getOrElse(Seq.empty)
-      appealsUpdated                                                                                         should have(size(1))
-      appealsUpdated.exists(a => a.status == AppealStatus.DISMISSED && a.`type` == AppealType.SUPREME_COURT) shouldBe true
+      appealsUpdated should have(size(1))
+      appealsUpdated.exists(a =>
+        a.status == AppealStatus.DISMISSED && a.`type` == AppealType.SUPREME_COURT
+      ) shouldBe true
 
       val appealStatusAudited = theAppealStatusChangeAudited()
       appealStatusAudited shouldBe AppealStatus.DISMISSED

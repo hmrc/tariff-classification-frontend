@@ -108,7 +108,7 @@ class RulingController @Inject() (
                   validForm =>
                     for {
                       update <- casesService
-                                 .updateCase(request.`case`, mapper.mergeFormIntoCase(c, validForm), request.operator)
+                                  .updateCase(request.`case`, mapper.mergeFormIntoCase(c, validForm), request.operator)
                     } yield Redirect(
                       v2.routes.AtarController.displayAtar(update.reference).withFragment(Tab.RULING_TAB.name)
                     )
@@ -123,8 +123,9 @@ class RulingController @Inject() (
                   errorForm => editLiabilityRulingView(errorForm, c),
                   updatedDecision =>
                     for {
-                      update <- casesService
-                                 .updateCase(request.`case`, c.copy(decision = Some(updatedDecision)), request.operator)
+                      update <-
+                        casesService
+                          .updateCase(request.`case`, c.copy(decision = Some(updatedDecision)), request.operator)
                     } yield Redirect(
                       v2.routes.LiabilityController
                         .displayLiability(update.reference)
@@ -135,16 +136,16 @@ class RulingController @Inject() (
         )
       }
 
-  private def editBTIRulingView(f: Form[DecisionFormData], c: Case)(
-    implicit request: AuthenticatedRequest[_]
+  private def editBTIRulingView(f: Form[DecisionFormData], c: Case)(implicit
+    request: AuthenticatedRequest[_]
   ): Future[Result] =
     fileStoreService
       .getAttachments(c)
       .map(ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
       .map(Ok(_))
 
-  private def editLiabilityRulingView(f: Form[Decision], c: Case)(
-    implicit request: AuthenticatedRequest[_]
+  private def editLiabilityRulingView(f: Form[Decision], c: Case)(implicit
+    request: AuthenticatedRequest[_]
   ): Future[Result] = {
 
     val caseHeaderViewModel  = CaseHeaderViewModel.fromCase(c)

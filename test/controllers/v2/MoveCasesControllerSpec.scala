@@ -16,25 +16,26 @@
 
 package controllers.v2
 
-import connector.DataCacheConnector
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, RequestActionsWithPermissionsAndData}
 import models.Role.Role
 import models._
+import models.cache.CacheMap
 import models.forms.v2._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.given
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, QueuesService, UserService}
+import service.{CasesService, DataCacheService, QueuesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
-import models.cache.CacheMap
 import utils.Cases
+
+import scala.concurrent.Future.successful
 
 class MoveCasesControllerSpec extends ControllerBaseSpec {
   private val casesService       = mock[CasesService]
   private val userService        = mock[UserService]
   private val queueService       = mock[QueuesService]
-  private val dataCacheConnector = mock[DataCacheConnector]
+  private val dataCacheConnector = mock[DataCacheService]
   private val teamOrUserPage     = injector.instanceOf[views.html.partials.users.move_cases_team_or_user]
   private val chooseTeamPage     = injector.instanceOf[views.html.partials.users.move_cases_choose_team]
   private val chooseTeamToChooseUsersFromPage =
@@ -81,7 +82,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         playBodyParsers,
         permission,
         addViewCasePermission = false,
-        userAnswers           = userAnswers
+        userAnswers = userAnswers
       ),
       casesService,
       userService,
@@ -103,60 +104,66 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type on form error" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        .willReturn(successful(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
-      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(Some(Operator("1")))
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(successful(Some(Operator("1"))))
 
-      val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(newFakePOSTRequestWithCSRF()))
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      val result = controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(newFakePOSTRequestWithCSRF())
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("error.moveCases.empty"))
 
     }
 
     "return Not found on form error when user not found" in {
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        .willReturn(successful(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
-      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
+      given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(successful(None))
 
       val result =
-        await(controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(newFakePOSTRequestWithCSRF()))
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+        controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(newFakePOSTRequestWithCSRF())
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap]))
+        .willReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          successful(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
       val atarForm = MoveCasesForm.moveCasesForm("atarCases").fill(Set("100"))
 
       val fakeReqWithCases = newFakePOSTRequestWithCSRF(atarForm.data)
       val result =
-        await(
-          controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
-        )
+        controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserOrTeam().url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap]))
+        .willReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.REFERRED)
+          successful(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.REFERRED)
+              )
             )
           )
         )
@@ -164,22 +171,23 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val fakeReqWithCases = newFakePOSTRequestWithCSRF(atarForm.data)
       val result =
-        await(
-          controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
-        )
+        controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap]))
+        .willReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample
-                .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.SUSPENDED)
+          successful(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.SUSPENDED)
+              )
             )
           )
         )
@@ -187,22 +195,23 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val fakeReqWithCases = newFakePOSTRequestWithCSRF(atarForm.data)
       val result =
-        await(
-          controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
-        )
+        controller(Set(Permission.MANAGE_USERS)).postMoveATaRCases("1")(fakeReqWithCases)
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(routes.MoveCasesController.chooseUserToMoveCases(None).url)
 
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheConnector.save(any[CacheMap]))
+        .willReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample
-                .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.COMPLETED)
+          successful(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.COMPLETED)
+              )
             )
           )
         )
@@ -242,9 +251,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(newFakePOSTRequestWithCSRF()))
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("error.moveCases.empty"))
 
     }
@@ -257,9 +266,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(newFakePOSTRequestWithCSRF()))
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
     }
 
@@ -375,9 +384,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(newFakePOSTRequestWithCSRF()))
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("error.moveCases.empty"))
 
     }
@@ -390,9 +399,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(newFakePOSTRequestWithCSRF()))
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
     }
 
@@ -509,9 +518,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       val result =
         await(controller(Set(Permission.MANAGE_USERS)))
           .postMoveMiscCases("1")(newFakePOSTRequestWithCSRF())
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("error.moveCases.empty"))
 
     }
@@ -524,9 +533,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveMiscCases("1")(newFakePOSTRequestWithCSRF()))
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
     }
 
@@ -999,9 +1008,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenTeam, "2")
           ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF())
         )
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "2"))
 
     }
@@ -1021,9 +1030,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenTeam, "2")
           ).casesMovedToTeamDone()(newFakeGETRequestWithCSRF())
         )
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.resource-not-found.title", "Queue 2"))
 
     }
@@ -1140,9 +1149,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenTeam, "2")
           ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "2"))
 
     }
@@ -1164,9 +1173,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenTeam, "2")
           ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
 
     }
@@ -1188,9 +1197,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
               .set(ChosenTeam, "2")
           ).casesMovedToUserDone()(newFakeGETRequestWithCSRF())
         )
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.resource-not-found.title", "Queue 2"))
 
     }
@@ -1299,9 +1308,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
           controllerWithData(Set(Permission.MANAGE_USERS), userAnswersMock.set(ChosenCases, Set("100")))
             .postTeamOrUserChoice()(newFakePOSTRequestWithCSRF())
         )
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("move_cases.error.empty.teamOrUser"))
 
     }
@@ -1382,8 +1391,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
@@ -1397,9 +1408,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postUserChoice(None)(newFakePOSTRequestWithCSRF())
         )
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("error.empty.moveCases.userToMove"))
 
     }
@@ -1414,8 +1425,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
@@ -1446,8 +1459,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
@@ -1463,9 +1478,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postUserChoice()(fakeReq)
         )
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
 
     }
@@ -1480,8 +1495,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2", "3")))))
@@ -1512,8 +1529,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
@@ -1544,8 +1563,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
@@ -1576,8 +1597,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
@@ -1607,8 +1630,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(assignee = Some(Operator("1")), queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
         .willReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
@@ -1640,9 +1665,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postChooseUserFromAnotherTeam()(newFakePOSTRequestWithCSRF())
         )
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("error.empty.moveCases.teamToMove"))
 
     }
@@ -1709,8 +1734,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
@@ -1721,9 +1748,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1")
           ).postTeamChoice()(newFakePOSTRequestWithCSRF())
         )
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("error.empty.moveCases.teamToMove"))
 
     }
@@ -1738,8 +1765,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
@@ -1767,8 +1796,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
@@ -1797,8 +1828,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
 
       given(queueService.getNonGateway).willReturn(Queues.allDynamicQueues)
@@ -1829,8 +1862,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getUser(any[String])(any[HeaderCarrier]))
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
@@ -1844,9 +1879,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
             userAnswersMock.set(ChosenCases, Set("100")).set(OriginalUserPID, "1").set(ChosenUserPID, "2")
           ).postChooseOneOfUsersTeams()(newFakePOSTRequestWithCSRF())
         )
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("error.empty.moveCases.teamToMove"))
 
     }
@@ -1861,8 +1896,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getUser(any[String])(any[HeaderCarrier]))
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
@@ -1894,8 +1931,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
       given(userService.getUser(any[String])(any[HeaderCarrier]))
         .willReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
@@ -1928,8 +1967,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
 
       given(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).willReturn(
-        Cases.btiCaseExample
-          .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        successful(
+          Cases.btiCaseExample
+            .copy(queueId = Some("2"), reference = "100", status = CaseStatus.OPEN)
+        )
       )
 
       given(userService.getUser(any[String])(any[HeaderCarrier]))

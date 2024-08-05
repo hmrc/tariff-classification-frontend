@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.v2.routes
 @import layouts.full_main_content_layout
 @import models.Operator
@@ -40,12 +39,12 @@
         corrForm: Form[Set[String]],
         miscForm: Form[Set[String]],
         activeSubNav : SubNavigationTab = ManagerToolsUsersTab
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("Manage user"),
     optCustomLayout = Some(fullMainContent(_)),
-    backLink = Some(backLink("Back to manage users", Some(s"${routes.ManageUserController.displayManageUsers}"))),
+    backLink = Some(backLink("Back to manage users", Some(s"${routes.ManageUserController.displayManageUsers()}"))),
     customPrimaryNavTab = ManagerToolsTab,
     subNavigationTab = Some(manager_tools_secondary_navigation(activeSubNav))
 ) {

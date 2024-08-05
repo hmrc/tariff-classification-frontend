@@ -36,10 +36,10 @@ class InputAutoCompleteViewSpec extends ViewSpec {
 
       val doc = view(
         input_accessible_auto_complete(
-          field               = form("field"),
-          label               = Some("Label"),
+          field = form("field"),
+          label = Some("Label"),
           autoCompleteOptions = Seq("A", "B"),
-          useTabIndex         = Some(100)
+          useTabIndex = Some(100)
         )
       )
 

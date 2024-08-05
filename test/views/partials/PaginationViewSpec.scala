@@ -47,8 +47,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq.empty[String], pageIndex = 1, pageSize = 1, resultCount = 0),
+          id = "ID",
+          pager = Paged(Seq.empty[String], pageIndex = 1, pageSize = 1, resultCount = 0),
           onChange = goToPage
         )
       )
@@ -61,8 +61,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq("", ""), pageIndex = 1, pageSize = 2, resultCount = 2),
+          id = "ID",
+          pager = Paged(Seq("", ""), pageIndex = 1, pageSize = 2, resultCount = 2),
           onChange = goToPage
         )
       )
@@ -90,8 +90,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 2, resultCount = 1),
+          id = "ID",
+          pager = Paged(Seq(""), pageIndex = 1, pageSize = 2, resultCount = 1),
           onChange = goToPage
         )
       )
@@ -119,8 +119,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 2),
+          id = "ID",
+          pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 2),
           onChange = goToPage
         )
       )
@@ -151,8 +151,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 3),
+          id = "ID",
+          pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 3),
           onChange = goToPage
         )
       )
@@ -184,8 +184,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 4),
+          id = "ID",
+          pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 4),
           onChange = goToPage
         )
       )
@@ -218,8 +218,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 5),
+          id = "ID",
+          pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 5),
           onChange = goToPage
         )
       )
@@ -253,8 +253,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 100),
+          id = "ID",
+          pager = Paged(Seq(""), pageIndex = 1, pageSize = 1, resultCount = 100),
           onChange = goToPage
         )
       )
@@ -289,8 +289,8 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
 
       val doc = view(
         pagination(
-          id       = "ID",
-          pager    = Paged(Seq(""), pageIndex = 2, pageSize = 1, resultCount = 2),
+          id = "ID",
+          pager = Paged(Seq(""), pageIndex = 2, pageSize = 1, resultCount = 2),
           onChange = goToPage
         )
       )

@@ -14,11 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.request.AuthenticatedRequest
-
-@(
-        href: Call
-)(implicit request: AuthenticatedRequest[_])
+@(href: Call)
 
 <div class="govuk-form-group" id="edit-ruling-buttons">
     <a class="govuk-button" role="button" id="edit-ruling-button" href="@href">Edit ruling details</a>

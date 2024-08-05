@@ -25,7 +25,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
       val form = LiabilityForm.newLiabilityForm.bindFromRequest(Map())
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(3))
+      form.errors      should have(size(3))
     }
 
     "Bind a blank form" in {
@@ -38,7 +38,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(3))
+      form.errors      should have(size(3))
     }
 
     "Bind a valid form" in {
@@ -52,10 +52,10 @@ class LiabilityFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe false
       form.get shouldBe LiabilityOrder(
-        contact    = Contact(name = "", email = ""),
-        status     = LiabilityStatus.LIVE,
+        contact = Contact(name = "", email = ""),
+        status = LiabilityStatus.LIVE,
         traderName = "trader name",
-        goodName   = Some("item name")
+        goodName = Some("item name")
       )
     }
 
@@ -69,7 +69,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(1))
+      form.errors      should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "Invalid entry"
     }
@@ -84,7 +84,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(1))
+      form.errors      should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "error.empty.trader-name"
     }
@@ -99,7 +99,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(1))
+      form.errors      should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "error.empty.item-name"
     }
@@ -110,10 +110,10 @@ class LiabilityFormTest extends ModelsBaseSpec {
     "populate a correct form" in {
       val form = LiabilityForm.newLiabilityForm.fill(
         LiabilityOrder(
-          contact    = Contact(name = "", email = ""),
-          status     = LiabilityStatus.LIVE,
+          contact = Contact(name = "", email = ""),
+          status = LiabilityStatus.LIVE,
           traderName = "Name",
-          goodName   = Some("item name")
+          goodName = Some("item name")
         )
       )
 

@@ -37,7 +37,7 @@ class NewKeywordViewSpec extends ViewSpec {
 
       val doc = view(
         newKeywordView(
-          allKeywords    = keywords,
+          allKeywords = keywords,
           newKeywordForm = keywordForm
         )
       )
@@ -50,7 +50,7 @@ class NewKeywordViewSpec extends ViewSpec {
 
       val doc = view(
         newKeywordView(
-          allKeywords    = keywords,
+          allKeywords = keywords,
           newKeywordForm = keywordForm
         )
       )
@@ -62,7 +62,7 @@ class NewKeywordViewSpec extends ViewSpec {
 
       val doc = view(
         newKeywordView(
-          allKeywords    = keywords,
+          allKeywords = keywords,
           newKeywordForm = keywordForm
         )
       )
@@ -73,7 +73,7 @@ class NewKeywordViewSpec extends ViewSpec {
 
       val doc = view(
         newKeywordView(
-          allKeywords    = keywords,
+          allKeywords = keywords,
           newKeywordForm = keywordForm
         )
       )

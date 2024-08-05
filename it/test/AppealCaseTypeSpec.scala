@@ -58,7 +58,7 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession(s"/cases/1/new-appeal/ANY").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
 
     def shouldSucceed(): Unit = {
@@ -76,7 +76,7 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
           await(requestWithSession(s"/cases/1/new-appeal/$appealType").get())
 
         response.status shouldBe OK
-        response.body   should include("id=\"appeal_choose_status-heading\"")
+        response.body     should include("id=\"appeal_choose_status-heading\"")
       }
     }
   }

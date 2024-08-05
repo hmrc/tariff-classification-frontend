@@ -34,7 +34,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
   given(mockAppConfig.fileStoreUrl) willReturn wireMockUrl
 
   private val attachmentId = "id"
-  private val connector    = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
+  private val connector    = new FileStoreConnector(mockAppConfig, standardHttpClient, metrics)
 
   "Connector 'GET' one" should {
     "handle 404" in {
@@ -70,10 +70,10 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
-          id         = attachmentId,
-          fileName   = Some("name"),
-          mimeType   = Some("text/plain"),
-          url        = None,
+          id = attachmentId,
+          fileName = Some("name"),
+          mimeType = Some("text/plain"),
+          url = None,
           scanStatus = None
         )
       )
@@ -99,10 +99,10 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
-          id         = attachmentId,
-          fileName   = Some("name"),
-          mimeType   = Some("text/plain"),
-          url        = Some("url"),
+          id = attachmentId,
+          fileName = Some("name"),
+          mimeType = Some("text/plain"),
+          url = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
       )
@@ -137,10 +137,10 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
         FileMetadata(
-          id         = "id",
-          fileName   = Some("name"),
-          mimeType   = Some("text/plain"),
-          url        = None,
+          id = "id",
+          fileName = Some("name"),
+          mimeType = Some("text/plain"),
+          url = None,
           scanStatus = None
         )
       )
@@ -168,10 +168,10 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
         FileMetadata(
-          id         = "id",
-          fileName   = Some("name"),
-          mimeType   = Some("text/plain"),
-          url        = Some("url"),
+          id = "id",
+          fileName = Some("name"),
+          mimeType = Some("text/plain"),
+          url = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
       )
@@ -196,7 +196,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     val initiateRequest = FileStoreInitiateRequest(maxFileSize = 0)
 
     await(connector.initiate(initiateRequest)) shouldBe FileStoreInitiateResponse(
-      id              = "id",
+      id = "id",
       upscanReference = "ref",
       uploadRequest = UpscanFormTemplate(
         "http://localhost:20001/upscan/upload",
@@ -231,7 +231,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     )
 
     result shouldBe FileMetadata(
-      id       = "id",
+      id = "id",
       fileName = Some("file-name.txt"),
       mimeType = Some("text/plain")
     )

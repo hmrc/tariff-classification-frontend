@@ -58,26 +58,26 @@ class DecisionFormMapper {
 
   private def amendDecision(decision: Decision, form: DecisionFormData): Decision =
     decision.copy(
-      bindingCommodityCode         = form.bindingCommodityCode,
-      goodsDescription             = form.goodsDescription,
-      methodSearch                 = Some(form.methodSearch),
-      justification                = form.justification,
+      bindingCommodityCode = form.bindingCommodityCode,
+      goodsDescription = form.goodsDescription,
+      methodSearch = Some(form.methodSearch),
+      justification = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion              = Some(form.methodExclusion),
-      explanation                  = Some(form.explanation),
-      effectiveEndDate             = form.expiryDate
+      methodExclusion = Some(form.methodExclusion),
+      explanation = Some(form.explanation),
+      effectiveEndDate = form.expiryDate
     )
 
   private def from(form: DecisionFormData): Decision =
     Decision(
-      bindingCommodityCode         = form.bindingCommodityCode,
-      goodsDescription             = form.goodsDescription,
-      methodSearch                 = Some(form.methodSearch),
-      justification                = form.justification,
+      bindingCommodityCode = form.bindingCommodityCode,
+      goodsDescription = form.goodsDescription,
+      methodSearch = Some(form.methodSearch),
+      justification = form.justification,
       methodCommercialDenomination = Some(form.methodCommercialDenomination),
-      methodExclusion              = Some(form.methodExclusion),
-      explanation                  = Some(form.explanation),
-      effectiveEndDate             = form.expiryDate
+      methodExclusion = Some(form.methodExclusion),
+      explanation = Some(form.explanation),
+      effectiveEndDate = form.expiryDate
     )
 
 }

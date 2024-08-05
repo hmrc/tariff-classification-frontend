@@ -21,17 +21,17 @@ import java.net.URLDecoder
 class SearchTest extends ModelsBaseSpec {
 
   private val populatedSearch = Search(
-    caseSource      = Some("trader-name"),
-    commodityCode   = Some("commodity-code"),
+    caseSource = Some("trader-name"),
+    commodityCode = Some("commodity-code"),
     decisionDetails = Some("decision-details"),
-    status          = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
+    status = Some(Set(PseudoCaseStatus.OPEN, PseudoCaseStatus.LIVE)),
     applicationType = Some(Set(ApplicationType.ATAR, ApplicationType.LIABILITY)),
-    keywords        = Some(Set("K1", "K2"))
+    keywords = Some(Set("K1", "K2"))
   )
 
-  /**
-    * When we add fields to Search these tests shouldn't need changing, only the field above and vals in each test suite.
-    * */
+  /** When we add fields to Search these tests shouldn't need changing, only the field above and vals in each test
+    * suite.
+    */
   "Search" should {
     "Return isEmpty = true" in {
       val search = Search()

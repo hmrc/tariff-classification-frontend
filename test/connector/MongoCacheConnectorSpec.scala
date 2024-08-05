@@ -26,6 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.JsString
 import repositories.SessionRepository
 import models.cache.CacheMap
+import service.MongoCacheService
 
 import scala.concurrent.Future
 
@@ -38,7 +39,7 @@ class MongoCacheConnectorSpec
 
   private trait Test {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    val mongoCacheConnector: MongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
+    val mongoCacheConnector: MongoCacheService   = new MongoCacheService(mockSessionRepository, metrics)
   }
 
   ".save" should {
@@ -119,13 +120,12 @@ class MongoCacheConnectorSpec
           cacheMap <- arbitrary[CacheMap]
         } yield (key, cacheMap copy (data = cacheMap.data - key))
 
-        forAll(gen) {
-          case (k, cacheMap) =>
-            when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+        forAll(gen) { case (k, cacheMap) =>
+          when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
-            val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
+          val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
-            whenReady(result)(optionalValue => optionalValue should be(empty))
+          whenReady(result)(optionalValue => optionalValue should be(empty))
         }
       }
     }
@@ -139,13 +139,12 @@ class MongoCacheConnectorSpec
           cacheMap <- arbitrary[CacheMap]
         } yield (key, value, cacheMap copy (data = cacheMap.data + (key -> JsString(value))))
 
-        forAll(gen) {
-          case (k, v, cacheMap) =>
-            when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+        forAll(gen) { case (k, v, cacheMap) =>
+          when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
-            val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
+          val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
 
-            whenReady(result)(optionalValue => optionalValue.get shouldBe v)
+          whenReady(result)(optionalValue => optionalValue.get shouldBe v)
         }
       }
     }

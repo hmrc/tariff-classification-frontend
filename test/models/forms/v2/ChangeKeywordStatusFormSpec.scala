@@ -30,7 +30,7 @@ class ChangeKeywordStatusFormSpec extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe false
-      form.errors    should have(size(0))
+      form.errors      should have(size(0))
     }
 
   }

@@ -35,8 +35,7 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
       val doc = view(
         viewAttachmentUnavailableView(fileMetadata)(
           AuthenticatedRequest(Operator("0", Some("name")), request),
-          messages,
-          appConfig
+          messages
         )
       )
 
@@ -54,8 +53,7 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
     val doc = view(
       viewAttachmentUnavailableView(fileMetadata)(
         AuthenticatedRequest(Operator("0", Some("name")), request),
-        messages,
-        appConfig
+        messages
       )
     )
 
@@ -72,8 +70,7 @@ class ViewAttachmentUnavailableViewSpec extends ViewSpec {
     val doc = view(
       viewAttachmentUnavailableView(fileMetadata)(
         AuthenticatedRequest(Operator("0", Some("name")), request),
-        messages,
-        appConfig
+        messages
       )
     )
 

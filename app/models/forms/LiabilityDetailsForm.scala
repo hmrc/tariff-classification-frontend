@@ -74,25 +74,25 @@ object LiabilityDetailsForm {
     Option[String]
   ) => Case = {
     case (
-        entryDate,
-        traderName,
-        goodName,
-        entryNumber,
-        traderCommodityCode,
-        officerCommodityCode,
-        contactName,
-        contactEmail,
-        contactPhone
+          entryDate,
+          traderName,
+          goodName,
+          entryNumber,
+          traderCommodityCode,
+          officerCommodityCode,
+          contactName,
+          contactEmail,
+          contactPhone
         ) =>
       existingCase.copy(application =
         existingCase.application.asLiabilityOrder.copy(
-          traderName           = traderName,
-          goodName             = goodName,
-          entryDate            = entryDate,
-          entryNumber          = entryNumber,
-          traderCommodityCode  = traderCommodityCode,
+          traderName = traderName,
+          goodName = goodName,
+          entryDate = entryDate,
+          entryNumber = entryNumber,
+          traderCommodityCode = traderCommodityCode,
           officerCommodityCode = officerCommodityCode,
-          contact              = Contact(contactName, contactEmail, contactPhone)
+          contact = Contact(contactName, contactEmail, contactPhone)
         )
       )
   }

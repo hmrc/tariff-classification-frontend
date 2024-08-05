@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
 
 @import models.response.{ScanStatus, FileMetadata}
@@ -25,7 +24,7 @@
         main: main
 )
 
-@(fileSubmitted: Option[FileMetadata])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(fileSubmitted: Option[FileMetadata])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages("view.attachment.unavailable.title"),

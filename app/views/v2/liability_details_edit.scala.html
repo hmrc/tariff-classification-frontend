@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.Tab
 @import controllers.v2.routes.LiabilityController
 @import helper._
@@ -32,7 +31,7 @@
 )
 
 
-@(c: Case, form : Form[Case], primaryNavTab : PrimaryNavigationTab = NoTabSelected)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form : Form[Case], primaryNavTab : PrimaryNavigationTab = NoTabSelected)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("case.liability.edit.title"),
@@ -48,7 +47,7 @@
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="govuk-form-group">
 
-            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), 'class -> "form" , Symbol("id") -> "liability-details-edit-form", Symbol("novalidate") -> "novalidate") {
+            @helper.form(action = LiabilityController.postLiabilityDetails(c.reference), Symbol("class") -> "form" , Symbol("id") -> "liability-details-edit-form", Symbol("novalidate") -> "novalidate") {
 
                 @CSRF.formField
 

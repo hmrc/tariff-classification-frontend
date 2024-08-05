@@ -57,7 +57,10 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, oneCase, manyCases)
+    reset(connector)
+    reset(audit)
+    reset(oneCase)
+    reset(manyCases)
   }
 
   "Refer a Case" should {
@@ -81,7 +84,7 @@ class CasesService_ReferCaseSpec extends ServiceSpecBase with BeforeAndAfterEach
       verify(audit).auditCaseReferred(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.status      shouldBe CaseStatus.REFERRED
+      caseUpdating.status    shouldBe CaseStatus.REFERRED
       caseUpdating.attachments should have(size(1))
 
       val attachmentUpdating = caseUpdating.attachments.find(_.id == "id")

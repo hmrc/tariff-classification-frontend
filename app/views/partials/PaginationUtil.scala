@@ -16,15 +16,13 @@
 
 package views.partials
 
-import scala.collection.immutable.Seq
-
 object PaginationUtil {
 
   def surroundingPages(pageIndex: Int, pageCount: Int, available: Int): Seq[Int] = {
     var indexes: Seq[Int] = Seq(pageIndex)
     var surrounded        = surround(indexes, pageCount)
     while (surrounded.size <= available && indexes != surrounded) {
-      indexes    = surrounded
+      indexes = surrounded
       surrounded = surround(indexes, pageCount)
     }
     indexes

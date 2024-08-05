@@ -36,12 +36,12 @@ class PagedTest extends ModelsBaseSpec {
     }
 
     "calculate pageCount" in {
-      Paged.empty.pageCount shouldBe 0
-      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount  = 1).pageCount   shouldBe 1
-      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount  = 2).pageCount   shouldBe 2
-      Paged(results = Seq(), pageIndex = 1, pageSize = 2, resultCount  = 3).pageCount   shouldBe 2
+      Paged.empty.pageCount                                                             shouldBe 0
+      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount = 1).pageCount    shouldBe 1
+      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount = 2).pageCount    shouldBe 2
+      Paged(results = Seq(), pageIndex = 1, pageSize = 2, resultCount = 3).pageCount    shouldBe 2
       Paged(results = Seq(), pageIndex = 1, pageSize = 10, resultCount = 100).pageCount shouldBe 10
-      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount  = 100).pageCount shouldBe 100
+      Paged(results = Seq(), pageIndex = 1, pageSize = 1, resultCount = 100).pageCount  shouldBe 100
     }
 
     "calculate nonEmpty" in {

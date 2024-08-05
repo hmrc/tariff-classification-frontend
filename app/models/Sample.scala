@@ -21,8 +21,8 @@ import models.SampleSend.SampleSend
 import models.SampleStatus.SampleStatus
 
 case class Sample(
-  status: Option[SampleStatus]       = None,
-  requestedBy: Option[Operator]      = None,
+  status: Option[SampleStatus] = None,
+  requestedBy: Option[Operator] = None,
   returnStatus: Option[SampleReturn] = None,
-  whoIsSending: Option[SampleSend]   = None
+  whoIsSending: Option[SampleSend] = None
 )

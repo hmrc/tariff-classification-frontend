@@ -67,7 +67,7 @@ case class CaseCreated(
 case class CaseStatusChange(
   override val from: CaseStatus,
   override val to: CaseStatus,
-  override val comment: Option[String]      = None,
+  override val comment: Option[String] = None,
   override val attachmentId: Option[String] = None
 ) extends FieldChange[CaseStatus]
     with OptionalAttachment {
@@ -77,7 +77,7 @@ case class CaseStatusChange(
 case class RejectCaseStatusChange(
   override val from: CaseStatus,
   override val to: CaseStatus,
-  override val comment: Option[String]      = None,
+  override val comment: Option[String] = None,
   override val attachmentId: Option[String] = None,
   reason: RejectReason
 ) extends FieldChange[CaseStatus]
@@ -87,7 +87,7 @@ case class RejectCaseStatusChange(
 
 case class CancellationCaseStatusChange(
   override val from: CaseStatus,
-  override val comment: Option[String]      = None,
+  override val comment: Option[String] = None,
   override val attachmentId: Option[String] = None,
   reason: CancelReason
 ) extends FieldChange[CaseStatus]
@@ -98,7 +98,7 @@ case class CancellationCaseStatusChange(
 
 case class ReferralCaseStatusChange(
   override val from: CaseStatus,
-  override val comment: Option[String]      = None,
+  override val comment: Option[String] = None,
   override val attachmentId: Option[String] = None,
   referredTo: String,
   reason: Seq[ReferralReason]

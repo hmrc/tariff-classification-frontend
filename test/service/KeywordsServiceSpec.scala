@@ -42,7 +42,8 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, auditService)
+    reset(connector)
+    reset(auditService)
   }
 
   "Add keyword" should {

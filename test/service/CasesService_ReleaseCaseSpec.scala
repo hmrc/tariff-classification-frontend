@@ -58,7 +58,11 @@ class CasesService_ReleaseCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, queue, oneCase, manyCases)
+    reset(connector)
+    reset(audit)
+    reset(queue)
+    reset(oneCase)
+    reset(manyCases)
   }
 
   "Release Case" should {

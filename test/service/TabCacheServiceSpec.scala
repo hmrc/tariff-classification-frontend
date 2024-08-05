@@ -16,7 +16,7 @@
 
 package service
 
-import connector.FakeDataCacheConnector
+import connector.FakeDataCacheService
 import controllers.Tab
 import models.ApplicationType
 import org.scalacheck.Gen
@@ -25,8 +25,8 @@ import models.cache.CacheMap
 
 class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyChecks {
 
-  val cacheConnector: FakeDataCacheConnector.type = FakeDataCacheConnector
-  val service                                     = new TabCacheService(cacheConnector)
+  val cacheConnector: FakeDataCacheService.type = FakeDataCacheService
+  val service                                   = new TabCacheService(cacheConnector)
 
   val tabGenerator: Gen[Tab] = Gen.oneOf(
     List(

@@ -29,10 +29,10 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     val owner = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
     val completeDecision = Decision(
       bindingCommodityCode = "0300000000",
-      justification        = "justification-content",
-      goodsDescription     = "goods-description",
-      methodSearch         = Some("method-to-search"),
-      explanation          = Some("explanation")
+      justification = "justification-content",
+      goodsDescription = "goods-description",
+      methodSearch = Some("method-to-search"),
+      explanation = Some("explanation")
     )
     val caseWithStatusOPEN = CasePayloads.jsonOf(
       Cases.btiCaseExample.copy(status = CaseStatus.OPEN, decision = Some(completeDecision), assignee = owner)
@@ -52,8 +52,8 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/complete").get())
 
       response.status shouldBe OK
-      response.body   should include("Are you sure you want to complete the Laptop case?")
-      response.body   should not include "disabled=disabled"
+      response.body     should include("Are you sure you want to complete the Laptop case?")
+      response.body     should not include "disabled=disabled"
     }
 
     def shouldNotSucceed = {
@@ -70,7 +70,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/complete").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
 
     "return status 200 for manager" in {
@@ -108,7 +108,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/complete").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
   }
 

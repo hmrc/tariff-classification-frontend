@@ -75,7 +75,13 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
 
     // should never use email service
     verifyNoMoreInteractions(emailService)
-    reset(connector, audit, queue, oneCase, manyCases, config, emailService)
+    reset(connector)
+    reset(audit)
+    reset(queue)
+    reset(oneCase)
+    reset(manyCases)
+    reset(config)
+    reset(emailService)
   }
 
   "Cancel Ruling" should {
@@ -85,23 +91,25 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
-      val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))
+      val originalCase    = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
-      val caseUpdated     = aCase.copy(status                      = CaseStatus.CANCELLED, decision = Some(updatedDecision))
+      val caseUpdated     = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
+      await(
+        service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
       caseUpdating.status                    shouldBe CaseStatus.CANCELLED
       caseUpdating.decision.get.cancellation shouldBe Some(Cancellation(CancelReason.ANNULLED))
-      caseUpdating.attachments               should have(size(1))
+      caseUpdating.attachments                 should have(size(1))
 
       val attachmentUpdating = caseUpdating.attachments.find(_.id == "id")
       attachmentUpdating.map(_.id)           shouldBe Some("id")
@@ -157,16 +165,18 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
-      val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))
+      val originalCase    = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
-      val caseUpdated     = aCase.copy(status                      = CaseStatus.CANCELLED, decision = Some(updatedDecision))
+      val caseUpdated     = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException("Failed to create Event")))
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
+      await(
+        service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
@@ -180,9 +190,9 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       val attachment         = Attachment("id", operator = Some(operator))
       val originalDecision =
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
-      val originalCase    = aCase.copy(status                      = CaseStatus.COMPLETED, decision = Some(originalDecision))
+      val originalCase    = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
-      val caseUpdated     = aCase.copy(status                      = CaseStatus.CANCELLED, decision = Some(updatedDecision))
+      val caseUpdated     = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
       given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
@@ -190,7 +200,9 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
         .willReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
 
-      await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)) shouldBe caseUpdated
+      await(
+        service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 

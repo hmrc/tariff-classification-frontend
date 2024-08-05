@@ -31,10 +31,10 @@ class RedirectServiceSpec extends ServiceSpecBase {
 
   private val request: Request[AnyContent] = FakeRequest().withCSRFToken
 
-  implicit def testRequest(`case`: Case) = new AuthenticatedCaseRequest(
-    operator      = Operator("operator-id"),
-    request       = request,
-    requestedCase = `case`
+  def testRequest(c: Case) = new AuthenticatedCaseRequest(
+    operator = Operator("operator-id"),
+    request = request,
+    requestedCase = c
   )
 
   "Redirect Service" should {

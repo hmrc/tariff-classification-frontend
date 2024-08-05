@@ -19,11 +19,11 @@ package models.request
 import play.api.libs.json.{Json, OFormat}
 
 case class FileStoreInitiateRequest(
-  id: Option[String]                  = None,
-  successRedirect: Option[String]     = None,
-  errorRedirect: Option[String]       = None,
+  id: Option[String] = None,
+  successRedirect: Option[String] = None,
+  errorRedirect: Option[String] = None,
   expectedContentType: Option[String] = None,
-  publishable: Boolean                = true,
+  publishable: Boolean = true,
   maxFileSize: Int
 )
 

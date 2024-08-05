@@ -46,9 +46,8 @@ trait UpscanErrorHandling { self: FrontendBaseController =>
         // Normal page render
         renderView(UploadAttachmentForm.form).map(Ok(_))
       }
-      .recoverWith {
-        case NonFatal(_) =>
-          Future.successful(BadGateway)
+      .recoverWith { case NonFatal(_) =>
+        Future.successful(BadGateway)
       }
 
 }

@@ -29,11 +29,11 @@ case class ApplicantTabViewModel(
 object ApplicantTabViewModel {
   def fromCase(cse: Case, countryNames: Map[String, Country]): ApplicantTabViewModel =
     ApplicantTabViewModel(
-      caseReference        = cse.reference,
-      eoriDetails          = cse.application.asATAR.holder,
-      contact              = cse.application.contact,
-      countryName          = countryNames.get(cse.application.asATAR.holder.country).map(_.countryName).getOrElse(""),
+      caseReference = cse.reference,
+      eoriDetails = cse.application.asATAR.holder,
+      contact = cse.application.contact,
+      countryName = countryNames.get(cse.application.asATAR.holder.country).map(_.countryName).getOrElse(""),
       caseBoardsFileNumber = cse.caseBoardsFileNumber,
-      agentDetails         = cse.application.asATAR.agent
+      agentDetails = cse.application.asATAR.agent
     )
 }

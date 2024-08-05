@@ -41,15 +41,15 @@ object CorrespondenceDetailsForm extends Constraints {
     Option[String]
   ) => Case = {
     case (
-        summary,
-        detailedDescription,
-        boardsFileNumber,
-        relatedBTIReference
+          summary,
+          detailedDescription,
+          boardsFileNumber,
+          relatedBTIReference
         ) =>
       existingCase.copy(
         caseBoardsFileNumber = boardsFileNumber,
         application = existingCase.application.asCorrespondence.copy(
-          summary             = summary,
+          summary = summary,
           detailedDescription = detailedDescription,
           relatedBTIReference = relatedBTIReference
         )

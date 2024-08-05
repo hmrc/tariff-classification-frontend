@@ -19,7 +19,7 @@
 
 @import views.html.forms.components.input_checkbox
 
-@(formData: Form[DecisionFormData])(implicit messages: Messages, request: RequestHeader)
+@(formData: Form[DecisionFormData])(implicit messages: Messages)
 
     @conditionalInput = @{Html(s"""
         <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-expiry-date">

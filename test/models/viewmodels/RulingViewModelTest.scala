@@ -48,14 +48,14 @@ class RulingViewModelTest extends ModelsBaseSpec {
 
       val expected = RulingViewModel(
         commodityCodeEnteredByTraderOrAgent = "trader-1234567",
-        commodityCodeSuggestedByOfficer     = "officer-1234567",
-        commodityCode                       = "040900",
-        itemDescription                     = "good description",
-        justification                       = "justification",
-        methodSearch                        = "",
-        methodExclusion                     = "Excludes everything ever",
-        showEditRuling                      = false,
-        caseReference                       = "case reference"
+        commodityCodeSuggestedByOfficer = "officer-1234567",
+        commodityCode = "040900",
+        itemDescription = "good description",
+        justification = "justification",
+        methodSearch = "",
+        methodExclusion = "Excludes everything ever",
+        showEditRuling = false,
+        caseReference = "case reference"
       )
 
       rulingViewModel shouldBe expected

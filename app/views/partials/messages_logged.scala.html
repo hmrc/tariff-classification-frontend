@@ -15,7 +15,6 @@
  *@
 
 @import helper._
-@import config.AppConfig
 @import controllers.routes.CaseController
 @import controllers.Tab
 @import models.request.AuthenticatedRequest
@@ -29,7 +28,7 @@
 
 @import models.forms.MessageFormData
 
-@(messagesLogged: MessagesTabViewModel, messageForm: Form[MessageFormData], startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(messagesLogged: MessagesTabViewModel, messageForm: Form[MessageFormData], startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @error_summary(messageForm.errors, Some(startAtTabIndex))
 
@@ -37,7 +36,7 @@
 
     @if(request.hasPermission(Permission.ADD_MESSAGE)) {
 
-        @form(action = CaseController.addMessage(messagesLogged.caseReference).withFragment(Tab.MESSAGES_TAB.name), 'class -> "form") {
+        @form(action = CaseController.addMessage(messagesLogged.caseReference).withFragment(Tab.MESSAGES_TAB.name), Symbol("class") -> "form") {
             @CSRF.formField
             @input_textarea(
                 field = messageForm("message"),

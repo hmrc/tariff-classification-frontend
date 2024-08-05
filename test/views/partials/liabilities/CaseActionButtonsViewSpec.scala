@@ -43,7 +43,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
         )
       )
 
-      doc                                                should containElementWithID("action-this-case-button")
+      doc                                                  should containElementWithID("action-this-case-button")
       doc.getElementById("action-this-case-button").text shouldBe messages("case.v2.liability.action_this_case.button")
     }
 
@@ -135,7 +135,7 @@ class CaseActionButtonsViewSpec extends ViewSpec {
         )
       )
 
-      doc                                    should containElementWithID("reopen-case")
+      doc                                      should containElementWithID("reopen-case")
       doc.getElementById("reopen-case").text shouldBe messages("case.v2.liability.reopen.button")
     }
 

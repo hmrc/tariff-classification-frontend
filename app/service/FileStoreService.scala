@@ -50,10 +50,10 @@ class FileStoreService @Inject() (connector: FileStoreConnector)(implicit ec: Ex
       } filter {
         // Select only attachments where the File is linked to a Case & Attachment
         case (c: Option[Case], att: Option[StoredAttachment]) => c.isDefined && att.isDefined
-      } map {
-        case (c: Option[Case], att: Option[StoredAttachment]) => (c.get, att.get)
-      } groupBy (_._1) map {
-        case (c: Case, seq: Seq[(Case, StoredAttachment)]) => (c, seq.map(_._2))
+      } map { case (c: Option[Case], att: Option[StoredAttachment]) =>
+        (c.get, att.get)
+      } groupBy (_._1) map { case (c: Case, seq: Seq[(Case, StoredAttachment)]) =>
+        (c, seq.map(_._2))
       }
 
       // Log an error for any attachments which arent in the response

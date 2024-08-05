@@ -104,9 +104,9 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           .get()(newFakeGETRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("page.title.create_correspondence.h1"))
     }
 
@@ -116,7 +116,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           .get()(newFakeGETRequestWithCSRF())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -244,7 +244,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentAsString(result) should include("case has been created")
     }
 
@@ -262,7 +262,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentAsString(result) should include("case has been released to a team")
     }
 
@@ -280,7 +280,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentAsString(result) should include("Case Queue not found.")
     }
 
@@ -298,7 +298,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           .displayConfirmation("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentAsString(result) should include("We could not find a Case with reference: reference")
     }
 
@@ -318,7 +318,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
             .editCorrespondence("reference")(newFakePOSTRequestWithCSRF())
         )
-        status(result)               shouldBe SEE_OTHER
+        status(result)             shouldBe SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
     }
@@ -387,7 +387,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
           controller(caseWithStatusOPEN, Set(Permission.VIEW_ASSIGNED_CASES))
             .editCorrespondenceContact("reference")(newFakePOSTRequestWithCSRF())
         )
-        status(result)               shouldBe SEE_OTHER
+        status(result)             shouldBe SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
     }
@@ -458,8 +458,8 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         .filterNot(_._1 == "MODULE$")
         .flatMap {
           case (n, l: List[_]) if l.headOption.exists(_.isInstanceOf[Product]) =>
-            l.zipWithIndex.flatMap {
-              case (x, i) => asFormParams(x.asInstanceOf[Product]).map { case (k, v) => (s"$n[$i].$k", v) }
+            l.zipWithIndex.flatMap { case (x, i) =>
+              asFormParams(x.asInstanceOf[Product]).map { case (k, v) => (s"$n[$i].$k", v) }
             }
           case (n, Some(p: Product)) => asFormParams(p).map { case (k, v) => (s"$n.$k", v) }
           case (n, Some(a))          => List((n, a.toString))

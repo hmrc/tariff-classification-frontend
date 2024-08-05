@@ -29,10 +29,10 @@ class UserTeamEditViewSpec extends ViewSpec {
   private val userEditForm = UserEditTeamForm.editTeamsForm
 
   private val operator = Operator(
-    id            = "PID5",
-    name          = Some("John Doe"),
-    email         = Some("john@doe.o"),
-    role          = Role.CLASSIFICATION_OFFICER,
+    id = "PID5",
+    name = Some("John Doe"),
+    email = Some("john@doe.o"),
+    role = Role.CLASSIFICATION_OFFICER,
     memberOfTeams = Seq("1", "5")
   )
 

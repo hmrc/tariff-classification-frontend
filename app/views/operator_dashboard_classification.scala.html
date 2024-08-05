@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import views.html.includes.main
 @import models.viewmodels.HomeTab
@@ -32,7 +31,7 @@
         totalCasesAssignedToMe: Int,
         referredCasesAssignedToMe: Int,
         completedCasesAssignedToMe: Int
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 
 @additionalCSS = {

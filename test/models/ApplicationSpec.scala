@@ -72,7 +72,7 @@ class ApplicationSpec extends ModelsBaseSpec {
 
     "be falsy for another type" in {
       Cases.liabilityApplicationExample.copy(status = LiabilityStatus.NON_LIVE).isLiveLiabilityOrder shouldBe false
-      Cases.btiApplicationExample.isLiveLiabilityOrder shouldBe false
+      Cases.btiApplicationExample.isLiveLiabilityOrder                                               shouldBe false
     }
 
   }

@@ -15,8 +15,6 @@
  *@
 
 @import models.request.AuthenticatedRequest
-@import config.AppConfig
-
 @import views.html.components.heading
 @import views.html.components.my_cases_tab
 @import models.viewmodels.{ApplicationTabViewModel, MyCasesTab, SubNavigationTab, AssignedToMeTab}
@@ -29,7 +27,7 @@
         my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation
 )
 
-@(myCases : ApplicationTabViewModel, activeSubNav : SubNavigationTab = AssignedToMeTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(myCases : ApplicationTabViewModel, activeSubNav : SubNavigationTab = AssignedToMeTab)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages(myCases.headingMessageKey),

@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.{Tab, routes}
 @import helper._
 @import models.Permission
@@ -27,7 +26,7 @@
 
 @this()
 
-@(activityViewModel: ActivityViewModel, activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activityViewModel: ActivityViewModel, activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
  @error_summary(activityForm.errors)
 
@@ -41,7 +40,7 @@
 
  @if(request.hasPermission(Permission.ADD_NOTE)) {
 
-  @form(action = routes.CaseController.addNote(activityViewModel.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
+  @form(action = routes.CaseController.addNote(activityViewModel.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), Symbol("class") -> "form") {
    @CSRF.formField
    @input_textarea(
     field = activityForm("note"),

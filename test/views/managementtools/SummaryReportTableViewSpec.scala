@@ -28,8 +28,8 @@ class SummaryReportTableViewSpec extends ViewSpec {
   "summaryReportTable view" should {
     val report = SummaryReport(
       "Case count by status",
-      groupBy   = NonEmptySeq.one(ReportField.Status),
-      sortBy    = ReportField.Status,
+      groupBy = NonEmptySeq.one(ReportField.Status),
+      sortBy = ReportField.Status,
       maxFields = Seq(ReportField.ElapsedDays)
     )
 
@@ -62,9 +62,8 @@ class SummaryReportTableViewSpec extends ViewSpec {
       val doc =
         view(summaryReportTable(report, SearchPagination(), reportResults, Map.empty, Map.empty, "summary-report"))
 
-      for (field <- ReportField.Count :: ReportField.Status :: report.maxFields.toList) {
+      for (field <- ReportField.Count :: ReportField.Status :: report.maxFields.toList)
         doc should containElementWithID(s"summary-report-${field.fieldName}")
-      }
 
       doc.getElementById("summary-report-count")        should containText(messages("reporting.field.count"))
       doc.getElementById("summary-report-status")       should containText(messages("reporting.field.status"))

@@ -27,7 +27,7 @@ class AdvancedSearchCasesViewSpec extends ViewSpec {
 
   private val showAdvancedSearchButtonStatuses    = Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
   private val notShowAdvancedSearchButtonStatuses = (CaseStatus.values -- showAdvancedSearchButtonStatuses).toList
-  private val advanced_search_cases               = app.injector.instanceOf[views.html.partials.liabilities.advanced_search_cases]
+  private val advanced_search_cases = app.injector.instanceOf[views.html.partials.liabilities.advanced_search_cases]
 
   "Advanced search button" should {
 
@@ -41,7 +41,7 @@ class AdvancedSearchCasesViewSpec extends ViewSpec {
           )
         )
 
-        doc                                               should containElementWithID("advanced-search-button")
+        doc                                                 should containElementWithID("advanced-search-button")
         doc.getElementById("advanced-search-button").text shouldBe messages("case.v2.liability.advanced_search.button")
       }
     }

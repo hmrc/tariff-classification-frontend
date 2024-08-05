@@ -36,7 +36,7 @@ object CaseStatusRadioInput extends Enumerable.Implicits {
   case object Release extends CaseStatusRadioInput("release", ApplicationType.values)
   case object Suppress extends CaseStatusRadioInput("suppress", ApplicationType.values)
 
-  private val changeCaseStatusValues: Seq[CaseStatusRadioInput]  = Seq(Complete, Refer, Reject, Suspend, MoveBackToQueue)
+  private val changeCaseStatusValues: Seq[CaseStatusRadioInput] = Seq(Complete, Refer, Reject, Suspend, MoveBackToQueue)
   private val releaseOrSuppressValues: Seq[CaseStatusRadioInput] = Seq(Release, Suppress)
 
   def changeCaseStatusOptionsFor(applicationType: ApplicationType): Seq[InputRadio] =

@@ -64,7 +64,7 @@ class UsersTabViewSpec extends ViewSpec {
   val emptyUsersTabViewModel: UsersTabViewModel = UsersTabViewModel(
     "Manage users",
     List(usersByQueue.copy(searchResult = List.empty)),
-    assignedUsers.copy(searchResult   = List.empty),
+    assignedUsers.copy(searchResult = List.empty),
     unassignedUsers.copy(searchResult = List.empty)
   )
 
@@ -72,7 +72,7 @@ class UsersTabViewSpec extends ViewSpec {
 
   def usersTabView(
     usersTabViewModel: UsersTabViewModel = usersTabViewModel,
-    caseCount: Map[String, List[Case]]   = count
+    caseCount: Map[String, List[Case]] = count
   ): HtmlFormat.Appendable =
     users_tab(usersTabViewModel, caseCount)
 

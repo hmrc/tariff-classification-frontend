@@ -73,7 +73,7 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
           SummaryReport(
             "Case count by status",
             groupBy = NonEmptySeq.one(ReportField.Status),
-            sortBy  = ReportField.Status
+            sortBy = ReportField.Status
           ),
           SearchPagination()
         )

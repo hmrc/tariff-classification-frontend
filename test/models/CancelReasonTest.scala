@@ -24,7 +24,9 @@ class CancelReasonTest extends ModelsBaseSpec {
     }
 
     "format 'Invalidated Code Change'" in {
-      CancelReason.format(CancelReason.INVALIDATED_CODE_CHANGE) shouldBe "Invalidated due to nomenclature code changes (61)"
+      CancelReason.format(
+        CancelReason.INVALIDATED_CODE_CHANGE
+      ) shouldBe "Invalidated due to nomenclature code changes (61)"
     }
 
     "format 'Invalidated EU Measure'" in {
@@ -32,11 +34,15 @@ class CancelReasonTest extends ModelsBaseSpec {
     }
 
     "format 'Invalidated National Measure'" in {
-      CancelReason.format(CancelReason.INVALIDATED_NATIONAL_MEASURE) shouldBe "Invalidated due to national legal measure (63)"
+      CancelReason.format(
+        CancelReason.INVALIDATED_NATIONAL_MEASURE
+      ) shouldBe "Invalidated due to national legal measure (63)"
     }
 
     "format 'Invalidated Wrong Classification'" in {
-      CancelReason.format(CancelReason.INVALIDATED_WRONG_CLASSIFICATION) shouldBe "Invalidated due to incorrect classification (64)"
+      CancelReason.format(
+        CancelReason.INVALIDATED_WRONG_CLASSIFICATION
+      ) shouldBe "Invalidated due to incorrect classification (64)"
     }
 
     "format 'Invalidated Other'" in {

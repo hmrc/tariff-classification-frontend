@@ -69,7 +69,8 @@ class AttachmentsController @Inject() (
             validateAndRenderView { c =>
               val header = CaseHeaderViewModel.fromCase(c)
               Future(remove_attachment(header, errors, fileId, fileName))
-            }, {
+            },
+          {
             case true =>
               getCaseAndRespond(
                 reference,

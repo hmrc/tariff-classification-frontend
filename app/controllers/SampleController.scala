@@ -54,8 +54,8 @@ class SampleController @Inject() (
 
   override protected def status(c: Case): Option[SampleStatus] = c.sample.status
 
-  protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])(
-    implicit request: AuthenticatedRequest[_]
+  protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])(implicit
+    request: AuthenticatedRequest[_]
   ): Html =
     c.application.`type` match {
       case ApplicationType.LIABILITY =>
@@ -88,8 +88,8 @@ class SampleController @Inject() (
       )
     }
 
-  override protected def update(c: Case, status: Option[SampleStatus], operator: Operator)(
-    implicit hc: HeaderCarrier
+  override protected def update(c: Case, status: Option[SampleStatus], operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     caseService.updateSampleStatus(c, status, operator)
 

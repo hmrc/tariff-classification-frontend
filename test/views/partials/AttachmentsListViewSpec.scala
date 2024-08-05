@@ -41,11 +41,11 @@ class AttachmentsListViewSpec extends ViewSpec {
 
     "Render attachments" in {
       val attachment = Cases.storedAttachment.copy(
-        id         = "FILE_ID",
-        fileName   = Some("name"),
-        url        = Some("url"),
+        id = "FILE_ID",
+        fileName = Some("name"),
+        url = Some("url"),
         scanStatus = Some(ScanStatus.READY),
-        timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
+        timestamp = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
       val doc = view(attachments_list("MODULE", Seq(attachment), caseRef = caseRef))
@@ -70,7 +70,7 @@ class AttachmentsListViewSpec extends ViewSpec {
 
     "Render 'uploaded by'" in {
       val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("name"),
         operator = Some(Operator("id", Some("operator name")))
       )
@@ -84,7 +84,7 @@ class AttachmentsListViewSpec extends ViewSpec {
 
     "Render 'uploaded by' with unknown operator" in {
       val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("name"),
         operator = None
       )
@@ -98,7 +98,7 @@ class AttachmentsListViewSpec extends ViewSpec {
 
     "Render 'uploaded by' with unknown operator name" in {
       val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("name"),
         operator = Some(Operator("id", None))
       )
@@ -112,7 +112,7 @@ class AttachmentsListViewSpec extends ViewSpec {
 
     "Render show remove link when user has permission " in {
       val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("name"),
         operator = Some(Operator("id", Some("operator name")))
       )
@@ -130,7 +130,7 @@ class AttachmentsListViewSpec extends ViewSpec {
 
     "Do not render show remove link when user does not have permission " in {
       val attachment = Cases.storedAttachment.copy(
-        id       = "FILE_ID",
+        id = "FILE_ID",
         fileName = Some("name"),
         operator = Some(Operator("id", Some("operator name")))
       )

@@ -14,14 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.Operator
-@import models.request.AuthenticatedRequest
 @import controllers.v2.routes.ManageUserController
 
 @this()
 
-@(userDetails: Operator)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(userDetails: Operator)(implicit messages: Messages)
 
 <h2 class="govuk-heading-l">@messages("users.user.details.heading")</h2>
 

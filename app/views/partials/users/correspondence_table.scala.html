@@ -15,7 +15,6 @@
  *@
 
 @import models.request.AuthenticatedRequest
-@import config.AppConfig
 @import models.viewmodels.ApplicationsTab
 @import utils.Dates
 
@@ -26,7 +25,7 @@
 @import views.html.partials.{error_summary}
 @import controllers.Tab
 
-@(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages)
  @error_summary(form.errors, keySwaps = Map("corrCases" -> "corrCases-0"))
  <h2 class="govuk-heading-l">@messages("users.user.correspondence.heading")</h2>
  @helper.form(action = MoveCasesController.postMoveCorrCases(userID).withFragment(Tab.CORRESPONDENCE_TAB.name), Symbol("id") -> "corrCases", Symbol("novalidate") -> "novalidate") {

@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-import config.AppConfig
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.forms._
@@ -49,7 +48,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private val attachments: Seq[StoredAttachment] = Seq(Cases.storedAttachment)
   private lazy val queues: List[Queue]           = List(Queue("", "", ""))
   private val initiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -57,13 +56,13 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     )
   )
 
-  override protected def beforeEach(): Unit =
-    reset(
-      queueService,
-      fileService,
-      event,
-      correspondenceView
-    )
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(queueService)
+    reset(fileService)
+    reset(event)
+    reset(correspondenceView)
+  }
 
   private def controller(c: Case, permission: Set[Permission]) = new CorrespondenceController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = c),
@@ -108,7 +107,7 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           any[Form[ActivityFormData]],
           any[Seq[StoredAttachment]],
           any[PrimaryNavigationTab]
-        )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
+        )(any[AuthenticatedRequest[_]], any[Messages])
       ) thenReturn Html("body")
 
       val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))

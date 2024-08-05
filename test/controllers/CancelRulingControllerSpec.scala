@@ -16,7 +16,7 @@
 
 package controllers
 
-import connector.FakeDataCacheConnector
+import connector.FakeDataCacheService
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
@@ -48,7 +48,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val caseWithStatusCANCELLED = Cases.btiCaseExample.copy(status = CaseStatus.CANCELLED)
 
   private val initiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -60,7 +60,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     new SuccessfulRequestActions(playBodyParsers, Cases.operatorWithPermissions, c = requestCase),
     casesService,
     fileService,
-    FakeDataCacheConnector,
+    FakeDataCacheService,
     mcc,
     cancelRulingReason,
     cancelRulingEmail,
@@ -72,7 +72,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
     fileService,
-    FakeDataCacheConnector,
+    FakeDataCacheService,
     mcc,
     cancelRulingReason,
     cancelRulingEmail,
@@ -82,8 +82,9 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   override def afterEach(): Unit = {
     super.afterEach()
-    reset(casesService, fileService)
-    await(FakeDataCacheConnector.clear())
+    reset(casesService)
+    reset(fileService)
+    await(FakeDataCacheService.clear())
   }
 
   private def aMultipartBodyWithParams(params: (String, Seq[String])*): AnyContentAsMultipartFormData =
@@ -145,7 +146,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("status.change.cancel.reason.error"))
+      bodyOf(result)          should include(messages("status.change.cancel.reason.error"))
     }
 
     "display error page when note is missing" in {
@@ -159,7 +160,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("error.empty.cancel.note"))
+      bodyOf(result)          should include(messages("error.empty.cancel.note"))
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {
@@ -209,7 +210,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to confirmation page" in {
       val cacheKey = s"cancel_ruling-${caseWithStatusCOMPLETED.reference}"
       val cacheMap = UserAnswers(cacheKey).set("cancellation", RulingCancellation("ANNULLED", "some-note")).cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       given(
         casesService.cancelRuling(
@@ -247,7 +248,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have the right permissions" in {
       val cacheKey = s"cancel_ruling-${caseWithStatusCOMPLETED.reference}"
       val cacheMap = UserAnswers(cacheKey).set("cancellation", RulingCancellation("ANNULLED", "some-note")).cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       val result = await(
         controller(caseWithStatusCOMPLETED, Set.empty)
@@ -273,7 +274,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("This ruling has been cancelled")
+      bodyOf(result)          should include("This ruling has been cancelled")
     }
   }
 }

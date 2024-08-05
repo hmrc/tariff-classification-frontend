@@ -55,7 +55,7 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
       val response: WSResponse = await(requestWithSession("/cases/1/suspend-reason").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
 
     def shouldSucceed = {
@@ -80,7 +80,7 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
       val response: WSResponse = await(requestWithSession("/cases/1/suspend-reason").get())
 
       response.status shouldBe OK
-      response.body   should include("Provide details to suspend this case")
+      response.body     should include("Provide details to suspend this case")
     }
   }
 

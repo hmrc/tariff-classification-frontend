@@ -180,7 +180,7 @@ class RulingDetailsViewSpec extends ViewSpec {
           withStatus(CaseStatus.CANCELLED),
           withDecision(
             bindingCommodityCode = "commodity code",
-            cancellation         = Some(Cancellation(reason = CancelReason.INVALIDATED_OTHER))
+            cancellation = Some(Cancellation(reason = CancelReason.INVALIDATED_OTHER))
           )
         )
 
@@ -255,11 +255,11 @@ class RulingDetailsViewSpec extends ViewSpec {
       val c = aCase(
         withStatus(CaseStatus.OPEN),
         withDecision(
-          bindingCommodityCode         = "commodity code",
-          justification                = "justification",
-          goodsDescription             = "goods description",
-          methodSearch                 = Some("method search"),
-          methodExclusion              = Some("method exclusion"),
+          bindingCommodityCode = "commodity code",
+          justification = "justification",
+          goodsDescription = "goods description",
+          methodSearch = Some("method search"),
+          methodExclusion = Some("method exclusion"),
           methodCommercialDenomination = Some("commercial denomination")
         )
       )
@@ -268,18 +268,18 @@ class RulingDetailsViewSpec extends ViewSpec {
 
       val doc = view(ruling_details(rulingTab, None, Seq.empty)(operatorRequest, messages, appConfig))
 
-      doc                                                            should containElementWithID("ruling_bindingCommodityCodeValue")
-      doc.getElementById("ruling_bindingCommodityCodeValue")         should containText("commodity code")
-      doc                                                            should containElementWithID("ruling_itemDescriptionValue")
-      doc.getElementById("ruling_itemDescriptionValue")              should containText("goods description")
-      doc                                                            should containElementWithID("ruling_justificationValue")
-      doc.getElementById("ruling_justificationValue")                should containText("justification")
-      doc                                                            should containElementWithID("ruling_searchesValue")
-      doc.getElementById("ruling_searchesValue")                     should containText("method search")
-      doc                                                            should containElementWithID("ruling_methodCommercialDenominationValue")
+      doc should containElementWithID("ruling_bindingCommodityCodeValue")
+      doc.getElementById("ruling_bindingCommodityCodeValue") should containText("commodity code")
+      doc                                                    should containElementWithID("ruling_itemDescriptionValue")
+      doc.getElementById("ruling_itemDescriptionValue")      should containText("goods description")
+      doc                                                    should containElementWithID("ruling_justificationValue")
+      doc.getElementById("ruling_justificationValue")        should containText("justification")
+      doc                                                    should containElementWithID("ruling_searchesValue")
+      doc.getElementById("ruling_searchesValue")             should containText("method search")
+      doc should containElementWithID("ruling_methodCommercialDenominationValue")
       doc.getElementById("ruling_methodCommercialDenominationValue") should containText("commercial denomination")
-      doc                                                            should containElementWithID("ruling_exclusionsValue")
-      doc.getElementById("ruling_exclusionsValue")                   should containText("method exclusion")
+      doc                                          should containElementWithID("ruling_exclusionsValue")
+      doc.getElementById("ruling_exclusionsValue") should containText("method exclusion")
       doc shouldNot containElementWithID("complete-case-button")
     }
 
@@ -312,15 +312,15 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       val stored = StoredAttachment(
-        id                     = "FILE_ID",
-        public                 = true,
-        operator               = None,
-        fileName               = Some("file.txt"),
-        url                    = None,
-        mimeType               = Some("text/plain"),
-        scanStatus             = None,
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        id = "FILE_ID",
+        public = true,
+        operator = None,
+        fileName = Some("file.txt"),
+        url = None,
+        mimeType = Some("text/plain"),
+        scanStatus = None,
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = true
       )
 
@@ -338,15 +338,15 @@ class RulingDetailsViewSpec extends ViewSpec {
       )
 
       val stored = StoredAttachment(
-        id                     = "FILE_ID",
-        public                 = false,
-        operator               = None,
-        fileName               = Some("file.txt"),
-        url                    = None,
-        mimeType               = Some("text/plain"),
-        scanStatus             = None,
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        id = "FILE_ID",
+        public = false,
+        operator = None,
+        fileName = Some("file.txt"),
+        url = None,
+        mimeType = Some("text/plain"),
+        scanStatus = None,
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = false
       )
 

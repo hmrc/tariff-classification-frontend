@@ -32,6 +32,7 @@ trait UnitSpec extends AnyWordSpecLike with Matchers with OptionValues {
 
   import scala.concurrent.duration._
   import scala.concurrent.{Await, Future}
+  import scala.language.implicitConversions
 
   implicit val defaultTimeout: FiniteDuration = 5 seconds
 

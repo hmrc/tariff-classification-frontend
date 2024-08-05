@@ -21,8 +21,7 @@ import models.AppealType.AppealType
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.{reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -64,12 +63,12 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   override def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(casesService)
+    reset(casesService)
   }
 
   "Case Appeal Details" should {
     "Redirect to case appeals page" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
           val c = aCase(withStatus(s), withDecision())
 
@@ -81,12 +80,11 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
             v2.routes.AtarController.displayAtar(c.reference).withFragment(Tab.APPEALS_TAB.name).path
           )
         }
-      }
 
     }
 
     "redirect to Liability v2 controller when case is a liability" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
 
           val c = aLiabilityCase(withStatus(s))
@@ -99,25 +97,23 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
             v2.routes.LiabilityController.displayLiability(c.reference).withFragment(Tab.APPEALS_TAB.name).path
           )
         }
-      }
     }
   }
 
   "Case Choose Type" should {
     "Return 200" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
           val c = aCase(withStatus(s), withDecision())
 
           val request = newFakeGETRequestWithCSRF()
           val result  = await(controller(c).chooseType(c.reference)(request))
 
-          status(result)          shouldBe Status.OK
-          contentType(result)     shouldBe Some("text/html")
-          charset(result)         shouldBe Some("utf-8")
+          status(result)        shouldBe Status.OK
+          contentType(result)   shouldBe Some("text/html")
+          charset(result)       shouldBe Some("utf-8")
           contentAsString(result) should include("appeal_choose_type")
         }
-      }
 
     }
 
@@ -130,7 +126,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   "Case Confirm Type" should {
     "Redirect to Next Stage" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
           val c = aCase(withStatus(s), withDecision())
 
@@ -142,7 +138,6 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
             routes.AppealCaseController.chooseStatus(c.reference, AppealType.REVIEW.toString).url
           )
         }
-      }
     }
 
     "Redirect to unauthorised if no permissions" in {
@@ -163,19 +158,18 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   "Case Choose Status" should {
     "Return 200" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
           val c = aCase(withStatus(s), withDecision())
 
           val request = newFakeGETRequestWithCSRF()
           val result  = await(controller(c).chooseStatus(c.reference, AppealType.REVIEW.toString)(request))
 
-          status(result)          shouldBe Status.OK
-          contentType(result)     shouldBe Some("text/html")
-          charset(result)         shouldBe Some("utf-8")
+          status(result)        shouldBe Status.OK
+          contentType(result)   shouldBe Some("text/html")
+          charset(result)       shouldBe Some("utf-8")
           contentAsString(result) should include("appeal_choose_status")
         }
-      }
 
     }
 
@@ -188,7 +182,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   "Case Confirm Status" should {
     "Redirect to Appeal View" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
           val c = aCase(withStatus(s), withDecision())
           given(
@@ -208,7 +202,6 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
             refEq(operator)
           )(any[HeaderCarrier])
         }
-      }
     }
 
     "Redirect to unauthorised if no permissions" in {
@@ -229,7 +222,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   "Case Change Status" should {
     "Return 200" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
           val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
           val c      = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
@@ -237,12 +230,11 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
           val request = newFakeGETRequestWithCSRF()
           val result  = await(controller(c).changeStatus(c.reference, "appeal-id")(request))
 
-          status(result)          shouldBe Status.OK
-          contentType(result)     shouldBe Some("text/html")
-          charset(result)         shouldBe Some("utf-8")
+          status(result)        shouldBe Status.OK
+          contentType(result)   shouldBe Some("text/html")
+          charset(result)       shouldBe Some("utf-8")
           contentAsString(result) should include("appeal_choose_status")
         }
-      }
 
     }
 
@@ -255,7 +247,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   "Case Confirm Change Status" should {
     "Redirect to Appeal View" when {
-      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)) {
+      for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
           val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
           val c      = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
@@ -277,7 +269,6 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
             refEq(operator)
           )(any[HeaderCarrier])
         }
-      }
     }
 
     "Redirect to unauthorised if no permissions" in {

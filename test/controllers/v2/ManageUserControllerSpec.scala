@@ -84,9 +84,9 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
       given(userService.getUser(any[String])(any[HeaderCarrier])).willReturn(None)
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayUserDetails("1")(fakeRequest))
-      status(result)          shouldBe Status.NOT_FOUND
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.NOT_FOUND
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("errors.user-not-found.message", "1"))
     }
 
@@ -288,7 +288,7 @@ class ManageUserControllerSpec extends ControllerBaseSpec {
         controller(Set(Permission.VIEW_ASSIGNED_CASES))
           .editUserTeamDetails("reference")(newFakePOSTRequestWithCSRF())
       )
-      status(result)               shouldBe SEE_OTHER
+      status(result)             shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

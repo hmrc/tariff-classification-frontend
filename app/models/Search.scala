@@ -22,13 +22,13 @@ import play.api.data.Form
 import play.api.mvc.QueryStringBindable
 
 case class Search(
-  caseDetails: Option[String]                   = None,
-  caseSource: Option[String]                    = None,
-  commodityCode: Option[String]                 = None,
-  decisionDetails: Option[String]               = None,
-  status: Option[Set[PseudoCaseStatus]]         = None,
+  caseDetails: Option[String] = None,
+  caseSource: Option[String] = None,
+  commodityCode: Option[String] = None,
+  decisionDetails: Option[String] = None,
+  status: Option[Set[PseudoCaseStatus]] = None,
   applicationType: Option[Set[ApplicationType]] = None,
-  keywords: Option[Set[String]]                 = None
+  keywords: Option[Set[String]] = None
 ) {
 
   def isEmpty: Boolean =
@@ -45,12 +45,11 @@ object Search {
 
       override def bind(string: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {
 
-        val filteredParams: Map[String, Seq[String]] = {
+        val filteredParams: Map[String, Seq[String]] =
           requestParams.view
             .mapValues(_.map(_.trim).filter(_.nonEmpty))
             .filter(_._2.nonEmpty)
             .toMap
-        }
 
         val form: Form[Search] = SearchForm.formWithoutValidation.bindFromRequest(filteredParams)
 

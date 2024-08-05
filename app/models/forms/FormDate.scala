@@ -37,7 +37,7 @@ object FormDate extends Mappings {
 
   def optionalDate(
     prefix: String = "expiryDate",
-    error: String  = "atar.editRuling.expiryDate"
+    error: String = "atar.editRuling.expiryDate"
   ): Mapping[Option[Instant]] = {
     val booleanField = "explicitEndDate"
 

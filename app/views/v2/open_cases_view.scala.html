@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{ATaRTab, CasesTabViewModel, OpenCasesTab, SubNavigationTab}
 @import views.html.components.{cases_tab, open_cases_secondary_navigation}
@@ -27,7 +26,7 @@
 )
 
 
-@(cases : CasesTabViewModel, activeSubNav : SubNavigationTab = ATaRTab)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(cases : CasesTabViewModel, activeSubNav : SubNavigationTab = ATaRTab)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages(s"cases.opencases.${cases.caseType.prettyName.toLowerCase}.title"),

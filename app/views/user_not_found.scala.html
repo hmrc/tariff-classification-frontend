@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import controllers.routes.IndexController
 
@@ -24,7 +23,7 @@
     main: main
 )
 
-@(pid: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(pid: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.user.not.found")

@@ -32,7 +32,6 @@ import views.html.partials.activity_details
 
 import java.time.{ZoneOffset, ZonedDateTime}
 
-// scalastyle:off magic.number
 class ActivityDetailsViewSpec extends ViewSpec {
 
   private val date   = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
@@ -46,9 +45,9 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = Note("comment"),
-        operator      = Operator("", None),
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("", None),
         caseReference = "ref"
       )
 
@@ -64,9 +63,9 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = Note("comment"),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("id", Some("name")),
         caseReference = "ref"
       )
 
@@ -82,9 +81,9 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = Note("comment"),
-        operator      = Operator("id", None),
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("id", None),
         caseReference = "ref"
       )
 
@@ -100,9 +99,9 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = Note("comment"),
-        operator      = Operator("", Some("name")),
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("", Some("name")),
         caseReference = "ref"
       )
 
@@ -118,17 +117,17 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = Note("comment"),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
       val doc = view(
-        activity_details(activityTab, ActivityForm.form)(requestWithAddNotePermission, messages, appConfig)
+        activity_details(activityTab, ActivityForm.form)(requestWithAddNotePermission, messages)
       )
 
       doc should containElementWithID("add-note-submit")
@@ -138,16 +137,16 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = Note("comment"),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      val doc = view(activity_details(activityTab, ActivityForm.form)(operatorRequest, messages, appConfig))
+      val doc = view(activity_details(activityTab, ActivityForm.form)(operatorRequest, messages))
 
       doc shouldNot containElementWithID("add-note-submit")
     }
@@ -156,11 +155,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = Note("comment"),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -181,14 +180,14 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val e = Event(
         id = "EVENT_ID",
         details = CaseStatusChange(
-          from         = CaseStatus.OPEN,
-          to           = CaseStatus.COMPLETED,
-          comment      = Some("comment"),
+          from = CaseStatus.OPEN,
+          to = CaseStatus.COMPLETED,
+          comment = Some("comment"),
           attachmentId = Some("att-id")
         ),
-        operator      = Operator("id", Some("name")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -201,7 +200,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc.getElementById("activity-events-row-0-content")  should containText("Status changed from open to completed")
       doc                                                  should containElementWithID("activity-events-row-0-comment")
       doc.getElementById("activity-events-row-0-comment")  should containText("comment")
-      doc                                                  should containElementWithID("activity-events-row-0-email_link")
+      doc should containElementWithID("activity-events-row-0-email_link")
       doc.getElementById("activity-events-row-0-email_link") should haveAttribute(
         "href",
         routes.ViewAttachmentController.get("ref", "att-id").url
@@ -216,14 +215,14 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val e = Event(
         id = "EVENT_ID",
         details = CancellationCaseStatusChange(
-          from         = CaseStatus.OPEN,
-          comment      = Some("comment"),
+          from = CaseStatus.OPEN,
+          comment = Some("comment"),
           attachmentId = Some("att-id"),
-          reason       = CancelReason.INVALIDATED_CODE_CHANGE
+          reason = CancelReason.INVALIDATED_CODE_CHANGE
         ),
-        operator      = Operator("id", Some("name")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -255,15 +254,15 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val e = Event(
         id = "EVENT_ID",
         details = ReferralCaseStatusChange(
-          from         = CaseStatus.OPEN,
-          comment      = Some("comment"),
+          from = CaseStatus.OPEN,
+          comment = Some("comment"),
           attachmentId = Some("att-id"),
-          referredTo   = "Applicant",
-          reason       = Seq(ReferralReason.REQUEST_SAMPLE, ReferralReason.REQUEST_MORE_INFO)
+          referredTo = "Applicant",
+          reason = Seq(ReferralReason.REQUEST_SAMPLE, ReferralReason.REQUEST_MORE_INFO)
         ),
-        operator      = Operator("id", Some("name")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -301,48 +300,48 @@ class ActivityDetailsViewSpec extends ViewSpec {
           id = "EVENT_ID",
           details =
             CompletedCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), email = Some("some email")),
-          operator      = Operator("id", Some("name")),
+          operator = Operator("id", Some("name")),
           caseReference = "ref",
-          timestamp     = date
+          timestamp = date
         )
 
         val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
         val doc = view(activity_details(activityTab, ActivityForm.form))
 
-        doc                                                  should containElementWithID("activity-events-row-0-operator")
+        doc should containElementWithID("activity-events-row-0-operator")
         doc.getElementById("activity-events-row-0-operator") should containText("name")
-        doc                                                  should containElementWithID("activity-events-row-0-content")
-        doc.getElementById("activity-events-row-0-content")  should containText("Status changed from open to completed")
-        doc                                                  should containElementWithID("activity-events-row-0-comment")
-        doc.getElementById("activity-events-row-0-comment")  should containText("comment")
-        doc                                                  should containElementWithID("activity-events-row-0-email")
-        doc.getElementById("activity-events-row-0-email")    should containText("some email")
-        doc                                                  should containElementWithID("activity-events-row-0-date")
-        doc.getElementById("activity-events-row-0-date")     should containText("01 Jan 2019")
+        doc                                                 should containElementWithID("activity-events-row-0-content")
+        doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to completed")
+        doc                                                 should containElementWithID("activity-events-row-0-comment")
+        doc.getElementById("activity-events-row-0-comment") should containText("comment")
+        doc                                                 should containElementWithID("activity-events-row-0-email")
+        doc.getElementById("activity-events-row-0-email")   should containText("some email")
+        doc                                                 should containElementWithID("activity-events-row-0-date")
+        doc.getElementById("activity-events-row-0-date")    should containText("01 Jan 2019")
       }
 
       "Email is absent" in {
 
         val c = aCase()
         val e = Event(
-          id            = "EVENT_ID",
-          details       = CompletedCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), email = None),
-          operator      = Operator("id", Some("name")),
+          id = "EVENT_ID",
+          details = CompletedCaseStatusChange(from = CaseStatus.OPEN, comment = Some("comment"), email = None),
+          operator = Operator("id", Some("name")),
           caseReference = "ref",
-          timestamp     = date
+          timestamp = date
         )
 
         val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
         val doc = view(activity_details(activityTab, ActivityForm.form))
 
-        doc                                                  should containElementWithID("activity-events-row-0-operator")
+        doc should containElementWithID("activity-events-row-0-operator")
         doc.getElementById("activity-events-row-0-operator") should containText("name")
-        doc                                                  should containElementWithID("activity-events-row-0-content")
-        doc.getElementById("activity-events-row-0-content")  should containText("Status changed from open to completed")
-        doc                                                  should containElementWithID("activity-events-row-0-comment")
-        doc.getElementById("activity-events-row-0-comment")  should containText("comment")
+        doc                                                 should containElementWithID("activity-events-row-0-content")
+        doc.getElementById("activity-events-row-0-content") should containText("Status changed from open to completed")
+        doc                                                 should containElementWithID("activity-events-row-0-comment")
+        doc.getElementById("activity-events-row-0-comment") should containText("comment")
         doc shouldNot containElementWithID("activity-events-row-0-email")
         doc                                              should containElementWithID("activity-events-row-0-date")
         doc.getElementById("activity-events-row-0-date") should containText("01 Jan 2019")
@@ -355,13 +354,13 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val e = Event(
         id = "EVENT_ID",
         details = AppealAdded(
-          appealType   = AppealType.APPEAL_TIER_1,
+          appealType = AppealType.APPEAL_TIER_1,
           appealStatus = AppealStatus.IN_PROGRESS,
-          comment      = Some("comment")
+          comment = Some("comment")
         ),
-        operator      = Operator("id", Some("name")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -385,13 +384,13 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val e = Event(
         id = "EVENT_ID",
         details = AppealAdded(
-          appealType   = AppealType.REVIEW,
+          appealType = AppealType.REVIEW,
           appealStatus = AppealStatus.IN_PROGRESS,
-          comment      = Some("comment")
+          comment = Some("comment")
         ),
-        operator      = Operator("id", Some("name")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -417,13 +416,13 @@ class ActivityDetailsViewSpec extends ViewSpec {
         id = "EVENT_ID",
         details = AppealStatusChange(
           appealType = AppealType.APPEAL_TIER_1,
-          from       = AppealStatus.IN_PROGRESS,
-          to         = AppealStatus.ALLOWED,
-          comment    = Some("comment")
+          from = AppealStatus.IN_PROGRESS,
+          to = AppealStatus.ALLOWED,
+          comment = Some("comment")
         ),
-        operator      = Operator("id", Some("name")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -445,11 +444,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = ExpertAdviceReceived(comment = "advice paragraph"),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = ExpertAdviceReceived(comment = "advice paragraph"),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -469,11 +468,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = ExtendedUseStatusChange(from = false, to = true, comment = Some("comment")),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = ExtendedUseStatusChange(from = false, to = true, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -495,11 +494,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = AssignmentChange(from = None, to = None, comment = Some("comment")),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = AssignmentChange(from = None, to = None, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -519,13 +518,13 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val e = Event(
         id = "EVENT_ID",
         details = AssignmentChange(
-          from    = Some(Operator("from", Some("FROM"))),
-          to      = Some(Operator("to", Some("TO"))),
+          from = Some(Operator("from", Some("FROM"))),
+          to = Some(Operator("to", Some("TO"))),
           comment = Some("comment")
         ),
-        operator      = Operator("id", Some("name")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -540,11 +539,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = AssignmentChange(from = Some(Operator("from", Some("FROM"))), to = None, comment = Some("comment")),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = AssignmentChange(from = Some(Operator("from", Some("FROM"))), to = None, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -559,11 +558,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = AssignmentChange(from = None, to = Some(Operator("to", Some("TO"))), comment = Some("comment")),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = AssignmentChange(from = None, to = Some(Operator("to", Some("TO"))), comment = Some("comment")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -578,11 +577,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = AssignmentChange(from = None, to = None, comment = Some("comment")),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = AssignmentChange(from = None, to = None, comment = Some("comment")),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -618,13 +617,12 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
-          messages,
-          appConfig
+          messages
         )
       )
 
-      doc                                                         should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee").text()       shouldBe "You"
+      doc                                                     should containElementWithID("activity-events-assignee")
+      doc.getElementById("activity-events-assignee").text() shouldBe "You"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
@@ -639,13 +637,12 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
-          messages,
-          appConfig
+          messages
         )
       )
 
-      doc                                                         should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee").text()       shouldBe "name"
+      doc                                                     should containElementWithID("activity-events-assignee")
+      doc.getElementById("activity-events-assignee").text() shouldBe "name"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
@@ -660,13 +657,12 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
-          messages,
-          appConfig
+          messages
         )
       )
 
-      doc                                                         should containElementWithID("activity-events-assignee")
-      doc.getElementById("activity-events-assignee").text()       shouldBe "PID id"
+      doc                                                     should containElementWithID("activity-events-assignee")
+      doc.getElementById("activity-events-assignee").text() shouldBe "PID id"
       doc.getElementById("activity-events-assignee-label").text() shouldBe "Currently assigned to:"
     }
 
@@ -682,12 +678,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
-          messages,
-          appConfig
+          messages
         )
       )
 
-      doc                                                               should containElementWithID("activity-events-assigned-queue")
+      doc should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "TEST"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
@@ -703,12 +698,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
-          messages,
-          appConfig
+          messages
         )
       )
 
-      doc                                                               should containElementWithID("activity-events-assigned-queue")
+      doc should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "Gateway"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
@@ -725,12 +719,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
       val doc = view(
         activity_details(activityTab, ActivityForm.form)(
           request = requestWithPermissions(Permission.VIEW_CASE_ASSIGNEE),
-          messages,
-          appConfig
+          messages
         )
       )
 
-      doc                                                               should containElementWithID("activity-events-assigned-queue")
+      doc should containElementWithID("activity-events-assigned-queue")
       doc.getElementById("activity-events-assigned-queue").text()       shouldBe "unknown"
       doc.getElementById("activity-events-assigned-queue-label").text() shouldBe "Currently in:"
     }
@@ -739,11 +732,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = QueueChange(from = Some("2"), to = Some("1"), comment = Some("comment")),
-        operator      = Operator("id", Some("Name")),
+        id = "EVENT_ID",
+        details = QueueChange(from = Some("2"), to = Some("1"), comment = Some("comment")),
+        operator = Operator("id", Some("Name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -778,7 +771,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
         val activityTab = ActivityViewModel.fromCase(c, Paged.empty, queues)
 
-        val doc = view(activity_details(activityTab, ActivityForm.form)(operatorRequest, messages, appConfig))
+        val doc = view(activity_details(activityTab, ActivityForm.form)(operatorRequest, messages))
 
         doc shouldNot containElementWithID("reassign-queue-link")
       }
@@ -794,11 +787,11 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val c = aCase()
       val e = Event(
-        id            = "EVENT_ID",
-        details       = Note("comment"),
-        operator      = Operator("id", Some("name")),
+        id = "EVENT_ID",
+        details = Note("comment"),
+        operator = Operator("id", Some("name")),
         caseReference = "ref",
-        timestamp     = date
+        timestamp = date
       )
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
@@ -809,8 +802,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
             authenticatedOperator.copy(permissions = Set(Permission.VIEW_CASE_ASSIGNEE)),
             requestWithFlashKeywordSuccess
           ),
-          messages,
-          appConfig
+          messages
         )
       )
 

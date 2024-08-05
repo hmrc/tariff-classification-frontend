@@ -35,7 +35,7 @@
     initiateResponse: FileStoreInitiateResponse,
     attachmentsTabViewModel: AttachmentsTabViewModel,
     showUploadAttachments: Boolean = false
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @error_summary(form.errors)
 
@@ -54,8 +54,8 @@
 @if(showUploadAttachments) {
     @helper.form(
         action = Call("POST", initiateResponse.uploadRequest.href),
-        'enctype -> "multipart/form-data",
-        'id -> "upload-files-form"
+        Symbol("enctype") -> "multipart/form-data",
+        Symbol("id") -> "upload-files-form"
     ) {
 
         <div id="file-upload-heading">

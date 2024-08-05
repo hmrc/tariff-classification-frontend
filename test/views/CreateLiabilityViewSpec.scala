@@ -51,8 +51,8 @@ class CreateLiabilityViewSpec extends ViewSpec {
         messages("liability.create_liability.liability-status.radio.yes") + " " +
         messages("liability.create_liability.liability-status.radio.no")
 
-      doc                                         should containElementWithID("create_liability-liability_status-LIVE")
-      doc                                         should containElementWithID("create_liability-liability_status-NON_LIVE")
+      doc should containElementWithID("create_liability-liability_status-LIVE")
+      doc should containElementWithID("create_liability-liability_status-NON_LIVE")
       doc.getElementById("liability-status").text shouldBe expectedMessage
 
     }
@@ -96,8 +96,8 @@ class CreateLiabilityViewSpec extends ViewSpec {
 
     "contain the correct buttons" in {
 
-      doc                                                should containElementWithID("create_liability-button")
-      doc                                                should containElementWithID("create_liability-cancel_button")
+      doc                                                  should containElementWithID("create_liability-button")
+      doc                                                  should containElementWithID("create_liability-cancel_button")
       doc.getElementById("create_liability-button").text shouldBe messages("liability.create_liability.confirm-button")
       doc.getElementById("create_liability-cancel_button").text shouldBe messages(
         "liability.create_liability.cancel-button"
@@ -111,7 +111,7 @@ class CreateLiabilityViewSpec extends ViewSpec {
       val expectedErrorMessage = messages(errorValue)
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
-      docWithErrors                             should containElementWithClass("govuk-error-summary")
+      docWithErrors                               should containElementWithClass("govuk-error-summary")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }
@@ -124,7 +124,7 @@ class CreateLiabilityViewSpec extends ViewSpec {
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
 
-      docWithErrors                             should containElementWithClass("govuk-error-summary")
+      docWithErrors                               should containElementWithClass("govuk-error-summary")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }
@@ -137,7 +137,7 @@ class CreateLiabilityViewSpec extends ViewSpec {
 
       val docWithErrors = liabilityOrderWithErrors(errorKey, errorValue)
 
-      docWithErrors                             should containElementWithClass("govuk-error-summary")
+      docWithErrors                               should containElementWithClass("govuk-error-summary")
       getElementByAttributeValue(docWithErrors) shouldBe expectedErrorMessage
 
     }

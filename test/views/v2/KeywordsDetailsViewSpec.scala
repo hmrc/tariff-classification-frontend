@@ -78,8 +78,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
       val doc = view(
         keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), form, 0)(
           requestWithPermissions(Permission.KEYWORDS),
-          messages,
-          appConfig
+          messages
         )
       )
 
@@ -92,8 +91,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
       val doc = view(
         keywordDetails(KeywordsTabViewModel("reference", Set("keyword1"), Seq("keyword1")), form, 0)(
           requestWithPermissions(Permission.KEYWORDS),
-          messages,
-          appConfig
+          messages
         )
       )
 
@@ -115,8 +113,7 @@ class KeywordsDetailsViewSpec extends ViewSpec {
             authenticatedOperator.copy(permissions = Set(Permission.KEYWORDS)),
             requestWithFlashKeywordSuccess
           ),
-          messages,
-          appConfig
+          messages
         )
       )
 

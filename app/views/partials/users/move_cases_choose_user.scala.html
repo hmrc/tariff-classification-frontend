@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.v2.routes
 @import models.Operator
 @import models.request.AuthenticatedRequest
@@ -35,7 +34,7 @@
         users:Seq[Operator],
         form: Form[String],
         teamId: Option[String] = None
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @heading = @{
     if(numberOfCases == 1){

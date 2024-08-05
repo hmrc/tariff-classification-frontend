@@ -29,13 +29,13 @@ object CorrespondenceForm {
     case (shortDescr, source, contactEmail) =>
       CorrespondenceApplication(
         correspondenceStarter = Some(source),
-        agentName             = None,
-        contact               = Contact("", contactEmail, None),
-        summary               = shortDescr,
-        detailedDescription   = "",
-        sampleToBeProvided    = false,
-        sampleToBeReturned    = false,
-        address               = Address("", "", None, None)
+        agentName = None,
+        contact = Contact("", contactEmail, None),
+        summary = shortDescr,
+        detailedDescription = "",
+        sampleToBeProvided = false,
+        sampleToBeReturned = false,
+        address = Address("", "", None, None)
       )
   }
 

@@ -63,12 +63,17 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, queue, c)
+    reset(connector)
+    reset(audit)
+    reset(queue)
+    reset(c)
   }
 
   "Get Cases 'By Queue'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByQueue(any[Queue], any[Pagination], any[Set[ApplicationType]])(any[HeaderCarrier])) willReturn successful(
+      given(
+        connector.findCasesByQueue(any[Queue], any[Pagination], any[Set[ApplicationType]])(any[HeaderCarrier])
+      ) willReturn successful(
         Paged(manyCases)
       )
 
@@ -107,7 +112,9 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Get Cases 'By Assignee'" should {
     "retrieve connector cases" in {
-      given(connector.findCasesByAssignee(refEq(Operator("assignee")), refEq(pagination))(any[HeaderCarrier])) willReturn successful(
+      given(
+        connector.findCasesByAssignee(refEq(Operator("assignee")), refEq(pagination))(any[HeaderCarrier])
+      ) willReturn successful(
         Paged(manyCases)
       )
 

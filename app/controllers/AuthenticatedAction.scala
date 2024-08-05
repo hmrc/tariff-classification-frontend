@@ -83,15 +83,15 @@ class AuthenticatedAction @Inject() (
         for {
           userWithTeams <- userConnector.getUserDetails(pid)
           updatedUser <- userWithTeams match {
-                          case None =>
-                            userConnector.createUser(userFromAuth)
-                          case Some(existingUser) =>
-                            if (existingUser.withoutTeams != userFromAuth) {
-                              userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
-                            } else {
-                              Future(existingUser)
-                            }
-                        }
+                           case None =>
+                             userConnector.createUser(userFromAuth)
+                           case Some(existingUser) =>
+                             if (existingUser.withoutTeams != userFromAuth) {
+                               userConnector.updateUser(userFromAuth.withTeamsFrom(existingUser))
+                             } else {
+                               Future(existingUser)
+                             }
+                         }
 
           permittedUser = updatedUser.copy(permissions = Permission.applyingTo(updatedUser))
           result <- block(AuthenticatedRequest(permittedUser, request))

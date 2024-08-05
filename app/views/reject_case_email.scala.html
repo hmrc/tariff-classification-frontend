@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.Case
 @import models.request.AuthenticatedRequest
@@ -32,7 +31,7 @@
 )
 
 
-@(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.reject.case.email", c.application.goodsName),
@@ -46,7 +45,7 @@
     @helper.form(
         action = Call("POST", initiateResponse.uploadRequest.href),
         Symbol("id") -> "refer_case",
-        'enctype -> "multipart/form-data",
+        Symbol("enctype") -> "multipart/form-data",
         Symbol("novalidate") -> "novalidate"
     ) {
 

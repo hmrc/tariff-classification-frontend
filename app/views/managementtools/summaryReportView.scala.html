@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.reporting._
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{ManagerToolsReportsTab, ManagerToolsTab}
@@ -33,7 +32,7 @@
   results: Paged[ResultGroup],
   users: Map[String, Operator],
   teams: Map[String, Queue]
-)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @additionalCSS = {
     <link rel="stylesheet" href='@routes.Assets.at("stylesheets/layout.css")'/>

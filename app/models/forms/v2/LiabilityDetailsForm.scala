@@ -80,8 +80,8 @@ class LiabilityDetailsForm @Inject() (
         ),
         "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
         //TODO make sure dont need validation
-        "traderEmail"             -> optional(Forms.text.verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
-        "traderPhone"             -> optional(Forms.text),
+        "traderEmail" -> optional(Forms.text.verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
+        "traderPhone" -> optional(Forms.text),
         "traderBuildingAndStreet" -> optional(Forms.text),
         "traderTownOrCity"        -> optional(Forms.text),
         "traderCounty"            -> optional(Forms.text),
@@ -155,26 +155,26 @@ class LiabilityDetailsForm @Inject() (
     Option[String]
   ) => Case = {
     case (
-        dateOfReceipt,
-        entryDate,
-        traderName,
-        traderEmail,
-        traderPhone,
-        traderBuildingAndStreet,
-        traderTownOrCity,
-        traderCounty,
-        traderPostcode,
-        boardsFileNumber,
-        agentName,
-        btiReference,
-        isRepaymentClaim,
-        goodName,
-        entryNumber,
-        traderCommodityCode,
-        officerCommodityCode,
-        contact,
-        port,
-        dvrNumber
+          dateOfReceipt,
+          entryDate,
+          traderName,
+          traderEmail,
+          traderPhone,
+          traderBuildingAndStreet,
+          traderTownOrCity,
+          traderCounty,
+          traderPostcode,
+          boardsFileNumber,
+          agentName,
+          btiReference,
+          isRepaymentClaim,
+          goodName,
+          entryNumber,
+          traderCommodityCode,
+          officerCommodityCode,
+          contact,
+          port,
+          dvrNumber
         ) =>
       existingCase.copy(
         caseBoardsFileNumber = boardsFileNumber,
@@ -187,26 +187,26 @@ class LiabilityDetailsForm @Inject() (
               address = Some(
                 Address(
                   buildingAndStreet = traderBuildingAndStreet.getOrElse(""),
-                  townOrCity        = traderTownOrCity.getOrElse(""),
-                  county            = traderCounty,
-                  postCode          = traderPostcode
+                  townOrCity = traderTownOrCity.getOrElse(""),
+                  county = traderCounty,
+                  postCode = traderPostcode
                 )
               )
             )
           ),
-          agentName    = agentName,
+          agentName = agentName,
           btiReference = btiReference,
           repaymentClaim =
             if (isRepaymentClaim) Some(RepaymentClaim(dvrNumber = dvrNumber, dateForRepayment = None))
             else None,
-          dateOfReceipt        = dateOfReceipt,
-          goodName             = goodName,
-          entryDate            = entryDate,
-          entryNumber          = entryNumber,
-          traderCommodityCode  = traderCommodityCode,
+          dateOfReceipt = dateOfReceipt,
+          goodName = goodName,
+          entryDate = entryDate,
+          entryNumber = entryNumber,
+          traderCommodityCode = traderCommodityCode,
           officerCommodityCode = officerCommodityCode,
-          contact              = contact,
-          port                 = port
+          contact = contact,
+          port = port
         )
       )
   }

@@ -35,6 +35,7 @@ class ShutteringFilter @Inject() (
 
   private val excludedPaths: Seq[Call] = appConfig.shutterExcludedUrls
     .split(",")
+    .toIndexedSeq
     .map(path => Call("GET", path.trim))
 
   private def toCall(rh: RequestHeader): Call =

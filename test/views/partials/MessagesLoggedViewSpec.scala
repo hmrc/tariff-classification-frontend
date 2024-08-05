@@ -63,7 +63,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val doc =
           view(
-            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddMsgPermission, messages, appConfig)
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddMsgPermission, messages)
           )
 
         doc should containElementWithID("add-note-submit")
@@ -77,7 +77,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val doc =
           view(
-            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages)
           )
 
         doc                                                 should containElementWithID("messages-events-row-0-name")
@@ -120,7 +120,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val doc =
           view(
-            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddMsgPermission, messages, appConfig)
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddMsgPermission, messages)
           )
 
         doc should containElementWithID("add-note-submit")
@@ -133,7 +133,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val doc =
           view(
-            partials.messages_logged(messagesTab, MessageForm.form)(authenticatedFakeRequest, messages, appConfig)
+            partials.messages_logged(messagesTab, MessageForm.form)(authenticatedFakeRequest, messages)
           )
 
         doc shouldNot containElementWithID("add-note-submit")
@@ -146,7 +146,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val doc =
           view(
-            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages, appConfig)
+            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages)
           )
 
         doc                                                 should containElementWithID("messages-events-row-0-name")

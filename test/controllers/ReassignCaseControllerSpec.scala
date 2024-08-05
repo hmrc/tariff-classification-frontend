@@ -86,7 +86,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Choose a team to move this case to")
+      bodyOf(result)          should include("Choose a team to move this case to")
     }
 
     "return OK when user has right permissions" in {
@@ -107,7 +107,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           .showAvailableQueues("reference", "origin")(newFakeGETRequestWithCSRF())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -146,7 +146,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Select a team")
+      bodyOf(result)          should include("Select a team")
     }
 
     "return Not Found and HTML content type on missing Queue" in {
@@ -158,7 +158,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Queue queue not found")
+      bodyOf(result)          should include("Queue queue not found")
     }
 
     "return OK when user has right permissions" in {
@@ -185,7 +185,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           .reassignCase("reference", "origin")(requestWithQueue())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -201,7 +201,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("case has been moved")
+      bodyOf(result)   should include("case has been moved")
     }
 
     "return resource not found when the queue is not found" in {
@@ -210,7 +210,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         await(controller(caseWithQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Case Queue not found")
+      bodyOf(result)   should include("Case Queue not found")
     }
 
     "return resource not found when the case have no queue assign" in {
@@ -218,7 +218,7 @@ class ReassignCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         await(controller(caseWithoutQueue).confirmReassignCase("reference", "origin")(newFakeGETRequestWithCSRF()))
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Case Queue not found")
+      bodyOf(result)   should include("Case Queue not found")
     }
 
     "redirect to a default page if the status is not right" in {
