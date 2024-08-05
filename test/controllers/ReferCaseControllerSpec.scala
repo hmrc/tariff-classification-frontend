@@ -16,7 +16,7 @@
 
 package controllers
 
-import connector.FakeDataCacheConnector
+import connector.FakeDataCacheService
 import models.ReferralReason.ReferralReason
 import models._
 import models.request.FileStoreInitiateRequest
@@ -50,7 +50,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   private val caseWithStatusREFERRED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REFERRED)
 
   private val initiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -60,8 +60,9 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   override def afterEach(): Unit = {
     super.afterEach()
-    reset(casesService, fileService)
-    await(FakeDataCacheConnector.clear())
+    reset(casesService)
+    reset(fileService)
+    await(FakeDataCacheService.clear())
   }
 
   private def controller(requestedCase: Case) =
@@ -69,7 +70,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       new SuccessfulRequestActions(playBodyParsers, operator, c = requestedCase),
       casesService,
       fileService,
-      FakeDataCacheConnector,
+      FakeDataCacheService,
       mcc,
       referCaseReason,
       referCaseEmail,
@@ -82,7 +83,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
       casesService,
       fileService,
-      FakeDataCacheConnector,
+      FakeDataCacheService,
       mcc,
       referCaseReason,
       referCaseEmail,
@@ -148,7 +149,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("error.empty.refer.to"))
+      bodyOf(result)          should include(messages("error.empty.refer.to"))
     }
 
     "display error page when referred to applicant and no reason is selected" in {
@@ -161,7 +162,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Select why you are referring this case")
+      bodyOf(result)          should include("Select why you are referring this case")
     }
 
     "display error page when referred to Other and no details of who is referred to are provided" in {
@@ -174,7 +175,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include("Enter who you are referring this case to")
+      bodyOf(result)          should include("Enter who you are referring this case to")
     }
 
     "display error page when note is missing" in {
@@ -187,7 +188,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("error.empty.refer.note"))
+      bodyOf(result)          should include(messages("error.empty.refer.note"))
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {
@@ -246,7 +247,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val cacheKey = s"refer_case-${caseWithStatusOPEN.reference}"
       val referral = CaseReferral("APPLICANT", List(ReferralReason.REQUEST_SAMPLE), "some-note", None)
       val cacheMap = UserAnswers(cacheKey).set("referral", referral).cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       given(
         casesService.referCase(
@@ -280,7 +281,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         None
       )
       val cacheMap = UserAnswers(cacheKey).set("referral", referral).cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       val captor: ArgumentCaptor[Seq[ReferralReason]] = ArgumentCaptor.forClass(classOf[Seq[ReferralReason]])
 
@@ -323,7 +324,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val cacheKey = s"refer_case-${caseWithStatusOPEN.reference}"
       val referral = CaseReferral("APPLICANT", List(ReferralReason.REQUEST_SAMPLE), "some-note", None)
       val cacheMap = UserAnswers(cacheKey).set("referral", referral).cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).referCase(caseWithStatusOPEN.reference, "id")(

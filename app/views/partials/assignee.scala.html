@@ -14,10 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.Operator
 @import models.request.AuthenticatedRequest
-@(operator: Operator, capitalise : Boolean = false)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(operator: Operator, capitalise : Boolean = false)(implicit request: AuthenticatedRequest[_])
 @{
  if(operator.id == request.operator.id) {
       if (capitalise) "You" else "you"

@@ -37,8 +37,7 @@ class CorrespondenceCaseDetailsViewSpec extends ViewSpec {
       val doc = view(
         correspondence_case_details(caseDetailsTab)(
           requestWithPermissions(Permission.EDIT_CORRESPONDENCE),
-          messages,
-          appConfig
+          messages
         )
       )
 

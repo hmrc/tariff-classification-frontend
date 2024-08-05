@@ -22,7 +22,7 @@ case class FileMetadata(
   id: String,
   fileName: Option[String],
   mimeType: Option[String],
-  url: Option[String]            = None,
+  url: Option[String] = None,
   scanStatus: Option[ScanStatus] = None
 )
 

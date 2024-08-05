@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.reporting._
 @import models.request.AuthenticatedRequest
 @import views.html.partials.pagination
@@ -25,7 +24,7 @@
   results: Paged[QueueResultGroup],
   teams: Map[String, Queue],
   id: String
-)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+)(implicit messages: Messages)
 
 @teamForId(teamId: String) = {
   @{

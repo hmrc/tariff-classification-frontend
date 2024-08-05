@@ -35,9 +35,9 @@ abstract class ViewSpec extends SpecBase {
   protected val authenticatedOperator: Operator         = Operator("operator-id")
   protected val authenticatedOperatorWithName: Operator = Operator("operator-id", Some("operator name officer"))
   protected val authenticatedManager: Operator = Operator(
-    id          = "operator-id",
-    name        = Some("operator-name"),
-    role        = Role.CLASSIFICATION_MANAGER,
+    id = "operator-id",
+    name = Some("operator-name"),
+    role = Role.CLASSIFICATION_MANAGER,
     permissions = Set(Permission.VIEW_MY_CASES)
   )
 

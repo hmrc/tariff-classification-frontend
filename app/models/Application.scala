@@ -119,8 +119,8 @@ object ApplicationType {
 
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
 
-  implicit def applicationTypePathBindable(
-    implicit stringBindable: PathBindable[String]
+  implicit def applicationTypePathBindable(implicit
+    stringBindable: PathBindable[String]
   ): PathBindable[ApplicationType] =
     new PathBindable[ApplicationType] {
       def bind(key: String, value: String): Either[String, ApplicationType] =
@@ -146,7 +146,7 @@ case class BTIApplication(
   otherInformation: Option[String],
   reissuedBTIReference: Option[String],
   relatedBTIReference: Option[String] = None,
-  relatedBTIReferences: List[String]  = Nil,
+  relatedBTIReferences: List[String] = Nil,
   knownLegalProceedings: Option[String],
   envisagedCommodityCode: Option[String],
   sampleToBeProvided: Boolean,
@@ -165,17 +165,17 @@ case class LiabilityOrder(
   override val contact: Contact,
   status: LiabilityStatus,
   traderName: String,
-  goodName: Option[String]                           = None,
-  entryDate: Option[Instant]                         = None,
-  entryNumber: Option[String]                        = None,
-  traderCommodityCode: Option[String]                = None,
-  officerCommodityCode: Option[String]               = None,
-  btiReference: Option[String]                       = None,
-  repaymentClaim: Option[RepaymentClaim]             = None,
-  dateOfReceipt: Option[Instant]                     = None,
+  goodName: Option[String] = None,
+  entryDate: Option[Instant] = None,
+  entryNumber: Option[String] = None,
+  traderCommodityCode: Option[String] = None,
+  officerCommodityCode: Option[String] = None,
+  btiReference: Option[String] = None,
+  repaymentClaim: Option[RepaymentClaim] = None,
+  dateOfReceipt: Option[Instant] = None,
   traderContactDetails: Option[TraderContactDetails] = None,
-  agentName: Option[String]                          = None,
-  port: Option[String]                               = None
+  agentName: Option[String] = None,
+  port: Option[String] = None
 ) extends Application {
   override val `type`: models.ApplicationType = ApplicationType.LIABILITY
 }
@@ -222,7 +222,7 @@ case class CorrespondenceApplication(
   summary: String,
   detailedDescription: String,
   relatedBTIReference: Option[String] = None,
-  relatedBTIReferences: List[String]  = Nil,
+  relatedBTIReferences: List[String] = Nil,
   sampleToBeProvided: Boolean,
   sampleToBeReturned: Boolean,
   messagesLogged: List[Message] = Nil

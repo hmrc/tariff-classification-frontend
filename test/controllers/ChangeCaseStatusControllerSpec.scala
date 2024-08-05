@@ -70,9 +70,9 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
           .onPageLoad("reference")(newFakeGETRequestWithCSRF())
       )
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("change_case_status_legend", "Laptop"))
     }
 
@@ -82,7 +82,7 @@ class ChangeCaseStatusControllerSpec extends ControllerBaseSpec with BeforeAndAf
           .onPageLoad("reference")(newFakeGETRequestWithCSRF())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 

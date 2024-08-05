@@ -14,14 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.{Tab, routes}
-@import models.request.AuthenticatedRequest
 @import models.{Application, BTIApplication, Case, EORIDetails, StoredAttachment}
 @import models.viewmodels.atar.GoodsTabViewModel
 @import views.html.partials._
 
-@(goods: GoodsTabViewModel, startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(goods: GoodsTabViewModel, startAtTabIndex: Int = 0)(implicit messages: Messages)
 
     @tab_heading("goods-application", messages("case.menu.application-details"))
 

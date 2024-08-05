@@ -14,15 +14,11 @@
  * limitations under the License.
  *@
 
-@import models.request.AuthenticatedRequest
-@import config.AppConfig
 @import models.viewmodels.ApplicationsTab
 @import utils.Dates
-
-
 @import views.html.v2.case_status_tab
 
-@(liabilityTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(liabilityTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit messages: Messages)
 
  <table id="@{liabilityTab.tabMessageKey}-table" class="govuk-table">
   <caption class="govuk-visually-hidden govuk-table__caption">@messages(captionMessage)</caption>

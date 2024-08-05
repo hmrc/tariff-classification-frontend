@@ -51,7 +51,13 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(config, environment, connector, userConnector, block, result)
+
+    reset(config)
+    reset(environment)
+    reset(connector)
+    reset(userConnector)
+    reset(block)
+    reset(result)
   }
 
   override protected def beforeEach(): Unit = {
@@ -221,9 +227,9 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
         givenAuthSuccess(manager = true, name = Name(Some("new name"), Some("name")))
         givenExistingUser(
           existingOperator.copy(
-            role           = Role.CLASSIFICATION_MANAGER,
+            role = Role.CLASSIFICATION_MANAGER,
             managerOfTeams = Seq("1"),
-            memberOfTeams  = Seq("1")
+            memberOfTeams = Seq("1")
           )
         )
         givenTheBlockExecutesSuccessfully()
@@ -343,9 +349,9 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
   }
 
   private def givenAuthSuccess(
-    id: String       = "id",
-    name: Name       = Name(Some("full name"), Some("surname")),
-    email: String    = "test@example.com",
+    id: String = "id",
+    name: Name = Name(Some("full name"), Some("surname")),
+    email: String = "test@example.com",
     manager: Boolean = false
   ): Unit = {
     val predicate: Predicate = (Enrolment("team-enrolment") or Enrolment("manager-enrolment") or Enrolment(

@@ -79,7 +79,7 @@ class RulingExplanationViewSpec extends ViewSpec {
       val c = aCase(
         withStatus(CaseStatus.OPEN),
         withDecision(
-          explanation          = Some("An explanation"),
+          explanation = Some("An explanation"),
           bindingCommodityCode = ""
         )
       )

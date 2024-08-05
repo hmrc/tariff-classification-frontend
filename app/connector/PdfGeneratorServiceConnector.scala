@@ -21,8 +21,10 @@ import config.AppConfig
 import metrics.HasMetrics
 import models.PdfFile
 import play.api.http.Status.OK
-import play.api.libs.ws.WSClient
 import play.twirl.api.Html
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future.{failed, successful}
@@ -31,21 +33,26 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PdfGeneratorServiceConnector @Inject() (
   configuration: AppConfig,
-  ws: WSClient,
+  http: HttpClientV2,
   val metrics: MetricRegistry
 )(implicit ec: ExecutionContext)
     extends HasMetrics {
 
-  private lazy val url = s"${configuration.pdfGeneratorUrl}/pdf-generator-service/generate"
+  private lazy val fullURL: String       = s"${configuration.pdfGeneratorUrl}/pdf-generator-service/generate"
+  private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   def generatePdf(html: Html): Future[PdfFile] =
     withMetricsTimerAsync("generate-pdf") { _ =>
-      ws.url(url).post(Map("html" -> Seq(html.toString))) flatMap { response =>
-        response.status match {
-          case OK => successful(PdfFile(content = response.bodyAsBytes.toArray))
-          case _  => failed(new RuntimeException(s"Error calling pdf-generator-service - ${response.body}"))
+      http
+        .post(url"$fullURL")
+        .withBody(Map("html" -> Seq(html.toString)))
+        .execute[HttpResponse]
+        .flatMap { response =>
+          response.status match {
+            case OK => successful(PdfFile(content = response.body.getBytes))
+            case _  => failed(new RuntimeException(s"Error calling pdf-generator-service - ${response.body}"))
+          }
         }
-      }
     }
 
 }

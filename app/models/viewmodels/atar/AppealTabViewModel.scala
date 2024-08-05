@@ -32,9 +32,9 @@ object AppealTabViewModel {
 
       Some(
         AppealTabViewModel(
-          caseReference             = cse.reference,
-          caseStatus                = cse.status,
-          appeals                   = appeals.sortBy(_.`type`.id).toList,
+          caseReference = cse.reference,
+          caseStatus = cse.status,
+          appeals = appeals.sortBy(_.`type`.id).toList,
           applicationForExtendedUse = extendedUse
         )
       )

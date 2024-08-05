@@ -21,9 +21,9 @@ import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.{Case, Event, Permission}
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
-import utils.Cases.{aCase, withLiabilityApplication, withReference}
 import play.api.http.Status
-import service.{CountriesService, EventsService, FileStoreService, KeywordsService, QueuesService}
+import service._
+import utils.Cases.{aCase, withLiabilityApplication, withReference}
 import views.html.v2.atar_view
 
 class AtarControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -37,13 +37,13 @@ class AtarControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val countriesService         = mock[CountriesService]
   private val atarView                 = mock[atar_view]
 
-  override protected def beforeEach(): Unit =
-    reset(
-      queueService,
-      fileService,
-      event,
-      atarView
-    )
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(queueService)
+    reset(fileService)
+    reset(event)
+    reset(atarView)
+  }
 
   private def controller(c: Case, permission: Set[Permission]) = new AtarController(
     new RequestActionsWithPermissions(playBodyParsers, permission, c = c),

@@ -63,11 +63,11 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withStatus(CaseStatus.OPEN)
       )
       val formData = DecisionFormData(
-        bindingCommodityCode         = "commodity code",
-        justification                = "justification",
-        goodsDescription             = "goods description",
-        methodSearch                 = "method search",
-        methodExclusion              = "method exclusion",
+        bindingCommodityCode = "commodity code",
+        justification = "justification",
+        goodsDescription = "goods description",
+        methodSearch = "method search",
+        methodExclusion = "method exclusion",
         methodCommercialDenomination = "commercial denomination"
       )
 
@@ -93,15 +93,15 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id                     = "FILE_ID",
-        public                 = true,
-        operator               = None,
-        fileName               = Some("file.txt"),
-        url                    = None,
-        mimeType               = Some("text/plain"),
-        scanStatus             = Some(ScanStatus.READY),
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        id = "FILE_ID",
+        public = true,
+        operator = None,
+        fileName = Some("file.txt"),
+        url = None,
+        mimeType = Some("text/plain"),
+        scanStatus = Some(ScanStatus.READY),
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = false
       )
 
@@ -118,15 +118,15 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id                     = "FILE_ID",
-        public                 = false,
-        operator               = None,
-        fileName               = Some("file.txt"),
-        url                    = None,
-        mimeType               = Some("text/plain"),
-        scanStatus             = Some(ScanStatus.FAILED),
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        id = "FILE_ID",
+        public = false,
+        operator = None,
+        fileName = Some("file.txt"),
+        url = None,
+        mimeType = Some("text/plain"),
+        scanStatus = Some(ScanStatus.FAILED),
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = false
       )
 
@@ -143,15 +143,15 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id                     = "FILE_ID",
-        public                 = true,
-        operator               = None,
-        fileName               = Some("file.txt"),
-        url                    = None,
-        mimeType               = Some("text/plain"),
-        scanStatus             = Some(ScanStatus.READY),
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        id = "FILE_ID",
+        public = true,
+        operator = None,
+        fileName = Some("file.txt"),
+        url = None,
+        mimeType = Some("text/plain"),
+        scanStatus = Some(ScanStatus.READY),
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = true
       )
 
@@ -167,15 +167,15 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id                     = "FILE_ID",
-        public                 = true,
-        operator               = None,
-        fileName               = Some("file.txt"),
-        url                    = None,
-        mimeType               = Some("text/plain"),
-        scanStatus             = Some(ScanStatus.READY),
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        id = "FILE_ID",
+        public = true,
+        operator = None,
+        fileName = Some("file.txt"),
+        url = None,
+        mimeType = Some("text/plain"),
+        scanStatus = Some(ScanStatus.READY),
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = false
       )
 
@@ -191,15 +191,15 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id                     = "FILE_ID",
-        public                 = false,
-        operator               = None,
-        fileName               = Some("file.txt"),
-        url                    = Some("url"),
-        mimeType               = Some("text/plain"),
-        scanStatus             = Some(ScanStatus.READY),
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        id = "FILE_ID",
+        public = false,
+        operator = None,
+        fileName = Some("file.txt"),
+        url = Some("url"),
+        mimeType = Some("text/plain"),
+        scanStatus = Some(ScanStatus.READY),
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = true
       )
 
@@ -220,15 +220,15 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withDecision()
       )
       val stored = StoredAttachment(
-        id                     = "FILE_ID",
-        public                 = false,
-        operator               = None,
-        fileName               = Some("file.txt"),
-        url                    = None,
-        mimeType               = Some("text/plain"),
-        scanStatus             = Some(ScanStatus.READY),
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        id = "FILE_ID",
+        public = false,
+        operator = None,
+        fileName = Some("file.txt"),
+        url = None,
+        mimeType = Some("text/plain"),
+        scanStatus = Some(ScanStatus.READY),
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = false
       )
 
@@ -245,11 +245,11 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withStatus(CaseStatus.OPEN)
       )
       val formData = DecisionFormData(
-        bindingCommodityCode         = "commodity code",
-        justification                = "justification",
-        goodsDescription             = "goods description",
-        methodSearch                 = "method search",
-        methodExclusion              = "method exclusion",
+        bindingCommodityCode = "commodity code",
+        justification = "justification",
+        goodsDescription = "goods description",
+        methodSearch = "method search",
+        methodExclusion = "method exclusion",
         methodCommercialDenomination = "commercial denomination"
       )
 

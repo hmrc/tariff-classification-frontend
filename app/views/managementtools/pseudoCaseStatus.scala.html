@@ -14,11 +14,9 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.reporting._
-@import models.request.AuthenticatedRequest
 
-@(status: PseudoCaseStatus.Value, id: String)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+@(status: PseudoCaseStatus.Value, id: String)
 
 @status match {
   case PseudoCaseStatus.CANCELLED => {

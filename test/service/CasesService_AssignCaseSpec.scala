@@ -57,7 +57,10 @@ class CasesService_AssignCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, oneCase, manyCases)
+    reset(connector)
+    reset(audit)
+    reset(oneCase)
+    reset(manyCases)
   }
 
   "Assign a Case" should {

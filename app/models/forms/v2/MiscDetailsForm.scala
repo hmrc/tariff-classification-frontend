@@ -43,19 +43,19 @@ object MiscDetailsForm extends Constraints {
     Option[String]
   ) => Case = {
     case (
-        summary,
-        contactName,
-        detailedDescription,
-        caseType,
-        boardsFileNumber
+          summary,
+          contactName,
+          detailedDescription,
+          caseType,
+          boardsFileNumber
         ) =>
       existingCase.copy(
         caseBoardsFileNumber = boardsFileNumber,
         application = existingCase.application.asMisc.copy(
-          name                = summary,
-          contactName         = Some(contactName),
+          name = summary,
+          contactName = Some(contactName),
           detailedDescription = detailedDescription,
-          caseType            = MiscCaseType.withName(caseType)
+          caseType = MiscCaseType.withName(caseType)
         )
       )
   }

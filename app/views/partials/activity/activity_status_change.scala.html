@@ -14,11 +14,10 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
 @import models.{CaseStatusChange, Event}
 @import views.html.partials.progressive_disclosure
-@(index: Int, event: Event)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+
+@(index: Int, event: Event)
 
 @content(body: CaseStatusChange) = {
  @if(body.comment.isDefined) {

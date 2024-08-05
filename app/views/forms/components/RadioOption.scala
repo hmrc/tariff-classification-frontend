@@ -22,8 +22,8 @@ import play.twirl.api.Html
 case class RadioOption(
   value: String,
   label: String,
-  dataTarget: Option[String]             = None,
-  customHtml: Option[Html]               = None,
+  dataTarget: Option[String] = None,
+  customHtml: Option[Html] = None,
   applicationTypes: Set[ApplicationType] = ApplicationType.values
 ) {
 

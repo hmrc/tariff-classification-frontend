@@ -50,7 +50,7 @@ trait CaseQueueBuilder {
   }
 
   case class TestPagination(
-    override val page: Int     = 1,
+    override val page: Int = 1,
     override val pageSize: Int = 2
   ) extends Pagination
 }

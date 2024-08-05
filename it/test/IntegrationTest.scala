@@ -127,7 +127,7 @@ trait IntegrationTest
     val response = await(requestWithSession(path).get())
 
     response.status shouldBe OK
-    response.body   should include(messages("not_authorised.paragraph1"))
+    response.body     should include(messages("not_authorised.paragraph1"))
   }
 
 }

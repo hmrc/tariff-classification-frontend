@@ -37,8 +37,8 @@ class ConfirmationKeywordRenamedViewSpec extends ViewSpec {
           newKeyword
         )
       )
-      doc                                              should containText(messages("management.manage-keywords.edit-approved-keywords.renamed.heading"))
-      doc                                              should containElementWithID("confirm_keyword_renamed_id")
+      doc should containText(messages("management.manage-keywords.edit-approved-keywords.renamed.heading"))
+      doc should containElementWithID("confirm_keyword_renamed_id")
       doc.getElementById("confirm_keyword_renamed_id") should containText(oldKeyword.toUpperCase)
       doc.getElementById("confirm_keyword_renamed_id") should containText(newKeyword.toUpperCase)
       doc should containText(

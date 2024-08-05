@@ -126,7 +126,7 @@ class ReopenCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
           .confirmReopenCase("reference")(newFakePOSTRequestWithCSRF())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

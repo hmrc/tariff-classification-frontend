@@ -17,16 +17,15 @@
 package controllers
 
 import config.AppConfig
-import connector.DataCacheConnector
 import controllers.v2.UpscanErrorHandling
 import models._
-import models.forms.{ReferCaseForm, UploadAttachmentForm}
+import models.forms.ReferCaseForm
 import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import service.{CasesService, FileStoreService}
+import service.{CasesService, DataCacheService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
@@ -42,7 +41,7 @@ class ReferCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheConnector,
+  dataCacheConnector: DataCacheService,
   mcc: MessagesControllerComponents,
   val refer_case_reason: refer_case_reason,
   val refer_case_email: refer_case_email,
@@ -82,8 +81,8 @@ class ReferCaseController @Inject() (
       }
 
   private def renderReferCaseEmail(
-    fileId: Option[String]   = None,
-    uploadForm: Form[String] = UploadAttachmentForm.form
+    fileId: Option[String],
+    uploadForm: Form[String]
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -100,10 +99,10 @@ class ReferCaseController @Inject() (
     fileService
       .initiate(
         FileStoreInitiateRequest(
-          id              = Some(uploadFileId),
+          id = Some(uploadFileId),
           successRedirect = Some(fileUploadSuccessRedirect),
-          errorRedirect   = Some(fileUploadErrorRedirect),
-          maxFileSize     = appConfig.fileUploadMaxSize
+          errorRedirect = Some(fileUploadErrorRedirect),
+          maxFileSize = appConfig.fileUploadMaxSize
         )
       )
       .map(initiateResponse => refer_case_email(request.`case`, uploadForm, initiateResponse))
@@ -133,14 +132,14 @@ class ReferCaseController @Inject() (
 
           for {
             _ <- casesService
-                  .referCase(
-                    request.`case`,
-                    referredTo,
-                    referralReasons,
-                    Attachment(id = fileId, operator = Some(request.operator)),
-                    referral.note,
-                    request.operator
-                  )
+                   .referCase(
+                     request.`case`,
+                     referredTo,
+                     referralReasons,
+                     Attachment(id = fileId, operator = Some(request.operator)),
+                     referral.note,
+                     request.operator
+                   )
 
             _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
 

@@ -54,13 +54,17 @@ class RulingTabViewSpec extends ViewSpec {
 
     "render code by trader row" in {
       val expected =
-        messages("case.v2.liability.ruling.info.from.c592.code.by.trader") + rulingViewModel.commodityCodeEnteredByTraderOrAgent
+        messages(
+          "case.v2.liability.ruling.info.from.c592.code.by.trader"
+        ) + rulingViewModel.commodityCodeEnteredByTraderOrAgent
       doc.getElementById("ruling_code_by_trader").text shouldBe expected
     }
 
     "render code suggestion" in {
       val expected =
-        messages("case.v2.liability.ruling.info.from.c592.code.suggested") + rulingViewModel.commodityCodeSuggestedByOfficer
+        messages(
+          "case.v2.liability.ruling.info.from.c592.code.suggested"
+        ) + rulingViewModel.commodityCodeSuggestedByOfficer
       doc.getElementById("ruling_code_suggested").text shouldBe expected
     }
 

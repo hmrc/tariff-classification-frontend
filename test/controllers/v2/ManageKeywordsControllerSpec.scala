@@ -42,8 +42,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
   val keyword: Keyword = Keyword("Scarf", approved = true)
   val keywords: Seq[Keyword] = Seq(
-    Keyword("SHOES", approved  = true),
-    Keyword("HATS", approved   = true),
+    Keyword("SHOES", approved = true),
+    Keyword("HATS", approved = true),
     Keyword("SHIRTS", approved = true),
     Keyword("TEST")
   )
@@ -68,10 +68,10 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private val casesService                           = mock[CasesService]
   val form: Form[String]                             = ChangeKeywordStatusForm.form
 
-  override protected def beforeEach(): Unit =
-    reset(
-      casesService
-    )
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(casesService)
+  }
 
   private def controller(permission: Set[Permission]) = new ManageKeywordsController(
     new RequestActionsWithPermissions(playBodyParsers, permission, addViewCasePermission = false),
@@ -172,9 +172,9 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "")))
       )
 
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include(messages("management.create-keyword.error.empty.keyword"))
 
@@ -189,9 +189,9 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           .createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> keywords.head.name)))
       )
 
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include(messages("management.create-keyword.error.duplicate.keyword"))
     }
@@ -287,9 +287,9 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
             .changeKeywordStatus("keywordName", "reference")(newFakeGETRequestWithCSRF())
         )
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("We could not find a Case with reference")
 
     }
@@ -390,7 +390,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         controller(Set(Permission.MANAGE_USERS))
           .postEditApprovedKeywords("oldKeyword")(newFakePOSTRequestWithCSRF(Map("action" -> "", "" -> "")))
       )
-      status(result)          shouldBe Status.BAD_REQUEST
+      status(result)        shouldBe Status.BAD_REQUEST
       contentAsString(result) should include(messages("error.empty.action"))
     }
 
@@ -442,7 +442,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
             newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> "SHOES"))
           )
       )
-      status(result)          shouldBe Status.BAD_REQUEST
+      status(result)        shouldBe Status.BAD_REQUEST
       contentAsString(result) should include(messages("management.update-keyword.error.duplicate.keyword"))
     }
 
@@ -461,7 +461,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
             newFakePOSTRequestWithCSRF(Map("action" -> "RENAME", "keywordName" -> "TEST"))
           )
       )
-      status(result)          shouldBe Status.BAD_REQUEST
+      status(result)        shouldBe Status.BAD_REQUEST
       contentAsString(result) should include(messages("management.create-keyword.error.rejected.keyword"))
     }
 

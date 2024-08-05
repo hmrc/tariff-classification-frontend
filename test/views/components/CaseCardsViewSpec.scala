@@ -25,7 +25,7 @@ class CaseCardsViewSpec extends ViewSpec {
   "Case cards" should {
 
     "display the name of the operator if present" in {
-      val doc = view(cases_cards(Map.empty, 2, 0, 0)(operatorRequestWithName, messages, appConfig))
+      val doc = view(cases_cards(Map.empty, 2, 0, 0)(operatorRequestWithName, messages))
 
       doc.getElementsByClass("govuk-heading-xl").text() should include(
         "Case dashboard"
@@ -34,7 +34,7 @@ class CaseCardsViewSpec extends ViewSpec {
 
     "display the correct title if the operator is a classification-officer" in {
 
-      val doc = view(cases_cards(casesByTeam = Map.empty, 2, 0, 0)(operatorRequestWithName, messages, appConfig))
+      val doc = view(cases_cards(casesByTeam = Map.empty, 2, 0, 0)(operatorRequestWithName, messages))
 
       doc.getElementsByClass("govuk-heading-xl").text() should include(
         "Case dashboard"
@@ -44,7 +44,7 @@ class CaseCardsViewSpec extends ViewSpec {
     "display the correct title if the operator is a classification-manager" in {
 
       val doc =
-        view(cases_cards(Map.empty, 2, 0, 0)(authenticatedManagerFakeRequest, messages, appConfig))
+        view(cases_cards(Map.empty, 2, 0, 0)(authenticatedManagerFakeRequest, messages))
 
       doc.getElementsByClass("govuk-heading-xl").text() should include(
         "Case dashboard"
@@ -69,7 +69,7 @@ class CaseCardsViewSpec extends ViewSpec {
     }
 
     "display the number of cases on My Referred Cases tile when plural" in {
-      val doc = view(cases_cards(Map.empty, 0, 2, 0)(operatorRequestWithName, messages, appConfig))
+      val doc = view(cases_cards(Map.empty, 0, 2, 0)(operatorRequestWithName, messages))
 
       doc.getElementById("my-referred-cases-id").text() should include(
         messages("operator.dashboard.classification.my-cases.onReferralProgress.plural", 2)
@@ -77,7 +77,7 @@ class CaseCardsViewSpec extends ViewSpec {
     }
 
     "display the number of cases on My Referred Cases tile when singular" in {
-      val doc = view(cases_cards(Map.empty, 0, 1, 0)(operatorRequestWithName, messages, appConfig))
+      val doc = view(cases_cards(Map.empty, 0, 1, 0)(operatorRequestWithName, messages))
 
       doc.getElementById("my-referred-cases-id").text() should include(
         messages("operator.dashboard.classification.my-cases.onReferralProgress.singular", 1)
@@ -85,7 +85,7 @@ class CaseCardsViewSpec extends ViewSpec {
     }
 
     "display the number of cases on My Completed Cases tile when plural" in {
-      val doc = view(cases_cards(Map.empty, 0, 0, 2)(operatorRequestWithName, messages, appConfig))
+      val doc = view(cases_cards(Map.empty, 0, 0, 2)(operatorRequestWithName, messages))
 
       doc.getElementById("my-completed-cases-id").text() should include(
         messages("operator.dashboard.classification.my-cases.onCompletedProgress.plural", 2)
@@ -93,7 +93,7 @@ class CaseCardsViewSpec extends ViewSpec {
     }
 
     "display the number of cases on My Complete Cases tile when singular" in {
-      val doc = view(cases_cards(Map.empty, 0, 0, 1)(operatorRequestWithName, messages, appConfig))
+      val doc = view(cases_cards(Map.empty, 0, 0, 1)(operatorRequestWithName, messages))
 
       doc.getElementById("my-completed-cases-id").text() should include(
         messages("operator.dashboard.classification.my-cases.onCompletedProgress.singular", 1)
@@ -102,7 +102,7 @@ class CaseCardsViewSpec extends ViewSpec {
 
     "display the manager tools, my cases, open cases and gateway" in {
       val doc =
-        view(cases_cards(Map.empty, 2, 0, 0)(authenticatedManagerFakeRequest, messages, appConfig))
+        view(cases_cards(Map.empty, 2, 0, 0)(authenticatedManagerFakeRequest, messages))
 
       doc should containElementWithID("my-referred-cases-id")
 

@@ -51,9 +51,8 @@ class CaseReportTableViewSpec extends ViewSpec {
 
     "render a header for each field" in {
       val doc = view(caseReportTable(report, SearchPagination(), reportResults, Map.empty, Map.empty, "case-report"))
-      for (field <- report.fields.toSeq) {
-        doc should containElementWithID(s"case-report-${field.fieldName}")
-      }
+      for (field <- report.fields.toSeq)
+        doc                                         should containElementWithID(s"case-report-${field.fieldName}")
       doc.getElementById("case-report-reference")   should containText(messages("reporting.field.reference"))
       doc.getElementById("case-report-goods_name")  should containText(messages("reporting.field.goods_name"))
       doc.getElementById("case-report-trader_name") should containText(messages("reporting.field.trader_name"))

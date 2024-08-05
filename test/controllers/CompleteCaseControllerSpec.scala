@@ -48,11 +48,11 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   private val completeDecision = Decision(
     bindingCommodityCode = "040900",
-    effectiveEndDate     = Some(Instant.now),
-    justification        = "justification-content",
-    goodsDescription     = "goods-description",
-    methodSearch         = Some("method-to-search"),
-    explanation          = Some("explanation")
+    effectiveEndDate = Some(Instant.now),
+    justification = "justification-content",
+    goodsDescription = "goods-description",
+    methodSearch = Some("method-to-search"),
+    explanation = Some("explanation")
   )
 
   private val inCompleteDecision = Decision(bindingCommodityCode = "", justification = "", goodsDescription = "")
@@ -106,7 +106,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         status(result)        shouldBe Status.OK
         contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
         charsetOf(result)     shouldBe Some("utf-8")
-        bodyOf(result)        should include("Are you sure you want to complete the Laptop case?")
+        bodyOf(result)          should include("Are you sure you want to complete the Laptop case?")
       }
 
       "Case is a valid Liability" in {
@@ -184,7 +184,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           .completeCase("reference")(newFakeGETRequestWithCSRF())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -235,7 +235,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
         )
 
       status(result) shouldBe Status.OK
-      bodyOf(result) should include("Select yes if you want to complete this case")
+      bodyOf(result)   should include("Select yes if you want to complete this case")
     }
 
     "redirect to default page for non OPEN statuses" in {
@@ -345,7 +345,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           .postCompleteCase("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("state" -> "true"))
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -359,7 +359,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("complete_case.completed.header", "Laptop", "ATaR"))
+      bodyOf(result)          should include(messages("complete_case.completed.header", "Laptop", "ATaR"))
     }
 
     "redirect to a default page if the status is not right" in {

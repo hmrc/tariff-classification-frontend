@@ -32,8 +32,7 @@ object AppealType extends Enumeration {
     case _      => "Appeal"
   }
 
-  /**
-    * The order of enum matters as it is used how to show elements in UI in some cases, where it is sorted by ID
+  /** The order of enum matters as it is used how to show elements in UI in some cases, where it is sorted by ID
     */
   type AppealType = Value
   val ADR, REVIEW, APPEAL_TIER_1, APPEAL_TIER_2, COURT_OF_APPEALS, SUPREME_COURT = Value

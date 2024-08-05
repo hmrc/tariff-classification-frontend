@@ -15,7 +15,6 @@
  *@
 
 @import helper._
-@import config.AppConfig
 @import controllers.routes.{CaseController, ReassignCaseController}
 @import controllers.Tab
 @import models.forms.ActivityFormData
@@ -27,7 +26,7 @@
 @import views.html.partials.{activity_details_events_table, assignee, tab_heading}
 @import views.html.partials.error_summary
 
-@(activity: ActivityViewModel, activityForm: Form[ActivityFormData], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activity: ActivityViewModel, activityForm: Form[ActivityFormData], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @error_summary(activityForm.errors, Some(startAtTabIndex))
 
@@ -38,7 +37,7 @@
     @tab_heading("activity", messages("case.menu.activity"))
 
     @if(request.hasPermission(Permission.ADD_NOTE)) {
-        @form(action = CaseController.addNote(activity.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), 'class -> "form") {
+        @form(action = CaseController.addNote(activity.referenceNumber).withFragment(Tab.ACTIVITY_TAB.name), Symbol("class") -> "form") {
             @CSRF.formField
             @input_textarea(
                 field = activityForm("note"),

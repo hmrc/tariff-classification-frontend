@@ -55,7 +55,8 @@ class CasesService_UpdateSampleWhoSendingSpec extends ServiceSpecBase with Befor
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit)
+    reset(connector)
+    reset(audit)
   }
 
   "Update Sample Who Sending" should {

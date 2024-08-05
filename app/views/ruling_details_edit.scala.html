@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import helper._
 @import models.forms.DecisionFormData
 @import models.request.AuthenticatedRequest
@@ -34,7 +33,7 @@
 )
 
 
-@(c: Case, files: Seq[StoredAttachment], decisionForm: Form[DecisionFormData], startAtTabIndex: Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, files: Seq[StoredAttachment], decisionForm: Form[DecisionFormData], startAtTabIndex: Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.edit.ruling"),
@@ -109,7 +108,7 @@
             </div>
         </dl>
 
-        @form(action = controllers.routes.RulingController.updateRulingDetails(c.reference), 'class -> "form") {
+        @form(action = controllers.routes.RulingController.updateRulingDetails(c.reference), Symbol("class") -> "form") {
 
             @CSRF.formField
 

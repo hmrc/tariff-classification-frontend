@@ -36,9 +36,9 @@ class FormDateTest extends ModelsBaseSpec {
 
     "disallow empty fields" in {
       assertInvalid(
-        day   = emptyStr,
+        day = emptyStr,
         month = emptyStr,
-        year  = emptyStr,
+        year = emptyStr,
         List("invalid.date.error.required.all")
       )
     }
@@ -102,9 +102,9 @@ class FormDateTest extends ModelsBaseSpec {
 
     "disallow empty fields" in {
       assertOptionalInvalid(
-        day   = emptyStr,
+        day = emptyStr,
         month = emptyStr,
-        year  = emptyStr,
+        year = emptyStr,
         List("invalid.date.error.required.all")
       )
     }
@@ -138,7 +138,7 @@ class FormDateTest extends ModelsBaseSpec {
     }
 
     "not verify invalid date when not required" in {
-      assertOptionalInvalid(day               = "30", month = "02", year = "2019", List(), hasEndDate = false)
+      assertOptionalInvalid(day = "30", month = "02", year = "2019", List(), hasEndDate = false)
       assertOptionalInvalidWithoutEndDate(day = "30", month = "02", year = "2019", List())
     }
 

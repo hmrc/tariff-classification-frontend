@@ -15,8 +15,6 @@
  *@
 
 @import models.request.AuthenticatedRequest
-@import config.AppConfig
-
 @import views.html.components.heading
 @import views.html.components.my_cases_tab
 @import views.html.components.primary_navigation
@@ -30,7 +28,7 @@
 )
 
 
-@(gatewayCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(gatewayCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages("operator.dashboard.classification.gateway-cases.title"),

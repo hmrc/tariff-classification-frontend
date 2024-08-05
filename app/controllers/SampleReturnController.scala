@@ -68,8 +68,8 @@ class SampleReturnController @Inject() (
       )
     }
 
-  override protected def update(c: Case, status: Option[SampleReturn], operator: Operator)(
-    implicit hc: HeaderCarrier
+  override protected def update(c: Case, status: Option[SampleReturn], operator: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Case] =
     caseService.updateSampleReturn(c, status, operator)
 

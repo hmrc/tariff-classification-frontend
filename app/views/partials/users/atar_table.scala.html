@@ -25,7 +25,7 @@
 @import views.html.partials.error_summary
 @import controllers.Tab
 
-@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages)
     @error_summary(form.errors, keySwaps = Map("atarCases" -> "atarCases-0"))
     <h2 class="govuk-heading-l">@messages("users.user.atar.heading")</h2>
     @helper.form(action = MoveCasesController.postMoveATaRCases(userID).withFragment(Tab.ATAR_TAB.name), Symbol("id") -> "atarCases", Symbol("novalidate") -> "novalidate") {

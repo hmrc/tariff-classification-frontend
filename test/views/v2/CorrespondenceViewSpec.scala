@@ -59,7 +59,7 @@ class CorrespondenceViewSpec extends ViewSpec {
   )
 
   val initiateResponse: FileStoreInitiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",

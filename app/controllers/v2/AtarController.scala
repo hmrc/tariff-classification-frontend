@@ -65,10 +65,10 @@ class AtarController @Inject() (
     }
 
   def renderView(
-    fileId: Option[String]               = None,
+    fileId: Option[String] = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
-    keywordForm: Form[String]            = KeywordForm.form,
-    uploadForm: Form[String]             = UploadAttachmentForm.form
+    keywordForm: Form[String] = KeywordForm.form,
+    uploadForm: Form[String] = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
 
     val uploadFileId: String                       = fileId.getOrElse(UUID.randomUUID().toString)
@@ -98,46 +98,44 @@ class AtarController @Inject() (
 
     for {
       allEvents <- eventsService
-                    .getFilteredEvents(
-                      reference      = atarCase.reference,
-                      pagination     = NoPagination(),
-                      onlyEventTypes = Some(allEvents)
-                    )
+                     .getFilteredEvents(
+                       reference = atarCase.reference,
+                       pagination = NoPagination(),
+                       onlyEventTypes = Some(allEvents)
+                     )
       initiateResponse <- fileService.initiate(
-                           FileStoreInitiateRequest(
-                             id              = Some(uploadFileId),
-                             successRedirect = Some(fileUploadSuccessRedirect),
-                             errorRedirect   = Some(fileUploadErrorRedirect),
-                             maxFileSize     = appConfig.fileUploadMaxSize
-                           )
-                         )
+                            FileStoreInitiateRequest(
+                              id = Some(uploadFileId),
+                              successRedirect = Some(fileUploadSuccessRedirect),
+                              errorRedirect = Some(fileUploadErrorRedirect),
+                              maxFileSize = appConfig.fileUploadMaxSize
+                            )
+                          )
       queues         <- queuesService.getAll
       attachments    <- fileService.getAttachments(atarCase)
       globalKeywords <- keywordsService.findAll()
       sampleTab = SampleTabViewModel.fromCase(atarCase, allEvents.filter(event => isSampleEvents(event.details.`type`)))
       activityTab = ActivityViewModel
-        .fromCase(atarCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
+                      .fromCase(atarCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
       attachmentsTab = AttachmentsTabViewModel.fromCase(atarCase, attachments)
       keywordsTab    = KeywordsTabViewModel.fromCase(atarCase, globalKeywords.map(_.name))
-    } yield {
-      atarView(
-        caseViewModel    = atarViewModel,
-        applicantTab     = applicantTab,
-        goodsTab         = goodsTab,
-        sampleTab        = sampleTab,
-        attachmentsTab   = attachmentsTab,
-        uploadForm       = uploadForm,
-        initiateResponse = initiateResponse,
-        activityTab      = activityTab,
-        activityForm     = activityForm,
-        keywordsTab      = keywordsTab,
-        keywordForm      = keywordForm,
-        rulingTab        = rulingTab,
-        rulingForm       = rulingForm,
-        attachments      = attachments,
-        appealTab        = appealTab,
-        primaryNavTab    = activeNavTab
-      )
-    }
+    } yield atarView(
+      caseViewModel = atarViewModel,
+      applicantTab = applicantTab,
+      goodsTab = goodsTab,
+      sampleTab = sampleTab,
+      attachmentsTab = attachmentsTab,
+      uploadForm = uploadForm,
+      initiateResponse = initiateResponse,
+      activityTab = activityTab,
+      activityForm = activityForm,
+      keywordsTab = keywordsTab,
+      keywordForm = keywordForm,
+      rulingTab = rulingTab,
+      rulingForm = rulingForm,
+      attachments = attachments,
+      appealTab = appealTab,
+      primaryNavTab = activeNavTab
+    )
   }
 }

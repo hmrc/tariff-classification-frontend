@@ -14,9 +14,7 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.reporting._
-@import models.request.AuthenticatedRequest
 @import views.html.partials.pagination
 @import views.html.managementtools.reportField
 
@@ -27,7 +25,7 @@
   users: Map[String, Operator],
   teams: Map[String, Queue],
   id: String
-)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+)(implicit messages: Messages)
 
 <table id="@{id}-table"class="govuk-table">
   <thead class="govuk-table__head">

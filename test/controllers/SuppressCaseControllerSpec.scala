@@ -16,7 +16,7 @@
 
 package controllers
 
-import connector.FakeDataCacheConnector
+import connector.FakeDataCacheService
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
@@ -48,7 +48,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.SUPPRESSED)
 
   private val initiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -60,7 +60,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     new SuccessfulRequestActions(playBodyParsers, operator, c = requestCase),
     casesService,
     fileService,
-    FakeDataCacheConnector,
+    FakeDataCacheService,
     mcc,
     suppressCaseReason,
     suppressCaseEmail,
@@ -72,7 +72,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
     casesService,
     fileService,
-    FakeDataCacheConnector,
+    FakeDataCacheService,
     mcc,
     suppressCaseReason,
     suppressCaseEmail,
@@ -82,8 +82,9 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
 
   override def afterEach(): Unit = {
     super.afterEach()
-    reset(casesService, fileService)
-    await(FakeDataCacheConnector.clear())
+    reset(casesService)
+    reset(fileService)
+    await(FakeDataCacheService.clear())
   }
 
   "GET suppress case reason" should {
@@ -140,7 +141,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("error.empty.suppress.note"))
+      bodyOf(result)          should include(messages("error.empty.suppress.note"))
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {
@@ -191,7 +192,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to confirmation page" in {
       val cacheKey = s"suppress_case-${caseWithStatusOPEN.reference}"
       val cacheMap = UserAnswers(cacheKey).set("note", "some-note").cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       given(
         casesService.suppressCase(
@@ -228,7 +229,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "redirect to unauthorised when the user does not have the right permissions" in {
       val cacheKey = s"suppress_case-${caseWithStatusOPEN.reference}"
       val cacheMap = UserAnswers(cacheKey).set("note", "some-note").cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).suppressCase(caseWithStatusOPEN.reference, "id")(

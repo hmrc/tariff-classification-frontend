@@ -21,7 +21,7 @@ import models._
 import models.reporting._
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
-import org.mockito.Mockito
+import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -50,11 +50,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(
-      reportingService,
-      usersService,
-      operator
-    )
+    reset(reportingService)
+    reset(usersService)
+    reset(operator)
   }
 
   private def controller(permission: Set[Permission], operator: Operator = Operator("0", Some("name"))) =
@@ -76,7 +74,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "downloadCaseReport" should {
     val report = CaseReport(
-      name   = "ATaR Summary Report",
+      name = "ATaR Summary Report",
       fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
@@ -103,7 +101,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         .willReturn(Future.successful(reportResults))
         .willReturn(Future.successful(Paged.empty[Map[String, ReportResultField[_]]]))
 
-      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+      given(
+        usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
+      ) willReturn Future
         .successful(Paged.empty[Operator])
 
       val result =
@@ -150,7 +150,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         .willReturn(Future.successful(reportResults))
         .willReturn(Future.successful(Paged.empty[QueueResultGroup]))
 
-      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+      given(
+        usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
+      ) willReturn Future
         .successful(Paged.empty[Operator])
 
       val result =
@@ -184,9 +186,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "downloadSummaryReport" should {
     val report = SummaryReport(
-      name      = "Case count by status",
-      groupBy   = NonEmptySeq.one(ReportField.Status),
-      sortBy    = ReportField.Status,
+      name = "Case count by status",
+      groupBy = NonEmptySeq.one(ReportField.Status),
+      sortBy = ReportField.Status,
       maxFields = Seq(ReportField.ElapsedDays)
     )
 
@@ -220,7 +222,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         .willReturn(Future.successful(reportResults))
         .willReturn(Future.successful(Paged.empty[ResultGroup]))
 
-      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+      given(
+        usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
+      ) willReturn Future
         .successful(Paged.empty[Operator])
 
       val result =
@@ -250,14 +254,16 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "caseReport" should {
     val report = CaseReport(
-      name   = "ATaR Summary Report",
+      name = "ATaR Summary Report",
       fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
     "return 200 OK and HTML content type" in {
       given(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier])) willReturn Future
         .successful(Paged.empty[Map[String, ReportResultField[_]]])
-      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+      given(
+        usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
+      ) willReturn Future
         .successful(Paged.empty[Operator])
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).caseReport(report, SearchPagination())(fakeRequest))
@@ -276,15 +282,17 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "summaryReport" should {
     val report = SummaryReport(
-      name    = "Case count by status",
+      name = "Case count by status",
       groupBy = NonEmptySeq.one(ReportField.Status),
-      sortBy  = ReportField.Status
+      sortBy = ReportField.Status
     )
 
     "return 200 OK and HTML content type" in {
       given(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier])) willReturn Future
         .successful(Paged.empty[ResultGroup])
-      given(usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])) willReturn Future
+      given(
+        usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
+      ) willReturn Future
         .successful(Paged.empty[Operator])
 
       val result =
@@ -342,9 +350,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "showChangeTeamsFilter" should {
     val report = SummaryReport(
-      name    = "Case count by status",
+      name = "Case count by status",
       groupBy = NonEmptySeq.one(ReportField.Status),
-      sortBy  = ReportField.Status
+      sortBy = ReportField.Status
     )
 
     "return 200 OK and HTML content type for a valid request" in {
@@ -369,14 +377,14 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "postChangeTeamsFilter" should {
     val summaryReport = SummaryReport(
-      name    = "Case count by status",
+      name = "Case count by status",
       groupBy = NonEmptySeq.one(ReportField.Status),
-      sortBy  = ReportField.Status,
-      teams   = Set("2", "3")
+      sortBy = ReportField.Status,
+      teams = Set("2", "3")
     )
 
     val caseReport = CaseReport(
-      name   = "ATaR Summary Report",
+      name = "ATaR Summary Report",
       fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
@@ -465,9 +473,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           controller(Set(Permission.VIEW_REPORTS)).postChangeTeamsFilter(summaryReport, SearchPagination())(request)
         )
 
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("reporting.choose_teams.required"))
     }
 
@@ -485,9 +493,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "showChangeDateFilter" should {
     val report = SummaryReport(
-      name    = "Case count by status",
+      name = "Case count by status",
       groupBy = NonEmptySeq.one(ReportField.Status),
-      sortBy  = ReportField.Status
+      sortBy = ReportField.Status
     )
 
     "return 200 OK and HTML content type for a valid request" in {
@@ -512,9 +520,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   "postChangeDateFilter" should {
     val summaryReport = SummaryReport(
-      name    = "Case count by status",
+      name = "Case count by status",
       groupBy = NonEmptySeq.one(ReportField.Status),
-      sortBy  = ReportField.Status,
+      sortBy = ReportField.Status,
       dateRange = InstantRange(
         Instant.parse("2020-01-01T09:00:00.00Z"),
         Instant.parse("2021-01-01T09:00:00.00Z")
@@ -522,7 +530,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     val caseReport = CaseReport(
-      name   = "ATaR Summary Report",
+      name = "ATaR Summary Report",
       fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName),
       dateRange = InstantRange(
         Instant.parse("2020-01-01T09:00:00.00Z"),
@@ -635,9 +643,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("reporting.choose_date.required"))
     }
 
@@ -654,9 +662,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("reporting.startDate.error.required.one", "month"))
     }
 
@@ -673,9 +681,9 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).postChangeDateFilter(summaryReport, SearchPagination())(request))
 
-      status(result)          shouldBe Status.BAD_REQUEST
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.BAD_REQUEST
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include(messages("reporting.choose_date.invalid_end_date"))
     }
 

@@ -57,7 +57,10 @@ class CasesService_SuspendCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, oneCase, manyCases)
+    reset(connector)
+    reset(audit)
+    reset(oneCase)
+    reset(manyCases)
   }
 
   "Suspend a Case" should {
@@ -79,7 +82,7 @@ class CasesService_SuspendCaseSpec extends ServiceSpecBase with BeforeAndAfterEa
       verify(audit).auditCaseSuspended(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.status      shouldBe CaseStatus.SUSPENDED
+      caseUpdating.status    shouldBe CaseStatus.SUSPENDED
       caseUpdating.attachments should have(size(2))
 
       val attachmentUpdating = caseUpdating.attachments.find(_.id == "id")

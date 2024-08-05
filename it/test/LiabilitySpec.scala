@@ -95,7 +95,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/cases/v2/1/liability").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"liability-entry-number\"")
+      response.body     should include("id=\"liability-entry-number\"")
     }
 
     "redirect on auth failure" in {

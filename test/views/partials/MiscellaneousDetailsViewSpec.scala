@@ -37,8 +37,7 @@ class MiscellaneousDetailsViewSpec extends ViewSpec {
       val doc = view(
         miscellaneous_case_details(caseDetailsTab)(
           requestWithPermissions(Permission.EDIT_MISCELLANEOUS),
-          messages,
-          appConfig
+          messages
         )
       )
 

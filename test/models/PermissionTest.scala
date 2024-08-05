@@ -150,9 +150,11 @@ class PermissionTest extends ModelsBaseSpec {
         permission.appliesTo(caseWithValidStatus, manager)    shouldBe true
       }
 
-      for (status: CaseStatus <- CaseStatus.values.filterNot(
-                                  anyOf(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
-                                )) {
+      for (
+        status: CaseStatus <- CaseStatus.values.filterNot(
+                                anyOf(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
+                              )
+      ) {
         val caseWithInvalidStatus = aCase(withQueue("queue"), withoutAssignee(), withStatus(status))
         permission.appliesTo(caseWithInvalidStatus, readOnly)   shouldBe false
         permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
@@ -208,17 +210,17 @@ class PermissionTest extends ModelsBaseSpec {
       Permission.from(name) shouldBe Some(permission)
 
       val caseWithValidStatus = aCase(withoutAssignee(), withStatus(CaseStatus.OPEN))
-      permission.appliesTo(caseWithValidStatus, readOnly)   shouldBe false
-      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatus, readOnly)                                     shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember)                                   shouldBe false
       permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
-      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager)                                      shouldBe true
 
       for (status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.OPEN))) {
         val caseWithInvalidStatus = aCase(withoutAssignee(), withStatus(status))
-        permission.appliesTo(caseWithInvalidStatus, readOnly)   shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, readOnly)                                     shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember)                                   shouldBe false
         permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager)                                      shouldBe false
 
       }
     }
@@ -253,17 +255,17 @@ class PermissionTest extends ModelsBaseSpec {
       Permission.from(name) shouldBe Some(permission)
 
       val caseWithValidStatus = aCase(withoutAssignee(), withStatus(CaseStatus.OPEN))
-      permission.appliesTo(caseWithValidStatus, readOnly)   shouldBe false
-      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatus, readOnly)                                     shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember)                                   shouldBe false
       permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
-      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager)                                      shouldBe true
 
       for (status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.OPEN))) {
         val caseWithInvalidStatus = aCase(withStatus(status))
-        permission.appliesTo(caseWithInvalidStatus, readOnly)   shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, readOnly)                                     shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember)                                   shouldBe false
         permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager)                                      shouldBe false
       }
     }
 
@@ -275,17 +277,17 @@ class PermissionTest extends ModelsBaseSpec {
       Permission.from(name) shouldBe Some(permission)
 
       val caseWithValidStatus = aCase(withoutAssignee(), withStatus(CaseStatus.OPEN))
-      permission.appliesTo(caseWithValidStatus, readOnly)   shouldBe false
-      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatus, readOnly)                                     shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember)                                   shouldBe false
       permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
-      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager)                                      shouldBe true
 
       for (status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.OPEN))) {
         val caseWithInvalidStatus = aCase(withStatus(status))
-        permission.appliesTo(caseWithInvalidStatus, readOnly)   shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, readOnly)                                     shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember)                                   shouldBe false
         permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager)                                      shouldBe false
       }
     }
 
@@ -297,17 +299,17 @@ class PermissionTest extends ModelsBaseSpec {
       Permission.from(name) shouldBe Some(permission)
 
       val caseWithValidStatus = aCase(withoutAssignee(), withStatus(CaseStatus.OPEN))
-      permission.appliesTo(caseWithValidStatus, readOnly)   shouldBe false
-      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatus, readOnly)                                     shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember)                                   shouldBe false
       permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
-      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager)                                      shouldBe true
 
       for (status: CaseStatus <- CaseStatus.values.filterNot(equalTo(CaseStatus.OPEN))) {
         val caseWithInvalidStatus = aCase(withStatus(status))
-        permission.appliesTo(caseWithInvalidStatus, readOnly)   shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, readOnly)                                     shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember)                                   shouldBe false
         permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager)                                      shouldBe false
       }
     }
 
@@ -412,19 +414,21 @@ class PermissionTest extends ModelsBaseSpec {
       Permission.from(name) shouldBe Some(permission)
 
       val caseWithValidStatus = aCase(withoutAssignee(), withStatus(CaseStatus.OPEN))
-      permission.appliesTo(caseWithValidStatus, readOnly)   shouldBe false
-      permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatus, readOnly)                                     shouldBe false
+      permission.appliesTo(caseWithValidStatus, teamMember)                                   shouldBe false
       permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
-      permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+      permission.appliesTo(caseWithValidStatus, manager)                                      shouldBe true
 
-      for (status: CaseStatus <- CaseStatus.values.filterNot(
-                                  Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
-                                )) {
+      for (
+        status: CaseStatus <- CaseStatus.values.filterNot(
+                                Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
+                              )
+      ) {
         val caseWithInvalidStatus = aCase(withStatus(status))
-        permission.appliesTo(caseWithInvalidStatus, readOnly)   shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, readOnly)                                     shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember)                                   shouldBe false
         permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager)                                      shouldBe false
       }
     }
 
@@ -441,17 +445,17 @@ class PermissionTest extends ModelsBaseSpec {
       permission.appliesTo(caseWithValidStatusNEW, manager)    shouldBe true
 
       val caseWithValidStatusOPEN = aCase(withoutAssignee(), withStatus(CaseStatus.OPEN))
-      permission.appliesTo(caseWithValidStatusOPEN, readOnly)   shouldBe false
-      permission.appliesTo(caseWithValidStatusOPEN, teamMember) shouldBe false
+      permission.appliesTo(caseWithValidStatusOPEN, readOnly)                                     shouldBe false
+      permission.appliesTo(caseWithValidStatusOPEN, teamMember)                                   shouldBe false
       permission.appliesTo(caseWithValidStatusOPEN.copy(assignee = Some(teamMember)), teamMember) shouldBe true
-      permission.appliesTo(caseWithValidStatusOPEN, manager) shouldBe true
+      permission.appliesTo(caseWithValidStatusOPEN, manager)                                      shouldBe true
 
       for (status: CaseStatus <- CaseStatus.values.filterNot(anyOf(CaseStatus.NEW, CaseStatus.OPEN))) {
         val caseWithInvalidStatus = aCase(withStatus(status))
-        permission.appliesTo(caseWithInvalidStatus, readOnly)   shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, readOnly)                                     shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, teamMember)                                   shouldBe false
         permission.appliesTo(caseWithInvalidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe false
-        permission.appliesTo(caseWithInvalidStatus, manager) shouldBe false
+        permission.appliesTo(caseWithInvalidStatus, manager)                                      shouldBe false
       }
     }
 
@@ -520,15 +524,17 @@ class PermissionTest extends ModelsBaseSpec {
 
       for (status: CaseStatus <- Seq(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)) {
         val caseWithValidStatus = aCase(withStatus(status), withoutAssignee())
-        permission.appliesTo(caseWithValidStatus, readOnly)   shouldBe false
-        permission.appliesTo(caseWithValidStatus, teamMember) shouldBe false
+        permission.appliesTo(caseWithValidStatus, readOnly)                                     shouldBe false
+        permission.appliesTo(caseWithValidStatus, teamMember)                                   shouldBe false
         permission.appliesTo(caseWithValidStatus.copy(assignee = Some(teamMember)), teamMember) shouldBe true
-        permission.appliesTo(caseWithValidStatus, manager) shouldBe true
+        permission.appliesTo(caseWithValidStatus, manager)                                      shouldBe true
       }
 
-      for (status: CaseStatus <- CaseStatus.values.filterNot(
-                                  anyOf(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
-                                )) {
+      for (
+        status: CaseStatus <- CaseStatus.values.filterNot(
+                                anyOf(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED)
+                              )
+      ) {
         val caseWithInvalidStatus = aCase(withStatus(status), withoutAssignee())
         permission.appliesTo(caseWithInvalidStatus, readOnly)   shouldBe false
         permission.appliesTo(caseWithInvalidStatus, teamMember) shouldBe false

@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import controllers.v2.routes.GatewayCasesController
 @import models.{BTIApplication, Case, Queue}
@@ -36,7 +35,7 @@
         case_heading: views.html.v2.case_heading
 )
 
-@(c: Case, queueName: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, queueName: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @customHeading = @{
     if(c.application.isCorrespondence) {

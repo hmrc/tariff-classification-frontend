@@ -14,14 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.ReferralReason.ReferralReason
-@import models.request.AuthenticatedRequest
 @import models.{Event, ReferralCaseStatusChange, ReferralReason}
 @import views.html.partials.progressive_disclosure
-@(index: Int, event: Event, useTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(index: Int, event: Event, useTabIndex: Int = 0)
 
-@content(body: ReferralCaseStatusChange, useTabIndex: Int = 0) = {
+@content(body: ReferralCaseStatusChange, useTabIndex: Int) = {
  <p class="govuk-body">
   <span class="govuk-!-font-weight-bold">Referred to:</span>
   <span id="activity-events-row-@index-referred_to" class="pre-wrap">@body.referredTo</span>

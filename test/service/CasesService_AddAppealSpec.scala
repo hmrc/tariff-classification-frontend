@@ -55,7 +55,8 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit)
+    reset(audit)
+    reset(connector)
   }
 
   "Add Appeal" should {
@@ -88,8 +89,8 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
 
       val caseUpdating   = theCaseUpdating(connector)
       val appealsUpdated = caseUpdating.decision.map(_.appeal).getOrElse(Seq.empty)
-      appealsUpdated                                                                                should have(size(2))
-      appealsUpdated                                                                                should contain(existingAppeal)
+      appealsUpdated should have(size(2))
+      appealsUpdated should contain(existingAppeal)
       appealsUpdated.exists(a => a.status == AppealStatus.ALLOWED && a.`type` == AppealType.REVIEW) shouldBe true
 
       val eventCreated = theEventCreatedFor(connector, caseUpdated)
@@ -125,14 +126,18 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      await(service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.DISMISSED, operator)) shouldBe caseUpdated
+      await(
+        service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.DISMISSED, operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating   = theCaseUpdating(connector)
       val appealsUpdated = caseUpdating.decision.map(_.appeal).getOrElse(Seq.empty)
-      appealsUpdated                                                                                         should have(size(1))
-      appealsUpdated.exists(a => a.status == AppealStatus.DISMISSED && a.`type` == AppealType.APPEAL_TIER_1) shouldBe true
+      appealsUpdated should have(size(1))
+      appealsUpdated.exists(a =>
+        a.status == AppealStatus.DISMISSED && a.`type` == AppealType.APPEAL_TIER_1
+      ) shouldBe true
 
       val appealAudited = theAppealAudited()
       appealAudited.`type` shouldBe AppealType.APPEAL_TIER_1

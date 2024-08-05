@@ -20,8 +20,7 @@ import models.SampleSend.SampleSend
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito
-import org.mockito.Mockito.{never, verify}
+import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -56,7 +55,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
   override def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(casesService)
+    reset(casesService)
   }
 
   "Sample - Who is Sending" should {
@@ -69,7 +68,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-      bodyOf(result)      should include("Who is sending the Laptop sample?")
+      bodyOf(result)        should include("Who is sending the Laptop sample?")
     }
 
     "return OK when user has right permissions" in {
@@ -86,7 +85,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
 
       val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -140,7 +139,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
       verify(casesService, never())
         .updateWhoSendSample(any[Case], any[Option[SampleSend]], any[Operator])(any[HeaderCarrier])
 
-      status(result)          shouldBe Status.OK
+      status(result)        shouldBe Status.OK
       contentAsString(result) should include("error-message-sample-sender-input")
     }
 
@@ -167,7 +166,7 @@ class SampleWhoSendingControllerSpec extends ControllerBaseSpec with BeforeAndAf
           .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("sample-sender" -> "TRADER"))
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

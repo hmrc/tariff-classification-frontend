@@ -30,8 +30,8 @@ class ManageKeywordsService @Inject() (auditService: AuditService, connector: Bi
   implicit ec: ExecutionContext
 ) {
 
-  def createKeyword(keyword: Keyword, user: Operator, keywordStatusAction: ChangeKeywordStatusAction)(
-    implicit hc: HeaderCarrier
+  def createKeyword(keyword: Keyword, user: Operator, keywordStatusAction: ChangeKeywordStatusAction)(implicit
+    hc: HeaderCarrier
   ): Future[Keyword] =
     for {
       keywordCreated <- connector.createKeyword(keyword)
@@ -47,14 +47,14 @@ class ManageKeywordsService @Inject() (auditService: AuditService, connector: Bi
   def deleteKeyword(keyword: Keyword, user: Operator)(implicit hc: HeaderCarrier): Future[Unit] =
     connector.deleteKeyword(keyword).map(_ => auditService.auditManagerKeywordDeleted(user, keyword))
 
-  def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword, user: Operator)(
-    implicit hc: HeaderCarrier
+  def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword, user: Operator)(implicit
+    hc: HeaderCarrier
   ): Future[Keyword] =
     for {
       keywordRenamed <- connector
-                         .deleteKeyword(keywordToDelete)
-                         .flatMap(_ => connector.createKeyword(keywordToDelete.copy(approved = false)))
-                         .flatMap(_ => connector.createKeyword(keywordToAdd))
+                          .deleteKeyword(keywordToDelete)
+                          .flatMap(_ => connector.createKeyword(keywordToDelete.copy(approved = false)))
+                          .flatMap(_ => connector.createKeyword(keywordToAdd))
       _ = auditService.auditManagerKeywordRenamed(user, keywordToDelete, keywordRenamed)
     } yield keywordRenamed
 }

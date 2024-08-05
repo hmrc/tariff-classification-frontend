@@ -57,7 +57,10 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, oneCase, manyCases)
+    reset(connector)
+    reset(audit)
+    reset(oneCase)
+    reset(manyCases)
   }
 
   "Reject a Case" should {
@@ -74,12 +77,14 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator)) shouldBe caseUpdated
+      await(
+        service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditCaseRejected(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 
       val caseUpdating = theCaseUpdating(connector)
-      caseUpdating.status      shouldBe CaseStatus.REJECTED
+      caseUpdating.status    shouldBe CaseStatus.REJECTED
       caseUpdating.attachments should have(size(2))
 
       val attachmentUpdating = caseUpdating.attachments.find(_.id == "id")
@@ -124,7 +129,9 @@ class CasesService_RejectCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(failed(new RuntimeException()))
 
-      await(service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator)) shouldBe caseUpdated
+      await(
+        service.rejectCase(originalCase, RejectReason.NO_INFO_FROM_TRADER, attachment, "note", operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditCaseRejected(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
 

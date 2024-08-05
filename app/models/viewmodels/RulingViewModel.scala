@@ -42,13 +42,13 @@ object RulingViewModel {
 
     RulingViewModel(
       commodityCodeEnteredByTraderOrAgent = c.application.asLiabilityOrder.traderCommodityCode.getOrElse(""),
-      commodityCodeSuggestedByOfficer     = c.application.asLiabilityOrder.officerCommodityCode.getOrElse(""),
-      commodityCode                       = bindingCommodityCode,
-      itemDescription                     = goodsDescription,
-      justification                       = decisionJustification,
-      methodSearch                        = decisionMethodSearch,
-      methodExclusion                     = decisionMethodExclusion,
-      showEditRuling                      = permissions.contains(Permission.EDIT_RULING),
+      commodityCodeSuggestedByOfficer = c.application.asLiabilityOrder.officerCommodityCode.getOrElse(""),
+      commodityCode = bindingCommodityCode,
+      itemDescription = goodsDescription,
+      justification = decisionJustification,
+      methodSearch = decisionMethodSearch,
+      methodExclusion = decisionMethodExclusion,
+      showEditRuling = permissions.contains(Permission.EDIT_RULING),
       c.reference
     )
   }

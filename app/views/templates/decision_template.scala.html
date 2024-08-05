@@ -14,16 +14,10 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.{Case, Decision, LiabilityOrder, LiabilityStatus}
 @import utils.Dates
 
-@(c: Case, d: Decision)(implicit messages: Messages, appConfig: AppConfig)
-
-@createLink(path: String)(implicit req: play.api.mvc.Request[_]) = @{
-    val protocol = if(req.secure) "https" else "http"
-    s"$protocol://${req.host}${routes.Assets.at("images/hmrc-logo.jpg")}"
-}
+@(c: Case, d: Decision)(implicit messages: Messages)
 
 @defining(c.application.asLiabilityOrder) { liab: LiabilityOrder =>
 

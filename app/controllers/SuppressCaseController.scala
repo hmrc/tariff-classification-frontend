@@ -17,16 +17,15 @@
 package controllers
 
 import config.AppConfig
-import connector.DataCacheConnector
 import controllers.v2.UpscanErrorHandling
-import models.forms.{AddNoteForm, UploadAttachmentForm}
+import models.forms.AddNoteForm
 import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
 import models.{Attachment, Permission, UserAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import service.{CasesService, FileStoreService}
+import service.{CasesService, DataCacheService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_supressed_case, suppress_case_email, suppress_case_reason}
@@ -41,7 +40,7 @@ class SuppressCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheConnector,
+  dataCacheConnector: DataCacheService,
   mcc: MessagesControllerComponents,
   val suppress_case_reason: suppress_case_reason,
   val suppress_case_email: suppress_case_email,
@@ -82,8 +81,8 @@ class SuppressCaseController @Inject() (
       }
 
   private def renderSuppressCaseEmail(
-    fileId: Option[String]   = None,
-    uploadForm: Form[String] = UploadAttachmentForm.form
+    fileId: Option[String],
+    uploadForm: Form[String]
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -100,10 +99,10 @@ class SuppressCaseController @Inject() (
     fileService
       .initiate(
         FileStoreInitiateRequest(
-          id              = Some(uploadFileId),
+          id = Some(uploadFileId),
           successRedirect = Some(fileUploadSuccessRedirect),
-          errorRedirect   = Some(fileUploadErrorRedirect),
-          maxFileSize     = appConfig.fileUploadMaxSize
+          errorRedirect = Some(fileUploadErrorRedirect),
+          maxFileSize = appConfig.fileUploadMaxSize
         )
       )
       .map(initiateResponse => suppress_case_email(request.`case`, uploadForm, initiateResponse))
@@ -123,12 +122,12 @@ class SuppressCaseController @Inject() (
         .map { note =>
           for {
             _ <- casesService
-                  .suppressCase(
-                    request.`case`,
-                    Attachment(id = fileId, operator = Some(request.operator)),
-                    note,
-                    request.operator
-                  )
+                   .suppressCase(
+                     request.`case`,
+                     Attachment(id = fileId, operator = Some(request.operator)),
+                     note,
+                     request.operator
+                   )
 
             _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
 

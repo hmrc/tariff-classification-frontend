@@ -72,9 +72,9 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
             .onPageLoad("reference")(newFakeGETRequestWithCSRF())
         )
 
-        status(result)          shouldBe Status.OK
-        contentType(result)     shouldBe Some("text/html")
-        charset(result)         shouldBe Some("utf-8")
+        status(result)        shouldBe Status.OK
+        contentType(result)   shouldBe Some("text/html")
+        charset(result)       shouldBe Some("utf-8")
         contentAsString(result) should include("Action this case")
       }
 
@@ -84,9 +84,9 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
             .onPageLoad("reference")(newFakeGETRequestWithCSRF())
         )
 
-        status(result)          shouldBe Status.OK
-        contentType(result)     shouldBe Some("text/html")
-        charset(result)         shouldBe Some("utf-8")
+        status(result)        shouldBe Status.OK
+        contentType(result)   shouldBe Some("text/html")
+        charset(result)       shouldBe Some("utf-8")
         contentAsString(result) should include("Action this case")
       }
 
@@ -96,7 +96,7 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
             .onPageLoad("reference")(newFakeGETRequestWithCSRF())
         )
 
-        status(result)               shouldBe Status.SEE_OTHER
+        status(result)             shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
 
@@ -151,9 +151,9 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
             .onPageLoad("reference")(newFakeGETRequestWithCSRF())
         )
 
-        status(result)          shouldBe Status.OK
-        contentType(result)     shouldBe Some("text/html")
-        charset(result)         shouldBe Some("utf-8")
+        status(result)        shouldBe Status.OK
+        contentType(result)   shouldBe Some("text/html")
+        charset(result)       shouldBe Some("utf-8")
         contentAsString(result) should include("Action this case")
       }
 
@@ -163,7 +163,7 @@ class ReleaseOrSuppressCaseControllerSpec extends ControllerBaseSpec with Before
             .onPageLoad("reference")(newFakeGETRequestWithCSRF())
         )
 
-        status(result)               shouldBe Status.SEE_OTHER
+        status(result)             shouldBe Status.SEE_OTHER
         redirectLocation(result).get should include("unauthorized")
       }
     }

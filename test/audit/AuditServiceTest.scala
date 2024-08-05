@@ -54,8 +54,8 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = caseCreatedAudit(
         caseReference = "ref",
-        operatorId    = operator.id,
-        comment       = "Liability case created"
+        operatorId = operator.id,
+        comment = "Liability case created"
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseCreated"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -126,10 +126,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseReleased(original, updated, queue, operator)
 
       val payload = caseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = OPEN,
+        caseReference = "ref",
+        newStatus = OPEN,
         previousStatus = NEW,
-        operatorId     = operator.id
+        operatorId = operator.id
       ) + ("queue" -> queue.name)
 
       verify(connector)
@@ -166,10 +166,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseCompleted(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = COMPLETED,
+        caseReference = "ref",
+        newStatus = COMPLETED,
         previousStatus = OPEN,
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseCompleted"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -189,8 +189,8 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = caseCancelAudit(
         caseReference = "ref",
-        cancelReason  = CancelReason.ANNULLED,
-        operatorId    = operator.id
+        cancelReason = CancelReason.ANNULLED,
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("rulingCancelled"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -205,10 +205,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseReferred(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = REFERRED,
+        caseReference = "ref",
+        newStatus = REFERRED,
         previousStatus = OPEN,
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseReferred"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -223,10 +223,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseRejected(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = REJECTED,
+        caseReference = "ref",
+        newStatus = REJECTED,
         previousStatus = OPEN,
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseRejected"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -241,10 +241,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseSuspended(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = SUSPENDED,
+        caseReference = "ref",
+        newStatus = SUSPENDED,
         previousStatus = OPEN,
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseSuspended"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -259,10 +259,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseSuppressed(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = SUPPRESSED,
+        caseReference = "ref",
+        newStatus = SUPPRESSED,
         previousStatus = NEW,
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseSuppressed"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -277,10 +277,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseReOpened(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = OPEN,
+        caseReference = "ref",
+        newStatus = OPEN,
         previousStatus = REFERRED,
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -295,10 +295,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseReOpened(original, updated, operator)
 
       val payload = caseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = OPEN,
+        caseReference = "ref",
+        newStatus = OPEN,
         previousStatus = SUSPENDED,
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseReopened"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -314,8 +314,8 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = appealAddAudit(
         caseReference = "ref",
-        appeal        = appeal,
-        operatorId    = operator.id
+        appeal = appeal,
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseAppealAdded"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -332,9 +332,9 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
 
       val payload = appealStatusChangeAudit(
         caseReference = "ref",
-        appeal        = appeal,
-        newStatus     = newStatus,
-        operatorId    = operator.id
+        appeal = appeal,
+        newStatus = newStatus,
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseAppealStatusChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -353,10 +353,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditCaseExtendedUseChange(original, updated, operator)
 
       val payload = extendedUseChangeAudit(
-        caseReference  = "ref",
-        newStatus      = false,
+        caseReference = "ref",
+        newStatus = false,
         previousStatus = true,
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseExtendedUseChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -416,10 +416,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditSampleStatusChange(original, updated, operator)
 
       val payload = sampleStatusChangeAudit(
-        caseReference  = "ref",
-        newStatus      = "AWAITING",
+        caseReference = "ref",
+        newStatus = "AWAITING",
         previousStatus = "None",
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseSampleStatusChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -435,10 +435,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditSampleReturnChange(original, updated, operator)
 
       val payload = sampleReturnChangeAudit(
-        caseReference  = "ref",
-        newStatus      = "YES",
+        caseReference = "ref",
+        newStatus = "YES",
         previousStatus = "None",
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseSampleReturnChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -454,10 +454,10 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
       service.auditSampleSendChange(original, updated, operator)
 
       val payload = sampleSendChangeAudit(
-        caseReference  = "ref",
-        newSender      = "AGENT",
+        caseReference = "ref",
+        newSender = "AGENT",
         previousSender = "None",
-        operatorId     = operator.id
+        operatorId = operator.id
       )
       verify(connector)
         .sendExplicitAudit(refEq("caseSampleSendChange"), refEq(payload))(any[HeaderCarrier], any[ExecutionContext])
@@ -467,14 +467,14 @@ class AuditServiceTest extends SpecBase with BeforeAndAfterEach {
   "Service 'audit message'" should {
     val message = "this is my message"
     val corrCase = correspondenceCaseExample.copy(
-      reference   = "ref",
-      status      = OPEN,
+      reference = "ref",
+      status = OPEN,
       application = correspondenceExample.copy(messagesLogged = List(Message("operator name", Instant.now, message)))
     )
 
     val miscCase = miscellaneousCaseExample.copy(
-      reference   = "ref",
-      status      = OPEN,
+      reference = "ref",
+      status = OPEN,
       application = miscExample.copy(messagesLogged = List(Message("operator name", Instant.now, message)))
     )
 

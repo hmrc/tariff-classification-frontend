@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import views.html.components.input_accessible_auto_complete
 @import views.html.includes.main
@@ -28,7 +27,7 @@
 )
 
 
-@(allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(allKeywords: Seq[Keyword], newKeywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @additionalCSS = {
     <link rel="stylesheet" href='@routes.Assets.at("stylesheets/autocomplete.css")'/>)

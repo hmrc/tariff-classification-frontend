@@ -16,13 +16,14 @@
 
 package connector
 
-import com.google.inject.Inject
 import com.codahale.metrics.MetricRegistry
+import com.google.inject.Inject
 import metrics.HasMetrics
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
-import uk.gov.hmrc.http.{CorePost, HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Singleton
@@ -30,13 +31,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StrideAuthConnector @Inject() (
-  client: HttpClient,
+  client: HttpClientV2,
   servicesConfig: ServicesConfig,
   val metrics: MetricRegistry
 ) extends PlayAuthConnector
     with HasMetrics {
-  override val serviceUrl: String = servicesConfig.baseUrl("auth")
-  override def http: CorePost     = client
+  override val serviceUrl: String         = servicesConfig.baseUrl("auth")
+  override def httpClientV2: HttpClientV2 = client
 
   override def authorise[A](
     predicate: Predicate,

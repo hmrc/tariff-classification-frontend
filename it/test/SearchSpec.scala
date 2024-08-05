@@ -104,7 +104,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response3 = await(requestWithSession("/cases/v2/1/atar").withFollowRedirects(false).get())
 
       response3.status shouldBe OK
-      response3.body   should include("trader-heading")
+      response3.body     should include("trader-heading")
     }
   }
 
@@ -135,7 +135,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?case_source=1").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -166,7 +166,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?commodity_code=11").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -197,7 +197,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?decision_details=1").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -228,7 +228,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?keyword[0]=k1&keyword[1]=k2").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -273,7 +273,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?case_source=1&live_rulings_only=true").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
 
     // Note the UI actually calls search WITHOUT the live_rulings_only flag when unchecked
@@ -292,7 +292,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?case_source=1").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Allow All Cases when 'false'" in {
@@ -310,7 +310,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?case_source=1&live_rulings_only=false").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
   }
 
@@ -331,7 +331,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?case_source=1").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "Sort by 'Commodity Code'" in {
@@ -349,7 +349,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       val response = await(requestWithSession("/search?sort_by=commodity-code&sort_direction=desc&case_source=1").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"advanced_search-results_and_filters\"")
+      response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
 
     "redirect on auth failure" in {

@@ -34,16 +34,15 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
   private def hasLink(id: String, text: String, attributes: Seq[(String, String)])(implicit doc: Document): Unit =
     s"render LINK with ID: $id, Text: $text, Attributes: $attributes" in {
       doc.getElementById(id).text() shouldBe text
-      doc.getElementById(id)        should haveTag("a")
+      doc.getElementById(id)          should haveTag("a")
       attributes.map { case (key, value) => doc.getElementById(id) should haveAttribute(key, value) }
     }
 
   private def hasExpectedTextByIds(expectedContent: Seq[(String, String)])(implicit doc: Document) =
-    expectedContent.map {
-      case (id, expectedText) =>
-        s"render ID: $id, ExpectedText: $expectedText" in {
-          doc.getElementById(id).text() shouldBe expectedText
-        }
+    expectedContent.map { case (id, expectedText) =>
+      s"render ID: $id, ExpectedText: $expectedText" in {
+        doc.getElementById(id).text() shouldBe expectedText
+      }
     }
 
   private def haveElementIds(expectedElementIds: Seq[String])(implicit doc: Document) =
@@ -127,9 +126,9 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
           withStatus(CaseStatus.OPEN),
           withDecision(
             bindingCommodityCode = "commodity-code",
-            effectiveStartDate   = Some(instant("2019-01-01")),
-            effectiveEndDate     = Some(instant("2019-02-01")),
-            appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+            effectiveStartDate = Some(instant("2019-01-01")),
+            effectiveEndDate = Some(instant("2019-02-01")),
+            appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
           ),
           withHolder(businessName = "business-name")
         )
@@ -137,14 +136,14 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       val storedAttachment =
         StoredAttachment(
           "id",
-          public                 = true,
-          operator               = None,
-          url                    = Some("url"),
-          fileName               = Some("filename"),
-          mimeType               = Some("image/png"),
-          scanStatus             = Some(ScanStatus.READY),
-          timestamp              = Instant.now(),
-          description            = Some("test description"),
+          public = true,
+          operator = None,
+          url = Some("url"),
+          fileName = Some("filename"),
+          mimeType = Some("image/png"),
+          scanStatus = Some(ScanStatus.READY),
+          timestamp = Instant.now(),
+          description = Some("test description"),
           shouldPublishToRulings = true
         )
 
@@ -202,23 +201,23 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
       withStatus(CaseStatus.OPEN),
       withDecision(
         bindingCommodityCode = "commodity-code",
-        effectiveStartDate   = Some(instant("2019-01-01")),
-        effectiveEndDate     = Some(instant("2019-02-01")),
-        appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+        effectiveStartDate = Some(instant("2019-01-01")),
+        effectiveEndDate = Some(instant("2019-02-01")),
+        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
       ),
       withHolder(businessName = "business-name")
     )
 
     val storedAttachment = StoredAttachment(
       "id",
-      public                 = true,
-      operator               = None,
-      url                    = Some("url"),
-      fileName               = Some("filename"),
-      mimeType               = Some("text/plain"),
-      scanStatus             = Some(ScanStatus.READY),
-      timestamp              = Instant.now(),
-      description            = Some("test description"),
+      public = true,
+      operator = None,
+      url = Some("url"),
+      fileName = Some("filename"),
+      mimeType = Some("text/plain"),
+      scanStatus = Some(ScanStatus.READY),
+      timestamp = Instant.now(),
+      description = Some("test description"),
       shouldPublishToRulings = true
     )
 
@@ -237,9 +236,9 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         withStatus(CaseStatus.OPEN),
         withDecision(
           bindingCommodityCode = "commodity-code",
-          effectiveStartDate   = Some(instant("2019-01-01")),
-          effectiveEndDate     = Some(instant("2019-02-01")),
-          appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+          effectiveStartDate = Some(instant("2019-01-01")),
+          effectiveEndDate = Some(instant("2019-02-01")),
+          appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
         ),
         withHolder(businessName = "business-name")
       )
@@ -247,14 +246,14 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
     val storedAttachment =
       StoredAttachment(
         "id",
-        public                 = true,
-        operator               = None,
-        url                    = None,
-        fileName               = Some("filename"),
-        mimeType               = Some("image/png"),
-        scanStatus             = Some(ScanStatus.READY),
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        public = true,
+        operator = None,
+        url = None,
+        fileName = Some("filename"),
+        mimeType = Some("image/png"),
+        scanStatus = Some(ScanStatus.READY),
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = true
       )
 
@@ -271,9 +270,9 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         withStatus(CaseStatus.OPEN),
         withDecision(
           bindingCommodityCode = "commodity-code",
-          effectiveStartDate   = Some(instant("2019-01-01")),
-          effectiveEndDate     = Some(instant("2019-02-01")),
-          appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+          effectiveStartDate = Some(instant("2019-01-01")),
+          effectiveEndDate = Some(instant("2019-02-01")),
+          appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
         ),
         withHolder(businessName = "business-name")
       )
@@ -281,14 +280,14 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
     val storedAttachment =
       StoredAttachment(
         "id",
-        public                 = true,
-        operator               = None,
-        url                    = Some("url"),
-        fileName               = Some("filename"),
-        mimeType               = Some("text/plain"),
-        scanStatus             = None,
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        public = true,
+        operator = None,
+        url = Some("url"),
+        fileName = Some("filename"),
+        mimeType = Some("text/plain"),
+        scanStatus = None,
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = true
       )
 
@@ -305,9 +304,9 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
         withStatus(CaseStatus.OPEN),
         withDecision(
           bindingCommodityCode = "commodity-code",
-          effectiveStartDate   = Some(instant("2019-01-01")),
-          effectiveEndDate     = Some(instant("2019-02-01")),
-          appeal               = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
+          effectiveStartDate = Some(instant("2019-01-01")),
+          effectiveEndDate = Some(instant("2019-02-01")),
+          appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1))
         ),
         withHolder(businessName = "business-name")
       )
@@ -315,14 +314,14 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
     val storedAttachment =
       StoredAttachment(
         "id",
-        public                 = true,
-        operator               = None,
-        url                    = Some("url"),
-        fileName               = Some("filename"),
-        mimeType               = Some("text/plain"),
-        scanStatus             = Some(ScanStatus.FAILED),
-        timestamp              = Instant.now(),
-        description            = Some("test description"),
+        public = true,
+        operator = None,
+        url = Some("url"),
+        fileName = Some("filename"),
+        mimeType = Some("text/plain"),
+        scanStatus = Some(ScanStatus.FAILED),
+        timestamp = Instant.now(),
+        description = Some("test description"),
         shouldPublishToRulings = true
       )
 

@@ -62,10 +62,10 @@ class CorrespondenceController @Inject() (
     }
 
   def renderView(
-    fileId: Option[String]               = None,
+    fileId: Option[String] = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
-    messageForm: Form[MessageFormData]   = MessageForm.form,
-    uploadForm: Form[String]             = UploadAttachmentForm.form
+    messageForm: Form[MessageFormData] = MessageForm.form,
+    uploadForm: Form[String] = UploadAttachmentForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val correspondenceCase: Case = request.`case`
     val uploadFileId             = fileId.getOrElse(UUID.randomUUID().toString)
@@ -91,25 +91,26 @@ class CorrespondenceController @Inject() (
 
     for {
       allEvents <- eventsService
-                    .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.allEvents))
+                     .getFilteredEvents(correspondenceCase.reference, NoPagination(), Some(EventType.allEvents))
       queues      <- queuesService.getAll
       attachments <- fileService.getAttachments(correspondenceCase)
-      activityTab = ActivityViewModel
-        .fromCase(correspondenceCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
+      activityTab =
+        ActivityViewModel
+          .fromCase(correspondenceCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
       attachmentsTab = AttachmentsTabViewModel.fromCase(correspondenceCase, attachments)
       sampleTab = SampleStatusTabViewModel(
-        correspondenceCase.reference,
-        correspondenceCase.sample,
-        allEvents.filter(event => isSampleEvents(event.details.`type`))
-      )
+                    correspondenceCase.reference,
+                    correspondenceCase.sample,
+                    allEvents.filter(event => isSampleEvents(event.details.`type`))
+                  )
       initiateResponse <- fileService.initiate(
-                           FileStoreInitiateRequest(
-                             id              = Some(uploadFileId),
-                             successRedirect = Some(fileUploadSuccessRedirect),
-                             errorRedirect   = Some(fileUploadErrorRedirect),
-                             maxFileSize     = appConfig.fileUploadMaxSize
-                           )
-                         )
+                            FileStoreInitiateRequest(
+                              id = Some(uploadFileId),
+                              successRedirect = Some(fileUploadSuccessRedirect),
+                              errorRedirect = Some(fileUploadErrorRedirect),
+                              maxFileSize = appConfig.fileUploadMaxSize
+                            )
+                          )
     } yield correspondenceView(
       correspondenceViewModel,
       caseDetailsTab,

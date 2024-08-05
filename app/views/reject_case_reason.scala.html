@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.NoTabSelected
@@ -31,7 +30,7 @@
         warning: warning
 )
 
-@(c: Case, form: Form[CaseRejection])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[CaseRejection])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.reject.case.reason", c.application.goodsName),
@@ -44,7 +43,7 @@
 
     @helper.form(
         action = routes.RejectCaseController.postRejectCaseReason(c.reference),
-        'enctype -> "multipart/form-data",
+        Symbol("enctype") -> "multipart/form-data",
         Symbol("id") -> "reject_case",
         Symbol("novalidate") -> "novalidate"
     ) {

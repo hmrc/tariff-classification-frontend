@@ -34,7 +34,7 @@ class SessionRepository @Inject() (config: Configuration, mongoComponent: MongoC
     extends PlayMongoRepository[DatedCacheMap](
       mongoComponent = mongoComponent,
       collectionName = "api-cache",
-      domainFormat   = DatedCacheMap.formats,
+      domainFormat = DatedCacheMap.formats,
       indexes = Seq(
         IndexModel(
           keys = ascending("lastUpdated"),
@@ -48,9 +48,9 @@ class SessionRepository @Inject() (config: Configuration, mongoComponent: MongoC
   def upsert(cm: CacheMap): Future[Boolean] =
     collection
       .replaceOne(
-        filter      = byId(cm.id),
+        filter = byId(cm.id),
         replacement = DatedCacheMap(cm),
-        options     = ReplaceOptions().upsert(true)
+        options = ReplaceOptions().upsert(true)
       )
       .toFuture()
       .map(_.wasAcknowledged())

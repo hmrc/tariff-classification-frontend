@@ -38,8 +38,8 @@ trait RenderCaseAction extends I18nSupport { this: FrontendController =>
 
   protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = true
 
-  protected def getCaseAndRenderView(caseReference: String, toHtml: Case => Future[HtmlFormat.Appendable])(
-    implicit request: AuthenticatedCaseRequest[_]
+  protected def getCaseAndRenderView(caseReference: String, toHtml: Case => Future[HtmlFormat.Appendable])(implicit
+    request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
     request.`case` match {
       case c: Case if isValidCase(c)(request) => toHtml(c).map(Ok(_))
@@ -74,8 +74,8 @@ trait RenderCaseAction extends I18nSupport { this: FrontendController =>
       defaultRedirect()
     }
 
-  protected def renderView(valid: Case => Boolean, toHtml: Case => Future[HtmlFormat.Appendable])(
-    implicit request: AuthenticatedCaseRequest[_]
+  protected def renderView(valid: Case => Boolean, toHtml: Case => Future[HtmlFormat.Appendable])(implicit
+    request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
     if (valid(request.`case`)) {
       toHtml(request.`case`).map(Ok(_))
@@ -83,8 +83,8 @@ trait RenderCaseAction extends I18nSupport { this: FrontendController =>
       defaultRedirect()
     }
 
-  protected def getCaseAndRespond(caseReference: String, toResult: Case => Future[Result])(
-    implicit request: AuthenticatedCaseRequest[_]
+  protected def getCaseAndRespond(caseReference: String, toResult: Case => Future[Result])(implicit
+    request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
     request.`case` match {
       case c: Case if isValidCase(c)(request) => toResult(c)

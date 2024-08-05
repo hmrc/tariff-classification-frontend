@@ -85,7 +85,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
       val doc = view(appeal_details(appealTab))
 
-      doc                                                      should containElementWithID("appeal_details-extended_use_status")
+      doc should containElementWithID("appeal_details-extended_use_status")
       doc.getElementById("appeal_details-extended_use_status") should containText("Yes")
     }
 
@@ -94,7 +94,7 @@ class AppealDetailsViewSpec extends ViewSpec {
       val c         = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
       val appealTab = AppealTabViewModel.fromCase(c).get
 
-      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
+      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.APPEAL_CASE), messages))
 
       doc should containElementWithID("appeal_details-add_new")
     }
@@ -104,7 +104,7 @@ class AppealDetailsViewSpec extends ViewSpec {
       val c         = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
       val appealTab = AppealTabViewModel.fromCase(c).get
 
-      val doc = view(appeal_details(appealTab)(operatorRequest, messages, appConfig))
+      val doc = view(appeal_details(appealTab)(operatorRequest, messages))
 
       doc shouldNot containElementWithID("appeal_details-add_new")
     }
@@ -118,7 +118,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
       val appealTab = AppealTabViewModel.fromCase(c).get
 
-      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.APPEAL_CASE), messages, appConfig))
+      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.APPEAL_CASE), messages))
 
       doc should containElementWithID("appeal_details-0-change-status")
     }
@@ -132,7 +132,7 @@ class AppealDetailsViewSpec extends ViewSpec {
 
       val appealTab = AppealTabViewModel.fromCase(c).get
 
-      val doc = view(appeal_details(appealTab)(operatorRequest, messages, appConfig))
+      val doc = view(appeal_details(appealTab)(operatorRequest, messages))
 
       doc shouldNot containElementWithID("change-status-0")
     }
@@ -142,7 +142,7 @@ class AppealDetailsViewSpec extends ViewSpec {
       val c         = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
       val appealTab = AppealTabViewModel.fromCase(c).get
 
-      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.EXTENDED_USE), messages, appConfig))
+      val doc = view(appeal_details(appealTab)(requestWithPermissions(Permission.EXTENDED_USE), messages))
 
       doc should containElementWithID("appeal_details-extended_use-change")
     }
@@ -152,7 +152,7 @@ class AppealDetailsViewSpec extends ViewSpec {
       val c         = aCase(withDecision(), withStatus(CaseStatus.CANCELLED))
       val appealTab = AppealTabViewModel.fromCase(c).get
 
-      val doc = view(appeal_details(appealTab)(operatorRequest, messages, appConfig))
+      val doc = view(appeal_details(appealTab)(operatorRequest, messages))
 
       doc shouldNot containElementWithID("appeal_details-extended_use-change")
     }

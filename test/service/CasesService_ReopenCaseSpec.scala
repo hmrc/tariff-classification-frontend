@@ -56,7 +56,8 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit)
+    reset(connector)
+    reset(audit)
   }
 
   "Reopen a Case" should {

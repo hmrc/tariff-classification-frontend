@@ -50,18 +50,19 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val miscellaneousController  = mock[MiscellaneousController]
   private val connector                = mock[BindingTariffClassificationConnector]
 
-  override protected def beforeEach(): Unit =
-    reset(
-      keywordsService,
-      eventService,
-      casesService,
-      event,
-      atarController,
-      liabilityController,
-      correspondenceController,
-      miscellaneousController,
-      connector
-    )
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+
+    reset(keywordsService)
+    reset(eventService)
+    reset(casesService)
+    reset(event)
+    reset(atarController)
+    reset(liabilityController)
+    reset(correspondenceController)
+    reset(miscellaneousController)
+    reset(connector)
+  }
 
   private def controller(c: Case) = new CaseController(
     new SuccessfulRequestActions(playBodyParsers, operator, c = c),
@@ -341,7 +342,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   "Case addNote" should {
     val aLiabilityCase = Cases.liabilityCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
-    val anAtarCase     = Cases.btiCaseExample.copy(assignee       = Some(Cases.operatorWithAddAttachment))
+    val anAtarCase     = Cases.btiCaseExample.copy(assignee = Some(Cases.operatorWithAddAttachment))
 
     "add a new note when a case note is provided" in {
       val aNote = "This is a note"
@@ -374,7 +375,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result: Future[Result] =
         controller(aLiabilityCase, Set(Permission.ADD_NOTE)).addNote(aLiabilityCase.reference)(fakeReq)
 
-      status(result)          shouldBe BAD_REQUEST
+      status(result)        shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
       verifyNoMoreInteractions(eventService)
@@ -394,7 +395,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result: Future[Result] =
         controller(anAtarCase, Set(Permission.ADD_NOTE)).addNote(anAtarCase.reference)(fakeReq)
 
-      status(result)          shouldBe BAD_REQUEST
+      status(result)        shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
       verifyNoMoreInteractions(eventService)
@@ -404,7 +405,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val aNote                  = "This is a note"
       val fakeReq                = newFakePOSTRequestWithCSRF(Map("note" -> aNote))
       val result: Future[Result] = controller(aLiabilityCase, Set()).addNote(aLiabilityCase.reference)(fakeReq)
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -415,7 +416,9 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "redirect back to display case if form submitted successfully" in {
       val keyword = "pajamas"
 
-      when(keywordsService.addKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])) thenReturn Future(
+      when(
+        keywordsService.addKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])
+      ) thenReturn Future(
         aCase
       )
 
@@ -441,7 +444,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result: Future[Result] =
         controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(fakeReq)
 
-      status(result)          shouldBe BAD_REQUEST
+      status(result)        shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
       verifyNoMoreInteractions(keywordsService)
@@ -451,7 +454,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val keyword                = "pajamas"
       val fakeReq                = newFakePOSTRequestWithCSRF(Map("keyword" -> keyword))
       val result: Future[Result] = controller(aCase, Set()).addKeyword(aCase.reference)(fakeReq)
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -463,7 +466,9 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val keyword = "llamas"
       val fakeReq = newFakeGETRequestWithCSRF()
 
-      when(keywordsService.removeKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])) thenReturn Future(
+      when(
+        keywordsService.removeKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])
+      ) thenReturn Future(
         aCase
       )
 
@@ -478,7 +483,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val keyword                = "llamas"
       val fakeReq                = newFakeGETRequestWithCSRF()
       val result: Future[Result] = controller(aCase, Set()).removeKeyword(aCase.reference, keyword)(fakeReq)
-      status(result)               shouldBe SEE_OTHER
+      status(result)             shouldBe SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -489,12 +494,12 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val anExampleCorrespondenceCase =
       Cases.correspondenceCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
     val updatedCorrespondenceCase = aCorrespondenceCase().copy(
-      assignee    = Some(Cases.operatorWithPermissions),
+      assignee = Some(Cases.operatorWithPermissions),
       application = correspondenceExample.copy(messagesLogged = List(aMessage))
     )
     val anExampleMiscellaneousCase = Cases.miscellaneousCaseExample.copy(assignee = Some(Cases.operatorWithPermissions))
     val updatedMiscellaneousCase = aMiscellaneousCase().copy(
-      assignee    = Some(Cases.operatorWithPermissions),
+      assignee = Some(Cases.operatorWithPermissions),
       application = miscExample.copy(messagesLogged = List(aMessage))
     )
 
@@ -544,7 +549,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_MESSAGE))
         .addMessage(anExampleCorrespondenceCase.reference)(fakeReq)
 
-      status(result)          shouldBe BAD_REQUEST
+      status(result)        shouldBe BAD_REQUEST
       contentAsString(result) should include("error")
 
       verifyNoMoreInteractions(casesService)
@@ -555,7 +560,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       val fakeReq   = newFakePOSTRequestWithCSRF(Map("message" -> aMessages))
       val result: Future[Result] =
         controller(anExampleCorrespondenceCase, Set()).addMessage(anExampleCorrespondenceCase.reference)(fakeReq)
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }

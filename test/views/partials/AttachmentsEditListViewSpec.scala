@@ -40,11 +40,11 @@ class AttachmentsEditListViewSpec extends ViewSpec {
 
     "Render attachments" in {
       val attachment = Cases.storedAttachment.copy(
-        id         = "FILE_ID",
-        fileName   = Some("name"),
-        url        = Some("url"),
+        id = "FILE_ID",
+        fileName = Some("name"),
+        url = Some("url"),
         scanStatus = Some(ScanStatus.READY),
-        timestamp  = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
+        timestamp = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
       val doc = view(attachments_edit_list("MODULE", Seq(attachment), caseRef = caseRef))

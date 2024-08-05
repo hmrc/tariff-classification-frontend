@@ -169,10 +169,9 @@ class ConstraintsSpec extends ModelsBaseSpec with Constraints {
         date <- datesBetween(LocalDate.of(2000, 1, 1), max)
       } yield (max, date)
 
-      forAll(gen) {
-        case (max, date) =>
-          val result = maxDate(max, "error.future")(date)
-          result shouldEqual Valid
+      forAll(gen) { case (max, date) =>
+        val result = maxDate(max, "error.future")(date)
+        result shouldEqual Valid
       }
     }
 
@@ -183,10 +182,9 @@ class ConstraintsSpec extends ModelsBaseSpec with Constraints {
         date <- datesBetween(max.plusDays(1), LocalDate.of(3000, 1, 2))
       } yield (max, date)
 
-      forAll(gen) {
-        case (max, date) =>
-          val result = maxDate(max, "error.future", "foo")(date)
-          result shouldEqual Invalid("error.future", "foo")
+      forAll(gen) { case (max, date) =>
+        val result = maxDate(max, "error.future", "foo")(date)
+        result shouldEqual Invalid("error.future", "foo")
       }
     }
   }

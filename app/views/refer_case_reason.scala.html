@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.ApplicationType._
 @import models.request.AuthenticatedRequest
@@ -30,7 +29,7 @@
         backLink: back_link
 )
 
-@(c: Case, form: Form[CaseReferral])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[CaseReferral])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @inputTextContent(labelText: String) = {
 @input_text(
@@ -39,9 +38,6 @@
 )
 }
 
-@isChecked(f1: Option[String], f2: Option[String], matchText: String) = @{
-    matchText == f1.getOrElse("") || matchText == f2.getOrElse("")
-}
 @contents = {
     <h2 class="govuk-heading-m">
         @messages("change_case_status.referred.title")
@@ -57,7 +53,7 @@
 
     @case_heading( c, messageKey = Some("change_case_status.referred.reason.heading"))
 
-    @helper.form(action = routes.ReferCaseController.postReferCaseReason(c.reference), Symbol("id") -> "refer_case", 'enctype -> "multipart/form-data", Symbol("novalidate") -> "novalidate") {
+    @helper.form(action = routes.ReferCaseController.postReferCaseReason(c.reference), Symbol("id") -> "refer_case", Symbol("enctype") -> "multipart/form-data", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
         @input_radiogroup(

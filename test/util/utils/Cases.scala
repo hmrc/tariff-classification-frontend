@@ -89,7 +89,7 @@ object Cases {
     None,
     sampleToBeProvided = false,
     sampleToBeReturned = false,
-    applicationPdf     = Some(Attachment("id", public = false, Some(Operator("1", None))))
+    applicationPdf = Some(Attachment("id", public = false, Some(Operator("1", None))))
   )
   val simpleBtiApplicationExample: BTIApplication = BTIApplication(
     eoriDetailsExample,
@@ -107,7 +107,7 @@ object Cases {
     None,
     sampleToBeProvided = false,
     sampleToBeReturned = false,
-    applicationPdf     = None
+    applicationPdf = None
   )
   val decision: Decision = Decision(
     "040900",
@@ -282,7 +282,7 @@ object Cases {
   )
   val expiredRuling: Decision = decision.copy(
     effectiveStartDate = Some(Instant.now().plus(-20, DAYS)),
-    effectiveEndDate   = Some(Instant.now().plus(-10, DAYS))
+    effectiveEndDate = Some(Instant.now().plus(-10, DAYS))
   )
   val btiCaseWithExpiredRuling: Case =
     btiCaseExample.copy(status = CaseStatus.COMPLETED, decision = Some(expiredRuling))
@@ -357,8 +357,8 @@ object Cases {
     "queue Name"
   )
   val operatorWithCompleteCasePermission: Operator = Operator(
-    id          = "0",
-    name        = Some("liability op name"),
+    id = "0",
+    name = Some("liability op name"),
     permissions = Set(Permission.COMPLETE_CASE, Permission.REOPEN_CASE)
   )
   val operatorWithKeywordsPermissions: Operator =
@@ -368,8 +368,8 @@ object Cases {
   val operatorWithoutCompleteCasePermission: Operator =
     Operator(id = "0", name = Some("liability op name"), permissions = Set(Permission.VIEW_CASES))
   val operatorWithReleaseOrSuppressPermissions: Operator = Operator(
-    id          = "0",
-    name        = Some("liability op name"),
+    id = "0",
+    name = Some("liability op name"),
     permissions = Set(Permission.RELEASE_CASE, Permission.SUPPRESS_CASE)
   )
 
@@ -398,16 +398,16 @@ object Cases {
 
   val liabilityWithCompleteDecision: LiabilityOrder = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
-    status               = LiabilityStatus.LIVE,
-    traderName           = "trader-name",
-    goodName             = Some("good-name"),
-    entryDate            = Some(Instant.EPOCH),
-    entryNumber          = Some("entry-no"),
-    traderCommodityCode  = Some("0200000000"),
+    status = LiabilityStatus.LIVE,
+    traderName = "trader-name",
+    goodName = Some("good-name"),
+    entryDate = Some(Instant.EPOCH),
+    entryNumber = Some("entry-no"),
+    traderCommodityCode = Some("0200000000"),
     officerCommodityCode = Some("0100000000"),
-    btiReference         = Some("btiReferenceN"),
-    repaymentClaim       = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
-    dateOfReceipt        = Some(Instant.EPOCH),
+    btiReference = Some("btiReferenceN"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    dateOfReceipt = Some(Instant.EPOCH),
     traderContactDetails = Some(
       TraderContactDetails(
         email = Some("trader@email.com"),
@@ -415,15 +415,15 @@ object Cases {
         address = Some(
           Address(
             buildingAndStreet = "STREET 1",
-            townOrCity        = "Town",
-            county            = Some("County"),
-            postCode          = Some("postcode")
+            townOrCity = "Town",
+            county = Some("County"),
+            postCode = Some("postcode")
           )
         )
       )
     ),
     agentName = Some("agent"),
-    port      = Some("port")
+    port = Some("port")
   )
 
   val aCaseWithCompleteDecision: Case = Cases.liabilityCaseExample
@@ -431,10 +431,10 @@ object Cases {
 
   def attachment(id: String = UUID.randomUUID().toString): Attachment =
     Attachment(
-      id                     = id,
-      public                 = true,
-      operator               = Some(Operator("0", Some("operatorName"))),
-      timestamp              = Instant.now(),
+      id = id,
+      public = true,
+      operator = Some(Operator("0", Some("operatorName"))),
+      timestamp = Instant.now(),
       shouldPublishToRulings = true
     )
 
@@ -460,36 +460,36 @@ object Cases {
     _.copy(application = miscExample)
 
   def withLiabilityApplication(
-    contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
-    status: LiabilityStatus              = LiabilityStatus.NON_LIVE,
-    traderName: String                   = "trader",
-    goodName: Option[String]             = Some("Goods Name"),
-    entryDate: Option[Instant]           = Some(Instant.EPOCH),
-    entryNumber: Option[String]          = Some("1234567"),
-    traderCommodityCode: Option[String]  = Some("0100000000"),
+    contact: Contact = Contact("name", "email@email.com", Some("1234")),
+    status: LiabilityStatus = LiabilityStatus.NON_LIVE,
+    traderName: String = "trader",
+    goodName: Option[String] = Some("Goods Name"),
+    entryDate: Option[Instant] = Some(Instant.EPOCH),
+    entryNumber: Option[String] = Some("1234567"),
+    traderCommodityCode: Option[String] = Some("0100000000"),
     officerCommodityCode: Option[String] = Some("0200000000")
   ): Case => Case =
     _.copy(application =
       liabilityApplicationExample.copy(
-        contact              = contact,
-        status               = status,
-        traderName           = traderName,
-        goodName             = goodName,
-        entryDate            = entryDate,
-        entryNumber          = entryNumber,
-        traderCommodityCode  = traderCommodityCode,
+        contact = contact,
+        status = status,
+        traderName = traderName,
+        goodName = goodName,
+        entryDate = entryDate,
+        entryNumber = entryNumber,
+        traderCommodityCode = traderCommodityCode,
         officerCommodityCode = officerCommodityCode
       )
     )
 
   def liabilityApplicationWithC592(
-    contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
-    status: LiabilityStatus              = LiabilityStatus.NON_LIVE,
-    traderName: String                   = "trader",
-    goodName: Option[String]             = Some("Goods Name"),
-    entryDate: Option[Instant]           = Some(Instant.now.plus(-20, DAYS)),
-    entryNumber: Option[String]          = Some("1234567"),
-    traderCommodityCode: Option[String]  = Some("0100000000"),
+    contact: Contact = Contact("name", "email@email.com", Some("1234")),
+    status: LiabilityStatus = LiabilityStatus.NON_LIVE,
+    traderName: String = "trader",
+    goodName: Option[String] = Some("Goods Name"),
+    entryDate: Option[Instant] = Some(Instant.now.plus(-20, DAYS)),
+    entryNumber: Option[String] = Some("1234567"),
+    traderCommodityCode: Option[String] = Some("0100000000"),
     officerCommodityCode: Option[String] = Some("0200000000"),
     traderDetails: Option[TraderContactDetails] = Some(
       TraderContactDetails(
@@ -498,9 +498,9 @@ object Cases {
         address = Some(
           Address(
             buildingAndStreet = "STREET 1",
-            townOrCity        = "Town",
-            county            = Some("County"),
-            postCode          = Some("NE10 0HW")
+            townOrCity = "Town",
+            county = Some("County"),
+            postCode = Some("NE10 0HW")
           )
         )
       )
@@ -508,37 +508,37 @@ object Cases {
   ): Case => Case =
     _.copy(application =
       liabilityApplicationExample.copy(
-        contact              = contact,
-        status               = status,
-        traderName           = traderName,
-        goodName             = goodName,
-        entryDate            = entryDate,
-        entryNumber          = entryNumber,
-        traderCommodityCode  = traderCommodityCode,
+        contact = contact,
+        status = status,
+        traderName = traderName,
+        goodName = goodName,
+        entryDate = entryDate,
+        entryNumber = entryNumber,
+        traderCommodityCode = traderCommodityCode,
         officerCommodityCode = officerCommodityCode,
         traderContactDetails = traderDetails
       )
     )
 
   def withIncompleteLiabilityApplication(
-    contact: Contact                     = Contact("name", "email@email.com", Some("1234")),
-    status: LiabilityStatus              = LiabilityStatus.NON_LIVE,
-    traderName: String                   = "trader",
-    goodName: Option[String]             = Some("Goods Name"),
-    entryDate: Option[Instant]           = Some(Instant.EPOCH),
-    entryNumber: Option[String]          = Some("1234567"),
-    traderCommodityCode: Option[String]  = Some("0100000000"),
+    contact: Contact = Contact("name", "email@email.com", Some("1234")),
+    status: LiabilityStatus = LiabilityStatus.NON_LIVE,
+    traderName: String = "trader",
+    goodName: Option[String] = Some("Goods Name"),
+    entryDate: Option[Instant] = Some(Instant.EPOCH),
+    entryNumber: Option[String] = Some("1234567"),
+    traderCommodityCode: Option[String] = Some("0100000000"),
     officerCommodityCode: Option[String] = Some("0200000000")
   ): Case => Case =
     _.copy(application =
       liabilityApplicationExample.copy(
-        contact              = contact,
-        status               = status,
-        traderName           = traderName,
-        goodName             = goodName,
-        entryDate            = entryDate,
-        entryNumber          = entryNumber,
-        traderCommodityCode  = traderCommodityCode,
+        contact = contact,
+        status = status,
+        traderName = traderName,
+        goodName = goodName,
+        entryDate = entryDate,
+        entryNumber = entryNumber,
+        traderCommodityCode = traderCommodityCode,
         officerCommodityCode = officerCommodityCode
       )
     )
@@ -569,43 +569,43 @@ object Cases {
     _.copy(queueId = None)
 
   def withBTIDetails(
-    offline: Boolean                        = false,
-    goodName: String                        = "good name",
-    goodDescription: String                 = "good description",
+    offline: Boolean = false,
+    goodName: String = "good name",
+    goodDescription: String = "good description",
     confidentialInformation: Option[String] = None,
-    otherInformation: Option[String]        = None,
-    reissuedBTIReference: Option[String]    = None,
-    relatedBTIReference: Option[String]     = None,
-    knownLegalProceedings: Option[String]   = None,
-    envisagedCommodityCode: Option[String]  = None,
-    sampleToBeProvided: Boolean             = false,
-    sampleToBeReturned: Boolean             = false
+    otherInformation: Option[String] = None,
+    reissuedBTIReference: Option[String] = None,
+    relatedBTIReference: Option[String] = None,
+    knownLegalProceedings: Option[String] = None,
+    envisagedCommodityCode: Option[String] = None,
+    sampleToBeProvided: Boolean = false,
+    sampleToBeReturned: Boolean = false
   ): Case => Case = { c =>
     c.copy(application =
       c.application.asATAR.copy(
-        offline                 = offline,
-        goodName                = goodName,
-        goodDescription         = goodDescription,
+        offline = offline,
+        goodName = goodName,
+        goodDescription = goodDescription,
         confidentialInformation = confidentialInformation,
-        otherInformation        = otherInformation,
-        reissuedBTIReference    = reissuedBTIReference,
-        relatedBTIReference     = relatedBTIReference,
-        knownLegalProceedings   = knownLegalProceedings,
-        envisagedCommodityCode  = envisagedCommodityCode,
-        sampleToBeProvided      = sampleToBeProvided,
-        sampleToBeReturned      = sampleToBeReturned
+        otherInformation = otherInformation,
+        reissuedBTIReference = reissuedBTIReference,
+        relatedBTIReference = relatedBTIReference,
+        knownLegalProceedings = knownLegalProceedings,
+        envisagedCommodityCode = envisagedCommodityCode,
+        sampleToBeProvided = sampleToBeProvided,
+        sampleToBeReturned = sampleToBeReturned
       )
     )
   }
 
   def withHolder(
-    eori: String         = "eori",
+    eori: String = "eori",
     businessName: String = "business name",
     addressLine1: String = "address line 1",
     addressLine2: String = "address line 2",
     addressLine3: String = "address line 3",
-    postcode: String     = "postcode",
-    country: String      = "country"
+    postcode: String = "postcode",
+    country: String = "country"
   ): Case => Case = { c =>
     c.copy(application =
       c.application.asATAR.copy(holder =
@@ -624,22 +624,22 @@ object Cases {
 
   def withOptionalApplicationFields(
     confidentialInformation: Option[String] = None,
-    otherInformation: Option[String]        = None,
-    reissuedBTIReference: Option[String]    = None,
-    relatedBTIReference: Option[String]     = None,
-    relatedBTIReferences: List[String]      = Nil,
-    knownLegalProceedings: Option[String]   = None,
-    envisagedCommodityCode: Option[String]  = None
+    otherInformation: Option[String] = None,
+    reissuedBTIReference: Option[String] = None,
+    relatedBTIReference: Option[String] = None,
+    relatedBTIReferences: List[String] = Nil,
+    knownLegalProceedings: Option[String] = None,
+    envisagedCommodityCode: Option[String] = None
   ): Case => Case = { c =>
     c.copy(
       application = c.application.asATAR.copy(
         confidentialInformation = confidentialInformation,
-        otherInformation        = otherInformation,
-        reissuedBTIReference    = reissuedBTIReference,
-        relatedBTIReference     = relatedBTIReference,
-        relatedBTIReferences    = relatedBTIReferences,
-        knownLegalProceedings   = knownLegalProceedings,
-        envisagedCommodityCode  = envisagedCommodityCode
+        otherInformation = otherInformation,
+        reissuedBTIReference = reissuedBTIReference,
+        relatedBTIReference = relatedBTIReference,
+        relatedBTIReferences = relatedBTIReferences,
+        knownLegalProceedings = knownLegalProceedings,
+        envisagedCommodityCode = envisagedCommodityCode
       )
     )
   }
@@ -653,13 +653,13 @@ object Cases {
   def withoutAgent(): Case => Case = { c => c.copy(application = c.application.asATAR.copy(agent = None)) }
 
   def withAgent(
-    eori: String               = "agent-eori",
-    businessName: String       = "agent-business",
-    addressLine1: String       = "agent-address1",
-    addressLine2: String       = "agent-address2",
-    addressLine3: String       = "agent-address3",
-    postcode: String           = "agent-postcode",
-    country: String            = "agent-country",
+    eori: String = "agent-eori",
+    businessName: String = "agent-business",
+    addressLine1: String = "agent-address1",
+    addressLine2: String = "agent-address2",
+    addressLine3: String = "agent-address3",
+    postcode: String = "agent-postcode",
+    country: String = "agent-country",
     letter: Option[Attachment] = None
   ): Case => Case = { c =>
     val eoriDetails  = EORIDetails(eori, businessName, addressLine1, addressLine2, addressLine3, postcode, country)
@@ -680,17 +680,17 @@ object Cases {
     _.copy(decision = None)
 
   def withDecision(
-    bindingCommodityCode: String                 = "decision-commodity-code",
-    effectiveStartDate: Option[Instant]          = Some(Instant.now()),
-    effectiveEndDate: Option[Instant]            = Some(Instant.now().plus(30, DAYS)),
-    justification: String                        = "decision-justification",
-    goodsDescription: String                     = "decision-goods-description",
-    methodSearch: Option[String]                 = Some("search"),
-    methodExclusion: Option[String]              = Some("exclusion"),
+    bindingCommodityCode: String = "decision-commodity-code",
+    effectiveStartDate: Option[Instant] = Some(Instant.now()),
+    effectiveEndDate: Option[Instant] = Some(Instant.now().plus(30, DAYS)),
+    justification: String = "decision-justification",
+    goodsDescription: String = "decision-goods-description",
+    methodSearch: Option[String] = Some("search"),
+    methodExclusion: Option[String] = Some("exclusion"),
     methodCommercialDenomination: Option[String] = None,
-    appeal: Seq[Appeal]                          = Seq.empty,
-    cancellation: Option[Cancellation]           = None,
-    explanation: Option[String]                  = Some("explanation")
+    appeal: Seq[Appeal] = Seq.empty,
+    cancellation: Option[Cancellation] = None,
+    explanation: Option[String] = Some("explanation")
   ): Case => Case =
     _.copy(decision =
       Some(
@@ -711,17 +711,17 @@ object Cases {
     )
 
   def withIncompleteDecision(
-    bindingCommodityCode: String                 = "decision-commodity-code",
-    effectiveStartDate: Option[Instant]          = Some(Instant.now()),
-    effectiveEndDate: Option[Instant]            = Some(Instant.now().plus(30, DAYS)),
-    justification: String                        = "decision-justification",
-    goodsDescription: String                     = "",
-    methodSearch: Option[String]                 = Some("search"),
-    methodExclusion: Option[String]              = Some("exclusion"),
+    bindingCommodityCode: String = "decision-commodity-code",
+    effectiveStartDate: Option[Instant] = Some(Instant.now()),
+    effectiveEndDate: Option[Instant] = Some(Instant.now().plus(30, DAYS)),
+    justification: String = "decision-justification",
+    goodsDescription: String = "",
+    methodSearch: Option[String] = Some("search"),
+    methodExclusion: Option[String] = Some("exclusion"),
     methodCommercialDenomination: Option[String] = None,
-    appeal: Seq[Appeal]                          = Seq.empty,
-    cancellation: Option[Cancellation]           = None,
-    explanation: Option[String]                  = Some("explanation")
+    appeal: Seq[Appeal] = Seq.empty,
+    cancellation: Option[Cancellation] = None,
+    explanation: Option[String] = Some("explanation")
   ): Case => Case =
     _.copy(decision =
       Some(
