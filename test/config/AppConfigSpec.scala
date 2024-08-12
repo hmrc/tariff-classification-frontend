@@ -25,7 +25,7 @@ class AppConfigSpec extends SpecBase {
   "Config" should {
 
     "Build report url" in {
-      realAppConfig.reportAProblemPartialUrl shouldBe "http://localhost:9250/contact/problem_reports_ajax?service=tariff-classification-frontend"
+      realAppConfig.reportAProblemPartialUrl shouldBe "http://localhost:9250/contact/problem_reports_service=tariff-classification-frontend"
     }
 
     "Build report non-json url" in {

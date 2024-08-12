@@ -16,6 +16,7 @@
 
 package config
 
+import com.sun.imageio.plugins.common.I18N.getString
 import play.api.{Configuration, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -34,8 +35,8 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val teamEnrolment: String                  = config.get[String]("auth.enrolments.team")
   lazy val readOnlyEnrolment: String              = config.get[String]("auth.enrolments.read-only")
   lazy val checkEnrolment: Boolean                = config.get[String]("auth.enrolments.enabled").toBoolean
-  lazy val reportAProblemPartialUrl               = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  lazy val reportAProblemNonJSUrl                 = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  lazy val reportAProblemPartialUrl: String       = getString("reportAProblemPartialUrl")
+  lazy val reportAProblemNonJSUrl: String         = getString("reportAProblemNonJSUrl")
   lazy val bindingTariffClassificationUrl: String = servicesConfig.baseUrl("binding-tariff-classification")
   lazy val emailUrl: String                       = servicesConfig.baseUrl("email")
   lazy val emailRendererUrl: String               = servicesConfig.baseUrl("hmrc-email-renderer")
