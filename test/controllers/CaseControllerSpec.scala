@@ -16,7 +16,7 @@
 
 package controllers
 
-import connector.BindingTariffClassificationConnector
+import connectors.BindingTariffClassificationConnector
 import controllers.v2.{AtarController, CorrespondenceController, LiabilityController, MiscellaneousController}
 import models._
 import models.forms.{ActivityFormData, MessageFormData}
@@ -29,7 +29,7 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import service._
+import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.Cases._

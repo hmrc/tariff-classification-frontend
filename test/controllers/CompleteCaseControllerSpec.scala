@@ -25,8 +25,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.Messages
 import play.api.mvc.Result
-import play.api.test.Helpers.{redirectLocation, _}
-import service.{CasesService, CommodityCodeService}
+import play.api.test.Helpers._
+import services.{CasesService, CommodityCodeService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.{complete_case, confirm_complete_case}

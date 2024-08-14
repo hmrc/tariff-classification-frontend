@@ -18,7 +18,7 @@ package config
 
 import com.google.inject.AbstractModule
 import controllers.actions._
-import service.{DataCacheService, MongoCacheService}
+import services.{DataCacheService, MongoCacheService}
 
 class Module extends AbstractModule {
 

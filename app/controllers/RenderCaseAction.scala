@@ -22,7 +22,7 @@ import _root_.config.AppConfig
 import models.Case
 import models.request.{AuthenticatedCaseRequest, AuthenticatedRequest}
 import play.twirl.api.HtmlFormat
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.Future.successful

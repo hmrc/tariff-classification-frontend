@@ -22,7 +22,7 @@ import models.{Case, Event, Permission}
 import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import service._
+import services._
 import utils.Cases.{aCase, withLiabilityApplication, withReference}
 import views.html.v2.atar_view
 

@@ -27,7 +27,7 @@ import models.viewmodels.managementtools.ReportingTabViewModel
 import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{QueuesService, ReportingService, UserService}
+import services.{QueuesService, ReportingService, UserService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools._

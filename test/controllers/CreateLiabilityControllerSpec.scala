@@ -24,7 +24,7 @@ import org.mockito.BDDMockito._
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.create_liability

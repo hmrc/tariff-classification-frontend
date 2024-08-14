@@ -36,7 +36,7 @@ import play.api.inject.{Binding, bind}
 import play.api.mvc.{PlayBodyParsers, Result}
 import play.api.test.Helpers._
 import play.twirl.api.{Html, HtmlFormat}
-import service._
+import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases.{aCase, withCorrespondenceApplication, withLiabilityApplication, withReference}
 import utils.{Cases, Events}

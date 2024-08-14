@@ -25,7 +25,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment}
-import service.{CasesService, FakeDataCacheService}
+import services.{CasesService, FakeDataCacheService}
 import utils.Cases
 import views.html.case_not_found
 

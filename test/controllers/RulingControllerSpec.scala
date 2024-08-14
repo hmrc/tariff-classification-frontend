@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, FileStoreService}
+import services.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.Cases._

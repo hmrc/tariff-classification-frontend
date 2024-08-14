@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, ManageKeywordsService}
+import services.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.case_not_found

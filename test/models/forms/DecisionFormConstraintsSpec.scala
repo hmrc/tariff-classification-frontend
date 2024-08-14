@@ -21,7 +21,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.data.Form.FromJsonMaxChars
 import play.api.libs.json.{JsObject, JsString, JsValue}
-import service.CommodityCodeService
+import services.CommodityCodeService
 
 class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 

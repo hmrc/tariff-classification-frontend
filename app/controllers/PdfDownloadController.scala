@@ -22,7 +22,7 @@ import models.Attachment
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, FileStoreService}
+import services.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

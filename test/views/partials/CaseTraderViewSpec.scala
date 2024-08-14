@@ -20,7 +20,7 @@ import models.request.AuthenticatedRequest
 import models.viewmodels.atar.ApplicantTabViewModel
 import models.{Permission, SampleStatus}
 import play.api.mvc.AnyContentAsEmpty
-import service.CountriesService
+import services.CountriesService
 import utils.Cases._
 import views.ViewMatchers._
 import views.ViewSpec
