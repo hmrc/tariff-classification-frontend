@@ -27,15 +27,10 @@ import scala.concurrent.duration.FiniteDuration
 @Singleton
 class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
 
-  private lazy val contactHost                  = config.getOptional[String]("contact-frontend.host").getOrElse("")
-  private lazy val contactFormServiceIdentifier = config.get[String]("appName")
-
   lazy val managerEnrolment: String               = config.get[String]("auth.enrolments.manager")
   lazy val teamEnrolment: String                  = config.get[String]("auth.enrolments.team")
   lazy val readOnlyEnrolment: String              = config.get[String]("auth.enrolments.read-only")
   lazy val checkEnrolment: Boolean                = config.get[String]("auth.enrolments.enabled").toBoolean
-  lazy val reportAProblemPartialUrl               = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  lazy val reportAProblemNonJSUrl                 = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val bindingTariffClassificationUrl: String = servicesConfig.baseUrl("binding-tariff-classification")
   lazy val emailUrl: String                       = servicesConfig.baseUrl("email")
   lazy val emailRendererUrl: String               = servicesConfig.baseUrl("hmrc-email-renderer")
