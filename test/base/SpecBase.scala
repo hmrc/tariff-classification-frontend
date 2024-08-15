@@ -23,10 +23,9 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.Injector
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.Files.TemporaryFileCreator
-import play.api.libs.ws.WSClient
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
@@ -68,8 +67,6 @@ trait SpecBase
   lazy val defaultPlayBodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
   lazy val injector: Injector                          = app.injector
   lazy val metrics: MetricRegistry                     = new MetricRegistry
-
-  lazy val ws: WSClient = injector.instanceOf[WSClient]
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 

@@ -30,7 +30,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 
 import java.time.Instant
-import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
 class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {

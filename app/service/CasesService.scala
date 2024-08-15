@@ -292,7 +292,7 @@ class CasesService @Inject() (
           }
           .recoverWith(
             suppressThrownError(
-              s"[sendCaseCompleteEmail] Failed to send email for Case ${updated.reference}",
+              s"[sendCaseCompleteEmail] Failed to send email for case ${updated.reference}",
               Some("Attempted to send an email to the applicant which failed")
             )
           )
@@ -740,22 +740,15 @@ class CasesService @Inject() (
       .map(_ => ())
       .recoverWith(
         suppressThrownError(
-          s"[addEvent] CasesCould not create Event for case [${original.reference}] with payload [${event.details}]"
+          s"[addEvent] Could not create Event for case [${original.reference}] with payload [${event.details}]"
         )
       )
   }
 
-  private def suppressThrownError(message: String): PartialFunction[Throwable, Future[Unit]] = { case t: Throwable =>
-    logger.error(s"[CasesService]$message", t)
-    Future.successful(())
-  }
-
-  private def suppressThrownError(
-    message: String,
-    result: Option[String]
-  ): PartialFunction[Throwable, Future[Option[String]]] = { case t: Throwable =>
-    logger.error(s"[CasesService]$message", t)
-    Future.successful(result)
+  private def suppressThrownError[T](message: String, result: T = ()): PartialFunction[Throwable, Future[T]] = {
+    case t: Throwable =>
+      logger.error(s"[CasesService]$message", t)
+      Future.successful(result)
   }
 
 }
