@@ -289,10 +289,13 @@ class CasesService @Inject() (
           .sendCaseCompleteEmail(updated, operator)
           .map { email: EmailTemplate =>
             Some(s"- Subject: ${email.subject}\n- Body: ${email.plain}")
-          } recover { case t: Throwable =>
-          logger.error("Failed to send email", t)
-          Some("Attempted to send an email to the applicant which failed")
-        }
+          }
+          .recoverWith(
+            suppressThrownError(
+              s"[sendCaseCompleteEmail] Failed to send email for Case ${updated.reference}",
+              Some("Attempted to send an email to the applicant which failed")
+            )
+          )
       }
 
     val completedCase = setCaseCompleted(original)
@@ -321,7 +324,9 @@ class CasesService @Inject() (
       _ = if (original.application.isBTI) {
             rulingConnector
               .notify(original.reference)
-              .recover(loggingARulingErrorFor(original.reference))
+              .recoverWith(
+                suppressThrownError(s"[completeCase] Failed to notify the ruling store for case ${original.reference}")
+              )
           }
 
     } yield updatedCase
@@ -430,7 +435,11 @@ class CasesService @Inject() (
       _ = auditService.auditRulingCancelled(original, updated, operator)
 
       // Notify the Ruling store
-      _ = rulingConnector.notify(original.reference) recover loggingARulingErrorFor(original.reference)
+      _ = rulingConnector
+            .notify(original.reference)
+            .recoverWith(
+              suppressThrownError(s"[cancelRuling] Failed to notify the ruling store for case ${original.reference}")
+            )
     } yield updated
   }
 
@@ -726,14 +735,27 @@ class CasesService @Inject() (
     hc: HeaderCarrier
   ): Future[Unit] = {
     val event = NewEventRequest(details, operator)
-    connector.createEvent(updated, event).map(_ => ()) recover { case t: Throwable =>
-      logger.error(s"Could not create Event for case [${original.reference}] with payload [${event.details}]", t)
-      ()
-    }
+    connector
+      .createEvent(updated, event)
+      .map(_ => ())
+      .recoverWith(
+        suppressThrownError(
+          s"[addEvent] CasesCould not create Event for case [${original.reference}] with payload [${event.details}]"
+        )
+      )
   }
 
-  private def loggingARulingErrorFor(reference: String): PartialFunction[Throwable, Unit] = { case t: Throwable =>
-    logger.error(s"Failed to notify the ruling store for case $reference", t)
+  private def suppressThrownError(message: String): PartialFunction[Throwable, Future[Unit]] = { case t: Throwable =>
+    logger.error(s"[CasesService]$message", t)
+    Future.successful(())
+  }
+
+  private def suppressThrownError(
+    message: String,
+    result: Option[String]
+  ): PartialFunction[Throwable, Future[Option[String]]] = { case t: Throwable =>
+    logger.error(s"[CasesService]$message", t)
+    Future.successful(result)
   }
 
 }

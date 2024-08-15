@@ -20,6 +20,8 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern
 import models._
 import org.apache.http.HttpStatus
+import uk.gov.hmrc.http.UpstreamErrorResponse
+import utils.JsonFormatters.{emailCompleteParamsFormat, emailFormat}
 
 class EmailConnectorSpec extends ConnectorTest {
 
@@ -35,7 +37,7 @@ class EmailConnectorSpec extends ConnectorTest {
       )
     )
 
-  private val connector = new EmailConnector(mockAppConfig, standardHttpClient, metrics)
+  private val connector = new EmailConnector(mockAppConfig, httpClient, metrics)
 
   "Connector 'Send'" should {
 
@@ -50,6 +52,26 @@ class EmailConnectorSpec extends ConnectorTest {
       )
 
       await(connector.send(email))
+
+      verify(
+        postRequestedFor(urlEqualTo("/hmrc/email"))
+          .withoutHeader("X-Api-Token")
+      )
+    }
+
+    "propagate errors" in {
+      stubFor(
+        post(urlEqualTo("/hmrc/email"))
+          .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_BAD_GATEWAY)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.send(email))
+      }
 
       verify(
         postRequestedFor(urlEqualTo("/hmrc/email"))

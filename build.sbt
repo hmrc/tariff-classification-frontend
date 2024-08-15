@@ -24,7 +24,7 @@ lazy val microservice = Project("tariff-classification-frontend", file("."))
     )
   )
   .settings(
-    play.sbt.routes.RoutesKeys.routesImport ++= Seq(
+    routesImport ++= Seq(
       "models.Sort",
       "models.Search",
       "models.ApplicationType",

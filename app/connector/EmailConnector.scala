@@ -20,13 +20,13 @@ import com.codahale.metrics.MetricRegistry
 import com.google.inject.Inject
 import config.AppConfig
 import metrics.HasMetrics
-import models.{CaseCompletedEmail, CaseCompletedEmailParameters, Email, EmailTemplate}
-import play.api.libs.json.Json
+import models.{Email, EmailTemplate}
+import play.api.libs.json.{Format, Json, Writes}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.Base64Utils
-import utils.JsonFormatters._
+import utils.JsonFormatters.emailTemplateFormat
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,24 +39,24 @@ class EmailConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends HasMetrics {
 
-  def send(email: CaseCompletedEmail)(implicit hc: HeaderCarrier): Future[Unit] =
+  def send[E >: Email[_]](email: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] =
     withMetricsTimerAsync("send-email") { _ =>
       val fullURL = s"${configuration.emailUrl}/hmrc/email"
 
       client
         .post(url"$fullURL")
         .withBody(Json.toJson(email))
-        .execute[HttpResponse]
+        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
         .map(_ => ())
     }
 
-  def generate(e: Email[CaseCompletedEmailParameters])(implicit hc: HeaderCarrier): Future[EmailTemplate] =
+  def generate[T](email: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] =
     withMetricsTimerAsync("generate-email") { _ =>
-      val fullURL = s"${configuration.emailRendererUrl}/templates/${e.templateId}"
+      val fullURL = s"${configuration.emailRendererUrl}/templates/${email.templateId}"
 
       client
         .post(url"$fullURL")
-        .withBody(Json.obj("parameters" -> Json.toJson(e.parameters)))
+        .withBody(Json.obj("parameters" -> Json.toJson(email.parameters)))
         .execute[EmailTemplate]
         .map(decodingContent)
     }

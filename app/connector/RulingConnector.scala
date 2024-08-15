@@ -41,7 +41,7 @@ class RulingConnector @Inject() (
       http
         .post(url"$fullURL")
         .setHeader(authHeaders(configuration): _*)
-        .execute[HttpResponse]
+        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
         .map(_ => ())
     }
 }

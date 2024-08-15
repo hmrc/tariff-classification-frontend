@@ -42,11 +42,9 @@ class FileStoreConnector @Inject() (
   appConfig: AppConfig,
   http: HttpClientV2,
   val metrics: MetricRegistry
-)(implicit mat: Materializer)
+)(implicit mat: Materializer, ec: ExecutionContext)
     extends HasMetrics
     with InjectAuthHeader {
-
-  implicit val ec: ExecutionContext = mat.executionContext
 
   private val ParamLength = 42 // A 36-char UUID plus &id= and some wiggle room
   private val BatchSize   = ((appConfig.maxUriLength - appConfig.fileStoreUrl.length) / ParamLength).intValue()
@@ -138,7 +136,7 @@ class FileStoreConnector @Inject() (
       http
         .delete(url"$fullURL")
         .setHeader(authHeaders(appConfig)(hc): _*)
-        .execute[HttpResponse]
+        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
         .map(_ => ())
     }
 

@@ -28,7 +28,7 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-  class Harness(dataCacheConnector: DataCacheService) extends DataRetrievalActionImpl(dataCacheConnector) {
+  class Harness(dataCacheService: DataCacheService) extends DataRetrievalActionImpl(dataCacheService) {
     def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
   }
 
@@ -37,9 +37,9 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     "there is no data in the cache" should {
 
       "set userAnswers to 'None' in the request" in {
-        val dataCacheConnector = mock[DataCacheService]
-        when(dataCacheConnector.fetch("id")) thenReturn Future(None)
-        val action = new Harness(dataCacheConnector)
+        val dataCacheService = mock[DataCacheService]
+        when(dataCacheService.fetch("id")) thenReturn Future(None)
+        val action = new Harness(dataCacheService)
 
         val futureResult = action.callTransform(IdentifierRequest(fakeRequest, "id"))
 
@@ -53,9 +53,9 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
     "there is data in the cache" should {
 
       "build a userAnswers object and add it to the request" in {
-        val dataCacheConnector = mock[DataCacheService]
-        when(dataCacheConnector.fetch("id")) thenReturn Future(Some(new CacheMap("id", Map())))
-        val action = new Harness(dataCacheConnector)
+        val dataCacheService = mock[DataCacheService]
+        when(dataCacheService.fetch("id")) thenReturn Future(Some(new CacheMap("id", Map())))
+        val action = new Harness(dataCacheService)
 
         val futureResult = action.callTransform(IdentifierRequest(fakeRequest, "id"))
 

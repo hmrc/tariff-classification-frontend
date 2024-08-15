@@ -20,8 +20,7 @@ import cats.data.NonEmptySeq
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models._
 import models.reporting._
-import org.apache.http.HttpStatus
-import play.api.http.Status
+import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils._
@@ -32,7 +31,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   private val pagination = SearchPagination(1, 2)
 
-  private val connector = new BindingTariffClassificationConnector(mockAppConfig, standardHttpClient, metrics)
+  private val connector = new BindingTariffClassificationConnector(mockAppConfig, httpClient, metrics)
 
   "Connector 'Get Cases By Queue'" should {
 
@@ -49,7 +48,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedEmpty)
           )
       )
@@ -75,7 +74,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -101,7 +100,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedEmpty)
           )
       )
@@ -127,7 +126,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -153,7 +152,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -184,7 +183,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -207,7 +206,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo("/cases/id"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_NOT_FOUND)
+              .withStatus(NOT_FOUND)
           )
       )
 
@@ -224,7 +223,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo("/cases/id"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.btiCase)
           )
       )
@@ -253,7 +252,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedEmpty)
           )
       )
@@ -278,7 +277,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -301,7 +300,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedEmpty)
           )
       )
@@ -336,7 +335,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -375,7 +374,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -400,7 +399,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -427,7 +426,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -454,7 +453,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -481,7 +480,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -510,7 +509,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -545,7 +544,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(json))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(json)
           )
       )
@@ -568,7 +567,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(json))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_NOT_FOUND)
+              .withStatus(NOT_FOUND)
           )
       )
 
@@ -596,7 +595,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(request))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_CREATED)
+              .withStatus(CREATED)
               .withBody(response)
           )
       )
@@ -625,7 +624,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(requestJson))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(responseJson)
           )
       )
@@ -649,7 +648,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(requestJson))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_NOT_FOUND)
+              .withStatus(NOT_FOUND)
           )
       )
 
@@ -674,7 +673,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(EventPayloads.pagedEvents)
           )
       )
@@ -693,7 +692,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(s"/events?case_reference=$ref&type=SAMPLE_STATUS_CHANGE&page=1&page_size=2"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(EventPayloads.pagedEvents)
           )
       )
@@ -713,7 +712,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(EventPayloads.pagedEmpty)
           )
       )
@@ -735,7 +734,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(EventPayloads.completionEvents)
           )
       )
@@ -753,7 +752,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(EventPayloads.pagedEmpty)
           )
       )
@@ -775,7 +774,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(EventPayloads.referralEvents)
           )
       )
@@ -793,7 +792,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(EventPayloads.pagedEmpty)
           )
       )
@@ -816,7 +815,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -843,7 +842,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(json))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(json)
           )
       )
@@ -869,7 +868,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
           )
       )
@@ -898,7 +897,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(json))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(json)
           )
       )
@@ -921,7 +920,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(json))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_NOT_FOUND)
+              .withStatus(NOT_FOUND)
           )
       )
 
@@ -946,7 +945,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         .withRequestBody(equalToJson(request))
         .willReturn(
           aResponse()
-            .withStatus(HttpStatus.SC_CREATED)
+            .withStatus(CREATED)
             .withBody(response)
         )
     )
@@ -969,7 +968,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         .withRequestBody(equalToJson(request))
         .willReturn(
           aResponse()
-            .withStatus(HttpStatus.SC_CREATED)
+            .withStatus(CREATED)
             .withBody(response)
         )
     )
@@ -994,7 +993,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(json))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(json)
           )
       )
@@ -1017,7 +1016,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(json))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_NOT_FOUND)
+              .withStatus(NOT_FOUND)
           )
       )
 
@@ -1059,7 +1058,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlPathEqualTo("/report/summary"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(resultsJson.toString())
           )
       )
@@ -1101,7 +1100,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlPathEqualTo("/report/cases"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(resultsJson.toString())
           )
       )
@@ -1141,7 +1140,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlPathEqualTo("/report/queues"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(resultsJson.toString())
           )
       )
@@ -1168,7 +1167,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo(url))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(response)
           )
       )
@@ -1193,7 +1192,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withRequestBody(equalToJson(request))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_CREATED)
+              .withStatus(CREATED)
               .withBody(response)
           )
       )
@@ -1219,7 +1218,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         get(urlEqualTo("/case-keywords"))
           .willReturn(
             aResponse()
-              .withStatus(HttpStatus.SC_OK)
+              .withStatus(OK)
               .withBody(response)
           )
       )
@@ -1241,11 +1240,31 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         delete(s"/keyword/${keyword.name}")
           .willReturn(
             aResponse()
-              .withStatus(Status.NO_CONTENT)
+              .withStatus(NO_CONTENT)
           )
       )
 
       await(connector.deleteKeyword(keyword))
+
+      verify(
+        deleteRequestedFor(urlEqualTo(s"/keyword/${keyword.name}"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "propagate errors" in {
+      val keyword = Keyword("AKeyword", approved = true)
+      stubFor(
+        delete(s"/keyword/${keyword.name}")
+          .willReturn(
+            aResponse()
+              .withStatus(BAD_GATEWAY)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.deleteKeyword(keyword))
+      }
 
       verify(
         deleteRequestedFor(urlEqualTo(s"/keyword/${keyword.name}"))

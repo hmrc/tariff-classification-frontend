@@ -20,6 +20,7 @@ import audit.AuditService
 import connector.BindingTariffClassificationConnector
 import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
 import models._
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -28,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ManageKeywordsService @Inject() (auditService: AuditService, connector: BindingTariffClassificationConnector)(
   implicit ec: ExecutionContext
-) {
+) extends Logging {
 
   def createKeyword(keyword: Keyword, user: Operator, keywordStatusAction: ChangeKeywordStatusAction)(implicit
     hc: HeaderCarrier

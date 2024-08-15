@@ -32,12 +32,12 @@ import utils.Cases
 import scala.concurrent.Future.successful
 
 class MoveCasesControllerSpec extends ControllerBaseSpec {
-  private val casesService       = mock[CasesService]
-  private val userService        = mock[UserService]
-  private val queueService       = mock[QueuesService]
-  private val dataCacheConnector = mock[DataCacheService]
-  private val teamOrUserPage     = injector.instanceOf[views.html.partials.users.move_cases_team_or_user]
-  private val chooseTeamPage     = injector.instanceOf[views.html.partials.users.move_cases_choose_team]
+  private val casesService     = mock[CasesService]
+  private val userService      = mock[UserService]
+  private val queueService     = mock[QueuesService]
+  private val dataCacheService = mock[DataCacheService]
+  private val teamOrUserPage   = injector.instanceOf[views.html.partials.users.move_cases_team_or_user]
+  private val chooseTeamPage   = injector.instanceOf[views.html.partials.users.move_cases_choose_team]
   private val chooseTeamToChooseUsersFromPage =
     injector.instanceOf[views.html.partials.users.move_cases_choose_user_team]
   private val chooseUserPage     = injector.instanceOf[views.html.partials.users.move_cases_choose_user]
@@ -63,7 +63,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       casesService,
       userService,
       queueService,
-      dataCacheConnector,
+      dataCacheService,
       mcc,
       teamOrUserPage,
       chooseTeamPage,
@@ -87,7 +87,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       casesService,
       userService,
       queueService,
-      dataCacheConnector,
+      dataCacheService,
       mcc,
       teamOrUserPage,
       chooseTeamPage,
@@ -131,7 +131,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any[CacheMap]))
+      given(dataCacheService.save(any[CacheMap]))
         .willReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
@@ -154,7 +154,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any[CacheMap]))
+      given(dataCacheService.save(any[CacheMap]))
         .willReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
@@ -178,7 +178,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any[CacheMap]))
+      given(dataCacheService.save(any[CacheMap]))
         .willReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
@@ -202,7 +202,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any[CacheMap]))
+      given(dataCacheService.save(any[CacheMap]))
         .willReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
@@ -273,7 +273,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -293,7 +293,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -315,7 +315,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -338,7 +338,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -406,7 +406,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -426,7 +426,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -448,7 +448,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -471,7 +471,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -540,7 +540,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -560,7 +560,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -582,7 +582,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -605,7 +605,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1316,7 +1316,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with User option" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1382,7 +1382,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postUserChoice" should {
 
     "return 200 OK and HTML content type on form error" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1416,7 +1416,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone on valid form with User selected" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1450,7 +1450,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to Not Found on valid form when user with posted pid is not present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1486,7 +1486,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseOneOfUsersTeams on valid form with User with more than 1 team selected" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1520,7 +1520,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone on valid form with User selected and teamId present" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1554,7 +1554,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserFromAnotherTeam on valid form with OTHER selected" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1588,7 +1588,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1621,7 +1621,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1725,7 +1725,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postTeamChoice" should {
 
     "return 200 OK and HTML content type on form error" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1756,7 +1756,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToTeamDone” on valid form with team selected" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1787,7 +1787,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1819,7 +1819,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1853,7 +1853,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postChooseOneOfUsersTeams" should {
 
     "return 200 OK and HTML content type on form error" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1887,7 +1887,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone” on valid form with team selected" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1922,7 +1922,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(
@@ -1958,7 +1958,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      given(dataCacheConnector.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      given(dataCacheService.save(any[CacheMap])).willReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
       given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .willReturn(
           Paged(

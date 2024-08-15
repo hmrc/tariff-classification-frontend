@@ -40,7 +40,7 @@ class SuppressCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheService,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val suppress_case_reason: suppress_case_reason,
   val suppress_case_email: suppress_case_email,
@@ -73,7 +73,7 @@ class SuppressCaseController @Inject() (
             note => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(NoteCacheKey, note)
-              dataCacheConnector
+              dataCacheService
                 .save(updatedUserAnswers.cacheMap)
                 .map(_ => Redirect(routes.SuppressCaseController.getSuppressCaseEmail(reference)))
             }
@@ -129,7 +129,7 @@ class SuppressCaseController @Inject() (
                      request.operator
                    )
 
-            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+            _ <- dataCacheService.remove(request.userAnswers.cacheMap)
 
           } yield Redirect(routes.SuppressCaseController.confirmSuppressCase(reference))
         }

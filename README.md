@@ -15,12 +15,6 @@ The frontend for the internal Advance Tariff Rulings Case Manager service for re
 
 The easiest way to run MongoDB and Localstack for local development is to use [Docker](https://docs.docker.com/get-docker/).
 
-##### To run MongoDB
-
-```
-docker run --restart unless-stopped -d -p 27017-27019:27017-27019 --name mongodb mongo:3.6.13
-```
-
 ##### To run Localstack and create the S3 bucket
 
 ```

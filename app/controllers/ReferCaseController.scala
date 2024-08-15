@@ -41,7 +41,7 @@ class ReferCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheService,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val refer_case_reason: refer_case_reason,
   val refer_case_email: refer_case_email,
@@ -73,7 +73,7 @@ class ReferCaseController @Inject() (
             referral => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(ReferralCacheKey, referral)
-              dataCacheConnector
+              dataCacheService
                 .save(updatedUserAnswers.cacheMap)
                 .map(_ => Redirect(routes.ReferCaseController.getReferCaseEmail(reference)))
             }
@@ -141,7 +141,7 @@ class ReferCaseController @Inject() (
                      request.operator
                    )
 
-            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+            _ <- dataCacheService.remove(request.userAnswers.cacheMap)
 
           } yield Redirect(routes.ReferCaseController.confirmReferCase(reference))
         }

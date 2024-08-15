@@ -25,7 +25,7 @@ class PdfGeneratorServiceConnectorSpec extends ConnectorTest {
 
   private val pdfTemplate = Html("dummy html")
 
-  private val connector = new PdfGeneratorServiceConnector(mockAppConfig, standardHttpClient, metrics)
+  private val connector = new PdfGeneratorServiceConnector(mockAppConfig, httpClient, metrics)
 
   "Connector" should {
 

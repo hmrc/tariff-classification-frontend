@@ -107,14 +107,14 @@ class MustHavePermissionActionFactory @Inject() (implicit ec: ExecutionContext) 
 
 @Singleton
 class RequireDataActionFactory @Inject() (
-  dataCacheConnector: DataCacheService
+  dataCacheService: DataCacheService
 )(implicit ec: ExecutionContext) {
   def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
     new ActionRefiner[B, AuthenticatedDataRequest] {
       override protected def refine[A](
         request: B[A]
       ): Future[Either[Result, AuthenticatedDataRequest[A]]] =
-        dataCacheConnector.fetch(cacheKey).map {
+        dataCacheService.fetch(cacheKey).map {
           case Some(cacheMap) => Right(new AuthenticatedDataRequest(request.operator, request, UserAnswers(cacheMap)))
           case None           => Left(Redirect(routes.SecurityController.unauthorized()))
         }
@@ -126,7 +126,7 @@ class RequireDataActionFactory @Inject() (
 @Singleton
 class RequireCaseDataActionFactory @Inject() (
   casesService: CasesService,
-  dataCacheConnector: DataCacheService,
+  dataCacheService: DataCacheService,
   val case_not_found: views.html.case_not_found
 )(implicit
   val messagesApi: MessagesApi,
@@ -146,7 +146,7 @@ class RequireCaseDataActionFactory @Inject() (
 
         casesService.getOne(reference).flatMap {
           case Some(cse) =>
-            dataCacheConnector.fetch(cacheKey).map {
+            dataCacheService.fetch(cacheKey).map {
               case Some(cacheMap) =>
                 Right(new AuthenticatedCaseDataRequest(request.operator, request, cse, UserAnswers(cacheMap)))
               case None =>

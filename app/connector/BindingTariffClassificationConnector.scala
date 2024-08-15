@@ -431,7 +431,7 @@ class BindingTariffClassificationConnector @Inject() (
       client
         .delete(url"$fullURL")
         .setHeader(authHeaders(appConfig): _*)
-        .execute[HttpResponse]
+        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
         .map(_ => ())
     }
 }

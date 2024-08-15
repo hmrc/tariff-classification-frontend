@@ -20,6 +20,7 @@ import connector.EmailConnector
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Dates
+import utils.JsonFormatters.{emailCompleteParamsFormat, emailFormat}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

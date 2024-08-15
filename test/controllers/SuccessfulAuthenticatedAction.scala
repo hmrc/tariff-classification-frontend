@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import connector.{BindingTariffClassificationConnector, FakeDataCacheService, StrideAuthConnector}
+import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
 import models.request._
 import models.{Case, Operator, Permission, UserAnswers}
 import org.mockito.Mockito.mock
@@ -25,7 +25,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment}
-import service.CasesService
+import service.{CasesService, FakeDataCacheService}
 import utils.Cases
 import views.html.case_not_found
 
@@ -102,7 +102,7 @@ class HaveRightPermissionsActionFactory @Inject() (implicit ec: ExecutionContext
 }
 
 class MustHaveDataActionFactory @Inject() (userAnswers: UserAnswers)(implicit ec: ExecutionContext)
-    extends RequireDataActionFactory(dataCacheConnector = FakeDataCacheService) {
+    extends RequireDataActionFactory(dataCacheService = FakeDataCacheService) {
   override def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
     new ActionRefiner[B, AuthenticatedDataRequest] {
       override protected def refine[A](
@@ -118,7 +118,7 @@ class MustHaveDataActionFactory @Inject() (userAnswers: UserAnswers)(implicit ec
 class HaveExistingCaseDataActionFactory(requestCase: Case)
     extends RequireCaseDataActionFactory(
       casesService = mock(classOf[CasesService]),
-      dataCacheConnector = FakeDataCacheService,
+      dataCacheService = FakeDataCacheService,
       case_not_found = mock(classOf[case_not_found])
     )(
       mock(classOf[MessagesApi]),

@@ -16,7 +16,6 @@
 
 package controllers
 
-import connector.FakeDataCacheService
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
@@ -26,7 +25,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.test.Helpers._
-import service.{CasesService, FileStoreService}
+import service.{CasesService, FakeDataCacheService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.{confirm_supressed_case, suppress_case_email, suppress_case_reason}

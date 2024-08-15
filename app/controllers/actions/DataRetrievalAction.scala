@@ -25,12 +25,12 @@ import service.DataCacheService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRetrievalActionImpl @Inject() (val dataCacheConnector: DataCacheService)(
+class DataRetrievalActionImpl @Inject() (val dataCacheService: DataCacheService)(
   override implicit val executionContext: ExecutionContext
 ) extends DataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
-    dataCacheConnector.fetch(request.internalId).map { maybeData: Option[CacheMap] =>
+    dataCacheService.fetch(request.internalId).map { maybeData: Option[CacheMap] =>
       OptionalDataRequest(request.request, request.internalId, maybeData.map(UserAnswers(_)))
     }
 }

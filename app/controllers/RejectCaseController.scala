@@ -41,7 +41,7 @@ class RejectCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheService,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val reject_case_reason: reject_case_reason,
   val reject_case_email: reject_case_email,
@@ -75,7 +75,7 @@ class RejectCaseController @Inject() (
           caseRejection => {
             val userAnswers        = UserAnswers(cacheKey(reference))
             val updatedUserAnswers = userAnswers.set(RejectionCacheKey, caseRejection)
-            dataCacheConnector
+            dataCacheService
               .save(updatedUserAnswers.cacheMap)
               .map(_ => Redirect(routes.RejectCaseController.getRejectCaseEmail(reference)))
           }
@@ -132,7 +132,7 @@ class RejectCaseController @Inject() (
                      request.operator
                    )
 
-            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+            _ <- dataCacheService.remove(request.userAnswers.cacheMap)
 
           } yield Redirect(routes.RejectCaseController.confirmRejectCase(reference))
         }

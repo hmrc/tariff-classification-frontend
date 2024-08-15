@@ -40,7 +40,7 @@ class SuspendCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheService,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val suspend_case_reason: suspend_case_reason,
   val suspend_case_email: suspend_case_email,
@@ -73,7 +73,7 @@ class SuspendCaseController @Inject() (
             note => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(NoteCacheKey, note)
-              dataCacheConnector
+              dataCacheService
                 .save(updatedUserAnswers.cacheMap)
                 .map(_ => Redirect(routes.SuspendCaseController.getSuspendCaseEmail(reference)))
             }
@@ -129,7 +129,7 @@ class SuspendCaseController @Inject() (
                      request.operator
                    )
 
-            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+            _ <- dataCacheService.remove(request.userAnswers.cacheMap)
 
           } yield Redirect(routes.SuspendCaseController.confirmSuspendCase(reference))
         }

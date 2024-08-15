@@ -41,7 +41,7 @@ class MoveCasesController @Inject() (
   casesService: CasesService,
   userService: UserService,
   queueService: QueuesService,
-  dataCacheConnector: DataCacheService,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val teamOrUserPage: move_cases_team_or_user,
   val chooseTeamPage: move_cases_choose_team,
@@ -273,7 +273,7 @@ class MoveCasesController @Inject() (
                 )
               )
             for {
-              _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
+              _ <- dataCacheService.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToUserDone())
           }
         )
@@ -336,7 +336,7 @@ class MoveCasesController @Inject() (
               request.operator.id
             )
             for {
-              _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
+              _ <- dataCacheService.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())
           }
         )
@@ -420,7 +420,7 @@ class MoveCasesController @Inject() (
     val userAnswersWithUserPID = userAnswers.set(OriginalUserPID, pid)
     val userAnswersWithCases   = userAnswersWithUserPID.set(ChosenCases, caseRefs)
     for {
-      _     <- dataCacheConnector.save(userAnswersWithCases.cacheMap)
+      _     <- dataCacheService.save(userAnswersWithCases.cacheMap)
       cases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
     } yield redirectBasedOnCaseStatus(findChosenCasesInAssignedCases(cases.results, caseRefs))
   }
@@ -456,7 +456,7 @@ class MoveCasesController @Inject() (
             request.operator.id
           )
           for {
-            _ <- dataCacheConnector.save(
+            _ <- dataCacheService.save(
                    userAnswersWithNewUser
                      .set(ChosenTeam, u.memberOfTeams.filterNot(_ == Queues.gateway.id).head)
                      .cacheMap
@@ -464,7 +464,7 @@ class MoveCasesController @Inject() (
           } yield Redirect(routes.MoveCasesController.casesMovedToUserDone())
         } else {
           for {
-            _ <- dataCacheConnector.save(userAnswersWithNewUser.cacheMap)
+            _ <- dataCacheService.save(userAnswersWithNewUser.cacheMap)
           } yield Redirect(routes.MoveCasesController.chooseOneOfUsersTeams())
         }
       case _ => successful(NotFound(user_not_found(pid)))

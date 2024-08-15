@@ -41,7 +41,7 @@ class CancelRulingController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheService,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val cancel_ruling_reason: cancel_ruling_reason,
   val cancel_ruling_email: cancel_ruling_email,
@@ -72,7 +72,7 @@ class CancelRulingController @Inject() (
             cancellation => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(CancellationCacheKey, cancellation)
-              dataCacheConnector
+              dataCacheService
                 .save(updatedUserAnswers.cacheMap)
                 .map(_ => Redirect(routes.CancelRulingController.getCancelRulingEmail(reference)))
             }
@@ -130,7 +130,7 @@ class CancelRulingController @Inject() (
                      rulingCancellation.note,
                      request.operator
                    )
-            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+            _ <- dataCacheService.remove(request.userAnswers.cacheMap)
           } yield Redirect(routes.CancelRulingController.confirmCancelRuling(reference))
         }
         .getOrElse(

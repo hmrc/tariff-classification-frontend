@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TabCacheService @Inject() (
-  dataCacheConnector: DataCacheService
+  dataCacheService: DataCacheService
 )(implicit ec: ExecutionContext) {
 
   private def cacheKey(reference: String, appType: ApplicationType) =
@@ -35,7 +35,7 @@ class TabCacheService @Inject() (
 
   def getActiveTab(requestId: String, reference: String, appType: ApplicationType): Future[Option[Tab]] = {
     val activeTab = for {
-      cacheMap  <- OptionT(dataCacheConnector.fetch(requestId))
+      cacheMap  <- OptionT(dataCacheService.fetch(requestId))
       _         <- OptionT.liftF[Future, Unit](clearActiveTab(requestId, reference, appType, cacheMap))
       entry     <- OptionT.fromOption[Future](cacheMap.getEntry[String](cacheKey(reference, appType)))
       activeTab <- OptionT.fromOption[Future](Tab.fromValue(entry))
@@ -45,7 +45,7 @@ class TabCacheService @Inject() (
   }
 
   def clearActiveTab(requestId: String, reference: String, appType: ApplicationType): Future[Unit] =
-    dataCacheConnector.fetch(requestId).flatMap {
+    dataCacheService.fetch(requestId).flatMap {
       case Some(cacheMap) =>
         clearActiveTab(requestId, reference, appType, cacheMap)
       case None =>
@@ -60,14 +60,14 @@ class TabCacheService @Inject() (
   ): Future[Unit] = {
     val cachedData      = cacheMap.data
     val updatedCacheMap = CacheMap(requestId, cachedData - cacheKey(reference, appType))
-    dataCacheConnector.save(updatedCacheMap).map(_ => ())
+    dataCacheService.save(updatedCacheMap).map(_ => ())
   }
 
   def setActiveTab(requestId: String, reference: String, appType: ApplicationType, activeTab: Tab): Future[Unit] =
-    dataCacheConnector.fetch(requestId).flatMap { maybeCacheMap =>
+    dataCacheService.fetch(requestId).flatMap { maybeCacheMap =>
       val cachedData      = maybeCacheMap.map(_.data).getOrElse(Map.empty)
       val tabMapping      = cacheKey(reference, appType) -> JsString(activeTab.name)
       val updatedCacheMap = CacheMap(requestId, cachedData + tabMapping)
-      dataCacheConnector.save(updatedCacheMap).map(_ => ())
+      dataCacheService.save(updatedCacheMap).map(_ => ())
     }
 }

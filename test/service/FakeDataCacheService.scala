@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package connector
+package service
 
-import play.api.libs.json.Format
 import models.cache.CacheMap
-import service.DataCacheService
+import play.api.libs.json.Format
 
 import java.util.concurrent.atomic.AtomicReference
 import scala.concurrent.Future
