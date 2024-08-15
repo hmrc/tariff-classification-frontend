@@ -16,7 +16,6 @@
 
 package config
 
-import com.sun.imageio.plugins.common.I18N.getString
 import play.api.{Configuration, Mode}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -27,9 +26,6 @@ import scala.concurrent.duration.FiniteDuration
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
-
-  private lazy val contactHost                  = config.getOptional[String]("contact-frontend.host").getOrElse("")
-  private lazy val contactFormServiceIdentifier = config.get[String]("appName")
 
   lazy val managerEnrolment: String               = config.get[String]("auth.enrolments.manager")
   lazy val teamEnrolment: String                  = config.get[String]("auth.enrolments.team")
