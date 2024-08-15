@@ -69,24 +69,24 @@ object CorrespondenceContactForm extends Constraints {
     Option[String]
   ) => Case = {
     case (
-        correspondenceStarter,
-        name,
-        email,
-        phone,
-        fax,
-        buildingAndStreet,
-        townOrCity,
-        county,
-        postCode,
-        agentName
+          correspondenceStarter,
+          name,
+          email,
+          phone,
+          fax,
+          buildingAndStreet,
+          townOrCity,
+          county,
+          postCode,
+          agentName
         ) =>
       existingCase.copy(
         application = existingCase.application.asCorrespondence.copy(
           correspondenceStarter = correspondenceStarter,
-          agentName             = agentName,
-          address               = Address(buildingAndStreet, townOrCity, county, postCode),
-          contact               = Contact(name, email, phone),
-          fax                   = fax
+          agentName = agentName,
+          address = Address(buildingAndStreet, townOrCity, county, postCode),
+          contact = Contact(name, email, phone),
+          fax = fax
         )
       )
   }

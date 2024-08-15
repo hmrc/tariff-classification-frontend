@@ -1,11 +1,9 @@
 import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
-val appName = "tariff-classification-frontend"
-
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "2.13.14"
 
-lazy val microservice = Project(appName, file("."))
+lazy val microservice = Project("tariff-classification-frontend", file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
@@ -26,7 +24,7 @@ lazy val microservice = Project(appName, file("."))
     )
   )
   .settings(
-    play.sbt.routes.RoutesKeys.routesImport ++= Seq(
+    routesImport ++= Seq(
       "models.Sort",
       "models.Search",
       "models.ApplicationType",
@@ -38,29 +36,17 @@ lazy val microservice = Project(appName, file("."))
       "models.viewmodels.ManagerToolsKeywordsTab"
     )
   )
-  .settings(scalacOptionsSettings)
+  .settings(
+    scalacOptions ++= Seq(
+      "-feature",
+      "-Wconf:src=routes/.*:s",
+      "-Wconf:cat=unused-imports&src=views/.*:s"
+    )
+  )
 
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
   .settings(itSettings())
-  .settings(libraryDependencies ++= AppDependencies.itDependencies)
-  .settings(scalacOptionsSettings)
-
-lazy val scalacOptionsSettings: Seq[Setting[?]] = Seq(
-  scalacOptions ++= Seq(
-    "-Wconf:src=routes/.*:s",
-    "-Wconf:cat=unused-imports&src=views/.*:s"
-  ),
-  scalacOptions ~= { opts =>
-    opts.filterNot(
-      Set(
-        "-Xfatal-warnings",
-        "-Ywarn-value-discard"
-      )
-    )
-  }
-)
 
 addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt it/Test/scalafmt")
-addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle it/Test/scalastyle")

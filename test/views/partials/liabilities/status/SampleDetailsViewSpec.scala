@@ -96,7 +96,7 @@ class SampleDetailsViewSpec extends ViewSpec {
             "location",
             sampleActivity = Paged.empty[Event]
           )
-        )(requestWithPermissions(Permission.EDIT_SAMPLE), messages, appConfig)
+        )(requestWithPermissions(Permission.EDIT_SAMPLE), messages)
       )
       doc.getElementById("change-sample-status") should containElementWithTag("a")
 

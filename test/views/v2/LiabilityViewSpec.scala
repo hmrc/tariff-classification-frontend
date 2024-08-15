@@ -50,7 +50,7 @@ class LiabilityViewSpec extends ViewSpec {
   def uploadAttachmentForm: Form[String] = UploadAttachmentForm.form
 
   val initiateResponse: FileStoreInitiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -65,7 +65,7 @@ class LiabilityViewSpec extends ViewSpec {
   val appealTabViewModel: Some[AppealTabViewModel] = Some(
     AppealTabViewModel(
       caseReference = "123456",
-      appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+      appeals = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
       Some(""),
       permissionForExtendedUse = false
     )
@@ -382,8 +382,7 @@ class LiabilityViewSpec extends ViewSpec {
             authenticatedOperator,
             requestWithFlashKeywordSuccess
           ),
-          messages,
-          appConfig
+          messages
         )
       )
 

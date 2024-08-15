@@ -14,13 +14,11 @@
  * limitations under the License.
  *@
 
-@import models.request.AuthenticatedRequest
-
 @(
     idOfElement: String,
     buttonText: String = "Complete",
     href: Call,
-)(implicit request: AuthenticatedRequest[_])
+)
 
 <div class="govuk-form-group" id="@idOfElement-buttons">
     <a class="govuk-button" role="button" id="@idOfElement-button" href="@href">@buttonText</a>

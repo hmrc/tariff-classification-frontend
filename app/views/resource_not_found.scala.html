@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import controllers.routes._
 
@@ -25,7 +24,7 @@
     main: main
 )
 
-@(resource: String = "Resource")(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(resource: String = "Resource")(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(pageTitle = messages("service.name"), customPrimaryNavTab = NoTabSelected) {
 

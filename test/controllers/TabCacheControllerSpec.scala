@@ -16,24 +16,23 @@
 
 package controllers
 
-import connector.FakeDataCacheConnector
 import controllers.actions.{FakeDataRetrievalAction, FakeIdentifierAction}
+import models.cache.CacheMap
 import models.{ApplicationType, Operator}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.TabCacheService
-import models.cache.CacheMap
+import service.{FakeDataCacheService, TabCacheService}
 
 class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  private val operator           = Operator(id = "id")
-  private val dataCacheConnector = FakeDataCacheConnector
-  private val tabCacheService    = new TabCacheService(dataCacheConnector)
+  private val operator         = Operator(id = "id")
+  private val dataCacheService = FakeDataCacheService
+  private val tabCacheService  = new TabCacheService(dataCacheService)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(dataCacheConnector.remove(CacheMap("id", Map.empty)))
+    await(dataCacheService.remove(CacheMap("id", Map.empty)))
   }
 
   def controller() =

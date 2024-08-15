@@ -67,10 +67,10 @@ class LiabilityController @Inject() (
     }
 
   def renderView(
-    fileId: Option[String]               = None,
+    fileId: Option[String] = None,
     activityForm: Form[ActivityFormData] = ActivityForm.form,
-    uploadForm: Form[String]             = UploadAttachmentForm.form,
-    keywordForm: Form[String]            = KeywordForm.form
+    uploadForm: Form[String] = UploadAttachmentForm.form,
+    keywordForm: Form[String] = KeywordForm.form
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
 
     val liabilityCase: Case = request.`case`
@@ -80,7 +80,7 @@ class LiabilityController @Inject() (
     val rulingViewModel    = Some(RulingViewModel.fromCase(liabilityCase, request.operator.permissions))
     val appealTabViewModel = Some(AppealTabViewModel.fromCase(liabilityCase, request.operator))
     val ownCase            = liabilityCase.assignee.exists(_.id == request.operator.id)
-    val activeNavTab       = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(liabilityCase.status, ownCase)
+    val activeNavTab = PrimaryNavigationViewModel.getSelectedTabBasedOnAssigneeAndStatus(liabilityCase.status, ownCase)
 
     val fileUploadSuccessRedirect =
       appConfig.host + controllers.routes.CaseController.addAttachment(liabilityCase.reference, uploadFileId).path
@@ -93,36 +93,36 @@ class LiabilityController @Inject() (
 
     for {
       allEvents <- eventsService
-                    .getFilteredEvents(
-                      liabilityCase.reference,
-                      NoPagination(),
-                      Some(EventType.values.diff(EventType.sampleEvents))
-                    )
+                     .getFilteredEvents(
+                       liabilityCase.reference,
+                       NoPagination(),
+                       Some(EventType.values.diff(EventType.sampleEvents))
+                     )
       queues         <- queuesService.getAll
       attachmentsTab <- getAttachmentTab(liabilityCase)
       sampleTab = SampleStatusTabViewModel(
-        liabilityCase.reference,
-        liabilityCase.sample,
-        allEvents.filter(event => isSampleEvents(event.details.`type`))
-      )
-      activityTab = Some(
-        ActivityViewModel
-          .fromCase(liabilityCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
-      )
+                    liabilityCase.reference,
+                    liabilityCase.sample,
+                    allEvents.filter(event => isSampleEvents(event.details.`type`))
+                  )
+      activityTab =
+        Some(
+          ActivityViewModel
+            .fromCase(liabilityCase, allEvents.filterNot(event => isSampleEvents(event.details.`type`)), queues)
+        )
       c592 = Some(C592ViewModel.fromCase(liabilityCase))
-      keywordsTab <- keywordsService
-                      .findAll()
-                      .map(kws =>
-                        KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name))
-                      )
+      keywordsTab <-
+        keywordsService
+          .findAll()
+          .map(kws => KeywordsTabViewModel(liabilityCase.reference, liabilityCase.keywords, kws.map(_.name)))
       initiateResponse <- fileService.initiate(
-                           FileStoreInitiateRequest(
-                             id              = Some(uploadFileId),
-                             successRedirect = Some(fileUploadSuccessRedirect),
-                             errorRedirect   = Some(fileUploadErrorRedirect),
-                             maxFileSize     = appConfig.fileUploadMaxSize
-                           )
-                         )
+                            FileStoreInitiateRequest(
+                              id = Some(uploadFileId),
+                              successRedirect = Some(fileUploadSuccessRedirect),
+                              errorRedirect = Some(fileUploadErrorRedirect),
+                              maxFileSize = appConfig.fileUploadMaxSize
+                            )
+                          )
     } yield liability_view(
       liabilityViewModel,
       c592,

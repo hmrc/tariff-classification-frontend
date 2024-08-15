@@ -77,10 +77,10 @@ class EmailServiceSpec extends ServiceSpecBase {
             Seq("email"),
             CaseCompletedEmailParameters(
               recipientName_line1 = "name",
-              reference           = "ref",
-              goodsName           = "item",
-              officerName         = "officer",
-              dateSubmitted       = "01 Jan 2021"
+              reference = "ref",
+              goodsName = "item",
+              officerName = "officer",
+              dateSubmitted = "01 Jan 2021"
             )
           )
         )

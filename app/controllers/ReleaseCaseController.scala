@@ -73,8 +73,8 @@ class ReleaseCaseController @Inject() (
       releaseCaseForm.bindFromRequest().fold(onInvalidForm, onValidForm)
     }
 
-  private def releaseCase(f: Form[String], caseRef: String)(
-    implicit request: AuthenticatedCaseRequest[_]
+  private def releaseCase(f: Form[String], caseRef: String)(implicit
+    request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
     getCaseAndRenderView(
       caseRef,

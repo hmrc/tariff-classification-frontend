@@ -17,8 +17,8 @@
 package config
 
 import com.google.inject.AbstractModule
-import connector.{DataCacheConnector, MongoCacheConnector}
 import controllers.actions._
+import service.{DataCacheService, MongoCacheService}
 
 class Module extends AbstractModule {
 
@@ -27,6 +27,6 @@ class Module extends AbstractModule {
     // Bind the actions for DI
     bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
-    bind(classOf[DataCacheConnector]).to(classOf[MongoCacheConnector]).asEagerSingleton()
+    bind(classOf[DataCacheService]).to(classOf[MongoCacheService]).asEagerSingleton()
   }
 }

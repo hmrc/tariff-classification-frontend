@@ -18,11 +18,9 @@
 @import views.html.components.liabilitiesTable
 @import views.html.components.correspondenceTable
 @import views.html.components.miscellaneousTable
-@import models.request.AuthenticatedRequest
-@import config.AppConfig
 @import models.viewmodels.ApplicationTabViewModel
 
-@(applicationTabViewModel: ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+@(applicationTabViewModel: ApplicationTabViewModel)(implicit messages: Messages)
 
 <div id="my-cases-tabs" class="govuk-tabs" data-module="govuk-tabs">
     <ul class="govuk-tabs__list">

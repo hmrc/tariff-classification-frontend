@@ -16,7 +16,6 @@
 
 package controllers
 
-import connector.FakeDataCacheConnector
 import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
@@ -26,7 +25,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.test.Helpers._
-import service.{CasesService, FileStoreService}
+import service.{CasesService, FakeDataCacheService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.JsonFormatters._
@@ -49,7 +48,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   private val caseWithStatusREJECTED = Cases.btiCaseExample.copy(reference = "reference", status = CaseStatus.REJECTED)
 
   private val initiateResponse = FileStoreInitiateResponse(
-    id              = "id",
+    id = "id",
     upscanReference = "ref",
     uploadRequest = UpscanFormTemplate(
       "http://localhost:20001/upscan/upload",
@@ -59,8 +58,9 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
 
   override def afterEach(): Unit = {
     super.afterEach()
-    reset(casesService, fileService)
-    await(FakeDataCacheConnector.clear())
+    reset(casesService)
+    reset(fileService)
+    await(FakeDataCacheService.clear())
   }
 
   private def controller(c: Case) =
@@ -68,7 +68,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       new SuccessfulRequestActions(playBodyParsers, operator, c = c),
       casesService,
       fileService,
-      FakeDataCacheConnector,
+      FakeDataCacheService,
       mcc,
       rejectCaseReason,
       rejectCaseEmail,
@@ -81,7 +81,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
       casesService,
       fileService,
-      FakeDataCacheConnector,
+      FakeDataCacheService,
       mcc,
       rejectCaseReason,
       rejectCaseEmail,
@@ -146,7 +146,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("error.empty.reject.reason"))
+      bodyOf(result)          should include(messages("error.empty.reject.reason"))
     }
 
     "display error page when note is missing" in {
@@ -159,7 +159,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       status(result)        shouldBe Status.BAD_REQUEST
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("error.empty.reject.note"))
+      bodyOf(result)          should include(messages("error.empty.reject.note"))
     }
 
     "redirect to unauthorised when the user does not have the right permissions" in {
@@ -217,7 +217,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       val cacheKey  = s"reject_case-${caseWithStatusOPEN.reference}"
       val rejection = CaseRejection(RejectReason.APPLICATION_WITHDRAWN, "some-note")
       val cacheMap  = UserAnswers(cacheKey).set("rejection", rejection).cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       given(
         casesService.rejectCase(
@@ -255,7 +255,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
     "redirect to unauthorised when the user does not have the right permissions" in {
       val cacheKey = s"reject_case-${caseWithStatusOPEN.reference}"
       val cacheMap = UserAnswers(cacheKey).set("note", "some-note").cacheMap
-      await(FakeDataCacheConnector.save(cacheMap))
+      await(FakeDataCacheService.save(cacheMap))
 
       val result = await(
         controller(caseWithStatusOPEN, Set.empty).rejectCase(caseWithStatusOPEN.reference, "id")(
@@ -279,7 +279,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       status(result)        shouldBe Status.OK
       contentTypeOf(result) shouldBe Some(MimeTypes.HTML)
       charsetOf(result)     shouldBe Some("utf-8")
-      bodyOf(result)        should include(messages("page.title.case.rejected"))
+      bodyOf(result)          should include(messages("page.title.case.rejected"))
     }
   }
 }

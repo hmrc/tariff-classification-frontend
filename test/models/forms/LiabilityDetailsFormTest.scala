@@ -25,16 +25,16 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
 
   private val liability = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
-    status               = LiabilityStatus.LIVE,
-    traderName           = "trader-name",
-    goodName             = Some("good-name"),
-    entryDate            = Some(Instant.EPOCH),
-    entryNumber          = Some("entry-no"),
-    traderCommodityCode  = Some("0200000000"),
+    status = LiabilityStatus.LIVE,
+    traderName = "trader-name",
+    goodName = Some("good-name"),
+    entryDate = Some(Instant.EPOCH),
+    entryNumber = Some("entry-no"),
+    traderCommodityCode = Some("0200000000"),
     officerCommodityCode = Some("0100000000"),
-    btiReference         = Some("btiReferenceN"),
-    repaymentClaim       = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
-    dateOfReceipt        = Some(Instant.EPOCH),
+    btiReference = Some("btiReferenceN"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    dateOfReceipt = Some(Instant.EPOCH),
     traderContactDetails = Some(
       TraderContactDetails(
         email = Some("trader@email.com"),
@@ -42,9 +42,9 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
         address = Some(
           Address(
             buildingAndStreet = "STREET 1",
-            townOrCity        = "Town",
-            county            = Some("County"),
-            postCode          = Some("postcode")
+            townOrCity = "Town",
+            county = Some("County"),
+            postCode = Some("postcode")
           )
         )
       )
@@ -79,7 +79,7 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
         val form = LiabilityDetailsForm.liabilityDetailsForm(sampleCase).bindFromRequest(emptyParams)
 
         form.hasErrors         shouldBe true
-        form.errors            should have(size(2))
+        form.errors              should have(size(2))
         form.errors.map(_.key) shouldBe Seq("traderName", "contactName")
       }
 
@@ -88,7 +88,7 @@ class LiabilityDetailsFormTest extends ModelsBaseSpec {
           LiabilityDetailsForm.liabilityDetailsCompleteForm(sampleCase).bindFromRequest(emptyParams)
 
         form.hasErrors shouldBe true
-        form.errors    should have(size(9))
+        form.errors      should have(size(9))
         form.errors.map(_.key) shouldBe Seq(
           "entryDate",
           "traderName",

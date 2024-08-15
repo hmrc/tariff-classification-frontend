@@ -14,13 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
 @import models.viewmodels.managementtools._
 @import views.html.components.heading
 @import views.html.managementtools.{assignedUsersTable, noTeamUsersTable, usersByTeamTable}
 
-@(users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+@(users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit messages: Messages)
 
 @heading(messages(users.headingMessageKey))
 

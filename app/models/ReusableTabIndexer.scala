@@ -18,9 +18,9 @@ package models
 
 case class ReusableTabIndexer(startTabIndex: Int = 0, indexIncrement: Int = 1) {
 
-  private val tabIncrement             = indexIncrement
-  private var nextIndex                = startTabIndex - tabIncrement
-  val nextTabIndex: () => Int          = { () => nextIndex += tabIncrement; nextIndex }
+  private val tabIncrement = indexIncrement
+  private var nextIndex    = startTabIndex - tabIncrement
+  val nextTabIndex: () => Int = { () => nextIndex += tabIncrement; nextIndex }
   val nextTabIndexWithJump: Int => Int = { (jump: Int) => nextIndex += jump; nextIndex }
-  val currentTabIndex: () => Int       = { () => nextIndex }
+  val currentTabIndex: () => Int = { () => nextIndex }
 }

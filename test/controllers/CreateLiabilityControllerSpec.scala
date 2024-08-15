@@ -60,8 +60,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
       charset(result)     shouldBe Some("utf-8")
       contentAsString(result) shouldBe createLiability(LiabilityForm.newLiabilityForm)(
         AuthenticatedRequest(Operator("0", Some("name")), request),
-        messages,
-        realAppConfig
+        messages
       ).toString()
     }
   }
@@ -85,8 +84,7 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
         charset(result)     shouldBe Some("utf-8")
         contentAsString(result) shouldBe createLiability(form)(
           AuthenticatedRequest(Operator("0", Some("name")), request),
-          messages,
-          realAppConfig
+          messages
         ).toString()
       }
     }

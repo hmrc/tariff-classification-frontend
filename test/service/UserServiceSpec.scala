@@ -38,7 +38,9 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   override protected def afterEach(): Unit = {
     super.afterEach()
-    reset(connector, audit, operator)
+    reset(connector)
+    reset(audit)
+    reset(operator)
   }
 
   "Update User" should {

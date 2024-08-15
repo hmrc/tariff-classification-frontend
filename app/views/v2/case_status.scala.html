@@ -18,9 +18,7 @@
 
 @this()
 
-@(
-    caseStatus: CaseStatusViewModel
-)(implicit messages: Messages)
+@(caseStatus: CaseStatusViewModel)
 
 <div id="case-status-section">
     @caseStatus.liabilityTypeTag.map { tag =>

@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.{CaseViewModel, NoTabSelected}
@@ -31,7 +30,7 @@
 )
 
 
-@(c: Case, form : Form[Case], caseViewModel: CaseViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form : Form[Case], caseViewModel: CaseViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("case.v2.misc.case-details-edit-title"),
@@ -43,7 +42,7 @@
 
         @case_heading(caseViewModel.caseHeader, messageKey=Some("case.v2.misc.case-details-edit-header"))
 
-        @helper.form(action = routes.CreateMiscellaneousController.postMiscDetails(c.reference), 'class -> "form" , Symbol("id") -> "misc-details-edit-form", Symbol("novalidate") -> "novalidate") {
+        @helper.form(action = routes.CreateMiscellaneousController.postMiscDetails(c.reference), Symbol("class") -> "form" , Symbol("id") -> "misc-details-edit-form", Symbol("novalidate") -> "novalidate") {
 
             @helper.CSRF.formField
 

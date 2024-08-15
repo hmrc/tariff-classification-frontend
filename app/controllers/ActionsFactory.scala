@@ -16,14 +16,12 @@
 
 package controllers
 
-import config.AppConfig
-import connector.DataCacheConnector
 import models.request._
 import models.{Case, Permission, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, ActionRefiner, Result}
-import service.CasesService
+import service.{CasesService, DataCacheService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -41,8 +39,8 @@ class CheckCasePermissionsAction @Inject() (override implicit val executionConte
     successful(
       Right(
         new AuthenticatedCaseRequest(
-          operator      = request.operator.addPermissions(Permission.applyingTo(request.`case`, request.operator)),
-          request       = request,
+          operator = request.operator.addPermissions(Permission.applyingTo(request.`case`, request.operator)),
+          request = request,
           requestedCase = request.`case`
         )
       )
@@ -52,7 +50,6 @@ class CheckCasePermissionsAction @Inject() (override implicit val executionConte
 @Singleton
 class VerifyCaseExistsActionFactory @Inject() (casesService: CasesService)(
   implicit val messagesApi: MessagesApi,
-  appConfig: AppConfig,
   val case_not_found: views.html.case_not_found,
   implicit val ec: ExecutionContext
 ) extends I18nSupport {
@@ -101,7 +98,7 @@ class MustHavePermissionActionFactory @Inject() (implicit ec: ExecutionContext) 
       override protected def filter[A](request: B[A]): Future[Option[Result]] =
         request match {
           case r if permissions.foldLeft[Boolean](false)(_ || r.hasPermission(_)) => successful(None)
-          case _                                                                  => successful(Some(Redirect(routes.SecurityController.unauthorized())))
+          case _ => successful(Some(Redirect(routes.SecurityController.unauthorized())))
         }
 
       override protected def executionContext: ExecutionContext = ec
@@ -110,14 +107,14 @@ class MustHavePermissionActionFactory @Inject() (implicit ec: ExecutionContext) 
 
 @Singleton
 class RequireDataActionFactory @Inject() (
-  dataCacheConnector: DataCacheConnector
+  dataCacheService: DataCacheService
 )(implicit ec: ExecutionContext) {
   def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
     new ActionRefiner[B, AuthenticatedDataRequest] {
       override protected def refine[A](
         request: B[A]
       ): Future[Either[Result, AuthenticatedDataRequest[A]]] =
-        dataCacheConnector.fetch(cacheKey).map {
+        dataCacheService.fetch(cacheKey).map {
           case Some(cacheMap) => Right(new AuthenticatedDataRequest(request.operator, request, UserAnswers(cacheMap)))
           case None           => Left(Redirect(routes.SecurityController.unauthorized()))
         }
@@ -129,12 +126,10 @@ class RequireDataActionFactory @Inject() (
 @Singleton
 class RequireCaseDataActionFactory @Inject() (
   casesService: CasesService,
-  dataCacheConnector: DataCacheConnector,
+  dataCacheService: DataCacheService,
   val case_not_found: views.html.case_not_found
-)(
-  implicit
+)(implicit
   val messagesApi: MessagesApi,
-  appConfig: AppConfig,
   ec: ExecutionContext
 ) extends I18nSupport {
   def apply[B[C] <: AuthenticatedRequest[C]](
@@ -151,7 +146,7 @@ class RequireCaseDataActionFactory @Inject() (
 
         casesService.getOne(reference).flatMap {
           case Some(cse) =>
-            dataCacheConnector.fetch(cacheKey).map {
+            dataCacheService.fetch(cacheKey).map {
               case Some(cacheMap) =>
                 Right(new AuthenticatedCaseDataRequest(request.operator, request, cse, UserAnswers(cacheMap)))
               case None =>

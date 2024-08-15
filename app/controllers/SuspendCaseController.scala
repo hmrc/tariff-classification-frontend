@@ -17,16 +17,15 @@
 package controllers
 
 import config.AppConfig
-import connector.DataCacheConnector
 import controllers.v2.UpscanErrorHandling
-import models.forms.{AddNoteForm, UploadAttachmentForm}
+import models.forms.AddNoteForm
 import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
 import models.{Attachment, Permission, UserAnswers}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import service.{CasesService, FileStoreService}
+import service.{CasesService, DataCacheService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_suspended, suspend_case_email, suspend_case_reason}
@@ -41,7 +40,7 @@ class SuspendCaseController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheConnector,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val suspend_case_reason: suspend_case_reason,
   val suspend_case_email: suspend_case_email,
@@ -74,7 +73,7 @@ class SuspendCaseController @Inject() (
             note => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(NoteCacheKey, note)
-              dataCacheConnector
+              dataCacheService
                 .save(updatedUserAnswers.cacheMap)
                 .map(_ => Redirect(routes.SuspendCaseController.getSuspendCaseEmail(reference)))
             }
@@ -82,8 +81,8 @@ class SuspendCaseController @Inject() (
       }
 
   private def renderSuspendCaseEmail(
-    fileId: Option[String]   = None,
-    uploadForm: Form[String] = UploadAttachmentForm.form
+    fileId: Option[String],
+    uploadForm: Form[String]
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -100,10 +99,10 @@ class SuspendCaseController @Inject() (
     fileService
       .initiate(
         FileStoreInitiateRequest(
-          id              = Some(uploadFileId),
+          id = Some(uploadFileId),
           successRedirect = Some(fileUploadSuccessRedirect),
-          errorRedirect   = Some(fileUploadErrorRedirect),
-          maxFileSize     = appConfig.fileUploadMaxSize
+          errorRedirect = Some(fileUploadErrorRedirect),
+          maxFileSize = appConfig.fileUploadMaxSize
         )
       )
       .map(initiateResponse => suspend_case_email(request.`case`, uploadForm, initiateResponse))
@@ -123,14 +122,14 @@ class SuspendCaseController @Inject() (
         .map { note =>
           for {
             _ <- casesService
-                  .suspendCase(
-                    request.`case`,
-                    Attachment(id = fileId, operator = Some(request.operator)),
-                    note,
-                    request.operator
-                  )
+                   .suspendCase(
+                     request.`case`,
+                     Attachment(id = fileId, operator = Some(request.operator)),
+                     note,
+                     request.operator
+                   )
 
-            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+            _ <- dataCacheService.remove(request.userAnswers.cacheMap)
 
           } yield Redirect(routes.SuspendCaseController.confirmSuspendCase(reference))
         }

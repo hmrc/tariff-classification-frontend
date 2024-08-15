@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import helper.CSRF
 @import models.forms.{ActivityFormData, MessageFormData}
 @import models.request.AuthenticatedRequest
@@ -58,7 +57,7 @@
         attachments: Seq[StoredAttachment],
         primaryNavTab: PrimaryNavigationTab = MyCasesTab
 
-)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @additionalJS = {
     <script @CSPNonce.attr src="@routes.Assets.at("javascripts/tab_focus.js")" type="text/javascript"></script>

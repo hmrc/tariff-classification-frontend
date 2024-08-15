@@ -152,13 +152,13 @@ class MyCasesViewSpec extends ViewSpec {
       ApplicationsTab
         .referredByMe(
           Seq(
-            Cases.btiCaseExample.copy(status          = CaseStatus.REFERRED),
+            Cases.btiCaseExample.copy(status = CaseStatus.REFERRED),
             Cases.liabilityCaseExample.copy(reference = "2", status = CaseStatus.REFERRED, referredDaysElapsed = 65),
-            Cases.btiCaseExample.copy(reference       = "3", status = CaseStatus.SUSPENDED, daysElapsed = 30),
+            Cases.btiCaseExample.copy(reference = "3", status = CaseStatus.SUSPENDED, daysElapsed = 30),
             Cases.newLiabilityLiveCaseExample
-              .copy(reference                              = "4", status = CaseStatus.REFERRED, daysElapsed = 5, referredDaysElapsed = 6),
+              .copy(reference = "4", status = CaseStatus.REFERRED, daysElapsed = 5, referredDaysElapsed = 6),
             Cases.correspondenceCaseExample.copy(reference = "6", status = CaseStatus.REFERRED, daysElapsed = 12),
-            Cases.miscellaneousCaseExample.copy(reference  = "5", status = CaseStatus.REFERRED, daysElapsed = 35)
+            Cases.miscellaneousCaseExample.copy(reference = "5", status = CaseStatus.REFERRED, daysElapsed = 35)
           ),
           referredEvents
         )
@@ -171,10 +171,10 @@ class MyCasesViewSpec extends ViewSpec {
       ApplicationsTab
         .completedByMe(
           Seq(
-            Cases.btiCaseExample.copy(status               = CaseStatus.COMPLETED),
-            Cases.liabilityCaseExample.copy(reference      = "2", status = CaseStatus.COMPLETED),
+            Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED),
+            Cases.liabilityCaseExample.copy(reference = "2", status = CaseStatus.COMPLETED),
             Cases.correspondenceCaseExample.copy(reference = "3", status = CaseStatus.COMPLETED),
-            Cases.miscellaneousCaseExample.copy(reference  = "4", status = CaseStatus.COMPLETED)
+            Cases.miscellaneousCaseExample.copy(reference = "4", status = CaseStatus.COMPLETED)
           ),
           completedEvents
         )
@@ -194,7 +194,7 @@ class MyCasesViewSpec extends ViewSpec {
     }
 
     "contain my_cases_secondary_navigation" in {
-      val doc = view(myCasesView(assignedToMeCasesTab)(authenticatedManagerFakeRequest, messages, appConfig))
+      val doc = view(myCasesView(assignedToMeCasesTab)(authenticatedManagerFakeRequest, messages))
 
       doc should containElementWithID("my-cases-sub-nav")
     }
@@ -242,7 +242,7 @@ class MyCasesViewSpec extends ViewSpec {
     // Referred By Me Sub Menu
 
     "contain my_cases_secondary_navigation for Referred by me" in {
-      val doc = view(myCasesView(referredByMeCasesTab)(authenticatedManagerFakeRequest, messages, appConfig))
+      val doc = view(myCasesView(referredByMeCasesTab)(authenticatedManagerFakeRequest, messages))
 
       doc should containElementWithID("my-cases-sub-nav")
     }
@@ -316,17 +316,17 @@ class MyCasesViewSpec extends ViewSpec {
 
       doc.getElementById("applicationTab.liability-status-refer-to-0").text shouldBe "Trader"
       doc.getElementById("applicationTab.atar-status-label-1-overdue").text shouldBe "OVERDUE"
-      doc.getElementById("applicationTab.atar-elapsed-days-1")              should haveClass("live-red-text")
+      doc.getElementById("applicationTab.atar-elapsed-days-1")                should haveClass("live-red-text")
       doc.getElementById("applicationTab.liability-refer-days-0").text      shouldBe "65"
-      doc.getElementById("applicationTab.liability-type-1").text            should include("LIVE")
-      doc.getElementById("applicationTab.liability-status-1").text          should include("Other reason")
+      doc.getElementById("applicationTab.liability-type-1").text              should include("LIVE")
+      doc.getElementById("applicationTab.liability-status-1").text            should include("Other reason")
 
     }
 
     // Completed by me Sub Menu
 
     "contain my_cases_secondary_navigation for Completed by me" in {
-      val doc = view(myCasesView(completedByMeCasesTab)(authenticatedManagerFakeRequest, messages, appConfig))
+      val doc = view(myCasesView(completedByMeCasesTab)(authenticatedManagerFakeRequest, messages))
       doc should containElementWithID("my-cases-sub-nav")
     }
 
@@ -372,8 +372,8 @@ class MyCasesViewSpec extends ViewSpec {
     "contain a completed status in ATaR table for Completed by me" in {
       val doc = view(myCasesView(completedByMeCasesTab))
 
-      doc                                                             should containElementWithID("applicationTab.atar-status-label-0-status")
-      doc                                                             should containElementWithClass("govuk-tag govuk-tag--green")
+      doc should containElementWithID("applicationTab.atar-status-label-0-status")
+      doc should containElementWithClass("govuk-tag govuk-tag--green")
       doc.getElementById("applicationTab.atar-status-label-0-status") should containText("COMPLETED")
     }
 

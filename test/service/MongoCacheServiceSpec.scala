@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package connector
+package service
 
+import connector.ConnectorTest
 import generators.Generators
+import models.cache.CacheMap
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Arbitrary.arbitrary
@@ -25,11 +27,10 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.libs.json.JsString
 import repositories.SessionRepository
-import models.cache.CacheMap
 
 import scala.concurrent.Future
 
-class MongoCacheConnectorSpec
+class MongoCacheServiceSpec
     extends ScalaCheckDrivenPropertyChecks
     with Generators
     with ConnectorTest
@@ -38,7 +39,7 @@ class MongoCacheConnectorSpec
 
   private trait Test {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    val mongoCacheConnector: MongoCacheConnector = new MongoCacheConnector(mockSessionRepository, metrics)
+    val mongoCacheService: MongoCacheService     = new MongoCacheService(mockSessionRepository, metrics)
   }
 
   ".save" should {
@@ -46,7 +47,7 @@ class MongoCacheConnectorSpec
       when(mockSessionRepository.upsert(any[CacheMap])) thenReturn Future.successful(true)
 
       forAll(arbitrary[CacheMap]) { cacheMap =>
-        val result = mongoCacheConnector.save(cacheMap)
+        val result = mongoCacheService.save(cacheMap)
 
         whenReady(result) { savedCacheMap =>
           savedCacheMap shouldBe cacheMap
@@ -61,7 +62,7 @@ class MongoCacheConnectorSpec
       when(mockSessionRepository.remove(any[CacheMap])) thenReturn Future.successful(true)
 
       forAll(arbitrary[CacheMap]) { cacheMap =>
-        val result = mongoCacheConnector.remove(cacheMap)
+        val result = mongoCacheService.remove(cacheMap)
 
         whenReady(result) { savedCacheMap =>
           savedCacheMap shouldBe true
@@ -77,7 +78,7 @@ class MongoCacheConnectorSpec
         when(mockSessionRepository.get(any[String])) thenReturn Future.successful(None)
 
         forAll(nonEmptyString) { cacheId =>
-          val result = mongoCacheConnector.fetch(cacheId)
+          val result = mongoCacheService.fetch(cacheId)
 
           whenReady(result)(optionalCacheMap => optionalCacheMap should be(empty))
         }
@@ -90,7 +91,7 @@ class MongoCacheConnectorSpec
         forAll(arbitrary[CacheMap]) { cacheMap =>
           when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
-          val result = mongoCacheConnector.fetch(cacheMap.id)
+          val result = mongoCacheService.fetch(cacheMap.id)
 
           whenReady(result)(optionalCacheMap => optionalCacheMap.get shouldBe cacheMap)
         }
@@ -104,7 +105,7 @@ class MongoCacheConnectorSpec
         when(mockSessionRepository.get(any[String])) thenReturn Future.successful(None)
 
         forAll(nonEmptyString, nonEmptyString) { (cacheId, key) =>
-          val result = mongoCacheConnector.getEntry[String](cacheId, key)
+          val result = mongoCacheService.getEntry[String](cacheId, key)
 
           whenReady(result)(optionalValue => optionalValue should be(empty))
         }
@@ -119,13 +120,12 @@ class MongoCacheConnectorSpec
           cacheMap <- arbitrary[CacheMap]
         } yield (key, cacheMap copy (data = cacheMap.data - key))
 
-        forAll(gen) {
-          case (k, cacheMap) =>
-            when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+        forAll(gen) { case (k, cacheMap) =>
+          when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
-            val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
+          val result = mongoCacheService.getEntry[String](cacheMap.id, k)
 
-            whenReady(result)(optionalValue => optionalValue should be(empty))
+          whenReady(result)(optionalValue => optionalValue should be(empty))
         }
       }
     }
@@ -139,13 +139,12 @@ class MongoCacheConnectorSpec
           cacheMap <- arbitrary[CacheMap]
         } yield (key, value, cacheMap copy (data = cacheMap.data + (key -> JsString(value))))
 
-        forAll(gen) {
-          case (k, v, cacheMap) =>
-            when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+        forAll(gen) { case (k, v, cacheMap) =>
+          when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
 
-            val result = mongoCacheConnector.getEntry[String](cacheMap.id, k)
+          val result = mongoCacheService.getEntry[String](cacheMap.id, k)
 
-            whenReady(result)(optionalValue => optionalValue.get shouldBe v)
+          whenReady(result)(optionalValue => optionalValue.get shouldBe v)
         }
       }
     }

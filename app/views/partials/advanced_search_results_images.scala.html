@@ -14,13 +14,11 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
-@import models.request.AuthenticatedRequest
 @import models.response.ScanStatus
 @import models.{Paged, StoredAttachment}
 @import views.html.partials.thumbnail
 @import views.partials.SearchResult
-@(results: Paged[SearchResult])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(results: Paged[SearchResult])
 
 @if(results.results.flatMap(_.attachments).isEmpty) {
     <p id="advanced_search_results-empty" class="govuk-body">No images found</p>

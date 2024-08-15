@@ -37,14 +37,14 @@ class EmailService @Inject() (connector: EmailConnector)(implicit ec: ExecutionC
       Seq(c.application.contact.email),
       CaseCompletedEmailParameters(
         recipientName_line1 = c.application.contact.name,
-        reference           = c.reference,
-        goodsName           = c.application.asATAR.goodName,
-        officerName         = operator.name.getOrElse(""),
-        dateSubmitted       = Dates.format(c.createdDate)
+        reference = c.reference,
+        goodsName = c.application.asATAR.goodName,
+        officerName = operator.name.getOrElse(""),
+        dateSubmitted = Dates.format(c.createdDate)
       )
     )
 
-    connector.send(email) flatMap (_ => connector.generate(email))
+    connector.send(email).flatMap(_ => connector.generate(email))
   }
 
 }

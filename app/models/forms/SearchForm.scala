@@ -31,7 +31,7 @@ object SearchForm {
       "case_source"      -> optional[String](text),
       "commodity_code"   -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
       "decision_details" -> optional[String](text),
-      "status"           -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
       "application_type" -> optional[Set[ApplicationType]](
         set(textTransformingTo(ApplicationType.withName, _.name))
       ),
@@ -45,7 +45,7 @@ object SearchForm {
       "case_source"      -> optional[String](text),
       "commodity_code"   -> optional[String](text),
       "decision_details" -> optional[String](text),
-      "status"           -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
+      "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
       "application_type" -> optional[Set[ApplicationType]](
         set(textTransformingTo(ApplicationType.withName, _.name))
       ),

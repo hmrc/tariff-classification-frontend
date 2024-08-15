@@ -16,17 +16,16 @@
 
 package service
 
-import connector.FakeDataCacheConnector
 import controllers.Tab
 import models.ApplicationType
+import models.cache.CacheMap
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import models.cache.CacheMap
 
 class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyChecks {
 
-  val cacheConnector: FakeDataCacheConnector.type = FakeDataCacheConnector
-  val service                                     = new TabCacheService(cacheConnector)
+  val cacheService: FakeDataCacheService.type = FakeDataCacheService
+  val service: TabCacheService                = new TabCacheService(cacheService)
 
   val tabGenerator: Gen[Tab] = Gen.oneOf(
     List(
@@ -40,7 +39,7 @@ class TabCacheServiceSpec extends ServiceSpecBase with ScalaCheckDrivenPropertyC
   )
 
   override protected def beforeEach(): Unit =
-    await(cacheConnector.remove(CacheMap("id", Map.empty)))
+    await(cacheService.remove(CacheMap("id", Map.empty)))
 
   "TabCacheService" should {
     "get the active tab" in {

@@ -17,16 +17,15 @@
 package controllers
 
 import config.AppConfig
-import connector.DataCacheConnector
 import controllers.v2.UpscanErrorHandling
 import models._
-import models.forms.{CancelRulingForm, UploadAttachmentForm}
+import models.forms.CancelRulingForm
 import models.request.{AuthenticatedCaseRequest, FileStoreInitiateRequest}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import service.{CasesService, FileStoreService}
+import service.{CasesService, DataCacheService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JsonFormatters._
@@ -42,7 +41,7 @@ class CancelRulingController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   fileService: FileStoreService,
-  dataCacheConnector: DataCacheConnector,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val cancel_ruling_reason: cancel_ruling_reason,
   val cancel_ruling_email: cancel_ruling_email,
@@ -73,7 +72,7 @@ class CancelRulingController @Inject() (
             cancellation => {
               val userAnswers        = UserAnswers(cacheKey(reference))
               val updatedUserAnswers = userAnswers.set(CancellationCacheKey, cancellation)
-              dataCacheConnector
+              dataCacheService
                 .save(updatedUserAnswers.cacheMap)
                 .map(_ => Redirect(routes.CancelRulingController.getCancelRulingEmail(reference)))
             }
@@ -81,8 +80,8 @@ class CancelRulingController @Inject() (
       }
 
   private def renderCancelRulingEmail(
-    fileId: Option[String]   = None,
-    uploadForm: Form[String] = UploadAttachmentForm.form
+    fileId: Option[String],
+    uploadForm: Form[String]
   )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
@@ -99,10 +98,10 @@ class CancelRulingController @Inject() (
     fileService
       .initiate(
         FileStoreInitiateRequest(
-          id              = Some(uploadFileId),
+          id = Some(uploadFileId),
           successRedirect = Some(fileUploadSuccessRedirect),
-          errorRedirect   = Some(fileUploadErrorRedirect),
-          maxFileSize     = appConfig.fileUploadMaxSize
+          errorRedirect = Some(fileUploadErrorRedirect),
+          maxFileSize = appConfig.fileUploadMaxSize
         )
       )
       .map(initiateResponse => cancel_ruling_email(request.`case`, uploadForm, initiateResponse))
@@ -124,14 +123,14 @@ class CancelRulingController @Inject() (
         .map { rulingCancellation =>
           for {
             _ <- casesService
-                  .cancelRuling(
-                    request.`case`,
-                    CancelReason.withName(rulingCancellation.cancelReason),
-                    Attachment(id = fileId, operator = Some(request.operator)),
-                    rulingCancellation.note,
-                    request.operator
-                  )
-            _ <- dataCacheConnector.remove(request.userAnswers.cacheMap)
+                   .cancelRuling(
+                     request.`case`,
+                     CancelReason.withName(rulingCancellation.cancelReason),
+                     Attachment(id = fileId, operator = Some(request.operator)),
+                     rulingCancellation.note,
+                     request.operator
+                   )
+            _ <- dataCacheService.remove(request.userAnswers.cacheMap)
           } yield Redirect(routes.CancelRulingController.confirmCancelRuling(reference))
         }
         .getOrElse(

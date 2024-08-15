@@ -31,20 +31,20 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 
   private val emptyLiabilityOrder = LiabilityOrder(
     Contact(name = "", email = "", Some("")),
-    status               = LiabilityStatus.LIVE,
-    traderName           = "trader-name",
-    goodName             = Some("good-name"),
-    entryDate            = Some(Instant.EPOCH),
-    entryNumber          = Some(""),
-    traderCommodityCode  = Some(""),
+    status = LiabilityStatus.LIVE,
+    traderName = "trader-name",
+    goodName = Some("good-name"),
+    entryDate = Some(Instant.EPOCH),
+    entryNumber = Some(""),
+    traderCommodityCode = Some(""),
     officerCommodityCode = Some(""),
-    btiReference         = Some(""),
-    repaymentClaim       = None,
-    dateOfReceipt        = Some(Instant.EPOCH),
+    btiReference = Some(""),
+    repaymentClaim = None,
+    dateOfReceipt = Some(Instant.EPOCH),
     traderContactDetails = Some(
       TraderContactDetails(
-        email   = Some(""),
-        phone   = Some(""),
+        email = Some(""),
+        phone = Some(""),
         address = Some(Address(buildingAndStreet = "", townOrCity = "", county = Some(""), postCode = Some("")))
       )
     )
@@ -52,16 +52,16 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
 
   private val liabilityOrder = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
-    status               = LiabilityStatus.LIVE,
-    traderName           = "trader-name",
-    goodName             = Some("good-name"),
-    entryDate            = Some(Instant.EPOCH),
-    entryNumber          = Some("123456"),
-    traderCommodityCode  = Some("0200000000"),
+    status = LiabilityStatus.LIVE,
+    traderName = "trader-name",
+    goodName = Some("good-name"),
+    entryDate = Some(Instant.EPOCH),
+    entryNumber = Some("123456"),
+    traderCommodityCode = Some("0200000000"),
     officerCommodityCode = Some("0100000000"),
-    btiReference         = Some("12345678"),
-    repaymentClaim       = Some(RepaymentClaim(dvrNumber = Some("123456"), dateForRepayment = None)),
-    dateOfReceipt        = Some(Instant.EPOCH),
+    btiReference = Some("12345678"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some("123456"), dateForRepayment = None)),
+    dateOfReceipt = Some(Instant.EPOCH),
     traderContactDetails = Some(
       TraderContactDetails(
         email = Some("trader@email.com"),
@@ -69,9 +69,9 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
         address = Some(
           Address(
             buildingAndStreet = "1 Street",
-            townOrCity        = "Town",
-            county            = Some("County"),
-            postCode          = Some("NE10 0HG")
+            townOrCity = "Town",
+            county = Some("County"),
+            postCode = Some("NE10 0HG")
           )
         )
       )
@@ -124,7 +124,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
         val form = liabilityDetailsForm.liabilityDetailsForm(sampleEmptyCase).bindFromRequest(emptyParams)
 
         form.hasErrors         shouldBe true
-        form.errors            should have(size(4))
+        form.errors              should have(size(4))
         form.errors.map(_.key) shouldBe Seq("traderPostcode", "traderName", "goodName", "contact.contactName")
       }
     }
@@ -172,7 +172,7 @@ class LiabilityDetailsFormSpec extends ModelsBaseSpec {
       "using edit form is repayments claim set to true" in {
         val form = liabilityDetailsForm.liabilityDetailsForm(sampleCase)
 
-        form.hasErrors                                       shouldBe false
+        form.hasErrors shouldBe false
         form.get.application.asLiabilityOrder.repaymentClaim shouldBe sampleCase.application.asLiabilityOrder.repaymentClaim
       }
     }

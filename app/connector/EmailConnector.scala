@@ -16,14 +16,15 @@
 
 package connector
 
-import com.google.inject.Inject
 import com.codahale.metrics.MetricRegistry
+import com.google.inject.Inject
 import config.AppConfig
 import metrics.HasMetrics
 import models.{Email, EmailTemplate}
-import play.api.libs.json.{Format, Writes}
+import play.api.libs.json.{Format, Json, Writes}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.Base64Utils
 import utils.JsonFormatters.emailTemplateFormat
 
@@ -33,27 +34,37 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EmailConnector @Inject() (
   configuration: AppConfig,
-  client: HttpClient,
+  client: HttpClientV2,
   val metrics: MetricRegistry
 )(implicit ec: ExecutionContext)
     extends HasMetrics {
 
-  def send(e: Email[_])(implicit hc: HeaderCarrier, writes: Writes[Email[_]]): Future[Unit] =
+  def send[E >: Email[_]](email: E)(implicit hc: HeaderCarrier, writes: Writes[E]): Future[Unit] =
     withMetricsTimerAsync("send-email") { _ =>
-      val url = s"${configuration.emailUrl}/hmrc/email"
-      client.POST[Email[_], Unit](url = url, body = e)
+      val fullURL = s"${configuration.emailUrl}/hmrc/email"
+
+      client
+        .post(url"$fullURL")
+        .withBody(Json.toJson(email))
+        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
+        .map(_ => ())
     }
 
-  def generate[T](e: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] =
+  def generate[T](email: Email[T])(implicit hc: HeaderCarrier, writes: Format[T]): Future[EmailTemplate] =
     withMetricsTimerAsync("generate-email") { _ =>
-      val url = s"${configuration.emailRendererUrl}/templates/${e.templateId}"
-      client.POST[Map[String, T], EmailTemplate](url, Map("parameters" -> e.parameters)).map(decodingContent)
+      val fullURL = s"${configuration.emailRendererUrl}/templates/${email.templateId}"
+
+      client
+        .post(url"$fullURL")
+        .withBody(Json.obj("parameters" -> Json.toJson(email.parameters)))
+        .execute[EmailTemplate]
+        .map(decodingContent)
     }
 
   private def decodingContent: EmailTemplate => EmailTemplate = { t: EmailTemplate =>
     t.copy(
       plain = Base64Utils.decode(t.plain),
-      html  = Base64Utils.decode(t.html)
+      html = Base64Utils.decode(t.html)
     )
   }
 

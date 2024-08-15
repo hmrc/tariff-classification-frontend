@@ -59,7 +59,8 @@ class ChangeCaseStatusController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          hasErrors => Ok(change_case_status(request.`case`, hasErrors)), {
+          hasErrors => Ok(change_case_status(request.`case`, hasErrors)),
+          {
             case CaseStatusRadioInput.Complete => Redirect(routes.CompleteCaseController.completeCase(reference))
             case CaseStatusRadioInput.Refer    => Redirect(routes.ReferCaseController.getReferCaseReason(reference))
             case CaseStatusRadioInput.Reject   => Redirect(routes.RejectCaseController.getRejectCaseReason(reference))

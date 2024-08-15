@@ -88,12 +88,12 @@ private[mappings] trait GenericDateFormatter extends Formatters with Constraints
         FormError(keyWithError(key, missingFields(key, data).head), missingMessage, missingFields(key, data) ++ args)
       )
         ++ illegalErrors(key, data, invalidMessage, args, illegalFields) ++ illegalErrors(
-        key,
-        data,
-        invalidMessage,
-        args,
-        illegalZero
-      )
+          key,
+          data,
+          invalidMessage,
+          args,
+          illegalZero
+        )
     )
 
   def filter(input: String): String = {

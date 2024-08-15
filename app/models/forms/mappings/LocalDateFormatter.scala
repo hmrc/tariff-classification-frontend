@@ -47,17 +47,17 @@ private[mappings] class LocalDateFormatter(
   private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
     val int = intFormatter(
-      requiredKey    = invalidKey,
+      requiredKey = invalidKey,
       wholeNumberKey = invalidKey,
-      nonNumericKey  = invalidKey,
+      nonNumericKey = invalidKey,
       args
     )
 
     for {
-      day   <- int.bind(getKey(key, "day"), data).right
-      month <- int.bind(getKey(key, "month"), data).right
-      year  <- int.bind(getKey(key, "year"), data).right
-      date  <- toDate(key, day, month, year).right
+      day   <- int.bind(getKey(key, "day"), data)
+      month <- int.bind(getKey(key, "month"), data)
+      year  <- int.bind(getKey(key, "year"), data)
+      date  <- toDate(key, day, month, year)
     } yield date
   }
 

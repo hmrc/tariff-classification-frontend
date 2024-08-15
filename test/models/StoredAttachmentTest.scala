@@ -47,15 +47,15 @@ class StoredAttachmentTest extends ModelsBaseSpec {
       val metadata   = someMetadataWithType("type")
 
       StoredAttachment(attachment, metadata) shouldBe StoredAttachment(
-        id                     = attachment.id,
-        public                 = attachment.public,
-        operator               = None,
-        timestamp              = attachment.timestamp,
-        url                    = metadata.url,
-        fileName               = metadata.fileName,
-        mimeType               = metadata.mimeType,
-        scanStatus             = metadata.scanStatus,
-        description            = Some("test description"),
+        id = attachment.id,
+        public = attachment.public,
+        operator = None,
+        timestamp = attachment.timestamp,
+        url = metadata.url,
+        fileName = metadata.fileName,
+        mimeType = metadata.mimeType,
+        scanStatus = metadata.scanStatus,
+        description = Some("test description"),
         shouldPublishToRulings = attachment.shouldPublishToRulings
       )
     }
@@ -75,18 +75,18 @@ class StoredAttachmentTest extends ModelsBaseSpec {
     StoredAttachment(anAttachment, someMetadataWithType(t))
 
   private def anAttachment = Attachment(
-    id     = "id",
+    id = "id",
     public = true,
     None,
-    timestamp   = Instant.EPOCH,
+    timestamp = Instant.EPOCH,
     description = Some("test description")
   )
 
   private def someMetadataWithType(t: String) = FileMetadata(
-    id         = "id",
-    fileName   = Some("name"),
-    mimeType   = Some(t),
-    url        = Some("url"),
+    id = "id",
+    fileName = Some("name"),
+    mimeType = Some(t),
+    url = Some("url"),
     scanStatus = Some(ScanStatus.READY)
   )
 

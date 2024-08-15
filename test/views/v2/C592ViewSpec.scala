@@ -35,13 +35,13 @@ class C592ViewSpec extends ViewSpec {
     }
     "contain Edit Details if operator has the required permissions" in {
       val doc =
-        view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.EDIT_LIABILITY), messages, appConfig))
+        view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.EDIT_LIABILITY), messages))
 
       doc should containElementWithID("edit-liability-details")
     }
 
     "not contain Edit Details if operator does not have the required permissions" in {
-      val doc = view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+      val doc = view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.VIEW_CASES), messages))
 
       doc shouldNot containElementWithID("edit-liability-details")
     }
@@ -50,8 +50,7 @@ class C592ViewSpec extends ViewSpec {
       val doc = view(
         c592Tab(Cases.c592ViewModel.copy(isRepaymentClaim = true))(
           requestWithPermissions(Permission.VIEW_CASES),
-          messages,
-          appConfig
+          messages
         )
       )
 
@@ -59,7 +58,7 @@ class C592ViewSpec extends ViewSpec {
     }
 
     "not show repayment section if one is not required" in {
-      val doc = view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+      val doc = view(c592Tab(Cases.c592ViewModel)(requestWithPermissions(Permission.VIEW_CASES), messages))
 
       doc shouldNot containElementWithID("dvr_number")
     }

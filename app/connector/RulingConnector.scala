@@ -16,27 +16,32 @@
 
 package connector
 
-import config.AppConfig
-import javax.inject.{Inject, Singleton}
-import metrics.HasMetrics
 import com.codahale.metrics.MetricRegistry
-import scala.concurrent.{ExecutionContext, Future}
-import uk.gov.hmrc.http.HeaderCarrier
+import config.AppConfig
+import metrics.HasMetrics
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RulingConnector @Inject() (
   configuration: AppConfig,
-  http: AuthenticatedHttpClient,
+  http: HttpClientV2,
   val metrics: MetricRegistry
 )(implicit ec: ExecutionContext)
-    extends HasMetrics {
+    extends HasMetrics
+    with InjectAuthHeader {
 
   def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] =
     withMetricsTimerAsync("notify-rulings-frontend") { _ =>
-      http.POSTEmpty[Unit](
-        s"${configuration.rulingUrl}/search-for-advance-tariff-rulings/ruling/$id",
-        headers = http.addAuth
-      )
+      val fullURL = s"${configuration.rulingUrl}/search-for-advance-tariff-rulings/ruling/$id"
+      http
+        .post(url"$fullURL")
+        .setHeader(authHeaders(configuration): _*)
+        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
+        .map(_ => ())
     }
 }

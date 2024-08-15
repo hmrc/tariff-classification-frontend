@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.Case
 @import models.SampleStatus.SampleStatus
 @import models.request.AuthenticatedRequest
@@ -28,7 +27,7 @@
         backLink: back_link
 )
 
-@(c: Case, form: Form[Option[SampleStatus]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[Option[SampleStatus]])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("case.liability.provide-samples"),

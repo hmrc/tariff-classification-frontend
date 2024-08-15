@@ -50,7 +50,7 @@ class AssignCaseSpec extends IntegrationTest with MockitoSugar {
       val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
 
       response.status shouldBe OK
-      response.body   should include("assign_case-heading")
+      response.body     should include("assign_case-heading")
     }
 
     "redirect on auth failure" in {
@@ -60,7 +60,7 @@ class AssignCaseSpec extends IntegrationTest with MockitoSugar {
       val response: WSResponse = await(requestWithSession("/cases/1/assign").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
   }
 

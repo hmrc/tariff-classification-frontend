@@ -34,9 +34,9 @@ object CaseDetailsViewModel {
 
     CaseDetailsViewModel(
       cse.reference,
-      summary              = correspondenceApplication.summary,
-      detailedDescription  = correspondenceApplication.detailedDescription,
-      caseCreatedDate      = Dates.format(cse.createdDate),
+      summary = correspondenceApplication.summary,
+      detailedDescription = correspondenceApplication.detailedDescription,
+      caseCreatedDate = Dates.format(cse.createdDate),
       caseBoardsFileNumber = cse.caseBoardsFileNumber,
       if (correspondenceApplication.relatedBTIReferences.nonEmpty) {
         correspondenceApplication.relatedBTIReferences

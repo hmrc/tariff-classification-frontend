@@ -16,7 +16,7 @@
 
 @import models.StoredAttachment
 @import models.response.ScanStatus
-@(reference: String, id: String, file: StoredAttachment, name: Option[String] = None, useTabIndex : Option[Int] = None)(implicit messages: Messages)
+@(reference: String, id: String, file: StoredAttachment, name: Option[String] = None, useTabIndex : Option[Int] = None)
 
 
 @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {

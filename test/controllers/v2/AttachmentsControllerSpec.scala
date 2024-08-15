@@ -16,7 +16,6 @@
 
 package controllers.v2
 
-import config.AppConfig
 import controllers.routes.CaseController
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, SuccessfulRequestActions}
 import models._
@@ -55,26 +54,28 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
 
   def controller: AttachmentsController =
     new AttachmentsController(
-      verify            = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
-      casesService      = casesService,
-      mcc               = mcc,
+      verify = new SuccessfulRequestActions(playBodyParsers, operator, c = Cases.btiCaseExample),
+      casesService = casesService,
+      mcc = mcc,
       remove_attachment = remove_attachment,
-      appConfig         = realAppConfig,
-      mat               = mat
+      appConfig = realAppConfig,
+      mat = mat
     )
 
   def controller(requestCase: Case, permission: Set[Permission]): AttachmentsController =
     new AttachmentsController(
-      verify            = new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
-      casesService      = casesService,
-      mcc               = mcc,
+      verify = new RequestActionsWithPermissions(playBodyParsers, permission, c = requestCase),
+      casesService = casesService,
+      mcc = mcc,
       remove_attachment = remove_attachment,
-      appConfig         = realAppConfig,
-      mat               = mat
+      appConfig = realAppConfig,
+      mat = mat
     )
 
-  override protected def beforeEach(): Unit =
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
     reset(remove_attachment)
+  }
 
   "Remove attachment" should {
 
@@ -97,7 +98,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
           .removeAttachment(aCase.reference, "reference", "some-file.jpg")(newFakeGETRequestWithCSRF())
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
   }
@@ -148,7 +149,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         any[Form[Boolean]],
         anyString(),
         anyString()
-      )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
+      )(any[AuthenticatedRequest[_]], any[Messages])
     }
 
   }
@@ -163,7 +164,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         any[Form[Boolean]],
         anyString(),
         anyString()
-      )(any[AuthenticatedRequest[_]], any[Messages], any[AppConfig])
+      )(any[AuthenticatedRequest[_]], any[Messages])
     ).thenReturn(Html("heading"))
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))

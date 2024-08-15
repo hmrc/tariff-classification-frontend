@@ -35,7 +35,7 @@ class SampleStatusViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      val doc = view(sample_status(sampleTab)(requestWithPermissions(Permission.EDIT_SAMPLE), messages, appConfig))
+      val doc = view(sample_status(sampleTab)(requestWithPermissions(Permission.EDIT_SAMPLE), messages))
 
       doc should containElementWithID("change-sample-status")
     }
@@ -48,7 +48,7 @@ class SampleStatusViewSpec extends ViewSpec {
 
       val sampleTab = SampleTabViewModel.fromCase(caseWithSample, Paged.empty)
 
-      val doc = view(sample_status(sampleTab)(requestWithPermissions(Permission.VIEW_CASES), messages, appConfig))
+      val doc = view(sample_status(sampleTab)(requestWithPermissions(Permission.VIEW_CASES), messages))
 
       doc shouldNot containElementWithID("change-sample-status")
     }

@@ -65,7 +65,7 @@ class ManageKeywordsController @Inject() (
         caseKeywords <- keywordService.fetchCaseKeywords()
         allKeywords  <- keywordService.findAll(NoPagination())
         manageKeywordsViewModel = ManageKeywordsViewModel
-          .forManagedTeams(caseKeywords.results, allKeywords.results)
+                                    .forManagedTeams(caseKeywords.results, allKeywords.results)
       } yield Ok(
         manageKeywordsView(
           activeSubNav,
@@ -87,7 +87,7 @@ class ManageKeywordsController @Inject() (
               for {
                 caseKeywords <- keywordService.fetchCaseKeywords()
                 manageKeywordsViewModel = ManageKeywordsViewModel
-                  .forManagedTeams(caseKeywords.results, keywords.results)
+                                            .forManagedTeams(caseKeywords.results, keywords.results)
               } yield BadRequest(
                 manageKeywordsView(
                   activeSubNav,
@@ -240,7 +240,8 @@ class ManageKeywordsController @Inject() (
             formWithErrors =>
               Future.successful(
                 BadRequest(editApprovedKeywordsView(keywordName, keywords.results, formWithErrors))
-              ), {
+              ),
+            {
               case (EditKeywordAction.DELETE, _) =>
                 keywordService
                   .deleteKeyword(Keyword(keywordName), request.operator)
@@ -250,7 +251,7 @@ class ManageKeywordsController @Inject() (
               case (EditKeywordAction.RENAME, keywordToRename) =>
                 keywordService
                   .renameKeyword(
-                    Keyword(keywordName, approved     = true),
+                    Keyword(keywordName, approved = true),
                     Keyword(keywordToRename, approved = true),
                     request.operator
                   )

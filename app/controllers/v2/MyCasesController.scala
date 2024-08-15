@@ -38,8 +38,8 @@ class MyCasesController @Inject() (
   eventsService: EventsService,
   mcc: MessagesControllerComponents,
   val myCasesView: my_cases_view
-)(
-  implicit val appConfig: AppConfig,
+)(implicit
+  val appConfig: AppConfig,
   mat: Materializer
 ) extends FrontendController(mcc)
     with I18nSupport
@@ -56,10 +56,10 @@ class MyCasesController @Inject() (
           referralEventsByCase <- eventsService.findReferralEvents(caseReferences)
           completeEventsByCase <- eventsService.findCompletionEvents(caseReferences)
           myCaseStatuses = activeSubNav match {
-            case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
-            case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
-            case CompletedByMeTab => ApplicationsTab.completedByMe(cases.results, completeEventsByCase)
-          }
+                             case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
+                             case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
+                             case CompletedByMeTab => ApplicationsTab.completedByMe(cases.results, completeEventsByCase)
+                           }
         } yield Ok(myCasesView(myCaseStatuses, activeSubNav))
     }
 }

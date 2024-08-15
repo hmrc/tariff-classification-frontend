@@ -18,27 +18,18 @@ package connector
 
 import base.SpecBase
 import config.AppConfig
-import org.apache.pekko.actor.ActorSystem
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterAll
-import play.api.libs.ws.WSClient
-import uk.gov.hmrc.http.HttpClient
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.{ResourceFiles, WiremockTestServer}
 
 trait ConnectorTest extends SpecBase with WiremockTestServer with ResourceFiles with BeforeAndAfterAll {
-
-  private val actorSystem = ActorSystem.create("testActorSystem")
 
   protected val mockAppConfig: AppConfig = mock[AppConfig]
 
   protected val fakeAuthToken = "AUTH_TOKEN"
 
-  protected val wsClient: WSClient = ws
-
-  protected val authenticatedHttpClient =
-    new AuthenticatedHttpClient(realConfig, realHttpAudit, wsClient, mockAppConfig, actorSystem)
-  protected val standardHttpClient: HttpClient = new DefaultHttpClient(realConfig, realHttpAudit, wsClient, actorSystem)
+  protected val httpClient: HttpClientV2 = injector.instanceOf[HttpClientV2]
 
   override def beforeAll(): Unit = {
     super.beforeAll()

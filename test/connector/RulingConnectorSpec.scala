@@ -17,11 +17,12 @@
 package connector
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import play.api.http.Status
+import play.api.http.Status.{ACCEPTED, BAD_GATEWAY}
+import uk.gov.hmrc.http.UpstreamErrorResponse
 
-class RulingConnectorTest extends ConnectorTest {
+class RulingConnectorSpec extends ConnectorTest {
 
-  private val connector = new RulingConnector(mockAppConfig, authenticatedHttpClient, metrics)
+  private val connector: RulingConnector = new RulingConnector(mockAppConfig, httpClient, metrics)
 
   "Connector Publish" should {
 
@@ -30,11 +31,30 @@ class RulingConnectorTest extends ConnectorTest {
         post("/search-for-advance-tariff-rulings/ruling/id")
           .willReturn(
             aResponse()
-              .withStatus(Status.ACCEPTED)
+              .withStatus(ACCEPTED)
           )
       )
 
       await(connector.notify("id"))
+
+      verify(
+        postRequestedFor(urlEqualTo("/search-for-advance-tariff-rulings/ruling/id"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "propagate errors" in {
+      stubFor(
+        post("/search-for-advance-tariff-rulings/ruling/id")
+          .willReturn(
+            aResponse()
+              .withStatus(BAD_GATEWAY)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.notify("id"))
+      }
 
       verify(
         postRequestedFor(urlEqualTo("/search-for-advance-tariff-rulings/ruling/id"))

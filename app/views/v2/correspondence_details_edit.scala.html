@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes.CreateCorrespondenceController
 @import helper._
 @import models.request.AuthenticatedRequest
@@ -32,7 +31,7 @@
 )
 
 
-@(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("case.v2.correspondence.case-details-edit-title"),
@@ -46,7 +45,7 @@
     @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
         <div class="govuk-form-group">
 
-            @helper.form(action = CreateCorrespondenceController.postCorrespondenceDetails(c.reference), 'class -> "form" , Symbol("id") -> "correspondence-details-edit-form", Symbol("novalidate") -> "novalidate") {
+            @helper.form(action = CreateCorrespondenceController.postCorrespondenceDetails(c.reference), Symbol("class") -> "form" , Symbol("id") -> "correspondence-details-edit-form", Symbol("novalidate") -> "novalidate") {
 
                 @CSRF.formField
 

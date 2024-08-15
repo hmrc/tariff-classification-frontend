@@ -17,7 +17,6 @@
 @import controllers.v2.routes.MyCasesController
 @import controllers.v2.routes.AllOpenCasesController
 @import models.viewmodels.{CorrespondenceTab, MiscellaneousTab, ATaRTab, LiabilitiesTab}
-@import config.AppConfig
 @import models.{Case, Queue}
 @import models.request.AuthenticatedRequest
 
@@ -35,7 +34,7 @@
 )
 
 
-@(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @backToCase =@{
     if(c.application.isCorrespondence) {

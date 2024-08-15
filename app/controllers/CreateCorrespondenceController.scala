@@ -101,7 +101,8 @@ class CreateCorrespondenceController @Inject() (
       formReleaseChoice
         .bindFromRequest()
         .fold(
-          errors => getCaseAndRenderChoiceView(reference, errors), {
+          errors => getCaseAndRenderChoiceView(reference, errors),
+          {
             case "Yes" => successful(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
             case _     => successful(Redirect(routes.CreateCorrespondenceController.displayConfirmation(reference)))
           }

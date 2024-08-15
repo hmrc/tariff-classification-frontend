@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import connector.{BindingTariffClassificationConnector, FakeDataCacheConnector, StrideAuthConnector}
+import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
 import models.request._
 import models.{Case, Operator, Permission, UserAnswers}
 import org.mockito.Mockito.mock
@@ -25,7 +25,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.api.{Configuration, Environment}
-import service.CasesService
+import service.{CasesService, FakeDataCacheService}
 import utils.Cases
 import views.html.case_not_found
 
@@ -35,15 +35,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SuccessfulAuthenticatedAction(
   parse: PlayBodyParsers,
-  operator: Operator           = Operator("0", Some("name")),
+  operator: Operator = Operator("0", Some("name")),
   permissions: Set[Permission] = Set.empty
 )(implicit ec: ExecutionContext)
     extends AuthenticatedAction(
-      appConfig     = mock(classOf[AppConfig]),
-      config        = mock(classOf[Configuration]),
-      env           = mock(classOf[Environment]),
+      appConfig = mock(classOf[AppConfig]),
+      config = mock(classOf[Configuration]),
+      env = mock(classOf[Environment]),
       authConnector = mock(classOf[StrideAuthConnector]),
-      parse         = parse,
+      parse = parse,
       userConnector = mock(classOf[BindingTariffClassificationConnector])
     ) {
 
@@ -52,7 +52,7 @@ class SuccessfulAuthenticatedAction(
 }
 
 class SuccessfulCasePermissionsAction(
-  operator: Operator           = Operator("0", Some("name")),
+  operator: Operator = Operator("0", Some("name")),
   permissions: Set[Permission] = Set.empty
 )(implicit val ec: ExecutionContext)
     extends CheckCasePermissionsAction {
@@ -63,7 +63,6 @@ class SuccessfulCasePermissionsAction(
 class ExistingCaseActionFactory(requestCase: Case)
     extends VerifyCaseExistsActionFactory(casesService = mock(classOf[CasesService]))(
       mock(classOf[MessagesApi]),
-      mock(classOf[AppConfig]),
       case_not_found = mock(classOf[case_not_found]),
       mock(classOf[ExecutionContext])
     ) {
@@ -93,7 +92,7 @@ class HaveRightPermissionsActionFactory @Inject() (implicit ec: ExecutionContext
 
       override protected def executionContext: ExecutionContext = ec
     }
-  override def apply[B[C] <: OperatorRequest[_]](ppermissions: Seq[Permission]): ActionFilter[B] =
+  override def apply[B[C] <: OperatorRequest[_]](permissions: Seq[Permission]): ActionFilter[B] =
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] =
         successful(None)
@@ -103,7 +102,7 @@ class HaveRightPermissionsActionFactory @Inject() (implicit ec: ExecutionContext
 }
 
 class MustHaveDataActionFactory @Inject() (userAnswers: UserAnswers)(implicit ec: ExecutionContext)
-    extends RequireDataActionFactory(dataCacheConnector = FakeDataCacheConnector) {
+    extends RequireDataActionFactory(dataCacheService = FakeDataCacheService) {
   override def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
     new ActionRefiner[B, AuthenticatedDataRequest] {
       override protected def refine[A](
@@ -118,12 +117,11 @@ class MustHaveDataActionFactory @Inject() (userAnswers: UserAnswers)(implicit ec
 
 class HaveExistingCaseDataActionFactory(requestCase: Case)
     extends RequireCaseDataActionFactory(
-      casesService       = mock(classOf[CasesService]),
-      dataCacheConnector = FakeDataCacheConnector,
-      case_not_found     = mock(classOf[case_not_found])
+      casesService = mock(classOf[CasesService]),
+      dataCacheService = FakeDataCacheService,
+      case_not_found = mock(classOf[case_not_found])
     )(
       mock(classOf[MessagesApi]),
-      mock(classOf[AppConfig]),
       mock(classOf[ExecutionContext])
     ) {
 
@@ -135,7 +133,7 @@ class HaveExistingCaseDataActionFactory(requestCase: Case)
       override protected def refine[A](
         request: B[A]
       ): Future[Either[Result, AuthenticatedCaseDataRequest[A]]] =
-        FakeDataCacheConnector
+        FakeDataCacheService
           .fetch(cacheKey)
           .map {
             case Some(cacheMap) =>
@@ -158,7 +156,7 @@ class SuccessfulRequestActions(
       new SuccessfulAuthenticatedAction(parse, operator),
       new ExistingCaseActionFactory(c),
       new HaveRightPermissionsActionFactory,
-      new RequireDataActionFactory(FakeDataCacheConnector),
+      new RequireDataActionFactory(FakeDataCacheService),
       new HaveExistingCaseDataActionFactory(c)
     ) {}
 
@@ -166,22 +164,22 @@ class RequestActionsWithPermissions(
   parse: PlayBodyParsers,
   permissions: Set[Permission],
   addViewCasePermission: Boolean = true,
-  c: Case                        = Cases.btiCaseExample,
-  op: Operator                   = Operator("0", Some("name"))
+  c: Case = Cases.btiCaseExample,
+  op: Operator = Operator("0", Some("name"))
 )(implicit ec: ExecutionContext)
     extends RequestActions(
       new SuccessfulCasePermissionsAction(
-        operator    = op,
+        operator = op,
         permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
       ),
       new SuccessfulAuthenticatedAction(
         parse,
-        operator    = op,
+        operator = op,
         permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
       ),
       new ExistingCaseActionFactory(c),
       new MustHavePermissionActionFactory,
-      new RequireDataActionFactory(FakeDataCacheConnector),
+      new RequireDataActionFactory(FakeDataCacheService),
       new HaveExistingCaseDataActionFactory(c)
     ) {}
 
@@ -190,17 +188,17 @@ class RequestActionsWithPermissionsAndData(
   permissions: Set[Permission],
   userAnswers: UserAnswers,
   addViewCasePermission: Boolean = true,
-  c: Case                        = Cases.btiCaseExample,
-  op: Operator                   = Operator("0", Some("name"))
+  c: Case = Cases.btiCaseExample,
+  op: Operator = Operator("0", Some("name"))
 )(implicit ec: ExecutionContext)
     extends RequestActions(
       new SuccessfulCasePermissionsAction(
-        operator    = op,
+        operator = op,
         permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
       ),
       new SuccessfulAuthenticatedAction(
         parse,
-        operator    = op,
+        operator = op,
         permissions = if (addViewCasePermission) permissions ++ Set(Permission.VIEW_CASES) else permissions
       ),
       new ExistingCaseActionFactory(c),

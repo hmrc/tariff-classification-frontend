@@ -14,15 +14,13 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.reporting._
-@import models.request.AuthenticatedRequest
 
 @(
   resultField: NumberResultField,
   id: String,
   index: Int
-)(implicit request: AuthenticatedRequest[_], appConfig: AppConfig, messages: Messages)
+)
 
 <td id="@{id}-@{resultField.fieldName}-@{index}">
   @{resultField.data.getOrElse(0)}

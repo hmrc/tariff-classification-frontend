@@ -23,7 +23,6 @@ import utils.Cases.{aCase, withDecision}
 import utils.JsonFormatters._
 import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
-//noinspection ScalaStyle
 class AppealCaseSpec extends IntegrationTest with MockitoSugar {
 
   val owner: Some[Operator] = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
@@ -60,7 +59,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/appeal").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
 
     def shouldSucceed = {
@@ -134,7 +133,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/v2/1/atar").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"appeal-heading\"")
+      response.body     should include("id=\"appeal-heading\"")
     }
   }
 
@@ -176,7 +175,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/new-appeal").get())
 
       response.status shouldBe OK
-      response.body   should include("id=\"appeal_choose_type-heading\"")
+      response.body     should include("id=\"appeal_choose_type-heading\"")
     }
 
     def shouldFail = {
@@ -185,7 +184,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/new-appeal").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
 
   }

@@ -31,16 +31,16 @@ class LiabilityDetailsEditViewSpec extends ViewSpec {
 
   private val liability = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),
-    status               = LiabilityStatus.LIVE,
-    traderName           = "trader-name",
-    goodName             = Some("good-name"),
-    entryDate            = Some(Instant.EPOCH),
-    entryNumber          = Some("entry-no"),
-    traderCommodityCode  = Some("0200000000"),
+    status = LiabilityStatus.LIVE,
+    traderName = "trader-name",
+    goodName = Some("good-name"),
+    entryDate = Some(Instant.EPOCH),
+    entryNumber = Some("entry-no"),
+    traderCommodityCode = Some("0200000000"),
     officerCommodityCode = Some("0100000000"),
-    btiReference         = Some("btiReferenceN"),
-    repaymentClaim       = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
-    dateOfReceipt        = Some(Instant.EPOCH),
+    btiReference = Some("btiReferenceN"),
+    repaymentClaim = Some(RepaymentClaim(dvrNumber = Some(""), dateForRepayment = Some(Instant.EPOCH))),
+    dateOfReceipt = Some(Instant.EPOCH),
     traderContactDetails = Some(
       TraderContactDetails(
         email = Some("trader@email.com"),
@@ -48,9 +48,9 @@ class LiabilityDetailsEditViewSpec extends ViewSpec {
         address = Some(
           Address(
             buildingAndStreet = "STREET 1",
-            townOrCity        = "Town",
-            county            = Some("County"),
-            postCode          = Some("postcode")
+            townOrCity = "Town",
+            county = Some("County"),
+            postCode = Some("postcode")
           )
         )
       )
@@ -78,7 +78,7 @@ class LiabilityDetailsEditViewSpec extends ViewSpec {
     "show the correct hint text for entry date" in {
       val doc = view(liabilityDetailsEditView(sampleCase, LiabilityDetailsForm.liabilityDetailsForm(sampleCase)))
 
-      doc                                       should containElementWithID("entryDate-hint")
+      doc                                         should containElementWithID("entryDate-hint")
       doc.getElementById("entryDate-hint").text shouldBe messages("case.v2.liability.c592.details_edit.date_hint")
     }
 

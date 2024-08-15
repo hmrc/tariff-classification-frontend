@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.request.AuthenticatedRequest
-@import config.AppConfig
 @import models.viewmodels.managementtools._
 @import controllers.routes.{AssignCaseController, CaseController}
 @import models.Role.Role
@@ -23,7 +21,7 @@
 
 @import views.html.partials.statuses.case_status
 
-@(usersTab : UsersTab, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(usersTab : UsersTab, usersCount: Map[String, List[Case]])
 
 <table id="@{usersTab.tabMessageKey}-table" class="govuk-table">
     <thead class="govuk-table__head">

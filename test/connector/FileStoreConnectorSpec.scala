@@ -23,8 +23,9 @@ import models.response._
 import models.{Attachment, FileUpload}
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.when
-import play.api.http.Status
+import play.api.http.Status._
 import play.api.libs.Files.SingletonTemporaryFileCreator
+import uk.gov.hmrc.http.UpstreamErrorResponse
 
 class FileStoreConnectorSpec extends ConnectorTest {
 
@@ -34,7 +35,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
   given(mockAppConfig.fileStoreUrl) willReturn wireMockUrl
 
   private val attachmentId = "id"
-  private val connector    = new FileStoreConnector(mockAppConfig, authenticatedHttpClient, wsClient, metrics)
+  private val connector    = new FileStoreConnector(mockAppConfig, httpClient, metrics)
 
   "Connector 'GET' one" should {
     "handle 404" in {
@@ -44,7 +45,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       stubFor(
         get("/file/id")
-          .willReturn(aResponse().withStatus(Status.NOT_FOUND))
+          .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
       await(connector.get(attachmentId)) shouldBe None
@@ -63,17 +64,17 @@ class FileStoreConnectorSpec extends ConnectorTest {
         get(s"/file/$attachmentId")
           .willReturn(
             aResponse()
-              .withStatus(Status.OK)
+              .withStatus(OK)
               .withBody(fromResource("filestore/single_file_with_mandatory_fields-response.json"))
           )
       )
 
       await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
-          id         = attachmentId,
-          fileName   = Some("name"),
-          mimeType   = Some("text/plain"),
-          url        = None,
+          id = attachmentId,
+          fileName = Some("name"),
+          mimeType = Some("text/plain"),
+          url = None,
           scanStatus = None
         )
       )
@@ -92,17 +93,17 @@ class FileStoreConnectorSpec extends ConnectorTest {
         get(s"/file/$attachmentId")
           .willReturn(
             aResponse()
-              .withStatus(Status.OK)
+              .withStatus(OK)
               .withBody(fromResource("filestore/single_file_with_optional_fields-response.json"))
           )
       )
 
       await(connector.get(attachmentId)) shouldBe Some(
         FileMetadata(
-          id         = attachmentId,
-          fileName   = Some("name"),
-          mimeType   = Some("text/plain"),
-          url        = Some("url"),
+          id = attachmentId,
+          fileName = Some("name"),
+          mimeType = Some("text/plain"),
+          url = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
       )
@@ -130,17 +131,17 @@ class FileStoreConnectorSpec extends ConnectorTest {
         get("/file?id=id1&id=id2")
           .willReturn(
             aResponse()
-              .withStatus(Status.OK)
+              .withStatus(OK)
               .withBody(fromResource("filestore/multi_file_with_mandatory_fields-response.json"))
           )
       )
 
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
         FileMetadata(
-          id         = "id",
-          fileName   = Some("name"),
-          mimeType   = Some("text/plain"),
-          url        = None,
+          id = "id",
+          fileName = Some("name"),
+          mimeType = Some("text/plain"),
+          url = None,
           scanStatus = None
         )
       )
@@ -161,17 +162,17 @@ class FileStoreConnectorSpec extends ConnectorTest {
         get("/file?id=id1&id=id2")
           .willReturn(
             aResponse()
-              .withStatus(Status.OK)
+              .withStatus(OK)
               .withBody(fromResource("filestore/multi_file_with_optional_fields-response.json"))
           )
       )
 
       await(connector.get(Seq(att1, att2))) shouldBe Seq(
         FileMetadata(
-          id         = "id",
-          fileName   = Some("name"),
-          mimeType   = Some("text/plain"),
-          url        = Some("url"),
+          id = "id",
+          fileName = Some("name"),
+          mimeType = Some("text/plain"),
+          url = Some("url"),
           scanStatus = Some(ScanStatus.READY)
         )
       )
@@ -188,7 +189,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
       post("/file/initiate")
         .willReturn(
           aResponse()
-            .withStatus(Status.ACCEPTED)
+            .withStatus(ACCEPTED)
             .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
         )
     )
@@ -196,7 +197,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     val initiateRequest = FileStoreInitiateRequest(maxFileSize = 0)
 
     await(connector.initiate(initiateRequest)) shouldBe FileStoreInitiateResponse(
-      id              = "id",
+      id = "id",
       upscanReference = "ref",
       uploadRequest = UpscanFormTemplate(
         "http://localhost:20001/upscan/upload",
@@ -215,7 +216,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
       post("/file")
         .willReturn(
           aResponse()
-            .withStatus(Status.ACCEPTED)
+            .withStatus(ACCEPTED)
             .withBody(fromResource("filestore/binding-tariff-filestore_upload-response.json"))
         )
     )
@@ -231,27 +232,48 @@ class FileStoreConnectorSpec extends ConnectorTest {
     )
 
     result shouldBe FileMetadata(
-      id       = "id",
+      id = "id",
       fileName = Some("file-name.txt"),
       mimeType = Some("text/plain")
     )
   }
 
-  "Delete" in {
-    stubFor(
-      delete("/file/fileId")
-        .willReturn(
-          aResponse()
-            .withStatus(Status.OK)
-        )
-    )
+  "delete" should {
+    "Delete from the File Store" in {
+      stubFor(
+        delete("/file/fileId")
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+          )
+      )
 
-    await(connector.delete("fileId"))
+      await(connector.delete("fileId"))
 
-    verify(
-      deleteRequestedFor(urlEqualTo("/file/fileId"))
-        .withHeader("X-Api-Token", equalTo(config.apiToken))
-    )
+      verify(
+        deleteRequestedFor(urlEqualTo("/file/fileId"))
+          .withHeader("X-Api-Token", equalTo(config.apiToken))
+      )
+    }
+
+    "propagate errors" in {
+      stubFor(
+        delete("/file/fileId")
+          .willReturn(
+            aResponse()
+              .withStatus(BAD_GATEWAY)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.delete("fileId"))
+      }
+
+      verify(
+        deleteRequestedFor(urlEqualTo("/file/fileId"))
+          .withHeader("X-Api-Token", equalTo(config.apiToken))
+      )
+    }
   }
 
   "Connector download" should {
@@ -260,7 +282,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
         get("/digital-tariffs-local/id")
           .willReturn(
             aResponse()
-              .withStatus(Status.NOT_FOUND)
+              .withStatus(NOT_FOUND)
           )
       )
 
@@ -274,7 +296,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
         get("/digital-tariffs-local/id")
           .willReturn(
             aResponse()
-              .withStatus(Status.INTERNAL_SERVER_ERROR)
+              .withStatus(INTERNAL_SERVER_ERROR)
           )
       )
 

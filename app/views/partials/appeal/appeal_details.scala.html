@@ -14,14 +14,13 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import controllers.routes
 @import models.request.AuthenticatedRequest
 @import models.{Appeal, AppealStatus, AppealType, Case, CaseStatus, Permission}
 @import models.viewmodels.atar.AppealTabViewModel
 @import views.html.partials.tab_heading
 
-@(appealTab: AppealTabViewModel, startTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(appealTab: AppealTabViewModel, startTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @tab_heading("appeal", messages("case.menu.appeal"))
 

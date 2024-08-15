@@ -35,9 +35,9 @@ class ReportSpec extends ModelsBaseSpec {
       Report.reportQueryStringBindable.bind("", summaryReportParams) shouldBe Some(
         Right(
           SummaryReport(
-            name    = "Summary report",
+            name = "Summary report",
             groupBy = NonEmptySeq.one(ReportField.User),
-            sortBy  = ReportField.User
+            sortBy = ReportField.User
           )
         )
       )
@@ -52,7 +52,7 @@ class ReportSpec extends ModelsBaseSpec {
       Report.reportQueryStringBindable.bind("", caseReportParams) shouldBe Some(
         Right(
           CaseReport(
-            name   = "Case report",
+            name = "Case report",
             sortBy = ReportField.Reference,
             fields =
               NonEmptySeq.of(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
@@ -128,12 +128,12 @@ class ReportSpec extends ModelsBaseSpec {
       CaseReport.caseReportQueryStringBindable.bind("", params1) shouldBe Some(
         Right(
           CaseReport(
-            name      = "Case report",
-            sortBy    = ReportField.Count,
+            name = "Case report",
+            sortBy = ReportField.Count,
             sortOrder = SortDirection.DESCENDING,
             caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
-            teams     = Set("1", "3"),
+            statuses = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
+            teams = Set("1", "3"),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
@@ -156,12 +156,12 @@ class ReportSpec extends ModelsBaseSpec {
       CaseReport.caseReportQueryStringBindable.bind("", params2) shouldBe Some(
         Right(
           CaseReport(
-            name      = "Case report",
-            sortBy    = ReportField.DateCreated,
+            name = "Case report",
+            sortBy = ReportField.DateCreated,
             sortOrder = SortDirection.ASCENDING,
             caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
-            teams     = Set("4", "5"),
+            statuses = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
+            teams = Set("4", "5"),
             fields =
               NonEmptySeq.of(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
           )
@@ -176,7 +176,7 @@ class ReportSpec extends ModelsBaseSpec {
       CaseReport.caseReportQueryStringBindable.bind("", minParams) shouldBe Some(
         Right(
           CaseReport(
-            name   = "Case report",
+            name = "Case report",
             sortBy = ReportField.Reference,
             fields =
               NonEmptySeq.of(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
@@ -190,14 +190,14 @@ class ReportSpec extends ModelsBaseSpec {
         CaseReport.caseReportQueryStringBindable.unbind(
           "",
           CaseReport(
-            name              = "Case report",
-            fields            = NonEmptySeq.one(ReportField.Reference),
-            sortBy            = ReportField.Count,
-            sortOrder         = SortDirection.DESCENDING,
-            caseTypes         = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
-            statuses          = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.NEW),
+            name = "Case report",
+            fields = NonEmptySeq.one(ReportField.Reference),
+            sortBy = ReportField.Count,
+            sortOrder = SortDirection.DESCENDING,
+            caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
+            statuses = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.NEW),
             liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
-            teams             = Set("1", "3"),
+            teams = Set("1", "3"),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
@@ -224,13 +224,13 @@ class ReportSpec extends ModelsBaseSpec {
         CaseReport.caseReportQueryStringBindable.unbind(
           "",
           CaseReport(
-            name              = "Case report",
-            sortBy            = ReportField.DateCreated,
-            sortOrder         = SortDirection.ASCENDING,
-            caseTypes         = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
-            statuses          = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
+            name = "Case report",
+            sortBy = ReportField.DateCreated,
+            sortOrder = SortDirection.ASCENDING,
+            caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
+            statuses = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
             liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
-            teams             = Set("4", "5"),
+            teams = Set("4", "5"),
             fields =
               NonEmptySeq.of(ReportField.Reference, ReportField.Status, ReportField.ElapsedDays, ReportField.TotalDays)
           )
@@ -268,13 +268,13 @@ class ReportSpec extends ModelsBaseSpec {
       SummaryReport.summaryReportQueryStringBindable.bind("", params1) shouldBe Some(
         Right(
           SummaryReport(
-            name      = "Summary report",
-            groupBy   = NonEmptySeq.one(ReportField.Status),
-            sortBy    = ReportField.Count,
+            name = "Summary report",
+            groupBy = NonEmptySeq.one(ReportField.Status),
+            sortBy = ReportField.Count,
             sortOrder = SortDirection.DESCENDING,
             caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
-            teams     = Set("1", "3"),
+            statuses = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
+            teams = Set("1", "3"),
             maxFields = Seq(ReportField.TotalDays),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
@@ -298,13 +298,13 @@ class ReportSpec extends ModelsBaseSpec {
       SummaryReport.summaryReportQueryStringBindable.bind("", params2) shouldBe Some(
         Right(
           SummaryReport(
-            name      = "Summary report",
-            groupBy   = NonEmptySeq.one(ReportField.User),
-            sortBy    = ReportField.DateCreated,
+            name = "Summary report",
+            groupBy = NonEmptySeq.one(ReportField.User),
+            sortBy = ReportField.DateCreated,
             sortOrder = SortDirection.ASCENDING,
             caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
-            teams     = Set("4", "5"),
+            statuses = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
+            teams = Set("4", "5"),
             maxFields = Seq(ReportField.ElapsedDays)
           )
         )
@@ -319,9 +319,9 @@ class ReportSpec extends ModelsBaseSpec {
       SummaryReport.summaryReportQueryStringBindable.bind("", minParams) shouldBe Some(
         Right(
           SummaryReport(
-            name    = "Summary report",
+            name = "Summary report",
             groupBy = NonEmptySeq.one(ReportField.User),
-            sortBy  = ReportField.User
+            sortBy = ReportField.User
           )
         )
       )
@@ -332,15 +332,15 @@ class ReportSpec extends ModelsBaseSpec {
         SummaryReport.summaryReportQueryStringBindable.unbind(
           "",
           SummaryReport(
-            name              = "Summary report",
-            groupBy           = NonEmptySeq.one(ReportField.Status),
-            sortBy            = ReportField.Count,
-            sortOrder         = SortDirection.DESCENDING,
-            caseTypes         = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
-            statuses          = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
+            name = "Summary report",
+            groupBy = NonEmptySeq.one(ReportField.Status),
+            sortBy = ReportField.Count,
+            sortOrder = SortDirection.DESCENDING,
+            caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
+            statuses = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
             liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
-            teams             = Set("1", "3"),
-            maxFields         = Seq(ReportField.ElapsedDays),
+            teams = Set("1", "3"),
+            maxFields = Seq(ReportField.ElapsedDays),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
@@ -367,15 +367,15 @@ class ReportSpec extends ModelsBaseSpec {
         SummaryReport.summaryReportQueryStringBindable.unbind(
           "",
           SummaryReport(
-            name              = "Summary report",
-            groupBy           = NonEmptySeq.one(ReportField.User),
-            sortBy            = ReportField.DateCreated,
-            sortOrder         = SortDirection.ASCENDING,
-            caseTypes         = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
-            statuses          = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
+            name = "Summary report",
+            groupBy = NonEmptySeq.one(ReportField.User),
+            sortBy = ReportField.DateCreated,
+            sortOrder = SortDirection.ASCENDING,
+            caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
+            statuses = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
             liabilityStatuses = Set(LiabilityStatus.NON_LIVE),
-            teams             = Set("4", "5"),
-            maxFields         = Seq(ReportField.TotalDays)
+            teams = Set("4", "5"),
+            maxFields = Seq(ReportField.TotalDays)
           )
         ),
         "UTF-8"
@@ -410,12 +410,12 @@ class ReportSpec extends ModelsBaseSpec {
       QueueReport.queueReportQueryStringBindable.bind("", params1) shouldBe Some(
         Right(
           QueueReport(
-            sortBy    = ReportField.Count,
+            sortBy = ReportField.Count,
             sortOrder = SortDirection.DESCENDING,
             caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
-            teams     = Set("1", "3"),
-            assignee  = Some("1"),
+            statuses = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.REFERRED),
+            teams = Set("1", "3"),
+            assignee = Some("1"),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
@@ -435,11 +435,11 @@ class ReportSpec extends ModelsBaseSpec {
       QueueReport.queueReportQueryStringBindable.bind("", params2) shouldBe Some(
         Right(
           QueueReport(
-            sortBy    = ReportField.DateCreated,
+            sortBy = ReportField.DateCreated,
             sortOrder = SortDirection.ASCENDING,
             caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
-            teams     = Set("4", "5")
+            statuses = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
+            teams = Set("4", "5")
           )
         )
       )
@@ -452,11 +452,11 @@ class ReportSpec extends ModelsBaseSpec {
         QueueReport.queueReportQueryStringBindable.unbind(
           "",
           QueueReport(
-            sortBy    = ReportField.Count,
+            sortBy = ReportField.Count,
             sortOrder = SortDirection.DESCENDING,
             caseTypes = Set(ApplicationType.ATAR, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.NEW),
-            teams     = Set("1", "3"),
+            statuses = Set(PseudoCaseStatus.LIVE, PseudoCaseStatus.NEW),
+            teams = Set("1", "3"),
             dateRange = InstantRange(
               Instant.parse("2020-03-21T12:03:15.000Z"),
               Instant.parse("2021-03-21T12:03:15.000Z")
@@ -480,11 +480,11 @@ class ReportSpec extends ModelsBaseSpec {
         QueueReport.queueReportQueryStringBindable.unbind(
           "",
           QueueReport(
-            sortBy    = ReportField.DateCreated,
+            sortBy = ReportField.DateCreated,
             sortOrder = SortDirection.ASCENDING,
             caseTypes = Set(ApplicationType.MISCELLANEOUS, ApplicationType.CORRESPONDENCE),
-            statuses  = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
-            teams     = Set("4", "5")
+            statuses = Set(PseudoCaseStatus.COMPLETED, PseudoCaseStatus.REJECTED),
+            teams = Set("4", "5")
           )
         ),
         "UTF-8"

@@ -20,9 +20,8 @@
 @import views.html.partials.{attachments_list, tab_heading}
 @import models.forms.DecisionFormData
 @import views.html.partials.ruling.{ruling_certificate_link}
-@import models.request.AuthenticatedRequest
 
-@(d: Option[Decision], useTabIndex : Option[Int] = None)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(d: Option[Decision], useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
     @d.map { d =>
 

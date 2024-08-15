@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models._
 @import models.request.AuthenticatedRequest
 @import utils.Dates
@@ -22,7 +21,7 @@
 @import views.html.partials.{assignee, progressive_disclosure}
 @import models.viewmodels.ActivityViewModel
 
-@(activityViewModel: ActivityViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(activityViewModel: ActivityViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <h3 class="govuk-heading-m" aria-hidden="true">@messages("case.v2.liability.activity_tab.activity_timeline_h2")</h3>
 

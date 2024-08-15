@@ -20,8 +20,8 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.matching.EqualToJsonPattern
 import models._
 import org.apache.http.HttpStatus
-import play.api.libs.json.{Format, OFormat}
-import utils.JsonFormatters
+import uk.gov.hmrc.http.UpstreamErrorResponse
+import utils.JsonFormatters.{emailCompleteParamsFormat, emailFormat}
 
 class EmailConnectorSpec extends ConnectorTest {
 
@@ -30,17 +30,16 @@ class EmailConnectorSpec extends ConnectorTest {
       Seq("user@domain.com"),
       CaseCompletedEmailParameters(
         recipientName_line1 = "name",
-        reference           = "case-ref",
-        goodsName           = "item-name",
-        officerName         = "officer",
-        dateSubmitted       = "01 Jan 2021"
+        reference = "case-ref",
+        goodsName = "item-name",
+        officerName = "officer",
+        dateSubmitted = "01 Jan 2021"
       )
     )
 
-  private val connector = new EmailConnector(mockAppConfig, standardHttpClient, metrics)
+  private val connector = new EmailConnector(mockAppConfig, httpClient, metrics)
 
   "Connector 'Send'" should {
-    implicit val format: Format[Email[_]] = JsonFormatters.emailFormat
 
     "POST Email payload" in {
       stubFor(
@@ -60,10 +59,29 @@ class EmailConnectorSpec extends ConnectorTest {
       )
     }
 
+    "propagate errors" in {
+      stubFor(
+        post(urlEqualTo("/hmrc/email"))
+          .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
+          .willReturn(
+            aResponse()
+              .withStatus(HttpStatus.SC_BAD_GATEWAY)
+          )
+      )
+
+      intercept[UpstreamErrorResponse] {
+        await(connector.send(email))
+      }
+
+      verify(
+        postRequestedFor(urlEqualTo("/hmrc/email"))
+          .withoutHeader("X-Api-Token")
+      )
+    }
+
   }
 
   "Connector 'Generate'" should {
-    implicit val format: OFormat[CaseCompletedEmailParameters] = JsonFormatters.emailCompleteParamsFormat
 
     "POST Email parameters" in {
       stubFor(

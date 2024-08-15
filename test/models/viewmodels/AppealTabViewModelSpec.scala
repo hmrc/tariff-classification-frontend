@@ -25,7 +25,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
     status = CaseStatus.COMPLETED,
     decision = Some(
       Cases.decision.copy(
-        appeal       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+        appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))
       )
     )
@@ -39,7 +39,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val expected = AppealTabViewModel(
         caseReference = "123456",
-        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+        appeals = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
         permissionForExtendedUse = false
       )
@@ -57,7 +57,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val expected = AppealTabViewModel(
         caseReference = "123456",
-        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+        appeals = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         Some("Yes"),
         permissionForExtendedUse = true
       )
@@ -75,7 +75,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val expected = AppealTabViewModel(
         caseReference = "123456",
-        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+        appeals = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
         permissionForExtendedUse = false
       )
@@ -93,7 +93,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val expected = AppealTabViewModel(
         caseReference = "123456",
-        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+        appeals = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         None,
         permissionForExtendedUse = false
       )
@@ -109,7 +109,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
         status = CaseStatus.CANCELLED,
         decision = Some(
           Cases.decision.copy(
-            appeal       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+            appeal = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
             cancellation = Some(Cancellation(CancelReason.ANNULLED))
           )
         )
@@ -119,7 +119,7 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val expected = AppealTabViewModel(
         caseReference = "123456",
-        appeals       = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+        appeals = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
         Some("No"),
         permissionForExtendedUse = true
       )

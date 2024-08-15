@@ -17,20 +17,20 @@
 package controllers.actions
 
 import com.google.inject.Inject
-import connector.DataCacheConnector
 import models.UserAnswers
 import models.request.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import models.cache.CacheMap
+import service.DataCacheService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRetrievalActionImpl @Inject() (val dataCacheConnector: DataCacheConnector)(
+class DataRetrievalActionImpl @Inject() (val dataCacheService: DataCacheService)(
   override implicit val executionContext: ExecutionContext
 ) extends DataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] =
-    dataCacheConnector.fetch(request.internalId).map { maybeData: Option[CacheMap] =>
+    dataCacheService.fetch(request.internalId).map { maybeData: Option[CacheMap] =>
       OptionalDataRequest(request.request, request.internalId, maybeData.map(UserAnswers(_)))
     }
 }

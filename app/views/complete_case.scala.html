@@ -66,7 +66,7 @@
 
         @warning(messages("complete_case.warning"))
 
-        @helper.form(action = CompleteCaseController.postCompleteCase(c.reference), 'class -> "form", Symbol("id") -> "complete-case", Symbol("novalidate") -> "novalidate") {
+        @helper.form(action = CompleteCaseController.postCompleteCase(c.reference), Symbol("class") -> "form", Symbol("id") -> "complete-case", Symbol("novalidate") -> "novalidate") {
             @helper.CSRF.formField
 
             @input_radiogroup(

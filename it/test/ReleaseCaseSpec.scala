@@ -27,7 +27,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
   "Case Release" should {
     val caseWithStatusNEW = CasePayloads.jsonOf(
       Cases.btiCaseExample.copy(
-        status      = CaseStatus.NEW,
+        status = CaseStatus.NEW,
         application = Cases.btiApplicationExample.copy(envisagedCommodityCode = Some("01234567890"))
       )
     )
@@ -57,7 +57,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession(s"/cases/1/release").get())
 
       response.status shouldBe OK
-      response.body   should include("Choose a team to release this case to")
+      response.body     should include("Choose a team to release this case to")
     }
 
     "redirect on auth failure" in {
@@ -68,7 +68,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
         await(requestWithSession("/cases/1/release").get())
 
       response.status shouldBe OK
-      response.body   should include(messages("not_authorised.paragraph1"))
+      response.body     should include(messages("not_authorised.paragraph1"))
     }
   }
 

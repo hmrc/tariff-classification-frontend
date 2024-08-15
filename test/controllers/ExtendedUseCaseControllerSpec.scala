@@ -19,8 +19,7 @@ package controllers
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.BDDMockito._
-import org.mockito.Mockito
-import org.mockito.Mockito.{never, verify}
+import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -56,7 +55,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
   override def afterEach(): Unit = {
     super.afterEach()
-    Mockito.reset(casesService)
+    reset(casesService)
   }
 
   "Case Extended Use - Choose Status" should {
@@ -68,9 +67,9 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
       val result =
         await(controller(c, Set(Permission.EXTENDED_USE)).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
-      status(result)          shouldBe Status.OK
-      contentType(result)     shouldBe Some("text/html")
-      charset(result)         shouldBe Some("utf-8")
+      status(result)        shouldBe Status.OK
+      contentType(result)   shouldBe Some("text/html")
+      charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("Do you want to extend the use of this case ruling?")
     }
 
@@ -80,7 +79,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
 
       val result = await(controller(c, Set.empty).chooseStatus("reference")(newFakeGETRequestWithCSRF()))
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 
@@ -158,7 +157,7 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
           .updateStatus("reference")(newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("state" -> "false"))
       )
 
-      status(result)               shouldBe Status.SEE_OTHER
+      status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
     }
 

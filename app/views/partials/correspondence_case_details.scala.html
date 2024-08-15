@@ -14,13 +14,12 @@
  * limitations under the License.
  *@
 
-@import config.AppConfig
 @import models.request.AuthenticatedRequest
 @import views.html.partials._
 
 @import models.viewmodels.correspondence.CaseDetailsViewModel
 
-@(caseDetails: CaseDetailsViewModel, startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(caseDetails: CaseDetailsViewModel, startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @tab_heading("correspondence", messages("case.v2.correspondence.case-details.heading"))
 

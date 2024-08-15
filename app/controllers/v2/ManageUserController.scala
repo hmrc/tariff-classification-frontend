@@ -50,8 +50,7 @@ class ManageUserController @Inject() (
   val confirmDeleteUser: confirm_delete_user,
   val doneDeleteUserPage: done_delete_user,
   val user_not_found: user_not_found
-)(
-  implicit
+)(implicit
   val appConfig: AppConfig,
   mat: Materializer
 ) extends FrontendController(mcc)
@@ -77,19 +76,20 @@ class ManageUserController @Inject() (
           val managerQueues = manager.memberOfTeams.flatMap(id => Queues.queueById(id))
 
           for {
-            allUsers <- userService
-                         .getAllUsers(Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER), "", NoPagination())
+            allUsers <-
+              userService
+                .getAllUsers(Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER), "", NoPagination())
 
             managerTeamsCases <- Paged
-                                  .stream(AssignedCasesPagination) { pagination =>
-                                    casesService
-                                      .getCasesByAllQueues(managerQueues, pagination, assignee = assignedCases)
-                                  }
-                                  .runFold(List.empty[Case]) { case (cases, nextCase) => nextCase :: cases }
+                                   .stream(AssignedCasesPagination) { pagination =>
+                                     casesService
+                                       .getCasesByAllQueues(managerQueues, pagination, assignee = assignedCases)
+                                   }
+                                   .runFold(List.empty[Case]) { case (cases, nextCase) => nextCase :: cases }
 
             usersWithCount = managerTeamsCases
-              .groupBy(singleCase => singleCase.assignee.map(_.id))
-              .collect { case (Some(pid), cases) => pid -> cases }
+                               .groupBy(singleCase => singleCase.assignee.map(_.id))
+                               .collect { case (Some(pid), cases) => pid -> cases }
 
             usersTabViewModel = UsersTabViewModel.fromUsers(manager, allUsers)
 
@@ -118,7 +118,7 @@ class ManageUserController @Inject() (
         for {
           userCases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
           user      <- userService.getUser(pid)
-        } yield {
+        } yield
           if (user.isDefined) {
             (user.get.id, userCases.results.nonEmpty) match {
               case (request.operator.id, _) => Redirect(controllers.routes.SecurityController.unauthorized())
@@ -129,7 +129,6 @@ class ManageUserController @Inject() (
             NotFound(user_not_found(pid))
           }
 
-        }
     }
 
   def confirmRemoveUser(pid: String): Action[AnyContent] =
@@ -144,18 +143,17 @@ class ManageUserController @Inject() (
               user <- userService.getUser(pid)
             } yield user
               .map(u => Ok(confirmDeleteUser(u, errors)))
-              .getOrElse(NotFound(user_not_found(pid))), {
+              .getOrElse(NotFound(user_not_found(pid))),
+          {
             case true =>
               for {
                 user <- userService.getUser(pid)
-              } yield {
-                user
-                  .map { u =>
-                    userService.markDeleted(u, request.operator)
-                    Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(u.safeName))
-                  }
-                  .getOrElse(NotFound(user_not_found(pid)))
-              }
+              } yield user
+                .map { u =>
+                  userService.markDeleted(u, request.operator)
+                  Redirect(controllers.v2.routes.ManageUserController.doneDeleteUser(u.safeName))
+                }
+                .getOrElse(NotFound(user_not_found(pid)))
             case _ =>
               successful(
                 Redirect(controllers.v2.routes.ManageUserController.displayUserDetails(pid))

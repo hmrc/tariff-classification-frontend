@@ -19,7 +19,7 @@
 @import views.html.partials._
 @import models.viewmodels.miscellaneous.DetailsViewModel
 
-@(caseDetails: DetailsViewModel, startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(caseDetails: DetailsViewModel, startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @tab_heading("miscellaneous", messages("case.v2.miscellaneous.case-details.heading"))
 

@@ -25,7 +25,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
       val form = CorrespondenceForm.newCorrespondenceForm.bindFromRequest(Map())
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(3))
+      form.errors      should have(size(3))
     }
 
     "Bind a blank form" in {
@@ -38,7 +38,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(2))
+      form.errors      should have(size(2))
     }
 
     "Bind a valid form" in {
@@ -53,13 +53,13 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
       form.hasErrors shouldBe false
       form.get shouldBe CorrespondenceApplication(
         correspondenceStarter = Some("example"),
-        agentName             = None,
-        contact               = Contact("", "example@email.com", None),
-        summary               = "example",
-        detailedDescription   = "",
-        sampleToBeProvided    = false,
-        sampleToBeReturned    = false,
-        address               = Address("", "", None, None)
+        agentName = None,
+        contact = Contact("", "example@email.com", None),
+        summary = "example",
+        detailedDescription = "",
+        sampleToBeProvided = false,
+        sampleToBeReturned = false,
+        address = Address("", "", None, None)
       )
     }
 
@@ -73,7 +73,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(1))
+      form.errors      should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "case.liability.error.email"
     }
@@ -88,7 +88,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(1))
+      form.errors      should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "Please enter a case source"
     }
@@ -103,7 +103,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
       )
 
       form.hasErrors shouldBe true
-      form.errors    should have(size(1))
+      form.errors      should have(size(1))
       //TODO get message for messages
       form.errors.head.message shouldBe "Please enter a short description"
     }
@@ -115,13 +115,13 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
       val form = CorrespondenceForm.newCorrespondenceForm.fill(
         CorrespondenceApplication(
           correspondenceStarter = Some("source"),
-          agentName             = None,
-          contact               = Contact("", "contact@email.com", None),
-          summary               = "shortDescr",
-          detailedDescription   = "",
-          sampleToBeProvided    = false,
-          sampleToBeReturned    = false,
-          address               = Address("", "", None, None)
+          agentName = None,
+          contact = Contact("", "contact@email.com", None),
+          summary = "shortDescr",
+          detailedDescription = "",
+          sampleToBeProvided = false,
+          sampleToBeReturned = false,
+          address = Address("", "", None, None)
         )
       )
 

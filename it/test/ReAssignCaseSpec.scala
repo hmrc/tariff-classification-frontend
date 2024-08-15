@@ -28,7 +28,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
   private val caseAssignedToOwner = CasePayloads.jsonOf(
     Cases.btiCaseExample
       .copy(
-        status   = CaseStatus.OPEN,
+        status = CaseStatus.OPEN,
         assignee = owner
       )
   )
@@ -112,7 +112,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
     val response: WSResponse = await(requestWithSession("/cases/1/reassign-case?origin=/").get())
 
     response.status shouldBe OK
-    response.body   should include("Choose a team to move this case to")
+    response.body     should include("Choose a team to move this case to")
   }
 
   private def shouldFail = {
@@ -120,6 +120,6 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
     val response: WSResponse = await(requestWithSession("/cases/1/reassign-case?origin=/").get())
 
     response.status shouldBe OK
-    response.body   should include(messages("not_authorised.paragraph1"))
+    response.body     should include(messages("not_authorised.paragraph1"))
   }
 }

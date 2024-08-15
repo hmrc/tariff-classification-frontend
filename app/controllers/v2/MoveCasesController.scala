@@ -18,7 +18,6 @@ package controllers.v2
 
 import com.google.inject.Inject
 import config.AppConfig
-import connector.DataCacheConnector
 import controllers.RequestActions
 import models._
 import models.forms.v2._
@@ -28,7 +27,7 @@ import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, QueuesService, UserService}
+import service.{CasesService, DataCacheService, QueuesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.partials.users._
@@ -42,7 +41,7 @@ class MoveCasesController @Inject() (
   casesService: CasesService,
   userService: UserService,
   queueService: QueuesService,
-  dataCacheConnector: DataCacheConnector,
+  dataCacheService: DataCacheService,
   mcc: MessagesControllerComponents,
   val teamOrUserPage: move_cases_team_or_user,
   val chooseTeamPage: move_cases_choose_team,
@@ -133,7 +132,8 @@ class MoveCasesController @Inject() (
       teamOrUserForm
         .bindFromRequest()
         .fold(
-          errors => Ok(teamOrUserPage(caseNumber, errors)), {
+          errors => Ok(teamOrUserPage(caseNumber, errors)),
+          {
             case TeamOrUser.TEAM => Redirect(routes.MoveCasesController.chooseTeamToMoveCases())
             case _               => Redirect(routes.MoveCasesController.chooseUserToMoveCases())
           }
@@ -152,10 +152,10 @@ class MoveCasesController @Inject() (
         .map(team =>
           for {
             usersOfManagedTeam <- userService.getAllUsers(
-                                   Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER),
-                                   team,
-                                   NoPagination()
-                                 )
+                                    Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER),
+                                    team,
+                                    NoPagination()
+                                  )
           } yield usersOfManagedTeam.results
         )
       Future
@@ -177,11 +177,11 @@ class MoveCasesController @Inject() (
         .map(team =>
           for {
             usersOfManagedTeam <- userService
-                                   .getAllUsers(
-                                     Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER),
-                                     team,
-                                     NoPagination()
-                                   )
+                                    .getAllUsers(
+                                      Seq(Role.CLASSIFICATION_OFFICER, Role.CLASSIFICATION_MANAGER),
+                                      team,
+                                      NoPagination()
+                                    )
           } yield usersOfManagedTeam.results
         )
 
@@ -192,7 +192,8 @@ class MoveCasesController @Inject() (
             Future
               .sequence(usersOfManagedTeams)
               .map(_.flatten)
-              .flatMap(users => successful(Ok(chooseUserPage(caseRefs.size, users.distinct, errors, teamId)))), {
+              .flatMap(users => successful(Ok(chooseUserPage(caseRefs.size, users.distinct, errors, teamId)))),
+          {
             case "OTHER" => successful(Redirect(routes.MoveCasesController.chooseUserFromAnotherTeam()))
             case userPid => moveToUser(userPid, caseRefs)
           }
@@ -209,23 +210,21 @@ class MoveCasesController @Inject() (
           for {
             user <- userService.getUser(pid)
             teams <- user
-                      .map(u => queueService.getQueuesById(u.memberOfTeams.filterNot(_ == Queues.gateway.id)))
-                      .getOrElse(Future.successful(Seq()))
-          } yield {
-            user
-              .map(u =>
-                Ok(
-                  chooseUserTeamPage(
-                    u.safeName,
-                    u.memberOfTeams.size,
-                    request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set()).size,
-                    chooseTeamForm,
-                    teams.flatten
-                  )
+                       .map(u => queueService.getQueuesById(u.memberOfTeams.filterNot(_ == Queues.gateway.id)))
+                       .getOrElse(Future.successful(Seq()))
+          } yield user
+            .map(u =>
+              Ok(
+                chooseUserTeamPage(
+                  u.safeName,
+                  u.memberOfTeams.size,
+                  request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set()).size,
+                  chooseTeamForm,
+                  teams.flatten
                 )
               )
-              .getOrElse(NotFound(user_not_found(pid)))
-          }
+            )
+            .getOrElse(NotFound(user_not_found(pid)))
         )
         .getOrElse(successful(Redirect(controllers.routes.SecurityController.unauthorized())))
     )
@@ -244,23 +243,21 @@ class MoveCasesController @Inject() (
                 for {
                   user <- userService.getUser(pid)
                   teams <- user
-                            .map(u => queueService.getQueuesById(u.memberOfTeams.filterNot(_ == Queues.gateway.id)))
-                            .getOrElse(Future.successful(Seq()))
-                } yield {
-                  user
-                    .map(u =>
-                      Ok(
-                        chooseUserTeamPage(
-                          u.safeName,
-                          u.memberOfTeams.size,
-                          request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set()).size,
-                          errors,
-                          teams.flatten
-                        )
+                             .map(u => queueService.getQueuesById(u.memberOfTeams.filterNot(_ == Queues.gateway.id)))
+                             .getOrElse(Future.successful(Seq()))
+                } yield user
+                  .map(u =>
+                    Ok(
+                      chooseUserTeamPage(
+                        u.safeName,
+                        u.memberOfTeams.size,
+                        request.userAnswers.get[Set[String]](ChosenCases).getOrElse(Set()).size,
+                        errors,
+                        teams.flatten
                       )
                     )
-                    .getOrElse(NotFound(user_not_found("")))
-                }
+                  )
+                  .getOrElse(NotFound(user_not_found("")))
               )
               .getOrElse(successful(NotFound(user_not_found("")))),
           team => {
@@ -276,7 +273,7 @@ class MoveCasesController @Inject() (
                 )
               )
             for {
-              _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
+              _ <- dataCacheService.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToUserDone())
           }
         )
@@ -339,7 +336,7 @@ class MoveCasesController @Inject() (
               request.operator.id
             )
             for {
-              _ <- dataCacheConnector.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
+              _ <- dataCacheService.save(request.userAnswers.set(ChosenTeam, team).cacheMap)
             } yield Redirect(routes.MoveCasesController.casesMovedToTeamDone())
           }
         )
@@ -406,9 +403,10 @@ class MoveCasesController @Inject() (
     chosenCaseRefs.flatMap(ref => assignedCases.find(c => c.reference == ref))
 
   private def redirectBasedOnCaseStatus(chosenCases: Set[Case]) =
-    if (chosenCases.exists(c =>
-          c.status != CaseStatus.OPEN && c.status != CaseStatus.REFERRED && c.status != CaseStatus.SUSPENDED
-        )) {
+    if (
+      chosenCases
+        .exists(c => c.status != CaseStatus.OPEN && c.status != CaseStatus.REFERRED && c.status != CaseStatus.SUSPENDED)
+    ) {
       Redirect(controllers.routes.SecurityController.unauthorized())
     } else if (chosenCases.exists(c => c.status == CaseStatus.REFERRED || c.status == CaseStatus.SUSPENDED)) {
       Redirect(routes.MoveCasesController.chooseUserToMoveCases())
@@ -416,13 +414,13 @@ class MoveCasesController @Inject() (
       Redirect(routes.MoveCasesController.chooseUserOrTeam())
     }
 
-  private def redirectAfterPostingCaseRefs(caseRefs: Set[String], pid: String, userAnswers: UserAnswers)(
-    implicit hc: HeaderCarrier
+  private def redirectAfterPostingCaseRefs(caseRefs: Set[String], pid: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier
   ) = {
     val userAnswersWithUserPID = userAnswers.set(OriginalUserPID, pid)
     val userAnswersWithCases   = userAnswersWithUserPID.set(ChosenCases, caseRefs)
     for {
-      _     <- dataCacheConnector.save(userAnswersWithCases.cacheMap)
+      _     <- dataCacheService.save(userAnswersWithCases.cacheMap)
       cases <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
     } yield redirectBasedOnCaseStatus(findChosenCasesInAssignedCases(cases.results, caseRefs))
   }
@@ -458,15 +456,15 @@ class MoveCasesController @Inject() (
             request.operator.id
           )
           for {
-            _ <- dataCacheConnector.save(
-                  userAnswersWithNewUser
-                    .set(ChosenTeam, u.memberOfTeams.filterNot(_ == Queues.gateway.id).head)
-                    .cacheMap
-                )
+            _ <- dataCacheService.save(
+                   userAnswersWithNewUser
+                     .set(ChosenTeam, u.memberOfTeams.filterNot(_ == Queues.gateway.id).head)
+                     .cacheMap
+                 )
           } yield Redirect(routes.MoveCasesController.casesMovedToUserDone())
         } else {
           for {
-            _ <- dataCacheConnector.save(userAnswersWithNewUser.cacheMap)
+            _ <- dataCacheService.save(userAnswersWithNewUser.cacheMap)
           } yield Redirect(routes.MoveCasesController.chooseOneOfUsersTeams())
         }
       case _ => successful(NotFound(user_not_found(pid)))

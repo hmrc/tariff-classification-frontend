@@ -35,7 +35,7 @@ object Queues {
 
   def allQueues: List[Queue] = List(gateway, act, cap, car, elm, flex, tta, ttb, ttc)
 
-  def allQueuesById: Map[String, Queue]   = allQueues.map(q => q.id   -> q).toMap
+  def allQueuesById: Map[String, Queue]   = allQueues.map(q => q.id -> q).toMap
   def allQueuesBySlug: Map[String, Queue] = allQueues.map(q => q.slug -> q).toMap
 
   private val queuesByType = Map(

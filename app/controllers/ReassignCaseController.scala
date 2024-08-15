@@ -54,8 +54,8 @@ class ReassignCaseController @Inject() (
       reassignToQueue(form, origin)
     }
 
-  private def reassignToQueue(f: Form[String], origin: String)(
-    implicit request: AuthenticatedCaseRequest[_]
+  private def reassignToQueue(f: Form[String], origin: String)(implicit
+    request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
     validateAndRenderView(c =>
       for {

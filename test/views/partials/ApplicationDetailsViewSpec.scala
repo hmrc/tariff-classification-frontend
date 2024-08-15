@@ -47,11 +47,11 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       val `case` = aCase(
         withOptionalApplicationFields(
           confidentialInformation = Some("confidential info"),
-          otherInformation        = Some("other info"),
-          reissuedBTIReference    = Some("reissued bti"),
-          relatedBTIReference     = Some("related bti"),
-          knownLegalProceedings   = Some("legal proceedings"),
-          envisagedCommodityCode  = Some("envisaged code")
+          otherInformation = Some("other info"),
+          reissuedBTIReference = Some("reissued bti"),
+          relatedBTIReference = Some("related bti"),
+          knownLegalProceedings = Some("legal proceedings"),
+          envisagedCommodityCode = Some("envisaged code")
         ),
         withAttachment(attachment("FILE_ID"))
       )
@@ -60,15 +60,15 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val doc = view(application_details(goodsTab))
 
-      doc                                                        should containElementWithID("app-details-previous-ruling-reference")
-      doc                                                        should containElementWithID("app-details-envisaged-code")
-      doc.getElementById("app-details-envisaged-code")           should containText("envisaged code")
-      doc                                                        should containElementWithID("app-details-confidential-info")
-      doc.getElementById("app-details-confidential-info")        should containText("confidential info")
-      doc                                                        should containElementWithID("app-details-similar-ruling-reference")
+      doc should containElementWithID("app-details-previous-ruling-reference")
+      doc should containElementWithID("app-details-envisaged-code")
+      doc.getElementById("app-details-envisaged-code")    should containText("envisaged code")
+      doc                                                 should containElementWithID("app-details-confidential-info")
+      doc.getElementById("app-details-confidential-info") should containText("confidential info")
+      doc should containElementWithID("app-details-similar-ruling-reference")
       doc.getElementById("app-details-similar-ruling-reference") should containText("related bti")
-      doc                                                        should containElementWithID("app-details-legal-challenges")
-      doc.getElementById("app-details-legal-challenges")         should containText("legal proceedings")
+      doc                                                should containElementWithID("app-details-legal-challenges")
+      doc.getElementById("app-details-legal-challenges") should containText("legal proceedings")
     }
 
     "Render the correct number of relatedBtiReferences " in {
@@ -84,7 +84,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
       val doc = view(application_details(goodsTab))
 
       //Then
-      doc                                                        should containElementWithID("app-details-similar-ruling-reference")
+      doc should containElementWithID("app-details-similar-ruling-reference")
       doc.getElementById("app-details-similar-ruling-reference") should containText("related BTI 1 related BTI 2")
 
     }
