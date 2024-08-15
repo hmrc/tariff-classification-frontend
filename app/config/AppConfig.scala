@@ -28,6 +28,9 @@ import scala.concurrent.duration.FiniteDuration
 @Singleton
 class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
 
+  private lazy val contactHost                  = config.getOptional[String]("contact-frontend.host").getOrElse("")
+  private lazy val contactFormServiceIdentifier = config.get[String]("appName")
+
   lazy val managerEnrolment: String               = config.get[String]("auth.enrolments.manager")
   lazy val teamEnrolment: String                  = config.get[String]("auth.enrolments.team")
   lazy val readOnlyEnrolment: String              = config.get[String]("auth.enrolments.read-only")
