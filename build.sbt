@@ -1,3 +1,5 @@
+import sbt.Compile
+import sbt.Keys.baseDirectory
 import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 ThisBuild / majorVersion := 0
@@ -41,7 +43,9 @@ lazy val microservice = Project("tariff-classification-frontend", file("."))
       "-feature",
       "-Wconf:src=routes/.*:s",
       "-Wconf:cat=unused-imports&src=views/.*:s"
-    )
+    ),
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "app" / "views" / "components" / "fop",
+    Test / unmanagedResourceDirectories += baseDirectory.value / "app" / "views" / "components" / "fop"
   )
 
 lazy val it = project

@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
+import connectors.{BindingTariffClassificationConnector, StrideAuthConnector}
 import models.request._
 import models.{Case, Operator, Permission, UserAnswers}
 import org.mockito.Mockito.mock

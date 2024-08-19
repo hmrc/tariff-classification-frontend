@@ -36,6 +36,7 @@ import models.request.NewEventRequest
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.templates.{cover_letter_template, decision_template, ruling_template}
 
@@ -54,7 +55,8 @@ class CasesService @Inject() (
   reportingService: ReportingService,
   pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
-  rulingConnector: RulingConnector
+  rulingConnector: RulingConnector,
+  cover_letter_template: cover_letter_template
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
@@ -407,7 +409,7 @@ class CasesService @Inject() (
     def generateLetter: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
         pdfService
-          .generatePdf(cover_letter_template(completedCase, decision, getCountryName))
+          .generateFopPdf(cover_letter_template(completedCase, decision, getCountryName))
           .map(createCoverLetterPdf)
     }
 

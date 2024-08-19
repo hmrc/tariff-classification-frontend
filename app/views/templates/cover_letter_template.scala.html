@@ -16,576 +16,260 @@
 
 @import utils.Dates
 
+@import views.html.includes.govuk_wrapper
+
+@this(govukWrapper: govuk_wrapper)
+
 @(c: Case, d: Decision, getCountryName: String => Option[String],
 compositeMode: Boolean = false)(implicit messages: Messages)
 
 @defining(c.application.asATAR) { btiApp: BTIApplication =>
-<html>
-<head>
-    <style>
-                body {
-                    font-family: "GDS Transport",arial,sans-serif;
-                    width: auto;
-                    height: auto;
-                    margin: 0;
-                }
-                .heading-xlarge {
-                    display: none;
-                }
-                .print-document {
-                    padding: 10px 10px;
-                    position: relative;
-                    margin-bottom: 15em;
-                    zoom: 100%;
-                    width: 210mm;
-                    height: auto;
-                }
-                .print-document .logotype {
-                    font-size: 1.4em;
-                    font-weight: normal;
-                    margin: 0;
-                    line-height: 1.6;
-                    padding-top: 15px;
-                }
-                .print-document {
-                    page-break-after  : always;
-                }
+<div class="print-document" id="page-1">
+    <div class="header" data-render-header="yes">
+        <div class="govuk-grid-row" data-column="one-third">
+            <div class="govuk-grid-column-one-third">
+                <div class="organisation-logo__container">
+                    <img class="organisation-logo__crest-hmrc"
+                         width="30px"
+                         height="30px"
+                         src="@messages("hmrc.logo.encoded.image")"
+                         alt="@messages("pdf.application.cover.letter.footer.hmrc")"/>
+                    <div class="organisation-logo__name">@messages("pdf.application.cover.letter.footer.hmrc")</div>
+                </div>
+            </div>
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-m print-header">@messages("pdf.ruling.title")</h2>
+            </div>
+        </div>
+    </div>
 
-                .body-text {
-                    margin-top: .26316em;
-                    margin-bottom: 1.05263em;
-                }
-                .print-document table td {
-                    border: none;
-                    padding: 0;
-                    margin: 0;
-                }
-                .print-document h2, h3, h4 {
-                    margin-top: 0;
-                }
-                .print-document h2 {
-                    text-align: right;
-                    margin-top: 2em;
-                    font-size: 1.2em;
-                    color: #00703C;
-                    font-weight: 600;
-                }
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="office-info">
+                <p class="govuk-body">
+                    <span class="service-info">@messages("pdf.application.footer.confirmation.sendingSamples.address.service")</span>
+                    <span class="service-info">@messages("pdf.application.footer.confirmation.sendingSamples.address.covt")</span>
+                    <span class="service-info">@messages("pdf.application.footer.hmrc")</span>
+                </p>
+                <p class="govuk-body">@Dates.format(d.effectiveStartDate)</p>
+            </div>
+        </div>
+    </div>
 
-                .crown-logo-atar{
-                    height: 100px;
-                    width:auto;
-                    padding-left: 0px;
-                    margin-right: -15px;
-                }
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <p class="govuk-body">
+                <span class="service-info">@btiApp.contact.name</span>
+                <span class="service-info">@btiApp.holder.addressLine1</span>
+                <span class="service-info">@btiApp.holder.addressLine2</span>
+                <span class="service-info">@btiApp.holder.addressLine3</span>
+                <span class="service-info">@btiApp.holder.postcode</span>
+                <span class="service-info">@messages(getCountryName(btiApp.holder.country).mkString)</span>
+            </p>
+        </div>
+    </div>
 
-                .print-document .print-header {
-                    position: relative;
-                }
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <p class="govuk-body">
+                Dear @btiApp.contact.name
+            </p>
+            <p class="govuk-body">
+                Thank you for your Advance Tariff Ruling (ATaR) application dated @Dates.format(c.createdDate)
+            </p>
+            <p class="govuk-body">
+                You asked for an Advance Tariff Ruling for <b class="bold-text">@c.application.goodsName</b>. This ruling certificate is for you to keep for your records. This tells you the commodity code I have decided is appropriate for your goods and the reasons for the decision.
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.markedConfidential") <a class="search-for-rulings">Search for Advance Tariff Rulings</a> website.
+            </p>
+        </div>
+    </div>
 
-                .print-document .logo-text {
-                    font-size: 24px;
-                    font-weight: normal;
-                    margin: 0;
-                    line-height: 2.1;
-                }
-                .print-document .print-header h2 {
-                    text-align: right;
-                    margin-top: 2em;
-                    font-size: 1.2em;
-                    color: #00703C;
-                    font-weight: 600;
-                }
-                .print-document .information-box {
-                    display: block;
-                    margin-bottom: 1em;
-                    padding: 5px 10px;
-                    width: 100%;
-                    background-color: #e1f3f1;
-                    margin-left: auto;
-                    margin-right: auto;
-                    box-sizing: border-box;
-                    display: block;
-                }
-                .print-document .print-header h3 {
-                    text-align: right;
-                    margin-top: 2em;
-                    font-size: 1.2em;
-                    color: #00703C;
-                    font-weight: 600
-                }
-                .print-document .hero-text {
-                    margin-bottom: 0.26316em;
-                    font-size: 1.4em;
-                    font-weight: 700;
-                }
-                .print-document .reference-number {
-                    font-size: 36px;
-                }
-                .print-document .footer-page-date {
-                    float: right;
-                }
-                .print-document h3 {
-                    margin-top: 1em;
-                    margin-bottom: 0.4em;
-                    font-size: 1.8em;
-                    font-weight: 700;
-                }
-                .print-header, .header-space,
-                .print-footer, .footer-space {
-                    height: 15mm;
-                }
-                .print-document__information-box {
-                    border: 2px solid #00703C;
-                    display: block;
-                    margin-bottom: 1em;
-                    padding: 5mm;
-                    background-color: #e1f3f1;
-                    text-align: center;
-                    margin-left: auto;
-                    margin-right: auto;
-                    box-sizing: border-box;
-                    -webkit-print-color-adjust: exact
-                }
-                .date-of-result, .decision-service-version {
-                    border-bottom: 2px solid #00703C
-                }
-                .date-of-result h3 {
-                    margin-bottom: 0
-                }
-                .date-of-result h2 {
-                    color: #333;
-                    text-align: left;
-                }
-                .about-this-result-box {
-                    background: #e1f3f1;
-                    padding: 1px 10px;
-                    font-size: 15px;
-                    -webkit-print-color-adjust: exact;
-                    margin-bottom: 20px;
-                }
-                .about-this-result-box-do-not-send {
-                    height: 480px;
-                }
-                .about-this-result, .date-of-result {
-                    margin-top: 1em;
-                    margin-bottom: 1em;
-                }
-                .mb-2 {
-                    margin-bottom: 1rem !important;
-                }
-                .bold {
-                    font-weight: 700;
-                }
-                .column-full {
-                    float: left;
-                    width: 100%;
-                }
-                .column-one-half {
-                    width: 50%;
-                    float: left;
-                }
-                .column-one-third {
-                    width: 36%;
-                    float: left;
-                }
-                .column-two-thirds {
-                    width: 64%;
-                    float: left;
-                }
-                .print-pages {
-                    -webkit-transform-origin:  top left;
-                    -moz-transform-origin:  top left;
-                    -ms-transform-origin:  top left;
-                    -o-transform-origin:  top left;
-                    transform-origin:  top left;
-                }
-                .section-heading {
-                    color: #005EA5;
-                    margin-top: 1em;
-                }
-                .answer--container {
-                    display: table;
-                    margin-top: 1em;
-                    page-break-inside: avoid !important;
-                    width: 100%;
-                }
-                .answer--question {
-                    float: left;
-                    width: 50%;
-                }
-                .answer--question p {
-                    margin-top: 0.5em;
-                }
-                .answer--question p strong {
-                    font-weight: 700;
-                }
-                .answer--answer {
-                    float: left;
-                    width: 50%;
-                }
-                .answer--answer p {
-                    margin-top: 0.5em;
-                    margin-left: 1em;
-                }
-                .print-header, .header-space,
-                .print-footer, .footer-space {
-                    height: 25mm;
-                }
-                .govuk-check-your-answers.cya-questions-short, .govuk-check-your-answers.cya-questions-long {
-                    width: 100%;
-                }
-                .govuk-check-your-answers {
-                    display: table;
-                }
-                .govuk-check-your-answers > * {
-                    display: table-row;
-                    border-bottom-width: 0;
-                }
-                .govuk-check-your-answers > * {
-                    position: relative;
-                    border-bottom: 1px solid #bfc1c3;
-                }
-                .govuk-check-your-answers.cya-questions-short .cya-question {
-                    width: 30%;
-                }
-                .govuk-check-your-answers > *:first-child .cya-question {
-                    margin-top: 0;
-                }
-                .govuk-check-your-answers .cya-question {
-                    font-weight: bold;
-                    margin: 0.63158em 4em 0.21053em 0;
-                }
-                .govuk-check-your-answers .cya-answer {
-                    padding-bottom: 0.47368em;
-                }
-                .govuk-check-your-answers > *:first-child > * {
-                    padding-top: 0;
-                }
-                .cya-answer {
-                    word-wrap: break-word;
-                    word-break: break-word;
-                    overflow-wrap: break-word;
-                }
-                .cya-question {
-                    font-weight: bold;
-                    margin: .63158em 4em .21053em 0;
-                    width: 50%;
-                }
-                .cya-answer {
-                    padding-bottom: .47368em;
-                    word-break: break-word;
-                    overflow-wrap: break-word;
-                    width: 50%;
-                }
-                .govuk-check-your-answers>*>* {
-                    display: table-cell;
-                    border-bottom: 1px solid #bfc1c3;
-                    padding: .63158em 1.05263em .47368em 0;
-                    margin: 0;
-                }
-                > *:first-child .cya-question {
-                    margin-top: 0;
-                }
-                .notice .icon {
-                    position: absolute;
-                    left: 0;
-                    margin-top: 0px;
-                    margin-right: 10px;
-                }
-                .notice strong {
-                    display: block;
-                    padding-left: 65px;
-                    margin-left: -15px;
-                }
-                .icon-important_ {
-                    width: 35px;
-                    height: 35px;
-                }
-                .visually-hidden {
-                    display:none;
-                }
-                .panel {
-                    -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-                    clear: both;
-                    border-left-style: solid;
-                    border-color: #bfc1c3;
-                    padding: .78947em;
-                    margin-bottom: .78947em;
-                }
-                .panel-border-wide {
-                    border-left-width: 10px;
-                }
-                .mt-2 {
-                    margin-top: 2rem !important;
-                }
-                .icon {
-                    display: inline-block;
-                    background-position: 0 0;
-                    background-repeat: no-repeat;
-                }
-                address {
-                    font-style: normal;
-                }
-                .pre-wrap {
-                    white-space: pre-wrap;
-                }
-                .mt-40 {
-  margin-top: 40px;
-}
-.govuk-tag--grey {
-    color: #454a4d;
-    background: #eff0f1;
-}
-.govuk-tag {
-    font-size: 14px;
-    margin-right: 2px;
-    margin-bottom: 2px;
-    text-transform: uppercase;
-    line-height: 1;
-    padding-top: 5px;
-    padding-right: 8px;
-    padding-bottom: 4px;
-    padding-left: 8px;
-}
-.align-right {
-    text-align: right;
-}
-.govuk-caption-xl {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 400;
-    font-size: 18px;
-    font-size: 1.125rem;
-    line-height: 1.11111;
-    display: block;
-    color: #505a5f;
-}
-.print-document .heading-medium {
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    line-height: 1.25;
-}
-.print-document .heading-small {
-    margin-bottom: 20px;
-    font-size: 1.1875rem;
-    line-height: 1.31579;
-}
-.green-hr{
-border: 1px solid #00703C;
-}
-        </style>
-    <title>@messages("pdf.ruling.title")</title>
-</head>
-<body>
-<div class="grid-row hidden-print">
-    <div class="column-two-thirds"></div>
+    @if(c.sampleToBeProvided){
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-grid-row prevent-content-split" data-column="two-thirds">
+                <div class="govuk-grid-column-two-thirds">
+                    <div class="about-this-decision-box">
+
+
+                    <h3 class="govuk-heading-m heading">About this decision</h3>
+                    <p class="govuk-body">
+                        I have made this decision under section 24 of The Taxation (Cross-border Trade) Act 2018 by @messages("pdf.application.cover.letter.footer.hmrc").
+                    </p>
+                    <p class="govuk-body">
+                        @d.explanation
+                    </p>
+                    </div>
+                </div>
+                <div class="govuk-grid-column-one-third">
+                    <div class="about-this-result-box">
+                        <div class="about-this-result">
+                            <div class="date-of-result">
+                                <h2 class="govuk-heading-m">Samples</h2>
+                            </div>
+                            <div class="date-of-result">
+                                <div>
+                                    <p class="govuk-body">Your samples have been kept by this office.</p>
+                                </div>
+                                <div>
+                                    <p class="govuk-body">Samples that are not collected or that do not have return postage will be destroyed after 60 days from the date of your ruling email. If you would like to collect your samples (or arrange for courier collection) then email <b class="bold-text"><a class="govuk-black-link">@messages("pdf.ruling.email")</a></b> giving 48 hours notice.</p>
+                                </div>
+                                <div>
+                                    <p class="govuk-body">You must quote the ATaR reference number <b class="bold-text">@c.reference</b> and give the time that the samples are being collected.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }else{
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <h3 class="govuk-heading-m heading">About this decision</h3>
+            <p class="govuk-body">
+                I have made this decision under section 24 of The Taxation (Cross-border Trade) Act 2018 by @messages("pdf.application.cover.letter.footer.hmrc").
+            </p>
+            <p class="govuk-body">
+                @d.explanation
+            </p>
+        </div>
+    </div>
+    }
 </div>
-<div id="print-pages" class="print-pages">
-    <div id="cover-letter1" class="print-document">
-        <div class="grid-row print-header">
-            <div class="column-one-third">
-                <img class="crown-logo-atar" alt="HM Revenue and Customs" src="@messages("logo.encoded")"/>
+
+<div class="print-document" id="page-2">
+    <div class="header" data-render-header="yes">
+        <div class="govuk-grid-row" data-column="one-third">
+            <div class="govuk-grid-column-one-third">
+                <div class="organisation-logo__container">
+                    <img class="organisation-logo__crest-hmrc"
+                         width="30px"
+                         height="30px"
+                         src="@messages("hmrc.logo.encoded.image")"
+                         alt="@messages("pdf.application.cover.letter.footer.hmrc")"/>
+                    <div class="organisation-logo__name">@messages("pdf.application.cover.letter.footer.hmrc")</div>
+                </div>
             </div>
-            <div class="column-two-thirds">
-                <h2 class="margin-top-small no-margin-bottom print-header__heading">
-                    <strong>@messages("pdf.ruling.title")</strong>
-                </h2>
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-m print-header">@messages("pdf.ruling.coverLetter.title")</h2>
             </div>
         </div>
+    </div>
 
-        <div class="grid-row mt-40">
-            <div class="column-two-thirds"><p></p></div>
-            <div class="column-one-third align-right">
-                <p class="govuk-body-s">
-                    @Html(messages("pdf.application.footer.confirmation.sendingSamples.address"))
-                </p>
-                <p class="govuk-body-s">@Dates.format(d.effectiveStartDate)</p>
-            </div>
-        </div>
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <p class="govuk-body-s">
-                    @btiApp.contact.name<br/>
-                    @btiApp.holder.addressLine1 <br/>
-                    @btiApp.holder.addressLine2 <br/>
-                    @btiApp.holder.addressLine3 <br/>
-                    @btiApp.holder.postcode <br/>
-                    @messages(getCountryName(btiApp.holder.country).mkString)
-                </p>
-            </div>
-        </div>
+    <div class="govuk-grid-row main-content" data-column="full">
+        <div class="govuk-grid-column-full">
+            <h3 class="govuk-heading-m">@messages("pdf.ruling.section.ifYouDisagree.title")</h3>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.ifYouDisagree")
+            </p>
+            <p class="govuk-body">
+                <ul>
+                    <li class="case-info">@messages("pdf.ruling.section.ifYouDisagree.1")</li>
+                    <li class="case-info">@messages("pdf.ruling.section.ifYouDisagree.2")</li>
+                </ul>
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.ifYouDisagree.within")
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.ifYouDisagree.cannot")
+            </p>
 
-        <div class="grid-row main-content">
-            <div class="column-full">
-                <p class="govuk-body-s">
-                    Dear @btiApp.contact.name
-                </p>
-                <p class="govuk-body-s">
-                    Thank you for your Advance Tariff Ruling (ATaR) application dated @Dates.format(c.createdDate)
-                </p>
-                <p class="govuk-body-s">
-                    You asked for an Advance Tariff Ruling for <strong>@c.application.goodsName</strong>. This ruling certificate is for you to keep for your records. This tells you the commodity code I have decided is appropriate for your goods and the reasons for the decision.
-                </p>
-                <p class="govuk-body-s">
-                    @Html(messages("pdf.ruling.markedConfidential"))
-                </p>
-            </div>
-
-            @if(c.sampleToBeProvided){
-            <div class="column-two-thirds">
-
-                <h3 class="heading-medium">About this decision</h3>
-                <p class="govuk-body-s">
-                    I have made this decision under section 24 of The Taxation (Cross-border Trade) Act 2018 by HM Revenue &amp; Customs.
-                </p>
-                <p class="govuk-body-s">
-                    @d.explanation
-                </p>
-            </div>
-            <div class="column-one-third">
-                <div class="information-box">
-                    <h3 class="heading-medium">Samples</h3>
-                    <hr class="green-hr"/>
-                    <p class="govuk-body-s">
-                        Your samples have been kept by this office.
-                    </p>
-                    <p class="govuk-body-s">
-                        Samples that are not collected or that do not have return postage will be destroyed after 60 days from the date of your ruling email. If you would like to collect your samples (or arrange for courier collection) then email <strong>@messages("pdf.ruling.email")</strong> giving 48 hours notice.
-                    </p>
-                    <p class="govuk-body-s">
-                        You must quote the ATaR reference number <strong>@c.reference</strong> and give the time that the samples are being collected.
+            <h5 class="strong-header">@messages("pdf.ruling.section.askForReview.title")</h5>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.askForReview.reviewOfficer")
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.askForReview.ifYouDisagree")
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.askForReview.furtherInfo")
+            </p>
+            <h5 class="strong-links">
+                <a class="govuk-link">@messages("pdf.ruling.section.askForReview.guidance.url")</a>
+            </h5>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.askForReview.requestReview")
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.askForReview.solsTeam")
+            </p>
+            <div class="govuk-grid-row" data-column="full">
+                <div class="govuk-grid-column-full">
+                    <p class="govuk-body">
+                        <ul>
+                            <li class="case-info">@messages("pdf.ruling.section.askForReview.solsTeam.1")</li>
+                            <li class="case-info">@messages("pdf.ruling.section.askForReview.solsTeam.2")</li>
+                            <li class="case-info">@messages("pdf.ruling.section.askForReview.solsTeam.3")</li>
+                            <li class="case-info">@messages("pdf.ruling.section.askForReview.solsTeam.4")</li>
+                            <li class="case-info">@messages("pdf.ruling.section.askForReview.solsTeam.5")</li>
+                        </ul>
                     </p>
                 </div>
             </div>
-            }else{
-            <div class="column-full">
-
-                <h3 class="heading-medium">About this decision</h3>
-                <p class="govuk-body-s">
-                    I have made this decision under section 24 of The Taxation (Cross-border Trade) Act 2018 by HM Revenue &amp; Customs.
-                </p>
-                <p class="govuk-body-s">
-                    @d.explanation
-                </p>
-            </div>
-            }
-
-
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.askForReview.solsTeam.cannotWrite")
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.askForReview.solsTeam.email.part1") <a class="govuk-link">@messages("pdf.ruling.section.askForReview.solsTeam.email.address")</a> @messages("pdf.ruling.section.askForReview.solsTeam.email.part2")
+            </p>
+            <p class="govuk-body">
+                <span class="service-info">@messages("pdf.application.footer.solicitors.office.and.legal.services.address.office")</span>
+                <span class="service-info">@messages("pdf.application.footer.hmrc")</span>
+                <span class="service-info">@messages("pdf.application.footer.solicitors.office.and.legal.services.address.postcode")</span>
+            </p>
+            <h5 class="strong-header">@messages("pdf.ruling.section.appealForIndependentTribunal.title")</h5>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.appealForIndependentTribunal.appealImmediately")
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.appealForIndependentTribunal.courtsAndTribunals")
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements")
+            </p>
+            <p class="govuk-body">
+                <li class="case-info">@messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements.1")</li>
+                <li class="case-info">@messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements.2")</li>
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.appealForIndependentTribunal.relevantInfo")
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.appealForIndependentTribunal.tribunalsInfo")
+            </p>
+            <p class="govuk-body">
+                <a class="govuk-link">@messages("pdf.ruling.section.appealForIndependentTribunal.page")</a>
+            </p>
+            <h5 class="strong-header">@messages("pdf.ruling.section.appealsAndReviews.title")</h5>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.appealsAndReviews.moreInfo")
+            </p>
+            <p class="govuk-body">
+                <a class="govuk-link">@messages("pdf.ruling.section.appealsAndReviews.page")</a>
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.appealsAndReviews.copy")
+            </p>
+            <h5 class="strong-header">@messages("pdf.ruling.section.communicatingByEmail.title")</h5>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.communicatingByEmail.tellUs")
+            </p>
+            <p class="govuk-body">
+                <a class="govuk-link">@messages("pdf.ruling.section.communicatingByEmail.page")</a>
+            </p>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.communicatingByEmail.copy")
+            </p>
+            <h5 class="strong-header">@messages("pdf.ruling.section.acknowledgement.title")</h5>
+            <p class="govuk-body">
+                @messages("pdf.ruling.section.acknowledgement") <a class="govuk-link">@messages("pdf.ruling.section.phishing.mail")</a>
+            </p>
         </div>
-    </div>
-    <div id="cover-letter2" class="print-document">
-        <div class="grid-row print-header">
-            <div class="column-one-third">
-                <img class="crown-logo-atar" alt="HM Revenue and Customs" src="@messages("logo.encoded")"/>
-            </div>
-            <div>
-                <h2 class="heading-medium margin-top-small no-margin-bottom print-header__heading">
-                    @messages("pdf.ruling.coverLetter.title")
-                </h2>
-            </div>
-        </div>
-        <div class="grid-row mt-40 main-content">
-            <div class="column-full">
-                <h3 class="heading-medium">@messages("pdf.ruling.section.ifYouDisagree.title")</h3>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.ifYouDisagree")
-                </p>
-                <ul class="govuk-list govuk-list--bullet govuk-body-s">
-                    <li>@messages("pdf.ruling.section.ifYouDisagree.1")</li>
-                    <li>@messages("pdf.ruling.section.ifYouDisagree.2")</li>
-                </ul>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.ifYouDisagree.within")
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.ifYouDisagree.cannot")
-                </p>
-                <h4 class="heading-small">@messages("pdf.ruling.section.askForReview.title")</h4>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.askForReview.reviewOfficer")
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.askForReview.ifYouDisagree")
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.askForReview.furtherInfo")
-                </p>
-                <h4 class="heading-small">@Html(messages("pdf.ruling.section.askForReview.guidance.url"))</h4>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.askForReview.requestReview")
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.askForReview.solsTeam")
-                </p>
-                <ul class="govuk-list govuk-list--bullet govuk-body-s">
-                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.1")</li>
-                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.2")</li>
-                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.3")</li>
-                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.4")</li>
-                    <li>@messages("pdf.ruling.section.askForReview.solsTeam.5")</li>
-                </ul>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.askForReview.solsTeam.cannotWrite")
-                </p>
-                <p class="govuk-body-s">
-                    @Html(messages("pdf.ruling.section.askForReview.solsTeam.email"))
-                </p>
-                <p class="govuk-body-s">
-                    @Html(messages("pdf.application.footer.solicitors.office.and.legal.services.address"))
-                </p>
-                <h4 class="heading-small">@messages("pdf.ruling.section.appealForIndependentTribunal.title")</h4>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.appealForIndependentTribunal.appealImmediately")
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.appealForIndependentTribunal.courtsAndTribunals")
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements")
-                </p>
-                <ul class="govuk-list govuk-list--bullet govuk-body-s">
-                    <li>@messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements.1")</li>
-                    <li>@messages("pdf.ruling.section.appealForIndependentTribunal.requestRequirements.2")</li>
-                </ul>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.appealForIndependentTribunal.relevantInfo")
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.appealForIndependentTribunal.tribunalsInfo")
-                </p>
-                <p class="govuk-body-s">
-                    @Html(messages("pdf.ruling.section.appealForIndependentTribunal.page"))
-                </p>
-                <h4 class="heading-small">@messages("pdf.ruling.section.appealsAndReviews.title")</h4>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.appealsAndReviews.moreInfo")
-                </p>
-                <p class="govuk-body-s">
-                    @Html(messages("pdf.ruling.section.appealsAndReviews.page"))
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.appealsAndReviews.copy")
-                </p>
-                <h4 class="heading-small">@messages("pdf.ruling.section.communicatingByEmail.title")</h4>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.communicatingByEmail.tellUs")
-                </p>
-                <p class="govuk-body-s">
-                    @Html(messages("pdf.ruling.section.communicatingByEmail.page"))
-                </p>
-                <p class="govuk-body-s">
-                    @messages("pdf.ruling.section.communicatingByEmail.copy")
-                </p>
-                <h4 class="heading-small">@messages("pdf.ruling.section.acknowledgement.title")</h4>
-                <p class="govuk-body-s">
-                    @Html(messages("pdf.ruling.section.acknowledgement"))
-                </p>
-            </div></div>
     </div>
 </div>
-
-</body>
-
-</html>
 }

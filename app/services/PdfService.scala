@@ -16,17 +16,25 @@
 
 package services
 
-import connector.PdfGeneratorServiceConnector
+import connectors.PdfGeneratorServiceConnector
 import models.PdfFile
 import play.twirl.api.Html
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.io.Source
 
 @Singleton
-class PdfService @Inject() (connector: PdfGeneratorServiceConnector) {
+class PdfService @Inject() (
+  pdfGeneratorService: PdfGeneratorService,
+  connector: PdfGeneratorServiceConnector
+)(implicit ec: ExecutionContext) {
 
   def generatePdf(htmlContent: Html): Future[PdfFile] =
     connector.generatePdf(htmlContent)
 
+  def generateFopPdf(htmlContent: Html): Future[PdfFile] = {
+    val xlsTransformer = Source.fromResource("cover_letter_template.xml").getLines()
+    pdfGeneratorService.render(htmlContent, xlsTransformer.mkString).map(PdfFile(_))
+  }
 }

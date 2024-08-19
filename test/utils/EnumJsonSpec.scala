@@ -16,12 +16,13 @@
 
 package utils
 
+import base.SpecBase
 import models.MiscCaseType
 import models.MiscCaseType.HARMONISED
 import play.api.libs.json._
 import utils.JsonFormatters.miscCaseType
 
-class EnumJsonSpec extends UtilsBaseSpec {
+class EnumJsonSpec extends SpecBase {
 
   "EnumJson" when {
     ".enumReads" should {
