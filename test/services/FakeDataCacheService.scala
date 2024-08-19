@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:test/services/FakeDataCacheService.scala
-package service
-========
-package connectors
->>>>>>>> 9fb357f9 (DDCE-5597 Renaming folders):test/connectors/FakeDataCacheConnector.scala
+package services
 
 import models.cache.CacheMap
 import play.api.libs.json.Format

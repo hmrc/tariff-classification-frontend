@@ -27,6 +27,7 @@ import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import views.html.templates.cover_letter_template
 
 import java.time._
 import scala.concurrent.Future
@@ -46,6 +47,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
   private val pdfService       = mock[PdfService]
   private val audit            = mock[AuditService]
   private val config           = mock[AppConfig]
+  private val cover_letter_template = mock[cover_letter_template]
   private val clock = Clock.fixed(
     LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC),
     ZoneId.of("UTC")
@@ -61,7 +63,8 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       reportingService,
       pdfService,
       connector,
-      rulingConnector
+      rulingConnector,
+      cover_letter_template
     )(executionContext, config)
 
   override protected def beforeEach(): Unit = {

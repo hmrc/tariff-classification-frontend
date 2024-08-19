@@ -94,7 +94,7 @@ class EmailConnectorSpec extends ConnectorTest {
           )
       )
 
-      await(connector.generate(email)) shouldBe EmailTemplate("text", "html", "from", "subject", "services")
+      await(connector.generate(email)) shouldBe EmailTemplate("text", "html", "from", "subject", "service")
 
       verify(
         postRequestedFor(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))

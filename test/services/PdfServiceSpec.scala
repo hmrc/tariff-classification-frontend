@@ -27,10 +27,11 @@ import scala.concurrent.Future.{failed, successful}
 class PdfServiceSpec extends ServiceSpecBase {
 
   private val pdfHtml           = mock[Html]
+  private val pdfService        = mock[PdfGeneratorService]
   private val connector         = mock[PdfGeneratorServiceConnector]
   private val connectorResponse = PdfFile("Some content".getBytes)
 
-  private val service = new PdfService(connector)
+  private val service = new PdfService(pdfService, connector)
 
   "Service 'Generate Pdf'" should {
 

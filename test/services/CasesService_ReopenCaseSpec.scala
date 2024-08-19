@@ -27,6 +27,7 @@ import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import views.html.templates.cover_letter_template
 
 import scala.concurrent.Future.{failed, successful}
 
@@ -40,6 +41,7 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
   private val countriesService = mock[CountriesService]
   private val reportingService = mock[ReportingService]
   private val pdfService       = mock[PdfService]
+  private val cover_letter_template = mock[cover_letter_template]
   private val aCase            = Cases.btiCaseExample
 
   private val service =
@@ -51,7 +53,8 @@ class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEac
       reportingService,
       pdfService,
       connector,
-      rulingConnector
+      rulingConnector,
+      cover_letter_template
     )(executionContext, realAppConfig)
 
   override protected def afterEach(): Unit = {

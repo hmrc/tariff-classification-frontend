@@ -28,6 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import views.html.templates.cover_letter_template
 
 import java.time.Instant
 import scala.concurrent.Future.{failed, successful}
@@ -48,6 +49,7 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   private val rulingConnector  = mock[RulingConnector]
   private val audit            = mock[AuditService]
   private val operator         = Operator("operator-id")
+  private val cover_letter_template = mock[cover_letter_template]
 
   private val service =
     new CasesService(
@@ -58,7 +60,8 @@ class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       reportingService,
       pdfService,
       connector,
-      rulingConnector
+      rulingConnector,
+      cover_letter_template
     )(executionContext, realAppConfig)
 
   override protected def afterEach(): Unit = {

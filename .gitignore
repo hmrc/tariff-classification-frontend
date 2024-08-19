@@ -34,3 +34,4 @@ bin
 .metals/
 .vscode/
 metals.sbt
+test/resources/fop/*test.pdf

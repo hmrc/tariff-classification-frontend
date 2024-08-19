@@ -4,6 +4,9 @@
             <pattern>%date{ISO8601} level=[%level] logger=[%logger] thread=[%thread] message=[%message] %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
         </encoder>
     </appender>
+
+    <logger name="org.apache.fop" level="DEBUG"/>
+
     <root level="ERROR">
         <appender-ref ref="CONSOLE"/>
     </root>

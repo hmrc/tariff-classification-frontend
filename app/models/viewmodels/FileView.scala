@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package utils
+package models.viewmodels
 
-import base.SpecBase
+import models.Attachment
 
-class UtilsBaseSpec extends SpecBase {}
+case class FileView(id: String, name: String, confidential: Boolean)
+
+object FileView {
+  def fromAttachment(att: Attachment, name: String): FileView =
+    FileView(
+      id = att.id,
+      name = name,
+      confidential = !att.public
+    )
+}

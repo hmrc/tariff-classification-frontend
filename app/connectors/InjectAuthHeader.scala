@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connector
+package connectors
 
 import config.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier

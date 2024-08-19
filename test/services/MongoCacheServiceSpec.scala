@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:test/services/MongoCacheServiceSpec.scala
-package service
-========
-package connectors
->>>>>>>> 9fb357f9 (DDCE-5597 Renaming folders):test/connectors/MongoCacheConnectorSpec.scala
+package services
 
-import connector.ConnectorTest
+import connectors.ConnectorTest
 import generators.Generators
 import models.cache.CacheMap
 import org.mockito.ArgumentMatchers.{any, refEq}

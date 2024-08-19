@@ -36,6 +36,7 @@ import models.request.NewEventRequest
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.Files.SingletonTemporaryFileCreator
+import play.api.mvc.RequestHeader
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.templates.{cover_letter_template, decision_template, ruling_template}
 
@@ -54,7 +55,8 @@ class CasesService @Inject() (
   reportingService: ReportingService,
   pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
-  rulingConnector: RulingConnector
+  rulingConnector: RulingConnector,
+  cover_letter_template: cover_letter_template
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
@@ -232,7 +234,7 @@ class CasesService @Inject() (
       _ = auditService.auditCaseSuppressed(original, updated, operator)
     } yield updated
 
-  def completeCase(original: Case, operator: Operator)(implicit hc: HeaderCarrier, messages: Messages): Future[Case] = {
+  def completeCase(original: Case, operator: Operator)(implicit hc: HeaderCarrier, rh: RequestHeader, messages: Messages): Future[Case] = {
 
     def setCaseCompleted(original: Case): Case = original.application.`type` match {
       case ApplicationType.ATAR | ApplicationType.LIABILITY =>
@@ -370,7 +372,7 @@ class CasesService @Inject() (
     completedCase: Case,
     decision: Decision,
     operator: Operator
-  )(implicit hc: HeaderCarrier, messages: Messages): Future[Case] = {
+  )(implicit hc: HeaderCarrier, rh: RequestHeader, messages: Messages): Future[Case] = {
 
     def getCountryName(code: String): Option[String] =
       countriesService.getAllCountriesById.get(code).map(_.countryName)
@@ -407,7 +409,7 @@ class CasesService @Inject() (
     def generateLetter: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
         pdfService
-          .generatePdf(cover_letter_template(completedCase, decision, getCountryName))
+          .generateFopPdf(cover_letter_template(completedCase, decision, getCountryName))
           .map(createCoverLetterPdf)
     }
 

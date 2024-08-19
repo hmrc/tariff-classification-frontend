@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-<<<<<<<< HEAD:app/services/DataCacheService.scala
-package service
-========
-package connectors
->>>>>>>> 9fb357f9 (DDCE-5597 Renaming folders):app/connectors/DataCacheConnector.scala
+package services
 
 import com.codahale.metrics.MetricRegistry
 import com.google.inject.Inject
