@@ -20,14 +20,14 @@ import com.codahale.metrics.MetricRegistry
 import config.AppConfig
 import metrics.HasMetrics
 import models.PdfFile
+import org.apache.pekko.stream.Materializer
 import play.api.http.Status.OK
 import play.twirl.api.Html
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future.{failed, successful}
+import scala.concurrent.Future.failed
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -35,7 +35,7 @@ class PdfGeneratorServiceConnector @Inject() (
   configuration: AppConfig,
   http: HttpClientV2,
   val metrics: MetricRegistry
-)(implicit ec: ExecutionContext)
+)(implicit ec: ExecutionContext, mat: Materializer)
     extends HasMetrics {
 
   private lazy val fullURL: String       = s"${configuration.pdfGeneratorUrl}/pdf-generator-service/generate"
@@ -46,13 +46,16 @@ class PdfGeneratorServiceConnector @Inject() (
       http
         .post(url"$fullURL")
         .withBody(Map("html" -> Seq(html.toString)))
-        .execute[HttpResponse]
+        .stream[HttpResponse]
         .flatMap { response =>
           response.status match {
-            case OK => successful(PdfFile(content = response.body.getBytes))
+            case OK => sourceToPdfFile(response)
             case _  => failed(new RuntimeException(s"Error calling pdf-generator-service - ${response.body}"))
           }
         }
     }
+
+  private def sourceToPdfFile(response: HttpResponse)(implicit ec: ExecutionContext): Future[PdfFile] =
+    response.bodyAsSource.runReduce(_ ++ _).map(byteString => PdfFile(byteString.toArray))
 
 }
