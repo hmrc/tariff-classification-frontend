@@ -17,7 +17,7 @@
 package service
 
 import connector.PdfGeneratorServiceConnector
-import models._
+import models.PdfFile
 import play.twirl.api.Html
 
 import javax.inject.{Inject, Singleton}
