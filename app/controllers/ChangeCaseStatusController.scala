@@ -28,7 +28,7 @@ import views.html.change_case_status
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future.successful
-//
+
 class ChangeCaseStatusController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
