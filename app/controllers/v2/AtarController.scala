@@ -49,7 +49,7 @@ class AtarController @Inject() (
   redirectService: RedirectService,
   val atarView: atar_view,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with UpscanErrorHandling
     with I18nSupport {
@@ -69,7 +69,7 @@ class AtarController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     keywordForm: Form[String] = KeywordForm.form,
     uploadForm: Form[String] = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(using request: AuthenticatedCaseRequest[_]): Future[Html] = {
 
     val uploadFileId: String                       = fileId.getOrElse(UUID.randomUUID().toString)
     val atarCase: Case                             = request.`case`

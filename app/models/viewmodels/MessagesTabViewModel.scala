@@ -24,10 +24,12 @@ case class MessagesTabViewModel(
 )
 
 object MessagesTabViewModel {
-  def fromCase(cse: Case): MessagesTabViewModel = cse.application.`type` match {
-    case ApplicationType.CORRESPONDENCE =>
-      MessagesTabViewModel(cse.reference, cse.application.asCorrespondence.messagesLogged)
-    case ApplicationType.MISCELLANEOUS =>
-      MessagesTabViewModel(cse.reference, cse.application.asMisc.messagesLogged)
-  }
+  def fromCase(cse: Case): MessagesTabViewModel =
+    cse.application.`type` match {
+      case ApplicationType.CORRESPONDENCE =>
+        MessagesTabViewModel(cse.reference, cse.application.asCorrespondence.messagesLogged)
+      case ApplicationType.MISCELLANEOUS =>
+        MessagesTabViewModel(cse.reference, cse.application.asMisc.messagesLogged)
+      case _ => MessagesTabViewModel(cse.reference, Nil)
+    }
 }

@@ -28,23 +28,29 @@ object AppealStatus extends Enumeration {
     case _                 => formatAppeal(status)
   }
 
-  def formatAppeal(status: AppealStatus): String = status match {
-    case IN_PROGRESS => "Under appeal"
-    case ALLOWED     => "Appeal allowed"
-    case DISMISSED   => "Appeal dismissed"
-  }
+  def formatAppeal(status: AppealStatus): String =
+    status match {
+      case IN_PROGRESS => "Under appeal"
+      case ALLOWED     => "Appeal allowed"
+      case DISMISSED   => "Appeal dismissed"
+      case _           => "Unknown Status"
+    }
 
-  def formatReview(status: AppealStatus): String = status match {
-    case IN_PROGRESS => "Under review"
-    case ALLOWED     => "Review upheld"
-    case DISMISSED   => "Review overturned"
-  }
+  def formatReview(status: AppealStatus): String =
+    status match {
+      case IN_PROGRESS => "Under review"
+      case ALLOWED     => "Review upheld"
+      case DISMISSED   => "Review overturned"
+      case _           => "Unknown Status"
+    }
 
-  def formatDispute(status: AppealStatus): String = status match {
-    case IN_PROGRESS => "Under mediation"
-    case ALLOWED     => "Completed"
-    case DISMISSED   => "Completed"
-  }
+  def formatDispute(status: AppealStatus): String =
+    status match {
+      case IN_PROGRESS => "Under mediation"
+      case ALLOWED     => "Completed"
+      case DISMISSED   => "Completed"
+      case _   => "Unknown Status"
+    }
 
   def validFor(appealType: AppealType): Seq[AppealStatus] = appealType match {
     case AppealType.REVIEW => Seq(AppealStatus.IN_PROGRESS, AppealStatus.ALLOWED, AppealStatus.DISMISSED)

@@ -47,7 +47,7 @@ class RejectCaseController @Inject() (
   val reject_case_email: reject_case_email,
   val confirm_rejected: confirm_rejected,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with UpscanErrorHandling
@@ -85,7 +85,7 @@ class RejectCaseController @Inject() (
   private def renderRejectCaseEmail(
     fileId: Option[String],
     uploadForm: Form[String]
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(using request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
     val fileUploadSuccessRedirect =
@@ -112,7 +112,7 @@ class RejectCaseController @Inject() (
 
   def getRejectCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REJECT_CASE))
-      .async(implicit request => handleUploadErrorAndRender(uploadForm => renderRejectCaseEmail(fileId, uploadForm)))
+      .async(using request => handleUploadErrorAndRender(uploadForm => renderRejectCaseEmail(fileId, uploadForm)))
 
   def rejectCase(reference: String, fileId: String): Action[AnyContent] =
     (verify.authenticated andThen
@@ -144,5 +144,5 @@ class RejectCaseController @Inject() (
   def confirmRejectCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_rejected(request.`case`)))
+      andThen verify.mustHave(Permission.VIEW_CASES))(using request => Ok(confirm_rejected(request.`case`)))
 }

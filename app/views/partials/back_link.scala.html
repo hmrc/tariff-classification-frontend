@@ -24,7 +24,7 @@
 @(
     messageKey: String = "errors.all.back",
     linkLocation: Option[String] = None
-)(implicit messages: Messages, request:RequestHeader)
+)(using messages: Messages, request:RequestHeader)
 
 
 @if(linkLocation.isDefined) {

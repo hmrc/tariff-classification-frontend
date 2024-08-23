@@ -16,7 +16,7 @@
 
 @import models.Operator
 @import models.request.AuthenticatedRequest
-@(operator: Operator, capitalise : Boolean = false)(implicit request: AuthenticatedRequest[_])
+@(operator: Operator, capitalise : Boolean = false)(using request: AuthenticatedRequest[_])
 @{
  if(operator.id == request.operator.id) {
       if (capitalise) "You" else "you"

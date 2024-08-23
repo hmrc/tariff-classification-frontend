@@ -98,10 +98,11 @@ private[mappings] trait GenericDateFormatter extends Formatters with Constraints
 
   def filter(input: String): String = {
     @tailrec
-    def applyFilters(filters: Seq[Pattern], sanitizedOuput: String): String = filters match {
-      case Nil            => sanitizedOuput.filterNot(_ == '|')
-      case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOuput).replaceAll(""))
-    }
+    def applyFilters(filters: Seq[Pattern], sanitizedOutput: String): String =
+      filters match {
+        case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOutput).replaceAll(""))
+        case _            => sanitizedOutput.filterNot(_ == '|')
+      }
     applyFilters(filters, input)
   }
 }

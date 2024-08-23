@@ -18,7 +18,7 @@
 @import views.html.components.heading
 @import views.html.managementtools.report_tab_view
 
-@(reportingViewModel: ReportingTabViewModel)(implicit messages: Messages)
+@(reportingViewModel: ReportingTabViewModel)(using messages: Messages)
 
     @heading(messages("reporting.manage_reports.heading"))
 

@@ -28,7 +28,7 @@
         showUploadedBy: Boolean = false,
         showRemoval: Boolean = false,
         caseRef: String = ""
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(using request: AuthenticatedRequest[_], messages: Messages)
 
     @if(attachments.nonEmpty){
         <table id="@{id}-table" class="govuk-table">

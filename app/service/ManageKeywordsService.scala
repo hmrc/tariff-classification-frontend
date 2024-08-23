@@ -30,7 +30,7 @@ class ManageKeywordsService @Inject() (auditService: AuditService, connector: Bi
   implicit ec: ExecutionContext
 ) {
 
-  def createKeyword(keyword: Keyword, user: Operator, keywordStatusAction: ChangeKeywordStatusAction)(implicit
+  def createKeyword(keyword: Keyword, user: Operator, keywordStatusAction: ChangeKeywordStatusAction)(using
     hc: HeaderCarrier
   ): Future[Keyword] =
     for {
@@ -38,16 +38,16 @@ class ManageKeywordsService @Inject() (auditService: AuditService, connector: Bi
       _ = auditService.auditManagerKeywordCreated(user, keywordCreated, keywordStatusAction)
     } yield keywordCreated
 
-  def findAll(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
+  def findAll(pagination: Pagination)(using hc: HeaderCarrier): Future[Paged[Keyword]] =
     connector.findAllKeywords(pagination)
 
-  def fetchCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
+  def fetchCaseKeywords()(using hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     connector.getCaseKeywords()
 
-  def deleteKeyword(keyword: Keyword, user: Operator)(implicit hc: HeaderCarrier): Future[Unit] =
+  def deleteKeyword(keyword: Keyword, user: Operator)(using hc: HeaderCarrier): Future[Unit] =
     connector.deleteKeyword(keyword).map(_ => auditService.auditManagerKeywordDeleted(user, keyword))
 
-  def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword, user: Operator)(implicit
+  def renameKeyword(keywordToDelete: Keyword, keywordToAdd: Keyword, user: Operator)(using
     hc: HeaderCarrier
   ): Future[Keyword] =
     for {

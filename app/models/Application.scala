@@ -24,6 +24,7 @@ import play.api.mvc.PathBindable
 import java.time.Instant
 
 sealed trait Application {
+
   val `type`: ApplicationType
   val contact: Contact
 
@@ -119,7 +120,7 @@ object ApplicationType {
 
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
 
-  implicit def applicationTypePathBindable(implicit
+  implicit def applicationTypePathBindable(using
     stringBindable: PathBindable[String]
   ): PathBindable[ApplicationType] =
     new PathBindable[ApplicationType] {
@@ -188,6 +189,7 @@ object LiabilityStatus extends Enumeration {
     liabilityStatus match {
       case LIVE     => "Live"
       case NON_LIVE => "Non-live"
+      case _ => "Unknown"
     }
 }
 

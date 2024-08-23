@@ -31,11 +31,11 @@ class RulingConnector @Inject() (
   configuration: AppConfig,
   http: HttpClientV2,
   val metrics: MetricRegistry
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends HasMetrics
     with InjectAuthHeader {
 
-  def notify(id: String)(implicit hc: HeaderCarrier): Future[Unit] =
+  def notify(id: String)(using hc: HeaderCarrier): Future[Unit] =
     withMetricsTimerAsync("notify-rulings-frontend") { _ =>
       val fullURL = s"${configuration.rulingUrl}/search-for-advance-tariff-rulings/ruling/$id"
       http

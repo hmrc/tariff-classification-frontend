@@ -203,7 +203,7 @@ class MoveCasesController @Inject() (
   def chooseOneOfUsersTeams: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
-    )).async(implicit request =>
+    )).async(using request =>
       request.userAnswers
         .get[String](ChosenUserPID)
         .map(pid =>
@@ -232,7 +232,7 @@ class MoveCasesController @Inject() (
   def postChooseOneOfUsersTeams: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
-    )).async(implicit request =>
+    )).async(using request =>
       chooseTeamForm
         .bindFromRequest()
         .fold(
@@ -282,7 +282,7 @@ class MoveCasesController @Inject() (
   def chooseUserFromAnotherTeam: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS) andThen verify.requireData(
       MoveCasesCacheKey
-    )).async(implicit request =>
+    )).async(using request =>
       for {
         nonGatewayQueues <- queueService.getNonGateway
       } yield Ok(chooseTeamToChooseUsersFromPage(chooseTeamForm, nonGatewayQueues))
@@ -414,7 +414,7 @@ class MoveCasesController @Inject() (
       Redirect(routes.MoveCasesController.chooseUserOrTeam())
     }
 
-  private def redirectAfterPostingCaseRefs(caseRefs: Set[String], pid: String, userAnswers: UserAnswers)(implicit
+  private def redirectAfterPostingCaseRefs(caseRefs: Set[String], pid: String, userAnswers: UserAnswers)(using
     hc: HeaderCarrier
   ) = {
     val userAnswersWithUserPID = userAnswers.set(OriginalUserPID, pid)
@@ -431,7 +431,7 @@ class MoveCasesController @Inject() (
     liabForm: Form[Set[String]],
     corrForm: Form[Set[String]],
     miscForm: Form[Set[String]]
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) =
+  )(using hc: HeaderCarrier, request: AuthenticatedRequest[_]) =
     for {
       userTab <- userService.getUser(pid)
       cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
@@ -443,7 +443,7 @@ class MoveCasesController @Inject() (
   private def moveToUser(
     pid: String,
     caseRefs: Set[String]
-  )(implicit hc: HeaderCarrier, request: AuthenticatedDataRequest[_]) =
+  )(using hc: HeaderCarrier, request: AuthenticatedDataRequest[_]) =
     userService.getUser(pid).flatMap {
       case Some(u) =>
         val userAnswersWithNewUser = request.userAnswers.set(ChosenUserPID, pid)

@@ -24,7 +24,7 @@
         attachments: Seq[StoredAttachment],
         showRemoval: Boolean = false,
         caseRef: String,
-        startAtTabIndex : Option[Int] = None)(implicit messages: Messages)
+        startAtTabIndex : Option[Int] = None)(using messages: Messages)
 
     @if(attachments.nonEmpty){
 

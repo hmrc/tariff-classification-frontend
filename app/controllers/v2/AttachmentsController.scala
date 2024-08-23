@@ -39,7 +39,7 @@ class AttachmentsController @Inject() (
   remove_attachment: remove_attachment,
   implicit val appConfig: AppConfig,
   implicit val mat: Materializer
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with I18nSupport {

@@ -27,7 +27,7 @@
 
 @(
     caseViewModel: CaseViewModel
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(using request: AuthenticatedRequest[_], messages: Messages)
 
 
 @defining({

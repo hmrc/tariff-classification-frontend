@@ -38,7 +38,7 @@ class PdfDownloadController @Inject() (
   val case_not_found: case_not_found,
   val ruling_not_found: ruling_not_found,
   val document_not_found: document_not_found
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {

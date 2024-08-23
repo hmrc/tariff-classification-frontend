@@ -35,7 +35,7 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
 
   implicit val appConfig: AppConfig = realAppConfig
 
-  implicit def authenticatedRequest[A](implicit
+  implicit def authenticatedRequest[A](using
     operator: Operator,
     request: Request[A]
   ): AuthenticatedRequest[A] =

@@ -26,7 +26,7 @@
 
 @this()
 
-@(activityViewModel: ActivityViewModel, activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(activityViewModel: ActivityViewModel, activityForm: Form[ActivityFormData])(using request: AuthenticatedRequest[_], messages: Messages)
 
  @error_summary(activityForm.errors)
 

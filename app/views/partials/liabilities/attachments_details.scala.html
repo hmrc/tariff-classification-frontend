@@ -35,7 +35,7 @@
     initiateResponse: FileStoreInitiateResponse,
     attachmentsTabViewModel: AttachmentsTabViewModel,
     showUploadAttachments: Boolean = false
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @error_summary(form.errors)
 

@@ -20,7 +20,7 @@
 
 @(
     caseViewModel: CaseViewModel
-)(implicit messages: Messages)
+)(using messages: Messages)
 
 @if(caseViewModel.showAdvancedSearchButton) {
     <div class="govuk-form-group">

@@ -19,7 +19,7 @@
 
 @this()
 
-@(userDetails: Operator)(implicit messages: Messages)
+@(userDetails: Operator)(using messages: Messages)
 
 <h2 class="govuk-heading-l">@messages("users.user.details.heading")</h2>
 
@@ -64,17 +64,19 @@
   </dt>
   <dd class="govuk-summary-list__value" id="user-role">
    @{(userDetails.role, userDetails.isGateway) match {
-   case (Role.CLASSIFICATION_OFFICER, true) => "Classification and Gateway"
-   case (Role.CLASSIFICATION_OFFICER, false) => "Classification"
-   case (Role.CLASSIFICATION_MANAGER, _) => "Manager"
-   case (_, true) => "Gateway"
+     case (Role.CLASSIFICATION_OFFICER, true) => "Classification and Gateway"
+     case (Role.CLASSIFICATION_OFFICER, false) => "Classification"
+     case (Role.CLASSIFICATION_MANAGER, _) => "Manager"
+     case (_, true) => "Gateway"
+     case _ => messages("error.summary.title")
    }}
    <div id="role-detail-hint" class="form-hint">
     @{(userDetails.role, userDetails.isGateway) match {
-    case (Role.CLASSIFICATION_OFFICER, true) => messages("users.user.details.role.hint.classificationAndGateway")
-    case (Role.CLASSIFICATION_OFFICER, false) => messages("users.user.details.role.hint.classification")
-    case (Role.CLASSIFICATION_MANAGER, _) => messages("users.user.details.role.hint.manager")
-    case (_, true) => messages("users.user.details.role.hint.gateway")
+     case (Role.CLASSIFICATION_OFFICER, true) => messages("users.user.details.role.hint.classificationAndGateway")
+     case (Role.CLASSIFICATION_OFFICER, false) => messages("users.user.details.role.hint.classification")
+     case (Role.CLASSIFICATION_MANAGER, _) => messages("users.user.details.role.hint.manager")
+     case (_, true) => messages("users.user.details.role.hint.gateway")
+     case _ => messages("users.user.details.role.hint.not.found")
     }}
    </div>
   </dd>

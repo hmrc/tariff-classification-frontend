@@ -28,7 +28,7 @@
 )
 
 
-@(gatewayCases : ApplicationTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(gatewayCases : ApplicationTabViewModel)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages("operator.dashboard.classification.gateway-cases.title"),

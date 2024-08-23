@@ -18,7 +18,7 @@
 @import views.html.v2.case_status_tab
 @import utils.Dates
 
-@(miscellaneousTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit messages: Messages)
+@(miscellaneousTab: ApplicationsTab, assignmentType: String, captionMessage: String)(using messages: Messages)
 
  <table id="@{miscellaneousTab.tabMessageKey}-table" class="govuk-table">
   <caption class="govuk-visually-hidden govuk-table__caption">@messages(captionMessage)</caption>

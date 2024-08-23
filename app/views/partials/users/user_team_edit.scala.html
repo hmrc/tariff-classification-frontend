@@ -38,7 +38,7 @@
 @(
         userDetails: Operator,
         form: Form[Set[String]]
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(using request: AuthenticatedRequest[_], messages: Messages)
 
 
 @getUserName = @{

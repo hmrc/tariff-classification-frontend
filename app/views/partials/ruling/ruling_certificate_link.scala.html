@@ -18,7 +18,7 @@
 @import models.viewmodels.atar.RulingTabViewModel
 @import controllers.routes.PdfDownloadController
 
-@(ruling: RulingTabViewModel, useTabIndex : Option[Int] = None)(implicit messages: Messages)
+@(ruling: RulingTabViewModel, useTabIndex : Option[Int] = None)(using messages: Messages)
 
 @validStatus = @{ Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED)}
 

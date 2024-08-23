@@ -22,7 +22,7 @@
         labelClass: Option[String] = None,
         maxLength: Option[Int] = None,
         minLength: Option[Int] = None
-)(implicit messages: Messages)
+)(using messages: Messages)
 
 <div class="govuk-form-group @if(field.hasErrors){form-group-error}">
     <label class="govuk-label" for="@{field.id}">

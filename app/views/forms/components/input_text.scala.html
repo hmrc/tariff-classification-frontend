@@ -25,7 +25,7 @@
         disableAutoComplete: Boolean = false,
         customErrorMessage : Option[String] = None,
         customGroupClasses : String = "",
-)(implicit messages: Messages)
+)(using messages: Messages)
 
 <div class="govuk-form-group @customGroupClasses @if(field.hasErrors){govuk-form-group--error}">
     <label class="govuk-label" for="@{field.id}">

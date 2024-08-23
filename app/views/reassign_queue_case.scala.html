@@ -28,7 +28,7 @@
         backLink: back_link
 )
 
-@(c: Case, form: Form[String], queues: Seq[Queue], actualQueue: Option[Queue], originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[String], queues: Seq[Queue], actualQueue: Option[Queue], originUrl: String)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.move.case"),

@@ -21,7 +21,7 @@
 @(
   report: reporting.Report,
   id: String
-)(implicit messages: Messages, request:RequestHeader)
+)(using messages: Messages, request:RequestHeader)
 
 @downloadLink = {
   @report match {

@@ -37,7 +37,7 @@ class SuccessfulAuthenticatedAction(
   parse: PlayBodyParsers,
   operator: Operator = Operator("0", Some("name")),
   permissions: Set[Permission] = Set.empty
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends AuthenticatedAction(
       appConfig = mock(classOf[AppConfig]),
       config = mock(classOf[Configuration]),
@@ -54,7 +54,7 @@ class SuccessfulAuthenticatedAction(
 class SuccessfulCasePermissionsAction(
   operator: Operator = Operator("0", Some("name")),
   permissions: Set[Permission] = Set.empty
-)(implicit val ec: ExecutionContext)
+)(using val ec: ExecutionContext)
     extends CheckCasePermissionsAction {
   override def refine[A](request: AuthenticatedCaseRequest[A]): Future[Either[Result, AuthenticatedCaseRequest[A]]] =
     successful(Right(new AuthenticatedCaseRequest(operator.copy(permissions = permissions), request, request.`case`)))
@@ -82,7 +82,7 @@ class ExistingCaseActionFactory(requestCase: Case)
     }
 }
 
-class HaveRightPermissionsActionFactory @Inject() (implicit ec: ExecutionContext)
+class HaveRightPermissionsActionFactory @Inject() (using ec: ExecutionContext)
     extends MustHavePermissionActionFactory {
 
   override def apply[B[C] <: OperatorRequest[_]](permission: Permission): ActionFilter[B] =
@@ -101,7 +101,7 @@ class HaveRightPermissionsActionFactory @Inject() (implicit ec: ExecutionContext
     }
 }
 
-class MustHaveDataActionFactory @Inject() (userAnswers: UserAnswers)(implicit ec: ExecutionContext)
+class MustHaveDataActionFactory @Inject() (userAnswers: UserAnswers)(using ec: ExecutionContext)
     extends RequireDataActionFactory(dataCacheService = FakeDataCacheService) {
   override def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
     new ActionRefiner[B, AuthenticatedDataRequest] {
@@ -150,7 +150,7 @@ class SuccessfulRequestActions(
   parse: PlayBodyParsers,
   operator: Operator,
   c: Case = Cases.btiCaseExample
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends RequestActions(
       new SuccessfulCasePermissionsAction(operator),
       new SuccessfulAuthenticatedAction(parse, operator),
@@ -166,7 +166,7 @@ class RequestActionsWithPermissions(
   addViewCasePermission: Boolean = true,
   c: Case = Cases.btiCaseExample,
   op: Operator = Operator("0", Some("name"))
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends RequestActions(
       new SuccessfulCasePermissionsAction(
         operator = op,
@@ -190,7 +190,7 @@ class RequestActionsWithPermissionsAndData(
   addViewCasePermission: Boolean = true,
   c: Case = Cases.btiCaseExample,
   op: Operator = Operator("0", Some("name"))
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends RequestActions(
       new SuccessfulCasePermissionsAction(
         operator = op,

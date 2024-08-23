@@ -51,7 +51,7 @@ class LiabilityController @Inject() (
   val liability_view: liability_view,
   val liability_details_edit: liability_details_edit,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with UpscanErrorHandling
     with I18nSupport {
@@ -71,7 +71,7 @@ class LiabilityController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     uploadForm: Form[String] = UploadAttachmentForm.form,
     keywordForm: Form[String] = KeywordForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(using request: AuthenticatedCaseRequest[_]): Future[Html] = {
 
     val liabilityCase: Case = request.`case`
     val uploadFileId        = fileId.getOrElse(UUID.randomUUID().toString)
@@ -142,7 +142,7 @@ class LiabilityController @Inject() (
 
   private def getAttachmentTab(
     liabilityCase: Case
-  )(implicit hc: HeaderCarrier): Future[Option[AttachmentsTabViewModel]] =
+  )(using hc: HeaderCarrier): Future[Option[AttachmentsTabViewModel]] =
     for {
       attachments <- fileService.getAttachments(liabilityCase)
       letter      <- fileService.getLetterOfAuthority(liabilityCase)

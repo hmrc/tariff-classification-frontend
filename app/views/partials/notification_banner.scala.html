@@ -16,7 +16,7 @@
 
 @import utils.NotificationType
 
-@()(implicit flash: Flash, messages: Messages)
+@()(using flash: Flash, messages: Messages)
 
 @renderSuccess(message: String) = {
     @notification_banner_success(

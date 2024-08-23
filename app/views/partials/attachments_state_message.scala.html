@@ -20,7 +20,7 @@
 @import views.html.helper.CSPNonce
 
 
-@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false, displayStateMessage : Boolean = true)(implicit request: RequestHeader)
+@(attachments: Seq[StoredAttachment], autoRefresh: Boolean = false, displayStateMessage : Boolean = true)(using request: RequestHeader)
 
 @if(displayStateMessage) {
     @if(attachments.exists(_.scanStatus.contains(ScanStatus.FAILED))) {

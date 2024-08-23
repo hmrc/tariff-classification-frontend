@@ -27,7 +27,7 @@
         backLink: back_link
 )
 
-@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[String])(using request: AuthenticatedRequest[_], messages: Messages)
 @main(
     pageTitle = messages("action_this_corr.case.page.title"),
     backLink = Some(backLink())

@@ -21,7 +21,7 @@
  govukWrapper: govuk_wrapper
 )
 
-@(resource: String = "Resource")(implicit request: Request[_], messages: Messages)
+@(resource: String = "Resource")(using request: Request[_], messages: Messages)
 
 @govukWrapper(
  pageTitle = messages("not_authorised.title") + " - " + messages("site.title.suffix")

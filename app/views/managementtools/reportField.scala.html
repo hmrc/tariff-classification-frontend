@@ -28,7 +28,7 @@
   teams: Map[String, Queue],
   id: String,
   index: Int
-)(implicit messages: Messages)
+)(using messages: Messages)
 
 @result match {
   case StringResultField(_, data) if field == ReportField.Reference => {

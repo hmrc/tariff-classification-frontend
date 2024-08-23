@@ -28,7 +28,7 @@
 )
 
 
-@(c: Case, form: Form[_])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[_])(using request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("change_case_status_title"),

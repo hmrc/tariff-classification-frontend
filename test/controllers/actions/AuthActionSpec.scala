@@ -181,7 +181,7 @@ class FakeFailingAuthConnector(exceptionToReturn: Throwable) extends AuthConnect
   override def authorise[A](
     predicate: Predicate,
     retrieval: Retrieval[A]
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     Future.failed(exceptionToReturn)
 
 }
@@ -191,7 +191,7 @@ class FakeAuthConnector(internalId: Option[String]) extends AuthConnector {
   override def authorise[A](
     predicate: Predicate,
     retrieval: Retrieval[A]
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     Future.successful(internalId.asInstanceOf[A])
 
 }

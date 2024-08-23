@@ -80,7 +80,7 @@ class VerifyCaseExistsActionFactory @Inject() (casesService: CasesService)(
 }
 
 @Singleton
-class MustHavePermissionActionFactory @Inject() (implicit ec: ExecutionContext) {
+class MustHavePermissionActionFactory @Inject() (using ec: ExecutionContext) {
 
   def apply[B[C] <: OperatorRequest[C]](permission: Permission): ActionFilter[B] =
     new ActionFilter[B] {
@@ -108,7 +108,7 @@ class MustHavePermissionActionFactory @Inject() (implicit ec: ExecutionContext) 
 @Singleton
 class RequireDataActionFactory @Inject() (
   dataCacheService: DataCacheService
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext) {
   def apply[B[C] <: OperatorRequest[C]](cacheKey: String): ActionRefiner[B, AuthenticatedDataRequest] =
     new ActionRefiner[B, AuthenticatedDataRequest] {
       override protected def refine[A](
@@ -128,7 +128,7 @@ class RequireCaseDataActionFactory @Inject() (
   casesService: CasesService,
   dataCacheService: DataCacheService,
   val case_not_found: views.html.case_not_found
-)(implicit
+)(using
   val messagesApi: MessagesApi,
   ec: ExecutionContext
 ) extends I18nSupport {

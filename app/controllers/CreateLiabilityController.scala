@@ -37,7 +37,7 @@ class CreateLiabilityController @Inject() (
   val create_liability: create_liability,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {

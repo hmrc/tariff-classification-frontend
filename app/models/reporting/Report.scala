@@ -449,7 +449,7 @@ object SummaryReport {
   private val statusesKey          = "status"
   private val liabilityStatusesKey = "liability_status"
 
-  implicit def summaryReportQueryStringBindable(implicit
+  implicit def summaryReportQueryStringBindable(using
     stringBindable: QueryStringBindable[String],
     boolBindable: QueryStringBindable[Boolean],
     rangeBindable: QueryStringBindable[InstantRange]
@@ -543,7 +543,7 @@ object CaseReport {
   private val liabilityStatusesKey = "liability_status"
   private val dueToExpireReportKey = "due_to_expire"
 
-  implicit def caseReportQueryStringBindable(implicit
+  implicit def caseReportQueryStringBindable(using
     stringBindable: QueryStringBindable[String],
     rangeBindable: QueryStringBindable[InstantRange],
     booleanBindable: QueryStringBindable[Boolean]
@@ -628,7 +628,7 @@ object QueueReport {
   private val assigneeKey          = "assigned_user"
   private val liabilityStatusesKey = "liability_status"
 
-  implicit def queueReportQueryStringBindable(implicit
+  implicit def queueReportQueryStringBindable(using
     stringBindable: QueryStringBindable[String],
     rangeBindable: QueryStringBindable[InstantRange]
   ): QueryStringBindable[QueueReport] = new QueryStringBindable[QueueReport] {

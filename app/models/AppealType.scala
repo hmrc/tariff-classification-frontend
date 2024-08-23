@@ -17,14 +17,16 @@
 package models
 
 object AppealType extends Enumeration {
-  def format(value: AppealType): String = value match {
-    case ADR              => "Alternative Dispute Resolution (ADR)"
-    case REVIEW           => "Review"
-    case APPEAL_TIER_1    => "Appeal tier 1"
-    case APPEAL_TIER_2    => "Appeal tier 2"
-    case COURT_OF_APPEALS => "Court of appeals"
-    case SUPREME_COURT    => "Supreme Court"
-  }
+  def format(value: AppealType): String =
+    value match {
+      case ADR              => "Alternative Dispute Resolution (ADR)"
+      case REVIEW           => "Review"
+      case APPEAL_TIER_1    => "Appeal tier 1"
+      case APPEAL_TIER_2    => "Appeal tier 2"
+      case COURT_OF_APPEALS => "Court of appeals"
+      case SUPREME_COURT    => "Supreme Court"
+      case _    => "Unknown Appeal"
+    }
 
   def heading(value: AppealType): String = value match {
     case ADR    => "Dispute"

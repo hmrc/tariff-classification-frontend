@@ -35,7 +35,7 @@ class PdfGeneratorServiceConnector @Inject() (
   configuration: AppConfig,
   http: HttpClientV2,
   val metrics: MetricRegistry
-)(implicit ec: ExecutionContext, mat: Materializer)
+)(using ec: ExecutionContext, mat: Materializer)
     extends HasMetrics {
 
   private lazy val fullURL: String       = s"${configuration.pdfGeneratorUrl}/pdf-generator-service/generate"
@@ -55,7 +55,7 @@ class PdfGeneratorServiceConnector @Inject() (
         }
     }
 
-  private def sourceToPdfFile(response: HttpResponse)(implicit ec: ExecutionContext): Future[PdfFile] =
+  private def sourceToPdfFile(response: HttpResponse)(using ec: ExecutionContext): Future[PdfFile] =
     response.bodyAsSource.runReduce(_ ++ _).map(byteString => PdfFile(byteString.toArray))
 
 }

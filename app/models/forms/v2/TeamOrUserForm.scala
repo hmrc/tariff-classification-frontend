@@ -42,5 +42,6 @@ object TeamOrUser extends Enumeration {
     choiceType match {
       case USER => "User"
       case TEAM => "Team"
+      case _ => "User type not found"
     }
 }

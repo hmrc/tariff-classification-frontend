@@ -16,13 +16,13 @@
 
 package controllers.v2
 
-import org.apache.pekko.stream.Materializer
 import com.google.inject.Inject
 import config.AppConfig
 import controllers.RequestActions
 import models._
 import models.request.AuthenticatedRequest
 import models.viewmodels._
+import org.apache.pekko.stream.Materializer
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,7 +38,7 @@ class MyCasesController @Inject() (
   eventsService: EventsService,
   mcc: MessagesControllerComponents,
   val myCasesView: my_cases_view
-)(implicit
+)(using
   val appConfig: AppConfig,
   mat: Materializer
 ) extends FrontendController(mcc)
@@ -55,11 +55,12 @@ class MyCasesController @Inject() (
           caseReferences = cases.results.map(_.reference).toSet
           referralEventsByCase <- eventsService.findReferralEvents(caseReferences)
           completeEventsByCase <- eventsService.findCompletionEvents(caseReferences)
-          myCaseStatuses = activeSubNav match {
-                             case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
-                             case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
-                             case CompletedByMeTab => ApplicationsTab.completedByMe(cases.results, completeEventsByCase)
-                           }
+          myCaseStatuses =
+            activeSubNav match {
+              case AssignedToMeTab  => ApplicationsTab.assignedToMeCases(cases.results)
+              case ReferredByMeTab  => ApplicationsTab.referredByMe(cases.results, referralEventsByCase)
+              case CompletedByMeTab => ApplicationsTab.completedByMe(cases.results, completeEventsByCase)
+            }
         } yield Ok(myCasesView(myCaseStatuses, activeSubNav))
     }
 }

@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TabCacheService @Inject() (
   dataCacheService: DataCacheService
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext) {
 
   private def cacheKey(reference: String, appType: ApplicationType) =
     s"$reference-${appType.toString}"

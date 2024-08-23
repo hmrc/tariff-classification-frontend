@@ -28,7 +28,7 @@
         formGroupClass: Option[String] = None,
         startAtTabIndex : Option[Int] = None,
         formControlUnBold: Boolean = false
-)(implicit messages: Messages)
+)(using messages: Messages)
 
 <div id="@{dateField.id}" class="govuk-form-group @formGroupClass @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors) {govuk-form-group--error}">
     <fieldset class="govuk-fieldset @inputClass" id="@fieldsetId" @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>

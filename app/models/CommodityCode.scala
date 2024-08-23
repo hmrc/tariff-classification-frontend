@@ -22,6 +22,6 @@ case class CommodityCode(
   code: String,
   expiry: Option[Instant] = None
 ) {
-  def isExpired(implicit clock: Clock): Boolean = expiry.exists(_.isBefore(clock.instant()))
-  def isLive(implicit clock: Clock): Boolean    = !isExpired
+  def isExpired(using clock: Clock): Boolean = expiry.exists(_.isBefore(clock.instant()))
+  def isLive(using clock: Clock): Boolean    = !isExpired
 }

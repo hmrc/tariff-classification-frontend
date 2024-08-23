@@ -20,7 +20,7 @@
 @import views.html.helper.CSPNonce
 
 
-@(f: Form[Search], keywords: Seq[String], tabIndexer: ReusableTabIndexer = ReusableTabIndexer())(implicit messages: Messages, request: RequestHeader)
+@(f: Form[Search], keywords: Seq[String], tabIndexer: ReusableTabIndexer = ReusableTabIndexer())(using messages: Messages, request: RequestHeader)
 
     @moveUnAddedKeywordToTable(form: Form[Search]) = @{
         form.data.get("keyword[0]").filter(_.nonEmpty).map { keyword =>

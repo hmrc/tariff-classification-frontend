@@ -21,7 +21,7 @@
 @import controllers.v2.routes
 
 @this()
-@(selectedTab: SubNavigationTab = AssignedToMeTab)(implicit messages: Messages)
+@(selectedTab: SubNavigationTab = AssignedToMeTab)(using messages: Messages)
 
 <nav id="my-cases-sub-nav" class="moj-sub-navigation" aria-label="Sub navigation">
     <ul class="moj-sub-navigation__list">

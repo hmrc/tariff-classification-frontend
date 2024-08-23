@@ -22,15 +22,12 @@ import play.api.mvc.QueryStringBindable
 trait Pagination {
   val page: Int
   val pageSize: Int
-  def withPage(page: Int): Pagination = this match {
-    case NoPagination(_, pageSize) =>
-      NoPagination(page, pageSize)
-    case SearchPagination(_, pageSize) =>
-      SearchPagination(page, pageSize)
-  }
+
+  def withPage(page: Int): Pagination
 }
 
 object Pagination {
+
   val unlimited: Int = Integer.MAX_VALUE
 
   implicit val paginationQueryStringBindable: QueryStringBindable[Pagination] = new QueryStringBindable[Pagination] {
@@ -50,9 +47,13 @@ object Pagination {
 case class SearchPagination(
   override val page: Int = 1,
   override val pageSize: Int = 50
-) extends Pagination
+) extends Pagination {
+  override def withPage(page: Int): Pagination = copy(page = page)
+}
 
 case class NoPagination(
   override val page: Int = 1,
   override val pageSize: Int = Pagination.unlimited
-) extends Pagination
+) extends Pagination {
+  override def withPage(page: Int): Pagination = copy(page = page)
+}

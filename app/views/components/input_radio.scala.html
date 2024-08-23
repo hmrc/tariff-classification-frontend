@@ -24,7 +24,7 @@
         trackGa: Boolean = false,
         inputs: Seq[InputRadio],
         contentHtml : Option[Html] = None
-)(implicit messages: Messages)
+)(using messages: Messages)
 
 <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}">
     <fieldset id="@{field.id}" class="govuk-fieldset">

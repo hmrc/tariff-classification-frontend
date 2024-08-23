@@ -47,10 +47,10 @@ case class Case(
   private def hasRuling: Boolean =
     decision.flatMap(_.effectiveEndDate).isDefined
 
-  def hasExpiredRuling(implicit clock: Clock = Clock.systemUTC()): Boolean =
+  def hasExpiredRuling(using clock: Clock = Clock.systemUTC()): Boolean =
     hasRuling && decision.flatMap(_.effectiveEndDate).exists(_.isBefore(Instant.now(clock)))
 
-  def hasLiveRuling(implicit clock: Clock = Clock.systemUTC()): Boolean =
+  def hasLiveRuling(using clock: Clock = Clock.systemUTC()): Boolean =
     hasRuling && !hasExpiredRuling
 
   def isAssignedTo(operator: Operator): Boolean =
@@ -64,14 +64,15 @@ case class Case(
   def sampleToBeProvided: Boolean =
     application.`type` match {
       case ApplicationType.ATAR      => application.asATAR.sampleToBeProvided
-      case ApplicationType.LIABILITY => sample.status.isDefined
-
+      case _ => sample.status.isDefined
     }
 
   def sampleToBeReturned: Boolean =
     application.`type` match {
       case ApplicationType.ATAR      => application.asATAR.sampleToBeReturned
       case ApplicationType.LIABILITY => sample.returnStatus.contains(SampleReturn.YES)
+      case ApplicationType.MISCELLANEOUS      => application.asMisc.sampleToBeReturned
+      case ApplicationType.CORRESPONDENCE      => application.asCorrespondence.sampleToBeReturned
     }
 
   def isCaseOverdue: Boolean =

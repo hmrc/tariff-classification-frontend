@@ -21,7 +21,7 @@
 @import views.html.partials.activity._
 @import views.html.partials.{assignee, progressive_disclosure}
 
-@(activity: ActivityViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_])
+@(activity: ActivityViewModel, startAtTabIndex : Int = 0)(using request: AuthenticatedRequest[_])
 
 <table id="activity-events" class="govuk-table">
     <caption class="govuk-visually-hidden" class="govuk-table__caption">Activity log</caption>

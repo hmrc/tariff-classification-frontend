@@ -27,7 +27,7 @@
     main: main
 )
 
-@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case)(using request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @main(
     pageTitle = messages("page.title.case.suspended"),

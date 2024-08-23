@@ -35,7 +35,7 @@
 )
 
 
-@(c: Case, form: Form[Boolean])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case, form: Form[Boolean])(using request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
 @endDate = @{
     c.decision.map(_.effectiveEndDate.getOrElse(LocalDate

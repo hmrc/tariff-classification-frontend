@@ -17,7 +17,7 @@
 @import models.{Case, Decision, LiabilityOrder, LiabilityStatus}
 @import utils.Dates
 
-@(c: Case, d: Decision)(implicit messages: Messages)
+@(c: Case, d: Decision)(using messages: Messages)
 
 @defining(c.application.asLiabilityOrder) { liab: LiabilityOrder =>
 

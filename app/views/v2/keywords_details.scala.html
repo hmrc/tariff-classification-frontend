@@ -28,7 +28,7 @@
 
 @this()
 
-@(ktvm: KeywordsTabViewModel, keywordForm : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(ktvm: KeywordsTabViewModel, keywordForm : Form[String], startAtTabIndex : Int = 0)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @error_summary(keywordForm.errors, Some(startAtTabIndex))
 

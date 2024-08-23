@@ -20,6 +20,6 @@
 @import models.Case
 @import views.html.partials.days_elapsed
 
-@(c: Case)(implicit appConfig: AppConfig, messages: Messages)
+@(c: Case)(using appConfig: AppConfig, messages: Messages)
 
 <div class="govuk-panel__body">@messages("case.referred.elapsed_day_count") <br><strong> @days_elapsed(c.daysElapsed)</strong></div>

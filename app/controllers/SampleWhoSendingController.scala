@@ -40,7 +40,7 @@ class SampleWhoSendingController @Inject() (
   val change_sample_send: change_sample_send,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleSend]]
     with WithUnsafeDefaultFormBinding {
@@ -55,7 +55,7 @@ class SampleWhoSendingController @Inject() (
     c: Case,
     notFilledForm: Form[Option[SampleSend]],
     options: Option[String] = None
-  )(implicit request: AuthenticatedRequest[_]): Html =
+  )(using request: AuthenticatedRequest[_]): Html =
     change_sample_send(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =
@@ -67,7 +67,7 @@ class SampleWhoSendingController @Inject() (
       )
     }
 
-  override protected def update(c: Case, sampleSender: Option[SampleSend], operator: Operator)(implicit
+  override protected def update(c: Case, sampleSender: Option[SampleSend], operator: Operator)(using
     hc: HeaderCarrier
   ): Future[Case] =
     caseService.updateWhoSendSample(c, sampleSender, operator)

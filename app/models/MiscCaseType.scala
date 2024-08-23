@@ -34,5 +34,6 @@ object MiscCaseType extends Enumeration {
       case NOMENCLATURE   => "Nomenclature"
       case OTHER_GOVT_DEP => "Other government department"
       case OTHER          => "Other"
+      case _              => "Unknown"
     }
 }

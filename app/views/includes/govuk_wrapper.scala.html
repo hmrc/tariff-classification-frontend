@@ -41,7 +41,7 @@
         head: Option[Html] = None,
         beforeContentBlock: Option[Html] = None,
         endOfBodyJS: Option[Html] = None,
-)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+)(contentBlock: Html)(using request: RequestHeader, messages: Messages)
 
 
 @content = {

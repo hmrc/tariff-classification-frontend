@@ -43,7 +43,7 @@ class SampleController @Inject() (
   val change_liablity_sending_sample: change_liablity_sending_sample,
   val change_sample_status: change_sample_status,
   val change_correspondence_sending_sample: change_correspondence_sending_sample
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleStatus]]
     with WithUnsafeDefaultFormBinding {
@@ -54,7 +54,7 @@ class SampleController @Inject() (
 
   override protected def status(c: Case): Option[SampleStatus] = c.sample.status
 
-  protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])(implicit
+  protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])(using
     request: AuthenticatedRequest[_]
   ): Html =
     c.application.`type` match {
@@ -88,7 +88,7 @@ class SampleController @Inject() (
       )
     }
 
-  override protected def update(c: Case, status: Option[SampleStatus], operator: Operator)(implicit
+  override protected def update(c: Case, status: Option[SampleStatus], operator: Operator)(using
     hc: HeaderCarrier
   ): Future[Case] =
     caseService.updateSampleStatus(c, status, operator)

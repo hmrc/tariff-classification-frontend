@@ -46,7 +46,7 @@ class SuspendCaseController @Inject() (
   val suspend_case_email: suspend_case_email,
   val confirm_suspended: confirm_suspended,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with UpscanErrorHandling
@@ -83,7 +83,7 @@ class SuspendCaseController @Inject() (
   private def renderSuspendCaseEmail(
     fileId: Option[String],
     uploadForm: Form[String]
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(using request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
     val fileUploadSuccessRedirect =
@@ -110,7 +110,7 @@ class SuspendCaseController @Inject() (
 
   def getSuspendCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUSPEND_CASE))
-      .async(implicit request => handleUploadErrorAndRender(uploadForm => renderSuspendCaseEmail(fileId, uploadForm)))
+      .async(using request => handleUploadErrorAndRender(uploadForm => renderSuspendCaseEmail(fileId, uploadForm)))
 
   def suspendCase(reference: String, fileId: String): Action[AnyContent] =
     (verify.authenticated andThen
@@ -141,5 +141,5 @@ class SuspendCaseController @Inject() (
   def confirmSuspendCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_suspended(request.`case`)))
+      andThen verify.mustHave(Permission.VIEW_CASES))(using request => Ok(confirm_suspended(request.`case`)))
 }

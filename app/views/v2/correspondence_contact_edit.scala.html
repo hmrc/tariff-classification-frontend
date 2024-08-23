@@ -32,7 +32,7 @@
 )
 
 
-@(c: Case, form : Form[Case])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form : Form[Case])(using request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("case.v2.correspondence.case-contact-edit-title"),

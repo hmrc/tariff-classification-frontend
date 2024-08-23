@@ -42,7 +42,7 @@ class CompleteCaseController @Inject() (
   val confirm_complete_case: confirm_complete_case,
   val complete_case: complete_case,
   implicit val appConfig: AppConfig
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
@@ -94,7 +94,7 @@ class CompleteCaseController @Inject() (
       renderView(c => c.status == CaseStatus.COMPLETED, c => successful(confirm_complete_case(c)))
     }
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean = hasValidDecision(c)
+  override protected def isValidCase(c: Case)(using request: AuthenticatedRequest[_]): Boolean = hasValidDecision(c)
 
   private def hasValidDecision(c: Case): Boolean = c.application.`type` match {
     case ApplicationType.ATAR =>

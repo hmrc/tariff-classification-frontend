@@ -52,7 +52,7 @@ class CreateCorrespondenceController @Inject() (
   val case_not_found: case_not_found,
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
@@ -84,12 +84,12 @@ class CreateCorrespondenceController @Inject() (
 
   def displayQuestion(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.RELEASE_CASE))
-      .async(implicit request => getCaseAndRenderChoiceView(reference))
+      .async(using request => getCaseAndRenderChoiceView(reference))
 
   private def getCaseAndRenderChoiceView(
     reference: String,
     form: Form[String] = formReleaseChoice
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
+  )(using hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => successful(Ok(releaseCaseQuestionView(c, form)))
       case _             => successful(Ok(case_not_found(reference)))

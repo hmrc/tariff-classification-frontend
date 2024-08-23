@@ -31,7 +31,7 @@
         totalCasesAssignedToMe: Int,
         referredCasesAssignedToMe: Int,
         completedCasesAssignedToMe: Int
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(using request: AuthenticatedRequest[_], messages: Messages)
 
 
 @additionalCSS = {

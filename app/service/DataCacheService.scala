@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class MongoCacheService @Inject() (
   val sessionRepository: SessionRepository,
   val metrics: MetricRegistry
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends DataCacheService
     with HasMetrics {
 
@@ -40,7 +40,7 @@ class MongoCacheService @Inject() (
   def fetch(cacheId: String): Future[Option[CacheMap]] =
     withMetricsTimerAsync("mongo-cache-fetch")(_ => sessionRepository.get(cacheId))
 
-  def getEntry[A](cacheId: String, key: String)(implicit fmt: Format[A]): Future[Option[A]] =
+  def getEntry[A](cacheId: String, key: String)(using fmt: Format[A]): Future[Option[A]] =
     withMetricsTimerAsync("mongo-cache-get-entry") { _ =>
       fetch(cacheId).map(optionalCacheMap => optionalCacheMap.flatMap(cacheMap => cacheMap.getEntry(key)))
     }
@@ -55,7 +55,7 @@ trait DataCacheService {
 
   def fetch(cacheId: String): Future[Option[CacheMap]]
 
-  def getEntry[A](cacheId: String, key: String)(implicit fmt: Format[A]): Future[Option[A]]
+  def getEntry[A](cacheId: String, key: String)(using fmt: Format[A]): Future[Option[A]]
 
   def remove(cacheMap: CacheMap): Future[Boolean]
 

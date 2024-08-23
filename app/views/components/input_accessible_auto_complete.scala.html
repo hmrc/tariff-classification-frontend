@@ -28,7 +28,7 @@
         useTabIndex : Option[Int] = None,
         customErrorMessage : Option[String] = None,
         placeholder:Option[String] = None
-)(implicit messages: Messages, request: RequestHeader)
+)(using messages: Messages, request: RequestHeader)
 
 <div class="govuk-form-group @inputClass.getOrElse("") @if(field.hasErrors){govuk-form-group--error}">
     @if(label.nonEmpty){

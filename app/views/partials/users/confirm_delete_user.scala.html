@@ -33,7 +33,7 @@
 @(
         user: Operator,
         form: Form[Boolean]
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @content = @{
         Html(s"""<p class="govuk-body">${messages("users.user.delete.confirm.message")}</p>

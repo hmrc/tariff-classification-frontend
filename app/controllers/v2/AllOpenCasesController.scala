@@ -36,7 +36,7 @@ class AllOpenCasesController @Inject() (
   mcc: MessagesControllerComponents,
   val openCasesView: open_cases_view,
   implicit val appConfig: AppConfig
-)(implicit executionContext: ExecutionContext)
+)(using executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

@@ -28,7 +28,7 @@
 )
 
 
-@(c: Case, form: Form[_], messageKey: Option[String] = None)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[_], messageKey: Option[String] = None)(using request: AuthenticatedRequest[_], messages: Messages)
 @main(
     pageTitle = messages("action_this_case_status_title"),
     customPrimaryNavTab = NoTabSelected,

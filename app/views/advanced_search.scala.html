@@ -37,7 +37,7 @@
 )
 
 
-@(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(form: Form[Search], results: Option[Paged[SearchResult]] = None, keywords: Seq[String], selectedTab: SearchTab)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @formHasStatus(status: PseudoCaseStatus) = @{
     form.value.flatMap(_.status).exists(_.contains(status))

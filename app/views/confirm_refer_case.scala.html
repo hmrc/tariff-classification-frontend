@@ -28,7 +28,7 @@
     main: main
 )
 
-@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(c: Case)(using request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @customHeading = @{
         if(c.application.isCorrespondence) {

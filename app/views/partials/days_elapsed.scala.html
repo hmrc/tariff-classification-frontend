@@ -18,6 +18,6 @@
 @import controllers.SessionKeys
 @import config.AppConfig
 
-@(daysElapsed: Long, id: String = "days-elapsed")(implicit appConfig: AppConfig)
+@(daysElapsed: Long, id: String = "days-elapsed")(using appConfig: AppConfig)
 
 <span id="@id" @if(daysElapsed >= appConfig.activeDaysElapsedSlaLimit) {class="extra-bold"}>@daysElapsed</span>

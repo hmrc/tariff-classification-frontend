@@ -35,7 +35,7 @@ case class Paged[T](results: Seq[T], pageIndex: Int, pageSize: Int, resultCount:
 object Paged {
   def stream[T](
     initialPagination: Pagination
-  )(fetchPage: Pagination => Future[Paged[T]])(implicit ec: ExecutionContext): Source[T, _] =
+  )(fetchPage: Pagination => Future[Paged[T]])(using ec: ExecutionContext): Source[T, _] =
     Source
       .unfoldAsync(initialPagination) { pagination =>
         fetchPage(pagination).map { page =>
@@ -52,10 +52,10 @@ object Paged {
 
   def apply[T](results: Seq[T]): Paged[T] = Paged(results, NoPagination(), results.size)
 
-  implicit def format[T](implicit fmt: Format[T]): Format[Paged[T]] =
+  implicit def format[T](using fmt: Format[T]): Format[Paged[T]] =
     Format[Paged[T]](Reads[Paged[T]](reads), Writes[Paged[T]](writes))
 
-  private def reads[T](implicit fmt: Reads[T]): JsValue => JsResult[Paged[T]] =
+  private def reads[T](using fmt: Reads[T]): JsValue => JsResult[Paged[T]] =
     js =>
       Try(
         new Paged[T](
@@ -73,7 +73,7 @@ object Paged {
         }
         .get
 
-  private def writes[T](implicit fmt: Writes[T]): Paged[T] => JsValue =
+  private def writes[T](using fmt: Writes[T]): Paged[T] => JsValue =
     (paged: Paged[T]) =>
       Json.obj(
         "results"     -> JsArray(paged.results.map(fmt.writes)),

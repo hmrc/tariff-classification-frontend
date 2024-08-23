@@ -35,7 +35,7 @@
         endOfBodyJS: Option[Html] = None,
         customPrimaryNavTab: PrimaryNavigationTab = NoTabSelected,
         subNavigationTab: Option[Html] = None
-)(contentBlock: Html)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(contentBlock: Html)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @head = {
 @additionalJS.getOrElse({})

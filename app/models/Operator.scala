@@ -64,6 +64,7 @@ case class Operator(
 }
 
 object Role extends Enumeration {
+
   type Role = Value
   val CLASSIFICATION_OFFICER, CLASSIFICATION_MANAGER, READ_ONLY = Value
 
@@ -71,7 +72,6 @@ object Role extends Enumeration {
     roleType match {
       case CLASSIFICATION_OFFICER => "Classification officer"
       case CLASSIFICATION_MANAGER => "Manager"
-      case READ_ONLY              => "Unknown"
-
+      case _              => "Unknown"
     }
 }

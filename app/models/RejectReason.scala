@@ -27,5 +27,6 @@ object RejectReason extends Enumeration {
       case DUPLICATE_APPLICATION      => "Duplicate application"
       case NO_INFO_FROM_TRADER        => "No information from trader"
       case OTHER                      => "Other"
+      case _                          => "Unknown"
     }
 }

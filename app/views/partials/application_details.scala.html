@@ -19,7 +19,7 @@
 @import models.viewmodels.atar.GoodsTabViewModel
 @import views.html.partials._
 
-@(goods: GoodsTabViewModel, startAtTabIndex: Int = 0)(implicit messages: Messages)
+@(goods: GoodsTabViewModel, startAtTabIndex: Int = 0)(using messages: Messages)
 
     @tab_heading("goods-application", messages("case.menu.application-details"))
 

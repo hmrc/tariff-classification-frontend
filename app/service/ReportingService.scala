@@ -27,17 +27,17 @@ import scala.concurrent.Future
 @Singleton
 class ReportingService @Inject() (connector: BindingTariffClassificationConnector) {
 
-  def caseReport(report: CaseReport, pagination: Pagination)(implicit
+  def caseReport(report: CaseReport, pagination: Pagination)(using
     hc: HeaderCarrier
   ): Future[Paged[Map[String, ReportResultField[_]]]] =
     connector.caseReport(report, pagination)
 
-  def summaryReport(report: SummaryReport, pagination: Pagination)(implicit
+  def summaryReport(report: SummaryReport, pagination: Pagination)(using
     hc: HeaderCarrier
   ): Future[Paged[ResultGroup]] =
     connector.summaryReport(report, pagination)
 
-  def queueReport(report: QueueReport, pagination: Pagination)(implicit
+  def queueReport(report: QueueReport, pagination: Pagination)(using
     hc: HeaderCarrier
   ): Future[Paged[QueueResultGroup]] =
     connector.queueReport(report, pagination)

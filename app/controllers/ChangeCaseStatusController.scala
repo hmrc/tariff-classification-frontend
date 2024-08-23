@@ -28,14 +28,14 @@ import views.html.change_case_status
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future.successful
-
+//
 class ChangeCaseStatusController @Inject() (
   verify: RequestActions,
   casesService: CasesService,
   mcc: MessagesControllerComponents,
   val change_case_status: change_case_status,
   implicit val appConfig: AppConfig
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
@@ -67,6 +67,7 @@ class ChangeCaseStatusController @Inject() (
             case CaseStatusRadioInput.Suspend  => Redirect(routes.SuspendCaseController.getSuspendCaseReason(reference))
             case CaseStatusRadioInput.MoveBackToQueue =>
               Redirect(routes.ReassignCaseController.reassignCase(reference, request.uri))
+            case _ => Redirect(routes.ChangeCaseStatusController.onPageLoad(reference))
           }
         )
     }

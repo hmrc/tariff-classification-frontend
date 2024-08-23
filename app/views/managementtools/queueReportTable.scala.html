@@ -24,7 +24,7 @@
   results: Paged[QueueResultGroup],
   teams: Map[String, Queue],
   id: String
-)(implicit messages: Messages)
+)(using messages: Messages)
 
 @teamForId(teamId: String) = {
   @{

@@ -25,7 +25,7 @@
         main: main
 )
 
-@(reportId: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(reportId: String)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.report.not.found")

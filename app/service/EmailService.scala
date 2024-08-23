@@ -26,9 +26,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailService @Inject() (connector: EmailConnector)(implicit ec: ExecutionContext) {
+class EmailService @Inject() (connector: EmailConnector)(using ec: ExecutionContext) {
 
-  def sendCaseCompleteEmail(c: Case, operator: Operator)(implicit hc: HeaderCarrier): Future[EmailTemplate] = {
+  def sendCaseCompleteEmail(c: Case, operator: Operator)(using hc: HeaderCarrier): Future[EmailTemplate] = {
     if (!c.application.isBTI) {
       throw new IllegalArgumentException("Cannot send email for non BTI types")
     }

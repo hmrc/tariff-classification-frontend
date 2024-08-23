@@ -1325,6 +1325,7 @@ users.user.details.status=Status
 
 users.user.details.role.hint.classification=Manage ATaR, liability, correspondence and miscellaneous cases.
 users.user.details.role.hint.gateway=Assign ATaR cases. Create and assign Liability, Correspondence and Miscellaneous cases.
+users.user.details.role.hint.not.found=Role or isGateway not found
 users.user.details.role.hint.manager=Manage users, cases and keywords for assigned teams.
 users.user.details.role.hint.classificationAndGateway=Assign and manage ATaR cases. Create, assign and manage Liability, Correspondence and Miscellaneous cases.
 

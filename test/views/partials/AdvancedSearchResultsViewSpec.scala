@@ -31,28 +31,28 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
   private def instant(date: String): Instant = LocalDate.parse(date).atStartOfDay().toInstant(ZoneOffset.UTC)
 
-  private def hasLink(id: String, text: String, attributes: Seq[(String, String)])(implicit doc: Document): Unit =
+  private def hasLink(id: String, text: String, attributes: Seq[(String, String)])(using doc: Document): Unit =
     s"render LINK with ID: $id, Text: $text, Attributes: $attributes" in {
       doc.getElementById(id).text() shouldBe text
       doc.getElementById(id)          should haveTag("a")
       attributes.map { case (key, value) => doc.getElementById(id) should haveAttribute(key, value) }
     }
 
-  private def hasExpectedTextByIds(expectedContent: Seq[(String, String)])(implicit doc: Document) =
+  private def hasExpectedTextByIds(expectedContent: Seq[(String, String)])(using doc: Document) =
     expectedContent.map { case (id, expectedText) =>
       s"render ID: $id, ExpectedText: $expectedText" in {
         doc.getElementById(id).text() shouldBe expectedText
       }
     }
 
-  private def haveElementIds(expectedElementIds: Seq[String])(implicit doc: Document) =
+  private def haveElementIds(expectedElementIds: Seq[String])(using doc: Document) =
     expectedElementIds.map { id =>
       s"CONTAIN Element with Id: $id" in {
         doc should containElementWithID(id)
       }
     }
 
-  private def notHaveElementsIds(expectedElementsNotBePresent: Seq[String])(implicit doc: Document) =
+  private def notHaveElementsIds(expectedElementsNotBePresent: Seq[String])(using doc: Document) =
     expectedElementsNotBePresent.map { id =>
       s"NOT contain Element with ID: $id" in {
         doc shouldNot containElementWithID(id)

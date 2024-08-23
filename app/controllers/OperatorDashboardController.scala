@@ -35,7 +35,7 @@ class OperatorDashboardController @Inject() (
   mcc: MessagesControllerComponents,
   operator_dashboard_classification: operator_dashboard_classification,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {

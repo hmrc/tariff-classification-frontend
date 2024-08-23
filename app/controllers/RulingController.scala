@@ -47,7 +47,7 @@ class RulingController @Inject() (
   val liability_details_edit: liability_details_edit,
   val ruling_details_edit: ruling_details_edit,
   implicit val appConfig: AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
@@ -136,7 +136,7 @@ class RulingController @Inject() (
         )
       }
 
-  private def editBTIRulingView(f: Form[DecisionFormData], c: Case)(implicit
+  private def editBTIRulingView(f: Form[DecisionFormData], c: Case)(using
     request: AuthenticatedRequest[_]
   ): Future[Result] =
     fileStoreService
@@ -144,7 +144,7 @@ class RulingController @Inject() (
       .map(ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
       .map(Ok(_))
 
-  private def editLiabilityRulingView(f: Form[Decision], c: Case)(implicit
+  private def editLiabilityRulingView(f: Form[Decision], c: Case)(using
     request: AuthenticatedRequest[_]
   ): Future[Result] = {
 
@@ -157,7 +157,7 @@ class RulingController @Inject() (
 
   private def getCaseAndThen(
     toResult: Case => Future[Result]
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
+  )(using request: AuthenticatedCaseRequest[_]): Future[Result] =
     toResult(request.`case`)
 
 }

@@ -35,7 +35,7 @@
         case_heading: views.html.v2.case_heading
 )
 
-@(c: Case, queueName: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, queueName: String)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @customHeading = @{
     if(c.application.isCorrespondence) {

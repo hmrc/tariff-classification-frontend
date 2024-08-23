@@ -27,7 +27,7 @@
         my_cases_secondary_nav: views.html.components.my_cases_secondary_navigation
 )
 
-@(myCases : ApplicationTabViewModel, activeSubNav : SubNavigationTab = AssignedToMeTab)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(myCases : ApplicationTabViewModel, activeSubNav : SubNavigationTab = AssignedToMeTab)(using request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages(myCases.headingMessageKey),

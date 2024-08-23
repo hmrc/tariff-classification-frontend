@@ -23,7 +23,7 @@
 @import models.viewmodels.CasesTabViewModel
 @import views.html.components.heading
 
-@(cases : CasesTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(cases : CasesTabViewModel)(using request: AuthenticatedRequest[_], messages: Messages)
 
     @heading(messages(cases.headingMessageKey))
 
