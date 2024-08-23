@@ -52,5 +52,7 @@ trait CaseQueueBuilder {
   case class TestPagination(
     override val page: Int = 1,
     override val pageSize: Int = 2
-  ) extends Pagination
+  ) extends Pagination {
+    override def withPage(page: Int): Pagination = copy(page = page)
+  }
 }
