@@ -42,7 +42,7 @@ class ReleaseCaseController @Inject() (
   val confirmation_case_creation: confirmation_case_creation,
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
@@ -53,7 +53,7 @@ class ReleaseCaseController @Inject() (
 
   def releaseCase(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
-      verify.mustHave(Permission.RELEASE_CASE)).async(using request => releaseCase(releaseCaseForm, reference))
+      verify.mustHave(Permission.RELEASE_CASE)).async(implicit request => releaseCase(releaseCaseForm, reference))
 
   def releaseCaseToQueue(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen
@@ -73,7 +73,7 @@ class ReleaseCaseController @Inject() (
       releaseCaseForm.bindFromRequest().fold(onInvalidForm, onValidForm)
     }
 
-  private def releaseCase(f: Form[String], caseRef: String)(using
+  private def releaseCase(f: Form[String], caseRef: String)(implicit
     request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
     getCaseAndRenderView(
@@ -85,7 +85,7 @@ class ReleaseCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      def queueNotFound(using request: AuthenticatedCaseRequest[_]) =
+      def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) =
         successful(resource_not_found(s"Case Queue"))
 
       renderView(

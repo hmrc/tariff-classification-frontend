@@ -21,7 +21,7 @@
 @(
   form: Form[ReportDateFormData],
   startAtTabIndex: Int = 0
-)(using messages: Messages)
+)(implicit messages: Messages)
 
 @input_date(
   dayField = form("dateRange.min.day"),

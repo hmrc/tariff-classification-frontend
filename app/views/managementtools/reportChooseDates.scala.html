@@ -34,7 +34,7 @@
 )
 
 
-@(form: Form[ReportDateFormData], report: Report, pagination: Pagination)(using request: AuthenticatedRequest[_], messages: Messages)
+@(form: Form[ReportDateFormData], report: Report, pagination: Pagination)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("reporting.choose_date.title"),

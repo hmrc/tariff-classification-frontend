@@ -29,7 +29,7 @@
     backLink: back_link
 )
 
-@(c: Case, appealType: AppealType, form: Form[AppealStatus])(using request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, appealType: AppealType, form: Form[AppealStatus])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.choose.appeal.status"),

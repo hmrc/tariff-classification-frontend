@@ -29,37 +29,37 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: ExecutionContext) {
+class AuditService @Inject() (auditConnector: DefaultAuditConnector)(implicit ec: ExecutionContext) {
 
   import AuditPayloadType._
 
   private lazy val undefined = "None"
 
-  def auditCaseReferred(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseReferred(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseReferred,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
     )
 
-  def auditCaseRejected(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseRejected(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseRejected,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
     )
 
-  def auditCaseSuspended(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseSuspended(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseSuspended,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
     )
 
-  def auditCaseReOpened(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseReOpened(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseReopened,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
     )
 
-  def auditCaseReleased(oldCase: Case, updatedCase: Case, queue: Queue, operator: Operator)(using
+  def auditCaseReleased(oldCase: Case, updatedCase: Case, queue: Queue, operator: Operator)(implicit
     hc: HeaderCarrier
   ): Unit =
     sendExplicitAuditEvent(
@@ -67,56 +67,56 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator) + ("queue" -> queue.name)
     )
 
-  def auditQueueReassigned(c: Case, operator: Operator, queue: Queue)(using hc: HeaderCarrier): Unit =
+  def auditQueueReassigned(c: Case, operator: Operator, queue: Queue)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = QueueReassigned,
       auditPayload = baseAuditPayload(c, operator) + ("queue" -> queue.name)
     )
 
-  def auditCaseCompleted(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseCompleted(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseCompleted,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
     )
 
-  def auditCaseSuppressed(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseSuppressed(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseSuppressed,
       auditPayload = statusChangeAuditPayload(oldCase, updatedCase, operator)
     )
 
-  def auditOperatorAssigned(c: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditOperatorAssigned(c: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseAssigned,
       auditPayload = baseAuditPayload(c, operator) + ("assigneeId" -> c.assignee.map(_.id).getOrElse("None"))
     )
 
-  def auditRulingCancelled(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditRulingCancelled(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = RulingCancelled,
       auditPayload =
         statusChangeAuditPayload(oldCase, updatedCase, operator) + ("cancelReason" -> cancelReason(updatedCase))
     )
 
-  def auditNote(c: Case, note: String, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditNote(c: Case, note: String, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseNote,
       auditPayload = baseAuditPayload(c, operator) + ("note" -> note)
     )
 
-  def auditCaseKeywordAdded(c: Case, keyword: String, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseKeywordAdded(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseKeywordAdded,
       auditPayload = keywordAuditPayload(c, keyword, operator)
     )
 
-  def auditCaseKeywordRemoved(c: Case, keyword: String, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseKeywordRemoved(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseKeywordRemoved,
       auditPayload = keywordAuditPayload(c, keyword, operator)
     )
 
-  def auditCaseAppealAdded(c: Case, appeal: Appeal, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseAppealAdded(c: Case, appeal: Appeal, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseAppealAdded,
       auditPayload = baseAuditPayload(c, operator) +
@@ -124,13 +124,13 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
         ("appealStatus" -> appeal.status.toString)
     )
 
-  def auditCaseCreated(c: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditCaseCreated(c: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseCreated,
       auditPayload = baseAuditPayload(c, operator) + ("comment" -> "Liability case created")
     )
 
-  def auditCaseUpdated(originalCase: Case, updatedCase: Case, operatorUpdating: Operator)(using
+  def auditCaseUpdated(originalCase: Case, updatedCase: Case, operatorUpdating: Operator)(implicit
     hc: HeaderCarrier
   ): Unit =
     sendExplicitAuditEvent(
@@ -142,7 +142,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
       )
     )
 
-  def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)(using
+  def auditCaseAppealStatusChange(c: Case, appeal: Appeal, newAppealStatus: AppealStatus, operator: Operator)(implicit
     hc: HeaderCarrier
   ): Unit =
     sendExplicitAuditEvent(
@@ -153,7 +153,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
         ("previousAppealStatus" -> appeal.status.toString)
     )
 
-  def auditSampleStatusChange(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditSampleStatusChange(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseSampleStatusChange,
       auditPayload = baseAuditPayload(updatedCase, operator) +
@@ -161,7 +161,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
         ("previousSampleStatus" -> sampleStatus(oldCase))
     )
 
-  def auditSampleReturnChange(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditSampleReturnChange(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseSampleReturnChange,
       auditPayload = baseAuditPayload(updatedCase, operator) +
@@ -169,7 +169,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
         ("previousSampleReturn" -> sampleReturn(oldCase))
     )
 
-  def auditSampleSendChange(oldCase: Case, updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit =
+  def auditSampleSendChange(oldCase: Case, updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = CaseSampleSendChange,
       auditPayload = baseAuditPayload(updatedCase, operator) +
@@ -177,7 +177,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
         ("previousSampleSender" -> sampleSend(oldCase))
     )
 
-  def auditCaseExtendedUseChange(oldCase: Case, updatedCase: Case, operator: Operator)(using
+  def auditCaseExtendedUseChange(oldCase: Case, updatedCase: Case, operator: Operator)(implicit
     hc: HeaderCarrier
   ): Unit =
     sendExplicitAuditEvent(
@@ -187,7 +187,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
         ("previousExtendedUseStatus" -> extendedUseStatus(oldCase))
     )
 
-  def auditAddMessage(updatedCase: Case, operator: Operator)(using hc: HeaderCarrier): Unit = {
+  def auditAddMessage(updatedCase: Case, operator: Operator)(implicit hc: HeaderCarrier): Unit = {
     val messageToAudit =
       updatedCase.application.`type` match {
         case CORRESPONDENCE => updatedCase.application.asCorrespondence.messagesLogged.head.message
@@ -199,7 +199,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
     )
   }
 
-  def auditUserUpdated(original: Operator, updatedOperator: Operator, operatorUpdating: Operator)(using
+  def auditUserUpdated(original: Operator, updatedOperator: Operator, operatorUpdating: Operator)(implicit
     hc: HeaderCarrier
   ): Unit =
     sendExplicitAuditEvent(
@@ -211,7 +211,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
       )
     )
 
-  def auditUserDeleted(oldOperator: Operator, operatorUpdating: Operator)(using hc: HeaderCarrier): Unit =
+  def auditUserDeleted(oldOperator: Operator, operatorUpdating: Operator)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = UserDeleted,
       auditPayload = Map(
@@ -226,7 +226,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
     teamId: String,
     originalUserId: String,
     operatorUpdating: String
-  )(using hc: HeaderCarrier): Unit = {
+  )(implicit hc: HeaderCarrier): Unit = {
     val operatorId: String = user.map(_.id).getOrElse("")
     sendExplicitAuditEvent(
       auditEventType = UserCasesMoved,
@@ -259,7 +259,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
     )
   }
 
-  def auditManagerKeywordDeleted(user: Operator, keyword: Keyword)(using hc: HeaderCarrier): Unit =
+  def auditManagerKeywordDeleted(user: Operator, keyword: Keyword)(implicit hc: HeaderCarrier): Unit =
     sendExplicitAuditEvent(
       auditEventType = ManagerKeywordDeleted,
       auditPayload = Map(
@@ -268,7 +268,7 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
       )
     )
 
-  def auditManagerKeywordRenamed(user: Operator, original: Keyword, updated: Keyword)(using
+  def auditManagerKeywordRenamed(user: Operator, original: Keyword, updated: Keyword)(implicit
     hc: HeaderCarrier
   ): Unit =
     sendExplicitAuditEvent(
@@ -294,12 +294,12 @@ class AuditService @Inject() (auditConnector: DefaultAuditConnector)(using ec: E
       "operatorId"    -> operator.id
     )
 
-  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])(using
+  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: Map[String, String])(implicit
     hc: HeaderCarrier
   ): Unit =
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)
 
-  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsObject)(using
+  private def sendExplicitAuditEvent(auditEventType: String, auditPayload: JsObject)(implicit
     hc: HeaderCarrier
   ): Unit =
     auditConnector.sendExplicitAudit(auditType = auditEventType, detail = auditPayload)

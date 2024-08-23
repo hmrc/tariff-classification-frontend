@@ -32,7 +32,7 @@ class KeywordsService @Inject() (
   config: AppConfig,
   connector: BindingTariffClassificationConnector,
   auditService: AuditService
-)(using mat: Materializer) {
+)(implicit mat: Materializer) {
 
   implicit val ec: ExecutionContext = mat.executionContext
 
@@ -45,7 +45,7 @@ class KeywordsService @Inject() (
       .maximumSize(1)
       .build[String, Seq[Keyword]]()
 
-  def addKeyword(c: Case, keyword: String, operator: Operator)(using hc: HeaderCarrier): Future[Case] =
+  def addKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     if (c.keywords.contains(keyword.toUpperCase)) {
       Future.successful(c)
     } else {
@@ -56,7 +56,7 @@ class KeywordsService @Inject() (
       }
     }
 
-  def removeKeyword(c: Case, keyword: String, operator: Operator)(using hc: HeaderCarrier): Future[Case] =
+  def removeKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     if (c.keywords.contains(keyword.toUpperCase)) {
       val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
       connector.updateCase(caseToUpdate) map { updated: Case =>
@@ -67,7 +67,7 @@ class KeywordsService @Inject() (
       Future.successful(c)
     }
 
-  def findAll()(using hc: HeaderCarrier): Future[Seq[Keyword]] =
+  def findAll()(implicit hc: HeaderCarrier): Future[Seq[Keyword]] =
     keywordsCache.getIfPresent(KeywordsCacheKey) match {
       case Some(value) => Future(value)
       case None =>

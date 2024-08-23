@@ -52,7 +52,7 @@ class ManageKeywordsController @Inject() (
   val confirmKeywordRenamedView: confirmation_keyword_renamed,
   val case_not_found: case_not_found,
   implicit val appConfig: AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with Logging {
@@ -76,7 +76,7 @@ class ManageKeywordsController @Inject() (
     }
 
   def postDisplayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(using request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       keywordService.findAll(NoPagination()).flatMap { keywords =>
         val keywordNames = keywords.results.map(_.name)
         KeywordForm
@@ -201,14 +201,14 @@ class ManageKeywordsController @Inject() (
     }
 
   def displayConfirmKeyword(saveKeyword: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(using request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         keywordCreatedConfirm(saveKeyword)
       )
     )
 
   def changeKeywordStatus(keywordName: String, reference: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(using request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       casesService.getOne(reference).flatMap {
         case Some(c: Case) => Future.successful(Ok(changeKeywordStatusView(keywordName, c, changeKeywordStatusForm)))
         case _             => Future.successful(Ok(case_not_found(reference)))
@@ -216,7 +216,7 @@ class ManageKeywordsController @Inject() (
     )
 
   def editApprovedKeywords(keywordName: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(using request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       for {
         allKeywords <- keywordService.findAll(NoPagination())
       } yield Ok(
@@ -231,7 +231,7 @@ class ManageKeywordsController @Inject() (
   def postEditApprovedKeywords(
     keywordName: String
   ): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(using request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       keywordService.findAll(NoPagination()).flatMap { keywords =>
         EditApprovedKeywordForm
           .formWithAuto(keywords.results)
@@ -267,14 +267,14 @@ class ManageKeywordsController @Inject() (
     )
 
   def displayConfirmationKeywordDeleted: Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(using request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         confirmKeywordDeletedView()
       )
     )
 
   def displayConfirmationKeywordRenamed(oldKeywordName: String, newKeywordName: String): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(using request =>
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS))(implicit request =>
       Ok(
         confirmKeywordRenamedView(oldKeywordName, newKeywordName)
       )

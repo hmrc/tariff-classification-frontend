@@ -46,7 +46,7 @@ class CaseController @Inject() (
   miscellaneousController: MiscellaneousController,
   redirectService: RedirectService,
   implicit val appConfig: AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {

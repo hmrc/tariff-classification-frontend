@@ -28,7 +28,7 @@
         originalUser: String,
         team: String,
         user: Option[String] = None
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages("users.move_cases.done.header", originalUser),

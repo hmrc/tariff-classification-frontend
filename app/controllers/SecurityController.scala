@@ -35,7 +35,7 @@ class SecurityController @Inject() (
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 
-  def unauthorized(): Action[AnyContent] = Action.async(using request => successful(Ok(not_authorized())))
+  def unauthorized(): Action[AnyContent] = Action.async(implicit request => successful(Ok(not_authorized())))
 
   def keepAlive(): Action[AnyContent] = Action.async(successful(NoContent))
 

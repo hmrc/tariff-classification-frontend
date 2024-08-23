@@ -42,7 +42,7 @@ class FileStoreConnector @Inject() (
   appConfig: AppConfig,
   http: HttpClientV2,
   val metrics: MetricRegistry
-)(using mat: Materializer, ec: ExecutionContext)
+)(implicit mat: Materializer, ec: ExecutionContext)
     extends HasMetrics
     with InjectAuthHeader {
 
@@ -54,7 +54,7 @@ class FileStoreConnector @Inject() (
     s"${appConfig.fileStoreUrl}/file$query"
   }
 
-  def get(attachments: Seq[Attachment])(using hc: HeaderCarrier): Future[Seq[FileMetadata]] =
+  def get(attachments: Seq[Attachment])(implicit hc: HeaderCarrier): Future[Seq[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata") { _ =>
       if (attachments.isEmpty) {
         Future.successful(Seq.empty)
@@ -73,7 +73,7 @@ class FileStoreConnector @Inject() (
       }
     }
 
-  def get(attachmentId: String)(using hc: HeaderCarrier): Future[Option[FileMetadata]] =
+  def get(attachmentId: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] =
     withMetricsTimerAsync("get-file-metadata-by-id") { _ =>
       val fullURL = s"${appConfig.fileStoreUrl}/file/$attachmentId"
 
@@ -83,7 +83,7 @@ class FileStoreConnector @Inject() (
         .execute[Option[FileMetadata]]
     }
 
-  def initiate(request: FileStoreInitiateRequest)(using hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
+  def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
     withMetricsTimerAsync("initiate-file-upload") { _ =>
       val fullURL = s"${appConfig.fileStoreUrl}/file/initiate"
 
@@ -94,7 +94,7 @@ class FileStoreConnector @Inject() (
         .execute[FileStoreInitiateResponse]
     }
 
-  def upload(fileUpload: FileUpload)(using hc: HeaderCarrier): Future[FileMetadata] =
+  def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileMetadata] =
     withMetricsTimerAsync("upload-file") { _ =>
       val dataPart: MultipartFormData.DataPart = MultipartFormData.DataPart("publish", "true")
 
@@ -112,7 +112,7 @@ class FileStoreConnector @Inject() (
         .execute[FileMetadata]
     }
 
-  def downloadFile(fileURL: String)(using hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
+  def downloadFile(fileURL: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
     withMetricsTimerAsync("download-file") { _ =>
       http
         .get(url"$fileURL")
@@ -129,7 +129,7 @@ class FileStoreConnector @Inject() (
         }
     }
 
-  def delete(fileId: String)(using hc: HeaderCarrier): Future[Unit] =
+  def delete(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
     withMetricsTimerAsync("delete-file") { _ =>
       val fullURL = s"${appConfig.fileStoreUrl}/file/$fileId"
 

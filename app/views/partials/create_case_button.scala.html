@@ -18,7 +18,7 @@
 @import models.{Case, CaseStatus}
 @import models.request.AuthenticatedRequest
 @import models.Permission
-@(caseType: String = ApplicationType.LIABILITY.name)(using request: AuthenticatedRequest[_])
+@(caseType: String = ApplicationType.LIABILITY.name)(implicit request: AuthenticatedRequest[_])
 
 
  @if(request.hasPermission(Permission.CREATE_CASES)) {

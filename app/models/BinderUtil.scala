@@ -45,32 +45,32 @@ object BinderUtil {
 
   def bindInstant(value: String): Option[Instant] = Try(Instant.parse(value)).toOption
 
-  def params(name: String)(using requestParams: Map[String, Seq[String]]): Option[Set[String]] =
+  def params(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[Set[String]] =
     requestParams.get(name).map(_.flatMap(_.split(",")).toSet).filterNot(_.exists(_.isEmpty))
 
-  def orderedParams(name: String)(using requestParams: Map[String, Seq[String]]): Option[List[String]] =
+  def orderedParams(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[List[String]] =
     requestParams.get(name).map(_.flatMap(_.split(",")).toList).filterNot(_.exists(_.isEmpty))
 
-  def param(name: String)(using requestParams: Map[String, Seq[String]]): Option[String] =
+  def param(name: String)(implicit requestParams: Map[String, Seq[String]]): Option[String] =
     params(name).map(_.head)
 
-  def bindable[T](using binder: QueryStringBindable[T]): QueryStringBindable[T] = binder
+  def bindable[T](implicit binder: QueryStringBindable[T]): QueryStringBindable[T] = binder
 
   private def subKey(parentKey: String, childKey: String) =
     Seq(parentKey, childKey).filterNot(_.isEmpty).mkString("_")
 
-  def bind[T](parentKey: String, childKey: String, params: Map[String, Seq[String]])(using
+  def bind[T](parentKey: String, childKey: String, params: Map[String, Seq[String]])(implicit
     binder: QueryStringBindable[T]
   ): EitherT[Option, String, T] =
     EitherT(binder.bind(subKey(parentKey, childKey), params))
 
   def bind[T](
     default: => T
-  )(parentKey: String, childKey: String, params: Map[String, Seq[String]])(using
+  )(parentKey: String, childKey: String, params: Map[String, Seq[String]])(implicit
     binder: QueryStringBindable[T]
   ): EitherT[Option, String, T] =
     EitherT(binder.bind(subKey(parentKey, childKey), params).orElse(Some(Right(default))))
 
-  def unbind[T](parentKey: String, childKey: String, value: T)(using binder: QueryStringBindable[T]): String =
+  def unbind[T](parentKey: String, childKey: String, value: T)(implicit binder: QueryStringBindable[T]): String =
     binder.unbind(subKey(parentKey, childKey), value)
 }

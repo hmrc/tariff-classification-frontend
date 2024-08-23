@@ -19,7 +19,7 @@
 
 @import play.twirl.api.TwirlFeatureImports.defining
 
-@(caseTab : CasesTab, captionMessage: String)(using request: AuthenticatedRequest[_], messages: Messages)
+@(caseTab : CasesTab, captionMessage: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
  <table id="@{caseTab.tabMessageKey}-table" class="govuk-table">
   <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">@messages(captionMessage)</caption>

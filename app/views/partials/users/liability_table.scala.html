@@ -25,7 +25,7 @@
 @import views.html.partials.{error_summary}
 @import controllers.Tab
 
-@(liabTab: ApplicationsTab, form: Form[Set[String]], userID:String)(using request: AuthenticatedRequest[_], messages: Messages)
+@(liabTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages)
  @error_summary(form.errors, keySwaps = Map("liabilityCases" -> "liabilityCases-0"))
 
  <h2 class="govuk-heading-l">@messages("users.user.liability.heading")</h2>

@@ -28,7 +28,7 @@
 
 @(
         user: Operator
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages("users.user.delete.casesMustBeMoved", user.safeName),

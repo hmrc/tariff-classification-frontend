@@ -17,7 +17,7 @@
 @import models.viewmodels.atar.ApplicantTabViewModel
 @import views.html.partials.{contact_details, tab_heading}
 
-@(applicant: ApplicantTabViewModel, startAtTabIndex : Int = 0)(using messages: Messages)
+@(applicant: ApplicantTabViewModel, startAtTabIndex : Int = 0)(implicit messages: Messages)
 
 @tab_heading("trader", "Applicant")
 

@@ -28,7 +28,7 @@
 
 @this(main: main)
 
-@(form: Form[CorrespondenceApplication])(using request: AuthenticatedRequest[_], messages: Messages)
+@(form: Form[CorrespondenceApplication])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.create_correspondence.h1")

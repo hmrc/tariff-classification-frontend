@@ -35,7 +35,7 @@ class ReleaseOrSuppressCaseController @Inject() (
   val release_or_suppress: release_or_suppress,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {

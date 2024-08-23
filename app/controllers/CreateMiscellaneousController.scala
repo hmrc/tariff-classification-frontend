@@ -46,7 +46,7 @@ class CreateMiscellaneousController @Inject() (
   val case_not_found: case_not_found,
   val resource_not_found: resource_not_found,
   implicit val appConfig: AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
@@ -73,11 +73,11 @@ class CreateMiscellaneousController @Inject() (
 
   def displayQuestion(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.RELEASE_CASE))
-      .async(using request => getCaseAndRenderChoiceView(reference))
+      .async(implicit request => getCaseAndRenderChoiceView(reference))
 
   private def getCaseAndRenderChoiceView(
     reference: String
-  )(using hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(_: Case) => Future(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
       case _             => Future(Ok(case_not_found(reference)))

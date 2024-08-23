@@ -20,10 +20,10 @@ import play.api.libs.json.{Json, Reads, Writes}
 import models.cache.CacheMap
 
 case class UserAnswers(cacheMap: CacheMap) {
-  def get[A](key: String)(using rds: Reads[A]): Option[A] =
+  def get[A](key: String)(implicit rds: Reads[A]): Option[A] =
     cacheMap.getEntry[A](key)
 
-  def set[A](key: String, value: A)(using writes: Writes[A]): UserAnswers =
+  def set[A](key: String, value: A)(implicit writes: Writes[A]): UserAnswers =
     UserAnswers(cacheMap.copy(data = cacheMap.data + (key -> Json.toJson(value))))
 
   def remove[A](key: String): UserAnswers =

@@ -39,7 +39,7 @@ class ViewAttachmentController @Inject() (
   mcc: MessagesControllerComponents,
   val view_attachment_unavailable: view_attachment_unavailable,
   implicit val appConfig: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {

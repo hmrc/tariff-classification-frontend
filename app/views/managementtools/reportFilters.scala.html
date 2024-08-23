@@ -23,7 +23,7 @@
         report: Report,
         options: Pagination,
         teams: Map[String, Queue]
-)(using messages: Messages)
+)(implicit messages: Messages)
 
     @teamNames = {
     @{

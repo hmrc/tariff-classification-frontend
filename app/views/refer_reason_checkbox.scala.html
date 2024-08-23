@@ -17,7 +17,7 @@
 @import views.forms.components.CheckOption
 @import views.html.forms.components.input_checkbox_group
 
-@(form: Form[CaseReferral])(using messages: Messages)
+@(form: Form[CaseReferral])(implicit messages: Messages)
 
 @isChecked(f1: Option[String], f2: Option[String], matchText: String) = @{
     matchText == f1.getOrElse("") || matchText == f2.getOrElse("")

@@ -22,7 +22,7 @@
 @import views.html.components.input_file
 @import views.html.partials.{attachments_list_atar, attachments_state_message, tab_heading, error_summary}
 
-@(attachments: AttachmentsTabViewModel, form : Form[String], initiateResponse: FileStoreInitiateResponse, startAtTabIndex : Int = 0)(using request: AuthenticatedRequest[_], messages: Messages)
+@(attachments: AttachmentsTabViewModel, form : Form[String], initiateResponse: FileStoreInitiateResponse, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @error_summary(form.errors, Some(startAtTabIndex))
 

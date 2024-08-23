@@ -20,7 +20,7 @@
 @import models.viewmodels.atar.AppealTabViewModel
 @import views.html.partials.tab_heading
 
-@(appealTab: AppealTabViewModel, startTabIndex : Int = 0)(using request: AuthenticatedRequest[_], messages: Messages)
+@(appealTab: AppealTabViewModel, startTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @tab_heading("appeal", messages("case.menu.appeal"))
 

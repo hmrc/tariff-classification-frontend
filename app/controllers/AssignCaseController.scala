@@ -37,7 +37,7 @@ class AssignCaseController @Inject() (
   mcc: MessagesControllerComponents,
   val assignCase: assign_case,
   override implicit val config: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
@@ -46,7 +46,7 @@ class AssignCaseController @Inject() (
 
   def get(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
-      .async(using request => getCaseAndRenderView(reference, c => Future(assignCase(c, takeOwnershipForm))))
+      .async(implicit request => getCaseAndRenderView(reference, c => Future(assignCase(c, takeOwnershipForm))))
 
   def post(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.ASSIGN_CASE))
@@ -72,7 +72,7 @@ class AssignCaseController @Inject() (
 
       }
 
-  override protected def isValidCase(c: Case)(using request: AuthenticatedRequest[_]): Boolean =
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean =
     (c.queueId, c.assignee) match {
       case (Some(_), None)                                                 => true
       case (Some(_), Some(operator)) if request.operator.id != operator.id => true

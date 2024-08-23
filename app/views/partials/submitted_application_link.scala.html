@@ -17,7 +17,7 @@
 @import models.Case
 @import controllers.routes.PdfDownloadController
 
-@(caseReference: String, useTabIndex : Option[Int] = None)(using messages: Messages)
+@(caseReference: String, useTabIndex : Option[Int] = None)(implicit messages: Messages)
 
 <p class="govuk-body">
  <a  id="submitted-application-link" class="govuk-link" target="_blank" href="@PdfDownloadController.applicationPdf(caseReference)"> @messages("case.decision.ruling.review.appeal.link") </a>

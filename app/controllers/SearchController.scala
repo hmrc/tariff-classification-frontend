@@ -44,7 +44,7 @@ class SearchController @Inject() (
   mcc: MessagesControllerComponents,
   val advanced_search: html.advanced_search,
   implicit val appConfig: AppConfig
-)(using executionContext: ExecutionContext)
+)(implicit executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {

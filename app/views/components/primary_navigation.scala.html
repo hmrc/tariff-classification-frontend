@@ -30,7 +30,7 @@
 )
 
 
-@(selectedTab: PrimaryNavigationTab = HomeTab)(using request: AuthenticatedRequest[_], messages: Messages)
+@(selectedTab: PrimaryNavigationTab = HomeTab)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <div class="moj-primary-navigation">
     <div class="moj-primary-navigation__container govuk-!-margin-right-2 govuk-!-margin-left-2">

@@ -36,7 +36,7 @@ class GatewayCasesController @Inject() (
   mcc: MessagesControllerComponents,
   val gatewayCasesView: gateway_cases_view,
   implicit val appConfig: AppConfig
-)(using executionContext: ExecutionContext)
+)(implicit executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

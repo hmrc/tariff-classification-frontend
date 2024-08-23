@@ -47,10 +47,10 @@ case class Case(
   private def hasRuling: Boolean =
     decision.flatMap(_.effectiveEndDate).isDefined
 
-  def hasExpiredRuling(using clock: Clock = Clock.systemUTC()): Boolean =
+  def hasExpiredRuling(implicit clock: Clock = Clock.systemUTC()): Boolean =
     hasRuling && decision.flatMap(_.effectiveEndDate).exists(_.isBefore(Instant.now(clock)))
 
-  def hasLiveRuling(using clock: Clock = Clock.systemUTC()): Boolean =
+  def hasLiveRuling(implicit clock: Clock = Clock.systemUTC()): Boolean =
     hasRuling && !hasExpiredRuling
 
   def isAssignedTo(operator: Operator): Boolean =

@@ -21,7 +21,7 @@
 @import views.html.partials._
 
 @import views.html.partials.sample.sample_status
-@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(using request: AuthenticatedRequest[_], messages: Messages)
+@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @tab_heading("sample-application", messages("case.menu.sample-details"))
 

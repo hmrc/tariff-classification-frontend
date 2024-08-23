@@ -39,7 +39,7 @@ class ExtendedUseCaseController @Inject() (
   mcc: MessagesControllerComponents,
   val change_extended_use_status: change_extended_use_status,
   override implicit val config: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with StatusChangeAction[Boolean]
     with WithUnsafeDefaultFormBinding {
@@ -55,7 +55,7 @@ class ExtendedUseCaseController @Inject() (
     implicit request: AuthenticatedRequest[_]
   ): Html = change_extended_use_status(c, preFilledForm)
 
-  override protected def update(c: Case, status: Boolean, operator: Operator)(using
+  override protected def update(c: Case, status: Boolean, operator: Operator)(implicit
     hc: HeaderCarrier
   ): Future[Case] =
     caseService.updateExtendedUseStatus(c, status, operator)

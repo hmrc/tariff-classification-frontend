@@ -21,14 +21,14 @@ import play.api.i18n.Messages
 import utils.Dates
 
 object Reports {
-  private def formatUserForPid(pid: String, users: Map[String, Operator])(using messages: Messages): String =
+  private def formatUserForPid(pid: String, users: Map[String, Operator])(implicit messages: Messages): String =
     users
       .get(pid)
       .flatMap(_.name)
       .filterNot(_.isEmpty)
       .getOrElse(messages("reporting.user.unknown", pid))
 
-  private def formatTeamForId(teamId: String, teams: Map[String, Queue])(using messages: Messages): String =
+  private def formatTeamForId(teamId: String, teams: Map[String, Queue])(implicit messages: Messages): String =
     teams
       .get(teamId)
       .map(_.name)
@@ -39,7 +39,7 @@ object Reports {
     result: ReportResultField[_],
     usersByPid: Map[String, Operator],
     teamsById: Map[String, Queue]
-  )(using messages: Messages): String = result match {
+  )(implicit messages: Messages): String = result match {
     case CaseTypeResultField(_, data) =>
       data.map(_.prettyName).getOrElse(messages("reporting.result.unknown"))
     case DateResultField(_, data) =>
@@ -63,7 +63,7 @@ object Reports {
 
   def formatCaseReport(report: CaseReport, usersByPid: Map[String, Operator], teamsById: Map[String, Queue])(
     row: Map[String, ReportResultField[_]]
-  )(using messages: Messages): List[String] =
+  )(implicit messages: Messages): List[String] =
     report.fields.toSeq.map { field =>
       row
         .get(field.fieldName)
@@ -79,7 +79,7 @@ object Reports {
     teamsById: Map[String, Queue]
   )(
     row: ResultGroup
-  )(using messages: Messages): List[String] = {
+  )(implicit messages: Messages): List[String] = {
     val group = report.groupBy.zipWith(row.groupKey) { case (groupBy, groupKey) =>
       formatField(groupBy, groupKey, usersByPid, teamsById)
     }
@@ -95,13 +95,13 @@ object Reports {
 
   def formatQueueReport(teamsById: Map[String, Queue])(
     row: QueueResultGroup
-  )(using messages: Messages): List[String] =
+  )(implicit messages: Messages): List[String] =
     List(
       row.team.map(formatTeamForId(_, teamsById)).getOrElse(messages("reporting.team.unassigned")),
       row.caseType.prettyName,
       row.count.toString
     )
 
-  def formatHeaders(report: Report)(using messages: Messages): List[String] =
+  def formatHeaders(report: Report)(implicit messages: Messages): List[String] =
     report.fields.toSeq.map(field => messages(s"reporting.field.${field.fieldName}")).toList
 }

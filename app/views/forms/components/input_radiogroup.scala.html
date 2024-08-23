@@ -32,7 +32,7 @@
         ariaDescribedBy: Option[String] = None,
         legendAsPageHeading: Boolean = false,
         headingCaption: Option[String] = None
-)(using messages: Messages)
+)(implicit messages: Messages)
 
 <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}" @{customGroupId.map(x => s"id=$x").getOrElse(s"id=${field.id}")}>
 

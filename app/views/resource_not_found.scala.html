@@ -24,7 +24,7 @@
     main: main
 )
 
-@(resource: String = "Resource")(using request: AuthenticatedRequest[_], messages: Messages)
+@(resource: String = "Resource")(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(pageTitle = messages("service.name"), customPrimaryNavTab = NoTabSelected) {
 

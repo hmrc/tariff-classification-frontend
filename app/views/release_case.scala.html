@@ -28,7 +28,7 @@
         caseHeading: views.html.v2.case_heading)
 
 
-@(c: Case, form: Form[String], queues: Seq[Queue])(using request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[String], queues: Seq[Queue])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.release.case"),

@@ -25,7 +25,7 @@
 @(id: String,
   attachments: AttachmentsTabViewModel,
   startAtTabIndex : Option[Int] = None
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @if(attachments.allAttachments.nonEmpty){
     <table id="@{id}-table" class="govuk-table">

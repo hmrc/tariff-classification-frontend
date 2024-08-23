@@ -30,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionRepository @Inject() (config: Configuration, mongoComponent: MongoComponent)(using ec: ExecutionContext)
+class SessionRepository @Inject() (config: Configuration, mongoComponent: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[DatedCacheMap](
       mongoComponent = mongoComponent,
       collectionName = "api-cache",

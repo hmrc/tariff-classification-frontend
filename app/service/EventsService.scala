@@ -28,29 +28,29 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EventsService @Inject() (connector: BindingTariffClassificationConnector, auditService: AuditService)(using
+class EventsService @Inject() (connector: BindingTariffClassificationConnector, auditService: AuditService)(implicit
   ec: ExecutionContext
 ) {
 
-  def getEvents(reference: String, pagination: Pagination)(using hc: HeaderCarrier): Future[Paged[Event]] =
+  def getEvents(reference: String, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Event]] =
     getFilteredEvents(reference, pagination, None)
 
-  def findReferralEvents(references: Set[String])(using
+  def findReferralEvents(references: Set[String])(implicit
     hc: HeaderCarrier
   ): Future[Map[String, Event]] =
     connector.findReferralEvents(references)
 
-  def findCompletionEvents(references: Set[String])(using
+  def findCompletionEvents(references: Set[String])(implicit
     hc: HeaderCarrier
   ): Future[Map[String, Event]] =
     connector.findCompletionEvents(references)
 
-  def getFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Option[Set[EventType]])(using
+  def getFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Option[Set[EventType]])(implicit
     hc: HeaderCarrier
   ): Future[Paged[Event]] =
     connector.findFilteredEvents(reference, pagination, onlyEventTypes.getOrElse(Set.empty))
 
-  def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())(using
+  def addNote(c: Case, note: String, operator: Operator, clock: Clock = Clock.systemUTC())(implicit
     hc: HeaderCarrier
   ): Future[Event] = {
     val event = NewEventRequest(Note(note), operator, Instant.now(clock))

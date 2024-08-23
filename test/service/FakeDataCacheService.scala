@@ -36,7 +36,7 @@ class FakeDataCacheService(initialData: Map[String, CacheMap]) extends DataCache
   override def fetch(cacheId: String): Future[Option[CacheMap]] =
     Future.successful(cache.get().get(cacheId))
 
-  override def getEntry[A](cacheId: String, key: String)(using fmt: Format[A]): Future[Option[A]] =
+  override def getEntry[A](cacheId: String, key: String)(implicit fmt: Format[A]): Future[Option[A]] =
     Future.successful(cache.get().get(cacheId).flatMap(_.getEntry(key)))
 
   override def remove(cacheMap: CacheMap): Future[Boolean] = Future.successful {

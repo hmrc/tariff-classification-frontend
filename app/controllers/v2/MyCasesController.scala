@@ -38,7 +38,7 @@ class MyCasesController @Inject() (
   eventsService: EventsService,
   mcc: MessagesControllerComponents,
   val myCasesView: my_cases_view
-)(using
+)(implicit
   val appConfig: AppConfig,
   mat: Materializer
 ) extends FrontendController(mcc)

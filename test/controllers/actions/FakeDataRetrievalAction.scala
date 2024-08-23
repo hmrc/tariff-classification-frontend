@@ -22,7 +22,7 @@ import models.cache.CacheMap
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataRetrievalAction(cacheMapToReturn: Option[CacheMap])(using ec: ExecutionContext)
+class FakeDataRetrievalAction(cacheMapToReturn: Option[CacheMap])(implicit ec: ExecutionContext)
     extends DataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {

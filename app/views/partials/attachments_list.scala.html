@@ -27,7 +27,7 @@
   showRemoval: Boolean = false,
   caseRef: String,
   startAtTabIndex : Option[Int] = None
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(attachments.nonEmpty){
 

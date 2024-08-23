@@ -32,7 +32,7 @@
   results: Paged[ResultGroup],
   users: Map[String, Operator],
   teams: Map[String, Queue]
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @additionalCSS = {
     <link rel="stylesheet" href='@routes.Assets.at("stylesheets/layout.css")'/>

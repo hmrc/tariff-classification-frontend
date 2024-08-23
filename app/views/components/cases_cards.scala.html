@@ -26,7 +26,7 @@
   totalCasesAssignedToMe: Int,
   referredCasesAssignedToMe: Int,
   completedCasesAssignedToMe: Int
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <div id="dashboard-view" class="centered-content">
     <div class="govuk-grid-row">

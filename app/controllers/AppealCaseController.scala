@@ -41,7 +41,7 @@ class AppealCaseController @Inject() (
   val appeal_choose_type: appeal_choose_type,
   val appeal_change_status: appeal_change_status,
   mcc: MessagesControllerComponents
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {

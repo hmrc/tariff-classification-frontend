@@ -42,6 +42,6 @@ class StrideAuthConnector @Inject() (
   override def authorise[A](
     predicate: Predicate,
     retrieval: Retrieval[A]
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     withMetricsTimerAsync("stride-authorise")(_ => super.authorise(predicate, retrieval))
 }

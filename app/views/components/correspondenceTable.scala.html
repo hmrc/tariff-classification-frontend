@@ -19,7 +19,7 @@
 
 @import views.html.v2.case_status_tab
 
-@(correspondenceTab: ApplicationsTab, assignmentType: String, captionMessage: String)(using messages: Messages)
+@(correspondenceTab: ApplicationsTab, assignmentType: String, captionMessage: String)(implicit messages: Messages)
 
 <table id="@{correspondenceTab.tabMessageKey}-table" class="govuk-table">
  <caption class="govuk-visually-hidden govuk-table__caption">@messages(captionMessage)</caption>

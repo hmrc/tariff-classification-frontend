@@ -31,7 +31,7 @@
 )
 
 
-@(c: Case, form : Form[Case], primaryNavTab : PrimaryNavigationTab = NoTabSelected)(using request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form : Form[Case], primaryNavTab : PrimaryNavigationTab = NoTabSelected)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("case.liability.edit.title"),

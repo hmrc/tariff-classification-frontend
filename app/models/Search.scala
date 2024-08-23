@@ -40,7 +40,7 @@ case class Search(
 
 object Search {
 
-  implicit def binder(using stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] =
+  implicit def binder(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[Search] =
     new QueryStringBindable[Search] {
 
       override def bind(string: String, requestParams: Map[String, Seq[String]]): Option[Either[String, Search]] = {

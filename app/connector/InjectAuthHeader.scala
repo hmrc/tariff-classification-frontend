@@ -21,7 +21,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 trait InjectAuthHeader {
 
-  def authHeaders(config: AppConfig)(using hc: HeaderCarrier): Seq[(String, String)] = {
+  def authHeaders(config: AppConfig)(implicit hc: HeaderCarrier): Seq[(String, String)] = {
     val headerName: String = "X-Api-Token"
 
     hc.headers(Seq(headerName)) match {

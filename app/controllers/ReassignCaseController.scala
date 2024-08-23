@@ -41,7 +41,7 @@ class ReassignCaseController @Inject() (
   val confirm_reassign_case: confirm_reassign_case,
   val resource_not_found: resource_not_found,
   override implicit val config: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {
@@ -54,7 +54,7 @@ class ReassignCaseController @Inject() (
       reassignToQueue(form, origin)
     }
 
-  private def reassignToQueue(f: Form[String], origin: String)(using
+  private def reassignToQueue(f: Form[String], origin: String)(implicit
     request: AuthenticatedCaseRequest[_]
   ): Future[Result] =
     validateAndRenderView(c =>
@@ -88,7 +88,7 @@ class ReassignCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
-      def queueNotFound(using request: AuthenticatedCaseRequest[_]) =
+      def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) =
         successful(resource_not_found(s"Case Queue"))
 
       renderView(

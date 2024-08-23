@@ -16,7 +16,7 @@
 
 @import models.viewmodels.RulingViewModel
 
-@(traderCommodityCode: String, officerCommodityCode: String, textClass:Option[String] = None)(using messages: Messages)
+@(traderCommodityCode: String, officerCommodityCode: String, textClass:Option[String] = None)(implicit messages: Messages)
 
 <h3 class="govuk-heading-m">@messages("case.v2.liability.ruling.info.from.c592")</h3>
 <dl class="govuk-summary-list">

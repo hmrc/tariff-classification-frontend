@@ -50,7 +50,7 @@ class ManageUserController @Inject() (
   val confirmDeleteUser: confirm_delete_user,
   val doneDeleteUserPage: done_delete_user,
   val user_not_found: user_not_found
-)(using
+)(implicit
   val appConfig: AppConfig,
   mat: Materializer
 ) extends FrontendController(mcc)
@@ -134,7 +134,7 @@ class ManageUserController @Inject() (
   def confirmRemoveUser(pid: String): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(
       Permission.MANAGE_USERS
-    )).async(using request =>
+    )).async(implicit request =>
       removeUserForm
         .bindFromRequest()
         .fold(

@@ -18,7 +18,7 @@
 
 @this(govukWrapper: govuk_wrapper)
 
-@(pageTitle: String, heading: String, message: String)(using request: RequestHeader, messages: Messages)
+@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, messages: Messages)
 
 @govukWrapper(
   pageTitle = pageTitle

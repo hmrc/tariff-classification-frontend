@@ -41,7 +41,7 @@ class SampleReturnController @Inject() (
   val change_sample_return: change_sample_return,
   mcc: MessagesControllerComponents,
   override implicit val config: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleReturn]]
     with WithUnsafeDefaultFormBinding {
@@ -56,7 +56,7 @@ class SampleReturnController @Inject() (
     c: Case,
     notFilledForm: Form[Option[SampleReturn]],
     options: Option[String] = None
-  )(using request: AuthenticatedRequest[_]): Html =
+  )(implicit request: AuthenticatedRequest[_]): Html =
     change_sample_return(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =
@@ -68,7 +68,7 @@ class SampleReturnController @Inject() (
       )
     }
 
-  override protected def update(c: Case, status: Option[SampleReturn], operator: Operator)(using
+  override protected def update(c: Case, status: Option[SampleReturn], operator: Operator)(implicit
     hc: HeaderCarrier
   ): Future[Case] =
     caseService.updateSampleReturn(c, status, operator)

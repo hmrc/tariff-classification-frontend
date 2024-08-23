@@ -46,7 +46,7 @@ import views.html.v2.{case_heading, liability_details_edit, liability_view, remo
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RequestActionsWithPermissionsProvider @Inject() (using
+class RequestActionsWithPermissionsProvider @Inject() (implicit
   parse: PlayBodyParsers,
   executionContext: ExecutionContext
 ) extends Provider[RequestActionsWithPermissions] {

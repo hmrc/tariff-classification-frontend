@@ -34,7 +34,7 @@ object SubNavigationTab {
     ManagerToolsReportsTab
   )
 
-  implicit def subNavigationTabQueryStringBindable(using
+  implicit def subNavigationTabQueryStringBindable(implicit
     stringBindable: QueryStringBindable[String]
   ): QueryStringBindable[SubNavigationTab] =
     new QueryStringBindable[SubNavigationTab] {

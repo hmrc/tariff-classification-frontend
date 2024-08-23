@@ -29,7 +29,7 @@
 )
 
 
-@(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(using request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, uploadForm: Form[String], initiateResponse: FileStoreInitiateResponse)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.refer.case.email"),

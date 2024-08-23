@@ -53,7 +53,7 @@ class ReportingController @Inject() (
   val reportChooseTeams: reportChooseTeams,
   val report_not_found: report_not_found,
   implicit val appConfig: AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
@@ -257,7 +257,7 @@ class ReportingController @Inject() (
     }
 
   def displayManageReporting(activeSubNav: SubNavigationTab = ManagerToolsReportsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(using request =>
+    (verify.authenticated andThen verify.mustHave(Permission.VIEW_REPORTS))(implicit request =>
       Ok(
         manageReportsView(
           activeSubNav,

@@ -43,7 +43,7 @@ class BindingTariffClassificationConnector @Inject() (
   appConfig: AppConfig,
   client: HttpClientV2,
   val metrics: MetricRegistry
-)(using mat: Materializer)
+)(implicit mat: Materializer)
     extends HasMetrics
     with InjectAuthHeader {
 
@@ -51,7 +51,7 @@ class BindingTariffClassificationConnector @Inject() (
 
   private lazy val statuses: Set[CaseStatus] = Set(NEW, OPEN, REFERRED, SUSPENDED, COMPLETED)
 
-  def createCase(application: Application)(using hc: HeaderCarrier): Future[Case] =
+  def createCase(application: Application)(implicit hc: HeaderCarrier): Future[Case] =
     withMetricsTimerAsync("create-case") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/cases"
       client
@@ -61,7 +61,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Case]
     }
 
-  def findCase(reference: String)(using hc: HeaderCarrier): Future[Option[Case]] =
+  def findCase(reference: String)(implicit hc: HeaderCarrier): Future[Option[Case]] =
     withMetricsTimerAsync("get-case-by-reference") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/cases/$reference"
       client
@@ -96,7 +96,7 @@ class BindingTariffClassificationConnector @Inject() (
     queue: Queue,
     pagination: Pagination,
     types: Set[ApplicationType] = ApplicationType.values
-  )(using hc: HeaderCarrier): Future[Paged[Case]] =
+  )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-queue") { _ =>
       val queueId = if (queue == Queues.gateway) "none" else queue.id
       val fullURL = buildQueryUrl(
@@ -119,7 +119,7 @@ class BindingTariffClassificationConnector @Inject() (
     types: Set[ApplicationType] = ApplicationType.values,
     statuses: Set[CaseStatus] = CaseStatus.openStatuses,
     assignee: String
-  )(using hc: HeaderCarrier): Future[Paged[Case]] =
+  )(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-all-queues") { _ =>
       val fullURL = buildQueryUrl(
         types = types,
@@ -135,7 +135,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Case]]
     }
 
-  def findCasesByAssignee(assignee: Operator, pagination: Pagination)(using hc: HeaderCarrier): Future[Paged[Case]] =
+  def findCasesByAssignee(assignee: Operator, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-cases-by-assignee") { _ =>
       val fullURL =
         buildQueryUrl(statuses = statuses, queueIds = Seq(), assigneeId = assignee.id, pagination = pagination)
@@ -146,7 +146,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Case]]
     }
 
-  def findAssignedCases(pagination: Pagination)(using hc: HeaderCarrier): Future[Paged[Case]] =
+  def findAssignedCases(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Case]] =
     withMetricsTimerAsync("get-assigned-cases") { _ =>
       val fullURL = buildQueryUrl(
         statuses = CaseStatus.openStatuses,
@@ -161,7 +161,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Case]]
     }
 
-  def updateCase(c: Case)(using hc: HeaderCarrier): Future[Case] =
+  def updateCase(c: Case)(implicit hc: HeaderCarrier): Future[Case] =
     withMetricsTimerAsync("update-case") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/cases/${c.reference}"
 
@@ -172,7 +172,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Case]
     }
 
-  def createEvent(c: Case, e: NewEventRequest)(using hc: HeaderCarrier): Future[Event] =
+  def createEvent(c: Case, e: NewEventRequest)(implicit hc: HeaderCarrier): Future[Event] =
     withMetricsTimerAsync("create-event") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/cases/${c.reference}/events"
       client
@@ -182,10 +182,10 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Event]
     }
 
-  def findEvents(reference: String, pagination: Pagination)(using hc: HeaderCarrier): Future[Paged[Event]] =
+  def findEvents(reference: String, pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Event]] =
     findFilteredEvents(reference, pagination, Set.empty)
 
-  def findFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Set[EventType])(using
+  def findFilteredEvents(reference: String, pagination: Pagination, onlyEventTypes: Set[EventType])(implicit
     hc: HeaderCarrier
   ): Future[Paged[Event]] =
     withMetricsTimerAsync("get-events-for-case") { _ =>
@@ -210,7 +210,7 @@ class BindingTariffClassificationConnector @Inject() (
           .toMap
       }
 
-  def findReferralEvents(references: Set[String])(using
+  def findReferralEvents(references: Set[String])(implicit
     hc: HeaderCarrier
   ): Future[Map[String, Event]] =
     withMetricsTimerAsync("get-referral-events") { _ =>
@@ -234,7 +234,7 @@ class BindingTariffClassificationConnector @Inject() (
         }
     }
 
-  def findCompletionEvents(references: Set[String])(using
+  def findCompletionEvents(references: Set[String])(implicit
     hc: HeaderCarrier
   ): Future[Map[String, Event]] =
     withMetricsTimerAsync("get-completion-events") { _ =>
@@ -258,7 +258,7 @@ class BindingTariffClassificationConnector @Inject() (
         }
     }
 
-  def search(search: Search, sort: Sort, pagination: Pagination)(using
+  def search(search: Search, sort: Sort, pagination: Pagination)(implicit
     hc: HeaderCarrier,
     qb: QueryStringBindable[String]
   ): Future[Paged[Case]] =
@@ -287,7 +287,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Case]]
     }
 
-  def getAllUsers(roles: Seq[Role], team: String, pagination: Pagination)(using
+  def getAllUsers(roles: Seq[Role], team: String, pagination: Pagination)(implicit
     hc: HeaderCarrier
   ): Future[Paged[Operator]] =
     withMetricsTimerAsync("get-all-users") { _ =>
@@ -301,7 +301,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Operator]]
     }
 
-  def updateUser(operator: Operator)(using hc: HeaderCarrier): Future[Operator] =
+  def updateUser(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
     withMetricsTimerAsync("update-user") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/users/${operator.id}"
 
@@ -312,7 +312,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Operator]
     }
 
-  def markDeleted(operator: Operator)(using hc: HeaderCarrier): Future[Operator] =
+  def markDeleted(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
     withMetricsTimerAsync("delete-user") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/mark-deleted/users/${operator.id}"
 
@@ -323,7 +323,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Operator]
     }
 
-  def getUserDetails(id: String)(using hc: HeaderCarrier): Future[Option[Operator]] =
+  def getUserDetails(id: String)(implicit hc: HeaderCarrier): Future[Option[Operator]] =
     withMetricsTimerAsync("get-user-details") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/users/$id"
 
@@ -333,7 +333,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Option[Operator]]
     }
 
-  def createUser(operator: Operator)(using hc: HeaderCarrier): Future[Operator] =
+  def createUser(operator: Operator)(implicit hc: HeaderCarrier): Future[Operator] =
     withMetricsTimerAsync("create-user") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/users"
 
@@ -344,7 +344,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Operator]
     }
 
-  def caseReport(report: CaseReport, pagination: Pagination)(using
+  def caseReport(report: CaseReport, pagination: Pagination)(implicit
     hc: HeaderCarrier,
     reportBind: QueryStringBindable[CaseReport],
     pageBind: QueryStringBindable[Pagination]
@@ -360,7 +360,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Map[String, ReportResultField[_]]]]
     }
 
-  def summaryReport(report: SummaryReport, pagination: Pagination)(using
+  def summaryReport(report: SummaryReport, pagination: Pagination)(implicit
     hc: HeaderCarrier,
     reportBind: QueryStringBindable[SummaryReport],
     pageBind: QueryStringBindable[Pagination]
@@ -376,7 +376,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[ResultGroup]]
     }
 
-  def queueReport(report: QueueReport, pagination: Pagination)(using
+  def queueReport(report: QueueReport, pagination: Pagination)(implicit
     hc: HeaderCarrier,
     reportBind: QueryStringBindable[QueueReport],
     pageBind: QueryStringBindable[Pagination]
@@ -392,7 +392,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[QueueResultGroup]]
     }
 
-  def createKeyword(keyword: Keyword)(using hc: HeaderCarrier): Future[Keyword] =
+  def createKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Keyword] =
     withMetricsTimerAsync("create-keyword") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/keyword"
 
@@ -403,7 +403,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Keyword]
     }
 
-  def findAllKeywords(pagination: Pagination)(using hc: HeaderCarrier): Future[Paged[Keyword]] =
+  def findAllKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[Keyword]] =
     withMetricsTimerAsync("find-all-keywords") { _ =>
       val fullURL =
         s"${appConfig.bindingTariffClassificationUrl}/keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
@@ -414,7 +414,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Keyword]]
     }
 
-  def getCaseKeywords()(using hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
+  def getCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     withMetricsTimerAsync("get-case-keywords") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/case-keywords"
 
@@ -424,7 +424,7 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[CaseKeyword]]
     }
 
-  def deleteKeyword(keyword: Keyword)(using hc: HeaderCarrier): Future[Unit] =
+  def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =
     withMetricsTimerAsync("delete-keyword") { _ =>
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/keyword/${keyword.name}"
 

@@ -18,7 +18,7 @@
 
 @import models.viewmodels.SubNavigationTab
 
-@(completeMessage: String, emailMessage: Option[String], daysElapsed: Option[Html], viewCasesMessage: String, viewCasesTab: SubNavigationTab)(using messages: Messages)
+@(completeMessage: String, emailMessage: Option[String], daysElapsed: Option[Html], viewCasesMessage: String, viewCasesTab: SubNavigationTab)(implicit messages: Messages)
 
 <div id="confirm_complete_id" class="govuk-form-group">
     <div class="govuk-panel govuk-panel--confirmation">

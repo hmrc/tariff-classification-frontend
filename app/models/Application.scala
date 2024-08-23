@@ -120,7 +120,7 @@ object ApplicationType {
 
   case object MISCELLANEOUS extends ApplicationType("MISCELLANEOUS")
 
-  implicit def applicationTypePathBindable(using
+  implicit def applicationTypePathBindable(implicit
     stringBindable: PathBindable[String]
   ): PathBindable[ApplicationType] =
     new PathBindable[ApplicationType] {

@@ -28,7 +28,7 @@ import scala.concurrent.Future
 @Singleton
 class ShutteringFilter @Inject() (
   appConfig: AppConfig
-)(using val mat: Materializer)
+)(implicit val mat: Materializer)
     extends Filter {
 
   private val shuttered: Boolean = appConfig.shutterFlag

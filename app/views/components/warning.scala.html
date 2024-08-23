@@ -19,7 +19,7 @@
 
 @this(govukWarningText: GovukWarningText)
 
-@(message: String)(using messages: Messages)
+@(message: String)(implicit messages: Messages)
 
 @govukWarningText(WarningText(
     iconFallbackText = Some(messages("site.warning")),

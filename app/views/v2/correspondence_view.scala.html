@@ -57,7 +57,7 @@
         attachments: Seq[StoredAttachment],
         primaryNavTab: PrimaryNavigationTab = MyCasesTab
 
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @additionalJS = {
     <script @CSPNonce.attr src="@routes.Assets.at("javascripts/tab_focus.js")" type="text/javascript"></script>

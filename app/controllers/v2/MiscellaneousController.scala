@@ -47,7 +47,7 @@ class MiscellaneousController @Inject() (
   redirectService: RedirectService,
   val miscellaneousView: miscellaneous_view,
   implicit val appConfig: AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with UpscanErrorHandling
     with I18nSupport {
@@ -67,7 +67,7 @@ class MiscellaneousController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData] = MessageForm.form,
     uploadForm: Form[String] = UploadAttachmentForm.form
-  )(using request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
 
     val miscellaneousCase: Case = request.`case`
     val uploadFileId            = fileId.getOrElse(UUID.randomUUID().toString)

@@ -33,7 +33,7 @@ trait UpscanErrorHandling { self: FrontendBaseController =>
 
   def handleUploadErrorAndRender(
     renderView: Form[String] => Future[Html]
-  )(using request: AuthenticatedCaseRequest[_], ec: ExecutionContext): Future[Result] =
+  )(implicit request: AuthenticatedCaseRequest[_], ec: ExecutionContext): Future[Result] =
     request
       .getQueryString(UpscanErrorCodeKey)
       .map { errorCode =>

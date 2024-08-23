@@ -24,7 +24,7 @@
     main: main
 )
 
-@(reference: String)(using request: AuthenticatedRequest[_], messages: Messages)
+@(reference: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.case.not.found"),

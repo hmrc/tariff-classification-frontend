@@ -35,7 +35,7 @@ class TabCacheController @Inject() (
   getData: DataRetrievalAction,
   verify: RequestActions,
   mcc: MessagesControllerComponents
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with Logging
     with WithUnsafeDefaultFormBinding {

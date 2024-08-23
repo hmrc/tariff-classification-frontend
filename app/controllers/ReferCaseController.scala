@@ -47,7 +47,7 @@ class ReferCaseController @Inject() (
   val refer_case_email: refer_case_email,
   val confirm_refer_case: confirm_refer_case,
   implicit val appConfig: AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with UpscanErrorHandling
@@ -83,7 +83,7 @@ class ReferCaseController @Inject() (
   private def renderReferCaseEmail(
     fileId: Option[String],
     uploadForm: Form[String]
-  )(using request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
     val fileUploadSuccessRedirect =
@@ -110,7 +110,7 @@ class ReferCaseController @Inject() (
 
   def getReferCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER_CASE))
-      .async(using request => handleUploadErrorAndRender(uploadForm => renderReferCaseEmail(fileId, uploadForm)))
+      .async(implicit request => handleUploadErrorAndRender(uploadForm => renderReferCaseEmail(fileId, uploadForm)))
 
   def referCase(reference: String, fileId: String): Action[AnyContent] =
     (verify.authenticated andThen
@@ -153,5 +153,5 @@ class ReferCaseController @Inject() (
   def confirmReferCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES))(using request => Ok(confirm_refer_case(request.`case`)))
+      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_refer_case(request.`case`)))
 }

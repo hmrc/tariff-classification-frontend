@@ -30,16 +30,16 @@ import scala.concurrent.Future.successful
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FileStoreService @Inject() (connector: FileStoreConnector)(using ec: ExecutionContext) extends Logging {
+class FileStoreService @Inject() (connector: FileStoreConnector)(implicit ec: ExecutionContext) extends Logging {
 
-  def getFileMetadata(id: String)(using hc: HeaderCarrier): Future[Option[FileMetadata]] = connector.get(id)
+  def getFileMetadata(id: String)(implicit hc: HeaderCarrier): Future[Option[FileMetadata]] = connector.get(id)
 
-  def getAttachments(c: Case)(using hc: HeaderCarrier): Future[Seq[StoredAttachment]] =
+  def getAttachments(c: Case)(implicit hc: HeaderCarrier): Future[Seq[StoredAttachment]] =
     getAttachments(Seq(c))
       .map(group => group.getOrElse(c, Seq.empty))
       .map(_.sortBy(_.timestamp))
 
-  def getAttachments(cases: Seq[Case])(using hc: HeaderCarrier): Future[Map[Case, Seq[StoredAttachment]]] = {
+  def getAttachments(cases: Seq[Case])(implicit hc: HeaderCarrier): Future[Map[Case, Seq[StoredAttachment]]] = {
     val caseByFileId: Map[String, Case] =
       cases.foldLeft(Map[String, Case]())((existing, c) => existing ++ c.attachments.map(_.id -> c))
     val attachmentsById: Map[String, Attachment] = cases.flatMap(_.attachments).map(a => a.id -> a).toMap
@@ -71,7 +71,7 @@ class FileStoreService @Inject() (connector: FileStoreConnector)(using ec: Execu
     connector.get(cases.flatMap(_.attachments)) map groupingByCase
   }
 
-  def getLetterOfAuthority(c: Case)(using hc: HeaderCarrier): Future[Option[StoredAttachment]] =
+  def getLetterOfAuthority(c: Case)(implicit hc: HeaderCarrier): Future[Option[StoredAttachment]] =
     if (c.application.isBTI) {
       c.application.asATAR.agent.flatMap(_.letterOfAuthorisation) match {
         case Some(attachment: Attachment) =>
@@ -92,16 +92,16 @@ class FileStoreService @Inject() (connector: FileStoreConnector)(using ec: Execu
       successful(None)
     }
 
-  def initiate(request: FileStoreInitiateRequest)(using hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
+  def initiate(request: FileStoreInitiateRequest)(implicit hc: HeaderCarrier): Future[FileStoreInitiateResponse] =
     connector.initiate(request)
 
-  def upload(fileUpload: FileUpload)(using hc: HeaderCarrier): Future[FileStoreAttachment] =
+  def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileStoreAttachment] =
     connector.upload(fileUpload).map(toFileAttachment(fileUpload.content.path.toFile.length))
 
-  def downloadFile(url: String)(using hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
+  def downloadFile(url: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
     connector.downloadFile(url)
 
-  def removeAttachment(fileId: String)(using hc: HeaderCarrier): Future[Unit] =
+  def removeAttachment(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =
     connector.delete(fileId)
 
   private def toFileAttachment(size: Long): FileMetadata => FileStoreAttachment = { r =>

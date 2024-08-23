@@ -20,7 +20,7 @@
 @import views.forms.components.RadioOption
 @import views.html.forms.components.input_radiogroup
 
-@(appealType: AppealType, form: Form[AppealStatus])(using messages: Messages)
+@(appealType: AppealType, form: Form[AppealStatus])(implicit messages: Messages)
 
 <h3 class="govuk-heading-s">@{s"${AppealType.heading(appealType)} status"}</h3>
 @input_radiogroup(

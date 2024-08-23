@@ -35,7 +35,7 @@ class ChangeCaseStatusController @Inject() (
   mcc: MessagesControllerComponents,
   val change_case_status: change_case_status,
   implicit val appConfig: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {

@@ -34,7 +34,7 @@
         users:Seq[Operator],
         form: Form[String],
         teamId: Option[String] = None
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @heading = @{
     if(numberOfCases == 1){

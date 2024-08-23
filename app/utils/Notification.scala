@@ -28,7 +28,7 @@ object Notification {
 
   import scala.language.implicitConversions
 
-  def success(key: String, args: Any*)(using messages: Messages): (NotificationType, String) =
+  def success(key: String, args: Any*)(implicit messages: Messages): (NotificationType, String) =
     NotificationType.Success -> messages(key, args: _*)
 
   implicit def toFlash(value: (NotificationType, String)): (String, String) = (value._1.key, value._2)

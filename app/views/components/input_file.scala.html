@@ -20,7 +20,7 @@
         inputClass: Option[String] = None,
         accept: Option[String] = None,
         useTabIndex : Option[Int] = None
-)(using messages: Messages)
+)(implicit messages: Messages)
 
 <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}">
     <label class="govuk-label" for="@{field.id}">

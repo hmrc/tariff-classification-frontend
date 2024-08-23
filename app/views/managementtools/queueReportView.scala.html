@@ -34,7 +34,7 @@
   pagination: Pagination,
   results: Paged[QueueResultGroup],
   teams: Map[String, Queue]
-)(using request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("reporting.view_report.title"),

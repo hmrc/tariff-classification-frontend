@@ -16,7 +16,7 @@
 
 @import controllers.routes._
 
-@(linkText:String, backHref: Call)(using messages: Messages)
+@(linkText:String, backHref: Call)(implicit messages: Messages)
 
   <h2 class="govuk-heading-m">Next steps</h2>
   <p class="govuk-body"><a id="back-home-link" class="govuk-link" href="@OperatorDashboardController.onPageLoad">@messages("back.home")</a></p>

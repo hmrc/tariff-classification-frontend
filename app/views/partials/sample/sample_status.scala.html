@@ -19,7 +19,7 @@
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.atar.SampleTabViewModel
 
-@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(using request: AuthenticatedRequest[_], messages: Messages)
+@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 <h3 class="govuk-heading-m govuk-!-margin-top-6" id="sample-status-heading">@messages("case.sample.sample-status-header")</h3>
 

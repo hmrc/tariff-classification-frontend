@@ -34,7 +34,7 @@ class ReopenCaseController @Inject() (
   casesService: CasesService,
   mcc: MessagesControllerComponents,
   implicit val appConfig: AppConfig
-)(using val executionContext: ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
     with WithUnsafeDefaultFormBinding {

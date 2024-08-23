@@ -22,7 +22,7 @@
 )
 
 
-@()(using request: AuthenticatedRequest[_], messages: Messages)
+@()(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
     pageTitle = messages("management.manage-keywords.edit-approved-keywords.deleted.heading")

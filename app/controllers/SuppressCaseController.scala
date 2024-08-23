@@ -46,7 +46,7 @@ class SuppressCaseController @Inject() (
   val suppress_case_email: suppress_case_email,
   val confirm_supressed_case: confirm_supressed_case,
   implicit val appConfig: AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with UpscanErrorHandling
@@ -83,7 +83,7 @@ class SuppressCaseController @Inject() (
   private def renderSuppressCaseEmail(
     fileId: Option[String],
     uploadForm: Form[String]
-  )(using request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
     val fileUploadSuccessRedirect =
@@ -110,7 +110,7 @@ class SuppressCaseController @Inject() (
 
   def getSuppressCaseEmail(reference: String, fileId: Option[String] = None): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.SUPPRESS_CASE))
-      .async(using request => handleUploadErrorAndRender(uploadForm => renderSuppressCaseEmail(fileId, uploadForm)))
+      .async(implicit request => handleUploadErrorAndRender(uploadForm => renderSuppressCaseEmail(fileId, uploadForm)))
 
   def suppressCase(reference: String, fileId: String): Action[AnyContent] =
     (verify.authenticated andThen
@@ -141,5 +141,5 @@ class SuppressCaseController @Inject() (
   def confirmSuppressCase(reference: String): Action[AnyContent] =
     (verify.authenticated
       andThen verify.casePermissions(reference)
-      andThen verify.mustHave(Permission.VIEW_CASES))(using request => Ok(confirm_supressed_case(request.`case`)))
+      andThen verify.mustHave(Permission.VIEW_CASES))(implicit request => Ok(confirm_supressed_case(request.`case`)))
 }

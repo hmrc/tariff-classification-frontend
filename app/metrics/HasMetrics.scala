@@ -37,7 +37,7 @@ trait HasActionMetrics extends HasMetrics { self: MessagesBaseController =>
     * @return
     *   an action which captures metrics about the wrapped action
     */
-  def withMetricsTimerAction[A](metric: Metric)(action: Action[A])(using ec: ExecutionContext): Action[A] =
+  def withMetricsTimerAction[A](metric: Metric)(action: Action[A])(implicit ec: ExecutionContext): Action[A] =
     Action(action.parser).async(request => withMetricsTimerResult(metric)(action(request)))
 }
 
@@ -85,7 +85,7 @@ trait HasMetrics {
     * @return
     *   The result of the block of code
     */
-  def withMetricsTimerResult(metric: Metric)(block: => Future[Result])(using ec: ExecutionContext): Future[Result] =
+  def withMetricsTimerResult(metric: Metric)(block: => Future[Result])(implicit ec: ExecutionContext): Future[Result] =
     withMetricsTimer(metric) { timer =>
       try {
         val result = block
@@ -132,7 +132,7 @@ trait HasMetrics {
     */
   def withMetricsTimerAsync[T](
     metric: Metric
-  )(block: MetricsTimer => Future[T])(using ec: ExecutionContext): Future[T] =
+  )(block: MetricsTimer => Future[T])(implicit ec: ExecutionContext): Future[T] =
     withMetricsTimer(metric) { timer =>
       try {
         val result = block(timer)

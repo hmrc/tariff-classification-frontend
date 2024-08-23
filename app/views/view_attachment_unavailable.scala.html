@@ -24,7 +24,7 @@
         main: main
 )
 
-@(fileSubmitted: Option[FileMetadata])(using request: AuthenticatedRequest[_], messages: Messages)
+@(fileSubmitted: Option[FileMetadata])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @main(
  pageTitle = messages("view.attachment.unavailable.title"),

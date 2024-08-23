@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 class RedirectService @Inject() () {
 
-  def redirectApplication(reference: String, fileId: Option[String] = None)(using
+  def redirectApplication(reference: String, fileId: Option[String] = None)(implicit
     request: AuthenticatedCaseRequest[AnyContent]
   ): Result =
     request.`case`.application.`type` match {

@@ -18,7 +18,7 @@
 @import views.html.components.heading
 @import views.html.managementtools.{assignedUsersTable, noTeamUsersTable, usersByTeamTable}
 
-@(users : UsersTabViewModel, usersCount: Map[String, List[Case]])(using messages: Messages)
+@(users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit messages: Messages)
 
 @heading(messages(users.headingMessageKey))
 

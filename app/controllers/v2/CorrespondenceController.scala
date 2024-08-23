@@ -46,7 +46,7 @@ class CorrespondenceController @Inject() (
   redirectService: RedirectService,
   val correspondenceView: correspondence_view,
   implicit val appConfig: AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with UpscanErrorHandling
     with I18nSupport {
@@ -66,7 +66,7 @@ class CorrespondenceController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData] = MessageForm.form,
     uploadForm: Form[String] = UploadAttachmentForm.form
-  )(using request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
     val correspondenceCase: Case = request.`case`
     val uploadFileId             = fileId.getOrElse(UUID.randomUUID().toString)
 
