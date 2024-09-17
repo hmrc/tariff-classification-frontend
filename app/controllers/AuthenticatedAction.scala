@@ -105,7 +105,7 @@ class AuthenticatedAction @Inject() (
           else s"${request.uri}"
         )
       case e: AuthorisationException =>
-        logger.info("Auth Failed", e)
+        logger.info("[AuthenticatedAction][invokeBlock] Auth Failed", e)
         Redirect(routes.SecurityController.unauthorized())
     }
   }
