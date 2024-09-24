@@ -20,10 +20,11 @@ import models._
 import models.response.FileMetadata
 import org.apache.pekko.stream.scaladsl.Source
 import org.apache.pekko.util.ByteString
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
+import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import service.{CasesService, FileStoreService}
@@ -198,6 +199,9 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       givenCaseWithoutAttachments()
       givenNotFoundPdf()
 
+      when(caseService.completeCase(any[Case], any[Operator])(any[HeaderCarrier], any[Messages]))
+        .thenReturn(successful(caseWithDecision))
+
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
 
       status(result)        shouldBe Status.NOT_FOUND
@@ -259,6 +263,9 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       givenCompletedCase()
       givenCaseWithoutAttachments()
       givenNotFoundPdf()
+
+      when(caseService.completeCase(any[Case], any[Operator])(any[HeaderCarrier], any[Messages]))
+        .thenReturn(successful(caseWithDecision))
 
       val result = await(controller.getLetterPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
 
