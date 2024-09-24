@@ -18,9 +18,11 @@ package controllers
 
 import cats.data.OptionT
 import config.AppConfig
+import models.Attachment
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{case_not_found, document_not_found, ruling_not_found}
@@ -48,21 +50,17 @@ class PdfDownloadController @Inject() (
       case Some(cse) =>
         cse.decision match {
           case Some(decision) =>
-            val pdfResult = for {
-              pdf      <- OptionT.fromOption[Future](decision.decisionPdf)
-              meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
-              url      <- OptionT.fromOption[Future](meta.url)
-              fileName <- OptionT.fromOption[Future](meta.fileName)
-              content  <- OptionT(fileStore.downloadFile(url))
-            } yield Ok
-              .streamed(content, None, meta.mimeType)
-              .withHeaders(
-                "Content-Disposition" -> s"attachment; filename=$fileName"
-              )
+            val pdfResult = downloadFile(decision.decisionPdf)
 
             val messages     = request.messages
             val documentType = messages("errors.document-not-found.ruling-certificate")
-            pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
+
+            pdfResult.getOrElseF {
+              caseService.completeCase(cse, request.operator).flatMap { regeneratedCase =>
+                downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf))
+                  .getOrElse(NotFound(document_not_found(documentType, reference)))
+              }
+            }
 
           case None =>
             successful(NotFound(ruling_not_found(reference)))
@@ -78,21 +76,17 @@ class PdfDownloadController @Inject() (
       case Some(cse) =>
         cse.decision match {
           case Some(decision) =>
-            val pdfResult = for {
-              pdf      <- OptionT.fromOption[Future](decision.letterPdf)
-              meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
-              url      <- OptionT.fromOption[Future](meta.url)
-              fileName <- OptionT.fromOption[Future](meta.fileName)
-              content  <- OptionT(fileStore.downloadFile(url))
-            } yield Ok
-              .streamed(content, None, meta.mimeType)
-              .withHeaders(
-                "Content-Disposition" -> s"attachment; filename=$fileName"
-              )
+            val pdfResult = downloadFile(decision.letterPdf)
 
             val messages     = request.messages
             val documentType = messages("errors.document-not-found.ruling-certificate")
-            pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
+
+            pdfResult.getOrElseF {
+              caseService.completeCase(cse, request.operator).flatMap { regeneratedCase =>
+                downloadFile(regeneratedCase.decision.flatMap(_.letterPdf))
+                  .getOrElse(NotFound(document_not_found(documentType, reference)))
+              }
+            }
 
           case None =>
             successful(NotFound(ruling_not_found(reference)))
@@ -106,24 +100,28 @@ class PdfDownloadController @Inject() (
   def applicationPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference).flatMap {
       case Some(cse) =>
-        val pdfResult = for {
-          pdf      <- OptionT.fromOption[Future](cse.application.asATAR.applicationPdf)
-          meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
-          url      <- OptionT.fromOption[Future](meta.url)
-          fileName <- OptionT.fromOption[Future](meta.fileName)
-          content  <- OptionT(fileStore.downloadFile(url))
-        } yield Ok
-          .streamed(content, None, meta.mimeType)
-          .withHeaders(
-            "Content-Disposition" -> s"attachment; filename=$fileName"
-          )
+        val pdfResult = downloadFile(cse.application.asATAR.applicationPdf)
 
         val messages     = request.messages
         val documentType = messages("errors.document-not-found.application")
+
         pdfResult.getOrElse(NotFound(document_not_found(documentType, reference)))
 
       case None =>
         successful(NotFound(case_not_found(reference)))
     }
   }
+
+  private def downloadFile(attachment: Option[Attachment])(implicit hc: HeaderCarrier): OptionT[Future, Result] =
+    for {
+      pdf      <- OptionT.fromOption[Future](attachment)
+      meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
+      url      <- OptionT.fromOption[Future](meta.url)
+      fileName <- OptionT.fromOption[Future](meta.fileName)
+      content  <- OptionT(fileStore.downloadFile(url))
+    } yield Ok
+      .streamed(content, None, meta.mimeType)
+      .withHeaders(
+        "Content-Disposition" -> s"attachment; filename=$fileName"
+      )
 }
