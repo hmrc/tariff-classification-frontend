@@ -298,7 +298,10 @@ class CasesService @Inject() (
           )
       }
 
-    val completedCase = setCaseCompleted(original)
+    val completedCase = original.status match {
+      case CaseStatus.COMPLETED => original
+      case _                    => setCaseCompleted(original)
+    }
 
     for {
 
