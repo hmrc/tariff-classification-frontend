@@ -335,6 +335,26 @@ class CasesService @Inject() (
     } yield updatedCase
   }
 
+
+  def regenerateDocuments(completedCase: Case, operator: Operator)
+                         (implicit hc: HeaderCarrier, messages: Messages): Future[Case] = {
+
+    logger.info(s"[CasesService][regenerateDocuments] Starting to regenerate documents for case: ${completedCase.reference}")
+
+    for {
+
+      caseWithPdf <- completedCase.decision
+                       .map(decision => uploadCaseDocuments(completedCase, decision, operator))
+                       .getOrElse {
+                         Future.successful(completedCase)
+                       }
+
+      // Update the case
+      updatedCase <- connector.updateCase(caseWithPdf)
+
+    } yield updatedCase
+  }
+
   private def uploadCaseDocuments(
     completedCase: Case,
     decision: Decision,
