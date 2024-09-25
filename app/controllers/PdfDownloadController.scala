@@ -56,7 +56,7 @@ class PdfDownloadController @Inject() (
             val documentType = messages("errors.document-not-found.ruling-certificate")
 
             pdfResult.getOrElseF {
-              caseService.completeCase(cse, request.operator).flatMap { regeneratedCase =>
+              caseService.regenerateDocuments(cse, request.operator).flatMap { regeneratedCase =>
                 downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf))
                   .getOrElse(NotFound(document_not_found(documentType, reference)))
               }
@@ -82,7 +82,7 @@ class PdfDownloadController @Inject() (
             val documentType = messages("errors.document-not-found.ruling-certificate")
 
             pdfResult.getOrElseF {
-              caseService.completeCase(cse, request.operator).flatMap { regeneratedCase =>
+              caseService.regenerateDocuments(cse, request.operator).flatMap { regeneratedCase =>
                 downloadFile(regeneratedCase.decision.flatMap(_.letterPdf))
                   .getOrElse(NotFound(document_not_found(documentType, reference)))
               }

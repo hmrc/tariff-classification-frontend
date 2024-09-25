@@ -199,7 +199,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       givenCaseWithoutAttachments()
       givenNotFoundPdf()
 
-      when(caseService.completeCase(any[Case], any[Operator])(any[HeaderCarrier], any[Messages]))
+      when(caseService.regenerateDocuments(any[Case], any[Operator])(any[HeaderCarrier], any[Messages]))
         .thenReturn(successful(caseWithDecision))
 
       val result = await(controller.getRulingPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))
@@ -264,7 +264,7 @@ class PdfDownloadControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       givenCaseWithoutAttachments()
       givenNotFoundPdf()
 
-      when(caseService.completeCase(any[Case], any[Operator])(any[HeaderCarrier], any[Messages]))
+      when(caseService.regenerateDocuments(any[Case], any[Operator])(any[HeaderCarrier], any[Messages]))
         .thenReturn(successful(caseWithDecision))
 
       val result = await(controller.getLetterPdf(caseWithDecision.reference)(newFakeGETRequestWithCSRF()))

@@ -298,10 +298,7 @@ class CasesService @Inject() (
           )
       }
 
-    val completedCase = original.status match {
-      case CaseStatus.COMPLETED => original
-      case _                    => setCaseCompleted(original)
-    }
+    val completedCase = setCaseCompleted(original)
 
     for {
 
@@ -334,6 +331,22 @@ class CasesService @Inject() (
 
     } yield updatedCase
   }
+
+
+  def regenerateDocuments(completedCase: Case, operator: Operator)
+                         (implicit hc: HeaderCarrier, messages: Messages): Future[Case] =
+    for {
+
+      caseWithPdf <- completedCase.decision
+                       .map(decision => uploadCaseDocuments(completedCase, decision, operator))
+                       .getOrElse {
+                         Future.successful(completedCase)
+                       }
+
+      // Update the case
+      updatedCase: Case <- connector.updateCase(caseWithPdf)
+
+    } yield updatedCase
 
   private def uploadCaseDocuments(
     completedCase: Case,

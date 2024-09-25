@@ -308,6 +308,40 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
     }
   }
 
+  "regenerate when document not found" in {
+    val operator: Operator = Operator("operator-id", Some("Billy Bobbins"))
+    val originalDecision   = Decision("code", None, None, "justification", "goods")
+    val originalCase       = aLiability.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
+
+    val coverLetter       = Attachment(id = "865d82ac-49c0-4647-ba2f-88bfba6b4b75", operator = Some(operator))
+    val rulingCertificate = Attachment(id = "f6436e76-6ec0-4019-9837-b8639058efa4", operator = Some(operator))
+
+    val updatedDecision =
+      Decision(
+        "code",
+        Some(date("2018-01-01")),
+        Some(date("2019-01-01")),
+        "justification",
+        "goods",
+        decisionPdf = Some(rulingCertificate),
+        letterPdf = Some(coverLetter)
+      )
+    val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
+
+    given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(
+      successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L))
+    )
+    given(pdfService.generatePdf(any[Html]))
+      .willReturn(successful(PdfFile(Array.emptyByteArray)))
+    given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+
+    await(service.regenerateDocuments(originalCase, operator)) shouldBe caseUpdated
+
+    val caseUpdating = theCaseUpdating(connector)
+    caseUpdating.status shouldBe CaseStatus.COMPLETED
+
+  }
+
   private def date(yymmdd: String): Instant =
     LocalDate.parse(yymmdd).atStartOfDay(ZoneId.of("UTC")).toInstant
 
