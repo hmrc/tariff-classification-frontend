@@ -337,7 +337,7 @@ class CasesService @Inject() (
 
 
   def regenerateDocuments(completedCase: Case, operator: Operator)
-                         (implicit hc: HeaderCarrier, messages: Messages): Future[Case] =
+                         (implicit hc: HeaderCarrier, messages: Messages): Future[Case] = {
     for {
 
       caseWithPdf <- completedCase.decision
@@ -347,9 +347,10 @@ class CasesService @Inject() (
                        }
 
       // Update the case
-      updatedCase: Case <- connector.updateCase(caseWithPdf)
+      updatedCase <- connector.updateCase(caseWithPdf)
 
     } yield updatedCase
+    }
 
   private def uploadCaseDocuments(
     completedCase: Case,
