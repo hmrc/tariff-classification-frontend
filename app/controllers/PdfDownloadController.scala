@@ -59,9 +59,7 @@ class PdfDownloadController @Inject() (
 
             pdfResult.getOrElseF {
               caseService.regenerateDocuments(cse, request.operator).flatMap { regeneratedCase =>
-                logger.info(
-                  s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}"
-                )
+                logger.info(s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}")
                 downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf))
                   .getOrElseF {
                     Future.successful(NotFound(document_not_found(documentType, reference)))
@@ -90,9 +88,7 @@ class PdfDownloadController @Inject() (
 
             pdfResult.getOrElseF {
               caseService.regenerateDocuments(cse, request.operator).flatMap { regeneratedCase =>
-                logger.info(
-                  s"[PdfDownloadController][getLetterPdf] new letterPdf: ${regeneratedCase.decision.flatMap(_.letterPdf).map(_.id)}"
-                )
+                logger.info(s"[PdfDownloadController][getLetterPdf] new letterPdf: ${regeneratedCase.decision.flatMap(_.letterPdf).map(_.id)}")
                 downloadFile(regeneratedCase.decision.flatMap(_.letterPdf))
                   .getOrElseF {
                     Future.successful(NotFound(document_not_found(documentType, reference)))
