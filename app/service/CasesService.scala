@@ -342,12 +342,23 @@ class CasesService @Inject() (
     logger.info(s"[CasesService][regenerateDocuments] Starting to regenerate documents for case: ${completedCase.reference}")
 
     for {
+      caseWithPdf <- completedCase.decision.map{ decision =>
+                         logger.info(s"[CasesService][regenerateDocuments] Decision found for case: ${completedCase.reference}. Uploading documents...")
 
-      caseWithPdf <- completedCase.decision
-                       .map(decision => uploadCaseDocuments(completedCase, decision, operator))
-                       .getOrElse {
-                         Future.successful(completedCase)
-                       }
+                         uploadCaseDocuments(completedCase, decision, operator)
+                           .flatMap { uploadedCase =>
+                             logger.info(s"[CasesService][regenerateDocuments] Documents uploaded successfully for case: ${completedCase.reference}")
+                             Future.successful(uploadedCase)
+                           }
+                           .recoverWith {
+                             case ex: Exception =>
+                               logger.error(s"[CasesService][regenerateDocuments] Failed to upload documents for case: ${completedCase.reference}. Exception: ${ex.getMessage}")
+                               Future.failed(ex)
+                           }
+                       }.getOrElse {
+          logger.warn(s"[CasesService][regenerateDocuments] No decision found for case: ${completedCase.reference}. Skipping document upload.")
+          Future.successful(completedCase)
+        }
 
       // Update the case
       updatedCase <- connector.updateCase(caseWithPdf)
