@@ -19,6 +19,7 @@ package controllers
 import cats.data.OptionT
 import config.AppConfig
 import models.Attachment
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import service.{CasesService, FileStoreService}
@@ -43,7 +44,8 @@ class PdfDownloadController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with WithUnsafeDefaultFormBinding {
+    with WithUnsafeDefaultFormBinding
+    with Logging {
 
   def getRulingPdf(reference: String): Action[AnyContent] = authenticatedAction.async { implicit request =>
     caseService.getOne(reference).flatMap {
@@ -57,8 +59,13 @@ class PdfDownloadController @Inject() (
 
             pdfResult.getOrElseF {
               caseService.regenerateDocuments(cse, request.operator).flatMap { regeneratedCase =>
+                logger.info(
+                  s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}"
+                )
                 downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf))
-                  .getOrElse(NotFound(document_not_found(documentType, reference)))
+                  .getOrElseF {
+                    Future.successful(NotFound(document_not_found(documentType, reference)))
+                  }
               }
             }
 
@@ -83,8 +90,13 @@ class PdfDownloadController @Inject() (
 
             pdfResult.getOrElseF {
               caseService.regenerateDocuments(cse, request.operator).flatMap { regeneratedCase =>
+                logger.info(
+                  s"[PdfDownloadController][getLetterPdf] new letterPdf: ${regeneratedCase.decision.flatMap(_.letterPdf).map(_.id)}"
+                )
                 downloadFile(regeneratedCase.decision.flatMap(_.letterPdf))
-                  .getOrElse(NotFound(document_not_found(documentType, reference)))
+                  .getOrElseF {
+                    Future.successful(NotFound(document_not_found(documentType, reference)))
+                  }
               }
             }
 
@@ -112,7 +124,7 @@ class PdfDownloadController @Inject() (
     }
   }
 
-  private def downloadFile(attachment: Option[Attachment])(implicit hc: HeaderCarrier): OptionT[Future, Result] =
+  private def downloadFile(attachment: Option[Attachment])(implicit hc: HeaderCarrier): OptionT[Future, Result] = {
     for {
       pdf      <- OptionT.fromOption[Future](attachment)
       meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
@@ -124,4 +136,5 @@ class PdfDownloadController @Inject() (
       .withHeaders(
         "Content-Disposition" -> s"attachment; filename=$fileName"
       )
+  }
 }
