@@ -58,13 +58,14 @@ class PdfDownloadController @Inject() (
             val documentType = messages("errors.document-not-found.ruling-certificate")
 
             pdfResult.getOrElseF {
-              caseService.regenerateDocuments(cse, request.operator).flatMap { regeneratedCase =>
-                logger.info(s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}")
-                downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf))
+              for {
+                regeneratedCase <- caseService.regenerateDocuments(cse, request.operator)
+                _ = logger.info(s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}")
+                fileDownloadResult <- downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf))
                   .getOrElseF {
                     Future.successful(NotFound(document_not_found(documentType, reference)))
                   }
-              }
+              } yield fileDownloadResult
             }
 
           case None =>
@@ -87,13 +88,14 @@ class PdfDownloadController @Inject() (
             val documentType = messages("errors.document-not-found.ruling-certificate")
 
             pdfResult.getOrElseF {
-              caseService.regenerateDocuments(cse, request.operator).flatMap { regeneratedCase =>
-                logger.info(s"[PdfDownloadController][getLetterPdf] new letterPdf: ${regeneratedCase.decision.flatMap(_.letterPdf).map(_.id)}")
-                downloadFile(regeneratedCase.decision.flatMap(_.letterPdf))
+              for {
+                regeneratedCase <- caseService.regenerateDocuments(cse, request.operator)
+                _ = logger.info(s"[PdfDownloadController][getLetterPdf] new letterPdf: ${regeneratedCase.decision.flatMap(_.letterPdf).map(_.id)}")
+                fileDownloadResult <- downloadFile(regeneratedCase.decision.flatMap(_.letterPdf))
                   .getOrElseF {
                     Future.successful(NotFound(document_not_found(documentType, reference)))
                   }
-              }
+              } yield fileDownloadResult
             }
 
           case None =>
