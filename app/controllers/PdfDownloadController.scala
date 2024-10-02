@@ -30,6 +30,7 @@ import views.html.{case_not_found, document_not_found, ruling_not_found}
 
 import javax.inject.Inject
 import scala.concurrent.Future.successful
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
 
 class PdfDownloadController @Inject() (
@@ -59,10 +60,13 @@ class PdfDownloadController @Inject() (
               for {
                 regeneratedCase <- caseService.regenerateDocuments(cse, request.operator)
                 _ = logger.info(s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}")
-                fileDownloadResult <- downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf)).getOrElse {
-                  NotFound(document_not_found(documentType, reference))
+                fileDownloadResult <- retryDownload(appConfig.downloadMaxRetries, appConfig.downloadRetryInterval) {
+                  downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf)).value
                 }
-              } yield fileDownloadResult
+              } yield fileDownloadResult match {
+                case Some(file) => file
+                case None => NotFound(document_not_found(documentType, reference))
+              }
             }
 
           case None =>
@@ -87,10 +91,13 @@ class PdfDownloadController @Inject() (
                 regeneratedCase <- caseService.regenerateDocuments(cse, request.operator)
                 letter = regeneratedCase.decision.flatMap(_.letterPdf)
                 _ = logger.info(s"[PdfDownloadController][getLetterPdf] new letterPdf: ${letter.map(_.id)}")
-                fileDownloadResult <- downloadFile(letter).getOrElse {
-                  NotFound(document_not_found(documentType, reference))
+                fileDownloadResult <- retryDownload(appConfig.downloadMaxRetries, appConfig.downloadRetryInterval) {
+                  downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf)).value
                 }
-              } yield fileDownloadResult
+              } yield fileDownloadResult match {
+                case Some(file) => file
+                case None => NotFound(document_not_found(documentType, reference))
+              }
             }
 
           case None =>
@@ -114,6 +121,18 @@ class PdfDownloadController @Inject() (
 
       case None =>
         successful(NotFound(case_not_found(reference)))
+    }
+  }
+
+  private def retryDownload[T](maxRetries: Int, delay: FiniteDuration)(block: => Future[Option[T]]): Future[Option[T]] = {
+    logger.info(s"[PdfDownloadController][retryDownload] attempt: $maxRetries")
+    block.flatMap {
+      case Some(result) => Future.successful(Some(result))
+      case None if maxRetries > 1 =>
+        Thread.sleep(delay.toMillis)
+        retryDownload(maxRetries - 1, delay)(block)
+      case None =>
+        Future.successful(None)
     }
   }
 
