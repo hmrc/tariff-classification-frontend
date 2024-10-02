@@ -92,7 +92,7 @@ class PdfDownloadController @Inject() (
                 letter = regeneratedCase.decision.flatMap(_.letterPdf)
                 _ = logger.info(s"[PdfDownloadController][getLetterPdf] new letterPdf: ${letter.map(_.id)}")
                 fileDownloadResult <- retryDownload(appConfig.downloadMaxRetries, appConfig.downloadRetryInterval) {
-                  downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf)).value
+                  downloadFile(letter).value
                 }
               } yield fileDownloadResult match {
                 case Some(file) => file
