@@ -22,7 +22,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.Clock
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 @Singleton
 class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
@@ -49,6 +49,15 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val dateOfReceiptYearLowerBound: Int       = 2010
 
   lazy val maxUriLength: Long = config.underlying.getBytes("pekko.http.parsing.max-uri-length")
+
+  lazy val downloadMaxRetries: Int            =  config.getOptional[Int]("download.max-retries").getOrElse(3)
+
+  lazy val downloadRetryInterval: FiniteDuration  = {
+    if (config.has("download.interval"))
+      FiniteDuration(config.underlying.getDuration("download.interval").toMillis, TimeUnit.MILLISECONDS)
+    else
+      3.seconds
+  }
 
   lazy val keywordsCacheExpiration: FiniteDuration = {
     val javaDuration = config.underlying.getDuration("keywords-cache.expiration")
