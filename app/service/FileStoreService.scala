@@ -59,7 +59,7 @@ class FileStoreService @Inject() (connector: FileStoreConnector)(implicit ec: Ex
       // Log an error for any attachments which arent in the response
       val idsFound: Set[String] = group.flatMap(_._2).map(_.id).toSet
       attachmentsById.keys.filterNot(idsFound.contains).foreach { id =>
-        logger.error(s"Published file [$id] was not found in the Filestore")
+        logger.error(s"[FileStoreService][groupingByCase] Published file [$id] was not found in the Filestore")
       }
 
       // The Map currently only contains Cases which have >=1 attachments.
@@ -82,7 +82,7 @@ class FileStoreService @Inject() (connector: FileStoreConnector)(implicit ec: Ex
                 Some(StoredAttachment(attachment, file))
               case None =>
                 logger.error(
-                  s"Agent Letter of Authority [${attachment.id}] was present on Case [${c.reference}] but it didn't exist in the FileStore"
+                  s"[FileStoreService][getLetterOfAuthority] Agent Letter of Authority [${attachment.id}] was present on Case [${c.reference}] but it didn't exist in the FileStore"
                 )
                 None
             }
