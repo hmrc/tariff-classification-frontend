@@ -25,7 +25,7 @@ import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import service.{CasesService, UserService}
+import services.{CasesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.managementtools.manage_users_view

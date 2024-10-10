@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito._
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, FileStoreService, KeywordsService}
+import services.{CasesService, FileStoreService, KeywordsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.SearchTab

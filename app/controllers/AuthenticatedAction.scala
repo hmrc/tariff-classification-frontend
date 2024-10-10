@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
+import connectors.{BindingTariffClassificationConnector, StrideAuthConnector}
 import controllers.auth.AuthRedirects
 import models.request.AuthenticatedRequest
 import models.{Operator, Permission, Role}

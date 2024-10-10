@@ -22,7 +22,7 @@ import models.forms.ReleaseCaseForm
 import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.mvc._
-import service.{CasesService, QueuesService}
+import services.{CasesService, QueuesService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.confirmation_case_creation

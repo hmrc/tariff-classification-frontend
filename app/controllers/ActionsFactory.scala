@@ -21,7 +21,7 @@ import models.{Case, Permission, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{ActionFilter, ActionRefiner, Result}
-import service.{CasesService, DataCacheService}
+import services.{CasesService, DataCacheService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 

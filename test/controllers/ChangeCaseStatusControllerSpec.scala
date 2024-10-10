@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.mvc.request.RequestTarget
 import play.api.test.Helpers._
-import service.CasesService
+import services.CasesService
 import utils.Cases
 import views.html.change_case_status
 

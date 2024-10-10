@@ -22,13 +22,15 @@ import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.response.ScanStatus
-import models.viewmodels._
+import viewmodels.{FileView, PdfViewModel, _}
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
 import java.util.UUID
 
 object Cases {
+
+  val fileAttachment: Attachment = Attachment(id = UUID.randomUUID().toString, public = false, None)
 
   val storedAttachment: StoredAttachment = StoredAttachment(
     "id",
@@ -424,6 +426,25 @@ object Cases {
     ),
     agentName = Some("agent"),
     port = Some("port")
+  )
+
+  val pdf: PdfViewModel = PdfViewModel(
+    "eori",
+    "reference",
+    eoriDetailsExample,
+    contactExample,
+    Instant.now,
+    "goods name",
+    "goods details",
+    Some("confidential info"),
+    sendingSample = true,
+    hazardousSample = false,
+    returnSample = true,
+    Seq(FileView("id", "file name", confidential = false)),
+    Some("commodity code"),
+    Some("legal"),
+    List(),
+    None
   )
 
   val aCaseWithCompleteDecision: Case = Cases.liabilityCaseExample

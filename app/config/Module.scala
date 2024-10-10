@@ -18,7 +18,8 @@ package config
 
 import com.google.inject.AbstractModule
 import controllers.actions._
-import service.{DataCacheService, MongoCacheService}
+import org.apache.fop.apps.FopFactory
+import services.{DataCacheService, MongoCacheService}
 
 class Module extends AbstractModule {
 
@@ -28,5 +29,6 @@ class Module extends AbstractModule {
     bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[DataCacheService]).to(classOf[MongoCacheService]).asEagerSingleton()
+    bind(classOf[FopFactory]).toProvider(classOf[FopFactoryProvider]).asEagerSingleton()
   }
 }

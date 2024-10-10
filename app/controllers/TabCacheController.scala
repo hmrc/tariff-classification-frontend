@@ -21,7 +21,7 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.ApplicationType
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.TabCacheService
+import services.TabCacheService
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

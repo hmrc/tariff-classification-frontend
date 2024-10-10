@@ -22,7 +22,7 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import models.cache.CacheMap
-import service.DataCacheService
+import services.DataCacheService
 
 import scala.concurrent.Future
 

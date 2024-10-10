@@ -24,7 +24,7 @@ import models.viewmodels._
 import models.{ApplicationType, NoPagination, Permission, Queues}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.gateway_cases_view
 

@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.assign_case

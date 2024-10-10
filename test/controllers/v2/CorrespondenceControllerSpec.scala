@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.http.Status
 import play.api.i18n.Messages
 import play.twirl.api.Html
-import service.{EventsService, FileStoreService, QueuesService}
+import services.{EventsService, FileStoreService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.Cases._

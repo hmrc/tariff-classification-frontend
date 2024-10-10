@@ -23,7 +23,7 @@ import models._
 import models.forms.AppealForm
 import play.api.data.Form
 import play.api.mvc._
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{appeal_change_status, appeal_choose_status, appeal_choose_type}

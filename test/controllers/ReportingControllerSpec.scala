@@ -25,7 +25,7 @@ import org.mockito.Mockito.reset
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
-import service._
+import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.managementtools._
 import views.html.report_not_found

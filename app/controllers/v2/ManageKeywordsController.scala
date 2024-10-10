@@ -29,7 +29,7 @@ import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.{CasesService, ManageKeywordsService}
+import services.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.case_not_found
 import views.html.managementtools._

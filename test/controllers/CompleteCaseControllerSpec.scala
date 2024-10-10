@@ -24,9 +24,9 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.Messages
-import play.api.mvc.Result
-import play.api.test.Helpers.{redirectLocation, _}
-import service.{CasesService, CommodityCodeService}
+import play.api.mvc.{RequestHeader, Result}
+import play.api.test.Helpers._
+import services.{CasesService, CommodityCodeService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.{complete_case, confirm_complete_case}
@@ -117,7 +117,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           withDecision(bindingCommodityCode = "040900")
         )
 
-        when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier], any[Messages]))
+        when(casesService.completeCase(refEq(c), any[Operator])(any[HeaderCarrier], any[RequestHeader], any[Messages]))
           .thenReturn(successful(caseWithStatusCOMPLETED))
 
         val result: Result = await(getController(c).completeCase("reference")(newFakeGETRequestWithCSRF()))
@@ -192,7 +192,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "Confirm Complete Case" should {
 
     "return OK and HTML content type" in {
-      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier], any[Messages]))
+      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier], any[RequestHeader], any[Messages]))
         .thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result =
@@ -208,7 +208,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     }
 
     "redirect to view case when 'No' selected" in {
-      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier], any[Messages]))
+      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier], any[RequestHeader], any[Messages]))
         .thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result =
@@ -224,7 +224,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     }
 
     "return form error when no option selected" in {
-      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier], any[Messages]))
+      when(casesService.completeCase(refEq(validCaseWithStatusOPEN), any[Operator])(any[HeaderCarrier], any[RequestHeader], any[Messages]))
         .thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result =
@@ -327,7 +327,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     }
 
     "return OK when user has right permissions" in {
-      when(casesService.completeCase(any[Case], any[Operator])(any[HeaderCarrier], any[Messages]))
+      when(casesService.completeCase(any[Case], any[Operator])(any[HeaderCarrier], any[RequestHeader], any[Messages]))
         .thenReturn(successful(caseWithStatusCOMPLETED))
 
       val result: Result = await(

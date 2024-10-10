@@ -27,7 +27,7 @@ import play.api.http.{MimeTypes, Status}
 import play.api.libs.Files.TemporaryFile
 import play.api.mvc.{AnyContentAsMultipartFormData, MultipartFormData}
 import play.api.test.Helpers._
-import service.{CasesService, FakeDataCacheService, FileStoreService}
+import services.{CasesService, FakeDataCacheService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.JsonFormatters._
