@@ -22,13 +22,15 @@ import models.SampleReturn.SampleReturn
 import models.SampleStatus.SampleStatus
 import models._
 import models.response.ScanStatus
-import models.viewmodels._
+import viewmodels._
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
 import java.util.UUID
 
 object Cases {
+
+  val fileAttachment: Attachment = Attachment(id = UUID.randomUUID().toString, public = false, None)
 
   val storedAttachment: StoredAttachment = StoredAttachment(
     "id",

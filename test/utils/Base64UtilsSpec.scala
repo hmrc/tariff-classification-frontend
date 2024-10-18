@@ -16,7 +16,9 @@
 
 package utils
 
-class Base64UtilsSpec extends UtilsBaseSpec {
+import base.SpecBase
+
+class Base64UtilsSpec extends SpecBase {
 
   private val text: String    = "hello world"
   private val encoded: String = "aGVsbG8gd29ybGQ="

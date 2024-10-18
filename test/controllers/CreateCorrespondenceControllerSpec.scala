@@ -26,7 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, QueuesService}
+import services.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.create_correspondence

@@ -31,7 +31,7 @@ import play.api.i18n.Messages
 import play.api.mvc._
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import service.{CasesService, FileStoreService}
+import services.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.partials.liabilities.attachments_details

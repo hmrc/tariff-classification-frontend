@@ -16,9 +16,11 @@
 
 package utils
 
+import base.SpecBase
+
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-class DatesSpec extends UtilsBaseSpec {
+class DatesSpec extends SpecBase {
 
   private val date: Instant = LocalDate
     .of(2018, 1, 1)

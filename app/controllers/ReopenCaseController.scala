@@ -20,7 +20,7 @@ import config.AppConfig
 import models.Permission
 import models.request.AuthenticatedCaseRequest
 import play.api.mvc._
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Notification._

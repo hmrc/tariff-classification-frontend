@@ -23,7 +23,7 @@ import models.forms.v2.{CompleteCaseChoiceForm, LiabilityDetailsForm}
 import models.request.AuthenticatedRequest
 import play.api.data.Form
 import play.api.mvc._
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{complete_case, confirm_complete_case}

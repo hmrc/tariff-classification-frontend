@@ -17,7 +17,7 @@
 package controllers
 
 import config.AppConfig
-import connector.{BindingTariffClassificationConnector, StrideAuthConnector}
+import connectors.{BindingTariffClassificationConnector, StrideAuthConnector}
 import models.request.AuthenticatedRequest
 import models.{Operator, Role}
 import org.mockito.ArgumentMatchers.{any, refEq}

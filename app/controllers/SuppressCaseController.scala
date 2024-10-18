@@ -25,7 +25,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import service.{CasesService, DataCacheService, FileStoreService}
+import services.{CasesService, DataCacheService, FileStoreService}
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_supressed_case, suppress_case_email, suppress_case_reason}

@@ -13,7 +13,9 @@ object AppDependencies {
     "org.typelevel"                %% "cats-core"                  % "2.12.0",
     "com.github.blemale"           %% "scaffeine"                  % "5.3.0",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.17.2",
-    "org.apache.pekko"             %% "pekko-connectors-csv"       % "1.0.2"
+    "org.apache.pekko"             %% "pekko-connectors-csv"       % "1.0.2",
+    "org.apache.xmlgraphics"        % "fop"                        % "2.9",
+    "net.sf.saxon"           % "Saxon-HE"                    % "12.5"
   )
 
   private val test: Seq[ModuleID] = Seq(

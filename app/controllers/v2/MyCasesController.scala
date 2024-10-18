@@ -26,7 +26,7 @@ import models.viewmodels._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import service.{CasesService, EventsService}
+import services.{CasesService, EventsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.my_cases_view
 

@@ -21,7 +21,7 @@ import models.UserAnswers
 import models.request.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.ActionTransformer
 import models.cache.CacheMap
-import service.DataCacheService
+import services.DataCacheService
 
 import scala.concurrent.{ExecutionContext, Future}
 

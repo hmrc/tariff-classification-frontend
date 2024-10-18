@@ -27,7 +27,7 @@ import play.api.http.Status
 import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import service.{CasesService, FileStoreService}
+import services.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.{case_not_found, document_not_found, ruling_not_found}

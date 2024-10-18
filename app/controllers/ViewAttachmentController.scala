@@ -22,7 +22,7 @@ import models.Permission
 import models.response.FileMetadata
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import service.FileStoreService
+import services.FileStoreService
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.view_attachment_unavailable
