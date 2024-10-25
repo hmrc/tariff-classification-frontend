@@ -22,7 +22,7 @@ import models.{ApplicationType, Operator}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{FakeDataCacheService, TabCacheService}
+import services.{FakeDataCacheService, TabCacheService}
 
 class TabCacheControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 

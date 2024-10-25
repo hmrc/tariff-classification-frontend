@@ -29,7 +29,7 @@ import play.api.libs.Files.TemporaryFileCreator
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers, MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.{Application, Configuration, Environment}
-import service.RedirectService
+import services.RedirectService
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
 import utils.UnitSpec

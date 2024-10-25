@@ -24,7 +24,7 @@ import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, EventsService}
+import services.{CasesService, EventsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
 import views.html.v2.my_cases_view

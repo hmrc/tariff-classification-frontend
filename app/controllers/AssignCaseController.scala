@@ -22,7 +22,7 @@ import models.request.AuthenticatedRequest
 import models.{Case, Permission}
 import play.api.data.Form
 import play.api.mvc._
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.assign_case

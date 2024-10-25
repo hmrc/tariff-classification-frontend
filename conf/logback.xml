@@ -15,7 +15,7 @@
     </appender>
 
     <appender name="CONNECTOR_LOG_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/connector.log</file>
+        <file>logs/connectors.log</file>
         <encoder>
             <pattern>%message%n</pattern>
         </encoder>
@@ -30,6 +30,8 @@
     <logger name="connector" level="TRACE">
         <appender-ref ref="STDOUT"/>
     </logger>
+
+    <logger name="org.apache.fop" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="FILE"/>

@@ -26,8 +26,8 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.mvc.Result
-import play.api.test.Helpers.{redirectLocation, _}
-import service.FileStoreService
+import play.api.test.Helpers._
+import services.FileStoreService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.view_attachment_unavailable

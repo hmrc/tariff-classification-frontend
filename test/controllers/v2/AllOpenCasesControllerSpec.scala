@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.{CasesService, QueuesService}
+import services.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.open_cases_view

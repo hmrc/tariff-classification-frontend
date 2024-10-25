@@ -23,7 +23,7 @@ import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
-import service.CasesService
+import services.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.change_extended_use_status
