@@ -32,16 +32,16 @@ import scala.concurrent.Future.successful
 
 class CasesService_UpdateSampleReturnSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val connector        = mock[BindingTariffClassificationConnector]
-  private val rulingConnector  = mock[RulingConnector]
-  private val emailService     = mock[EmailService]
-  private val fileStoreService = mock[FileStoreService]
-  private val countriesService = mock[CountriesService]
-  private val reportingService = mock[ReportingService]
-  private val pdfService       = mock[PdfService]
-  private val audit            = mock[AuditService]
+  private val connector             = mock[BindingTariffClassificationConnector]
+  private val rulingConnector       = mock[RulingConnector]
+  private val emailService          = mock[EmailService]
+  private val fileStoreService      = mock[FileStoreService]
+  private val countriesService      = mock[CountriesService]
+  private val reportingService      = mock[ReportingService]
+  private val pdfService            = mock[PdfService]
+  private val audit                 = mock[AuditService]
   private val cover_letter_template = mock[cover_letter_template]
-  private val aCase            = Cases.btiCaseExample
+  private val aCase                 = Cases.btiCaseExample
 
   private val service =
     new CasesService(

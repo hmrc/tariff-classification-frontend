@@ -35,20 +35,20 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
-  private val c                = mock[Case]
-  private val manyCases        = Seq(c)
-  private val oneCase          = Some(c)
-  private val emailService     = mock[EmailService]
-  private val fileStoreService = mock[FileStoreService]
-  private val countriesService = mock[CountriesService]
-  private val reportingService = mock[ReportingService]
-  private val pdfService       = mock[PdfService]
-  private val queue            = mock[Queue]
-  private val pagination       = mock[Pagination]
-  private val connector        = mock[BindingTariffClassificationConnector]
-  private val rulingConnector  = mock[RulingConnector]
-  private val audit            = mock[AuditService]
-  private val operator         = Operator("operator-id")
+  private val c                     = mock[Case]
+  private val manyCases             = Seq(c)
+  private val oneCase               = Some(c)
+  private val emailService          = mock[EmailService]
+  private val fileStoreService      = mock[FileStoreService]
+  private val countriesService      = mock[CountriesService]
+  private val reportingService      = mock[ReportingService]
+  private val pdfService            = mock[PdfService]
+  private val queue                 = mock[Queue]
+  private val pagination            = mock[Pagination]
+  private val connector             = mock[BindingTariffClassificationConnector]
+  private val rulingConnector       = mock[RulingConnector]
+  private val audit                 = mock[AuditService]
+  private val operator              = Operator("operator-id")
   private val cover_letter_template = mock[cover_letter_template]
 
   private val service =

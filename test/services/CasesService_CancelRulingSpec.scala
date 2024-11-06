@@ -35,18 +35,18 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val manyCases        = mock[Seq[Case]]
-  private val oneCase          = mock[Option[Case]]
-  private val queue            = mock[Queue]
-  private val connector        = mock[BindingTariffClassificationConnector]
-  private val rulingConnector  = mock[RulingConnector]
-  private val emailService     = mock[EmailService]
-  private val fileStoreService = mock[FileStoreService]
-  private val countriesService = mock[CountriesService]
-  private val reportingService = mock[ReportingService]
-  private val pdfService       = mock[PdfService]
-  private val audit            = mock[AuditService]
-  private val config           = mock[AppConfig]
+  private val manyCases             = mock[Seq[Case]]
+  private val oneCase               = mock[Option[Case]]
+  private val queue                 = mock[Queue]
+  private val connector             = mock[BindingTariffClassificationConnector]
+  private val rulingConnector       = mock[RulingConnector]
+  private val emailService          = mock[EmailService]
+  private val fileStoreService      = mock[FileStoreService]
+  private val countriesService      = mock[CountriesService]
+  private val reportingService      = mock[ReportingService]
+  private val pdfService            = mock[PdfService]
+  private val audit                 = mock[AuditService]
+  private val config                = mock[AppConfig]
   private val cover_letter_template = mock[cover_letter_template]
   private val clock = Clock.fixed(
     LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC),

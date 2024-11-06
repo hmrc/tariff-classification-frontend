@@ -36,19 +36,23 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
 
   private val env: Environment       = injector.instanceOf[Environment]
   private val fopFactory: FopFactory = injector.instanceOf[FopFactory]
-  private val countriesService = injector.instanceOf[CountriesService]
+  private val countriesService       = injector.instanceOf[CountriesService]
   private val coverLetterTemplate: Html =
-    injector.instanceOf[cover_letter_template].apply(
-      aCase(_ => btiCaseExample),
-      expiredRuling,
-      _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
-    )(messages)
+    injector
+      .instanceOf[cover_letter_template]
+      .apply(
+        aCase(_ => btiCaseExample),
+        expiredRuling,
+        _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
+      )(messages)
   private val coverLetterTemplateWithSamples: Html =
-    injector.instanceOf[cover_letter_template].apply(
-      aCase(_ => btiCaseExample.copy(application = btiApplicationExample.copy(sampleToBeProvided = true))),
-      expiredRuling,
-      _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
-    )(messages)
+    injector
+      .instanceOf[cover_letter_template]
+      .apply(
+        aCase(_ => btiCaseExample.copy(application = btiApplicationExample.copy(sampleToBeProvided = true))),
+        expiredRuling,
+        _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
+      )(messages)
 
   private val pdfGeneratorService: PdfGeneratorService = new PdfGeneratorService(fopFactory, env)
 
@@ -57,11 +61,11 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
   "render" must {
 
     def test(
-              pdfType: String,
-              template: Html,
-              visibleContent: Seq[String],
-              hiddenContent: Seq[String]
-            ): Unit = {
+      pdfType: String,
+      template: Html,
+      visibleContent: Seq[String],
+      hiddenContent: Seq[String]
+    ): Unit = {
       s"create a PDF $pdfType" in {
         val result = Await.result(pdfGeneratorService.render(template, xlsTransformer), Duration.Inf)
 
@@ -81,7 +85,7 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
 
           lines(2) shouldBe "Advance Tariff Ruling"
           lines      should contain allElementsOf visibleContent
-          lines should contain noElementsOf hiddenContent
+          lines      should contain noElementsOf hiddenContent
         } finally document.close()
 
       }
@@ -96,8 +100,18 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
     )
 
     val input: Seq[(String, Html, Seq[String], Seq[String])] = Seq(
-      ("withoutSamples", coverLetterTemplate, headings ++ Seq("Asking for a review with HMRC"), Seq("Your samples have been kept")),
-      ("withSamples", coverLetterTemplateWithSamples, headings ++ Seq("Asking for a review with HMRC", "Your samples have been kept"), Seq.empty)
+      (
+        "withoutSamples",
+        coverLetterTemplate,
+        headings ++ Seq("Asking for a review with HMRC"),
+        Seq("Your samples have been kept")
+      ),
+      (
+        "withSamples",
+        coverLetterTemplateWithSamples,
+        headings ++ Seq("Asking for a review with HMRC", "Your samples have been kept"),
+        Seq.empty
+      )
     )
 
     input.foreach(args => (test _).tupled(args))

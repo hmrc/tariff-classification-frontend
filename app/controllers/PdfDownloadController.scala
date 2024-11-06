@@ -54,18 +54,21 @@ class PdfDownloadController @Inject() (
         val messages     = request.messages
         val documentType = messages("errors.document-not-found.ruling-certificate")
 
-        cse.decision match  {
+        cse.decision match {
           case Some(decision) =>
             downloadFile(decision.decisionPdf).getOrElseF {
               for {
                 regeneratedCase <- caseService.regenerateDocuments(cse, request.operator)
-                _ = logger.info(s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}")
+                _ =
+                  logger.info(
+                    s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}"
+                  )
                 fileDownloadResult <- retryDownload(appConfig.downloadMaxRetries, appConfig.downloadRetryInterval) {
-                  downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf)).value
-                }
+                                        downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf)).value
+                                      }
               } yield fileDownloadResult match {
                 case Some(file) => file
-                case None => NotFound(document_not_found(documentType, reference))
+                case None       => NotFound(document_not_found(documentType, reference))
               }
             }
 
@@ -90,13 +93,13 @@ class PdfDownloadController @Inject() (
               for {
                 regeneratedCase <- caseService.regenerateDocuments(cse, request.operator)
                 letter = regeneratedCase.decision.flatMap(_.letterPdf)
-                _ = logger.info(s"[PdfDownloadController][getLetterPdf] new letterPdf: ${letter.map(_.id)}")
+                _      = logger.info(s"[PdfDownloadController][getLetterPdf] new letterPdf: ${letter.map(_.id)}")
                 fileDownloadResult <- retryDownload(appConfig.downloadMaxRetries, appConfig.downloadRetryInterval) {
-                  downloadFile(letter).value
-                }
+                                        downloadFile(letter).value
+                                      }
               } yield fileDownloadResult match {
                 case Some(file) => file
-                case None => NotFound(document_not_found(documentType, reference))
+                case None       => NotFound(document_not_found(documentType, reference))
               }
             }
 
@@ -124,7 +127,9 @@ class PdfDownloadController @Inject() (
     }
   }
 
-  private def retryDownload[T](maxRetries: Int, delay: FiniteDuration)(block: => Future[Option[T]]): Future[Option[T]] = {
+  private def retryDownload[T](maxRetries: Int, delay: FiniteDuration)(
+    block: => Future[Option[T]]
+  ): Future[Option[T]] = {
     logger.info(s"[PdfDownloadController][retryDownload] attempt: $maxRetries")
     block.flatMap {
       case Some(result) => Future.successful(Some(result))
@@ -136,7 +141,7 @@ class PdfDownloadController @Inject() (
     }
   }
 
-  private def downloadFile(attachment: Option[Attachment])(implicit hc: HeaderCarrier): OptionT[Future, Result] = {
+  private def downloadFile(attachment: Option[Attachment])(implicit hc: HeaderCarrier): OptionT[Future, Result] =
     for {
       pdf      <- OptionT.fromOption[Future](attachment)
       meta     <- OptionT(fileStore.getFileMetadata(pdf.id))
@@ -148,5 +153,4 @@ class PdfDownloadController @Inject() (
       .withHeaders(
         "Content-Disposition" -> s"attachment; filename=$fileName"
       )
-  }
 }
