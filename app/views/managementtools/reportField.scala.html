@@ -42,26 +42,26 @@
     </td>
   }
   case StatusResultField(_, data) => {
-    <td id="@{id}-@{field.fieldName}-@{index}" scope="row" class="govuk-table__cell">
+    <td id="@{id}-@{field.fieldName}-@{index}" class="govuk-table__cell">
       @data.map { status =>
         @pseudoCaseStatus(status, s"${id}-${field.fieldName}-status-label-$index")
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
   case LiabilityStatusResultField(_, data) => {
-    <td id="@{id}-@{field.fieldName}-@{index}" scope="row" class="govuk-table__cell">
+    <td id="@{id}-@{field.fieldName}-@{index}" class="govuk-table__cell">
       @data.map { status =>
         @liabilityStatus(status, s"${id}-${field.fieldName}-status-label-$index")
       }.getOrElse(messages("reporting.result.unknown"))
     </td>
   }
   case NumberResultField(_, data) if field == ReportField.TotalDays => {
-    <td id="@{id}-@{field.fieldName}-@{index}" scope="row" class="govuk-table__cell @if(data.exists(_>=120)){live-red-text}">
+    <td id="@{id}-@{field.fieldName}-@{index}" class="govuk-table__cell @if(data.exists(_>=120)){live-red-text}">
         @Reports.formatField(field, result, users, teams)
     </td>
   }
   case other => {
-    <td id="@{id}-@{field.fieldName}-@{index}" scope="row" class="govuk-table__cell">
+    <td id="@{id}-@{field.fieldName}-@{index}" class="govuk-table__cell">
       @Reports.formatField(field, result, users, teams)
     </td>
   }
