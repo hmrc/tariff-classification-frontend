@@ -33,8 +33,8 @@ class PdfService @Inject() (
   def generatePdf(htmlContent: Html): Future[PdfFile] =
     connector.generatePdf(htmlContent)
 
-  def generateFopPdf(htmlContent: Html): Future[PdfFile] = {
-    val xlsTransformer = Source.fromResource("cover_letter_template.xml").getLines()
+  def generateFopPdf(htmlContent: Html, templateSource: String): Future[PdfFile] = {
+    val xlsTransformer = Source.fromResource(templateSource).getLines()
     pdfGeneratorService.render(htmlContent, xlsTransformer.mkString).map(PdfFile(_))
   }
 }

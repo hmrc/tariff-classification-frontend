@@ -24,7 +24,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.Environment
 import play.twirl.api.Html
 import utils.Cases.{aCase, btiApplicationExample, btiCaseExample, expiredRuling}
-import views.html.templates.cover_letter_template
+import views.html.templates.{cover_letter_template, ruling_template}
 
 import java.io.File
 import java.nio.file.{Files, Paths}
@@ -49,21 +49,36 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       expiredRuling,
       _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
     )(messages)
+  private val applicationCertificate: Html =
+    injector.instanceOf[ruling_template].apply(
+      aCase(_ => btiCaseExample.copy(
+        reference = "600000034",
+        application = btiApplicationExample.copy(sampleToBeProvided = true, goodName = "Snow man jacket"),
+        keywords = Set("jacket", "snow", "products"))),
+      expiredRuling.copy(
+        goodsDescription = "Termo produced in Uruguay with stamps from Norway and legal justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf",
+        justification = "Termo produced in Uruguay with stamps from Norway and legal justification justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf"
+      ),
+      _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
+    )(messages)
 
   private val pdfGeneratorService: PdfGeneratorService = new PdfGeneratorService(fopFactory, env)
 
   private val xlsTransformer = Source.fromResource("cover_letter_template.xml").mkString
+
+  private val xlsRulingTransformer = Source.fromResource("ruling_template.xml").mkString
 
   "render" must {
 
     def test(
               pdfType: String,
               template: Html,
+              transformer: String,
               visibleContent: Seq[String],
               hiddenContent: Seq[String]
             ): Unit = {
       s"create a PDF $pdfType" in {
-        val result = Await.result(pdfGeneratorService.render(template, xlsTransformer), Duration.Inf)
+        val result = Await.result(pdfGeneratorService.render(template, transformer), Duration.Inf)
 
         val fileName = s"test/resources/fop/$pdfType-test.pdf"
         Files.write(Paths.get(fileName), result)
@@ -79,7 +94,6 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
           val text: String                  = textStripper.getText(document)
           val lines: List[String]           = text.split("\n").toList.map(_.trim)
 
-          lines(2) shouldBe "Advance Tariff Ruling"
           lines      should contain allElementsOf visibleContent
           lines should contain noElementsOf hiddenContent
         } finally document.close()
@@ -88,6 +102,7 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
     }
 
     val headings: Seq[String] = Seq(
+      "Advance Tariff Ruling",
       "About this decision",
       "What to do if you disagree with this decision",
       "If you want to appeal to an independent tribunal",
@@ -95,9 +110,16 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       "Important information about communicating by email"
     )
 
-    val input: Seq[(String, Html, Seq[String], Seq[String])] = Seq(
-      ("withoutSamples", coverLetterTemplate, headings ++ Seq("Asking for a review with HMRC"), Seq("Your samples have been kept")),
-      ("withSamples", coverLetterTemplateWithSamples, headings ++ Seq("Asking for a review with HMRC", "Your samples have been kept"), Seq.empty)
+    val rulingCertificateHeadings: Seq[String] = Seq(
+      "Advance Tariff Ruling Certificate",
+      "Holder details Ruling details",
+      "Legal information about this ruling"
+    )
+
+    val input: Seq[(String, Html, String, Seq[String], Seq[String])] = Seq(
+      ("withoutSamples", coverLetterTemplate, xlsTransformer, headings ++ Seq("Asking for a review with HMRC"), Seq("Your samples have been kept")),
+      ("withSamples", coverLetterTemplateWithSamples, xlsTransformer, headings ++ Seq("Asking for a review with HMRC", "Your samples have been kept"), Seq.empty),
+      ("applicationCertificate", applicationCertificate, xlsRulingTransformer, rulingCertificateHeadings, Seq.empty)
     )
 
     input.foreach(args => (test _).tupled(args))

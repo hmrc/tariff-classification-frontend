@@ -13,7 +13,7 @@
   <xsl:param name="log" select="false()"/>
 
   <xsl:template
-          match="*[self::h1 or self::h2 or self::h3 or self::p or self::strong or self::div]"
+          match="*[self::h1 or self::h2 or self::h3 or self::p or self::strong or self::div or self::dt or self::dd]"
           mode="pdf"
           priority="0">
     <xsl:variable name="class" select="@class"/>
