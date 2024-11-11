@@ -36,31 +36,42 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
 
   private val env: Environment       = injector.instanceOf[Environment]
   private val fopFactory: FopFactory = injector.instanceOf[FopFactory]
-  private val countriesService = injector.instanceOf[CountriesService]
+  private val countriesService       = injector.instanceOf[CountriesService]
   private val coverLetterTemplate: Html =
-    injector.instanceOf[cover_letter_template].apply(
-      aCase(_ => btiCaseExample),
-      expiredRuling,
-      _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
-    )(messages)
+    injector
+      .instanceOf[cover_letter_template]
+      .apply(
+        aCase(_ => btiCaseExample),
+        expiredRuling,
+        _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
+      )(messages)
   private val coverLetterTemplateWithSamples: Html =
-    injector.instanceOf[cover_letter_template].apply(
-      aCase(_ => btiCaseExample.copy(application = btiApplicationExample.copy(sampleToBeProvided = true))),
-      expiredRuling,
-      _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
-    )(messages)
+    injector
+      .instanceOf[cover_letter_template]
+      .apply(
+        aCase(_ => btiCaseExample.copy(application = btiApplicationExample.copy(sampleToBeProvided = true))),
+        expiredRuling,
+        _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
+      )(messages)
   private val applicationCertificate: Html =
-    injector.instanceOf[ruling_template].apply(
-      aCase(_ => btiCaseExample.copy(
-        reference = "600000034",
-        application = btiApplicationExample.copy(sampleToBeProvided = true, goodName = "Snow man jacket"),
-        keywords = Set("jacket", "snow", "products"))),
-      expiredRuling.copy(
-        goodsDescription = "Termo produced in Uruguay with stamps from Norway and legal justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf",
-        justification = "Termo produced in Uruguay with stamps from Norway and legal justification justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf"
-      ),
-      _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
-    )(messages)
+    injector
+      .instanceOf[ruling_template]
+      .apply(
+        aCase(_ =>
+          btiCaseExample.copy(
+            reference = "600000034",
+            application = btiApplicationExample.copy(sampleToBeProvided = true, goodName = "Snow man jacket"),
+            keywords = Set("jacket", "snow", "products")
+          )
+        ),
+        expiredRuling.copy(
+          goodsDescription =
+            "Termo produced in Uruguay with stamps from Norway and legal justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf",
+          justification =
+            "Termo produced in Uruguay with stamps from Norway and legal justification justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf justification asdkjasjoijasjdajsdaoida oiajsd oaijda oijadsd jasdioajso jasdja sod asidjdwofjewofjevvds vsdjsd ofjsd jsdofj sdf"
+        ),
+        _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
+      )(messages)
 
   private val pdfGeneratorService: PdfGeneratorService = new PdfGeneratorService(fopFactory, env)
 
@@ -71,12 +82,12 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
   "render" must {
 
     def test(
-              pdfType: String,
-              template: Html,
-              transformer: String,
-              visibleContent: Seq[String],
-              hiddenContent: Seq[String]
-            ): Unit = {
+      pdfType: String,
+      template: Html,
+      transformer: String,
+      visibleContent: Seq[String],
+      hiddenContent: Seq[String]
+    ): Unit = {
       s"create a PDF $pdfType" in {
         val result = Await.result(pdfGeneratorService.render(template, transformer), Duration.Inf)
 
@@ -94,7 +105,7 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
           val text: String                  = textStripper.getText(document)
           val lines: List[String]           = text.split("\n").toList.map(_.trim)
 
-          lines      should contain allElementsOf visibleContent
+          lines should contain allElementsOf visibleContent
           lines should contain noElementsOf hiddenContent
         } finally document.close()
 
@@ -117,8 +128,20 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
     )
 
     val input: Seq[(String, Html, String, Seq[String], Seq[String])] = Seq(
-      ("withoutSamples", coverLetterTemplate, xlsTransformer, headings ++ Seq("Asking for a review with HMRC"), Seq("Your samples have been kept")),
-      ("withSamples", coverLetterTemplateWithSamples, xlsTransformer, headings ++ Seq("Asking for a review with HMRC", "Your samples have been kept"), Seq.empty),
+      (
+        "withoutSamples",
+        coverLetterTemplate,
+        xlsTransformer,
+        headings ++ Seq("Asking for a review with HMRC"),
+        Seq("Your samples have been kept")
+      ),
+      (
+        "withSamples",
+        coverLetterTemplateWithSamples,
+        xlsTransformer,
+        headings ++ Seq("Asking for a review with HMRC", "Your samples have been kept"),
+        Seq.empty
+      ),
       ("applicationCertificate", applicationCertificate, xlsRulingTransformer, rulingCertificateHeadings, Seq.empty)
     )
 
