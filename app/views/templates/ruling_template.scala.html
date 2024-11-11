@@ -17,468 +17,124 @@
 @import models.{Case, BTIApplication, Decision}
 @import utils.Dates
 
+@import views.html.includes.govuk_wrapper
+
+@this(govukWrapper: govuk_wrapper)
+
 @(c: Case, d: Decision, getCountryName: String => Option[String],
         compositeMode: Boolean = false)(implicit messages: Messages)
 
 @defining(c.application.asATAR) { btiApp: BTIApplication =>
-<html>
-    <head>
-        <style>
-                body {
-                    font-family: "GDS Transport",arial,sans-serif;
-                    width: auto;
-                    height: auto;
-                    margin: 0;
-                }
-                .govuk-heading-xl {
-                    font-weight: 700;
-                    font-size: 48px;
-                }
-                .print-document {
-                    padding: 10px 10px;
-                    position: relative;
-                    margin-bottom: 15em;
-                    zoom: 100%;
-                    width: 210mm;
-                    height: auto;
-                }
-                .print-document .logotype {
-                    font-size: 1.4em;
-                    font-weight: normal;
-                    margin: 0;
-                    line-height: 1.6;
-                    padding-top: 15px;
-                }
-                .print-document {
-                    page-break-after  : always;
-                }
-
-                .body-text {
-                    margin-top: .26316em;
-                    margin-bottom: 1.05263em;
-                }
-                .print-document table td {
-                    border: none;
-                    padding: 0;
-                    margin: 0;
-                }
-                .print-document h2, h3, h4 {
-                    margin-top: 0;
-                }
-                .print-document h2 {
-                    text-align: right;
-                    margin-top: 2em;
-                    font-size: 1.2em;
-                    color: #00703C;
-                    font-weight: 600;
-                }
-
-                .crown-logo-atar{
-                    height: 100px;
-                    width:auto;
-                    padding-left: 0px;
-                    margin-right: -15px;
-                }
-
-                .print-document .print-header {
-                    position: relative;
-                }
-
-                .print-document .logo-text {
-                    font-size: 24px;
-                    font-weight: normal;
-                    margin: 0;
-                    line-height: 2.1;
-                }
-                .print-document .print-header h2 {
-                    text-align: right;
-                    margin-top: 2em;
-                    font-size: 1.2em;
-                    color: #00703C;
-                    font-weight: 600;
-                }
-                .print-document .information-box {
-                    display: block;
-                    margin-bottom: 1em;
-                    padding: 5px 10px;
-                    width: 100%;
-                    background-color: #e1f3f1;
-                    margin-left: auto;
-                    margin-right: auto;
-                    box-sizing: border-box;
-                    display: block;
-                }
-                .print-document .print-header h3 {
-                    text-align: right;
-                    margin-top: 2em;
-                    font-size: 1.2em;
-                    color: #00703C;
-                    font-weight: 600
-                }
-                .print-document .hero-text {
-                    margin-bottom: 0.26316em;
-                    font-size: 1.4em;
-                    font-weight: 700;
-                }
-                .print-document .reference-number {
-                    font-size: 36px;
-                }
-                .print-document .footer-page-date {
-                    float: right;
-                }
-                .print-document h3 {
-                    margin-top: 1em;
-                    margin-bottom: 0.4em;
-                    font-size: 1.8em;
-                    font-weight: 700;
-                }
-                .print-header, .header-space,
-                .print-footer, .footer-space {
-                    height: 15mm;
-                }
-                .print-document__information-box {
-                    border: 2px solid #00703C;
-                    display: block;
-                    margin-bottom: 1em;
-                    padding: 5mm;
-                    background-color: #e1f3f1;
-                    text-align: center;
-                    margin-left: auto;
-                    margin-right: auto;
-                    box-sizing: border-box;
-                    -webkit-print-color-adjust: exact
-                }
-                .date-of-result, .decision-service-version {
-                    border-bottom: 2px solid #00703C
-                }
-                .date-of-result h3 {
-                    margin-bottom: 0
-                }
-                .date-of-result h2 {
-                    color: #333;
-                    text-align: left;
-                }
-                .about-this-result-box {
-                    background: #e1f3f1;
-                    padding: 1px 10px;
-                    font-size: 15px;
-                    -webkit-print-color-adjust: exact;
-                    margin-bottom: 20px;
-                }
-                .about-this-result-box-do-not-send {
-                    height: 480px;
-                }
-                .about-this-result, .date-of-result {
-                    margin-top: 1em;
-                    margin-bottom: 1em;
-                }
-                .mb-2 {
-                    margin-bottom: 1rem !important;
-                }
-                .bold {
-                    font-weight: 700;
-                }
-                .column-full {
-                    float: left;
-                    width: 100%;
-                }
-                .column-one-half {
-                    width: 50%;
-                    float: left;
-                }
-                .column-one-third {
-                    width: 36%;
-                    float: left;
-                }
-                .column-two-thirds {
-                    width: 64%;
-                    float: left;
-                }
-                .print-pages {
-                    -webkit-transform-origin:  top left;
-                    -moz-transform-origin:  top left;
-                    -ms-transform-origin:  top left;
-                    -o-transform-origin:  top left;
-                    transform-origin:  top left;
-                }
-                .section-heading {
-                    color: #005EA5;
-                    margin-top: 1em;
-                }
-                .answer--container {
-                    display: table;
-                    margin-top: 1em;
-                    page-break-inside: avoid !important;
-                    width: 100%;
-                }
-                .answer--question {
-                    float: left;
-                    width: 50%;
-                }
-                .answer--question p {
-                    margin-top: 0.5em;
-                }
-                .answer--question p strong {
-                    font-weight: 700;
-                }
-                .answer--answer {
-                    float: left;
-                    width: 50%;
-                }
-                .answer--answer p {
-                    margin-top: 0.5em;
-                    margin-left: 1em;
-                }
-                .print-header, .header-space,
-                .print-footer, .footer-space {
-                    height: 25mm;
-                }
-                .govuk-check-your-answers.cya-questions-short, .govuk-check-your-answers.cya-questions-long {
-                    width: 100%;
-                }
-                .govuk-check-your-answers {
-                    display: table;
-                }
-                .govuk-check-your-answers > * {
-                    display: table-row;
-                    border-bottom-width: 0;
-                }
-                .govuk-check-your-answers > * {
-                    position: relative;
-                    border-bottom: 1px solid #bfc1c3;
-                }
-                .govuk-check-your-answers.cya-questions-short .cya-question {
-                    width: 30%;
-                }
-                .govuk-check-your-answers > *:first-child .cya-question {
-                    margin-top: 0;
-                }
-                .govuk-check-your-answers .cya-question {
-                    font-weight: bold;
-                    margin: 0.63158em 4em 0.21053em 0;
-                }
-                .govuk-check-your-answers .cya-answer {
-                    padding-bottom: 0.47368em;
-                }
-                .govuk-check-your-answers > *:first-child > * {
-                    padding-top: 0;
-                }
-                .cya-answer {
-                    word-wrap: break-word;
-                    word-break: break-word;
-                    overflow-wrap: break-word;
-                }
-                .cya-question {
-                    font-weight: bold;
-                    margin: .63158em 4em .21053em 0;
-                    width: 50%;
-                }
-                .cya-answer {
-                    padding-bottom: .47368em;
-                    word-break: break-word;
-                    overflow-wrap: break-word;
-                    width: 50%;
-                }
-                .govuk-check-your-answers>*>* {
-                    display: table-cell;
-                    border-bottom: 1px solid #bfc1c3;
-                    padding: .63158em 1.05263em .47368em 0;
-                    margin: 0;
-                }
-                > *:first-child .cya-question {
-                    margin-top: 0;
-                }
-                .notice .icon {
-                    position: absolute;
-                    left: 0;
-                    margin-top: 0px;
-                    margin-right: 10px;
-                }
-                .notice strong {
-                    display: block;
-                    padding-left: 65px;
-                    margin-left: -15px;
-                }
-                .icon-important_ {
-                    width: 35px;
-                    height: 35px;
-                }
-                .visually-hidden {
-                    display:none;
-                }
-                .panel {
-                    -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-                    clear: both;
-                    border-left-style: solid;
-                    border-color: #bfc1c3;
-                    padding: .78947em;
-                    margin-bottom: .78947em;
-                }
-                .panel-border-wide {
-                    border-left-width: 10px;
-                }
-                .mt-2 {
-                    margin-top: 2rem !important;
-                }
-                .icon {
-                    display: inline-block;
-                    background-position: 0 0;
-                    background-repeat: no-repeat;
-                }
-                address {
-                    font-style: normal;
-                }
-                .pre-wrap {
-                    white-space: pre-wrap;
-                }
-                .mt-40 {
-  margin-top: 40px;
-}
-.govuk-tag--grey {
-    color: #454a4d;
-    background: #eff0f1;
-}
-.govuk-tag {
-    font-size: 14px;
-    margin-right: 2px;
-    margin-bottom: 2px;
-    text-transform: uppercase;
-    line-height: 1;
-    padding-top: 5px;
-    padding-right: 8px;
-    padding-bottom: 4px;
-    padding-left: 8px;
-}
-.align-right {
-    text-align: right;
-}
-.govuk-caption-xl {
-    font-family: "GDS Transport",arial,sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 400;
-    font-size: 18px;
-    font-size: 1.125rem;
-    line-height: 1.11111;
-    display: block;
-    color: #505a5f;
-}
-.print-document .heading-medium {
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    line-height: 1.25;
-}
-.print-document .heading-small {
-    margin-bottom: 20px;
-    font-size: 1.1875rem;
-    line-height: 1.31579;
-}
-.green-hr{
-border: 1px solid #00703C;
-}
-        </style>
-        <title>@messages("pdf.ruling.title")</title>
-    </head>
-    <body>
-        <div class="grid-row hidden-print">
-            <div class="column-two-thirds"></div>
-        </div>
-        <div id="print-pages" class="print-pages">
-            <div id="ruling-certificate" class="print-document" id="print-document">
-                <div class="grid-row print-header">
-                    <div class="column-one-third">
-                        <img class="crown-logo-atar" alt="HM Revenue and Customs" src="@messages("logo.encoded")"/>
-                    </div>
-                    <div>
-                        <h2 class="heading-medium margin-top-small no-margin-bottom print-header__heading">
-                            @messages("pdf.ruling.certificate.title")
-                        </h2>
-                    </div>
+<div class="print-document" id="page-1">
+    <div class="header" data-render-header="yes">
+        <div class="govuk-grid-row" data-column="one-third">
+            <div class="govuk-grid-column-one-third">
+                <div class="organisation-logo__container">
+                    <img class="organisation-logo__crest-hmrc"
+                         width="30px"
+                         height="30px"
+                         src="@messages("hmrc.logo.encoded.image")"
+                    alt="@messages("pdf.application.cover.letter.footer.hmrc")"/>
+                    <div class="organisation-logo__name">@messages("pdf.application.cover.letter.footer.hmrc")</div>
                 </div>
-                <div class="grid-row mt-40">
-                    <div class="column-full">
-                        <span class="govuk-caption-xl">Advance Tariff Ruling (ATaR) for @{c.reference}</span>
-                        <h1 class="govuk-heading-xlarge">@c.application.goodsName</h1>
-                        <p>Issued by: HMRC Tariff Classification Team</p>
-                    </div>
-                </div>
-                <div class="grid-row main-content">
-                    <div class="column-one-half" id="section-holder">
-                        <h4 class="heading-small">@messages("pdf.ruling.section.holder.heading")</h4>
-                        <p class="govuk-body-s" id="ruling.holder.businessName">
-                            <strong>@messages("pdf.ruling.section.holder.name.label")</strong><br>
-                            @btiApp.businessName
-                        </p>
-                        <p class="govuk-body-s" id="ruling.holder.address">
-                            <strong>@messages("pdf.ruling.section.holder.address.label")</strong><br>
-                            @btiApp.holder.addressLine1 <br/>
-                            @btiApp.holder.addressLine2 <br/>
-                            @btiApp.holder.addressLine3 <br/>
-                            @btiApp.holder.postcode <br/>
-                            @messages(getCountryName(btiApp.holder.country).mkString)
-                        </p>
-                        <p class="govuk-body-s" id="ruling.holder.eori">
-                            <strong>@messages("pdf.ruling.section.holder.eori.label")</strong><br>
-                            @btiApp.holder.eori
-                        </p>
-                    </div>
-                    <div class="column-one-half" id="section-ruling">
-                        <h4 class="heading-small">@messages("pdf.ruling.section.ruling.heading")</h4>
-                        <p class="govuk-body-s">
-                            <strong>@messages("pdf.ruling.section.ruling.commodityCode.label")</strong><br>
-                            @d.bindingCommodityCode
-                        </p>
-                        <p class="govuk-body-s">
-                            <strong>@messages("pdf.ruling.section.ruling.rulingReference.label")</strong><br>
-                            @c.reference
-                        </p>
-                        <p class="govuk-body-s">
-                            <strong>@messages("pdf.ruling.section.ruling.validFrom.label")</strong><br>
-                            @Dates.format(d.effectiveStartDate)
-                        </p>
-                        <p class="govuk-body-s">
-                            <strong>@messages("pdf.ruling.section.ruling.validTo.label")</strong><br>
-                            @Dates.format(d.effectiveEndDate)
-                        </p>
-                    </div>
-                    <div class="grid-row">
-                        <div class="column-full" id="section-goods-info">
-                            <h3 class="heading-medium">@c.application.goodsName details</h3>
-                            <dl class="govuk-check-your-answers cya-questions-short">
-                                <div id="section-goods">
-                                    <dt class="cya-question">@messages("pdf.ruling.section.ruling.description.label")</dt>
-                                    <dd class="cya-answer" id="ruling.goodsDescription">@d.goodsDescription</dd>
-                                </div>
-                                <div id="section-commercial">
-                                    <dt class="cya-question">@messages("pdf.ruling.section.ruling.commercialDenomination.label")</dt>
-                                    <dd class="cya-answer" id="ruling.methodCommercialDenomination">@d.methodCommercialDenomination.getOrElse("")</dd>
-                                </div>
-                                <div id="section-justification">
-                                    <dt class="cya-question">@messages("pdf.ruling.section.ruling.justification.label")</dt>
-                                    <dd class="cya-answer" id="ruling.justification">@d.justification</dd>
-                                </div>
-                                <div id="section-keywords">
-                                    <dt class="cya-question">@messages("pdf.ruling.section.ruling.keywords.label")</dt>
-                                    <dd class="cya-answer">
-                                        @for(keyword <- c.keywords){
-                                        <strong class="govuk-tag govuk-tag--grey">@keyword</strong>
-                                        }
-                                    </dd>
-                                </div>
-
-                            </dl>
-                            <h3 class="heading-small">@messages("pdf.ruling.section.ruling.legalInformation.section1.label")</h3>
-                            <p class="govuk-body">@messages("pdf.ruling.section.ruling.legalInformation.paragraph", Dates.format(d.effectiveStartDate), Dates.format(d.effectiveEndDate))</p>
-                        </div>
-                    </div>
-                </div>
-
+            </div>
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-m print-header">@messages("pdf.ruling.certificate.title")</h2>
             </div>
         </div>
+    </div>
 
-    </body>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="ruling-reference">Advance Tariff Ruling (ATaR) for @{c.reference}</div>
+            <h1 class="govuk-heading-large">@c.application.goodsName</h1>
+            <div class="details-block">
+                <p class="details-info">Issued by: HMRC Tariff Classification Team</p>
+            </div>
+        </div>
+    </div>
 
-</html>
+    <div class="govuk-grid-row" data-column="half">
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-m">@messages("pdf.ruling.section.holder.heading")</h2>
+        </div>
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-m">@messages("pdf.ruling.section.ruling.heading")</h2>
+        </div>
+    </div>
 
+    <div class="govuk-grid-row" data-column="half">
+        <div class="govuk-grid-column-one-half">
+            <div class="details-block">
+                <h3 class="details">@messages("pdf.ruling.section.holder.name.label")</h3>
+                <p class="details-info">@btiApp.businessName</p>
+            </div>
+            <div class="details-block">
+                <h3 class="details">@messages("pdf.ruling.section.holder.address.label")</h3>
+                <p class="details-info">@btiApp.holder.addressLine1</p>
+                <p class="details-info">@btiApp.holder.addressLine2</p>
+                <p class="details-info">@btiApp.holder.addressLine3</p>
+                <p class="details-info">@btiApp.holder.postcode</p>
+                <p class="details-info">@messages(getCountryName(btiApp.holder.country).mkString)</p>
+            </div>
+            <div class="details-block">
+                <h3 class="details">@messages("pdf.ruling.section.holder.eori.label")</h3>
+                <p class="details-info">@btiApp.holder.eori</p>
+            </div>
+        </div>
+        <div class="govuk-grid-column-one-half">
+            <div class="details-block">
+                <h3 class="details">@messages("pdf.ruling.section.ruling.commodityCode.label")</h3>
+                <p class="details-info">@d.bindingCommodityCode</p>
+            </div>
+            <div class="details-block">
+                <h3 class="details">@messages("pdf.ruling.section.ruling.rulingReference.label")</h3>
+                <p class="details-info">@c.reference</p>
+            </div>
+            <div class="details-block">
+                <h3 class="details">@messages("pdf.ruling.section.ruling.validFrom.label")</h3>
+                <p class="details-info">@Dates.format(d.effectiveStartDate)</p>
+            </div>
+            <div class="details-block">
+                <h3 class="details">@messages("pdf.ruling.section.ruling.validTo.label")</h3>
+                <p class="details-info">@Dates.format(d.effectiveEndDate)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m">@c.application.goodsName details</h2>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@messages("pdf.ruling.section.ruling.description.label")</dt>
+                    <dd class="govuk-summary-list__value prevent-content-split">@d.goodsDescription</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@messages("pdf.ruling.section.ruling.commercialDenomination.label")</dt>
+                    <dd class="govuk-summary-list__value prevent-content-split">@d.methodCommercialDenomination.getOrElse("")</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@messages("pdf.ruling.section.ruling.justification.label")</dt>
+                    <dd class="govuk-summary-list__value prevent-content-split">@d.justification</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">@messages("pdf.ruling.section.ruling.keywords.label")</dt>
+                    <dd class="govuk-summary-list__value prevent-content-split">
+                            @for(keyword <- c.keywords){
+                                <span class="govuk-tag__grey">@keyword</span>
+                            }
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-m">@messages("pdf.ruling.section.ruling.legalInformation.section1.label")</h2>
+            <p class="details-info">@messages("pdf.ruling.section.ruling.legalInformation.paragraph", Dates.format(d.effectiveStartDate), Dates.format(d.effectiveEndDate))</p>
+        </div>
+    </div>
+</div>
 }

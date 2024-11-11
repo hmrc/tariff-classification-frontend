@@ -28,7 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.templates.cover_letter_template
+import views.html.templates.{cover_letter_template, ruling_template}
 
 import java.time._
 import scala.concurrent.Future
@@ -49,6 +49,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
   private val audit            = mock[AuditService]
   private val config           = mock[AppConfig]
   private val cover_letter_template = mock[cover_letter_template]
+  private val ruling_template = mock[ruling_template]
   private val clock      = Clock.fixed(LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
   private val aBTI       = Cases.btiCaseExample
   private val aLiability = Cases.liabilityCaseExample
@@ -63,7 +64,8 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
       pdfService,
       connector,
       rulingConnector,
-      cover_letter_template
+      cover_letter_template,
+      ruling_template
     )(executionContext, config)
 
   override protected def beforeEach(): Unit = {
@@ -97,7 +99,7 @@ class CasesService_CompleteCaseSpec extends ServiceSpecBase with BeforeAndAfterE
         )
         given(pdfService.generatePdf(any[Html]))
           .willReturn(successful(PdfFile(Array.emptyByteArray)))
-        given(pdfService.generateFopPdf(any[Html]))
+        given(pdfService.generateFopPdf(any[Html], any[String]))
           .willReturn(successful(PdfFile(Array.emptyByteArray)))
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
         given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))

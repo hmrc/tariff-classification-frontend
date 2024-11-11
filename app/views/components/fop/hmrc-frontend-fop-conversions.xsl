@@ -93,7 +93,7 @@
     <xsl:attribute name="font-size">1em</xsl:attribute>
     <xsl:attribute name="line-height">1.25</xsl:attribute>
     <xsl:attribute name="margin-bottom">20px</xsl:attribute>
-    <xsl:attribute name="position">relative</xsl:attribute> <!--check -->
+    <xsl:attribute name="position">relative</xsl:attribute>
     <xsl:attribute name="padding-left">0px</xsl:attribute>
     <xsl:attribute name="padding-right">0px</xsl:attribute>
     <xsl:attribute name="padding-top">10px</xsl:attribute>
@@ -114,9 +114,9 @@
 
   <xsl:attribute-set name="govuk-summary-list">
     <xsl:attribute name="color">#0b0c0c</xsl:attribute>
-    <xsl:attribute name="font-family">GDS Transport,Helvetica,sans-serif</xsl:attribute>
-    <xsl:attribute name="font-weight">400</xsl:attribute>
-    <xsl:attribute name="font-size">1em</xsl:attribute>
+    <xsl:attribute name="font-family">GDS Transport,Arial,sans-serif</xsl:attribute>
+    <xsl:attribute name="font-weight">normal</xsl:attribute>
+    <xsl:attribute name="font-size">0.86em</xsl:attribute>
     <xsl:attribute name="line-height">1.25</xsl:attribute>
     <xsl:attribute name="margin-top">0px</xsl:attribute>
     <xsl:attribute name="margin-bottom">20px</xsl:attribute>
@@ -133,19 +133,19 @@
   </xsl:attribute-set>
 
   <xsl:attribute-set name="govuk-summary-list__key">
-    <xsl:attribute name="padding-top">10px</xsl:attribute>
+    <xsl:attribute name="padding-top">5px</xsl:attribute>
     <xsl:attribute name="padding-right">20px</xsl:attribute>
-    <xsl:attribute name="padding-bottom">10px</xsl:attribute>
-    <xsl:attribute name="font-family">GDS Transport,Helvetica,sans-serif</xsl:attribute>
+    <xsl:attribute name="padding-bottom">5px</xsl:attribute>
+    <xsl:attribute name="font-family">GDS Transport,Arial,sans-serif</xsl:attribute>
     <xsl:attribute name="font-weight">700</xsl:attribute>
     <!-- Replaced margin-* with padding-*
          Added font-family -->
   </xsl:attribute-set>
 
   <xsl:attribute-set name="govuk-summary-list__value">
-    <xsl:attribute name="padding-top">10px</xsl:attribute>
+    <xsl:attribute name="padding-top">5px</xsl:attribute>
     <xsl:attribute name="padding-right">20px</xsl:attribute>
-    <xsl:attribute name="padding-bottom">10px</xsl:attribute>
+    <xsl:attribute name="padding-bottom">5px</xsl:attribute>
     <!-- Replaced margin-* with padding-* -->
   </xsl:attribute-set>
 

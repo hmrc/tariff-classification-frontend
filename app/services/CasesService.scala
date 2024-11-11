@@ -56,7 +56,8 @@ class CasesService @Inject() (
   pdfService: PdfService,
   connector: BindingTariffClassificationConnector,
   rulingConnector: RulingConnector,
-  cover_letter_template: cover_letter_template
+  cover_letter_template: cover_letter_template,
+  ruling_template: ruling_template
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
@@ -398,7 +399,7 @@ class CasesService @Inject() (
     def generatePdf: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
         pdfService
-          .generatePdf(ruling_template(completedCase, decision, getCountryName))
+          .generateFopPdf(ruling_template(completedCase, decision, getCountryName), "ruling_template.xml")
           .map(createRulingPdf)
       case LIABILITY =>
         pdfService
@@ -409,7 +410,7 @@ class CasesService @Inject() (
     def generateLetter: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
         pdfService
-          .generateFopPdf(cover_letter_template(completedCase, decision, getCountryName))
+          .generateFopPdf(cover_letter_template(completedCase, decision, getCountryName), "cover_letter_template.xml")
           .map(createCoverLetterPdf)
     }
 
