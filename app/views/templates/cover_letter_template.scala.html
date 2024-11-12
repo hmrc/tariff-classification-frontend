@@ -75,10 +75,23 @@ compositeMode: Boolean = false)(implicit messages: Messages)
                 Dear @btiApp.contact.name
             </p>
             <p class="govuk-body">
-                Thank you for your Advance Tariff Ruling (ATaR) application dated @Dates.format(c.createdDate)
+                Thank you for your Advance Tariff Ruling (ATaR) application dated @Dates.format(c.createdDate).
             </p>
             <p class="govuk-body">
-                You asked for an Advance Tariff Ruling for <b class="bold-text">@c.application.goodsName</b>. This ruling certificate is for you to keep for your records. This tells you the commodity code I have decided is appropriate for your goods and the reasons for the decision.
+                You asked for an Advance Tariff Ruling for: <b class="bold-text">@c.application.goodsName</b>.
+            </p>
+            <p class="govuk-body">
+                This ruling certificate is for you to keep for your records. This tells you the commodity code I have decided is appropriate for your goods and the reasons for the decision.
+            </p>
+            <p class="govuk-body">
+                It is your responsibility to make sure that:
+            </p>
+            <p class="govuk-body">
+                <li class="case-info">your goods</li>
+                <li class="case-info">your customs declarations</li>
+            </p>
+            <p class="govuk-body">
+                meet the terms of the commodity code when you are importing to the UK.
             </p>
             <p class="govuk-body">
                 @messages("pdf.ruling.markedConfidential") <a class="search-for-rulings">Search for Advance Tariff Rulings</a> website.
