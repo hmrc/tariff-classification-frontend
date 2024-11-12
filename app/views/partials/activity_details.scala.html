@@ -43,7 +43,7 @@
                 field = activityForm("note"),
                 label = "Add case note",
                 hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
-                tabIndex = Some(startAtTabIndex+10),
+                tabIndex = Some(startAtTabIndex),
                 customErrorMessage = Some(messages("error.empty.note"))
             )
             <div class="govuk-form-group">
@@ -52,7 +52,7 @@
         }
     }
 
-    @activity_details_events_table(activity, startAtTabIndex+15)
+    @activity_details_events_table(activity, startAtTabIndex)
 
     <div class="govuk-body">
     @if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){

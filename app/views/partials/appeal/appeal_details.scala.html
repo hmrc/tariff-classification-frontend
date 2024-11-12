@@ -73,7 +73,7 @@
                     <dd class="govuk-summary-list__actions" id="appeal_details-extended_use_change">
                         @if(request.hasPermission(Permission.EXTENDED_USE)) {
                             @if(request.hasPermission(Permission.EXTENDED_USE)) {
-                                <a tabindex="@{startTabIndex+51}" class="govuk-link" id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(appealTab.caseReference)">
+                                <a tabindex="@{startTabIndex}" class="govuk-link" id="appeal_details-extended_use-change" href="@routes.ExtendedUseCaseController.chooseStatus(appealTab.caseReference)">
                                     Change
                                 </a>
                             }

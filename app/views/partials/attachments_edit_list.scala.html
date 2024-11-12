@@ -41,14 +41,14 @@
                 <tr id="@{id}-row-@{index}" class="govuk-table__row">
                     <td class="govuk-table__cell">
                         <div id="@{id}-row-@{index}-title">
-                            @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                            @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex)
                         </div>
                     </td>
                     <td class="govuk-table__cell">
                         @if(file.public) {
                             <div class="govuk-checkboxes">
                                 <div class="govuk-checkboxes__item">
-                                    <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
+                                    <input tabindex="0"
                                     id="attachments[@{index}]"
                                     class="govuk-checkboxes__input"
                                     name="attachments[@{index}]"

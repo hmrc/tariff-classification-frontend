@@ -32,20 +32,20 @@ import scala.concurrent.Future.{failed, successful}
 
 class CasesService_ReleaseCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val manyCases        = mock[Seq[Case]]
-  private val oneCase          = mock[Option[Case]]
-  private val queue            = mock[Queue]
-  private val connector        = mock[BindingTariffClassificationConnector]
-  private val rulingConnector  = mock[RulingConnector]
-  private val emailService     = mock[EmailService]
-  private val fileStoreService = mock[FileStoreService]
-  private val countriesService = mock[CountriesService]
-  private val reportingService = mock[ReportingService]
-  private val pdfService       = mock[PdfService]
-  private val audit            = mock[AuditService]
+  private val manyCases             = mock[Seq[Case]]
+  private val oneCase               = mock[Option[Case]]
+  private val queue                 = mock[Queue]
+  private val connector             = mock[BindingTariffClassificationConnector]
+  private val rulingConnector       = mock[RulingConnector]
+  private val emailService          = mock[EmailService]
+  private val fileStoreService      = mock[FileStoreService]
+  private val countriesService      = mock[CountriesService]
+  private val reportingService      = mock[ReportingService]
+  private val pdfService            = mock[PdfService]
+  private val audit                 = mock[AuditService]
   private val cover_letter_template = mock[cover_letter_template]
-  private val ruling_template = mock[ruling_template]
-  private val aCase            = Cases.btiCaseExample
+  private val ruling_template       = mock[ruling_template]
+  private val aCase                 = Cases.btiCaseExample
 
   private val service =
     new CasesService(

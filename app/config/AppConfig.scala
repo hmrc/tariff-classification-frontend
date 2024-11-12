@@ -50,9 +50,9 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
 
   lazy val maxUriLength: Long = config.underlying.getBytes("pekko.http.parsing.max-uri-length")
 
-  lazy val downloadMaxRetries: Int            =  config.getOptional[Int]("download.max-retries").getOrElse(3)
+  lazy val downloadMaxRetries: Int = config.getOptional[Int]("download.max-retries").getOrElse(3)
 
-  lazy val downloadRetryInterval: FiniteDuration  = {
+  lazy val downloadRetryInterval: FiniteDuration = {
     if (config.has("download.interval"))
       FiniteDuration(config.underlying.getDuration("download.interval").toMillis, TimeUnit.MILLISECONDS)
     else

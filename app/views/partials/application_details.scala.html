@@ -62,7 +62,7 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     @if(goods.hasAttachmentsFromApplicant) {
-                        Yes.<a tabindex="@{startAtTabIndex + 1}" href="#@Tab.ATTACHMENTS_TAB.name" class="govuk-link">@messages("case.goods.attachments_yes")</a>
+                        Yes.<a tabindex="0" href="#@Tab.ATTACHMENTS_TAB.name" class="govuk-link">@messages("case.goods.attachments_yes")</a>
                     } else {
                         @messages("answer.no")
                     }
@@ -146,5 +146,5 @@
     }
 
     <div class="govuk-form-group">
-        @submitted_application_link(goods.caseReference, Some(startAtTabIndex + 7))
+        @submitted_application_link(goods.caseReference, Some(startAtTabIndex))
     </div>

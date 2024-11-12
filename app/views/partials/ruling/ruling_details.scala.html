@@ -147,9 +147,9 @@
     </div>
 
     <div class="govuk-form-group">
-        @ruling_explanation(ruling.decision,Some(startAtTabIndex+50))
+        @ruling_explanation(ruling.decision,Some(startAtTabIndex))
 
-        @ruling_certificate_link(ruling,Some(startAtTabIndex+51))
+        @ruling_certificate_link(ruling,Some(startAtTabIndex))
 
         @if(ruling.caseStatus == CaseStatus.COMPLETED || ruling.caseStatus == CaseStatus.CANCELLED) {
             @ruling_commodity_code_expiry_section(ruling)
@@ -163,12 +163,12 @@
             "attachments",
             files.filter(_.shouldPublishToRulings),
             caseRef = ruling.caseReference,
-            startAtTabIndex = Some(startAtTabIndex+2)
+            startAtTabIndex = Some(startAtTabIndex)
         )
     </div>
 
     <div class="govuk-form-group" id="ruling-actions">
         @if(request.hasPermission(Permission.CANCEL_CASE)) {
-            @cancel_ruling_section(ruling,Some(startAtTabIndex+53))
+            @cancel_ruling_section(ruling,Some(startAtTabIndex))
         }
     </div>
