@@ -11,7 +11,7 @@ lazy val microservice = Project("tariff-classification-frontend", file("."))
   .settings(
     PlayKeys.playDefaultPort := 9581,
     libraryDependencies ++= AppDependencies(),
-    CodeCoverageSettings.settings
+    CodeCoverageSettings()
   )
   .settings(
     Test / fork := true,
