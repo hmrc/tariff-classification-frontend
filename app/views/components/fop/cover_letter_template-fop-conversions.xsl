@@ -115,17 +115,11 @@
     <xsl:attribute name="margin-bottom">20px</xsl:attribute>
   </xsl:attribute-set>
 
-  <xsl:attribute-set name="date-of-result">
-    <xsl:attribute name="border-bottom">1px solid #00703C</xsl:attribute>
-    <xsl:attribute name="margin-top">1em</xsl:attribute>
-    <xsl:attribute name="margin-bottom">1em</xsl:attribute>
-  </xsl:attribute-set>
-
   <xsl:attribute-set name="about-this-result">
     <xsl:attribute name="margin-top">1em</xsl:attribute>
     <xsl:attribute name="margin-bottom">1em</xsl:attribute>
     <xsl:attribute name="margin-left">0px</xsl:attribute>
-    <xsl:attribute name="margin-right">20px</xsl:attribute>
+    <xsl:attribute name="margin-right">0px</xsl:attribute>
   </xsl:attribute-set>
 
   <xsl:attribute-set name="about-this-result-box">

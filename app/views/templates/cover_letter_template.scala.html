@@ -86,47 +86,6 @@ compositeMode: Boolean = false)(implicit messages: Messages)
         </div>
     </div>
 
-    @if(c.sampleToBeProvided){
-    <div class="govuk-grid-row" data-column="full">
-        <div class="govuk-grid-column-full">
-            <div class="govuk-grid-row prevent-content-split" data-column="two-thirds">
-                <div class="govuk-grid-column-two-thirds">
-                    <div class="about-this-decision-box">
-
-
-                    <h3 class="govuk-heading-m heading">About this decision</h3>
-                    <p class="govuk-body">
-                        I have made this decision under section 24 of The Taxation (Cross-border Trade) Act 2018 by @messages("pdf.application.cover.letter.footer.hmrc").
-                    </p>
-                    <p class="govuk-body">
-                        @d.explanation
-                    </p>
-                    </div>
-                </div>
-                <div class="govuk-grid-column-one-third">
-                    <div class="about-this-result-box">
-                        <div class="about-this-result">
-                            <div class="date-of-result">
-                                <h2 class="govuk-heading-m">Samples</h2>
-                            </div>
-                            <div class="date-of-result">
-                                <div>
-                                    <p class="govuk-body">Your samples have been kept by this office.</p>
-                                </div>
-                                <div>
-                                    <p class="govuk-body">Samples that are not collected or that do not have return postage will be destroyed after 60 days from the date of your ruling email. If you would like to collect your samples (or arrange for courier collection) then email <b class="bold-text"><a class="govuk-black-link">@messages("pdf.ruling.email")</a></b> giving 48 hours notice.</p>
-                                </div>
-                                <div>
-                                    <p class="govuk-body">You must quote the ATaR reference number <b class="bold-text">@c.reference</b> and give the time that the samples are being collected.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    }else{
     <div class="govuk-grid-row" data-column="full">
         <div class="govuk-grid-column-full">
             <h3 class="govuk-heading-m heading">About this decision</h3>
@@ -136,6 +95,27 @@ compositeMode: Boolean = false)(implicit messages: Messages)
             <p class="govuk-body">
                 @d.explanation
             </p>
+        </div>
+    </div>
+
+    @if(c.sampleToBeProvided){
+    <div class="govuk-grid-row  prevent-content-split" data-column="full">
+        <div class="govuk-grid-column-full">                    
+            <div class="about-this-result-box">
+                <div class="about-this-result">
+                    <h2 class="govuk-heading-m">Samples</h2>
+
+                    <div>
+                        <p class="govuk-body">Your samples have been kept by this office.</p>
+                    </div>
+                    <div>
+                        <p class="govuk-body">Samples that are not collected or that do not have return postage will be destroyed after 60 days from the date of your ruling email. If you would like to collect your samples (or arrange for courier collection) then email <b class="bold-text"><a class="govuk-black-link">@messages("pdf.ruling.email")</a></b> giving 48 hours notice.</p>
+                    </div>
+                    <div>
+                        <p class="govuk-body">You must quote the ATaR reference number <b class="bold-text">@c.reference</b> and give the time that the samples are being collected.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     }
