@@ -17,144 +17,164 @@
 @import models.{Case, Decision, LiabilityOrder, LiabilityStatus}
 @import utils.Dates
 
+@import views.html.includes.govuk_wrapper
+
+@this(govukWrapper: govuk_wrapper)
+
 @(c: Case, d: Decision)(implicit messages: Messages)
 
 @defining(c.application.asLiabilityOrder) { liab: LiabilityOrder =>
-
-<html>
-    <head>
-        <style>
-                body {
-                    font-size: 21px;
-                    font-family: "nta", Arial, sans-serif;
-                }
-
-                table {
-                    width: 100%;
-                    font-size: 21px;
-                    line-height: 1.31579;
-                    border-collapse: collapse;
-                }
-
-                td {
-                    padding: 8px 0px 8px 0px;
-                    /*border-bottom: 1px solid #bfc1c3;*/
-                    vertical-align: top;
-                }
-
-                td:nth-child(n) {
-                    width: 35%;
-                }
-
-                table.header td {
-                    border-bottom: 0px
-                }
-
-                .box {
-                    border: 1px solid #000000;
-                    padding: 0px 10px 0px 10px;
-                }
-
-                .section-label {
-                    font-weight: bold;
-                }
-
-                .timestamp {
-                    font-size: 10px;
-                    text-align: right;
-                }
-                .pre-wrap {
-                    white-space: pre-wrap;
-                }
-        </style>
-
-    </head>
-    <body>
-        <div class="centered-content">
-
-            <img alt="HM Revenue and Customs" src="@messages("logo.encoded")"/>
-
-            <h1>@messages("pdf.decision.title", liab.traderName)</h1>
-
-            <div id="section-c592" class="box">
-                <h2>@messages("pdf.decision.section.c592.heading")</h2>
-
-                <table>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.c592.liability.type.label")</td>
-                        <td id="decision.c592.liability.type">@{LiabilityStatus.format(liab.status)}</td>
-                    </tr>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.c592.port.officer.label")</td>
-                        <td id="decision.c592.port.officer">@liab.contact.name</td>
-                    </tr>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.c592.trader.name.label")</td>
-                        <td id="decision.c592.traderName">@liab.traderName</td>
-                    </tr>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.c592.liability.entry.date.label")</td>
-                        <td id="decision.c592.liability.entry.date">@Dates.format(liab.entryDate)</td>
-                    </tr>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.c592.liability.entry.number.label")</td>
-                        <td id="decision.c592.liability.entry.number">@liab.entryNumber.getOrElse("")</td>
-                    </tr>
-
-                </table>
-
+<div class="print-document" id="page-1">
+    <div class="header" data-render-header="yes">
+        <div class="govuk-grid-row" data-column="one-third">
+            <div class="govuk-grid-column-one-third">
+                <div class="organisation-logo__container">
+                    <img class="organisation-logo__crest-hmrc"
+                         width="30px"
+                         height="30px"
+                         src="@messages("hmrc.logo.encoded.image")"
+                    alt="@messages("pdf.application.cover.letter.footer.hmrc")"/>
+                    <div class="organisation-logo__name">@messages("pdf.application.cover.letter.footer.hmrc")</div>
+                </div>
             </div>
-            <div id="section-information" class="box">
-                <h2>@messages("pdf.decision.section.information.heading")</h2>
-
-                <table>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.information.classification.officer.label")</td>
-                        <td id="decision.information.classification.officer">@c.assignee.map(x => x.name).getOrElse("")</td>
-                    </tr>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.information.reference.number.label")</td>
-                        <td id="decision.information.reference.number">@c.reference</td>
-                    </tr>
-                    <tr>
-                        <td class="section-label">@messages("pdf.decision.section.information.decision.date.label")</td>
-                        <td id="decision.information.decision.date">@Dates.format(d.effectiveStartDate)</td>
-                    </tr>
-                </table>
-
-            </div>
-
-            <div id="section-commcode" class="box">
-                <p class="section-label">@messages("pdf.decision.section.commcode.commodity.code.label")</p>
-                <span id="decision.suggested.commodity.code.hint">@messages("pdf.decision.section.commcode.commodity.code.hint")</span>
-                <p id="decision.suggested.commodity.code"><span class="pre-wrap">@d.bindingCommodityCode</span></p>
-            </div>
-
-            <div id="section-description" class="box">
-                <p>
-                    <span class="section-label">@messages("pdf.decision.section.description.item.description.label")</span>
-                </p>
-                <p id="ruling.methodCommercialDenomination"><span class="pre-wrap">@d.goodsDescription</span></p>
-            </div>
-
-            <div id="section-justification" class="box">
-                <p class="section-label">@messages("pdf.decision.section.justification.label")</p>
-                <p id="decision.justification"><span class="pre-wrap">@d.justification</span></p>
-            </div>
-
-            <div id="section-exclusion" class="box">
-                <p class="section-label">@messages("pdf.decision.section.exclusion.label")</p>
-                <p id="decision.exclusion"><span class="pre-wrap">@d.methodExclusion.getOrElse("")</span></p>
-            </div>
-
-            <div id="section-legal" class="box">
-                <p>@messages("pdf.decision.section.legal.label")</p>
-            </div>
-
         </div>
+    </div>
 
-    </body>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-large">@messages("pdf.decision.title", liab.traderName)</h1>
+        </div>
+    </div>
 
-</html>
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="box-c592">
+                <h2 class="govuk-heading-m">@messages("pdf.decision.section.c592.heading")</h2>
+                <div class="govuk-grid-row" data-column="half">
+                    <div class="govuk-grid-column-one-half">
+                        <h3 class="details">@messages("pdf.decision.section.c592.liability.type.label")</h3>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">@{LiabilityStatus.format(liab.status)}</p>
+                    </div>
+                </div>
 
+                <div class="govuk-grid-row" data-column="half">
+                    <div class="govuk-grid-column-one-half">
+                        <h3 class="details">@messages("pdf.decision.section.c592.port.officer.label")</h3>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">@liab.contact.name</p>
+                    </div>
+                </div>
+
+                <div class="govuk-grid-row" data-column="half">
+                    <div class="govuk-grid-column-one-half">
+                        <h3 class="details">@messages("pdf.decision.section.c592.trader.name.label")</h3>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">@liab.traderName</p>
+                    </div>
+                </div>
+
+                <div class="govuk-grid-row" data-column="half">
+                    <div class="govuk-grid-column-one-half">
+                        <h3 class="details">@messages("pdf.decision.section.c592.liability.entry.date.label")</h3>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">@Dates.format(liab.entryDate)</p>
+                    </div>
+                </div>
+
+                <div class="govuk-grid-row" data-column="half">
+                    <div class="govuk-grid-column-one-half">
+                        <h3 class="details">@messages("pdf.decision.section.c592.liability.entry.number.label")</h3>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">@liab.entryNumber.getOrElse("")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="box-c592">
+                <h2 class="govuk-heading-m">@messages("pdf.decision.section.information.heading")</h2>
+                <div class="govuk-grid-row" data-column="half">
+                    <div class="govuk-grid-column-one-half">
+                        <h3 class="details">@messages("pdf.decision.section.information.classification.officer.label")</h3>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">@c.assignee.map(x => x.name).getOrElse("")</p>
+                    </div>
+                </div>
+
+                <div class="govuk-grid-row" data-column="half">
+                    <div class="govuk-grid-column-one-half">
+                        <h3 class="details">@messages("pdf.decision.section.information.reference.number.label")</h3>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">@c.reference</p>
+                    </div>
+                </div>
+
+                <div class="govuk-grid-row" data-column="half">
+                    <div class="govuk-grid-column-one-half">
+                        <h3 class="details">@messages("pdf.decision.section.information.decision.date.label")</h3>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <p class="govuk-body">@Dates.format(d.effectiveStartDate)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="box-c592">
+                <h3 class="details">@messages("pdf.decision.section.commcode.commodity.code.label")</h3>
+                <p class="govuk-body">@messages("pdf.decision.section.commcode.commodity.code.hint")</p>
+                <p class="govuk-body">@d.bindingCommodityCode</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row prevent-content-split" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="box-c592">
+                <h3 class="details">@messages("pdf.decision.section.description.item.description.label")</h3>
+                <p class="govuk-body">@d.goodsDescription</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row prevent-content-split" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="box-c592">
+                <h3 class="details">@messages("pdf.decision.section.justification.label")</h3>
+                <p class="govuk-body">@d.justification</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="box-c592">
+                <h3 class="details">@messages("pdf.decision.section.exclusion.label")</h3>
+                <p class="govuk-body">@d.methodExclusion.getOrElse("")</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row" data-column="full">
+        <div class="govuk-grid-column-full">
+            <div class="box-c592">
+                <p class="govuk-body">@messages("pdf.decision.section.legal.label")</p>
+            </div>
+        </div>
+    </div>
+</div>
 }

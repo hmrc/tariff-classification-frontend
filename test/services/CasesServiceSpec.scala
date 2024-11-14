@@ -16,8 +16,6 @@
 
 package services
 
-import audit.AuditService
-import connectors.{BindingTariffClassificationConnector, RulingConnector}
 import models.CaseStatus.CaseStatus
 import models._
 import models.request.NewEventRequest
@@ -28,43 +26,17 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.templates.{cover_letter_template, ruling_template}
 
 import java.time.Instant
 import scala.concurrent.Future.{failed, successful}
 
-class CasesServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
+class CasesServiceSpec extends CasesServiceSpecBase with BeforeAndAfterEach {
 
-  private val c                     = mock[Case]
-  private val manyCases             = Seq(c)
-  private val oneCase               = Some(c)
-  private val emailService          = mock[EmailService]
-  private val fileStoreService      = mock[FileStoreService]
-  private val countriesService      = mock[CountriesService]
-  private val reportingService      = mock[ReportingService]
-  private val pdfService            = mock[PdfService]
-  private val queue                 = mock[Queue]
-  private val pagination            = mock[Pagination]
-  private val connector             = mock[BindingTariffClassificationConnector]
-  private val rulingConnector       = mock[RulingConnector]
-  private val audit                 = mock[AuditService]
-  private val operator              = Operator("operator-id")
-  private val cover_letter_template = mock[cover_letter_template]
-  private val ruling_template       = mock[ruling_template]
-
-  private val service =
-    new CasesService(
-      audit,
-      emailService,
-      fileStoreService,
-      countriesService,
-      reportingService,
-      pdfService,
-      connector,
-      rulingConnector,
-      cover_letter_template,
-      ruling_template
-    )(executionContext, realAppConfig)
+  private val c          = mock[Case]
+  private val manyCases  = Seq(c)
+  private val oneCase    = Some(c)
+  private val pagination = mock[Pagination]
+  private val operator   = Operator("operator-id")
 
   override protected def afterEach(): Unit = {
     super.afterEach()

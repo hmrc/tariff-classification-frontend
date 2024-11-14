@@ -16,8 +16,6 @@
 
 package services
 
-import audit.AuditService
-import connectors.{BindingTariffClassificationConnector, RulingConnector}
 import models.CaseStatus.CaseStatus
 import models._
 import models.request.NewEventRequest
@@ -27,37 +25,12 @@ import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.templates.{cover_letter_template, ruling_template}
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_ReopenCaseSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
+class CasesService_ReopenCaseSpec extends CasesServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val connector             = mock[BindingTariffClassificationConnector]
-  private val emailService          = mock[EmailService]
-  private val fileStoreService      = mock[FileStoreService]
-  private val rulingConnector       = mock[RulingConnector]
-  private val audit                 = mock[AuditService]
-  private val countriesService      = mock[CountriesService]
-  private val reportingService      = mock[ReportingService]
-  private val pdfService            = mock[PdfService]
-  private val cover_letter_template = mock[cover_letter_template]
-  private val ruling_template       = mock[ruling_template]
-  private val aCase                 = Cases.btiCaseExample
-
-  private val service =
-    new CasesService(
-      audit,
-      emailService,
-      fileStoreService,
-      countriesService,
-      reportingService,
-      pdfService,
-      connector,
-      rulingConnector,
-      cover_letter_template,
-      ruling_template
-    )(executionContext, realAppConfig)
+  private val aCase = Cases.btiCaseExample
 
   override protected def afterEach(): Unit = {
     super.afterEach()

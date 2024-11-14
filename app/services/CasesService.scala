@@ -56,7 +56,8 @@ class CasesService @Inject() (
   connector: BindingTariffClassificationConnector,
   rulingConnector: RulingConnector,
   cover_letter_template: cover_letter_template,
-  ruling_template: ruling_template
+  ruling_template: ruling_template,
+  decision_template: decision_template
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
     extends Logging {
 
@@ -389,40 +390,28 @@ class CasesService @Inject() (
     def getCountryName(code: String): Option[String] =
       countriesService.getAllCountriesById.get(code).map(_.countryName)
 
-    def createRulingPdf(pdf: PdfFile): FileUpload = {
+    def createFileUpload(pdf: PdfFile, fileName: String): FileUpload = {
       val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
       Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
-      FileUpload(tempFile, s"ATaRRuling_${completedCase.reference}.pdf", pdf.contentType)
-    }
-
-    def createCoverLetterPdf(pdf: PdfFile): FileUpload = {
-      val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
-      Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
-      FileUpload(tempFile, s"ATaRCoverLetter_${completedCase.reference}.pdf", pdf.contentType)
-    }
-
-    def createLiabilityDecisionPdf(pdf: PdfFile): FileUpload = {
-      val tempFile = SingletonTemporaryFileCreator.create(completedCase.reference, "pdf")
-      Files.write(tempFile.path, pdf.content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
-      FileUpload(tempFile, s"LiabilityDecision_${completedCase.reference}.pdf", pdf.contentType)
+      FileUpload(tempFile, s"${fileName}_${completedCase.reference}.pdf", pdf.contentType)
     }
 
     def generatePdf: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
         pdfService
           .generateFopPdf(ruling_template(completedCase, decision, getCountryName), "ruling_template.xml")
-          .map(createRulingPdf)
+          .map(pdf => createFileUpload(pdf, "ATaRRuling"))
       case LIABILITY =>
         pdfService
-          .generatePdf(decision_template(completedCase, decision))
-          .map(createLiabilityDecisionPdf)
+          .generateFopPdf(decision_template(completedCase, decision), "decision_template.xml")
+          .map(pdf => createFileUpload(pdf, "LiabilityDecision"))
     }
 
     def generateLetter: Future[FileUpload] = completedCase.application.`type` match {
       case ATAR =>
         pdfService
           .generateFopPdf(cover_letter_template(completedCase, decision, getCountryName), "cover_letter_template.xml")
-          .map(createCoverLetterPdf)
+          .map(pdf => createFileUpload(pdf, "ATaRCoverLetter"))
     }
 
     if (completedCase.application.`type` == ATAR) {

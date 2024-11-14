@@ -1,0 +1,63 @@
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" version="2.0">
+  <xsl:include href="*/hmrc-frontend-fop-conversions.xsl"/>
+  <xsl:include href="*/decision_template-fop-conversions.xsl"/>
+  <xsl:include href="*/hmrc-frontend-fop-matchers.xsl"/>
+
+  <!-- This template is used to convert the 'decision_template.scala.html' Twirl template into FOP elements & attributes.
+       HTML elements following a standard pattern are converted by 'hmrc-frontend-fop-matchers.xsl'.
+       Custom elements and elements which are different to the 'GOV.UK Design system' are defined here. -->
+
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" media-type="application/pdf"/>
+
+  <xsl:param name="documentAttributeSets"
+             select="document('*/decision_template-fop-conversions.xsl')//xsl:attribute-set"/>
+
+  <xsl:template match="div[@class='print-document']" mode="pdf" priority="1">
+    <fo:block xsl:use-attribute-sets="print-document" break-before="page">
+      <xsl:apply-templates select="node()" mode="pdf"/>
+    </fo:block>
+  </xsl:template>
+
+  <xsl:template match="h1[@class='govuk-heading-large']" mode="pdf" priority="1">
+    <fo:block xsl:use-attribute-sets="heading-large">
+      <xsl:apply-templates select="node()" mode="pdf"/>
+    </fo:block>
+  </xsl:template>
+
+  <xsl:template match="div[@class='box-c592']" mode="pdf" priority="1">
+    <fo:block xsl:use-attribute-sets="box-c592" border="1px solid black">
+      <xsl:apply-templates select="node()" mode="pdf"/>
+    </fo:block>
+  </xsl:template>
+
+  <xsl:template match="div[@class='header']" name="header" mode="pdf" priority="1">
+    <xsl:choose>
+      <xsl:when test="@data-render-header = 'yes'">
+        <xsl:apply-templates select="node()" mode="pdf"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:comment>Header not rendered</xsl:comment>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match = "/">
+
+    <fo:root xml:lang="en" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="main" page-height="297mm" page-width="210mm" margin-top="1.3cm"
+                               margin-bottom="1.3cm" margin-left="2cm" margin-right="2cm">
+          <fo:region-body region-name="xsl-region-body" margin-top="1cm" margin-bottom="1cm"/>
+          <fo:region-before region-name="xsl-region-before" extent="1cm"/>
+          <fo:region-after region-name="xsl-region-after"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+
+      <fo:page-sequence master-reference="main">
+        <fo:flow flow-name="xsl-region-body" text-align="left">
+          <xsl:apply-templates select="." mode="pdf"/>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </xsl:template>
+</xsl:stylesheet>
