@@ -52,16 +52,16 @@
                             activity_status_change(index, event)
                         }
                         case EventType.CASE_CANCELLATION => {
-                            activity_case_cancellation(index, event, startAtTabIndex + (index*2))
+                            activity_case_cancellation(index, event, startAtTabIndex)
                         }
                         case EventType.CASE_REFERRAL => {
-                            activity_case_referral(index, event, startAtTabIndex + (index*2))
+                            activity_case_referral(index, event, startAtTabIndex)
                         }
                         case EventType.CASE_COMPLETED => {
-                            activity_case_completed(index, event, startAtTabIndex + (index*2))
+                            activity_case_completed(index, event, startAtTabIndex)
                         }
                         case EventType.CASE_REJECTED => {
-                            activity_case_rejection(index, event, startAtTabIndex + (index*2))
+                            activity_case_rejection(index, event, startAtTabIndex)
                         }
                         case EventType.APPEAL_ADDED => {
                             val body = event.details.asInstanceOf[AppealAdded]
@@ -70,14 +70,14 @@
                                     id = s"activity-events-row-$index",
                                     summary = s"Review added with status ${AppealStatus.formatReview(body.appealStatus)}",
                                     body = body.comment.map(Html(_)),
-                                    useTabIndex = Some(startAtTabIndex + (index*2))
+                                    useTabIndex = Some(startAtTabIndex)
                                 )
                             } else {
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"Appeal added with type ${AppealType.format(body.appealType)} and status ${AppealStatus.formatAppeal(body.appealStatus)}",
                                     body = body.comment.map(Html(_)),
-                                    useTabIndex = Some(startAtTabIndex + (index*2))
+                                    useTabIndex = Some(startAtTabIndex)
                                 )
                             }
                         }
@@ -88,14 +88,14 @@
                                     id = s"activity-events-row-$index",
                                     summary = s"Review status changed from ${AppealStatus.formatReview(body.from)} to ${AppealStatus.formatReview(body.to)}",
                                     body = body.comment.map(Html(_)),
-                                    useTabIndex = Some(startAtTabIndex + (index*2))
+                                    useTabIndex = Some(startAtTabIndex)
                                 )
                             } else {
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"${AppealType.format(body.appealType)} status changed from ${AppealStatus.formatAppeal(body.from)} to ${AppealStatus.formatAppeal(body.to)}",
                                     body = body.comment.map(Html(_)),
-                                    useTabIndex = Some(startAtTabIndex + (index*2))
+                                    useTabIndex = Some(startAtTabIndex)
                                 )
                             }
                         }
@@ -107,7 +107,7 @@
                                 id = s"activity-events-row-$index",
                                 summary = s"Application for extended use status changed from ${from} to ${to}",
                                 body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index*2))
+                                useTabIndex = Some(startAtTabIndex)
                             )
                         }
                         case EventType.ASSIGNMENT_CHANGE => {
@@ -126,7 +126,7 @@
                                 id = s"activity-events-row-$index",
                                 summary = summary,
                                 body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index*2))
+                                useTabIndex = Some(startAtTabIndex)
                             )
                         }
                         case EventType.QUEUE_CHANGE => {
@@ -135,7 +135,7 @@
                                 id = s"activity-events-row-$index",
                                 summary = s" ${assignee(event.operator, true)} moved this case to the ${body.to.flatMap(to => activity.queues.find(to == _.id)).map(_.name).getOrElse("unknown")} queue",
                                 body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index*2))
+                                useTabIndex = Some(startAtTabIndex)
                             )
                         }
 
@@ -144,7 +144,7 @@
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
                                 summary = body.comment,
-                                useTabIndex = Some(startAtTabIndex + (index*2))
+                                useTabIndex = Some(startAtTabIndex)
                             )
                         }
 

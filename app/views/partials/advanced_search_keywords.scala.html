@@ -16,11 +16,10 @@
 
 @import models.Search
 @import views.html.components.input_accessible_auto_complete
-@import models.ReusableTabIndexer
 @import views.html.helper.CSPNonce
 
 
-@(f: Form[Search], keywords: Seq[String], tabIndexer: ReusableTabIndexer = ReusableTabIndexer())(implicit messages: Messages, request: RequestHeader)
+@(f: Form[Search], keywords: Seq[String])(implicit messages: Messages, request: RequestHeader)
 
     @moveUnAddedKeywordToTable(form: Form[Search]) = @{
         form.data.get("keyword[0]").filter(_.nonEmpty).map { keyword =>
@@ -73,7 +72,7 @@
                     </dd>
                     <script @CSPNonce.attr>advancedSearch.removeKeyword(@index)</script>
                     <dd class="govuk-summary-list__actions">
-                        <a tabindex="@{tabIndexer.nextTabIndex()}" id="advanced_search_keywords-list-row-@{index}-remove_button" type="link" class="govuk-link" href="#">Remove <span class="govuk-visually-hidden">@keyword</span></a>
+                        <a tabindex="0" id="advanced_search_keywords-list-row-@{index}-remove_button" type="link" class="govuk-link" href="#">Remove <span class="govuk-visually-hidden">@keyword</span></a>
                     </dd>
                 </div>
             }

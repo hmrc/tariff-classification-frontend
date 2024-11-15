@@ -46,7 +46,7 @@
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                         <tr id="@{id}-row-@{index}" class="govuk-table__row">
                             <td id="@{id}-row-@{index}-title" class="govuk-table__cell">
-                                @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex.map(x => x+1+(0*index)))
+                                @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex)
                             </td>
 
                             @if(showUploadedBy) {
@@ -61,7 +61,7 @@
                                         <fieldset>
                                             @* TODO FIX *@
                                             <div class="multiple-choice">
-                                                <input @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+1+(1*index)}"}
+                                                <input  tabindex="0"
                                                         id="attachments[@{index}]"
                                                         name="attachments[@{index}]"
                                                         type="checkbox"
@@ -83,7 +83,7 @@
                                 caseRef.nonEmpty &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove"  class="govuk-table__cell">
-                                    <a class="govuk-link" @if(startAtTabIndex.isDefined){tabindex="@{startAtTabIndex.get+2+(2*index)}"} id="@{id}-row-@{index}-remove-link" href='@v2.routes.AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
+                                    <a class="govuk-link" tabindex="0" id="@{id}-row-@{index}-remove-link" href='@v2.routes.AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
                                         <span aria-hidden="true">@messages("case.attachment.remove.file.text")</span>
                                         <span class="govuk-visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName.getOrElse("New Attachment"))</span>
                                     </a>

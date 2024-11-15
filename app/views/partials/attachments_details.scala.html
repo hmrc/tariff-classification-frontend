@@ -32,7 +32,7 @@
 
     @attachments_state_message(attachments = attachments.allAttachments, autoRefresh = true, displayStateMessage = false)
 
-    @attachments_list_atar("classification-team", attachments, startAtTabIndex = Some(startAtTabIndex+31))
+    @attachments_list_atar("classification-team", attachments, Some(startAtTabIndex))
 
     @if(request.hasPermission(Permission.ADD_ATTACHMENT)) {
         @helper.form(

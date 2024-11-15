@@ -44,7 +44,7 @@
                                 id = s"sample-status-events-row-$index",
                                 summary = body.renderSummaryFor(ApplicationType.ATAR),
                                 body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index * 2))
+                                useTabIndex = Some(startAtTabIndex)
                             )
                         }
                         case EventType.SAMPLE_RETURN_CHANGE => {
@@ -53,7 +53,7 @@
                                 id = s"sample-status-events-row-$index",
                                 summary = s"Returning requested sample changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
                                 body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index * 2))
+                                useTabIndex = Some(startAtTabIndex)
                             )
                         }
                         case _ => {
