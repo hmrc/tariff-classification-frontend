@@ -42,7 +42,7 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       .instanceOf[cover_letter_template]
       .apply(
         aCase(_ => btiCaseExample),
-        expiredRuling,
+        expiredRuling.copy(explanation = Some("The UK operate within the World Customs Organization (WCO) Harmonized System (HS), the worldwidesystem for uniform classification of goods. The UK is aware that WCO member(s), the European Union (EU) (orother Customs Authorities. The item has been classified in accordance with the Harmonised SystemExplanatory Notes (HSEN)s to heading 9503 and the General Interpretative Rules 1-6. I have taken these intoaccount when reaching my decision, to ensure the HS is applied consistently amongst WCO members. I haveresearched and taken account of rulings issued by Great Britain for rulings made by other contracting parties ofthe Harmonized System (HS), which includes European Union member states. Through this research, I havefound that similar products have also been classified to 9503007000 Tricycles, scooters, pedal cars and similarwheeled toys; dolls' carriages; dolls; other toys; reduced size ('scale') models and similar recreational models,working or not; puzzles of all kinds Examples of previous decisions are always carefully considered as part ofour classification process to ensure consistency in how the HS is applied.")),
         _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
       )(messages)
   private val coverLetterTemplateWithSamples: Html =
@@ -50,7 +50,7 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       .instanceOf[cover_letter_template]
       .apply(
         aCase(_ => btiCaseExample.copy(application = btiApplicationExample.copy(sampleToBeProvided = true))),
-        expiredRuling,
+        expiredRuling.copy(explanation = Some("The UK operate within the World Customs Organization (WCO) Harmonized System (HS), the worldwidesystem for uniform classification of goods. The UK is aware that WCO member(s), the European Union (EU) (orother Customs Authorities. The item has been classified in accordance with the Harmonised SystemExplanatory Notes (HSEN)s to heading 9503 and the General Interpretative Rules 1-6. I have taken these intoaccount when reaching my decision, to ensure the HS is applied consistently amongst WCO members. I haveresearched and taken account of rulings issued by Great Britain for rulings made by other contracting parties ofthe Harmonized System (HS), which includes European Union member states. Through this research, I havefound that similar products have also been classified to 9503007000 Tricycles, scooters, pedal cars and similarwheeled toys; dolls' carriages; dolls; other toys; reduced size ('scale') models and similar recreational models,working or not; puzzles of all kinds Examples of previous decisions are always carefully considered as part ofour classification process to ensure consistency in how the HS is applied.")),
         _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
       )(messages)
   private val applicationCertificate: Html =
@@ -139,7 +139,7 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
         "withSamples",
         coverLetterTemplateWithSamples,
         xlsTransformer,
-        headings ++ Seq("Asking for a review with HMRC", "Your samples have been kept"),
+        headings ++ Seq("Asking for a review with HMRC", "Samples"),
         Seq.empty
       ),
       ("applicationCertificate", applicationCertificate, xlsRulingTransformer, rulingCertificateHeadings, Seq.empty)
