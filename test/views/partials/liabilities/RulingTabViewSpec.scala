@@ -40,8 +40,8 @@ class RulingTabViewSpec extends ViewSpec {
 
   "Ruling Tab" should {
 
-    val doc               = view(rulingTab(rulingViewModel.copy(showEditRuling = true), 1))
-    val notShowEditButton = view(rulingTab(rulingViewModel.copy(showEditRuling = false), 1))
+    val doc               = view(rulingTab(rulingViewModel.copy(showEditRuling = true)))
+    val notShowEditButton = view(rulingTab(rulingViewModel.copy(showEditRuling = false)))
 
     "display tab title" in {
       doc.getElementById("ruling-heading").text shouldBe messages("case.liability.decision.heading")

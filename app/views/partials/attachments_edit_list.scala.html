@@ -23,8 +23,7 @@
 @(id: String,
         attachments: Seq[StoredAttachment],
         showRemoval: Boolean = false,
-        caseRef: String,
-        startAtTabIndex : Option[Int] = None)(implicit messages: Messages)
+        caseRef: String)(implicit messages: Messages)
 
     @if(attachments.nonEmpty){
 
@@ -41,15 +40,14 @@
                 <tr id="@{id}-row-@{index}" class="govuk-table__row">
                     <td class="govuk-table__cell">
                         <div id="@{id}-row-@{index}-title">
-                            @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex)
+                            @attachment(s"$id-row-$index", file, caseRef)
                         </div>
                     </td>
                     <td class="govuk-table__cell">
                         @if(file.public) {
                             <div class="govuk-checkboxes">
                                 <div class="govuk-checkboxes__item">
-                                    <input tabindex="0"
-                                    id="attachments[@{index}]"
+                                    <input id="attachments[@{index}]"
                                     class="govuk-checkboxes__input"
                                     name="attachments[@{index}]"
                                     type="checkbox"

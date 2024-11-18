@@ -25,8 +25,7 @@
   showUploadedBy: Boolean = false,
   showSelect: Boolean = false,
   showRemoval: Boolean = false,
-  caseRef: String,
-  startAtTabIndex : Option[Int] = None
+  caseRef: String
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
     @if(attachments.nonEmpty){
@@ -46,7 +45,7 @@
                     @for((file: StoredAttachment, index: Int) <- attachments.zipWithIndex) {
                         <tr id="@{id}-row-@{index}" class="govuk-table__row">
                             <td id="@{id}-row-@{index}-title" class="govuk-table__cell">
-                                @attachment(s"$id-row-$index", file, caseRef, useTabIndex = startAtTabIndex)
+                                @attachment(s"$id-row-$index", file, caseRef)
                             </td>
 
                             @if(showUploadedBy) {
@@ -61,8 +60,7 @@
                                         <fieldset>
                                             @* TODO FIX *@
                                             <div class="multiple-choice">
-                                                <input  tabindex="0"
-                                                        id="attachments[@{index}]"
+                                                <input  id="attachments[@{index}]"
                                                         name="attachments[@{index}]"
                                                         type="checkbox"
                                                         value="@file.id"
@@ -83,7 +81,7 @@
                                 caseRef.nonEmpty &&
                                 request.hasPermission(Permission.REMOVE_ATTACHMENTS)) {
                                 <td id="@{id}-row-@{index}-remove"  class="govuk-table__cell">
-                                    <a class="govuk-link" tabindex="0" id="@{id}-row-@{index}-remove-link" href='@v2.routes.AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
+                                    <a class="govuk-link" id="@{id}-row-@{index}-remove-link" href='@v2.routes.AttachmentsController.removeAttachment(caseRef, file.id, file.fileName.getOrElse("New Attachment"))'>
                                         <span aria-hidden="true">@messages("case.attachment.remove.file.text")</span>
                                         <span class="govuk-visually-hidden">@messages("case.attachment.remove.file.hidden.text",file.fileName.getOrElse("New Attachment"))</span>
                                     </a>

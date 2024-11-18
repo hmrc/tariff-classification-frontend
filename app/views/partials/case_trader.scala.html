@@ -17,7 +17,7 @@
 @import models.viewmodels.atar.ApplicantTabViewModel
 @import views.html.partials.{contact_details, tab_heading}
 
-@(applicant: ApplicantTabViewModel, startAtTabIndex : Int = 0)(implicit messages: Messages)
+@(applicant: ApplicantTabViewModel)(implicit messages: Messages)
 
 @tab_heading("trader", "Applicant")
 
@@ -57,7 +57,7 @@
 
 </dl>
 
-@contact_details(applicant, Some(startAtTabIndex))
+@contact_details(applicant)
 
     @applicant.agentDetails.map { agentDetails =>
         <h3 class="govuk-heading-m" id="agent-details-heading">@messages("case.application.agent.agent-details-heading")</h3>

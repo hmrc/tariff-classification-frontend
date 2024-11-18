@@ -25,7 +25,7 @@
 @import views.html.partials.ruling._
 @import views.html.partials.{attachments_list, tab_heading}
 
-@(ruling: RulingTabViewModel, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(ruling: RulingTabViewModel, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("ruling", messages("case.menu.ruling-advance"))
 
@@ -147,9 +147,9 @@
     </div>
 
     <div class="govuk-form-group">
-        @ruling_explanation(ruling.decision,Some(startAtTabIndex))
+        @ruling_explanation(ruling.decision)
 
-        @ruling_certificate_link(ruling,Some(startAtTabIndex))
+        @ruling_certificate_link(ruling)
 
         @if(ruling.caseStatus == CaseStatus.COMPLETED || ruling.caseStatus == CaseStatus.CANCELLED) {
             @ruling_commodity_code_expiry_section(ruling)
@@ -162,13 +162,12 @@
         @attachments_list(
             "attachments",
             files.filter(_.shouldPublishToRulings),
-            caseRef = ruling.caseReference,
-            startAtTabIndex = Some(startAtTabIndex)
+            caseRef = ruling.caseReference
         )
     </div>
 
     <div class="govuk-form-group" id="ruling-actions">
         @if(request.hasPermission(Permission.CANCEL_CASE)) {
-            @cancel_ruling_section(ruling,Some(startAtTabIndex))
+            @cancel_ruling_section(ruling)
         }
     </div>

@@ -21,7 +21,7 @@
 @import models.forms.DecisionFormData
 @import views.html.partials.ruling.{ruling_certificate_link}
 
-@(d: Option[Decision], useTabIndex : Option[Int] = None)(implicit messages: Messages)
+@(d: Option[Decision])(implicit messages: Messages)
 
     @d.map { d =>
 

@@ -18,8 +18,7 @@
         field: Field,
         label: String,
         inputClass: Option[String] = None,
-        accept: Option[String] = None,
-        useTabIndex : Option[Int] = None
+        accept: Option[String] = None
 )(implicit messages: Messages)
 
 <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}">
@@ -34,7 +33,6 @@
     class="govuk-file-upload @if(field.hasErrors) {govuk-file-upload--error }"
     id="@{field.id}"
     name="@{field.name}"
-    @if(useTabIndex.isDefined){tabindex="@{useTabIndex.get}"}
     @if(accept.isDefined) { accept="@{accept.get}" }
     @if(field.hasErrors){  aria-describedby="error-message-@{field.id}-input" }
     />

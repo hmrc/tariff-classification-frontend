@@ -21,7 +21,7 @@
 @import views.html.partials.activity._
 @import views.html.partials.{assignee, progressive_disclosure}
 
-@(activity: ActivityViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_])
+@(activity: ActivityViewModel)(implicit request: AuthenticatedRequest[_])
 
 <table id="activity-events" class="govuk-table">
     <caption class="govuk-visually-hidden" class="govuk-table__caption">Activity log</caption>
@@ -52,16 +52,16 @@
                             activity_status_change(index, event)
                         }
                         case EventType.CASE_CANCELLATION => {
-                            activity_case_cancellation(index, event, startAtTabIndex)
+                            activity_case_cancellation(index, event)
                         }
                         case EventType.CASE_REFERRAL => {
-                            activity_case_referral(index, event, startAtTabIndex)
+                            activity_case_referral(index, event)
                         }
                         case EventType.CASE_COMPLETED => {
-                            activity_case_completed(index, event, startAtTabIndex)
+                            activity_case_completed(index, event)
                         }
                         case EventType.CASE_REJECTED => {
-                            activity_case_rejection(index, event, startAtTabIndex)
+                            activity_case_rejection(index, event)
                         }
                         case EventType.APPEAL_ADDED => {
                             val body = event.details.asInstanceOf[AppealAdded]
@@ -69,15 +69,13 @@
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"Review added with status ${AppealStatus.formatReview(body.appealStatus)}",
-                                    body = body.comment.map(Html(_)),
-                                    useTabIndex = Some(startAtTabIndex)
+                                    body = body.comment.map(Html(_))
                                 )
                             } else {
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"Appeal added with type ${AppealType.format(body.appealType)} and status ${AppealStatus.formatAppeal(body.appealStatus)}",
-                                    body = body.comment.map(Html(_)),
-                                    useTabIndex = Some(startAtTabIndex)
+                                    body = body.comment.map(Html(_))
                                 )
                             }
                         }
@@ -87,15 +85,13 @@
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"Review status changed from ${AppealStatus.formatReview(body.from)} to ${AppealStatus.formatReview(body.to)}",
-                                    body = body.comment.map(Html(_)),
-                                    useTabIndex = Some(startAtTabIndex)
+                                    body = body.comment.map(Html(_))
                                 )
                             } else {
                                 progressive_disclosure(
                                     id = s"activity-events-row-$index",
                                     summary = s"${AppealType.format(body.appealType)} status changed from ${AppealStatus.formatAppeal(body.from)} to ${AppealStatus.formatAppeal(body.to)}",
-                                    body = body.comment.map(Html(_)),
-                                    useTabIndex = Some(startAtTabIndex)
+                                    body = body.comment.map(Html(_))
                                 )
                             }
                         }
@@ -106,8 +102,7 @@
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
                                 summary = s"Application for extended use status changed from ${from} to ${to}",
-                                body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex)
+                                body = body.comment.map(Html(_))
                             )
                         }
                         case EventType.ASSIGNMENT_CHANGE => {
@@ -125,8 +120,7 @@
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
                                 summary = summary,
-                                body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex)
+                                body = body.comment.map(Html(_))
                             )
                         }
                         case EventType.QUEUE_CHANGE => {
@@ -134,8 +128,7 @@
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
                                 summary = s" ${assignee(event.operator, true)} moved this case to the ${body.to.flatMap(to => activity.queues.find(to == _.id)).map(_.name).getOrElse("unknown")} queue",
-                                body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex)
+                                body = body.comment.map(Html(_))
                             )
                         }
 
@@ -143,8 +136,7 @@
                             val body = event.details.asInstanceOf[CaseCreated]
                             progressive_disclosure(
                                 id = s"activity-events-row-$index",
-                                summary = body.comment,
-                                useTabIndex = Some(startAtTabIndex)
+                                summary = body.comment
                             )
                         }
 

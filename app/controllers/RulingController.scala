@@ -52,8 +52,6 @@ class RulingController @Inject() (
     with I18nSupport
     with WithUnsafeDefaultFormBinding {
 
-  private final val rulingDetailsStartTabIndex = 7000
-
   def editRulingDetails(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.EDIT_RULING))
       .async { implicit request =>
@@ -141,7 +139,7 @@ class RulingController @Inject() (
   ): Future[Result] =
     fileStoreService
       .getAttachments(c)
-      .map(ruling_details_edit(c, _, f, startAtTabIndex = Some(rulingDetailsStartTabIndex)))
+      .map(ruling_details_edit(c, _, f))
       .map(Ok(_))
 
   private def editLiabilityRulingView(f: Form[Decision], c: Case)(implicit

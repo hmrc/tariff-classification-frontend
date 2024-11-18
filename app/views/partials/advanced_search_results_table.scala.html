@@ -19,7 +19,7 @@
 @import utils.Dates
 @import views.html.partials.statuses._
 @import views.partials.SearchResult
-@(results: Paged[SearchResult], startAtTabIndex: Int = 0)
+@(results: Paged[SearchResult])
 
 @if(results.isEmpty) {
     <p id="advanced_search_results-empty" class="govuk-body">No results found</p>

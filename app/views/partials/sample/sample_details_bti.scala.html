@@ -21,7 +21,7 @@
 @import views.html.partials._
 
 @import views.html.partials.sample.sample_status
-@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(sample: SampleTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @tab_heading("sample-application", messages("case.menu.sample-details"))
 
@@ -74,7 +74,7 @@
                 @sample.sampleReturnStatus
             </dd>
             <dd class="govuk-summary-list__actions">
-                <a id="sample-requested-return-change" tabindex="@startAtTabIndex"
+                <a id="sample-requested-return-change"
                 href="@routes.SampleReturnController.updateStatus(sample.caseReference)" class="govuk-link">@messages("case.sample.request.change")</a>
             </dd>
         </div>
@@ -83,7 +83,7 @@
 
 @if(sample.sampleToBeProvided || sample.sampleRequestedBy.nonEmpty) {
     <dl class="govuk-summary-list">
-        @sample_status(sample, startAtTabIndex)
+        @sample_status(sample)
     </dl>
 }
 

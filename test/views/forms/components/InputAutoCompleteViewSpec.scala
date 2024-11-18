@@ -38,8 +38,7 @@ class InputAutoCompleteViewSpec extends ViewSpec {
         input_accessible_auto_complete(
           field = form("field"),
           label = Some("Label"),
-          autoCompleteOptions = Seq("A", "B"),
-          useTabIndex = Some(100)
+          autoCompleteOptions = Seq("A", "B")
         )
       )
 

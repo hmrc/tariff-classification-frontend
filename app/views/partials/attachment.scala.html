@@ -18,7 +18,7 @@
 @import models.response.ScanStatus
 @import utils.Dates
 
-@(id: String, file: StoredAttachment, reference: String, name: Option[String] = None, useTabIndex : Option[Int] = None)
+@(id: String, file: StoredAttachment, reference: String, name: Option[String] = None)
 
 @if(file.scanStatus.contains(ScanStatus.READY) && file.url.isDefined) {
     <div class="govuk-form-group">
