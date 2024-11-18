@@ -23,8 +23,7 @@
 
 
 @(id: String,
-  attachments: AttachmentsTabViewModel,
-  startAtTabIndex : Option[Int] = None
+  attachments: AttachmentsTabViewModel
 )(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @if(attachments.allAttachments.nonEmpty){

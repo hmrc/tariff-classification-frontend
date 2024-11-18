@@ -19,7 +19,7 @@
 @import utils.Dates
 @import views.html.partials.progressive_disclosure
 
-@(sample: SampleTabViewModel, startAtTabIndex : Int = 0)
+@(sample: SampleTabViewModel)
 
 @if(sample.sampleActivity.nonEmpty) {
     <h3 class="govuk-heading-m" id="sample-status-events-heading">Sample activity</h3>
@@ -43,8 +43,7 @@
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
                                 summary = body.renderSummaryFor(ApplicationType.ATAR),
-                                body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index * 2))
+                                body = body.comment.map(Html(_))
                             )
                         }
                         case EventType.SAMPLE_RETURN_CHANGE => {
@@ -52,8 +51,7 @@
                             progressive_disclosure(
                                 id = s"sample-status-events-row-$index",
                                 summary = s"Returning requested sample changed from ${SampleReturn.format(body.from).toLowerCase} to ${SampleReturn.format(body.to).toLowerCase}",
-                                body = body.comment.map(Html(_)),
-                                useTabIndex = Some(startAtTabIndex + (index * 2))
+                                body = body.comment.map(Html(_))
                             )
                         }
                         case _ => {

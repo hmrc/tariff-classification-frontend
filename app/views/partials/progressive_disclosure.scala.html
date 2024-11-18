@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@(id: String, summary: String, body: Option[Html] = None, open: Boolean = false, useTabIndex: Option[Int] = None)
+@(id: String, summary: String, body: Option[Html] = None, open: Boolean = false)
 
 @if(body.isDefined) {
     <details role="group" class="govuk-details" @if(open){open} >

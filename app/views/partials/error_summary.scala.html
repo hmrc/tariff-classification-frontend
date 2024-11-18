@@ -14,20 +14,16 @@
  * limitations under the License.
  *@
 
-@(errors: Seq[FormError], startAtTabIndex : Option[Int] = None, titleMessage: String = "error.summary.title", keySwaps: Map[String, String] = Map())(implicit messages: Messages)
+@(errors: Seq[FormError], titleMessage: String = "error.summary.title", keySwaps: Map[String, String] = Map())(implicit messages: Messages)
 @if(errors.nonEmpty) {
-    <div class="govuk-error-summary" id="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="@startAtTabIndex.map(index => index + 1).getOrElse("0")">
+    <div class="govuk-error-summary" id="error-summary" role="group" aria-labelledby="error-summary-heading">
         <h2 class="govuk-error-summary__title" id="error-summary-heading">
             @messages(titleMessage)
         </h2>
         <div class="govuk-error-summary__body">
             <ul role="list" class="govuk-list govuk-error-summary__list">
                 @for((error: FormError, index: Int) <- errors.zipWithIndex) {
-                    @if(startAtTabIndex.isDefined) {
-                        <li><a href="#@keySwaps.getOrElse(error.key.replaceAll("""[\.\[\]]""", "_"), error.key.replaceAll("""[\.\[\]]""", "_"))" tabindex="@startAtTabIndex.map(x => x+2+index)">@messages(error.message, error.args:_*)</a></li>
-                    } else {
                         <li><a href="#@keySwaps.getOrElse(error.key.replaceAll("""[\.\[\]]""", "_"), error.key.replaceAll("""[\.\[\]]""", "_"))">@messages(error.message, error.args:_*)</a></li>
-                    }
                 }
             </ul>
         </div>

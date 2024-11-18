@@ -6,7 +6,7 @@ object AppDependencies {
   private val bootstrapPlayVersion = "9.5.0"
 
   private val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"                  %% "play-frontend-hmrc-play-30" % "11.4.0",
+    "uk.gov.hmrc"                  %% "play-frontend-hmrc-play-30" % "11.5.0",
     "uk.gov.hmrc"                  %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
     "uk.gov.hmrc.mongo"            %% "hmrc-mongo-play-30"         % hmrcMongoPlayVersion,
     "uk.gov.hmrc"                  %% "play-json-union-formatter"  % "1.22.0",
@@ -14,7 +14,7 @@ object AppDependencies {
     "com.github.blemale"           %% "scaffeine"                  % "5.3.0",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.18.1",
     "org.apache.pekko"             %% "pekko-connectors-csv"       % "1.0.2",
-    "org.apache.xmlgraphics"        % "fop"                        % "2.9",
+    "org.apache.xmlgraphics"        % "fop"                        % "2.10",
     "net.sf.saxon"                  % "Saxon-HE"                   % "12.5"
   )
 

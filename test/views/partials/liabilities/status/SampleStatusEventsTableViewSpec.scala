@@ -35,19 +35,19 @@ class SampleStatusEventsTableViewSpec extends ViewSpec {
   "sample_details_liability view" should {
 
     "render correctly" in {
-      val doc = view(sampleStatusEventsTableView(Paged(sampleStatusChangeEvents), 0))
+      val doc = view(sampleStatusEventsTableView(Paged(sampleStatusChangeEvents)))
       doc.getElementById("sample-status-events-heading") should containText("Sample activity")
     }
 
     "render status change events correctly" in {
-      val doc = view(sampleStatusEventsTableView(Paged(sampleStatusChangeEvents), 0))
+      val doc = view(sampleStatusEventsTableView(Paged(sampleStatusChangeEvents)))
       doc.getElementById("sample-status-events-row-0") should containText(
         "Sample status changed from awaiting sample to destroyed"
       )
     }
 
     "render status return events correctly" in {
-      val doc = view(sampleStatusEventsTableView(Paged(sampleStatusReturnChangeEvents), 0))
+      val doc = view(sampleStatusEventsTableView(Paged(sampleStatusReturnChangeEvents)))
       doc.getElementById("sample-status-events-row-0") should containText("Returning sample changed from yes to no")
     }
 

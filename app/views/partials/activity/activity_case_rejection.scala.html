@@ -18,9 +18,9 @@
 @import views.html.partials.progressive_disclosure
 
 
-@(index: Int, event: Event, useTabIndex: Int = 0)
+@(index: Int, event: Event)
 
-@content(body: RejectCaseStatusChange, useTabIndex: Int) = {
+@content(body: RejectCaseStatusChange) = {
     <p class="govuk-body">
         <span class="govuk-!-font-weight-bold">Reason:</span>
         <span id="activity-events-row-@index-reason" class="pre-wrap">@RejectReason.format(body.reason)</span>
@@ -34,8 +34,7 @@
 }
 
 @if(body.attachmentId.isDefined) {
-    <a tabindex="@useTabIndex"
-    class="govuk-link"
+    <a class="govuk-link"
     id="activity-events-row-@index-email_link"
     target="_blank"
     href="@controllers.routes.ViewAttachmentController.get(event.caseReference, body.attachmentId.get)">
@@ -48,7 +47,6 @@
     @progressive_disclosure(
         id = s"activity-events-row-$index",
         summary = s"Status changed from ${body.from.toString.toLowerCase} to ${body.to.toString.toLowerCase}",
-        body = Some(content(body, useTabIndex+1)),
-        useTabIndex = Some(useTabIndex)
-    )
+        body = Some(content(body))
+)
 }

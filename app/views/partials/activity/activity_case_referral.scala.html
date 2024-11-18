@@ -17,9 +17,9 @@
 @import models.ReferralReason.ReferralReason
 @import models.{Event, ReferralCaseStatusChange, ReferralReason}
 @import views.html.partials.progressive_disclosure
-@(index: Int, event: Event, useTabIndex: Int = 0)
+@(index: Int, event: Event)
 
-@content(body: ReferralCaseStatusChange, useTabIndex: Int) = {
+@content(body: ReferralCaseStatusChange) = {
  <p class="govuk-body">
   <span class="govuk-!-font-weight-bold">Referred to:</span>
   <span id="activity-events-row-@index-referred_to" class="pre-wrap">@body.referredTo</span>
@@ -40,7 +40,7 @@
  }
 
  @if(body.attachmentId.isDefined) {
-   <a tabindex="@useTabIndex" class="govuk-link" id="activity-events-row-@index-email_link" target="_blank" href="@controllers.routes.ViewAttachmentController.get(event.caseReference, body.attachmentId.get)">
+   <a class="govuk-link" id="activity-events-row-@index-email_link" target="_blank" href="@controllers.routes.ViewAttachmentController.get(event.caseReference, body.attachmentId.get)">
     View attached email
    </a>
  }
@@ -50,7 +50,6 @@
  @progressive_disclosure(
   id = s"activity-events-row-$index",
   summary = s"Status changed from ${body.from.toString.toLowerCase} to ${body.to.toString.toLowerCase}",
-  body = Some(content(body, useTabIndex+1)),
-  useTabIndex = Some(useTabIndex)
+  body = Some(content(body))
  )
 }

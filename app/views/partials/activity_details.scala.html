@@ -26,9 +26,9 @@
 @import views.html.partials.{activity_details_events_table, assignee, tab_heading}
 @import views.html.partials.error_summary
 
-@(activity: ActivityViewModel, activityForm: Form[ActivityFormData], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(activity: ActivityViewModel, activityForm: Form[ActivityFormData])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-    @error_summary(activityForm.errors, Some(startAtTabIndex))
+    @error_summary(activityForm.errors)
 
     @if(request.flash.get("success").getOrElse("").contains("note")){
         @notification_banner()(request.flash, messages)
@@ -43,7 +43,6 @@
                 field = activityForm("note"),
                 label = "Add case note",
                 hint = Some("Add short, descriptive notes to record case activity. For example, 'A sample of one trainer has been received and sent to the lab for testing.'"),
-                tabIndex = Some(startAtTabIndex+10),
                 customErrorMessage = Some(messages("error.empty.note"))
             )
             <div class="govuk-form-group">
@@ -52,7 +51,7 @@
         }
     }
 
-    @activity_details_events_table(activity, startAtTabIndex+15)
+    @activity_details_events_table(activity)
 
     <div class="govuk-body">
     @if(request.hasPermission(Permission.VIEW_CASE_ASSIGNEE)){

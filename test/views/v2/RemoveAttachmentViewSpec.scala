@@ -29,7 +29,6 @@ class RemoveAttachmentViewSpec extends ViewSpec {
 
   lazy val attachment: StoredAttachment = Cases.storedAttachment.copy()
   lazy val caseOne: Case                = Cases.btiCaseExample.copy(reference = "ref")
-  val testTabIndex                      = 99
 
   def renderWithoutError: HtmlFormat.Appendable = {
     val header = CaseHeaderViewModel.fromCase(caseOne)

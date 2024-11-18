@@ -28,9 +28,9 @@
 
 @import models.forms.MessageFormData
 
-@(messagesLogged: MessagesTabViewModel, messageForm: Form[MessageFormData], startAtTabIndex: Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(messagesLogged: MessagesTabViewModel, messageForm: Form[MessageFormData])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-    @error_summary(messageForm.errors, Some(startAtTabIndex))
+    @error_summary(messageForm.errors)
 
     @tab_heading("messages", messages("case.menu.messages"))
 
@@ -42,7 +42,6 @@
                 field = messageForm("message"),
                 label = "Add new message",
                 hint = Some("Copy and paste emails into this box, including the sender and recipient."),
-                tabIndex = Some(startAtTabIndex + 10),
                 customErrorMessage = Some(messages("error.empty.message"))
             )
             <div class="govuk-form-group">

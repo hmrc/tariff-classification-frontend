@@ -19,7 +19,7 @@
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.atar.ApplicantTabViewModel
 
-@(applicant: ApplicantTabViewModel, useTabIndex : Option[Int] = None)(implicit  messages: Messages)
+@(applicant: ApplicantTabViewModel)(implicit  messages: Messages)
 <h3 class="govuk-heading-m">Contact details</h3>
 
     @defining(applicant.contact) { co: Contact =>

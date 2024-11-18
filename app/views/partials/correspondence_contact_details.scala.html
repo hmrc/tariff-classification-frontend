@@ -19,7 +19,7 @@
 
 @import models.viewmodels.correspondence.ContactDetailsTabViewModel
 
-@(contactDetails: ContactDetailsTabViewModel, startAtTabIndex: Int = 2)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(contactDetails: ContactDetailsTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
 @tab_heading("correspondence", messages("case.v2.correspondence.contact-details.heading"))
 

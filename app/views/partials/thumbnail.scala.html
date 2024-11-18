@@ -17,15 +17,15 @@
 @import controllers.{Tab, routes}
 @import models.StoredAttachment
 
-@(id: String, caseReference : String, attachment: StoredAttachment, figureClass: Option[String] = None, useTabIndex: Option[Int] = None)
+@(id: String, caseReference : String, attachment: StoredAttachment, figureClass: Option[String] = None)
 
 <figure id="thumbnail-@id" class="search-results--thumbnail_wrapper @figureClass.getOrElse("")">
     <div class="search-results--thumbnail_image">
-        <a @if(useTabIndex.isDefined){ tabindex="@useTabIndex" } id="@{id}-link" target="_blank" href="@attachment.url" class="image-anchor">
+        <a id="@{id}-link" target="_blank" href="@attachment.url" class="image-anchor">
             <img id="@id" src="@attachment.url" alt="Image @attachment.fileName for case @caseReference" title="@attachment.fileName"/>
         </a>
     </div>
     <figcaption class="search-results--thumbnail_text">
-        <a @if(useTabIndex.isDefined){ tabindex="@useTabIndex" } aria-label="View case @caseReference" id="search-images-@id-text" href="@routes.CaseController.rulingDetails(caseReference)" class="govuk-link">@caseReference</a>
+        <a aria-label="View case @caseReference" id="search-images-@id-text" href="@routes.CaseController.rulingDetails(caseReference)" class="govuk-link">@caseReference</a>
     </figcaption>
 </figure>

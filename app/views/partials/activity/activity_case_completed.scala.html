@@ -17,7 +17,7 @@
 @import models.Event
 @import views.html.partials.progressive_disclosure
 @import models.CompletedCaseStatusChange
-@(index: Int, event: Event, useTabIndex: Int = 0)
+@(index: Int, event: Event)
 
 @content(body: CompletedCaseStatusChange) = {
  @if(body.comment.isDefined) {
@@ -37,7 +37,6 @@
  @progressive_disclosure(
   id = s"activity-events-row-$index",
   summary = s"Status changed from ${body.from.toString.toLowerCase} to ${body.to.toString.toLowerCase}",
-  body = Some(content(body)),
-  useTabIndex = Some(useTabIndex)
+  body = Some(content(body))
  )
 }

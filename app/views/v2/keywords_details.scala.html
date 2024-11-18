@@ -28,9 +28,9 @@
 
 @this()
 
-@(ktvm: KeywordsTabViewModel, keywordForm : Form[String], startAtTabIndex : Int = 0)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(ktvm: KeywordsTabViewModel, keywordForm : Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-@error_summary(keywordForm.errors, Some(startAtTabIndex))
+@error_summary(keywordForm.errors)
 
 @if(request.flash.get("success").getOrElse("").contains("keyword")){
     @notification_banner()(request.flash, messages)
@@ -47,7 +47,6 @@
             label = Some(messages("case.v2.liability.keywords.label")),
             hint = Some(messages("case.v2.liability.keywords.hint")),
             autoCompleteOptions = ktvm.globalKeywords,
-            useTabIndex = Some(startAtTabIndex+50),
             placeholder = Some("Start typing to find approved keywords")
         )
 
