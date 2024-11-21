@@ -21,8 +21,6 @@
 
 @(sample: SampleTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
 
-<h3 class="govuk-heading-m govuk-!-margin-top-6" id="sample-status-heading">@messages("case.sample.sample-status-header")</h3>
-
 <div id="sample-status" class="govuk-summary-list__row">
     <dt class="govuk-summary-list__value" id="sample-status-value" >
         @sample.sampleStatus
