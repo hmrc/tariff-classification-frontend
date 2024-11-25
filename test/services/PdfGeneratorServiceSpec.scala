@@ -23,8 +23,8 @@ import org.apache.pdfbox.text.PDFTextStripper
 import org.scalatest.concurrent.ScalaFutures
 import play.api.Environment
 import play.twirl.api.Html
-import utils.Cases.{aCase, btiApplicationExample, btiCaseExample, expiredRuling}
-import views.html.templates.{cover_letter_template, ruling_template}
+import utils.Cases.{aCase, btiApplicationExample, btiCaseExample, decisionWithExclusion, expiredRuling, liabilityCaseWithDecisionExample}
+import views.html.templates.{cover_letter_template, decision_template, ruling_template}
 
 import java.io.File
 import java.nio.file.{Files, Paths}
@@ -42,7 +42,11 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       .instanceOf[cover_letter_template]
       .apply(
         aCase(_ => btiCaseExample),
-        expiredRuling.copy(explanation = Some("The UK operate within the World Customs Organization (WCO) Harmonized System (HS), the worldwidesystem for uniform classification of goods. The UK is aware that WCO member(s), the European Union (EU) (orother Customs Authorities. The item has been classified in accordance with the Harmonised SystemExplanatory Notes (HSEN)s to heading 9503 and the General Interpretative Rules 1-6. I have taken these intoaccount when reaching my decision, to ensure the HS is applied consistently amongst WCO members. I haveresearched and taken account of rulings issued by Great Britain for rulings made by other contracting parties ofthe Harmonized System (HS), which includes European Union member states. Through this research, I havefound that similar products have also been classified to 9503007000 Tricycles, scooters, pedal cars and similarwheeled toys; dolls' carriages; dolls; other toys; reduced size ('scale') models and similar recreational models,working or not; puzzles of all kinds Examples of previous decisions are always carefully considered as part ofour classification process to ensure consistency in how the HS is applied.")),
+        expiredRuling.copy(explanation =
+          Some(
+            "The UK operate within the World Customs Organization (WCO) Harmonized System (HS), the worldwidesystem for uniform classification of goods. The UK is aware that WCO member(s), the European Union (EU) (orother Customs Authorities. The item has been classified in accordance with the Harmonised SystemExplanatory Notes (HSEN)s to heading 9503 and the General Interpretative Rules 1-6. I have taken these intoaccount when reaching my decision, to ensure the HS is applied consistently amongst WCO members. I haveresearched and taken account of rulings issued by Great Britain for rulings made by other contracting parties ofthe Harmonized System (HS), which includes European Union member states. Through this research, I havefound that similar products have also been classified to 9503007000 Tricycles, scooters, pedal cars and similarwheeled toys; dolls' carriages; dolls; other toys; reduced size ('scale') models and similar recreational models,working or not; puzzles of all kinds Examples of previous decisions are always carefully considered as part ofour classification process to ensure consistency in how the HS is applied."
+          )
+        ),
         _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
       )(messages)
   private val coverLetterTemplateWithSamples: Html =
@@ -50,7 +54,11 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       .instanceOf[cover_letter_template]
       .apply(
         aCase(_ => btiCaseExample.copy(application = btiApplicationExample.copy(sampleToBeProvided = true))),
-        expiredRuling.copy(explanation = Some("The UK operate within the World Customs Organization (WCO) Harmonized System (HS), the worldwidesystem for uniform classification of goods. The UK is aware that WCO member(s), the European Union (EU) (orother Customs Authorities. The item has been classified in accordance with the Harmonised SystemExplanatory Notes (HSEN)s to heading 9503 and the General Interpretative Rules 1-6. I have taken these intoaccount when reaching my decision, to ensure the HS is applied consistently amongst WCO members. I haveresearched and taken account of rulings issued by Great Britain for rulings made by other contracting parties ofthe Harmonized System (HS), which includes European Union member states. Through this research, I havefound that similar products have also been classified to 9503007000 Tricycles, scooters, pedal cars and similarwheeled toys; dolls' carriages; dolls; other toys; reduced size ('scale') models and similar recreational models,working or not; puzzles of all kinds Examples of previous decisions are always carefully considered as part ofour classification process to ensure consistency in how the HS is applied.")),
+        expiredRuling.copy(explanation =
+          Some(
+            "The UK operate within the World Customs Organization (WCO) Harmonized System (HS), the worldwidesystem for uniform classification of goods. The UK is aware that WCO member(s), the European Union (EU) (orother Customs Authorities. The item has been classified in accordance with the Harmonised SystemExplanatory Notes (HSEN)s to heading 9503 and the General Interpretative Rules 1-6. I have taken these intoaccount when reaching my decision, to ensure the HS is applied consistently amongst WCO members. I haveresearched and taken account of rulings issued by Great Britain for rulings made by other contracting parties ofthe Harmonized System (HS), which includes European Union member states. Through this research, I havefound that similar products have also been classified to 9503007000 Tricycles, scooters, pedal cars and similarwheeled toys; dolls' carriages; dolls; other toys; reduced size ('scale') models and similar recreational models,working or not; puzzles of all kinds Examples of previous decisions are always carefully considered as part ofour classification process to ensure consistency in how the HS is applied."
+          )
+        ),
         _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
       )(messages)
   private val applicationCertificate: Html =
@@ -72,12 +80,24 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
         ),
         _ => countriesService.getAllCountriesById.get("UY").map(_.countryName)
       )(messages)
+  private val decisionLetter: Html =
+    injector
+      .instanceOf[decision_template]
+      .apply(
+        aCase(_ => liabilityCaseWithDecisionExample),
+        decisionWithExclusion.copy(
+          goodsDescription = "Termo produced in Uruguay with stamps from Norway and legal justification",
+          justification = "Termo produced in Uruguay with stamps from Norway and legal justification justification"
+        )
+      )(messages)
 
   private val pdfGeneratorService: PdfGeneratorService = new PdfGeneratorService(fopFactory, env)
 
   private val xlsTransformer = Source.fromResource("cover_letter_template.xml").mkString
 
   private val xlsRulingTransformer = Source.fromResource("ruling_template.xml").mkString
+
+  private val xlsDecisionTransformer = Source.fromResource("decision_template.xml").mkString
 
   "render" must {
 
@@ -127,6 +147,11 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       "Legal information about this ruling"
     )
 
+    val decisionLetterHeadings: Seq[String] = Seq(
+      "Liability details from C592",
+      "Information about this decision"
+    )
+
     val input: Seq[(String, Html, String, Seq[String], Seq[String])] = Seq(
       (
         "withoutSamples",
@@ -142,7 +167,8 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
         headings ++ Seq("Asking for a review with HMRC", "Samples"),
         Seq.empty
       ),
-      ("applicationCertificate", applicationCertificate, xlsRulingTransformer, rulingCertificateHeadings, Seq.empty)
+      ("applicationCertificate", applicationCertificate, xlsRulingTransformer, rulingCertificateHeadings, Seq.empty),
+      ("decisionLetter", decisionLetter, xlsDecisionTransformer, decisionLetterHeadings, Seq.empty)
     )
 
     input.foreach(args => (test _).tupled(args))

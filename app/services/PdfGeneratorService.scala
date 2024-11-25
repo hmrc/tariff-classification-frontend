@@ -57,7 +57,11 @@ class PdfGeneratorService @Inject() (fopFactory: FopFactory, environment: Enviro
       val xslt: StreamSource = new StreamSource(new StringReader(xlsTransformer))
       val fop: Fop           = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out)
 
-      val view = ("<html>" + input.toString() + "</html>").replaceAll("&([^;]+(?!(?:\\w|;)))", "&amp;$1")
+      val invalidCharPattern = "[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]".r
+
+      val cleanedInput = invalidCharPattern.replaceAllIn(input.toString(), "")
+
+      val view = ("<html>" + cleanedInput.toString() + "</html>").replaceAll("&([^;]+(?!(?:\\w|;)))", "&amp;$1")
 
       try {
         val source: StreamSource = new StreamSource(new StringReader(view))

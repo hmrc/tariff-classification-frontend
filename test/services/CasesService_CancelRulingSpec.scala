@@ -16,9 +16,6 @@
 
 package services
 
-import audit.AuditService
-import config.AppConfig
-import connectors.{BindingTariffClassificationConnector, RulingConnector}
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
@@ -27,47 +24,20 @@ import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import views.html.templates.{cover_letter_template, ruling_template}
 
 import java.time._
 import scala.concurrent.Future
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
+class CasesService_CancelRulingSpec extends CasesServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
-  private val manyCases             = mock[Seq[Case]]
-  private val oneCase               = mock[Option[Case]]
-  private val queue                 = mock[Queue]
-  private val connector             = mock[BindingTariffClassificationConnector]
-  private val rulingConnector       = mock[RulingConnector]
-  private val emailService          = mock[EmailService]
-  private val fileStoreService      = mock[FileStoreService]
-  private val countriesService      = mock[CountriesService]
-  private val reportingService      = mock[ReportingService]
-  private val pdfService            = mock[PdfService]
-  private val audit                 = mock[AuditService]
-  private val config                = mock[AppConfig]
-  private val cover_letter_template = mock[cover_letter_template]
-  private val ruling_template       = mock[ruling_template]
+  private val manyCases = mock[Seq[Case]]
+  private val oneCase   = mock[Option[Case]]
   private val clock = Clock.fixed(
     LocalDateTime.of(2018, 1, 1, 14, 0).toInstant(ZoneOffset.UTC),
     ZoneId.of("UTC")
   )
   private val aCase = Cases.btiCaseExample
-
-  private val service =
-    new CasesService(
-      audit,
-      emailService,
-      fileStoreService,
-      countriesService,
-      reportingService,
-      pdfService,
-      connector,
-      rulingConnector,
-      cover_letter_template,
-      ruling_template
-    )(executionContext, config)
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -106,7 +76,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       await(
-        service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
+        serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
       ) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -139,7 +109,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       val originalCase       = aCase.copy(status = CaseStatus.COMPLETED, decision = None)
 
       intercept[IllegalArgumentException] {
-        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
+        await(serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
       }
 
       verifyNoMoreInteractions(audit)
@@ -157,7 +127,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(failed(new RuntimeException("Failed to update the Case")))
 
       intercept[RuntimeException] {
-        await(service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
+        await(serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
       }
 
       verifyNoMoreInteractions(audit)
@@ -180,7 +150,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
       given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
 
       await(
-        service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
+        serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
       ) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])
@@ -206,7 +176,7 @@ class CasesService_CancelRulingSpec extends ServiceSpecBase with BeforeAndAfterE
         .willReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
 
       await(
-        service.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
+        serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
       ) shouldBe caseUpdated
 
       verify(audit).auditRulingCancelled(refEq(originalCase), refEq(caseUpdated), refEq(operator))(any[HeaderCarrier])

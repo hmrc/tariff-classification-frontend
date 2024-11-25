@@ -16,8 +16,6 @@
 
 package services
 
-import audit.AuditService
-import connectors.{BindingTariffClassificationConnector, RulingConnector}
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentCaptor
@@ -27,36 +25,10 @@ import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
-import views.html.templates.{cover_letter_template, ruling_template}
 
 import scala.concurrent.Future.{failed, successful}
 
-class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
-
-  private val connector             = mock[BindingTariffClassificationConnector]
-  private val rulingConnector       = mock[RulingConnector]
-  private val emailService          = mock[EmailService]
-  private val fileStoreService      = mock[FileStoreService]
-  private val countriesService      = mock[CountriesService]
-  private val reportingService      = mock[ReportingService]
-  private val pdfService            = mock[PdfService]
-  private val audit                 = mock[AuditService]
-  private val cover_letter_template = mock[cover_letter_template]
-  private val ruling_template       = mock[ruling_template]
-
-  private val service =
-    new CasesService(
-      audit,
-      emailService,
-      fileStoreService,
-      countriesService,
-      reportingService,
-      pdfService,
-      connector,
-      rulingConnector,
-      cover_letter_template,
-      ruling_template
-    )(executionContext, realAppConfig)
+class CasesService_AddAppealSpec extends CasesServiceSpecBase with BeforeAndAfterEach with ConnectorCaptor {
 
   override protected def afterEach(): Unit = {
     super.afterEach()
@@ -88,7 +60,9 @@ class CasesService_AddAppealSpec extends ServiceSpecBase with BeforeAndAfterEach
       given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
         .willReturn(successful(mock[Event]))
 
-      await(service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator)) shouldBe caseUpdated
+      await(
+        service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator)
+      ) shouldBe caseUpdated
 
       verify(audit).auditCaseAppealAdded(refEq(caseUpdated), any[Appeal], refEq(operator))(any[HeaderCarrier])
 
