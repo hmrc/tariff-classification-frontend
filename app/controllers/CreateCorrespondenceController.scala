@@ -17,9 +17,8 @@
 package controllers
 
 import config.AppConfig
-import models.forms.CorrespondenceForm
 import models.forms.mappings.FormMappings.fieldNonEmpty
-import models.forms.v2.{CorrespondenceContactForm, CorrespondenceDetailsForm}
+import models.forms.v2.{CorrespondenceContactForm, CorrespondenceDetailsForm, CorrespondenceForm}
 import models.request.AuthenticatedRequest
 import models.{Case, CorrespondenceApplication, Permission}
 import play.api.data.Form

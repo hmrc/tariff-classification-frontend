@@ -35,7 +35,6 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
   lazy val emailUrl: String                       = servicesConfig.baseUrl("email")
   lazy val emailRendererUrl: String               = servicesConfig.baseUrl("hmrc-email-renderer")
   lazy val fileStoreUrl: String                   = servicesConfig.baseUrl("binding-tariff-filestore")
-  lazy val pdfGeneratorUrl: String                = servicesConfig.baseUrl("pdf-generator-service")
   lazy val rulingUrl: String                      = servicesConfig.baseUrl("binding-tariff-ruling-frontend")
   lazy val decisionLifetimeYears: Int             = config.get[Int]("app.decision-lifetime-years")
   lazy val decisionLifetimeDays: Int              = config.get[Int]("app.decision-lifetime-days")

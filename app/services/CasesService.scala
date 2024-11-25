@@ -52,7 +52,7 @@ class CasesService @Inject() (
   fileService: FileStoreService,
   countriesService: CountriesService,
   reportingService: ReportingService,
-  pdfService: PdfService,
+  pdfService: PdfGeneratorService,
   connector: BindingTariffClassificationConnector,
   rulingConnector: RulingConnector,
   cover_letter_template: cover_letter_template,
