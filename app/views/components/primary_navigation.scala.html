@@ -104,7 +104,7 @@
         </div>
         <div class="moj-primary-navigation__search">
             <div class="moj-search moj-search--ondark moj-search--inline">
-                @formWithCSRF(action = controllers.routes.SearchController.search(), Symbol("novalidate") -> "novalidate") {
+                @formWithCSRF(action = controllers.routes.SearchController.search(), Symbol("novalidate") -> "novalidate", Symbol("role") -> "search") {
                 <div class="govuk-form-group">
                     <label class="govuk-label moj-search__label govuk-visually-hidden" for="case_search_box-input">Search cases</label>
                     <input id="case_search_box-input" class="govuk-input" name="reference" value="" type="text">
