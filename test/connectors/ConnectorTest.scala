@@ -41,7 +41,6 @@ trait ConnectorTest extends SpecBase with WiremockTestServer with ResourceFiles 
 
     when(mockAppConfig.emailUrl) thenReturn getUrl
     when(mockAppConfig.emailRendererUrl) thenReturn getUrl
-    when(mockAppConfig.pdfGeneratorUrl) thenReturn getUrl
 
     when(mockAppConfig.apiToken) thenReturn fakeAuthToken
   }

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package models.forms
+package models.forms.v2
+
 import models.forms.mappings.FormMappings._
 import models.{Address, Contact, CorrespondenceApplication}
 import play.api.data.Form

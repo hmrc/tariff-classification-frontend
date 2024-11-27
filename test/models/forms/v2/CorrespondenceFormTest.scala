@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.forms
+package models.forms.v2
 
 import models._
 

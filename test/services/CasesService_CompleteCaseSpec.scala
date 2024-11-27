@@ -67,8 +67,6 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
         given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(
           successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L))
         )
-        given(pdfService.generatePdf(any[Html]))
-          .willReturn(successful(PdfFile(Array.emptyByteArray)))
         given(pdfService.generateFopPdf(any[Html], any[String]))
           .willReturn(successful(PdfFile(Array.emptyByteArray)))
         given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
@@ -308,7 +306,7 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
     given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(
       successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L))
     )
-    given(pdfService.generatePdf(any[Html]))
+    given(pdfService.generateFopPdf(any[Html], any[String]))
       .willReturn(successful(PdfFile(Array.emptyByteArray)))
     given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
 

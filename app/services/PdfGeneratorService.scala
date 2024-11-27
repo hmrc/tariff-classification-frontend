@@ -16,6 +16,7 @@
 
 package services
 
+import models.PdfFile
 import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.fop.apps.{FOUserAgent, Fop, FopFactory}
 import org.apache.xmlgraphics.util.MimeConstants
@@ -61,7 +62,7 @@ class PdfGeneratorService @Inject() (fopFactory: FopFactory, environment: Enviro
 
       val cleanedInput = invalidCharPattern.replaceAllIn(input.toString(), "")
 
-      val view = ("<html>" + cleanedInput.toString() + "</html>").replaceAll("&([^;]+(?!(?:\\w|;)))", "&amp;$1")
+      val view = ("<html>" + cleanedInput + "</html>").replaceAll("&([^;]+(?!(?:\\w|;)))", "&amp;$1")
 
       try {
         val source: StreamSource = new StreamSource(new StringReader(view))
@@ -80,5 +81,10 @@ class PdfGeneratorService @Inject() (fopFactory: FopFactory, environment: Enviro
 
       out.toByteArray
     }
+  }
+
+  def generateFopPdf(htmlContent: Html, templateSource: String): Future[PdfFile] = {
+    val xlsTransformer = scala.io.Source.fromResource(templateSource).getLines()
+    render(htmlContent, xlsTransformer.mkString).map(PdfFile(_))
   }
 }
