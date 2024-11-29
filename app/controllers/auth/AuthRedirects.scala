@@ -43,11 +43,11 @@ trait AuthRedirects {
     config.getOptional[String](key).orElse(hostDefaults.get(key)).getOrElse("")
   }
 
-  def ggLoginUrl: String = host("bas-gateway-frontend") + "/bas-gateway/sign-in"
+  private def ggLoginUrl: String = host("bas-gateway-frontend") + "/bas-gateway/sign-in"
 
-  def strideLoginUrl: String = host("stride-auth-frontend") + "/stride/sign-in"
+  private def strideLoginUrl: String = host("stride-auth-frontend") + "/stride/sign-in"
 
-  final lazy val defaultOrigin: String =
+  private final lazy val defaultOrigin: String =
     config
       .getOptional[String]("sosOrigin")
       .orElse(config.getOptional[String]("appName"))

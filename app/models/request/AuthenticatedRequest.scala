@@ -41,9 +41,6 @@ class AuthenticatedCaseRequest[A](operator: Operator, request: Request[A], reque
   val `case`: Case = requestedCase
 }
 
-class AuthenticatedOptionalDataRequest[A](operator: Operator, request: Request[A], val userAnswers: Option[UserAnswers])
-    extends AuthenticatedRequest[A](operator, request)
-
 class AuthenticatedDataRequest[A](operator: Operator, request: Request[A], val userAnswers: UserAnswers)
     extends AuthenticatedRequest[A](operator, request)
 

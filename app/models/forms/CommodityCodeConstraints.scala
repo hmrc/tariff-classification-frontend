@@ -22,7 +22,7 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class CommodityCodeConstraints @Inject() () extends Constraints {
+class CommodityCodeConstraints @Inject() extends Constraints {
 
   val commodityCodeNonEmpty: Constraint[String] =
     customNonEmpty("decision_form.error.bindingCommodityCode.required")
