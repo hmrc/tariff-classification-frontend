@@ -18,6 +18,7 @@ package services
 
 import config.AppConfig
 import models.CommodityCode
+import scala.util.Using
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,25 +47,27 @@ class CommodityCodeService @Inject() (appConfig: AppConfig) {
   }
 
   private lazy val commodityCodesFromFile: Seq[CommodityCode] = {
-    val url   = getClass.getClassLoader.getResource(appConfig.commodityCodePath)
-    val lines = Source.fromURL(url, "UTF-8").getLines()
+    val url = getClass.getClassLoader.getResource(appConfig.commodityCodePath)
 
-    val byHeader: Map[String, Int] = split(lines.next()).zipWithIndex.toMap
+    Using.resource(Source.fromURL(url, "UTF-8")) { source =>
+      val lines                      = source.getLines()
+      val byHeader: Map[String, Int] = split(lines.next()).zipWithIndex.toMap
 
-    lines
-      .map(split)
-      .filter(columns => columns(byHeader("leaf")) == "1")
-      .map { columns =>
-        val commodityCode = columns(byHeader("goods_nomenclature_item_id"))
-        val expiry        = columns(byHeader("validity_end_date"))
-        if (expiry.nonEmpty) {
-          val date = LocalDateTime.parse(expiry, dateTimeFormatter).atZone(appConfig.clock.getZone).toInstant
-          CommodityCode(commodityCode, Some(date))
-        } else {
-          CommodityCode(commodityCode)
+      lines
+        .map(split)
+        .filter(columns => columns(byHeader("leaf")) == "1")
+        .map { columns =>
+          val commodityCode = columns(byHeader("goods_nomenclature_item_id"))
+          val expiry        = columns(byHeader("validity_end_date"))
+          if (expiry.nonEmpty) {
+            val date = LocalDateTime.parse(expiry, dateTimeFormatter).atZone(appConfig.clock.getZone).toInstant
+            CommodityCode(commodityCode, Some(date))
+          } else {
+            CommodityCode(commodityCode)
+          }
         }
-      }
-      .toSeq
+        .toSeq
+    }
   }
 
   private def split(string: String): Array[String] =

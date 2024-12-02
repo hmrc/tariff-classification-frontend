@@ -47,12 +47,10 @@ trait SpecBase
     GuiceApplicationBuilder()
       .configure(
         //turn off metrics
-        "metrics.jvm"     -> false,
-        "metrics.enabled" -> false,
-        //app related feature flag
-        "toggle.new-liability-details" -> true,
-        "download.interval"            -> "1 seconds",
-        "download.max-retries"         -> 0
+        "metrics.jvm"          -> false,
+        "metrics.enabled"      -> false,
+        "download.interval"    -> "1 seconds",
+        "download.max-retries" -> 0
       )
       .build()
 

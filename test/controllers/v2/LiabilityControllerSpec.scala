@@ -89,9 +89,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     .configure(
       //turn off metrics
       "metrics.jvm"     -> false,
-      "metrics.enabled" -> false,
-      //app related feature flag
-      "toggle.new-liability-details" -> true
+      "metrics.enabled" -> false
     )
     .build()
 

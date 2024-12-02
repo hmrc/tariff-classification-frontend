@@ -24,7 +24,7 @@ import play.api.mvc._
 
 import javax.inject.Inject
 
-class RedirectService @Inject() () {
+class RedirectService @Inject() {
 
   def redirectApplication(reference: String, fileId: Option[String] = None)(implicit
     request: AuthenticatedCaseRequest[AnyContent]

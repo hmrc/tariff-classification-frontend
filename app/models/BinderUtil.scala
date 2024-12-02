@@ -31,9 +31,6 @@ object BinderUtil {
   def bindApplicationType(value: String): Option[ApplicationType] =
     ApplicationType.values.find(_.name == value)
 
-  def bindCaseStatus(value: String): Option[CaseStatus] =
-    CaseStatus.values.find(_.toString == value)
-
   def bindPseudoCaseStatus(value: String): Option[PseudoCaseStatus] =
     PseudoCaseStatus.values.find(_.toString == value)
 

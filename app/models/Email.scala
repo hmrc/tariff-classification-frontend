@@ -20,9 +20,6 @@ sealed trait Email[T] {
   val to: Seq[String]
   val templateId: String
   val parameters: T // Must render to JSON as a Map[String, String]
-  val force: Boolean            = false
-  val eventUrl: Option[String]  = None
-  val onSendUrl: Option[String] = None
 }
 
 case class CaseCompletedEmail(
