@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package models.forms
 
 import models.forms.mappings.Mappings
-import org.apache.commons.lang3.StringUtils.stripToNull
 import play.api.data.Forms.{mapping, of}
 import play.api.data.format.Formats.booleanFormat
 import play.api.data.format.Formatter
@@ -27,6 +26,8 @@ import java.time.{Instant, ZoneOffset}
 import scala.util.Try
 
 object FormDate extends Mappings {
+
+  private def stripToNull(value: String): String = Option(value).map(_.trim).filterNot(_.isEmpty).orNull
 
   def date(error: String): Mapping[Instant] =
     localDate(error)
@@ -49,7 +50,10 @@ object FormDate extends Mappings {
             instant => Try(instant.map(_.atZone(ZoneOffset.UTC).toLocalDate).orNull).getOrElse(null)
           )
 
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[Instant]] =
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[Instant]] = {
+        val prefix  = Option(stripToNull(key)).map(k => s"$k.").getOrElse("")
+        val fullKey = s"$prefix$booleanField"
+
         of[Boolean].binder
           .bind(s"${Option(stripToNull(key)).map(k => s"$k.").getOrElse("")}$booleanField", data)
           .flatMap { explicitEndDate =>
@@ -59,6 +63,8 @@ object FormDate extends Mappings {
               Right(None)
             }
           }
+      }
+
       override def unbind(key: String, value: Option[Instant]): Map[String, String] =
         date.withPrefix(prefix).unbind(value)
     }
