@@ -51,11 +51,11 @@ object FormDate extends Mappings {
           )
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[Instant]] = {
-        val prefix  = Option(stripToNull(key)).map(k => s"$k.").getOrElse("")
-        val fullKey = s"$prefix$booleanField"
+        val keyPrefix  = Option(stripToNull(key)).map(k => s"$k.").getOrElse("")
+        val fullKey = s"$keyPrefix$booleanField"
 
         of[Boolean].binder
-          .bind(s"${Option(stripToNull(key)).map(k => s"$k.").getOrElse("")}$booleanField", data)
+          .bind(fullKey, data)
           .flatMap { explicitEndDate =>
             if (explicitEndDate) {
               date.withPrefix(prefix).bind(data)
