@@ -9,7 +9,7 @@ The frontend for the internal Advance Tariff Rulings Case Manager service for re
 
 1) [Service Manager 2](https://github.com/hmrc/sm2) installed
 2) [SBT](https://www.scala-sbt.org) Version `>=1.x` installed
-3) [MongoDB](https://www.mongodb.com/) version `>=3.6` installed and running on port 27017
+3) [MongoDB](https://www.mongodb.com/) version `>=6.0` installed and running on port 27017
 4) [Localstack](https://github.com/localstack/localstack) installed and running on port 4572
 5) Create an S3 bucket in localstack by using `awslocal s3 mb s3://digital-tariffs-local` within the localstack container
 
@@ -25,20 +25,17 @@ The easiest way to run MongoDB and Localstack for local development is to use [D
 ```
 
 #### Starting the application:
- 
-1) Launch dependencies using `sm2 --start DIGITAL_TARIFFS_DEPS`
-2) Start the backend service [binding-tariff-classification](https://github.com/hmrc/binding-tariff-classification) using `sm2 --start BINDING_TARIFF_CLASSIFICATION`
-3) Start the filestore service [binding-tariff-filestore](https://github.com/hmrc/binding-tariff-filestore) using `sm2 --start BINDING_TARIFF_FILESTORE`
-4) Start the ruling frontend [binding-tariff-ruling-frontend](https://github.com/hmrc/binding-tariff-ruling-frontend) using `sm2 --start BINDING_TARIFF_RULING_FRONTEND`
-5) Start the trader frontend [binding-tariff-trader-frontend](https://github.com/hmrc/binding-tariff-trader-frontend) using `sm2 --start BINDING_TARIFF_TRADER_FRONTEND`
 
-Use `sbt run` to boot the app or run it with Service Manager 2 using `sm2 --start TARIFF_CLASSIFICATION_FRONTEND`.
+Launch services using `sm2 --start DIGITAL_TARIFFS`
+
+If you want to run it locally:
+
+- `sm2 --stop TARIFF_CLASSIFICATION_FRONTEND`
+- `sbt run`
 
 This application runs on port 9581.
 
 Open `http://localhost:9581/manage-tariff-classifications`.
-
-You can also run the `DIGITAL_TARIFFS` profile using `sm2 --start DIGITAL_TARIFFS` and then stop the Service Manager 2 instance of this service using `sm2 --stop TARIFF_CLASSIFICATION_FRONTEND` before running with sbt.
 
 ### Authentication
 
