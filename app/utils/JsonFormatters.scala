@@ -23,7 +23,6 @@ import models.reporting._
 import models.request.NewEventRequest
 import models.response.{FileMetadata, ScanStatus}
 import play.api.libs.json._
-import uk.gov.hmrc.play.json.Union
 
 import scala.util.Try
 
