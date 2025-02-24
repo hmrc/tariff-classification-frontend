@@ -51,8 +51,8 @@ object FormDate extends Mappings {
           )
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[Instant]] = {
-        val keyPrefix  = Option(stripToNull(key)).map(k => s"$k.").getOrElse("")
-        val fullKey = s"$keyPrefix$booleanField"
+        val keyPrefix = Option(stripToNull(key)).map(k => s"$k.").getOrElse("")
+        val fullKey   = s"$keyPrefix$booleanField"
 
         of[Boolean].binder
           .bind(fullKey, data)
