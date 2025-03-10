@@ -50,7 +50,7 @@ class KeywordsService @Inject() (
       Future.successful(c)
     } else {
       val caseToUpdate = c.copy(keywords = c.keywords + keyword.toUpperCase)
-      connector.updateCase(caseToUpdate) map { updated: Case =>
+      connector.updateCase(caseToUpdate) map { (updated: Case) =>
         auditService.auditCaseKeywordAdded(updated, keyword, operator)
         updated
       }
@@ -59,7 +59,7 @@ class KeywordsService @Inject() (
   def removeKeyword(c: Case, keyword: String, operator: Operator)(implicit hc: HeaderCarrier): Future[Case] =
     if (c.keywords.contains(keyword.toUpperCase)) {
       val caseToUpdate = c.copy(keywords = c.keywords - keyword.toUpperCase)
-      connector.updateCase(caseToUpdate) map { updated: Case =>
+      connector.updateCase(caseToUpdate) map { (updated: Case) =>
         auditService.auditCaseKeywordRemoved(updated, keyword, operator)
         updated
       }

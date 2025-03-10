@@ -137,7 +137,7 @@ class ManageKeywordsController @Inject() (
                   request.operator,
                   ChangeKeywordStatusAction.CREATED
                 )
-                .map { saveKeyword: Keyword =>
+                .map { (saveKeyword: Keyword) =>
                   Redirect(controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword(saveKeyword.name))
                 }
           )
@@ -171,7 +171,7 @@ class ManageKeywordsController @Inject() (
                           request.operator,
                           ChangeKeywordStatusAction.APPROVE
                         )
-                        .map { savedKeyword: Keyword =>
+                        .map { (savedKeyword: Keyword) =>
                           Redirect(
                             controllers.v2.routes.ManageKeywordsController
                               .displayKeywordChangeConfirmation(
@@ -184,7 +184,7 @@ class ManageKeywordsController @Inject() (
                     case ChangeKeywordStatusAction.REJECT =>
                       keywordService
                         .createKeyword(Keyword(keywordName), request.operator, ChangeKeywordStatusAction.REJECT)
-                        .map { savedKeyword: Keyword =>
+                        .map { (savedKeyword: Keyword) =>
                           Redirect(
                             controllers.v2.routes.ManageKeywordsController
                               .displayKeywordChangeConfirmation(
@@ -255,7 +255,7 @@ class ManageKeywordsController @Inject() (
                     Keyword(keywordToRename, approved = true),
                     request.operator
                   )
-                  .map { updatedKeyword: Keyword =>
+                  .map { (updatedKeyword: Keyword) =>
                     Redirect(
                       routes.ManageKeywordsController
                         .displayConfirmationKeywordRenamed(keywordName, updatedKeyword.name)

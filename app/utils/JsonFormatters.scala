@@ -23,6 +23,7 @@ import models.reporting._
 import models.request.NewEventRequest
 import models.response.{FileMetadata, ScanStatus}
 import play.api.libs.json._
+import scala.collection.immutable.Nil
 
 import scala.util.Try
 
@@ -216,11 +217,11 @@ object EnumJson {
 
   import scala.language.implicitConversions
 
-  private def enumReads[E <: Enumeration](`enum`: E): Reads[E#Value] = {
+  private def enumReads[E <: Enumeration](`customEnum`: E): Reads[E#Value] = {
     case JsString(s) =>
-      Try(JsSuccess(enum.withName(s))).recover { case _: NoSuchElementException =>
+      Try(JsSuccess(customEnum.withName(s))).recover { case _: NoSuchElementException =>
         JsError(
-          s"Expected an enumeration of type: '${enum.getClass.getSimpleName}', but it does not contain the name: '$s'"
+          s"Expected an enumeration of type: '${customEnum.getClass.getSimpleName}', but it does not contain the name: '$s'"
         )
       }.get
 
@@ -229,6 +230,6 @@ object EnumJson {
 
   implicit def enumWrites[E <: Enumeration]: Writes[E#Value] = (v: E#Value) => JsString(v.toString)
 
-  implicit def format[E <: Enumeration](`enum`: E): Format[E#Value] = Format(enumReads(enum), enumWrites)
+  implicit def format[E <: Enumeration](`customEnum`: E): Format[E#Value] = Format(enumReads(customEnum), enumWrites)
 
 }

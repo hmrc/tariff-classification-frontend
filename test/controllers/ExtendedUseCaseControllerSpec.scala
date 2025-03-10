@@ -94,8 +94,8 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
         withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
       )
 
-      given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(c))
+      when(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(c))
 
       val result = await(
         controller(c)
@@ -133,8 +133,8 @@ class ExtendedUseCaseControllerSpec extends ControllerBaseSpec with BeforeAndAft
         withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true)))
       )
 
-      given(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(c))
+      when(casesService.updateExtendedUseStatus(refEq(c), any[Boolean], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(c))
 
       val result = await(
         controller(c, Set(Permission.EXTENDED_USE))

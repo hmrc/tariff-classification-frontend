@@ -43,7 +43,7 @@
 }
 }
 
-@defining(event.details.asInstanceOf[RejectCaseStatusChange]) { body: RejectCaseStatusChange =>
+@defining(event.details.asInstanceOf[RejectCaseStatusChange]) { (body: RejectCaseStatusChange) =>
     @progressive_disclosure(
         id = s"activity-events-row-$index",
         summary = s"Status changed from ${body.from.toString.toLowerCase} to ${body.to.toString.toLowerCase}",

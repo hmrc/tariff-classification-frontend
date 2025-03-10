@@ -30,7 +30,7 @@ class InputTextViewSpec extends ViewSpec {
     val form = Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(FormData.unapply)
+      )(FormData.apply)(o => Tuple.fromProductTyped(o))
     ).fill(FormData("v"))
 
     "Render" in {
@@ -45,7 +45,7 @@ class InputTextViewSpec extends ViewSpec {
     }
 
     "Disable autocomplete when required" in {
-      //When
+      // When
       val doc = view(input_text(form("field"), "Label", disableAutoComplete = true))
 
       doc.getElementById("field") should haveAttribute("autocomplete", "off")

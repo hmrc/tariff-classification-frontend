@@ -38,7 +38,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       stubFor(
         get(urlEqualTo(s"/cases/$caseRef"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(cse)
@@ -47,7 +47,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       stubFor(
         get(urlEqualTo("/file/id"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(pdfMeta)
@@ -56,7 +56,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       stubFor(
         get(urlEqualTo("/digital-tariffs-local/id"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody("my application pdf content".getBytes)
@@ -91,7 +91,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       stubFor(
         get(urlEqualTo(s"/cases/$caseRef"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(cse)
@@ -100,7 +100,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       stubFor(
         get(urlEqualTo("/file/id"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(pdfMeta)
@@ -109,7 +109,7 @@ class PdfGenerationSpec extends IntegrationTest {
 
       stubFor(
         get(urlEqualTo("/digital-tariffs-local/id"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody("my ruling pdf content".getBytes)

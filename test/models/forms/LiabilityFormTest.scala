@@ -70,7 +70,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "Invalid entry"
     }
 
@@ -85,7 +85,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "error.empty.trader-name"
     }
 
@@ -100,7 +100,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "error.empty.item-name"
     }
   }

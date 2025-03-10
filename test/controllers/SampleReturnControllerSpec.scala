@@ -94,8 +94,8 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "update & redirect" in {
       val c = aCase(withReference("reference"), withDecision())
 
-      given(casesService.updateSampleReturn(refEq(c), any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(c))
+      when(casesService.updateSampleReturn(refEq(c), any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(c))
 
       val result = await(
         controller(c)
@@ -143,8 +143,8 @@ class SampleReturnControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
     "return OK when user has right permissions" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
 
-      given(casesService.updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(c))
+      when(casesService.updateSampleReturn(any[Case], any[Option[SampleReturn]], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(c))
 
       val result = await(
         controller(c, Set(Permission.EDIT_SAMPLE))

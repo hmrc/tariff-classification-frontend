@@ -48,10 +48,10 @@ class CheckCasePermissionsAction @Inject() (override implicit val executionConte
 }
 
 @Singleton
-class VerifyCaseExistsActionFactory @Inject() (casesService: CasesService)(
-  implicit val messagesApi: MessagesApi,
+class VerifyCaseExistsActionFactory @Inject() (casesService: CasesService)(implicit
+  val messagesApi: MessagesApi,
   val case_not_found: views.html.case_not_found,
-  implicit val ec: ExecutionContext
+  val ec: ExecutionContext
 ) extends I18nSupport {
 
   def apply(reference: String): ActionRefiner[AuthenticatedRequest, AuthenticatedCaseRequest] =

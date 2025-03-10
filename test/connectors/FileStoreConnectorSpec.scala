@@ -16,14 +16,14 @@
 
 package connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import config.AppConfig
 import models.request.FileStoreInitiateRequest
-import models.response._
+import models.response.*
 import models.{Attachment, FileUpload}
-import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.{thenReturn, given}
 import org.mockito.Mockito.when
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.Files.SingletonTemporaryFileCreator
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
@@ -31,8 +31,8 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
   private val config = fakeApplication().injector.instanceOf[AppConfig]
 
-  given(mockAppConfig.maxUriLength) willReturn 2048L
-  given(mockAppConfig.fileStoreUrl) willReturn wireMockUrl
+  when(mockAppConfig.maxUriLength).thenReturn(2048L)
+  when(mockAppConfig.fileStoreUrl).thenReturn(wireMockUrl)
 
   private val attachmentId = "id"
   private val connector    = new FileStoreConnector(mockAppConfig, httpClient, metrics)
@@ -41,11 +41,11 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "handle 404" in {
       when(mockAppConfig.apiToken) thenReturn config.apiToken
       val att = mock[Attachment]
-      given(att.id) willReturn attachmentId
+      when(att.id) thenReturn attachmentId
 
       stubFor(
         get("/file/id")
-          .willReturn(aResponse().withStatus(NOT_FOUND))
+          .thenReturn(aResponse().withStatus(NOT_FOUND))
       )
 
       await(connector.get(attachmentId)) shouldBe None
@@ -58,11 +58,11 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     "handle response with mandatory fields only" in {
       val att = mock[Attachment]
-      given(att.id) willReturn attachmentId
+      when(att.id) thenReturn attachmentId
 
       stubFor(
         get(s"/file/$attachmentId")
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/single_file_with_mandatory_fields-response.json"))
@@ -87,11 +87,11 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     "handle response with optional fields" in {
       val att = mock[Attachment]
-      given(att.id) willReturn attachmentId
+      when(att.id) thenReturn attachmentId
 
       stubFor(
         get(s"/file/$attachmentId")
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/single_file_with_optional_fields-response.json"))
@@ -123,13 +123,13 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     "handle response with mandatory fields" in {
       val att1 = mock[Attachment]
-      given(att1.id) willReturn "id1"
+      when(att1.id) thenReturn "id1"
       val att2 = mock[Attachment]
-      given(att2.id) willReturn "id2"
+      when(att2.id) thenReturn "id2"
 
       stubFor(
         get("/file?id=id1&id=id2")
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/multi_file_with_mandatory_fields-response.json"))
@@ -154,13 +154,13 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     "handle response with optional fields" in {
       val att1 = mock[Attachment]
-      given(att1.id) willReturn "id1"
+      when(att1.id) thenReturn "id1"
       val att2 = mock[Attachment]
-      given(att2.id) willReturn "id2"
+      when(att2.id) thenReturn "id2"
 
       stubFor(
         get("/file?id=id1&id=id2")
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/multi_file_with_optional_fields-response.json"))
@@ -187,7 +187,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
   "Initiate" in {
     stubFor(
       post("/file/initiate")
-        .willReturn(
+        .thenReturn(
           aResponse()
             .withStatus(ACCEPTED)
             .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
@@ -214,7 +214,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
   "Upload" in {
     stubFor(
       post("/file")
-        .willReturn(
+        .thenReturn(
           aResponse()
             .withStatus(ACCEPTED)
             .withBody(fromResource("filestore/binding-tariff-filestore_upload-response.json"))
@@ -242,7 +242,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "Delete from the File Store" in {
       stubFor(
         delete("/file/fileId")
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
           )
@@ -259,7 +259,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "propagate errors" in {
       stubFor(
         delete("/file/fileId")
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(BAD_GATEWAY)
           )
@@ -280,7 +280,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "handle missing file" in {
       stubFor(
         get("/digital-tariffs-local/id")
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(NOT_FOUND)
           )
@@ -294,7 +294,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "handle error response" in {
       stubFor(
         get("/digital-tariffs-local/id")
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(INTERNAL_SERVER_ERROR)
           )

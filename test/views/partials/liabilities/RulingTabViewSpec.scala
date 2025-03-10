@@ -47,7 +47,7 @@ class RulingTabViewSpec extends ViewSpec {
       doc.getElementById("ruling-heading").text shouldBe messages("case.liability.decision.heading")
     }
 
-    //C592
+    // C592
     "render c592 section name" in {
       doc.getElementsByTag("h3").get(0).text shouldBe messages("case.v2.liability.ruling.info.from.c592")
     }
@@ -68,7 +68,7 @@ class RulingTabViewSpec extends ViewSpec {
       doc.getElementById("ruling_code_suggested").text shouldBe expected
     }
 
-    //liability info
+    // liability info
     "render liability details section name" in {
       doc.getElementsByTag("h3").get(1).text shouldBe messages("case.v2.liability.ruling.section")
     }

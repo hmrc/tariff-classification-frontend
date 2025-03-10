@@ -36,7 +36,7 @@ object SearchForm {
         set(textTransformingTo(ApplicationType.withName, _.name))
       ),
       "keyword" -> optional[Set[String]](set(text))
-    )(Search.apply)(Search.unapply)
+    )(Search.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 
   val formWithoutValidation: Form[Search] = Form(
@@ -50,7 +50,7 @@ object SearchForm {
         set(textTransformingTo(ApplicationType.withName, _.name))
       ),
       "keyword" -> optional[Set[String]](set(text))
-    )(Search.apply)(Search.unapply)
+    )(Search.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 
 }

@@ -42,7 +42,7 @@
     }
     <div class="govuk-checkboxes @divClass">
         @for((option: CheckOption, index: Int) <- options.zipWithIndex) {
-            @defining(s"${field.id}-$index") { id: String =>
+            @defining(s"${field.id}-$index") { (id: String) =>
                 <div class="govuk-checkboxes__item">
                     <input class="govuk-checkboxes__input" id="@id" name="@{field.name}[@index]" type="checkbox"
                            value="@option.value"

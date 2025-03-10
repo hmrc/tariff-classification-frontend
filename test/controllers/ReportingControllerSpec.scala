@@ -97,13 +97,13 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     "return 200 OK and text/csv content type" in {
-      given(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Future.successful(reportResults))
-        .willReturn(Future.successful(Paged.empty[Map[String, ReportResultField[_]]]))
+      when(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(reportResults))
+        .thenReturn(Future.successful(Paged.empty[Map[String, ReportResultField[_]]]))
 
-      given(
+      when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) willReturn Future
+      ) thenReturn Future
         .successful(Paged.empty[Operator])
 
       val result =
@@ -146,13 +146,13 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     "return 200 OK and text/csv content type" in {
-      given(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Future.successful(reportResults))
-        .willReturn(Future.successful(Paged.empty[QueueResultGroup]))
+      when(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(reportResults))
+        .thenReturn(Future.successful(Paged.empty[QueueResultGroup]))
 
-      given(
+      when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) willReturn Future
+      ) thenReturn Future
         .successful(Paged.empty[Operator])
 
       val result =
@@ -218,13 +218,13 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     "return 200 OK and text/csv content type" in {
-      given(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Future.successful(reportResults))
-        .willReturn(Future.successful(Paged.empty[ResultGroup]))
+      when(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(reportResults))
+        .thenReturn(Future.successful(Paged.empty[ResultGroup]))
 
-      given(
+      when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) willReturn Future
+      ) thenReturn Future
         .successful(Paged.empty[Operator])
 
       val result =
@@ -259,11 +259,11 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     "return 200 OK and HTML content type" in {
-      given(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier])) willReturn Future
+      when(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier])) thenReturn Future
         .successful(Paged.empty[Map[String, ReportResultField[_]]])
-      given(
+      when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) willReturn Future
+      ) thenReturn Future
         .successful(Paged.empty[Operator])
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).caseReport(report, SearchPagination())(fakeRequest))
@@ -288,11 +288,11 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     "return 200 OK and HTML content type" in {
-      given(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier])) willReturn Future
+      when(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier])) thenReturn Future
         .successful(Paged.empty[ResultGroup])
-      given(
+      when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) willReturn Future
+      ) thenReturn Future
         .successful(Paged.empty[Operator])
 
       val result =
@@ -314,7 +314,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     val report = QueueReport()
 
     "return 200 OK and HTML content type" in {
-      given(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier])) willReturn Future
+      when(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier])) thenReturn Future
         .successful(Paged.empty[QueueResultGroup])
 
       val result =

@@ -52,9 +52,9 @@ class MoveCasesController @Inject() (
   val viewUser: view_user,
   val user_not_found: user_not_found,
   val resource_not_found: resource_not_found
-)(
-  implicit val appConfig: AppConfig,
-  implicit val ec: ExecutionContext
+)(implicit
+  val appConfig: AppConfig,
+  val ec: ExecutionContext
 ) extends FrontendController(mcc)
     with I18nSupport
     with Logging {

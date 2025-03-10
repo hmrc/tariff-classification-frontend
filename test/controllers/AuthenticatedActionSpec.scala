@@ -62,12 +62,12 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    given(appConfig.teamEnrolment).willReturn("team-enrolment")
-    given(appConfig.managerEnrolment).willReturn("manager-enrolment")
-    given(appConfig.readOnlyEnrolment).willReturn("read-only-enrolment")
-    given(appConfig.checkEnrolment).willReturn(true)
-    given(environment.mode).willReturn(Mode.Test)
-    given(config.getOptional(any[String])(any[ConfigLoader[String]])).willReturn(None)
+    when(appConfig.teamEnrolment).thenReturn("team-enrolment")
+    when(appConfig.managerEnrolment).thenReturn("manager-enrolment")
+    when(appConfig.readOnlyEnrolment).thenReturn("read-only-enrolment")
+    when(appConfig.checkEnrolment).thenReturn(true)
+    when(environment.mode).thenReturn(Mode.Test)
+    when(config.getOptional(any[String])(any[ConfigLoader[String]])).thenReturn(None)
   }
 
   "AuthenticatedAction" when {
@@ -270,12 +270,12 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       "allow unknown exceptions to propagate" in {
         val exception = new RuntimeException("Exception")
-        given(
+        when(
           connector.authorise(
             any[Predicate],
             any[Retrieval[Credentials ~ Name]]
           )(any[HeaderCarrier], any[ExecutionContext])
-        ).willReturn(Future.failed(exception))
+        ).thenReturn(Future.failed(exception))
 
         intercept[RuntimeException] {
           await(action.invokeBlock(FakeRequest(), block))
@@ -283,13 +283,13 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
       }
 
       "redirect to Stride Login on NoActiveSession" in {
-        given(appConfig.runningAsDev).willReturn(false)
-        given(
+        when(appConfig.runningAsDev).thenReturn(false)
+        when(
           connector.authorise(
             any[Predicate],
             any[Retrieval[Credentials ~ Name]]
           )(any[HeaderCarrier], any[ExecutionContext])
-        ).willReturn(Future.failed(new NoActiveSession("No Session") {}))
+        ).thenReturn(Future.failed(new NoActiveSession("No Session") {}))
 
         val result: Result = await(action.invokeBlock(FakeRequest(), block))
         status(result)     shouldBe Status.SEE_OTHER
@@ -297,15 +297,15 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
       }
 
       "redirect to Stride Login Dev on NoActiveSession" in {
-        given(appConfig.runningAsDev).willReturn(true)
-        given(config.getOptional[String](ArgumentMatchers.eq("run.mode"))(any[ConfigLoader[String]]))
-          .willReturn(Some("Dev"))
-        given(
+        when(appConfig.runningAsDev).thenReturn(true)
+        when(config.getOptional[String](ArgumentMatchers.eq("run.mode"))(any[ConfigLoader[String]]))
+          .thenReturn(Some("Dev"))
+        when(
           connector.authorise(
             any[Predicate],
             any[Retrieval[Credentials ~ Name]]
           )(any[HeaderCarrier], any[ExecutionContext])
-        ).willReturn(Future.failed(new NoActiveSession("No Session") {}))
+        ).thenReturn(Future.failed(new NoActiveSession("No Session") {}))
 
         val result: Result = await(action.invokeBlock(FakeRequest(), block))
         status(result)     shouldBe Status.SEE_OTHER
@@ -313,12 +313,12 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
       }
 
       "redirect to Unauthorized on AuthorizationException" in {
-        given(
+        when(
           connector.authorise(
             any[Predicate],
             any[Retrieval[Credentials ~ Name]]
           )(any[HeaderCarrier], any[ExecutionContext])
-        ).willReturn(Future.failed(new AuthorisationException("Error") {}))
+        ).thenReturn(Future.failed(new AuthorisationException("Error") {}))
 
         val result: Result = await(action.invokeBlock(FakeRequest(), block))
         status(result) shouldBe Status.SEE_OTHER
@@ -363,28 +363,28 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
       if (manager) Set(Enrolment("manager-enrolment")) else Set(Enrolment("team-enrolment"))
     val value: Option[Credentials] ~ Option[Name] ~ Option[String] ~ Enrolments =
       new ~(new ~(new ~(Option(Credentials(id, "type")), Option(name)), Option(email)), Enrolments(enrolments))
-    given(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(executionContext)))
-      .willReturn(Future.successful(value))
+    when(connector.authorise(refEq(predicate), refEq(retrieval))(any[HeaderCarrier], refEq(executionContext)))
+      .thenReturn(Future.successful(value))
   }
 
   private def givenExistingUser(operator: Operator): Unit = {
-    given(userConnector.getUserDetails(refEq(operator.id))(any[HeaderCarrier]))
-      .willReturn(Future.successful(Some(operator)))
-    given(userConnector.updateUser(any[Operator])(any[HeaderCarrier]))
+    when(userConnector.getUserDetails(refEq(operator.id))(any[HeaderCarrier]))
+      .thenReturn(Future.successful(Some(operator)))
+    when(userConnector.updateUser(any[Operator])(any[HeaderCarrier]))
       .will(i => Future.successful(i.getArgument[Operator](0)))
   }
 
   private def givenNoExistingUser(id: String = "id"): Unit = {
-    given(userConnector.getUserDetails(refEq(id))(any[HeaderCarrier]))
-      .willReturn(Future.successful(None))
-    given(userConnector.createUser(any[Operator])(any[HeaderCarrier]))
+    when(userConnector.getUserDetails(refEq(id))(any[HeaderCarrier]))
+      .thenReturn(Future.successful(None))
+    when(userConnector.createUser(any[Operator])(any[HeaderCarrier]))
       .will(i => Future.successful(i.getArgument[Operator](0)))
   }
 
   private def givenTheBlockExecutesSuccessfully(): Unit =
-    given(block.apply(any[AuthenticatedRequest[AnyContent]])).willReturn(Future.successful(result))
+    when(block.apply(any[AuthenticatedRequest[AnyContent]])).thenReturn(Future.successful(result))
 
   private def givenTheBlockThrowsAnError(e: RuntimeException): Unit =
-    given(block.apply(any[AuthenticatedRequest[AnyContent]])).willThrow(e)
+    when(block.apply(any[AuthenticatedRequest[AnyContent]])).willThrow(e)
 
 }

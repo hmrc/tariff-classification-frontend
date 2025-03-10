@@ -60,7 +60,7 @@ class SearchController @Inject() (
     implicit request =>
       val focus: SearchTab = if (addToSearch.contains(true)) SearchTab.SEARCH_BOX else selectedTab
       def defaultAction: Future[Result] =
-        keywordsService.findAll().map { keywords: Seq[Keyword] =>
+        keywordsService.findAll().map { (keywords: Seq[Keyword]) =>
           Results.Ok(advanced_search(SearchForm.form, None, keywords.map(_.name), focus))
         }
 

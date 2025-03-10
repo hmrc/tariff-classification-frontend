@@ -60,7 +60,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         "explanation"                  -> text,
         "expiryDate"                   -> FormDate.optionalDate(),
         "expiryDate.explicitEndDate"   -> boolean
-      )(DecisionFormData.apply)(DecisionFormData.unapply).verifying(
+      )(DecisionFormData.apply)(o => Some(Tuple.fromProductTyped(o))).verifying(
         "atar.editRuling.expiryDate.error.required.all",
         formData => if (formData.explicitEndDate) formData.expiryDate.isDefined else true
       )
@@ -86,7 +86,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "explanation" -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required")),
       "expiryDate"  -> FormDate.optionalDate(),
       "expiryDate.explicitEndDate" -> boolean
-    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying(
+    )(DecisionFormData.apply)(o => Some(Tuple.fromProductTyped(o))).verifying(
       "atar.editRuling.expiryDate.error.required.all",
       formData => if (formData.explicitEndDate) formData.expiryDate.isDefined else true
     )

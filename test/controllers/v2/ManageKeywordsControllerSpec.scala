@@ -93,10 +93,10 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   "displayManageKeywords" should {
 
     "return 200 OK and HTML content type" in {
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
-      given(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .willReturn(Future(Paged(Seq(caseKeyword))))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
+      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(newFakeGETRequestWithCSRF()))
       status(result)      shouldBe Status.OK
@@ -118,8 +118,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     "return 200 OK and HTML content type" in {
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).newKeyword()(newFakeGETRequestWithCSRF()))
       status(result)      shouldBe Status.OK
@@ -138,12 +138,12 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     "return 303 SEE_OTHER when new keyword successfully added" in {
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
-      given(
+      when(
         keywordService.createKeyword(any[Keyword], any[Operator], any[ChangeKeywordStatusAction])(any[HeaderCarrier])
-      ).willReturn(Future(Keyword("newkeyword", approved = true)))
+      ).thenReturn(Future(Keyword("newkeyword", approved = true)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -165,8 +165,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     "render error if keyword empty" in {
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS)).createKeyword()(newFakePOSTRequestWithCSRF(Map("keyword" -> "")))
@@ -181,8 +181,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
 
     "render error if duplicate keyword entered" in {
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -202,15 +202,15 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     "return 303 SEE_OTHER when keyword is successfully updated" in {
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
-      given(
+      when(
         keywordService.createKeyword(any[Keyword], any[Operator], any[ChangeKeywordStatusAction])(any[HeaderCarrier])
-      ).willReturn(Future(Keyword("updatedKeyword", approved = true)))
+      ).thenReturn(Future(Keyword("updatedKeyword", approved = true)))
 
-      given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(Future(Some(dummyCase)))
+      when(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future(Some(dummyCase)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -408,11 +408,11 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
 
     "delete a keyword when keyword has been selected and found" in {
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
-      given(keywordService.deleteKeyword(any[Keyword], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful((): Unit))
+      when(keywordService.deleteKeyword(any[Keyword], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future.successful((): Unit))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -430,11 +430,11 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "render errors when duplicate keyword is entered for renaming" in {
       val newKeyword = Keyword("SHOES", approved = true)
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
-      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future(newKeyword))
+      when(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future(newKeyword))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -449,11 +449,11 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "render errors when updating keyword with rejected keyword" in {
       val newKeyword = Keyword("TEST")
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
-      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future(newKeyword))
+      when(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future(newKeyword))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -468,11 +468,11 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "rename a keyword when keyword has been selected and found" in {
       val newKeyword = Keyword("updatedKeyword", approved = true)
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
-      given(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future(newKeyword))
+      when(keywordService.renameKeyword(any[Keyword], any[Keyword], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future(newKeyword))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -492,8 +492,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     "return Bad request when form has errors" in {
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -508,11 +508,11 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   "postDisplayManageKeywords" should {
     "redirect to editApprovedKeywords if the keyword has been selected" in {
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
-      given(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .willReturn(Future(Paged(Seq(caseKeyword))))
+      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -528,11 +528,11 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
     "return Bad Request with form with errors" in {
 
-      given(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .willReturn(Future(Paged(keywords)))
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
 
-      given(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .willReturn(Future(Paged(Seq(caseKeyword))))
+      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))

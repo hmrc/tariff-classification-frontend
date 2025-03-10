@@ -67,7 +67,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
       stubFor(
         get(urlEqualTo(s"/cases/$caseRef"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(cse)
@@ -76,7 +76,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
       stubFor(
         get(urlEqualTo("/file/id"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fileMetadata)
@@ -85,7 +85,7 @@ class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
 
       stubFor(
         get(urlEqualTo(s"/$caseRef/file.txt"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody("FILE_CONTENTS")

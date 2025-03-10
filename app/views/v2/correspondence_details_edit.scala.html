@@ -42,7 +42,7 @@
 
     @case_heading(CaseHeaderViewModel.fromCase(c), messageKey = Some("case.v2.correspondence.case-details-edit-header"))
 
-    @defining(c.application.asCorrespondence) { correspondence: CorrespondenceApplication =>
+    @defining(c.application.asCorrespondence) { (correspondence: CorrespondenceApplication) =>
         <div class="govuk-form-group">
 
             @helper.form(action = CreateCorrespondenceController.postCorrespondenceDetails(c.reference), Symbol("class") -> "form" , Symbol("id") -> "correspondence-details-edit-form", Symbol("novalidate") -> "novalidate") {

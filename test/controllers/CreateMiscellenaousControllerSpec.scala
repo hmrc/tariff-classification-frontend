@@ -98,8 +98,8 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     }
 
     "display Misc details page if form has errors POST" in {
-      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscellaneousCaseExample))
+      when(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Cases.miscellaneousCaseExample))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
@@ -116,8 +116,8 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     }
 
     "display Case created page when form has no errors POST" in {
-      given(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscellaneousCaseExample))
+      when(casesService.createCase(any[CorrespondenceApplication], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Cases.miscellaneousCaseExample))
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
           .post()(
@@ -133,13 +133,13 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     }
 
     "display no results found when a queue is not found GET" in {
-      given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
-      given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
+      when(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
+      when(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .thenReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
 
-      given(queuesService.getOneById(any[String]))
-        .willReturn(successful(None))
+      when(queuesService.getOneById(any[String]))
+        .thenReturn(successful(None))
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
@@ -151,13 +151,13 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     }
 
     "display no results found when a case is not found GET" in {
-      given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
-      given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(None))
+      when(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
+      when(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .thenReturn(successful(None))
 
-      given(queuesService.getOneById(any[String]))
-        .willReturn(successful(None))
+      when(queuesService.getOneById(any[String]))
+        .thenReturn(successful(None))
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
@@ -169,13 +169,13 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     }
 
     "display confirmation of case created with no queue id " in {
-      given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some(""))))
-      given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.miscellaneousCaseExample)))
+      when(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some(""))))
+      when(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .thenReturn(successful(Some(Cases.miscellaneousCaseExample)))
 
-      given(queuesService.getOneById(any[String]))
-        .willReturn(successful(Some(Queue("", "", "queue"))))
+      when(queuesService.getOneById(any[String]))
+        .thenReturn(successful(Some(Queue("", "", "queue"))))
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
@@ -187,13 +187,13 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     }
 
     "display confirmation of case created" in {
-      given(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
-      given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
+      when(casesService.createCase(any[MiscApplication], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(Cases.miscellaneousCaseExample.copy(queueId = Some("queue"))))
+      when(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .thenReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
 
-      given(queuesService.getOneById(any[String]))
-        .willReturn(successful(Some(Queue("1", "", "queue"))))
+      when(queuesService.getOneById(any[String]))
+        .thenReturn(successful(Some(Queue("1", "", "queue"))))
 
       val result = await(
         controller(caseWithStatusOPEN, Set(Permission.CREATE_CASES))
@@ -205,8 +205,8 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     }
 
     "displayQuestion return the expected result when request has permissions " in {
-      given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(None))
+      when(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .thenReturn(successful(None))
 
       val reference = "reference"
       val result = await(
@@ -218,8 +218,8 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
     }
 
     "displayQuestion return the expected result when request does not have permissions " in {
-      given(casesService.getOne(any[String])(any[HeaderCarrier]))
-        .willReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
+      when(casesService.getOne(any[String])(any[HeaderCarrier]))
+        .thenReturn(successful(Some(Cases.miscellaneousCaseExample.copy(queueId = Some("queue")))))
 
       val reference = "123456"
       val result = await(

@@ -41,7 +41,7 @@
     backLink = Some(backLink()),
     optCustomLayout = Some(fullMainContent(_))
 ) {
-    @defining(c.application.asATAR) { btiApp: BTIApplication =>
+    @defining(c.application.asATAR) { (btiApp: BTIApplication) =>
 
 
         @error_summary(decisionForm.errors)
@@ -171,7 +171,7 @@
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         <h2 class="govuk-fieldset__heading">@messages("case.decision.attachments")</h2>
                     </legend>
-                    @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { attachments: Seq[StoredAttachment] =>
+                    @defining(files.filter(_.scanStatus.contains(ScanStatus.READY))) { (attachments: Seq[StoredAttachment]) =>
                         @if(attachments.isEmpty) {
                             <span id="edit-ruling-no_attachments" class="govuk-body">There are no attachments for this case.</span>
                         } else {

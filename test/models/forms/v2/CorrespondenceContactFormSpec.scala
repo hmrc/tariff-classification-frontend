@@ -84,9 +84,9 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
           .correspondenceContactForm(emptyCaseWithEmail)
           .fold(
             form => {
-              form.hasErrors                                    shouldBe true
-              form.errors.size                                  shouldBe 1
-              form.errors.map(_.key)                            shouldBe Seq("correspondenceStarter")
+              form.hasErrors         shouldBe true
+              form.errors.size       shouldBe 1
+              form.errors.map(_.key) shouldBe Seq("correspondenceStarter")
               form.error("correspondenceStarter").map(_.message shouldBe "Enter a case source")
 
             },
@@ -100,9 +100,9 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
           .correspondenceContactForm(emptyCaseWithInvalidEmail)
           .fold(
             form => {
-              form.hasErrors                    shouldBe true
-              form.errors.size                  shouldBe 1
-              form.errors.map(_.key)            shouldBe Seq("email")
+              form.hasErrors         shouldBe true
+              form.errors.size       shouldBe 1
+              form.errors.map(_.key) shouldBe Seq("email")
               form.error("email").map(_.message shouldBe "case.liability.error.trader.email")
             },
             _ => "form should not succeed"

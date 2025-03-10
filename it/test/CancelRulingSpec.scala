@@ -56,7 +56,7 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
     def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusCOMPLETE)
@@ -64,7 +64,7 @@ class CancelRulingSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/cases/1/events"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(CREATED)
               .withBody(event)

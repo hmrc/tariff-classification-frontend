@@ -83,7 +83,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val doc = view(application_details(goodsTab))
 
-      //Then
+      // Then
       doc should containElementWithID("app-details-similar-ruling-reference")
       doc.getElementById("app-details-similar-ruling-reference") should containText("related BTI 1 related BTI 2")
 

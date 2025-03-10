@@ -62,7 +62,7 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
 
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusOPEN)
@@ -70,7 +70,7 @@ class SuspendCaseSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/cases/1/events"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(CREATED)
               .withBody(EventPayloads.event)

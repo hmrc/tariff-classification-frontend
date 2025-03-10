@@ -31,7 +31,7 @@ class InputCheckboxViewSpec extends ViewSpec {
     Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(FormData.unapply)
+      )(FormData.apply)(o => Tuple.fromProductTyped(o))
     )
 
   "Input Checkbox" should {

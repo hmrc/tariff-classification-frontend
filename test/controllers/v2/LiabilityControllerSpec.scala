@@ -63,7 +63,7 @@ class RequestActionsWithPermissionsProvider @Inject() (implicit
 class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   val binds: List[Binding[_]] = List(
-    //views
+    // views
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
     bind[QueuesService].toInstance(mock[QueuesService]),
@@ -71,14 +71,14 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     bind[attachments_details].toInstance(mock[attachments_details]),
     bind[remove_attachment].toInstance(mock[remove_attachment]),
     bind[attachments_list].toInstance(mock[attachments_list]),
-    //services
+    // services
     bind[FileStoreService].toInstance(mock[FileStoreService]),
     bind[KeywordsService].toInstance(mock[KeywordsService]),
     bind[CasesService].toInstance(mock[CasesService])
   )
 
   val defaultRequestActions: List[Binding[RequestActions]] = List(
-    //providers
+    // providers
     bind[RequestActions].toProvider[RequestActionsWithPermissionsProvider]
   )
 
@@ -87,7 +87,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       binds ++ defaultRequestActions
     )
     .configure(
-      //turn off metrics
+      // turn off metrics
       "metrics.jvm"     -> false,
       "metrics.enabled" -> false
     )

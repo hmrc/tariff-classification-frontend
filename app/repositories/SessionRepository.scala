@@ -40,7 +40,7 @@ class SessionRepository @Inject() (config: Configuration, mongoComponent: MongoC
           keys = ascending("lastUpdated"),
           indexOptions = IndexOptions()
             .name("userAnswersExpiry")
-            .expireAfter(config.get[Int]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+            .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
         )
       )
     ) {

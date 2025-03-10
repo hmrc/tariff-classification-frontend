@@ -158,7 +158,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "GET suppress case email" should {
 
     "return OK and HTML content type" in {
-      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn successful(
         initiateResponse
       )
 
@@ -193,14 +193,14 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val cacheMap = UserAnswers(cacheKey).set("note", "some-note").cacheMap
       await(FakeDataCacheService.save(cacheMap))
 
-      given(
+      when(
         casesService.suppressCase(
           refEq(caseWithStatusOPEN),
           any[Attachment],
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) willReturn successful(caseWithStatusSUPPRESSED)
+      ) thenReturn successful(caseWithStatusSUPPRESSED)
 
       val result = await(
         controller(caseWithStatusOPEN).suppressCase(caseWithStatusOPEN.reference, "id")(

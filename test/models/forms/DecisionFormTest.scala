@@ -182,15 +182,15 @@ class DecisionFormTest extends ModelsBaseSpec {
     validationResultForValidEvenDigits: ValidationResult = Valid
   ): CommodityCodeConstraints = {
     val mockCommodityCodeConstraints = mock[CommodityCodeConstraints]
-    given(mockCommodityCodeConstraints.commodityCodeLengthValid)
-      .willReturn(Constraint[String]("error")(_ => validationResultForValidLength))
-    given(mockCommodityCodeConstraints.commodityCodeNumbersValid)
-      .willReturn(Constraint[String]("error")(_ => validationResultForValidNumberType))
-    given(mockCommodityCodeConstraints.commodityCodeEvenDigitsValid)
-      .willReturn(Constraint[String]("error")(_ => validationResultForValidEvenDigits))
+    when(mockCommodityCodeConstraints.commodityCodeLengthValid)
+      .thenReturn(Constraint[String]("error")(_ => validationResultForValidLength))
+    when(mockCommodityCodeConstraints.commodityCodeNumbersValid)
+      .thenReturn(Constraint[String]("error")(_ => validationResultForValidNumberType))
+    when(mockCommodityCodeConstraints.commodityCodeEvenDigitsValid)
+      .thenReturn(Constraint[String]("error")(_ => validationResultForValidEvenDigits))
 
-    given(mockCommodityCodeConstraints.commodityCodeNonEmpty)
-      .willReturn(Constraint[String]("error")(_ => validationResultForEmpty))
+    when(mockCommodityCodeConstraints.commodityCodeNonEmpty)
+      .thenReturn(Constraint[String]("error")(_ => validationResultForEmpty))
     mockCommodityCodeConstraints
   }
 

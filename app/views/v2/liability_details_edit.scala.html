@@ -42,7 +42,7 @@
     @error_summary(form.errors, keySwaps = Map("dateOfReceipt" -> "dateOfReceipt_day", "entryDate" -> "entryDate_day"))
 
     <div class="govuk-form-group">
-    @case_heading( c, messageKey = Some("case.v2.liability.c592.edit_details.heading"))
+    @partials.case_heading( c, messageKey = Some("case.v2.liability.c592.edit_details.heading"))
     </div>
     @defining(c.application.asLiabilityOrder) { liability: LiabilityOrder =>
         <div class="govuk-form-group">

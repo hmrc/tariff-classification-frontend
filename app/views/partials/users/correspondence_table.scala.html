@@ -79,7 +79,7 @@
       @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
         <div class="multiple-choice">
          <fieldset class="govuk-fieldset">
-          @defining(s"${form("corrCases").id}-$index") { id: String =>
+          @defining(s"${form("corrCases").id}-$index") { (id: String) =>
            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
              <input class="govuk-checkboxes__input" id="@{id}" name="@{form("corrCases").name}[@index]" type="checkbox" value="@{result.reference}" @if(form("corrCases").hasErrors){aria-describedby="error-message-@{form("corrCases").id}-input"} @if(form("corrCases").value.contains(result.reference)){checked="checked"}>

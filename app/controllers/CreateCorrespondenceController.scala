@@ -74,7 +74,7 @@ class CreateCorrespondenceController @Inject() (
         .fold(
           formWithErrors => Future.successful(Ok(create_correspondence(formWithErrors))),
           correspondenceApp =>
-            casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
+            casesService.createCase(correspondenceApp, request.operator).map { (caseCreated: Case) =>
               Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
             }
         )

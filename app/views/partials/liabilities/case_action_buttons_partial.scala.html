@@ -38,7 +38,7 @@
         case _ if caseViewModel.showReopen => "reopen-case"
         case _ => ""
     }
-}) { idOfElement: String =>
+}) { (idOfElement: String) =>
 
 @if(caseViewModel.showActionThisCase) {
     @change_case_status_button(

@@ -69,6 +69,6 @@ object ReferCaseForm {
       "reasons"       -> of[List[ReferralReason.Value]](reasonSpecified),
       "note"          -> textNonEmpty("error.empty.refer.note"),
       "referManually" -> of[Option[String]](referentSpecified)
-    )(CaseReferral.apply)(CaseReferral.unapply)
+    )(CaseReferral.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 }

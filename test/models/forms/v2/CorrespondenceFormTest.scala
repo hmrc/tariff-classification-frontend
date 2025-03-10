@@ -74,7 +74,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "case.liability.error.email"
     }
 
@@ -89,7 +89,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "Please enter a case source"
     }
 
@@ -104,7 +104,7 @@ class CorrespondenceFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "Please enter a short description"
     }
   }

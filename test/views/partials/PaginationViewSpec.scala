@@ -38,7 +38,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       (invocation: InvocationOnMock) => Call(method = "GET", url = "/page=" + invocation.getArgument(0))
 
     super.beforeEach()
-    given(goToPage.apply(ArgumentMatchers.any[Int])) will returnThePage
+    when(goToPage.apply(ArgumentMatchers.any[Int])) will returnThePage
   }
 
   "Pagination" should {

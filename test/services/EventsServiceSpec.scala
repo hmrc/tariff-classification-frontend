@@ -48,7 +48,7 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Get Events by reference" should {
     "retrieve a list of events" in {
-      given(connector.findFilteredEvents("reference", NoPagination(), Set.empty)) willReturn Future.successful(
+      when(connector.findFilteredEvents("reference", NoPagination(), Set.empty)) thenReturn Future.successful(
         Paged(manyEvents)
       )
 
@@ -68,9 +68,9 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
         )
       )
 
-      given(
+      when(
         connector.findFilteredEvents("reference", NoPagination(), Set(EventType.SAMPLE_STATUS_CHANGE))
-      ) willReturn Future
+      ) thenReturn Future
         .successful(Paged(filteredEvents, NoPagination(), 1))
 
       await(
@@ -92,8 +92,8 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     val aCase           = Cases.btiCaseExample
 
     "post a new note to the backend via the connector" in {
-      given(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
-        .willReturn(successful(event))
+      when(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
+        .thenReturn(successful(event))
 
       await(service.addNote(aCase, aNote, operator, clock)) shouldBe event
 
@@ -102,8 +102,8 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     }
 
     "propagate the error if the connector fails" in {
-      given(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
-        .willReturn(failed(new IllegalStateException))
+      when(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
+        .thenReturn(failed(new IllegalStateException))
 
       intercept[IllegalStateException] {
         await(service.addNote(aCase, aNote, operator, clock))

@@ -171,7 +171,7 @@
                         </div>
                     </div>
 
-                    @defining(results.get) { searchResults: Paged[SearchResult] =>
+                    @defining(results.get) { (searchResults: Paged[SearchResult]) =>
                         <div class="govuk-grid-column-three-quarters">
 
                             @pagination(

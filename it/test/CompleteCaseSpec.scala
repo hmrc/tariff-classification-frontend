@@ -41,7 +41,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusOPEN)
@@ -59,7 +59,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldNotSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusOPEN)
@@ -112,7 +112,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     }
   }
 
-  //TODO DIT-291 This returns 403s due to CSRF issues
+  // TODO DIT-291 This returns 403s due to CSRF issues
 //  "Case Complete Confirm" should {
 //    val caseWithStatusOPEN = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.OPEN))
 //    val event = EventPayloads.event
@@ -123,22 +123,22 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 //
 //      givenAuthSuccess()
 //      stubFor(get(urlEqualTo("/cases/1"))
-//        .willReturn(aResponse()
+//        .thenReturn(aResponse()
 //          .withStatus(OK)
 //          .withBody(caseWithStatusOPEN))
 //      )
 //      stubFor(post(urlEqualTo("/cases/1/events"))
-//        .willReturn(aResponse()
+//        .thenReturn(aResponse()
 //          .withStatus(CREATED)
 //          .withBody(event))
 //      )
 //      stubFor(post(urlEqualTo("/hmrc/email"))
-//        .willReturn(aResponse()
+//        .thenReturn(aResponse()
 //          .withStatus(ACCEPTED))
 //      )
 //      stubFor(post(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
 //        .withRequestBody(new EqualToJsonPattern(fromResource("parameters_email-request.json"), true, false))
-//        .willReturn(aResponse()
+//        .thenReturn(aResponse()
 //          .withBody(fromResource("email_template-response.json"))
 //          .withStatus(HttpStatus.SC_OK))
 //      )

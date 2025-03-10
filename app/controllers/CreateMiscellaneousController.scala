@@ -64,7 +64,7 @@ class CreateMiscellaneousController @Inject() (
         .fold(
           formWithErrors => Future(Ok(create_misc(formWithErrors))),
           miscApp =>
-            casesService.createCase(miscApp, request.operator).map { caseCreated: Case =>
+            casesService.createCase(miscApp, request.operator).map { (caseCreated: Case) =>
               Redirect(routes.CreateMiscellaneousController.displayQuestion(caseCreated.reference))
             }
         )

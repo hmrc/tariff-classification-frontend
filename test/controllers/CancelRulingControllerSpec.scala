@@ -176,7 +176,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "GET cancel ruling email" should {
 
     "return OK and HTML content type" in {
-      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn successful(
         initiateResponse
       )
 
@@ -211,7 +211,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
       val cacheMap = UserAnswers(cacheKey).set("cancellation", RulingCancellation("ANNULLED", "some-note")).cacheMap
       await(FakeDataCacheService.save(cacheMap))
 
-      given(
+      when(
         casesService.cancelRuling(
           refEq(caseWithStatusCOMPLETED),
           refEq(CancelReason.ANNULLED),
@@ -219,7 +219,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) willReturn successful(caseWithStatusCANCELLED)
+      ) thenReturn successful(caseWithStatusCANCELLED)
 
       val result = await(
         controller(caseWithStatusCOMPLETED).cancelRuling(caseWithStatusCOMPLETED.reference, "id")(

@@ -64,7 +64,7 @@ class AppealCaseTypeSpec extends IntegrationTest with MockitoSugar {
     def shouldSucceed(): Unit = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusCOMPLETE)

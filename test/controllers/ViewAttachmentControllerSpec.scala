@@ -70,13 +70,13 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   private def givenFileMetadata(
     fileMetadata: Option[FileMetadata]
   ): BDDMyOngoingStubbing[Future[Option[FileMetadata]]] =
-    given(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])) willReturn Future.successful(fileMetadata)
+    when(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])) thenReturn Future.successful(fileMetadata)
 
   private def givenFileContent(
     url: String,
     fileContent: Array[Byte]
   ): BDDMyOngoingStubbing[Future[Option[Source[ByteString, _]]]] =
-    given(fileService.downloadFile(refEq(url))(any[HeaderCarrier])) willReturn Future.successful(
+    when(fileService.downloadFile(refEq(url))(any[HeaderCarrier])) thenReturn Future.successful(
       Some(Source.single(ByteString(fileContent)))
     )
 

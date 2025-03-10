@@ -31,7 +31,7 @@ class InputNumberViewSpec extends ViewSpec {
     lazy val form = Form(
       mapping(
         "field" -> number
-      )(FormData.apply)(FormData.unapply)
+      )(FormData.apply)(o => Tuple.fromProductTyped(o))
     ).fill(FormData(5))
 
     lazy val emptyForm = Map[String, String]()

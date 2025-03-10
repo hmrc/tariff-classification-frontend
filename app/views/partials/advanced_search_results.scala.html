@@ -70,7 +70,7 @@
             </div>
 
             @*Attached Images*@
-            @defining(result.attachments.filter(att => att.scanStatus.contains(ScanStatus.READY) && att.url.isDefined && att.isImage)) { attachments: Seq[StoredAttachment] =>
+            @defining(result.attachments.filter(att => att.scanStatus.contains(ScanStatus.READY) && att.url.isDefined && att.isImage)) { (attachments: Seq[StoredAttachment]) =>
                 @if(attachments.nonEmpty) {
                     <div id="advanced_search_results-row-@{index}-attachments" class="mt-1">
                     @for((attachment: StoredAttachment, attIndex: Int) <- attachments.zipWithIndex) {

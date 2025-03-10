@@ -41,13 +41,13 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Reporting Service - caseReport" should {
     "delegate to connector" in {
-      given(
+      when(
         connector.caseReport(any[CaseReport], any[Pagination])(
           any[HeaderCarrier],
           any[QueryStringBindable[CaseReport]],
           any[QueryStringBindable[Pagination]]
         )
-      ) willReturn Future.successful(Paged.empty[Map[String, ReportResultField[_]]])
+      ) thenReturn Future.successful(Paged.empty[Map[String, ReportResultField[_]]])
 
       await(
         service.caseReport(
@@ -60,13 +60,13 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Reporting Service - summaryReport" should {
     "delegate to connector" in {
-      given(
+      when(
         connector.summaryReport(any[SummaryReport], any[Pagination])(
           any[HeaderCarrier],
           any[QueryStringBindable[SummaryReport]],
           any[QueryStringBindable[Pagination]]
         )
-      ) willReturn Future.successful(Paged.empty[ResultGroup])
+      ) thenReturn Future.successful(Paged.empty[ResultGroup])
 
       await(
         service.summaryReport(
@@ -83,13 +83,13 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Reporting Service - queueReport" should {
     "delegate to connector" in {
-      given(
+      when(
         connector.queueReport(any[QueueReport], any[Pagination])(
           any[HeaderCarrier],
           any[QueryStringBindable[QueueReport]],
           any[QueryStringBindable[Pagination]]
         )
-      ) willReturn Future.successful(Paged.empty[QueueResultGroup])
+      ) thenReturn Future.successful(Paged.empty[QueueResultGroup])
 
       await(
         service.queueReport(

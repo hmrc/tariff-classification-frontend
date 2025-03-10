@@ -48,7 +48,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
   "Open cases" should {
 
     "return 200 OK and HTML content type" in {
-      given(
+      when(
         casesService
           .getCasesByAllQueues(
             any[Seq[Queue]],
@@ -57,7 +57,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[Set[CaseStatus]],
             any[String]
           )(any[HeaderCarrier])
-      ).willReturn(
+      ).thenReturn(
         Paged(
           Seq(
             Cases.aCase(),
@@ -78,7 +78,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return 200 OK and HTML content type for ATaR tab" in {
-      given(
+      when(
         casesService
           .getCasesByAllQueues(
             any[Seq[Queue]],
@@ -87,7 +87,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[Set[CaseStatus]],
             any[String]
           )(any[HeaderCarrier])
-      ).willReturn(
+      ).thenReturn(
         Paged(
           Seq(
             Cases.aCase(),
@@ -113,7 +113,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return 200 OK and HTML content type for Liability tab" in {
-      given(
+      when(
         casesService
           .getCasesByAllQueues(
             any[Seq[Queue]],
@@ -122,7 +122,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[Set[CaseStatus]],
             any[String]
           )(any[HeaderCarrier])
-      ).willReturn(
+      ).thenReturn(
         Paged(
           Seq(
             Cases.aCase(),
@@ -144,7 +144,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type for Correspondence tab" in {
 
-      given(
+      when(
         casesService
           .getCasesByAllQueues(
             any[Seq[Queue]],
@@ -153,7 +153,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[Set[CaseStatus]],
             any[String]
           )(any[HeaderCarrier])
-      ).willReturn(
+      ).thenReturn(
         Paged(
           Seq(
             Cases.aCase(),
@@ -177,7 +177,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return 200 OK and HTML content type for Miscellaneous tab" in {
-      given(
+      when(
         casesService
           .getCasesByAllQueues(
             any[Seq[Queue]],
@@ -186,7 +186,7 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[Set[CaseStatus]],
             any[String]
           )(any[HeaderCarrier])
-      ).willReturn(
+      ).thenReturn(
         Paged(
           Seq(
             Cases.aCase(),

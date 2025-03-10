@@ -185,9 +185,9 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       for (s <- Seq(CaseStatus.COMPLETED, CaseStatus.CANCELLED))
         s"Case has status $s" in {
           val c = aCase(withStatus(s), withDecision())
-          given(
+          when(
             casesService.addAppeal(any[Case], any[AppealType], any[AppealStatus], any[Operator])(any[HeaderCarrier])
-          ) willReturn Future.successful(c)
+          ) thenReturn Future.successful(c)
 
           val request = newFakePOSTRequestWithCSRF(Map("status" -> AppealStatus.ALLOWED.toString))
           val result  = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
@@ -251,10 +251,10 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
         s"Case has status $s" in {
           val appeal = Appeal("appeal-id", AppealStatus.IN_PROGRESS, AppealType.SUPREME_COURT)
           val c      = aCase(withStatus(s), withDecision(appeal = Seq(appeal)))
-          given(
+          when(
             casesService
               .updateAppealStatus(any[Case], any[Appeal], any[AppealStatus], any[Operator])(any[HeaderCarrier])
-          ) willReturn Future.successful(c)
+          ) thenReturn Future.successful(c)
 
           val request = newFakePOSTRequestWithCSRF(Map("status" -> AppealStatus.ALLOWED.toString))
           val result  = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))

@@ -24,7 +24,7 @@ class SampleSendFormTest extends ModelsBaseSpec {
     "Bind empty" in {
       val form = SampleSendForm.form.bindFromRequest(Map())
 
-      form.hasErrors            shouldBe true
+      form.hasErrors shouldBe true
       form.errors.map(_.message shouldBe "error.empty.sample.sender")
     }
 

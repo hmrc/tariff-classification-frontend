@@ -51,9 +51,9 @@ class CasesService_SuspendCaseSpec extends CasesServiceSpecBase with BeforeAndAf
       val originalCase       = aCase.copy(status = CaseStatus.NEW, attachments = Seq(existingAttachment))
       val caseUpdated        = aCase.copy(status = CaseStatus.SUSPENDED)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(service.suspendCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 
@@ -78,7 +78,7 @@ class CasesService_SuspendCaseSpec extends CasesServiceSpecBase with BeforeAndAf
       val attachment         = Attachment("id", operator = Some(operator))
       val caseUpdated        = aCase.copy(status = CaseStatus.SUSPENDED)
 
-      given(connector.updateCase(refEq(caseUpdated))(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(refEq(caseUpdated))(any[HeaderCarrier])).thenReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.suspendCase(caseUpdated, attachment, "note", operator))
@@ -95,9 +95,9 @@ class CasesService_SuspendCaseSpec extends CasesServiceSpecBase with BeforeAndAf
       val originalCase       = aCase.copy(status = CaseStatus.NEW)
       val caseUpdated        = aCase.copy(status = CaseStatus.SUSPENDED)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException()))
 
       await(service.suspendCase(originalCase, attachment, "note", operator)) shouldBe caseUpdated
 

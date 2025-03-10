@@ -75,7 +75,7 @@
 
         <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
             @for(option: RadioOption <- options) {
-                @defining(option.value.replace(" ", "_")) { optionId: String =>
+                @defining(option.value.replace(" ", "_")) { (optionId: String) =>
                     <div class="govuk-radios__item">
                         <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(option.customHtml.isDefined){data-aria-controls="@{option.dataTarget.get}"} class="govuk-radios__input" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
                         <label id="@id-@optionId-label" class="govuk-label govuk-radios__label" for="@id-@optionId">@option.label</label>
@@ -92,7 +92,7 @@
         @if(customOtherOptions.nonEmpty){
             <div class="govuk-radios__divider">or</div>
             @for(option: RadioOption <- customOtherOptions) {
-                @defining(option.value.replace(" ", "_")) { optionId: String =>
+                @defining(option.value.replace(" ", "_")) { (optionId: String) =>
                     <div class="govuk-radios__item">
                         <input id="@id-@optionId" type="radio" name="@{field.name}" value="@option.value" @if(option.customHtml.isDefined){data-aria-controls="@{option.dataTarget.get}"} class="govuk-radios__input" @if(field.value.contains(option.value) && preSelect){checked="checked"}>
                         <label id="@id-@optionId-label" class="govuk-label govuk-radios__label" for="@id-@optionId">@option.label</label>

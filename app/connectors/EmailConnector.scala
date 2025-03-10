@@ -61,11 +61,10 @@ class EmailConnector @Inject() (
         .map(decodingContent)
     }
 
-  private def decodingContent: EmailTemplate => EmailTemplate = { t: EmailTemplate =>
+  private def decodingContent: EmailTemplate => EmailTemplate = (t: EmailTemplate) =>
     t.copy(
       plain = Base64Utils.decode(t.plain),
       html = Base64Utils.decode(t.html)
     )
-  }
 
 }

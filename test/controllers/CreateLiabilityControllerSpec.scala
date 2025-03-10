@@ -90,8 +90,8 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect on success" in {
-      given(casesService.createCase(any[LiabilityOrder], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(aCase(withReference("reference"))))
+      when(casesService.createCase(any[LiabilityOrder], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(aCase(withReference("reference"))))
       val request = newFakePOSTRequestWithCSRF().withFormUrlEncodedBody(
         "item-name"        -> "item name",
         "trader-name"      -> "Trader",

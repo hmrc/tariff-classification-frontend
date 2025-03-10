@@ -27,7 +27,7 @@ object CancelRulingForm {
     mapping(
       "reason" -> oneOf("status.change.cancel.reason.error", CancelReason),
       "note"   -> textNonEmpty("error.empty.cancel.note")
-    )(RulingCancellation.apply)(RulingCancellation.unapply)
+    )(RulingCancellation.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 
 }

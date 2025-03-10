@@ -38,7 +38,7 @@ class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusCOMPLETED)

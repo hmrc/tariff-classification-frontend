@@ -65,9 +65,9 @@ class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
           .correspondenceDetailsForm(caseWithoutSummary)
           .fold(
             form => {
-              form.hasErrors                      shouldBe true
-              form.errors.size                    shouldBe 1
-              form.errors.map(_.key)              shouldBe Seq("summary")
+              form.hasErrors         shouldBe true
+              form.errors.size       shouldBe 1
+              form.errors.map(_.key) shouldBe Seq("summary")
               form.error("summary").map(_.message shouldBe "Enter a summary")
 
             },

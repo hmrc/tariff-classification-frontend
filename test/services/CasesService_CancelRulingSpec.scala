@@ -42,7 +42,7 @@ class CasesService_CancelRulingSpec extends CasesServiceSpecBase with BeforeAndA
   override protected def beforeEach(): Unit = {
     super.beforeEach()
 
-    given(config.clock).willReturn(clock)
+    when(config.clock).thenReturn(clock)
   }
 
   override protected def afterEach(): Unit = {
@@ -70,10 +70,10 @@ class CasesService_CancelRulingSpec extends CasesServiceSpecBase with BeforeAndA
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated     = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
-      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
+      when(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).thenReturn(Future.successful(()))
 
       await(
         serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
@@ -123,8 +123,8 @@ class CasesService_CancelRulingSpec extends CasesServiceSpecBase with BeforeAndA
         Decision("code", Some(date("2018-01-01")), Some(date("2021-01-01")), "justification", "goods")
       val originalCase = aCase.copy(status = CaseStatus.COMPLETED, decision = Some(originalDecision))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException("Failed to update the Case")))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException("Failed to update the Case")))
 
       intercept[RuntimeException] {
         await(serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator))
@@ -144,10 +144,10 @@ class CasesService_CancelRulingSpec extends CasesServiceSpecBase with BeforeAndA
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated     = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException("Failed to create Event")))
-      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException("Failed to create Event")))
+      when(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).thenReturn(Future.successful(()))
 
       await(
         serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)
@@ -169,11 +169,11 @@ class CasesService_CancelRulingSpec extends CasesServiceSpecBase with BeforeAndA
       val updatedDecision = originalDecision.copy(effectiveEndDate = Some(date("2019-01-01")))
       val caseUpdated     = aCase.copy(status = CaseStatus.CANCELLED, decision = Some(updatedDecision))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
-      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
-        .willReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
+      when(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new RuntimeException("Failed to notify the Ruling Store")))
 
       await(
         serviceMockConfig.cancelRuling(originalCase, CancelReason.ANNULLED, attachment, "note", operator)

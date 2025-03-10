@@ -290,8 +290,9 @@ class CasesService @Inject() (
       } else {
         emailService
           .sendCaseCompleteEmail(updated, operator)
-          .map { email: EmailTemplate =>
-            Some(s"- Subject: ${email.subject}\n- Body: ${email.plain}")
+          .map { (email: EmailTemplate) =>
+            val template = s"- Subject: ${email.subject}\n- Body: ${email.plain}"
+            Some(template)
           }
           .recoverWith(
             suppressThrownError(

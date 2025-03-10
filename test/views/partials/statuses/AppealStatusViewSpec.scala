@@ -37,7 +37,7 @@ class AppealStatusViewSpec extends ViewSpec {
       doc.text() shouldBe ""
     }
 
-    //ADR
+    // ADR
     "render under mediation for IN_PROGRESS ADR" in {
 
       val c = aCase(
@@ -86,7 +86,7 @@ class AppealStatusViewSpec extends ViewSpec {
       doc.text() shouldBe "COMPLETED"
     }
 
-    //REVIEW
+    // REVIEW
     "render under review for IN_PROGRESS REVIEW" in {
 
       val c = aCase(

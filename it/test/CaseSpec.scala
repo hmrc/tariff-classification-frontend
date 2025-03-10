@@ -33,7 +33,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(NOT_FOUND)
           )
@@ -57,7 +57,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.jsonOf(c))
@@ -70,7 +70,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
               "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&type=SAMPLE_SEND_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
-        ).willReturn(
+        ).thenReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedSampleEvents)
@@ -95,7 +95,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
               "&type=SAMPLE_RETURN_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
-        ).willReturn(
+        ).thenReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedEvents)
@@ -106,7 +106,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
           urlEqualTo(
             s"/keywords?page=1&page_size=${Pagination.unlimited}"
           )
-        ).willReturn(
+        ).thenReturn(
           aResponse()
             .withStatus(OK)
             .withBody(KeywordsPayloads.pagedKeywords)
@@ -114,7 +114,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/file/initiate"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
@@ -139,7 +139,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.jsonOf(c))
@@ -147,7 +147,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/file?id="))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody("[]")
@@ -172,7 +172,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.jsonOf(c))
@@ -189,7 +189,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
               s"&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION" +
               s"&type=CASE_CREATED&type=ASSIGNMENT_CHANGE&page=1&page_size=${Pagination.unlimited}"
           )
-        ).willReturn(
+        ).thenReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedEvents)
@@ -214,7 +214,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.jsonOf(c))
@@ -222,7 +222,7 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/file?id="))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody("[]")

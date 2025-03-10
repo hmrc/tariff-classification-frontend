@@ -65,7 +65,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusCOMPLETE)
@@ -78,7 +78,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
               "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&type=SAMPLE_SEND_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
-        ).willReturn(
+        ).thenReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedSampleEvents)
@@ -103,7 +103,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
               "&type=SAMPLE_RETURN_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
-        ).willReturn(
+        ).thenReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedEvents)
@@ -114,7 +114,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
           urlEqualTo(
             s"/keywords?page=1&page_size=${Pagination.unlimited}"
           )
-        ).willReturn(
+        ).thenReturn(
           aResponse()
             .withStatus(OK)
             .withBody(KeywordsPayloads.pagedKeywords)
@@ -122,7 +122,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/file/initiate"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
@@ -164,7 +164,7 @@ class AppealCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .willReturn(
+          .thenReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusCOMPLETE)

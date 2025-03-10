@@ -28,7 +28,7 @@ object RejectCaseForm {
       "reason" -> oneOf("error.empty.reject.reason", RejectReason)
         .transform[RejectReason.Value](RejectReason.withName, _.toString),
       "note" -> textNonEmpty("error.empty.reject.note")
-    )(CaseRejection.apply)(CaseRejection.unapply)
+    )(CaseRejection.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 
 }

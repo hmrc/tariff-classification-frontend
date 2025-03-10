@@ -51,8 +51,8 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     val aKeyword = "Apples"
 
     "propagate the error if the connector fails" in {
-      given(connector.updateCase(any[Case])(any[HeaderCarrier]))
-        .willReturn(failed(new IllegalStateException))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier]))
+        .thenReturn(failed(new IllegalStateException))
 
       intercept[IllegalStateException] {
         await(service.addKeyword(aCase, aKeyword, operator))
@@ -63,8 +63,8 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     "add the keyword to the case keywords using the upper-case format" in {
       val aCaseWithNewKeyword = aCase.copy(keywords = aCase.keywords + "APPLES")
 
-      given(connector.updateCase(refEq(aCaseWithNewKeyword))(any[HeaderCarrier]))
-        .willReturn(successful(aCaseWithNewKeyword))
+      when(connector.updateCase(refEq(aCaseWithNewKeyword))(any[HeaderCarrier]))
+        .thenReturn(successful(aCaseWithNewKeyword))
 
       await(service.addKeyword(aCase, aKeyword, operator)) shouldBe aCaseWithNewKeyword
 
@@ -90,8 +90,8 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
       val aCaseWithExistingKeyword = aCase.copy(keywords = aCase.keywords + "APPLES")
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier]))
-        .willReturn(failed(new IllegalStateException))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier]))
+        .thenReturn(failed(new IllegalStateException))
 
       intercept[IllegalStateException] {
         await(service.removeKeyword(aCaseWithExistingKeyword, aKeyword, operator))
@@ -104,7 +104,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       val aKeyword         = "Apples"
       val aCaseWithKeyword = aCase.copy(keywords = aCase.keywords + "APPLES")
 
-      given(connector.updateCase(refEq(aCase))(any[HeaderCarrier])).willReturn(successful(aCase))
+      when(connector.updateCase(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(aCase))
 
       await(service.removeKeyword(aCaseWithKeyword, aKeyword, operator)) shouldBe aCase
 
@@ -125,7 +125,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Retrieve auto complete keywords" should {
 
     "return a list of keywords" in {
-      given(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])) willReturn successful(Paged(Seq(keyword)))
+      when(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])) thenReturn successful(Paged(Seq(keyword)))
 
       await(service.findAll()) shouldBe Seq.empty[Keyword]
     }

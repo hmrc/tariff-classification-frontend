@@ -26,6 +26,6 @@ object MessageForm {
   val form: Form[MessageFormData] = Form(
     mapping(
       "message" -> textNonEmpty("error.empty.message")
-    )(MessageFormData.apply)(MessageFormData.unapply)
+    )(MessageFormData.apply)(o => Some(o.message))
   )
 }

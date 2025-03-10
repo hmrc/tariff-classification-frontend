@@ -30,7 +30,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
     val form = Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(FormData.unapply)
+      )(FormData.apply)(o => Tuple.fromProductTyped(o))
     )
 
     "Render 'None'" in {

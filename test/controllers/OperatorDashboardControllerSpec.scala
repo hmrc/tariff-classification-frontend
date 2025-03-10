@@ -53,8 +53,8 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
   override def beforeEach(): Unit =
     when(casesService.countCasesByQueue(any[HeaderCarrier])) thenReturn casesCounted
 
-  given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-    .willReturn(Future.successful(Paged.empty[Case]))
+  when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+    .thenReturn(Future.successful(Paged.empty[Case]))
 
   private def controller(permission: Set[Permission]) = new OperatorDashboardController(
     new RequestActionsWithPermissions(playBodyParsers, permission),
@@ -83,8 +83,8 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK for the correct number of refer by me cases" in {
 
-      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(
+      when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(
           Future.successful(
             Paged(
               Seq(

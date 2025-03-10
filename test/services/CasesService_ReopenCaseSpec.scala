@@ -71,9 +71,9 @@ class CasesService_ReopenCaseSpec extends CasesServiceSpecBase with BeforeAndAft
       val originalCase       = aCase.copy(status = originalStatus)
       val caseUpdated        = aCase.copy(status = updatedStatus)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
 
@@ -91,7 +91,7 @@ class CasesService_ReopenCaseSpec extends CasesServiceSpecBase with BeforeAndAft
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase.copy(status = originalStatus)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.reopenCase(originalCase, operator))
@@ -106,9 +106,9 @@ class CasesService_ReopenCaseSpec extends CasesServiceSpecBase with BeforeAndAft
       val originalCase       = aCase.copy(status = originalStatus)
       val caseUpdated        = aCase.copy(status = updatedStatus)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException()))
 
       await(service.reopenCase(originalCase, operator)) shouldBe caseUpdated
 

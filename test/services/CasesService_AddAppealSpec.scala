@@ -56,9 +56,9 @@ class CasesService_AddAppealSpec extends CasesServiceSpecBase with BeforeAndAfte
       val originalCase       = aCase(withDecision(appeal = Seq(existingAppeal)))
       val caseUpdated        = mock[Case]
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(
         service.addAppeal(originalCase, AppealType.REVIEW, AppealStatus.ALLOWED, operator)
@@ -85,7 +85,7 @@ class CasesService_AddAppealSpec extends CasesServiceSpecBase with BeforeAndAfte
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase(withDecision())
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.ALLOWED, operator))
@@ -101,9 +101,9 @@ class CasesService_AddAppealSpec extends CasesServiceSpecBase with BeforeAndAfte
       val originalCase       = aCase(withDecision())
       val caseUpdated        = mock[Case]
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException()))
 
       await(
         service.addAppeal(originalCase, AppealType.APPEAL_TIER_1, AppealStatus.DISMISSED, operator)

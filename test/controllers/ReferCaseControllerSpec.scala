@@ -212,7 +212,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "GET refer case email" should {
 
     "return OK and HTML content type" in {
-      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn successful(
         initiateResponse
       )
 
@@ -248,7 +248,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       val cacheMap = UserAnswers(cacheKey).set("referral", referral).cacheMap
       await(FakeDataCacheService.save(cacheMap))
 
-      given(
+      when(
         casesService.referCase(
           refEq(caseWithStatusOPEN),
           refEq("APPLICANT"),
@@ -257,7 +257,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) willReturn successful(caseWithStatusREFERRED)
+      ) thenReturn successful(caseWithStatusREFERRED)
 
       val result = await(
         controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(
@@ -284,7 +284,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       val captor: ArgumentCaptor[Seq[ReferralReason]] = ArgumentCaptor.forClass(classOf[Seq[ReferralReason]])
 
-      given(
+      when(
         casesService.referCase(
           refEq(caseWithStatusOPEN),
           any[String],
@@ -293,7 +293,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) willReturn successful(caseWithStatusREFERRED)
+      ) thenReturn successful(caseWithStatusREFERRED)
 
       val result = await(
         controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(

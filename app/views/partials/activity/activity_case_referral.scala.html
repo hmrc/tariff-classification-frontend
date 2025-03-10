@@ -46,7 +46,7 @@
  }
 }
 
-@defining(event.details.asInstanceOf[ReferralCaseStatusChange]) { body: ReferralCaseStatusChange =>
+@defining(event.details.asInstanceOf[ReferralCaseStatusChange]) { (body: ReferralCaseStatusChange) =>
  @progressive_disclosure(
   id = s"activity-events-row-$index",
   summary = s"Status changed from ${body.from.toString.toLowerCase} to ${body.to.toString.toLowerCase}",

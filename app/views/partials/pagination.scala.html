@@ -30,7 +30,7 @@
 
     @if(pager.pageCount > 1) {
         <div id="@id-links" class="govuk-grid-column-one-half @linksClass.getOrElse("")">
-            @defining(pager.pageCount) { pageCount: Int =>
+            @defining(pager.pageCount) { (pageCount: Int) =>
                 <p class="govuk-body">
                     @* Previous Page *@
                     @if(pager.pageIndex > 1) {

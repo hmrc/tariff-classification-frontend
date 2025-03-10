@@ -158,7 +158,7 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
   "GET suspend case email" should {
 
     "return OK and HTML content type" in {
-      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn successful(
         initiateResponse
       )
 
@@ -193,14 +193,14 @@ class SuspendCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
       val cacheMap = UserAnswers(cacheKey).set("note", "some-note").cacheMap
       await(FakeDataCacheService.save(cacheMap))
 
-      given(
+      when(
         casesService.suspendCase(
           refEq(caseWithStatusOPEN),
           any[Attachment],
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) willReturn successful(caseWithStatusSUSPENDED)
+      ) thenReturn successful(caseWithStatusSUSPENDED)
 
       val result = await(
         controller(caseWithStatusOPEN).suspendCase(caseWithStatusOPEN.reference, "id")(

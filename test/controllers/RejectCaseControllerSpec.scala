@@ -183,7 +183,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
   "GET reject case email" should {
 
     "return OK and HTML content type" in {
-      given(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) willReturn successful(
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn successful(
         initiateResponse
       )
 
@@ -219,7 +219,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
       val cacheMap  = UserAnswers(cacheKey).set("rejection", rejection).cacheMap
       await(FakeDataCacheService.save(cacheMap))
 
-      given(
+      when(
         casesService.rejectCase(
           refEq(caseWithStatusOPEN),
           refEq(RejectReason.APPLICATION_WITHDRAWN),
@@ -227,7 +227,7 @@ class RejectCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) willReturn successful(caseWithStatusREJECTED)
+      ) thenReturn successful(caseWithStatusREJECTED)
 
       val result = await(
         controller(caseWithStatusOPEN).rejectCase(caseWithStatusOPEN.reference, "id")(

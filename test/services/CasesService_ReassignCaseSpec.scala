@@ -49,10 +49,10 @@ class CasesService_ReassignCaseSpec extends CasesServiceSpecBase with BeforeAndA
       val originalCase       = aCase.copy(status = CaseStatus.OPEN)
       val caseUpdated        = aCase.copy(queueId = Some("queue_id"))
 
-      given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(queue.id).thenReturn("queue_id")
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(service.reassignCase(originalCase, queue, operator)) shouldBe caseUpdated
 
@@ -67,8 +67,8 @@ class CasesService_ReassignCaseSpec extends CasesServiceSpecBase with BeforeAndA
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase.copy(status = CaseStatus.NEW)
 
-      given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      when(queue.id).thenReturn("queue_id")
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.releaseCase(originalCase, queue, operator))
@@ -84,10 +84,10 @@ class CasesService_ReassignCaseSpec extends CasesServiceSpecBase with BeforeAndA
       val originalCase       = aCase.copy(status = CaseStatus.NEW)
       val caseUpdated        = aCase.copy(status = CaseStatus.OPEN, queueId = Some("queue_id"))
 
-      given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException()))
+      when(queue.id).thenReturn("queue_id")
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException()))
 
       await(service.releaseCase(originalCase, queue, operator)) shouldBe caseUpdated
 

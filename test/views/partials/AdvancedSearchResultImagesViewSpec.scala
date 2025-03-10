@@ -36,7 +36,7 @@ class AdvancedSearchResultImagesViewSpec extends ViewSpec {
     }
 
     "Render with Results" in {
-      //Given
+      // Given
       val c = aCase(
         withReference("reference"),
         withStatus(CaseStatus.OPEN),

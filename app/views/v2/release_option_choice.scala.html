@@ -35,7 +35,7 @@
 
 @error_summary(form.errors, keySwaps = Map("choice" -> "release_choice_form-Yes"))
 
-    @case_heading(c, messageKey=Some("action_this_corr.case.header"))
+    @partials.case_heading(c, messageKey=Some("action_this_corr.case.header"))
 
      @helper.form(
          action = routes.CreateCorrespondenceController.postChoice(c.reference),

@@ -25,7 +25,7 @@
  </p>
 }
 
-@defining(event.details.asInstanceOf[ExpertAdviceReceived]) { body: ExpertAdviceReceived =>
+@defining(event.details.asInstanceOf[ExpertAdviceReceived]) { (body: ExpertAdviceReceived) =>
  @progressive_disclosure(
   id = s"activity-events-row-$index",
   summary = s"Expert advice received",

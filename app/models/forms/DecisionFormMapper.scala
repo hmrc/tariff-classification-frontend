@@ -38,7 +38,7 @@ class DecisionFormMapper {
 
   def caseToDecisionFormData(c: Case): DecisionFormData = {
 
-    val form = c.decision map { d: Decision =>
+    val form = c.decision map { (d: Decision) =>
       DecisionFormData(
         d.bindingCommodityCode,
         d.goodsDescription,

@@ -24,7 +24,7 @@ import java.util.Calendar
 class FormConstraintsTest extends ModelsBaseSpec {
 
   private val currentYear: Int = Calendar.getInstance().get(Calendar.YEAR)
-  //TODO read from appconfig
+  // TODO read from appconfig
   private val yearLowBound: Int = 2010
 
   "FormConstraintsTest" when {

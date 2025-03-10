@@ -46,7 +46,7 @@ trait SpecBase
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
       .configure(
-        //turn off metrics
+        // turn off metrics
         "metrics.jvm"          -> false,
         "metrics.enabled"      -> false,
         "download.interval"    -> "1 seconds",

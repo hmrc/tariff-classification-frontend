@@ -82,7 +82,7 @@
       <td id="@{liabTab.tabMessageKey}-select-@index" class="govuk-table__cell">
       @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
         <fieldset class="govuk-fieldset">
-        @defining(s"${form("liabilityCases").id}-$index") { id: String =>
+        @defining(s"${form("liabilityCases").id}-$index") { (id: String) =>
          <div class="govuk-checkboxes" data-module="govuk-checkboxes">
           <div class="govuk-checkboxes__item">
            <input class="govuk-checkboxes__input" id="@{id}" name="@{form("liabilityCases").name}[@index]" type="checkbox" value="@{result.reference}" @if(form("liabilityCases").hasErrors){aria-describedby="error-message-@{form("liabilityCases").id}-input"} @if(form("liabilityCases").value.contains(result.reference)){checked="checked"}>

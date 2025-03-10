@@ -62,7 +62,7 @@ class ReferCaseController @Inject() (
       implicit request => Ok(refer_case_reason(request.`case`, ReferCaseForm.form))
     }
 
-  //TODO Form binding needs reworking, currently optional fields generate multiple errors for the refferTo field
+  // TODO Form binding needs reworking, currently optional fields generate multiple errors for the refferTo field
   def postReferCaseReason(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER_CASE))
       .async { implicit request =>

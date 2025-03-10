@@ -48,9 +48,9 @@ class CasesService_AssignCaseSpec extends CasesServiceSpecBase with BeforeAndAft
       val originalCase       = aCase.copy(assignee = None)
       val caseUpdated        = aCase.copy(assignee = Some(operator))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
 
@@ -68,7 +68,7 @@ class CasesService_AssignCaseSpec extends CasesServiceSpecBase with BeforeAndAft
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase.copy(assignee = None)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.assignCase(originalCase, operator))
@@ -84,9 +84,9 @@ class CasesService_AssignCaseSpec extends CasesServiceSpecBase with BeforeAndAft
       val originalCase       = aCase.copy(assignee = None)
       val caseUpdated        = aCase.copy(assignee = Some(operator))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException()))
 
       await(service.assignCase(originalCase, operator)) shouldBe caseUpdated
 
@@ -102,7 +102,7 @@ class CasesService_AssignCaseSpec extends CasesServiceSpecBase with BeforeAndAft
       val originalCase       = aCase.copy(assignee = None)
       val caseUpdated        = aCase.copy(assignee = None)
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
 
       await(service.assignCase(originalCase, operator))
 
