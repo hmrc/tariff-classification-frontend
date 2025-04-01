@@ -1,7 +1,7 @@
 import sbt.*
 
 object AppDependencies {
-
+  
   private val hmrcMongoPlayVersion = "2.6.0"
   private val bootstrapPlayVersion = "9.11.0"
 
@@ -13,6 +13,7 @@ object AppDependencies {
     "com.github.blemale"           %% "scaffeine"                  % "5.3.0",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.18.3",
     "org.apache.pekko"             %% "pekko-connectors-csv"       % "1.0.2",
+    "commons-io"                    % "commons-io"                 % "2.18.0",
     "org.apache.xmlgraphics"        % "fop"                        % "2.10",
     "net.sf.saxon"                  % "Saxon-HE"                   % "12.5"
   )
