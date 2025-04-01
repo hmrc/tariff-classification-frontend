@@ -26,7 +26,7 @@
   showSelect: Boolean = false,
   showRemoval: Boolean = false,
   caseRef: String
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
     @if(attachments.nonEmpty){
 

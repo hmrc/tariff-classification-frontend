@@ -39,7 +39,7 @@
         corrForm: Form[Set[String]],
         miscForm: Form[Set[String]],
         activeSubNav : SubNavigationTab = ManagerToolsUsersTab
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
     pageTitle = messages("Manage user"),

@@ -20,7 +20,6 @@ import models._
 import models.forms.LiabilityForm
 import models.request.AuthenticatedRequest
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -28,6 +27,7 @@ import services.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.create_liability
+import org.mockito.Mockito.*
 
 import scala.concurrent.Future._
 

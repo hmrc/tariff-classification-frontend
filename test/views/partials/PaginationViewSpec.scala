@@ -18,7 +18,6 @@ package views.partials
 
 import models._
 import org.mockito.ArgumentMatchers
-import org.mockito.BDDMockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.scalatest.BeforeAndAfterEach
@@ -27,6 +26,7 @@ import play.api.mvc.Call
 import views.ViewMatchers._
 import views.ViewSpec
 import views.html.partials.pagination
+import org.mockito.Mockito.*
 
 class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterEach {
 
@@ -38,7 +38,7 @@ class PaginationViewSpec extends ViewSpec with MockitoSugar with BeforeAndAfterE
       (invocation: InvocationOnMock) => Call(method = "GET", url = "/page=" + invocation.getArgument(0))
 
     super.beforeEach()
-    when(goToPage.apply(ArgumentMatchers.any[Int])) will returnThePage
+    when(goToPage.apply(ArgumentMatchers.any[Int])).thenAnswer(returnThePage)
   }
 
   "Pagination" should {

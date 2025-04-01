@@ -35,7 +35,7 @@
     }
 
     @field.errors.map { error =>
-        <span class="govuk-error-message" id="@{field.id}-error"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))</span>
+        <span class="govuk-error-message" id="@{field.id}-error"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args*))</span>
     }
 
     <textarea

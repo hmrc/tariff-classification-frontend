@@ -18,17 +18,18 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions, RequestActionsWithPermissionsAndData}
 import models.Role.Role
-import models._
+import models.*
 import models.cache.CacheMap
-import models.forms.v2._
+import models.forms.v2.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.given
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{CasesService, DataCacheService, QueuesService, UserService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
+import org.mockito.Mockito.*
 
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 class MoveCasesControllerSpec extends ControllerBaseSpec {
@@ -104,7 +105,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type on form error" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(successful(Paged(Seq(Cases.aCase(), Cases.aCase()))))
+        .thenReturn(Future.successful(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
       when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(Operator("1"))))
 
@@ -118,7 +119,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not found on form error when user not found" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(successful(Paged(Seq(Cases.aCase(), Cases.aCase()))))
+        .thenReturn(Future.successful(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
       when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
 
@@ -135,7 +136,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .thenReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          successful(
+          Future.successful(
             Paged(
               Seq(
                 Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
@@ -158,7 +159,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .thenReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          successful(
+          Future.successful(
             Paged(
               Seq(
                 Cases.btiCaseExample
@@ -182,7 +183,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .thenReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          successful(
+          Future.successful(
             Paged(
               Seq(
                 Cases.btiCaseExample
@@ -206,7 +207,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         .thenReturn(successful(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          successful(
+          Future.successful(
             Paged(
               Seq(
                 Cases.btiCaseExample
@@ -229,9 +230,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return unauthorised with no permissions" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result = await(controller(Set()).postMoveATaRCases("1")(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
@@ -245,9 +246,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type on form error" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.liabilityCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.liabilityCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(newFakePOSTRequestWithCSRF()))
@@ -260,9 +261,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not found on form error when user not found" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.liabilityCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.liabilityCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(None)
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(None))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveLiabCases("1")(newFakePOSTRequestWithCSRF()))
@@ -273,11 +274,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
       val liabForm = MoveCasesForm.moveCasesForm("liabilityCases").fill(Set("100"))
@@ -293,12 +299,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.REFERRED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.REFERRED)
+              )
             )
           )
         )
@@ -315,13 +325,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample
-                .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.SUSPENDED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.SUSPENDED)
+              )
             )
           )
         )
@@ -338,13 +351,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample
-                .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.COMPLETED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.COMPLETED)
+              )
             )
           )
         )
@@ -362,9 +378,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return unauthorised with no permissions" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.liabilityCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.liabilityCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result = await(controller(Set()).postMoveLiabCases("1")(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
@@ -378,9 +394,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type on form error" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.correspondenceCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.correspondenceCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(newFakePOSTRequestWithCSRF()))
@@ -393,9 +409,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not found on form error when user not found" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.correspondenceCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.correspondenceCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(None)
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(None))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveCorrCases("1")(newFakePOSTRequestWithCSRF()))
@@ -406,11 +422,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
       val corrForm = MoveCasesForm.moveCasesForm("corrCases").fill(Set("100"))
@@ -426,12 +447,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.REFERRED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.REFERRED)
+              )
             )
           )
         )
@@ -448,13 +473,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample
-                .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.SUSPENDED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.SUSPENDED)
+              )
             )
           )
         )
@@ -471,13 +499,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample
-                .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.COMPLETED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.COMPLETED)
+              )
             )
           )
         )
@@ -495,9 +526,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return unauthorised with no permissions" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.correspondenceCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.correspondenceCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result = await(controller(Set()).postMoveCorrCases("1")(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
@@ -511,9 +542,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type on form error" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.miscellaneousCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.miscellaneousCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)))
@@ -527,9 +558,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not found on form error when user not found" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.miscellaneousCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.miscellaneousCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(None)
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(None))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).postMoveMiscCases("1")(newFakePOSTRequestWithCSRF()))
@@ -540,11 +571,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserOrTeam on valid form with cases only open" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
       val miscForm = MoveCasesForm.moveCasesForm("miscCases").fill(Set("100"))
@@ -560,12 +596,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with referred cases present" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.REFERRED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.REFERRED)
+              )
             )
           )
         )
@@ -582,13 +622,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with suspended cases present" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample
-                .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.SUSPENDED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.SUSPENDED)
+              )
             )
           )
         )
@@ -605,13 +648,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to unauthorised on valid form with cases with different status than Open/Referred/Suspended" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(
-              Cases.btiCaseExample
-                .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.COMPLETED)
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample
+                  .copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.COMPLETED)
+              )
             )
           )
         )
@@ -629,9 +675,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return unauthorised with no permissions" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.miscellaneousCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.miscellaneousCaseExample))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result = await(controller(Set()).postMoveMiscCases("1")(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
@@ -645,9 +691,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result =
         await(
@@ -662,9 +708,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type when set is empty" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result =
         await(
@@ -679,9 +725,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return unauthorised with no permissions" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result =
         await(controllerWithData(Set(), userAnswersMock.set(ChosenCases, Set("100"))).chooseUserOrTeam()(fakeRequest))
@@ -692,9 +738,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return unauthorised with no data" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).chooseUserOrTeam()(newFakeGETRequestWithCSRF()))
       status(result)           shouldBe Status.SEE_OTHER
@@ -709,7 +755,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type" in {
 
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2"))))))
 
       val result =
         await(
@@ -725,7 +771,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type for empty set" in {
 
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1"))))
+        .thenReturn(Future(Paged(Seq(Operator("1")))))
 
       val result =
         await(
@@ -741,7 +787,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     "return 200 OK and HTML content type for teamID present" in {
 
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1"))))
+        .thenReturn(Future(Paged(Seq(Operator("1")))))
 
       val result =
         await(
@@ -756,7 +802,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return unauthorised with no permissions" in {
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1"))))
+        .thenReturn(Future(Paged(Seq(Operator("1")))))
 
       val result =
         await(
@@ -769,7 +815,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return unauthorised with no data" in {
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1"))))
+        .thenReturn(Future(Paged(Seq(Operator("1")))))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).chooseUserToMoveCases()(newFakeGETRequestWithCSRF()))
@@ -784,8 +830,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type" in {
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
-      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Seq(Some(Queues.elm)))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Future(Seq(Some(Queues.elm))))
 
       val result =
         await(
@@ -802,8 +848,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type for empty set" in {
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1")))
-      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Seq(Some(Queues.elm)))
+        .thenReturn(Future(Some(Operator("1"))))
+      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Future(Seq(Some(Queues.elm))))
 
       val result =
         await(
@@ -819,8 +865,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return Not Found when user is not found" in {
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(None)
-      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Seq(Some(Queues.elm)))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(None))
+      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Future(Seq(Some(Queues.elm))))
 
       val result =
         await(
@@ -834,7 +880,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return Unauthorised when pid was not present" in {
-      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Seq(Some(Queues.elm)))
+      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Future(Seq(Some(Queues.elm))))
 
       val result =
         await(
@@ -872,7 +918,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type" in {
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
 
       val result =
         await(
@@ -888,7 +934,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
 
       val result =
         await(
@@ -901,7 +947,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).chooseUserFromAnotherTeam()(newFakeGETRequestWithCSRF()))
@@ -916,7 +962,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type" in {
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
 
       val result =
         await(
@@ -933,7 +979,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type for empty set" in {
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
 
       val result =
         await(
@@ -946,7 +992,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
 
       val result =
         await(
@@ -959,7 +1005,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).chooseTeamToMoveCases()(newFakeGETRequestWithCSRF()))
@@ -974,8 +1020,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -995,8 +1041,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not Found when user not found" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(None)
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(None))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1017,8 +1063,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not Found when team not found" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
-      when(queueService.getOneById(any[String])).thenReturn(None)
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
+      when(queueService.getOneById(any[String])).thenReturn(Future(None))
 
       val result =
         await(
@@ -1039,8 +1085,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Unauthorised for missing original user pid" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1058,8 +1104,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Unauthorised for missing teamID" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")))
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1076,8 +1122,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(None)
-      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Seq(Some(Queues.elm)))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(None))
+      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Future(Seq(Some(Queues.elm))))
 
       val result =
         await(
@@ -1095,8 +1141,8 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(None)
-      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Seq(Some(Queues.elm)))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(None))
+      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Future(Seq(Some(Queues.elm))))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).casesMovedToTeamDone()(newFakeGETRequestWithCSRF()))
@@ -1111,9 +1157,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return 200 OK and HTML content type" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")), Some(Operator("2")))
+      when(userService.getUser(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future(Some(Operator("1"))), Future(Some(Operator("2"))))
 
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1134,9 +1181,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not Found when original user not found" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(None, Some(Operator("1")))
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(None), Future(Some(Operator("1"))))
 
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1158,9 +1205,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not Found when chosen user not found" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")), None)
+      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Future(Some(Operator("1"))), Future(None))
 
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1182,9 +1229,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Not Found when team not found" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")), Some(Operator("2")))
+      when(userService.getUser(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future(Some(Operator("1"))), Future(Some(Operator("2"))))
 
-      when(queueService.getOneById(any[String])).thenReturn(None)
+      when(queueService.getOneById(any[String])).thenReturn(Future(None))
 
       val result =
         await(
@@ -1206,9 +1254,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Unauthorised for missing original user pid" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")), Some(Operator("2")))
+      when(userService.getUser(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future(Some(Operator("1")), Some(Operator("2"))))
 
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1227,9 +1276,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Unauthorised for missing chosen user pid" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")), Some(Operator("2")))
+      when(userService.getUser(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future(Some(Operator("1")), Some(Operator("2"))))
 
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1248,9 +1298,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
 
     "return Unauthorised for missing teamID" in {
 
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")), Some(Operator("2")))
+      when(userService.getUser(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future(Some(Operator("1")), Some(Operator("2"))))
 
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
       val result =
         await(
@@ -1268,8 +1319,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")), Some(Operator("2")))
-      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Seq(Some(Queues.elm)))
+      when(userService.getUser(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future(Some(Operator("1")), Some(Operator("2"))))
+      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Future(Seq(Some(Queues.elm))))
 
       val result =
         await(
@@ -1288,8 +1340,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      when(userService.getUser(any[String])(any[HeaderCarrier])).thenReturn(Some(Operator("1")), Some(Operator("2")))
-      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Seq(Some(Queues.elm)))
+      when(userService.getUser(any[String])(any[HeaderCarrier]))
+        .thenReturn(Future(Some(Operator("1")), Some(Operator("2"))))
+      when(queueService.getQueuesById(any[Seq[String]])).thenReturn(Future(Seq(Some(Queues.elm))))
 
       val result =
         await(controller(Set(Permission.MANAGE_USERS)).casesMovedToUserDone()(newFakeGETRequestWithCSRF()))
@@ -1316,11 +1369,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserToMoveCases on valid form with User option" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1382,11 +1440,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postUserChoice" should {
 
     "return 200 OK and HTML content type on form error" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1397,9 +1460,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2"))))))
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
 
       val result =
         await(
@@ -1416,11 +1479,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone on valid form with User selected" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1431,9 +1499,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2"))))))
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
@@ -1450,11 +1518,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to Not Found on valid form when user with posted pid is not present" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1465,9 +1538,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2"))))))
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(None)
+        .thenReturn(Future(None))
 
       val form    = UserToMoveCaseForm.form.fill("1")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
@@ -1486,11 +1559,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseOneOfUsersTeams on valid form with User with more than 1 team selected" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1501,9 +1579,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2", "3")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2", "3"))))))
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2", "3"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2", "3")))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
@@ -1520,11 +1598,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone on valid form with User selected and teamId present" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1535,9 +1618,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2"))))))
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
@@ -1554,11 +1637,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to chooseUserFromAnotherTeam on valid form with OTHER selected" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1569,9 +1657,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2"))))))
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
 
       val form    = UserToMoveCaseForm.form.fill("OTHER")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
@@ -1588,11 +1676,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1603,9 +1696,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2"))))))
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
@@ -1621,11 +1714,16 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(
+                Cases.btiCaseExample.copy(assignee = Some(Operator("1")), reference = "100", status = CaseStatus.OPEN)
+              )
+            )
           )
         )
 
@@ -1636,9 +1734,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+        .thenReturn(Future(Paged(Seq(Operator("1").copy(memberOfTeams = Seq("1", "2"))))))
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
 
       val form    = UserToMoveCaseForm.form.fill("1")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
@@ -1657,7 +1755,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postChooseUserFromAnotherTeam" should {
 
     "return 200 OK and HTML content type on form error" in {
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val result =
         await(
           controllerWithData(
@@ -1673,7 +1771,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone on valid form with User selected" in {
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
@@ -1689,7 +1787,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
@@ -1706,7 +1804,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
@@ -1725,11 +1823,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postTeamChoice" should {
 
     "return 200 OK and HTML content type on form error" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+            )
           )
         )
 
@@ -1740,7 +1841,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val result =
         await(
           controllerWithData(
@@ -1756,11 +1857,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToTeamDone” on valid form with team selected" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+            )
           )
         )
 
@@ -1771,7 +1875,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
@@ -1787,11 +1891,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+            )
           )
         )
 
@@ -1802,7 +1909,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
@@ -1819,11 +1926,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+            )
           )
         )
 
@@ -1834,7 +1944,7 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
@@ -1853,11 +1963,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
   "postChooseOneOfUsersTeams" should {
 
     "return 200 OK and HTML content type on form error" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+            )
           )
         )
 
@@ -1868,10 +1981,10 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val result =
         await(
           controllerWithData(
@@ -1887,11 +2000,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to casesMovedToUserDone” on valid form with team selected" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+            )
           )
         )
 
@@ -1902,11 +2018,11 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
 
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
@@ -1922,11 +2038,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no permissions" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+            )
           )
         )
 
@@ -1937,11 +2056,11 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
         )
       )
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
 
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
 
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =
@@ -1958,11 +2077,14 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
     }
 
     "return unauthorised with no data" in {
-      when(dataCacheService.save(any[CacheMap])).thenReturn(userAnswersMock.set(ChosenCases, Set("100")).cacheMap)
+      when(dataCacheService.save(any[CacheMap]))
+        .thenReturn(Future(userAnswersMock.set(ChosenCases, Set("100")).cacheMap))
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(
-          Paged(
-            Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+          Future(
+            Paged(
+              Seq(Cases.btiCaseExample.copy(reference = "100", status = CaseStatus.OPEN))
+            )
           )
         )
 
@@ -1974,9 +2096,9 @@ class MoveCasesControllerSpec extends ControllerBaseSpec {
       )
 
       when(userService.getUser(any[String])(any[HeaderCarrier]))
-        .thenReturn(Some(Operator("1").copy(memberOfTeams = Seq("1", "2"))))
-      when(queueService.getOneById(any[String])).thenReturn(Some(Queues.elm))
-      when(queueService.getNonGateway).thenReturn(Queues.allDynamicQueues)
+        .thenReturn(Future(Some(Operator("1").copy(memberOfTeams = Seq("1", "2")))))
+      when(queueService.getOneById(any[String])).thenReturn(Future(Some(Queues.elm)))
+      when(queueService.getNonGateway).thenReturn(Future(Queues.allDynamicQueues))
       val form    = TeamToMoveCaseForm.form.fill("2")
       val fakeReq = newFakePOSTRequestWithCSRF(form.data)
       val result =

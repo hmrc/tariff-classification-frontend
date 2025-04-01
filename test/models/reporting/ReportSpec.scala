@@ -18,12 +18,11 @@ package models
 package reporting
 
 import cats.data.NonEmptySeq
-import models.ModelsBaseSpec
-
+import base.SpecBase
 import java.net.URLDecoder
 import java.time.Instant
 
-class ReportSpec extends ModelsBaseSpec {
+class ReportSpec extends SpecBase {
   "Report" should {
     "assume SummaryReport if group_by and sort_by is provided" in {
       val summaryReportParams = Map[String, Seq[String]](

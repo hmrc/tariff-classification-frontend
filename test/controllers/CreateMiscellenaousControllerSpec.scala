@@ -19,8 +19,7 @@ package controllers
 import models._
 import models.forms.v2.MiscellaneousForm
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.when
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.test.Helpers._
@@ -255,8 +254,10 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-          Cases.aCorrespondenceCase()
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(
+          Future(
+            Cases.aCorrespondenceCase()
+          )
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
@@ -281,8 +282,10 @@ class CreateMiscellenaousControllerSpec extends ControllerBaseSpec with BeforeAn
       }
 
       "return back to the view if form fails to validate" in {
-        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-          Cases.aCaseWithCompleteDecision
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(
+          Future(
+            Cases.aCaseWithCompleteDecision
+          )
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(

@@ -3,7 +3,7 @@ import sbt.Keys.baseDirectory
 import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "3.5.1"
+ThisBuild / scalaVersion := "3.5.2"
 
 lazy val microservice = Project("tariff-classification-frontend", file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
@@ -42,9 +42,7 @@ lazy val microservice = Project("tariff-classification-frontend", file("."))
     scalacOptions ++= Seq(
       "-feature",
       "-Wconf:src=routes/.*:s",
-      "-Wconf:cat=unused-imports&src=views/.*:s",
-      "-source:3.0-migration",
-      "-rewrite"
+      "-Wconf:src=views/.*:s"
     ),
     Compile / unmanagedResourceDirectories += baseDirectory.value / "app" / "views" / "components" / "fop",
     Test / unmanagedResourceDirectories += baseDirectory.value / "app" / "views" / "components" / "fop"

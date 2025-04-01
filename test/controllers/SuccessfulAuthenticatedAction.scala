@@ -20,7 +20,7 @@ import config.AppConfig
 import connectors.{BindingTariffClassificationConnector, StrideAuthConnector}
 import models.request._
 import models.{Case, Operator, Permission, UserAnswers}
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.*
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -85,14 +85,14 @@ class ExistingCaseActionFactory(requestCase: Case)
 class HaveRightPermissionsActionFactory @Inject() (implicit ec: ExecutionContext)
     extends MustHavePermissionActionFactory {
 
-  override def apply[B[C] <: OperatorRequest[_]](permission: Permission): ActionFilter[B] =
+  override def apply[B[C] <: OperatorRequest[?]](permission: Permission): ActionFilter[B] =
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] =
         successful(None)
 
       override protected def executionContext: ExecutionContext = ec
     }
-  override def apply[B[C] <: OperatorRequest[_]](permissions: Seq[Permission]): ActionFilter[B] =
+  override def apply[B[C] <: OperatorRequest[?]](permissions: Seq[Permission]): ActionFilter[B] =
     new ActionFilter[B] {
       override protected def filter[A](request: B[A]): Future[Option[Result]] =
         successful(None)

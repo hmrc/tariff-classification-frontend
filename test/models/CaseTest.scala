@@ -19,10 +19,11 @@ package models
 import org.scalatest.BeforeAndAfterAll
 import utils.Cases
 import utils.Cases._
+import base.SpecBase
 
 import java.time.{Clock, Instant, ZoneOffset}
 
-class CaseTest extends ModelsBaseSpec with BeforeAndAfterAll {
+class CaseTest extends SpecBase with BeforeAndAfterAll {
 
   private val pastTime    = Instant.parse("2010-01-01T01:01:00Z")
   private val currentTime = Instant.parse("2010-01-01T01:01:01Z")

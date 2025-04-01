@@ -98,7 +98,7 @@ class FileStoreService @Inject() (connector: FileStoreConnector)(implicit ec: Ex
   def upload(fileUpload: FileUpload)(implicit hc: HeaderCarrier): Future[FileStoreAttachment] =
     connector.upload(fileUpload).map(toFileAttachment(fileUpload.content.path.toFile.length))
 
-  def downloadFile(url: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
+  def downloadFile(url: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, ?]]] =
     connector.downloadFile(url)
 
   def removeAttachment(fileId: String)(implicit hc: HeaderCarrier): Future[Unit] =

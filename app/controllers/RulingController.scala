@@ -135,7 +135,7 @@ class RulingController @Inject() (
       }
 
   private def editBTIRulingView(f: Form[DecisionFormData], c: Case)(implicit
-    request: AuthenticatedRequest[_]
+    request: AuthenticatedRequest[?]
   ): Future[Result] =
     fileStoreService
       .getAttachments(c)
@@ -143,7 +143,7 @@ class RulingController @Inject() (
       .map(Ok(_))
 
   private def editLiabilityRulingView(f: Form[Decision], c: Case)(implicit
-    request: AuthenticatedRequest[_]
+    request: AuthenticatedRequest[?]
   ): Future[Result] = {
 
     val caseHeaderViewModel  = CaseHeaderViewModel.fromCase(c)
@@ -155,7 +155,7 @@ class RulingController @Inject() (
 
   private def getCaseAndThen(
     toResult: Case => Future[Result]
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
+  )(implicit request: AuthenticatedCaseRequest[?]): Future[Result] =
     toResult(request.`case`)
 
 }

@@ -29,7 +29,7 @@
 )
 
 
-@(c: Case, form: Form[Boolean])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[Boolean])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.take.ownership"),

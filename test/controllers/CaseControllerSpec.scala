@@ -22,7 +22,7 @@ import models._
 import models.forms.{ActivityFormData, MessageFormData}
 import models.request.AuthenticatedCaseRequest
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
@@ -351,7 +351,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         eventService.addNote(refEq(aLiabilityCase), refEq(aNote), any[Operator], any[Clock])(
           any[HeaderCarrier]
         )
-      ) thenReturn Future(event)
+      ).thenReturn(Future(event))
 
       val fakeReq = newFakePOSTRequestWithCSRF(Map("note" -> aNote))
       val result: Future[Result] =
@@ -368,9 +368,9 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(
         liabilityController
           .renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
-            any[AuthenticatedCaseRequest[_]]
+            any[AuthenticatedCaseRequest[?]]
           )
-      ) thenReturn Future.successful(Html("error"))
+      ).thenReturn(Future.successful(Html("error")))
 
       val result: Future[Result] =
         controller(aLiabilityCase, Set(Permission.ADD_NOTE)).addNote(aLiabilityCase.reference)(fakeReq)
@@ -388,9 +388,9 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(
         atarController
           .renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
-            any[AuthenticatedCaseRequest[_]]
+            any[AuthenticatedCaseRequest[?]]
           )
-      ) thenReturn Future.successful(Html("error"))
+      ).thenReturn(Future.successful(Html("error")))
 
       val result: Future[Result] =
         controller(anAtarCase, Set(Permission.ADD_NOTE)).addNote(anAtarCase.reference)(fakeReq)
@@ -418,8 +418,10 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       when(
         keywordsService.addKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])
-      ) thenReturn Future(
-        aCase
+      ).thenReturn(
+        Future(
+          aCase
+        )
       )
 
       val fakeReq = newFakePOSTRequestWithCSRF(Map("keyword" -> keyword))
@@ -437,9 +439,9 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(
         liabilityController
           .renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[String]], any[Form[String]])(
-            any[AuthenticatedCaseRequest[_]]
+            any[AuthenticatedCaseRequest[?]]
           )
-      ) thenReturn Future.successful(Html("error"))
+      ).thenReturn(Future.successful(Html("error")))
 
       val result: Future[Result] =
         controller(aCase, Set(Permission.KEYWORDS)).addKeyword(aCase.reference)(fakeReq)
@@ -468,8 +470,10 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       when(
         keywordsService.removeKeyword(refEq(aCase), refEq(keyword), any[Operator])(any[HeaderCarrier])
-      ) thenReturn Future(
-        aCase
+      ).thenReturn(
+        Future(
+          aCase
+        )
       )
 
       val result: Future[Result] =
@@ -507,7 +511,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       when(
         casesService.addMessage(refEq(anExampleCorrespondenceCase), any[Message], any[Operator])(any[HeaderCarrier])
-      ) thenReturn Future(updatedCorrespondenceCase)
+      ).thenReturn(Future(updatedCorrespondenceCase))
 
       val fakeReq = newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("message" -> aMessage.message)
       val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_MESSAGE))
@@ -523,7 +527,7 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
       when(
         casesService.addMessage(refEq(anExampleMiscellaneousCase), any[Message], any[Operator])(any[HeaderCarrier])
-      ) thenReturn Future(updatedMiscellaneousCase)
+      ).thenReturn(Future(updatedMiscellaneousCase))
 
       val fakeReq = newFakePOSTRequestWithCSRF().withFormUrlEncodedBody("message" -> aMessage.message)
       val result: Future[Result] = controller(anExampleMiscellaneousCase, Set(Permission.ADD_MESSAGE))
@@ -542,9 +546,9 @@ class CaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       when(
         correspondenceController
           .renderView(any[Option[String]], any[Form[ActivityFormData]], any[Form[MessageFormData]], any[Form[String]])(
-            any[AuthenticatedCaseRequest[_]]
+            any[AuthenticatedCaseRequest[?]]
           )
-      ) thenReturn Future.successful(Html("error"))
+      ).thenReturn(Future.successful(Html("error")))
 
       val result: Future[Result] = controller(anExampleCorrespondenceCase, Set(Permission.ADD_MESSAGE))
         .addMessage(anExampleCorrespondenceCase.reference)(fakeReq)

@@ -29,7 +29,7 @@ object SearchForm {
     mapping(
       "case_details"     -> optional[String](text),
       "case_source"      -> optional[String](text),
-      "commodity_code"   -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch): _*)),
+      "commodity_code"   -> optional[String](text.verifying(emptyOr(validCommodityCodeSearch)*)),
       "decision_details" -> optional[String](text),
       "status" -> optional[Set[PseudoCaseStatus]](set(textTransformingTo(PseudoCaseStatus.withName, _.toString))),
       "application_type" -> optional[Set[ApplicationType]](

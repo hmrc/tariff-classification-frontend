@@ -19,7 +19,7 @@
 
 @import models.viewmodels.correspondence.CaseDetailsViewModel
 
-@(caseDetails: CaseDetailsViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(caseDetails: CaseDetailsViewModel)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @tab_heading("correspondence", messages("case.v2.correspondence.case-details.heading"))
 

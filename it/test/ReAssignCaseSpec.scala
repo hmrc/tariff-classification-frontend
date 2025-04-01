@@ -91,7 +91,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
   private def whenCaseExists(caseJson: String) = {
     stubFor(
       get(urlEqualTo("/cases/1"))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(caseJson)
@@ -99,7 +99,7 @@ class ReAssignCaseSpec extends IntegrationTest with MockitoSugar {
     )
     stubFor(
       post(urlEqualTo("/cases/1/events"))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(CREATED)
             .withBody(event)

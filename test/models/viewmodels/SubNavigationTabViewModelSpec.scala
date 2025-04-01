@@ -16,9 +16,9 @@
 
 package models.viewmodels
 
-import models.ModelsBaseSpec
+import base.SpecBase
 
-class SubNavigationTabViewModelSpec extends ModelsBaseSpec {
+class SubNavigationTabViewModelSpec extends SpecBase {
 
   "SubNavigationTab Binder" should {
 

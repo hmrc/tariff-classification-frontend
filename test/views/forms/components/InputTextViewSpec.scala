@@ -16,7 +16,6 @@
 
 package views.forms.components
 
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import views.ViewMatchers._
@@ -30,7 +29,7 @@ class InputTextViewSpec extends ViewSpec {
     val form = Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(o => Tuple.fromProductTyped(o))
+      )(FormData.apply)(o => Option(o.value))
     ).fill(FormData("v"))
 
     "Render" in {
@@ -54,7 +53,7 @@ class InputTextViewSpec extends ViewSpec {
       lazy val emptyForm = Map[String, String]()
       val formWithError  = form.bind(emptyForm).apply("field")
       val doc            = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
+      doc.getElementsByClass("govuk-visually-hidden").text() shouldBe errorPrefix
     }
   }
 

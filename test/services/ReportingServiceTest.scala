@@ -21,8 +21,7 @@ import connectors.BindingTariffClassificationConnector
 import models._
 import models.reporting._
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.QueryStringBindable
 import uk.gov.hmrc.http.HeaderCarrier
@@ -47,7 +46,7 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
           any[QueryStringBindable[CaseReport]],
           any[QueryStringBindable[Pagination]]
         )
-      ) thenReturn Future.successful(Paged.empty[Map[String, ReportResultField[_]]])
+      ).thenReturn(Future.successful(Paged.empty[Map[String, ReportResultField[?]]]))
 
       await(
         service.caseReport(
@@ -66,7 +65,7 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
           any[QueryStringBindable[SummaryReport]],
           any[QueryStringBindable[Pagination]]
         )
-      ) thenReturn Future.successful(Paged.empty[ResultGroup])
+      ).thenReturn(Future.successful(Paged.empty[ResultGroup]))
 
       await(
         service.summaryReport(
@@ -89,7 +88,7 @@ class ReportingServiceTest extends ServiceSpecBase with BeforeAndAfterEach {
           any[QueryStringBindable[QueueReport]],
           any[QueryStringBindable[Pagination]]
         )
-      ) thenReturn Future.successful(Paged.empty[QueueResultGroup])
+      ).thenReturn(Future.successful(Paged.empty[QueueResultGroup]))
 
       await(
         service.queueReport(

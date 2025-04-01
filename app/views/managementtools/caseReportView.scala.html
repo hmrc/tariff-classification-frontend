@@ -30,10 +30,10 @@
 @(
         report: CaseReport,
         pagination: Pagination,
-        results: Paged[Map[String, ReportResultField[_]]],
+        results: Paged[Map[String, ReportResultField[?]]],
         users: Map[String, Operator],
         teams: Map[String, Queue]
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
     @additionalCSS = {
         <link rel="stylesheet" href='@routes.Assets.at("stylesheets/layout.css")'/>

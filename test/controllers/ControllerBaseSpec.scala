@@ -59,7 +59,7 @@ class ControllerBaseSpec extends SpecBase {
     encodedBody: Map[String, String] = Map.empty
   ): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest("POST", "/", FakeHeaders(Seq("csrfToken" -> "csrfToken")), AnyContentAsFormUrlEncoded)
-      .withFormUrlEncodedBody(encodedBody.toSeq: _*)
+      .withFormUrlEncodedBody(encodedBody.toSeq*)
       .withCSRFToken
       .asInstanceOf[FakeRequest[AnyContentAsFormUrlEncoded]]
 

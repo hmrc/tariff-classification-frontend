@@ -16,9 +16,9 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 
-class BooleanFormTest extends ModelsBaseSpec {
+class BooleanFormTest extends SpecBase {
 
   "Boolean Form 'Bind From Request'" should {
     "fail on empty request" in {

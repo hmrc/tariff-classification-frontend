@@ -41,7 +41,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusOPEN)
@@ -59,7 +59,7 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldNotSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusOPEN)
@@ -123,22 +123,22 @@ class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
 //
 //      givenAuthSuccess()
 //      stubFor(get(urlEqualTo("/cases/1"))
-//        .thenReturn(aResponse()
+//        .willReturn(aResponse()
 //          .withStatus(OK)
 //          .withBody(caseWithStatusOPEN))
 //      )
 //      stubFor(post(urlEqualTo("/cases/1/events"))
-//        .thenReturn(aResponse()
+//        .willReturn(aResponse()
 //          .withStatus(CREATED)
 //          .withBody(event))
 //      )
 //      stubFor(post(urlEqualTo("/hmrc/email"))
-//        .thenReturn(aResponse()
+//        .willReturn(aResponse()
 //          .withStatus(ACCEPTED))
 //      )
 //      stubFor(post(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
 //        .withRequestBody(new EqualToJsonPattern(fromResource("parameters_email-request.json"), true, false))
-//        .thenReturn(aResponse()
+//        .willReturn(aResponse()
 //          .withBody(fromResource("email_template-response.json"))
 //          .withStatus(HttpStatus.SC_OK))
 //      )

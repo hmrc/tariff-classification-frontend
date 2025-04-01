@@ -21,8 +21,7 @@ import connectors.{BindingTariffClassificationConnector, StrideAuthConnector}
 import models.request.AuthenticatedRequest
 import models.{Operator, Role}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.Mockito.*
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
@@ -371,20 +370,20 @@ class AuthenticatedActionSpec extends ControllerBaseSpec with BeforeAndAfterEach
     when(userConnector.getUserDetails(refEq(operator.id))(any[HeaderCarrier]))
       .thenReturn(Future.successful(Some(operator)))
     when(userConnector.updateUser(any[Operator])(any[HeaderCarrier]))
-      .will(i => Future.successful(i.getArgument[Operator](0)))
+      .thenAnswer(i => Future.successful(i.getArgument[Operator](0)))
   }
 
   private def givenNoExistingUser(id: String = "id"): Unit = {
     when(userConnector.getUserDetails(refEq(id))(any[HeaderCarrier]))
       .thenReturn(Future.successful(None))
     when(userConnector.createUser(any[Operator])(any[HeaderCarrier]))
-      .will(i => Future.successful(i.getArgument[Operator](0)))
+      .thenAnswer(i => Future.successful(i.getArgument[Operator](0)))
   }
 
   private def givenTheBlockExecutesSuccessfully(): Unit =
     when(block.apply(any[AuthenticatedRequest[AnyContent]])).thenReturn(Future.successful(result))
 
   private def givenTheBlockThrowsAnError(e: RuntimeException): Unit =
-    when(block.apply(any[AuthenticatedRequest[AnyContent]])).willThrow(e)
+    when(block.apply(any[AuthenticatedRequest[AnyContent]])).thenThrow(e)
 
 }

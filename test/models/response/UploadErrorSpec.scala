@@ -17,9 +17,10 @@
 package models.response
 
 import models._
+import base.SpecBase
 import models.response.UploadError.fromErrorCode
 
-class UploadErrorSpec extends ModelsBaseSpec {
+class UploadErrorSpec extends SpecBase {
 
   "UploadErrorSpec.fromErrorCode" should {
 

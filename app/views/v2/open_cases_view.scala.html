@@ -26,7 +26,7 @@
 )
 
 
-@(cases : CasesTabViewModel, activeSubNav : SubNavigationTab = ATaRTab)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(cases : CasesTabViewModel, activeSubNav : SubNavigationTab = ATaRTab)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
  pageTitle = messages(s"cases.opencases.${cases.caseType.prettyName.toLowerCase}.title"),

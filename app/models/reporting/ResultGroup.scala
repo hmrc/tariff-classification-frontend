@@ -21,19 +21,19 @@ import cats.data.NonEmptySeq
 
 sealed abstract class ResultGroup {
   def count: Long
-  def groupKey: NonEmptySeq[ReportResultField[_]]
+  def groupKey: NonEmptySeq[ReportResultField[?]]
   def maxFields: List[NumberResultField]
 }
 
 case class SimpleResultGroup(
   count: Long,
-  groupKey: NonEmptySeq[ReportResultField[_]],
+  groupKey: NonEmptySeq[ReportResultField[?]],
   maxFields: List[NumberResultField] = List.empty
 ) extends ResultGroup
 
 case class CaseResultGroup(
   count: Long,
-  groupKey: NonEmptySeq[ReportResultField[_]],
+  groupKey: NonEmptySeq[ReportResultField[?]],
   maxFields: List[NumberResultField] = List.empty,
   cases: List[Case] = List.empty
 ) extends ResultGroup

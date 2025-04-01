@@ -65,7 +65,7 @@ trait IntegrationTest
 
     stubFor(
       post(urlEqualTo("/auth/authorise"))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(fromResource(resource))
@@ -74,7 +74,7 @@ trait IntegrationTest
 
     stubFor(
       post(urlEqualTo("/users"))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(fromResource(userInfoResource))
@@ -83,7 +83,7 @@ trait IntegrationTest
 
     stubFor(
       get(urlMatching("/users/\\d+"))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(fromResource(userInfoResource))
@@ -92,7 +92,7 @@ trait IntegrationTest
 
     stubFor(
       put(urlMatching("/users/\\d+"))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(fromResource(userInfoResource))
@@ -114,7 +114,7 @@ trait IntegrationTest
   protected def givenAuthFailed(): Unit =
     stubFor(
       post(urlEqualTo("/auth/authorise"))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(UNAUTHORIZED)
         )

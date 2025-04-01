@@ -18,11 +18,12 @@ package models.viewmodels
 
 import models.CaseStatus.CaseStatus
 import models._
+import base.SpecBase
 import utils.Cases
 
 import java.time.Instant
 
-class CaseViewModelSpec extends ModelsBaseSpec {
+class CaseViewModelSpec extends SpecBase {
 
   val openCase: Case                      = Cases.liabilityCaseExample.copy(status = CaseStatus.OPEN)
   val referredCase: Case                  = Cases.liabilityCaseExample.copy(status = CaseStatus.REFERRED)

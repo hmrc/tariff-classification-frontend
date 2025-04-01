@@ -20,8 +20,7 @@ import models._
 import models.request.FileStoreInitiateRequest
 import models.response._
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.test.Helpers._
@@ -158,8 +157,10 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "GET suppress case email" should {
 
     "return OK and HTML content type" in {
-      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn successful(
-        initiateResponse
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])).thenReturn(
+        successful(
+          initiateResponse
+        )
       )
 
       val result = await(
@@ -200,7 +201,7 @@ class SuppressCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) thenReturn successful(caseWithStatusSUPPRESSED)
+      ).thenReturn(successful(caseWithStatusSUPPRESSED))
 
       val result = await(
         controller(caseWithStatusOPEN).suppressCase(caseWithStatusOPEN.reference, "id")(

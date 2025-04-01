@@ -25,7 +25,7 @@
 )
 
 
-@(oldKeywordName: String, newKeywordName: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(oldKeywordName: String, newKeywordName: String)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
     pageTitle = messages("management.manage-keywords.edit-approved-keywords.renamed.heading")

@@ -29,7 +29,7 @@
         warning: warning
 )
 
-@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[String])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.suppress.case.reason"),

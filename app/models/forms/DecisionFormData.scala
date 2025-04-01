@@ -49,7 +49,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
             commodityCodeConstraints.commodityCodeLengthValid,
             commodityCodeConstraints.commodityCodeNumbersValid,
             commodityCodeConstraints.commodityCodeEvenDigitsValid
-          ): _*
+          )*
         ),
         "goodsDescription"             -> text,
         "methodSearch"                 -> text,
@@ -118,7 +118,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
             commodityCodeConstraints.commodityCodeLengthValid,
             commodityCodeConstraints.commodityCodeNumbersValid,
             commodityCodeConstraints.commodityCodeEvenDigitsValid
-          ): _*
+          )*
         ),
         "goodsDescription" -> text,
         "methodSearch"     -> text,

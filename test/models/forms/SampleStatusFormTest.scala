@@ -16,9 +16,10 @@
 
 package models.forms
 
-import models.{ModelsBaseSpec, SampleStatus}
+import models.SampleStatus
+import base.SpecBase
 
-class SampleStatusFormTest extends ModelsBaseSpec {
+class SampleStatusFormTest extends SpecBase {
 
   "Bind from request" should {
     "Bind empty" in {

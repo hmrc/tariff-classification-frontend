@@ -16,12 +16,12 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 import play.api.data.Form
 
 import java.time.{ZoneOffset, ZonedDateTime}
 
-class FormDateTest extends ModelsBaseSpec {
+class FormDateTest extends SpecBase {
 
   private val test         = Form(FormDate.date("invalid.date"))
   private val optionalTest = Form(FormDate.optionalDate("", "invalid.date"))

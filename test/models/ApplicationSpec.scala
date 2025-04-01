@@ -17,8 +17,9 @@
 package models
 
 import utils.Cases
+import base.SpecBase
 
-class ApplicationSpec extends ModelsBaseSpec {
+class ApplicationSpec extends SpecBase {
 
   "Application 'Get Type'" should {
 

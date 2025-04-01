@@ -20,8 +20,7 @@ import controllers.routes._
 import models._
 import models.forms.v2.CorrespondenceForm
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito._
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
@@ -327,8 +326,10 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-          Cases.aCorrespondenceCase()
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(
+          Future(
+            Cases.aCorrespondenceCase()
+          )
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
@@ -351,8 +352,10 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       }
 
       "return back to the view if form fails to validate" in {
-        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-          Cases.aCaseWithCompleteDecision
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(
+          Future(
+            Cases.aCaseWithCompleteDecision
+          )
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
@@ -396,8 +399,10 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
 
       "redirect back to controller if the form has been submitted successfully" in {
 
-        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-          Cases.aCorrespondenceCase()
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(
+          Future(
+            Cases.aCorrespondenceCase()
+          )
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
@@ -424,8 +429,10 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
       }
 
       "return back to the view if form fails to validate" in {
-        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-          Cases.aCaseWithCompleteDecision
+        when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(
+          Future(
+            Cases.aCaseWithCompleteDecision
+          )
         )
 
         val fakeReq = newFakePOSTRequestWithCSRF(
@@ -457,7 +464,7 @@ class CreateCorrespondenceControllerSpec extends ControllerBaseSpec with BeforeA
         .filterNot(_._1 == "serialVersionUID")
         .filterNot(_._1 == "MODULE$")
         .flatMap {
-          case (n, l: List[_]) if l.headOption.exists(_.isInstanceOf[Product]) =>
+          case (n, l: List[?]) if l.headOption.exists(_.isInstanceOf[Product]) =>
             l.zipWithIndex.flatMap { case (x, i) =>
               asFormParams(x.asInstanceOf[Product]).map { case (k, v) => (s"$n[$i].$k", v) }
             }

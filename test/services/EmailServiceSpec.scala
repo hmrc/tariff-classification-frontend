@@ -19,8 +19,7 @@ package services
 import connectors.EmailConnector
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -64,7 +63,7 @@ class EmailServiceSpec extends ServiceSpecBase {
       when(application.contact).thenReturn(contact)
       when(application.goodName).thenReturn("item")
 
-      when(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Email[_]]]))
+      when(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Email[?]]]))
         .thenReturn(successful((): Unit))
       when(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]]))
         .thenReturn(successful(template))
@@ -84,7 +83,7 @@ class EmailServiceSpec extends ServiceSpecBase {
             )
           )
         )
-      )(any[HeaderCarrier], any[Writes[Email[_]]])
+      )(any[HeaderCarrier], any[Writes[Email[?]]])
     }
   }
 

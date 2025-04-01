@@ -23,7 +23,6 @@ import models.reporting._
 import models.request.NewEventRequest
 import models.response.{FileMetadata, ScanStatus}
 import play.api.libs.json._
-import scala.collection.immutable.Nil
 
 import scala.util.Try
 
@@ -143,8 +142,8 @@ object JsonFormatters {
   implicit val emailCompleteParamsFormat: OFormat[CaseCompletedEmailParameters] =
     Json.format[CaseCompletedEmailParameters]
   implicit val emailCompleteFormat: OFormat[CaseCompletedEmail] = Json.format[CaseCompletedEmail]
-  implicit val emailFormat: Format[Email[_]] = Union
-    .from[Email[_]]("templateId")
+  implicit val emailFormat: Format[Email[?]] = Union
+    .from[Email[?]]("templateId")
     .and[CaseCompletedEmail](EmailType.COMPLETE.toString)
     .format
   implicit val emailTemplateFormat: OFormat[EmailTemplate] = Json.format[EmailTemplate]
@@ -160,8 +159,8 @@ object JsonFormatters {
   implicit val formatStringField: OFormat[StringField]                   = Json.format[StringField]
   implicit val formatDaysSinceField: OFormat[DaysSinceField]             = Json.format[DaysSinceField]
 
-  implicit val formatReportField: Format[ReportField[_]] = Union
-    .from[ReportField[_]]("type")
+  implicit val formatReportField: Format[ReportField[?]] = Union
+    .from[ReportField[?]]("type")
     .and[NumberField](ReportFieldType.Number.name)
     .and[StatusField](ReportFieldType.Status.name)
     .and[LiabilityStatusField](ReportFieldType.LiabilityStatus.name)
@@ -180,8 +179,8 @@ object JsonFormatters {
   implicit val formatDateResultField: OFormat[DateResultField]         = Json.format[DateResultField]
   implicit val formatStringResultField: OFormat[StringResultField]     = Json.format[StringResultField]
 
-  implicit val formatReportResultField: Format[ReportResultField[_]] = Union
-    .from[ReportResultField[_]]("type")
+  implicit val formatReportResultField: Format[ReportResultField[?]] = Union
+    .from[ReportResultField[?]]("type")
     .and[NumberResultField](ReportFieldType.Number.name)
     .and[StatusResultField](ReportFieldType.Status.name)
     .and[LiabilityStatusResultField](ReportFieldType.LiabilityStatus.name)
@@ -189,6 +188,10 @@ object JsonFormatters {
     .and[DateResultField](ReportFieldType.Date.name)
     .and[StringResultField](ReportFieldType.String.name)
     .format
+
+  // Add this before the formatSimpleResultGroup and formatCaseResultGroup declarations
+  implicit val numberResultFieldListWrites: Writes[List[NumberResultField]] =
+    Writes.list[NumberResultField].contramap(identity)
 
   implicit val formatSimpleResultGroup: OFormat[SimpleResultGroup] = Json.format[SimpleResultGroup]
   implicit val formatCaseResultGroup: OFormat[CaseResultGroup]     = Json.format[CaseResultGroup]
@@ -217,7 +220,7 @@ object EnumJson {
 
   import scala.language.implicitConversions
 
-  private def enumReads[E <: Enumeration](`customEnum`: E): Reads[E#Value] = {
+  private def enumReads[E <: Enumeration](customEnum: E): Reads[customEnum.Value] = {
     case JsString(s) =>
       Try(JsSuccess(customEnum.withName(s))).recover { case _: NoSuchElementException =>
         JsError(
@@ -228,8 +231,10 @@ object EnumJson {
     case _ => JsError("String value is expected")
   }
 
-  implicit def enumWrites[E <: Enumeration]: Writes[E#Value] = (v: E#Value) => JsString(v.toString)
+  implicit def enumWrites[E <: Enumeration, V <: Enumeration#Value]: Writes[V] =
+    Writes((v: V) => JsString(v.toString))
 
-  implicit def format[E <: Enumeration](`customEnum`: E): Format[E#Value] = Format(enumReads(customEnum), enumWrites)
+  implicit def format[E <: Enumeration](customEnum: E): Format[customEnum.Value] =
+    Format(enumReads(customEnum), enumWrites[E, customEnum.Value])
 
 }

@@ -58,7 +58,7 @@
 
         @field.errors.headOption.map { error =>
             <span class="govuk-error-message" id="error-message-@{field.id}-input">
-                <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args: _*))
+                <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@customErrorMessage.getOrElse( messages(error.message, error.args*))
             </span>
         }
 

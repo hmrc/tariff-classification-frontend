@@ -30,7 +30,7 @@
 )
 
 
-@(caseHeaderViewModel: CaseHeaderViewModel, form: Form[Decision], traderCommodityCode: String, officerCommodityCode: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(caseHeaderViewModel: CaseHeaderViewModel, form: Form[Decision], traderCommodityCode: String, officerCommodityCode: String)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
  pageTitle = messages("page.title.edit_liability_decision"),

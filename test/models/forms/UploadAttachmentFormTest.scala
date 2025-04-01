@@ -16,9 +16,9 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 
-class UploadAttachmentFormTest extends ModelsBaseSpec {
+class UploadAttachmentFormTest extends SpecBase {
 
   "Bind from request" should {
     "Bind empty" in {

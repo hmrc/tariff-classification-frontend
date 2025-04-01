@@ -17,8 +17,9 @@
 package models.forms.v2
 
 import models._
+import base.SpecBase
 
-class CorrespondenceFormTest extends ModelsBaseSpec {
+class CorrespondenceFormTest extends SpecBase {
 
   "Bind from request" should {
     "Bind an empty form" in {

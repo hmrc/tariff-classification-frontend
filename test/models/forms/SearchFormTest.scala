@@ -16,10 +16,11 @@
 
 package models.forms
 
-import models.{ApplicationType, ModelsBaseSpec, PseudoCaseStatus, Search}
+import models.{ApplicationType, PseudoCaseStatus, Search}
+import base.SpecBase
 import play.api.data.FormError
 
-class SearchFormTest extends ModelsBaseSpec {
+class SearchFormTest extends SpecBase {
 
   private val commodityCodeError = "Commodity code must be empty or numeric between 2 and 22 digits"
 

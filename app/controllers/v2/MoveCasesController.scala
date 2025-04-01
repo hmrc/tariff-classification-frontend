@@ -431,7 +431,7 @@ class MoveCasesController @Inject() (
     liabForm: Form[Set[String]],
     corrForm: Form[Set[String]],
     miscForm: Form[Set[String]]
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]) =
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[?]) =
     for {
       userTab <- userService.getUser(pid)
       cases   <- casesService.getCasesByAssignee(Operator(pid), NoPagination())
@@ -443,7 +443,7 @@ class MoveCasesController @Inject() (
   private def moveToUser(
     pid: String,
     caseRefs: Set[String]
-  )(implicit hc: HeaderCarrier, request: AuthenticatedDataRequest[_]) =
+  )(implicit hc: HeaderCarrier, request: AuthenticatedDataRequest[?]) =
     userService.getUser(pid).flatMap {
       case Some(u) =>
         val userAnswersWithNewUser = request.userAnswers.set(ChosenUserPID, pid)

@@ -21,12 +21,12 @@ import models.{Operator, Permission}
 import org.apache.pekko.stream.scaladsl.Source
 import org.apache.pekko.util.ByteString
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito.{BDDMyOngoingStubbing, given}
-import org.mockito.Mockito._
+import org.mockito.stubbing.OngoingStubbing
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FileStoreService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -69,15 +69,17 @@ class ViewAttachmentControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
   private def givenFileMetadata(
     fileMetadata: Option[FileMetadata]
-  ): BDDMyOngoingStubbing[Future[Option[FileMetadata]]] =
-    when(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])) thenReturn Future.successful(fileMetadata)
+  ): OngoingStubbing[Future[Option[FileMetadata]]] =
+    when(fileService.getFileMetadata(refEq("id"))(any[HeaderCarrier])).thenReturn(Future.successful(fileMetadata))
 
   private def givenFileContent(
     url: String,
     fileContent: Array[Byte]
-  ): BDDMyOngoingStubbing[Future[Option[Source[ByteString, _]]]] =
-    when(fileService.downloadFile(refEq(url))(any[HeaderCarrier])) thenReturn Future.successful(
-      Some(Source.single(ByteString(fileContent)))
+  ): OngoingStubbing[Future[Option[Source[ByteString, ?]]]] =
+    when(fileService.downloadFile(refEq(url))(any[HeaderCarrier])).thenReturn(
+      Future.successful(
+        Some(Source.single(ByteString(fileContent)))
+      )
     )
 
   private def encodedFilename(file: FileMetadata)       = file.fileName.map(URLEncoder.encode(_, "UTF-8"))

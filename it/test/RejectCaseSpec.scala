@@ -56,7 +56,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
     def shouldSucceed = {
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusOPEN)
@@ -64,7 +64,7 @@ class RejectCaseSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/cases/1/events"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(CREATED)
               .withBody(event)

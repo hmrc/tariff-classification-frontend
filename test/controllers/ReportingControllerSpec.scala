@@ -17,17 +17,16 @@
 package controllers
 
 import cats.data.NonEmptySeq
-import models._
-import models.reporting._
-import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.reset
+import models.*
+import models.reporting.*
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.test.Helpers._
-import services._
+import play.api.test.Helpers.*
+import services.*
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.managementtools._
+import views.html.managementtools.*
 import views.html.report_not_found
 
 import java.time.Instant
@@ -78,7 +77,7 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
-    val reportResults: Paged[Map[String, ReportResultField[_]]] = Paged(
+    val reportResults: Paged[Map[String, ReportResultField[?]]] = Paged(
       Seq(
         Map(
           ReportField.Reference.fieldName  -> StringResultField(ReportField.Reference.fieldName, Some("123456")),
@@ -99,12 +98,14 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     "return 200 OK and text/csv content type" in {
       when(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier]))
         .thenReturn(Future.successful(reportResults))
-        .thenReturn(Future.successful(Paged.empty[Map[String, ReportResultField[_]]]))
+        .thenReturn(Future.successful(Paged.empty[Map[String, ReportResultField[?]]]))
 
       when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) thenReturn Future
-        .successful(Paged.empty[Operator])
+      ).thenReturn(
+        Future
+          .successful(Paged.empty[Operator])
+      )
 
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).downloadCaseReport(report)(fakeRequest))
@@ -152,8 +153,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) thenReturn Future
-        .successful(Paged.empty[Operator])
+      ).thenReturn(
+        Future
+          .successful(Paged.empty[Operator])
+      )
 
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).downloadQueueReport(report)(fakeRequest))
@@ -224,8 +227,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
 
       when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) thenReturn Future
-        .successful(Paged.empty[Operator])
+      ).thenReturn(
+        Future
+          .successful(Paged.empty[Operator])
+      )
 
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).downloadSummaryReport(report)(fakeRequest))
@@ -259,12 +264,16 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     "return 200 OK and HTML content type" in {
-      when(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier])) thenReturn Future
-        .successful(Paged.empty[Map[String, ReportResultField[_]]])
+      when(reportingService.caseReport(any[CaseReport], any[Pagination])(any[HeaderCarrier])).thenReturn(
+        Future
+          .successful(Paged.empty[Map[String, ReportResultField[?]]])
+      )
       when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) thenReturn Future
-        .successful(Paged.empty[Operator])
+      ).thenReturn(
+        Future
+          .successful(Paged.empty[Operator])
+      )
 
       val result = await(controller(Set(Permission.VIEW_REPORTS)).caseReport(report, SearchPagination())(fakeRequest))
 
@@ -288,12 +297,16 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     )
 
     "return 200 OK and HTML content type" in {
-      when(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier])) thenReturn Future
-        .successful(Paged.empty[ResultGroup])
+      when(reportingService.summaryReport(any[SummaryReport], any[Pagination])(any[HeaderCarrier])).thenReturn(
+        Future
+          .successful(Paged.empty[ResultGroup])
+      )
       when(
         usersService.getAllUsers(any[Seq[Role.Role]], any[String], any[Pagination])(any[HeaderCarrier])
-      ) thenReturn Future
-        .successful(Paged.empty[Operator])
+      ).thenReturn(
+        Future
+          .successful(Paged.empty[Operator])
+      )
 
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).summaryReport(report, SearchPagination())(fakeRequest))
@@ -314,8 +327,10 @@ class ReportingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     val report = QueueReport()
 
     "return 200 OK and HTML content type" in {
-      when(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier])) thenReturn Future
-        .successful(Paged.empty[QueueResultGroup])
+      when(reportingService.queueReport(any[QueueReport], any[Pagination])(any[HeaderCarrier])).thenReturn(
+        Future
+          .successful(Paged.empty[QueueResultGroup])
+      )
 
       val result =
         await(controller(Set(Permission.VIEW_REPORTS)).queueReport(report, SearchPagination())(fakeRequest))

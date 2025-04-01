@@ -18,8 +18,9 @@ package models
 
 import play.api.libs.Files.{SingletonTemporaryFileCreator, TemporaryFile}
 import play.api.mvc.MultipartFormData.FilePart
+import base.SpecBase
 
-class FileUploadTest extends ModelsBaseSpec {
+class FileUploadTest extends SpecBase {
 
   def aMultipartFileOfType(mimeType: Option[String]): FilePart[TemporaryFile] = {
     val file = SingletonTemporaryFileCreator.create("example-file")

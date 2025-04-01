@@ -41,7 +41,7 @@ object CorrespondenceContactForm extends Constraints {
       ](
         "correspondenceStarter" -> optional(text).verifying("Enter a case source", _.isDefined),
         "name"                  -> text,
-        "email"                 -> text.verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*),
+        "email"                 -> text.verifying(emptyOr(validEmail("case.liability.error.trader.email"))*),
         "phone"                 -> optional(text),
         "fax"                   -> optional(text),
         "buildingAndStreet"     -> text,

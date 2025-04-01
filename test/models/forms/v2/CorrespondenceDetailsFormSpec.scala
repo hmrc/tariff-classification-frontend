@@ -18,8 +18,9 @@ package models.forms.v2
 
 import models._
 import utils.Cases
+import base.SpecBase
 
-class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
+class CorrespondenceDetailsFormSpec extends SpecBase {
 
   private val correspondenceCase = Cases.correspondenceCaseExample
   private val sampleEmptyCase = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)

@@ -19,7 +19,7 @@ package controllers.v2
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import models.{Case, Event, Permission}
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import services._

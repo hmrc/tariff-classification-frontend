@@ -20,7 +20,7 @@ import connectors.ConnectorTest
 import generators.Generators
 import models.cache.CacheMap
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
@@ -44,7 +44,7 @@ class MongoCacheServiceSpec
 
   ".save" should {
     "save the cache map to the Mongo repository" in new Test {
-      when(mockSessionRepository.upsert(any[CacheMap])) thenReturn Future.successful(true)
+      when(mockSessionRepository.upsert(any[CacheMap])).thenReturn(Future.successful(true))
 
       forAll(arbitrary[CacheMap]) { cacheMap =>
         val result = mongoCacheService.save(cacheMap)
@@ -59,7 +59,7 @@ class MongoCacheServiceSpec
 
   ".remove" should {
     "remove the cache map to the Mongo repository" in new Test {
-      when(mockSessionRepository.remove(any[CacheMap])) thenReturn Future.successful(true)
+      when(mockSessionRepository.remove(any[CacheMap])).thenReturn(Future.successful(true))
 
       forAll(arbitrary[CacheMap]) { cacheMap =>
         val result = mongoCacheService.remove(cacheMap)
@@ -75,7 +75,7 @@ class MongoCacheServiceSpec
   ".fetch" when {
     "there isn't a record for this key in Mongo" should {
       "return None" in new Test {
-        when(mockSessionRepository.get(any[String])) thenReturn Future.successful(None)
+        when(mockSessionRepository.get(any[String])).thenReturn(Future.successful(None))
 
         forAll(nonEmptyString) { cacheId =>
           val result = mongoCacheService.fetch(cacheId)
@@ -89,7 +89,7 @@ class MongoCacheServiceSpec
       "return the record" in new Test {
 
         forAll(arbitrary[CacheMap]) { cacheMap =>
-          when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+          when(mockSessionRepository.get(refEq(cacheMap.id))).thenReturn(Future.successful(Some(cacheMap)))
 
           val result = mongoCacheService.fetch(cacheMap.id)
 
@@ -102,7 +102,7 @@ class MongoCacheServiceSpec
   ".getEntry" when {
     "there isn't a record for this key in Mongo" should {
       "return None" in new Test {
-        when(mockSessionRepository.get(any[String])) thenReturn Future.successful(None)
+        when(mockSessionRepository.get(any[String])).thenReturn(Future.successful(None))
 
         forAll(nonEmptyString, nonEmptyString) { (cacheId, key) =>
           val result = mongoCacheService.getEntry[String](cacheId, key)
@@ -118,10 +118,10 @@ class MongoCacheServiceSpec
         private val gen = for {
           key      <- nonEmptyString
           cacheMap <- arbitrary[CacheMap]
-        } yield (key, cacheMap copy (data = cacheMap.data - key))
+        } yield (key, cacheMap.copy(data = cacheMap.data - key))
 
         forAll(gen) { case (k, cacheMap) =>
-          when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+          when(mockSessionRepository.get(refEq(cacheMap.id))).thenReturn(Future.successful(Some(cacheMap)))
 
           val result = mongoCacheService.getEntry[String](cacheMap.id, k)
 
@@ -137,10 +137,10 @@ class MongoCacheServiceSpec
           key      <- nonEmptyString
           value    <- nonEmptyString
           cacheMap <- arbitrary[CacheMap]
-        } yield (key, value, cacheMap copy (data = cacheMap.data + (key -> JsString(value))))
+        } yield (key, value, cacheMap.copy(data = cacheMap.data + (key -> JsString(value))))
 
         forAll(gen) { case (k, v, cacheMap) =>
-          when(mockSessionRepository.get(refEq(cacheMap.id))) thenReturn Future.successful(Some(cacheMap))
+          when(mockSessionRepository.get(refEq(cacheMap.id))).thenReturn(Future.successful(Some(cacheMap)))
 
           val result = mongoCacheService.getEntry[String](cacheMap.id, k)
 

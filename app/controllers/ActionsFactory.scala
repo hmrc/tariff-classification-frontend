@@ -142,7 +142,7 @@ class RequireCaseDataActionFactory @Inject() (
       ): Future[Either[Result, AuthenticatedCaseDataRequest[A]]] = {
         implicit val hc: HeaderCarrier =
           HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        implicit val authenticatedRequest: AuthenticatedRequest[_] = request
+        implicit val authenticatedRequest: AuthenticatedRequest[?] = request
 
         casesService.getOne(reference).flatMap {
           case Some(cse) =>

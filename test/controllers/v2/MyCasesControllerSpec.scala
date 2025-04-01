@@ -20,7 +20,6 @@ import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -28,7 +27,7 @@ import services.{CasesService, EventsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
 import views.html.v2.my_cases_view
-
+import org.mockito.Mockito.*
 import scala.concurrent.Future
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -51,7 +50,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 and the correct content when no tab has ben specified" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
       when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Events.referralEventsById))
@@ -77,7 +76,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for AssignedToMe" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase().copy(daysElapsed = 35))))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase().copy(daysElapsed = 35)))))
 
       when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Events.referralEventsById))
@@ -94,7 +93,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for ReferredByMe" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35)))))
 
       when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Events.referralEventsById))
@@ -111,7 +110,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for ReferredByMe without any details for the event" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35)))))
 
       when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Events.referralEventsById))
@@ -128,7 +127,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for CompletedByMe" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.liabilityLiveCaseExample)))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.liabilityLiveCaseExample))))
 
       when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Events.referralEventsById))
@@ -145,7 +144,7 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
     "return 200 OK with the correct subNavigation tab for CompletedByMe without any details for the event" in {
       when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .thenReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35)))))
 
       when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
         .thenReturn(Future.successful(Events.referralEventsById))

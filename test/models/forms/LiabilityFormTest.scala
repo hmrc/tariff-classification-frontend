@@ -16,9 +16,10 @@
 
 package models.forms
 
-import models.{Contact, LiabilityOrder, LiabilityStatus, ModelsBaseSpec}
+import models.{Contact, LiabilityOrder, LiabilityStatus}
+import base.SpecBase
 
-class LiabilityFormTest extends ModelsBaseSpec {
+class LiabilityFormTest extends SpecBase {
 
   "Bind from request" should {
     "Bind an empty form" in {

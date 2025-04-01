@@ -32,7 +32,7 @@
 )
 
 
-@(form: Form[Boolean], report: Report, pagination: Pagination)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(form: Form[Boolean], report: Report, pagination: Pagination)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @govukKLayoutWrapper(
     pageTitle = messages("reporting.choose_teams.title"),

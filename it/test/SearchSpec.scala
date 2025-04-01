@@ -29,7 +29,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.simpleBtiCase)
@@ -42,7 +42,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
               "&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE" +
               s"&type=SAMPLE_SEND_CHANGE&page=1&page_size=${Pagination.unlimited}"
           )
-        ).thenReturn(
+        ).willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedSampleEvents)
@@ -67,7 +67,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
               "&type=SAMPLE_RETURN_CHANGE" +
               s"&page=1&page_size=${Pagination.unlimited}"
           )
-        ).thenReturn(
+        ).willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedEvents)
@@ -78,7 +78,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
           urlEqualTo(
             s"/keywords?page=1&page_size=${Pagination.unlimited}"
           )
-        ).thenReturn(
+        ).willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(KeywordsPayloads.pagedKeywords)
@@ -86,7 +86,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/file/initiate"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
@@ -125,7 +125,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlMatching("/cases\\?.*case_source=1.*"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -156,7 +156,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlMatching("/cases\\?.*commodity_code=1.*"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -187,7 +187,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlMatching("/cases\\?.*decision_details=1.*"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -218,7 +218,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlMatching("/cases\\?.*keyword=k1&keyword=k2.*"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -263,7 +263,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
 
       stubFor(
         get(urlMatching(s"/cases\\?.*min_decision_end=$dateRegex&status=COMPLETED"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -282,7 +282,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -300,7 +300,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlMatching(s"/cases\\?${excluding("status=", "min_decision_end=")}"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -321,7 +321,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlMatching("/cases\\?.*sort_direction=asc&sort_by=commodity-code.*"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -339,7 +339,7 @@ class SearchSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlMatching("/cases\\?.*sort_direction=desc&sort_by=commodity-code.*"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)

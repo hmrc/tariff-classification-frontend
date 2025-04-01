@@ -29,7 +29,7 @@ class InputAutoCompleteViewSpec extends ViewSpec {
     val form = Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(o => Tuple.fromProductTyped(o))
+      )(FormData.apply)(o => Option(o.value))
     ).fill(FormData("v"))
 
     "Render" in {

@@ -18,7 +18,7 @@ package controllers
 
 import models.{Case, CaseStatus, Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.mvc.Result

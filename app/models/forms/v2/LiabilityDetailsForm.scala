@@ -80,7 +80,7 @@ class LiabilityDetailsForm @Inject() (
         ),
         "traderName" -> textNonEmpty("case.liability.error.empty.trader-name"),
         // TODO make sure dont need validation
-        "traderEmail" -> optional(Forms.text.verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)),
+        "traderEmail" -> optional(Forms.text.verifying(emptyOr(validEmail("case.liability.error.trader.email"))*)),
         "traderPhone" -> optional(Forms.text),
         "traderBuildingAndStreet" -> optional(Forms.text),
         "traderTownOrCity"        -> optional(Forms.text),
@@ -93,11 +93,11 @@ class LiabilityDetailsForm @Inject() (
         "boardsFileNumber" -> optional(Forms.text),
         "agentName"        -> optional(Forms.text),
         // TODO ^^
-        "btiReference"   -> optional(Forms.text.verifying(emptyOr(btiReferenceIsCorrectFormat()): _*)),
+        "btiReference"   -> optional(Forms.text.verifying(emptyOr(btiReferenceIsCorrectFormat())*)),
         "repaymentClaim" -> Forms.boolean,
         "goodName"       -> optional(Forms.text).verifying(defined("case.liability.error.empty.good-name")),
         "entryNumber" -> optional(
-          Forms.text.verifying(emptyOr(entryNumberIsNumbersAndLettersOnly()): _*)
+          Forms.text.verifying(emptyOr(entryNumberIsNumbersAndLettersOnly())*)
         ),
         "traderCommodityCode" -> optional(
           Forms.text.verifying(
@@ -105,7 +105,7 @@ class LiabilityDetailsForm @Inject() (
               commodityCodeConstraints.commodityCodeLengthValid,
               commodityCodeConstraints.commodityCodeNumbersValid,
               commodityCodeConstraints.commodityCodeEvenDigitsValid
-            ): _*
+            )*
           )
         ),
         "officerCommodityCode" -> optional(
@@ -114,13 +114,13 @@ class LiabilityDetailsForm @Inject() (
               commodityCodeConstraints.commodityCodeLengthValid,
               commodityCodeConstraints.commodityCodeNumbersValid,
               commodityCodeConstraints.commodityCodeEvenDigitsValid
-            ): _*
+            )*
           )
         ),
         "contact" -> contactMapping,
         "port"    -> optional(Forms.text),
         "dvrNumber" -> optional(
-          Forms.text.verifying(emptyOr(dvrNumberIsNumberAndLettersOnly()): _*)
+          Forms.text.verifying(emptyOr(dvrNumberIsNumberAndLettersOnly())*)
         )
       )(form2Liability(existingLiability))(liability2Form)
     ).fillAndValidate(existingLiability)
@@ -128,7 +128,7 @@ class LiabilityDetailsForm @Inject() (
   private def contactMapping: Mapping[Contact] =
     mapping(
       "contactName"  -> textNonEmpty("case.liability.error.compliance_officer.name"),
-      "contactEmail" -> Forms.text.verifying(emptyOr(validEmail("case.liability.error.contact.email")): _*),
+      "contactEmail" -> Forms.text.verifying(emptyOr(validEmail("case.liability.error.contact.email"))*),
       "contactPhone" -> optional(Forms.text)
     )(Contact.apply)(o => Some(Tuple.fromProductTyped(o)))
 
@@ -324,7 +324,7 @@ class LiabilityDetailsForm @Inject() (
         "traderEmail" -> optional(
           Forms.text
             .verifying(customNonEmpty("Enter a trader email"))
-            .verifying(emptyOr(validEmail("case.liability.error.trader.email")): _*)
+            .verifying(emptyOr(validEmail("case.liability.error.trader.email"))*)
         ),
         "traderPhone"             -> optional(Forms.text),
         "traderBuildingAndStreet" -> optional(Forms.text),

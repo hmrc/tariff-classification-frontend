@@ -46,7 +46,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedEmpty)
@@ -72,7 +72,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -98,7 +98,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedEmpty)
@@ -124,7 +124,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -150,7 +150,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -181,7 +181,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -204,7 +204,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get an unknown case" in {
       stubFor(
         get(urlEqualTo("/cases/id"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(NOT_FOUND)
           )
@@ -221,7 +221,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get a case" in {
       stubFor(
         get(urlEqualTo("/cases/id"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.btiCase)
@@ -250,7 +250,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedEmpty)
@@ -275,7 +275,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -298,7 +298,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedEmpty)
@@ -333,7 +333,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -372,7 +372,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -397,7 +397,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -424,7 +424,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -451,7 +451,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -478,7 +478,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -507,7 +507,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -542,7 +542,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         put(urlEqualTo(s"/cases/$ref"))
           .withRequestBody(equalToJson(json))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(json)
@@ -565,7 +565,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         put(urlEqualTo(s"/cases/$unknownRef"))
           .withRequestBody(equalToJson(json))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(NOT_FOUND)
           )
@@ -593,7 +593,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         post(urlEqualTo(s"/cases"))
           .withRequestBody(equalToJson(request))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(CREATED)
               .withBody(response)
@@ -622,7 +622,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         post(urlEqualTo(s"/cases/$ref/events"))
           .withRequestBody(equalToJson(requestJson))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(responseJson)
@@ -646,7 +646,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         post(urlEqualTo(s"/cases/$ref/events"))
           .withRequestBody(equalToJson(requestJson))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(NOT_FOUND)
           )
@@ -671,7 +671,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(EventPayloads.pagedEvents)
@@ -690,7 +690,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(s"/events?case_reference=$ref&type=SAMPLE_STATUS_CHANGE&page=1&page_size=2"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(EventPayloads.pagedEvents)
@@ -710,7 +710,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "returns empty list when case ref not found" in {
       stubFor(
         get(urlEqualTo(s"/events?case_reference=$ref&page=1&page_size=2"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(EventPayloads.pagedEmpty)
@@ -732,7 +732,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "return a list of events for the given case references" in {
       stubFor(
         get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(EventPayloads.completionEvents)
@@ -750,7 +750,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "return empty list when case ref not found" in {
       stubFor(
         get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_COMPLETED&page=1&page_size=2147483647"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(EventPayloads.pagedEmpty)
@@ -772,7 +772,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "return a list of events for the given case references" in {
       stubFor(
         get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(EventPayloads.referralEvents)
@@ -790,7 +790,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "return empty list when case ref not found" in {
       stubFor(
         get(urlEqualTo(s"/events?case_reference=$ref&type=CASE_REFERRAL&page=1&page_size=2147483647"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(EventPayloads.pagedEmpty)
@@ -813,7 +813,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -840,7 +840,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         put(urlEqualTo(s"/users/$ref"))
           .withRequestBody(equalToJson(json))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(json)
@@ -866,7 +866,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.pagedGatewayCases)
@@ -895,7 +895,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         put(urlEqualTo(s"/users/$ref"))
           .withRequestBody(equalToJson(json))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(json)
@@ -918,7 +918,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         put(urlEqualTo(s"/users/$unknownId"))
           .withRequestBody(equalToJson(json))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(NOT_FOUND)
           )
@@ -943,7 +943,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     stubFor(
       post(urlEqualTo(s"/users"))
         .withRequestBody(equalToJson(request))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(CREATED)
             .withBody(response)
@@ -966,7 +966,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     stubFor(
       post(urlEqualTo(s"/users/user:1"))
         .withRequestBody(equalToJson(request))
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(CREATED)
             .withBody(response)
@@ -991,7 +991,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         put(urlEqualTo(s"/mark-deleted/users/$ref"))
           .withRequestBody(equalToJson(json))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(json)
@@ -1014,7 +1014,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         put(urlEqualTo(s"/mark-deleted/users/$unknownId"))
           .withRequestBody(equalToJson(json))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(NOT_FOUND)
           )
@@ -1056,7 +1056,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlPathEqualTo("/report/summary"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(resultsJson.toString())
@@ -1085,7 +1085,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   "Connector 'Case Report'" should {
     "fetch cases report" in {
-      val expectedResults: Paged[Map[String, ReportResultField[_]]] = Paged(
+      val expectedResults: Paged[Map[String, ReportResultField[?]]] = Paged(
         Seq(
           Map(
             ReportField.Reference.fieldName  -> StringResultField(ReportField.Reference.fieldName, Some("1")),
@@ -1098,7 +1098,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlPathEqualTo("/report/cases"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(resultsJson.toString())
@@ -1138,7 +1138,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlPathEqualTo("/report/queues"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(resultsJson.toString())
@@ -1165,7 +1165,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo(url))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(response)
@@ -1190,7 +1190,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       stubFor(
         post(urlEqualTo(s"/keyword"))
           .withRequestBody(equalToJson(request))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(CREATED)
               .withBody(response)
@@ -1216,7 +1216,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
       stubFor(
         get(urlEqualTo("/case-keywords"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(response)
@@ -1238,7 +1238,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val keyword = Keyword("AKeyword", approved = true)
       stubFor(
         delete(s"/keyword/${keyword.name}")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(NO_CONTENT)
           )
@@ -1256,7 +1256,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val keyword = Keyword("AKeyword", approved = true)
       stubFor(
         delete(s"/keyword/${keyword.name}")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(BAD_GATEWAY)
           )

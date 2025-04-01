@@ -25,7 +25,7 @@ import models.request.{AuthenticatedRequest, FileStoreInitiateRequest}
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.Application
 import play.api.data.Form
@@ -62,7 +62,7 @@ class RequestActionsWithPermissionsProvider @Inject() (implicit
 
 class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
-  val binds: List[Binding[_]] = List(
+  val binds: List[Binding[?]] = List(
     // views
     bind[liability_view].toInstance(mock[liability_view]),
     bind[EventsService].toInstance(mock[EventsService]),
@@ -139,7 +139,7 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
       any[Form[String]],
       any[Option[AppealTabViewModel]],
       any[PrimaryNavigationTab]
-    )(any[AuthenticatedRequest[_]], any[Messages])
+    )(any[AuthenticatedRequest[?]], any[Messages])
 
   private def mockLiabilityController(
     pagedEvent: Paged[Event] = pagedEvent,
@@ -150,22 +150,30 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     when(
       eventService
         .getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])
-    ) thenReturn Future(pagedEvent)
-    when(queueService.getAll) thenReturn Future(queues)
+    ).thenReturn(Future(pagedEvent))
+    when(queueService.getAll).thenReturn(Future(queues))
 
-    when(fileStoreService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(attachments)
-    when(fileStoreService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(
-      letterOfAuthority
+    when(fileStoreService.getAttachments(any[Case])(any[HeaderCarrier])).thenReturn(Future.successful(attachments))
+    when(fileStoreService.getLetterOfAuthority(any[Case])(any[HeaderCarrier])).thenReturn(
+      Future.successful(
+        letterOfAuthority
+      )
     )
-    when(keywordsService.findAll()(any[HeaderCarrier])) thenReturn Future(Seq(keyword1, keyword2))
-    when(keywordsService.addKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-      Cases.liabilityLiveCaseExample
+    when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future(Seq(keyword1, keyword2)))
+    when(keywordsService.addKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(
+      Future(
+        Cases.liabilityLiveCaseExample
+      )
     )
-    when(keywordsService.removeKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-      Cases.liabilityLiveCaseExample
+    when(keywordsService.removeKeyword(any[Case], any[String], any[Operator])(any[HeaderCarrier])).thenReturn(
+      Future(
+        Cases.liabilityLiveCaseExample
+      )
     )
-    when(fileStoreService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn Future.successful(
-      initiateResponse
+    when(fileStoreService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])).thenReturn(
+      Future.successful(
+        initiateResponse
+      )
     )
 
     when(
@@ -183,8 +191,8 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
         any[Form[String]],
         any[Option[AppealTabViewModel]],
         any[PrimaryNavigationTab]
-      )(any[AuthenticatedRequest[_]], any[Messages])
-    ) thenReturn Html("body")
+      )(any[AuthenticatedRequest[?]], any[Messages])
+    ).thenReturn(Html("body"))
   }
 
   private def controller(c: Case, permissions: Set[Permission]): LiabilityController =
@@ -265,8 +273,10 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "post Liability details" should {
     "redirect back to controller if the form has been submitted successfully" in {
 
-      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-        Cases.aCaseWithCompleteDecision
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(
+        Future(
+          Cases.aCaseWithCompleteDecision
+        )
       )
 
       val c = aCase(withReference("reference"), withLiabilityApplication())
@@ -296,8 +306,10 @@ class LiabilityControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
     }
 
     "return back to the view if form fails to validate" in {
-      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])) thenReturn Future(
-        Cases.aCaseWithCompleteDecision
+      when(casesService.updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])).thenReturn(
+        Future(
+          Cases.aCaseWithCompleteDecision
+        )
       )
       val c = aCase(withReference("reference"), withLiabilityApplication())
 

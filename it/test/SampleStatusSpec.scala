@@ -30,7 +30,7 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.simpleBtiCase)
@@ -48,7 +48,7 @@ class SampleStatusSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.simpleLiabilityCase)

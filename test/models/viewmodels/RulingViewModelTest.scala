@@ -17,10 +17,11 @@
 package models.viewmodels
 
 import models.CaseStatus._
-import models.{Case, CaseStatus, ModelsBaseSpec, Permission}
+import base.SpecBase
+import models.{Case, CaseStatus, Permission}
 import utils.Cases
 
-class RulingViewModelTest extends ModelsBaseSpec {
+class RulingViewModelTest extends SpecBase {
 
   val dummyCase: Case = Cases.liabilityCaseExample.copy(status = CaseStatus.NEW)
 

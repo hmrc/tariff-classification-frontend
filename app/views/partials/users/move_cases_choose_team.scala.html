@@ -32,7 +32,7 @@
         numberOfCases:Integer,
         form: Form[String],
         queues: List[Queue]
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @heading = @{
     if(numberOfCases == 1){

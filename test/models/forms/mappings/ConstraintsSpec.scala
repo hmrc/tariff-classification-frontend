@@ -16,14 +16,14 @@
 
 package models.forms.mappings
 
-import models.ModelsBaseSpec
+import base.SpecBase
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks.forAll
 import play.api.data.validation.{Invalid, Valid}
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-class ConstraintsSpec extends ModelsBaseSpec with Constraints {
+class ConstraintsSpec extends SpecBase with Constraints {
 
   "firstError" should {
 

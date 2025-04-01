@@ -20,8 +20,7 @@ import models.AppealStatus.AppealStatus
 import models.AppealType.AppealType
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -187,7 +186,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
           val c = aCase(withStatus(s), withDecision())
           when(
             casesService.addAppeal(any[Case], any[AppealType], any[AppealStatus], any[Operator])(any[HeaderCarrier])
-          ) thenReturn Future.successful(c)
+          ).thenReturn(Future.successful(c))
 
           val request = newFakePOSTRequestWithCSRF(Map("status" -> AppealStatus.ALLOWED.toString))
           val result  = await(controller(c).confirmStatus(c.reference, AppealType.REVIEW.toString)(request))
@@ -254,7 +253,7 @@ class AppealCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEac
           when(
             casesService
               .updateAppealStatus(any[Case], any[Appeal], any[AppealStatus], any[Operator])(any[HeaderCarrier])
-          ) thenReturn Future.successful(c)
+          ).thenReturn(Future.successful(c))
 
           val request = newFakePOSTRequestWithCSRF(Map("status" -> AppealStatus.ALLOWED.toString))
           val result  = await(controller(c).confirmChangeStatus(c.reference, "appeal-id")(request))

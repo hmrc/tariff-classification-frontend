@@ -36,7 +36,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
               pag = NoPagination()
             )
           )
-        ).thenReturn(
+        ).willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(CasePayloads.pagedGatewayCases)
@@ -45,7 +45,7 @@ class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
       stubFor(
         get(
           urlPathEqualTo("/report/queues")
-        ).thenReturn(
+        ).willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(ReportPayloads.sampleQueueReport)

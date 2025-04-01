@@ -29,7 +29,7 @@ class ReportingService @Inject() (connector: BindingTariffClassificationConnecto
 
   def caseReport(report: CaseReport, pagination: Pagination)(implicit
     hc: HeaderCarrier
-  ): Future[Paged[Map[String, ReportResultField[_]]]] =
+  ): Future[Paged[Map[String, ReportResultField[?]]]] =
     connector.caseReport(report, pagination)
 
   def summaryReport(report: SummaryReport, pagination: Pagination)(implicit

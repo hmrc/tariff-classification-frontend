@@ -24,7 +24,7 @@ import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels._
 import models.viewmodels.correspondence._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
@@ -79,18 +79,20 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "display Correspondence" in {
       val c = aCase(withReference("reference"), withCorrespondenceApplication)
 
-      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(attachments)
+      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])).thenReturn(Future.successful(attachments))
 
       when(
         eventService
           .getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])
-      ) thenReturn Future(pagedEvent)
+      ).thenReturn(Future(pagedEvent))
 
-      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn Future.successful(
-        initiateResponse
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])).thenReturn(
+        Future.successful(
+          initiateResponse
+        )
       )
 
-      when(queueService.getAll) thenReturn Future(queues)
+      when(queueService.getAll).thenReturn(Future(queues))
 
       when(
         correspondenceView(
@@ -107,8 +109,8 @@ class CorrespondenceControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           any[Form[ActivityFormData]],
           any[Seq[StoredAttachment]],
           any[PrimaryNavigationTab]
-        )(any[AuthenticatedRequest[_]], any[Messages])
-      ) thenReturn Html("body")
+        )(any[AuthenticatedRequest[?]], any[Messages])
+      ).thenReturn(Html("body"))
 
       val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
         .displayCorrespondence("reference")(newFakeGETRequestWithCSRF())

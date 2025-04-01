@@ -33,7 +33,9 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.JsonFormatters.fileMetaDataFormat
-
+import play.api.libs.ws.writeableOf_JsValue
+import play.api.libs.ws.bodyWritableOf_Multipart
+import uk.gov.hmrc.http.client.readStreamHttpResponse
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -64,7 +66,7 @@ class FileStoreConnector @Inject() (
           .mapAsyncUnordered(Runtime.getRuntime.availableProcessors()) { ids =>
             http
               .get(url"${makeQuery(ids)}")
-              .setHeader(authHeaders(appConfig)(hc): _*)
+              .setHeader(authHeaders(appConfig)(hc)*)
               .execute[Seq[FileMetadata]]
           }
           .runFold(Seq.empty[FileMetadata]) { case (acc, next) =>
@@ -79,7 +81,7 @@ class FileStoreConnector @Inject() (
 
       http
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig)(hc): _*)
+        .setHeader(authHeaders(appConfig)(hc)*)
         .execute[Option[FileMetadata]]
     }
 
@@ -89,7 +91,7 @@ class FileStoreConnector @Inject() (
 
       http
         .post(url"$fullURL")
-        .setHeader(authHeaders(appConfig)(hc): _*)
+        .setHeader(authHeaders(appConfig)(hc)*)
         .withBody(Json.toJson(request))
         .execute[FileStoreInitiateResponse]
     }
@@ -107,16 +109,16 @@ class FileStoreConnector @Inject() (
 
       http
         .post(url"${appConfig.fileStoreUrl}/file")
-        .setHeader(authHeaders(appConfig)(hc): _*)
+        .setHeader(authHeaders(appConfig)(hc)*)
         .withBody(Source(List(filePart, dataPart)))
         .execute[FileMetadata]
     }
 
-  def downloadFile(fileURL: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, _]]] =
+  def downloadFile(fileURL: String)(implicit hc: HeaderCarrier): Future[Option[Source[ByteString, ?]]] =
     withMetricsTimerAsync("download-file") { _ =>
       http
         .get(url"$fileURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .stream[HttpResponse]
         .flatMap { response =>
           if (response.status / 100 == 2) {
@@ -135,8 +137,8 @@ class FileStoreConnector @Inject() (
 
       http
         .delete(url"$fullURL")
-        .setHeader(authHeaders(appConfig)(hc): _*)
-        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
+        .setHeader(authHeaders(appConfig)(hc)*)
+        .execute[HttpResponse](using throwOnFailure(readEitherOf(using readRaw)), ec)
         .map(_ => ())
     }
 

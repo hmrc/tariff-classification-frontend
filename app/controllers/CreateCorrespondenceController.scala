@@ -88,7 +88,7 @@ class CreateCorrespondenceController @Inject() (
   private def getCaseAndRenderChoiceView(
     reference: String,
     form: Form[String] = formReleaseChoice
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[?]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => successful(Ok(releaseCaseQuestionView(c, form)))
       case _             => successful(Ok(case_not_found(reference)))

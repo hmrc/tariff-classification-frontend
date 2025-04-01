@@ -18,8 +18,9 @@ package models.forms.v2
 
 import models._
 import utils.Cases
+import base.SpecBase
 
-class MiscDetailsFormSpec extends ModelsBaseSpec {
+class MiscDetailsFormSpec extends SpecBase {
 
   private val miscCase        = Cases.miscellaneousCaseExample
   private val sampleEmptyCase = Cases.miscellaneousCaseExample.copy(application = Cases.miscExampleWithMissingName)

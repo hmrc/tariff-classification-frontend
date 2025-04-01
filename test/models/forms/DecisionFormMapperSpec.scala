@@ -16,11 +16,12 @@
 
 package models.forms
 
-import models.{Case, Decision, ModelsBaseSpec}
+import models.{Case, Decision}
 import utils.Cases._
 import utils.DecisionForms
+import base.SpecBase
 
-class DecisionFormMapperSpec extends ModelsBaseSpec {
+class DecisionFormMapperSpec extends SpecBase {
 
   private val validForm = DecisionForms.validForm
   private val testCase  = btiCaseExample

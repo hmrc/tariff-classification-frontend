@@ -20,10 +20,11 @@ import config.AppConfig
 import models._
 import models.forms.CommodityCodeConstraints
 import utils.Cases
+import base.SpecBase
 
 import java.time.{Instant, LocalDate}
 
-class LiabilityDetailsFormSpec extends ModelsBaseSpec {
+class LiabilityDetailsFormSpec extends SpecBase {
 
   private val appConfig = mock[AppConfig]
   private val liabilityDetailsForm =

@@ -38,7 +38,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(caseWithStatusNEW)
@@ -46,7 +46,7 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/cases/1/events"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(CREATED)
               .withBody(event)
@@ -81,12 +81,12 @@ class ReleaseCaseSpec extends IntegrationTest with MockitoSugar {
 //    "return status 200" in {
 //
 //      stubFor(get(urlEqualTo("/cases/1"))
-//        .thenReturn(aResponse()
+//        .willReturn(aResponse()
 //          .withStatus(OK)
 //          .withBody(caseWithStatusNEW))
 //      )
 //      stubFor(put(urlEqualTo("/cases/1"))
-//        .thenReturn(aResponse()
+//        .willReturn(aResponse()
 //          .withStatus(OK)
 //          .withBody(caseWithStatusOPEN))
 //      )

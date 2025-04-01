@@ -20,7 +20,7 @@
 
 @this()
 
-@(appealTabViewModel: AppealTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(appealTabViewModel: AppealTabViewModel)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @tab_heading("appeal", messages("case.menu.appeal"))
 

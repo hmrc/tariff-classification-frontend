@@ -34,7 +34,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.JsonFormatters._
-
+import play.api.libs.ws.writeableOf_JsValue
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,7 +56,7 @@ class BindingTariffClassificationConnector @Inject() (
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/cases"
       client
         .post(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .withBody(Json.toJson(NewCaseRequest(application)))
         .execute[Case]
     }
@@ -66,7 +66,7 @@ class BindingTariffClassificationConnector @Inject() (
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/cases/$reference"
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Option[Case]]
     }
 
@@ -109,7 +109,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[Case]]
     }
 
@@ -131,7 +131,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[Case]]
     }
 
@@ -142,7 +142,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[Case]]
     }
 
@@ -157,7 +157,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[Case]]
     }
 
@@ -167,7 +167,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .put(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .withBody(Json.toJson(c))
         .execute[Case]
     }
@@ -177,7 +177,7 @@ class BindingTariffClassificationConnector @Inject() (
       val fullURL = s"${appConfig.bindingTariffClassificationUrl}/cases/${c.reference}/events"
       client
         .post(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .withBody(Json.toJson(e))
         .execute[Event]
     }
@@ -195,7 +195,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[Event]]
     }
 
@@ -226,7 +226,7 @@ class BindingTariffClassificationConnector @Inject() (
 
           client
             .get(url"$fullURL")
-            .setHeader(authHeaders(appConfig): _*)
+            .setHeader(authHeaders(appConfig)*)
             .execute[Paged[Event]]
         }
         .runFold(Map.empty[String, Event]) { case (eventsById, nextBatch) =>
@@ -250,7 +250,7 @@ class BindingTariffClassificationConnector @Inject() (
 
           client
             .get(url"$fullURL")
-            .setHeader(authHeaders(appConfig): _*)
+            .setHeader(authHeaders(appConfig)*)
             .execute[Paged[Event]]
         }
         .runFold(Map.empty[String, Event]) { case (eventsById, nextBatch) =>
@@ -283,7 +283,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[Case]]
     }
 
@@ -297,7 +297,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[Operator]]
     }
 
@@ -307,7 +307,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .put(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .withBody(Json.toJson(operator))
         .execute[Operator]
     }
@@ -318,7 +318,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .put(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .withBody(Json.toJson(operator))
         .execute[Operator]
     }
@@ -329,7 +329,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Option[Operator]]
     }
 
@@ -339,7 +339,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .post(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .withBody(Json.toJson(NewUserRequest(operator)))
         .execute[Operator]
     }
@@ -348,7 +348,7 @@ class BindingTariffClassificationConnector @Inject() (
     hc: HeaderCarrier,
     reportBind: QueryStringBindable[CaseReport],
     pageBind: QueryStringBindable[Pagination]
-  ): Future[Paged[Map[String, ReportResultField[_]]]] =
+  ): Future[Paged[Map[String, ReportResultField[?]]]] =
     withMetricsTimerAsync("case-report") { _ =>
       val reportQuery = reportBind.unbind("", report)
       val pageQuery   = pageBind.unbind("", pagination)
@@ -356,8 +356,8 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
-        .execute[Paged[Map[String, ReportResultField[_]]]]
+        .setHeader(authHeaders(appConfig)*)
+        .execute[Paged[Map[String, ReportResultField[?]]]]
     }
 
   def summaryReport(report: SummaryReport, pagination: Pagination)(implicit
@@ -372,7 +372,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[ResultGroup]]
     }
 
@@ -388,7 +388,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[QueueResultGroup]]
     }
 
@@ -398,7 +398,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .post(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .withBody(Json.toJson(NewKeywordRequest(Keyword(keyword.name.toUpperCase, keyword.approved))))
         .execute[Keyword]
     }
@@ -410,7 +410,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[Keyword]]
     }
 
@@ -420,7 +420,7 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .get(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
+        .setHeader(authHeaders(appConfig)*)
         .execute[Paged[CaseKeyword]]
     }
 
@@ -430,8 +430,8 @@ class BindingTariffClassificationConnector @Inject() (
 
       client
         .delete(url"$fullURL")
-        .setHeader(authHeaders(appConfig): _*)
-        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
+        .setHeader(authHeaders(appConfig)*)
+        .execute[HttpResponse](using throwOnFailure(readEitherOf(using readRaw)), ec)
         .map(_ => ())
     }
 }

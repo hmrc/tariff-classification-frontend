@@ -16,13 +16,13 @@
 
 package connectors
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import config.AppConfig
 import models.request.FileStoreInitiateRequest
 import models.response.*
 import models.{Attachment, FileUpload}
-import org.mockito.BDDMockito.{thenReturn, given}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.*
 import play.api.http.Status.*
 import play.api.libs.Files.SingletonTemporaryFileCreator
 import uk.gov.hmrc.http.UpstreamErrorResponse
@@ -39,18 +39,18 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
   "Connector 'GET' one" should {
     "handle 404" in {
-      when(mockAppConfig.apiToken) thenReturn config.apiToken
+      when(mockAppConfig.apiToken).thenReturn(config.apiToken)
       val att = mock[Attachment]
-      when(att.id) thenReturn attachmentId
+      when(att.id).thenReturn(attachmentId)
 
       stubFor(
         get("/file/id")
-          .thenReturn(aResponse().withStatus(NOT_FOUND))
+          .willReturn(aResponse().withStatus(NOT_FOUND))
       )
 
       await(connector.get(attachmentId)) shouldBe None
 
-      verify(
+      WireMock.verify(
         getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
           .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
@@ -58,11 +58,11 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     "handle response with mandatory fields only" in {
       val att = mock[Attachment]
-      when(att.id) thenReturn attachmentId
+      when(att.id).thenReturn(attachmentId)
 
       stubFor(
         get(s"/file/$attachmentId")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/single_file_with_mandatory_fields-response.json"))
@@ -79,7 +79,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
         )
       )
 
-      verify(
+      WireMock.verify(
         getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
           .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
@@ -87,11 +87,11 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     "handle response with optional fields" in {
       val att = mock[Attachment]
-      when(att.id) thenReturn attachmentId
+      when(att.id).thenReturn(attachmentId)
 
       stubFor(
         get(s"/file/$attachmentId")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/single_file_with_optional_fields-response.json"))
@@ -108,7 +108,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
         )
       )
 
-      verify(
+      WireMock.verify(
         getRequestedFor(urlEqualTo(s"/file/$attachmentId"))
           .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
@@ -123,13 +123,13 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     "handle response with mandatory fields" in {
       val att1 = mock[Attachment]
-      when(att1.id) thenReturn "id1"
+      when(att1.id).thenReturn("id1")
       val att2 = mock[Attachment]
-      when(att2.id) thenReturn "id2"
+      when(att2.id).thenReturn("id2")
 
       stubFor(
         get("/file?id=id1&id=id2")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/multi_file_with_mandatory_fields-response.json"))
@@ -146,7 +146,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
         )
       )
 
-      verify(
+      WireMock.verify(
         getRequestedFor(urlEqualTo("/file?id=id1&id=id2"))
           .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
@@ -154,13 +154,13 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
     "handle response with optional fields" in {
       val att1 = mock[Attachment]
-      when(att1.id) thenReturn "id1"
+      when(att1.id).thenReturn("id1")
       val att2 = mock[Attachment]
-      when(att2.id) thenReturn "id2"
+      when(att2.id).thenReturn("id2")
 
       stubFor(
         get("/file?id=id1&id=id2")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/multi_file_with_optional_fields-response.json"))
@@ -177,7 +177,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
         )
       )
 
-      verify(
+      WireMock.verify(
         getRequestedFor(urlEqualTo("/file?id=id1&id=id2"))
           .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
@@ -187,7 +187,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
   "Initiate" in {
     stubFor(
       post("/file/initiate")
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(ACCEPTED)
             .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))
@@ -205,7 +205,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
       )
     )
 
-    verify(
+    WireMock.verify(
       postRequestedFor(urlEqualTo("/file/initiate"))
         .withHeader("X-Api-Token", equalTo(config.apiToken))
     )
@@ -214,7 +214,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
   "Upload" in {
     stubFor(
       post("/file")
-        .thenReturn(
+        .willReturn(
           aResponse()
             .withStatus(ACCEPTED)
             .withBody(fromResource("filestore/binding-tariff-filestore_upload-response.json"))
@@ -224,7 +224,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     val file   = FileUpload(SingletonTemporaryFileCreator.create("example-file.txt"), "file.txt", "text/plain")
     val result = await(connector.upload(file))
 
-    verify(
+    WireMock.verify(
       postRequestedFor(urlEqualTo("/file"))
         .withHeader("X-Api-Token", equalTo(config.apiToken))
         .withRequestBody(containing("file"))
@@ -242,7 +242,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "Delete from the File Store" in {
       stubFor(
         delete("/file/fileId")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
           )
@@ -250,7 +250,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
 
       await(connector.delete("fileId"))
 
-      verify(
+      WireMock.verify(
         deleteRequestedFor(urlEqualTo("/file/fileId"))
           .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
@@ -259,7 +259,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "propagate errors" in {
       stubFor(
         delete("/file/fileId")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(BAD_GATEWAY)
           )
@@ -269,7 +269,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
         await(connector.delete("fileId"))
       }
 
-      verify(
+      WireMock.verify(
         deleteRequestedFor(urlEqualTo("/file/fileId"))
           .withHeader("X-Api-Token", equalTo(config.apiToken))
       )
@@ -280,7 +280,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "handle missing file" in {
       stubFor(
         get("/digital-tariffs-local/id")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(NOT_FOUND)
           )
@@ -294,7 +294,7 @@ class FileStoreConnectorSpec extends ConnectorTest {
     "handle error response" in {
       stubFor(
         get("/digital-tariffs-local/id")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(INTERNAL_SERVER_ERROR)
           )

@@ -22,7 +22,7 @@
 
 @import views.html.components.change_case_status_button
 
-@(manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
     @heading(messages("management.manage-keywords.heading"))
 

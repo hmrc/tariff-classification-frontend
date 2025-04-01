@@ -19,7 +19,7 @@
 @(id: String = "pagination",
         singularName: String = "result",
         pluralName: String = "results",
-        pager: Paged[_],
+        pager: Paged[?],
         onChange: Int => Call,
         containerClass: Option[String] = None,
         counterClass: Option[String] = None,

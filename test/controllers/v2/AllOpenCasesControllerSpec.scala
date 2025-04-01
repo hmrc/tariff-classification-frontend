@@ -18,16 +18,18 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.CaseStatus.CaseStatus
-import models._
+import models.*
 import models.viewmodels.{ATaRTab, CorrespondenceTab, LiabilitiesTab, MiscellaneousTab}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.`given`
+import org.mockito.Mockito.*
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.open_cases_view
+
+import scala.concurrent.Future
 
 class AllOpenCasesControllerSpec extends ControllerBaseSpec {
 
@@ -58,15 +60,17 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[String]
           )(any[HeaderCarrier])
       ).thenReturn(
-        Paged(
-          Seq(
-            Cases.aCase(),
-            Cases.aLiabilityCase().copy(queueId = Some("3")),
-            Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
-            Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
-            Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
-            Cases.correspondenceCaseExample.copy(queueId = Some("2")),
-            Cases.correspondenceCaseExample.copy(queueId = Some("1"))
+        Future(
+          Paged(
+            Seq(
+              Cases.aCase(),
+              Cases.aLiabilityCase().copy(queueId = Some("3")),
+              Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+              Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+              Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
+              Cases.correspondenceCaseExample.copy(queueId = Some("2")),
+              Cases.correspondenceCaseExample.copy(queueId = Some("1"))
+            )
           )
         )
       )
@@ -88,13 +92,15 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[String]
           )(any[HeaderCarrier])
       ).thenReturn(
-        Paged(
-          Seq(
-            Cases.aCase(),
-            Cases.btiCaseExample.copy(queueId = Some("2")),
-            Cases.btiCaseExample.copy(queueId = Some("1")),
-            Cases.btiCaseExample.copy(queueId = Some("3")),
-            Cases.simpleCaseExample.copy(queueId = Some("3"))
+        Future(
+          Paged(
+            Seq(
+              Cases.aCase(),
+              Cases.btiCaseExample.copy(queueId = Some("2")),
+              Cases.btiCaseExample.copy(queueId = Some("1")),
+              Cases.btiCaseExample.copy(queueId = Some("3")),
+              Cases.simpleCaseExample.copy(queueId = Some("3"))
+            )
           )
         )
       )
@@ -123,13 +129,15 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[String]
           )(any[HeaderCarrier])
       ).thenReturn(
-        Paged(
-          Seq(
-            Cases.aCase(),
-            Cases.aLiabilityCase().copy(queueId = Some("3")),
-            Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
-            Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
-            Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3"))
+        Future(
+          Paged(
+            Seq(
+              Cases.aCase(),
+              Cases.aLiabilityCase().copy(queueId = Some("3")),
+              Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+              Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+              Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3"))
+            )
           )
         )
       )
@@ -154,15 +162,17 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[String]
           )(any[HeaderCarrier])
       ).thenReturn(
-        Paged(
-          Seq(
-            Cases.aCase(),
-            Cases.aLiabilityCase().copy(queueId = Some("3")),
-            Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
-            Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
-            Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
-            Cases.correspondenceCaseExample.copy(queueId = Some("2")),
-            Cases.correspondenceCaseExample.copy(queueId = Some("1"))
+        Future(
+          Paged(
+            Seq(
+              Cases.aCase(),
+              Cases.aLiabilityCase().copy(queueId = Some("3")),
+              Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+              Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+              Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
+              Cases.correspondenceCaseExample.copy(queueId = Some("2")),
+              Cases.correspondenceCaseExample.copy(queueId = Some("1"))
+            )
           )
         )
       )
@@ -187,15 +197,17 @@ class AllOpenCasesControllerSpec extends ControllerBaseSpec {
             any[String]
           )(any[HeaderCarrier])
       ).thenReturn(
-        Paged(
-          Seq(
-            Cases.aCase(),
-            Cases.aLiabilityCase().copy(queueId = Some("3")),
-            Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
-            Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
-            Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
-            Cases.correspondenceCaseExample.copy(queueId = Some("2")),
-            Cases.correspondenceCaseExample.copy(queueId = Some("1"))
+        Future(
+          Paged(
+            Seq(
+              Cases.aCase(),
+              Cases.aLiabilityCase().copy(queueId = Some("3")),
+              Cases.aLiabilityCase().copy(daysElapsed = 35, queueId = Some("3")),
+              Cases.liabilityLiveCaseExample.copy(queueId = Some("3")),
+              Cases.liabilityLiveCaseExample.copy(daysElapsed = 6, queueId = Some("3")),
+              Cases.correspondenceCaseExample.copy(queueId = Some("2")),
+              Cases.correspondenceCaseExample.copy(queueId = Some("1"))
+            )
           )
         )
       )

@@ -16,14 +16,14 @@
 
 package models.forms
 
-import models.{Decision, ModelsBaseSpec}
-import org.mockito.BDDMockito._
+import models.Decision
 import play.api.data.FormError
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
-
+import org.mockito.Mockito.*
+import base.SpecBase
 import java.time.Instant
 
-class DecisionFormTest extends ModelsBaseSpec {
+class DecisionFormTest extends SpecBase {
 
   private val decision = Decision(
     bindingCommodityCode = "0100000000",
@@ -83,6 +83,12 @@ class DecisionFormTest extends ModelsBaseSpec {
 
         form.hasErrors shouldBe false
         form.data      shouldBe params.view.mapValues(v => v.head).toMap
+      }
+      "provided decision is not provided" in {
+        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
+        val form                          = formProvider(mockedCommodityCodeConstraint).liabilityForm()
+
+        form.hasErrors shouldBe false
       }
     }
   }

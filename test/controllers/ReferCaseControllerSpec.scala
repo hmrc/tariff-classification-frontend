@@ -22,8 +22,7 @@ import models.request.FileStoreInitiateRequest
 import models.response._
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.test.Helpers._
@@ -212,8 +211,10 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
   "GET refer case email" should {
 
     "return OK and HTML content type" in {
-      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn successful(
-        initiateResponse
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])).thenReturn(
+        successful(
+          initiateResponse
+        )
       )
 
       val result = await(
@@ -257,7 +258,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) thenReturn successful(caseWithStatusREFERRED)
+      ).thenReturn(successful(caseWithStatusREFERRED))
 
       val result = await(
         controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(
@@ -293,7 +294,7 @@ class ReferCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) thenReturn successful(caseWithStatusREFERRED)
+      ).thenReturn(successful(caseWithStatusREFERRED))
 
       val result = await(
         controller(caseWithStatusOPEN).referCase(caseWithStatusOPEN.reference, "id")(

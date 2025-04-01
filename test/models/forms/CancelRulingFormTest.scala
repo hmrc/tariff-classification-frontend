@@ -16,9 +16,10 @@
 
 package models.forms
 
-import models.{CancelReason, ModelsBaseSpec, RulingCancellation}
+import base.SpecBase
+import models.{CancelReason, RulingCancellation}
 
-class CancelRulingFormTest extends ModelsBaseSpec {
+class CancelRulingFormTest extends SpecBase {
 
   "Bind from request" should {
     "Bind empty should succeed" in {

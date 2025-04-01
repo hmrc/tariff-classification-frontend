@@ -33,7 +33,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         get(urlEqualTo("/cases/1"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(CasePayloads.jsonOf(liabilityCase))
@@ -42,7 +42,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       givenAuthSuccess()
       stubFor(
         post(urlEqualTo("/file?id="))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody("[]")
@@ -54,7 +54,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
           urlEqualTo(
             s"/events?case_reference=1&type=EXPERT_ADVICE_RECEIVED&type=CASE_REJECTED&type=APPEAL_STATUS_CHANGE&type=EXTENDED_USE_STATUS_CHANGE&type=CASE_STATUS_CHANGE&type=CASE_REFERRAL&type=NOTE&type=CASE_COMPLETED&type=CASE_CANCELLATION&type=CASE_CREATED&type=ASSIGNMENT_CHANGE&type=QUEUE_CHANGE&type=APPEAL_ADDED&page=1&page_size=${Pagination.unlimited}"
           )
-        ).thenReturn(
+        ).willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedEvents)
@@ -66,7 +66,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
           urlEqualTo(
             s"/events?case_reference=1&type=SAMPLE_STATUS_CHANGE&type=SAMPLE_RETURN_CHANGE&type=SAMPLE_SEND_CHANGE&page=1&page_size=${Pagination.unlimited}"
           )
-        ).thenReturn(
+        ).willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(EventPayloads.pagedEmpty)
@@ -77,7 +77,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
           urlEqualTo(
             s"/keywords?page=1&page_size=${Pagination.unlimited}"
           )
-        ).thenReturn(
+        ).willReturn(
           aResponse()
             .withStatus(OK)
             .withBody(KeywordsPayloads.pagedKeywords)
@@ -85,7 +85,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       )
       stubFor(
         post(urlEqualTo("/file/initiate"))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(OK)
               .withBody(fromResource("filestore/binding-tariff-filestore_initiate-response.json"))

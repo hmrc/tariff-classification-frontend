@@ -31,7 +31,7 @@ class CaseReportTableViewSpec extends ViewSpec {
       fields = NonEmptySeq.of(ReportField.Reference, ReportField.GoodsName, ReportField.TraderName)
     )
 
-    val reportResults: Paged[Map[String, ReportResultField[_]]] = Paged(
+    val reportResults: Paged[Map[String, ReportResultField[?]]] = Paged(
       Seq(
         Map(
           ReportField.Reference.fieldName  -> StringResultField(ReportField.Reference.fieldName, Some("123456")),

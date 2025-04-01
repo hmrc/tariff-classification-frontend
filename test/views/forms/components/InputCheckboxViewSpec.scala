@@ -16,7 +16,6 @@
 
 package views.forms.components
 
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import views.ViewMatchers._
@@ -27,11 +26,11 @@ class InputCheckboxViewSpec extends ViewSpec {
 
   case class FormData(text: String)
 
-  val form =
+  val form: Form[FormData] =
     Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(o => Tuple.fromProductTyped(o))
+      )(FormData.apply)(o => Option(o.text))
     )
 
   "Input Checkbox" should {
@@ -63,7 +62,7 @@ class InputCheckboxViewSpec extends ViewSpec {
       lazy val emptyForm = Map[String, String]()
       val formWithError  = form.bind(emptyForm).apply("field")
       val doc            = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
+      doc.getElementsByClass("govuk-visually-hidden").text() shouldBe errorPrefix
     }
   }
 }

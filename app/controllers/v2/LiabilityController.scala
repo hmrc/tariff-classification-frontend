@@ -71,7 +71,7 @@ class LiabilityController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     uploadForm: Form[String] = UploadAttachmentForm.form,
     keywordForm: Form[String] = KeywordForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(implicit request: AuthenticatedCaseRequest[?]): Future[Html] = {
 
     val liabilityCase: Case = request.`case`
     val uploadFileId        = fileId.getOrElse(UUID.randomUUID().toString)

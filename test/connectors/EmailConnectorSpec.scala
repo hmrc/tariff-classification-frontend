@@ -45,7 +45,7 @@ class EmailConnectorSpec extends ConnectorTest {
       stubFor(
         post(urlEqualTo("/hmrc/email"))
           .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(HttpStatus.SC_ACCEPTED)
           )
@@ -63,7 +63,7 @@ class EmailConnectorSpec extends ConnectorTest {
       stubFor(
         post(urlEqualTo("/hmrc/email"))
           .withRequestBody(new EqualToJsonPattern(fromResource("completion_email-request.json"), true, false))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(HttpStatus.SC_BAD_GATEWAY)
           )
@@ -87,7 +87,7 @@ class EmailConnectorSpec extends ConnectorTest {
       stubFor(
         post(urlEqualTo(s"/templates/${EmailType.COMPLETE}"))
           .withRequestBody(new EqualToJsonPattern(fromResource("parameters_email-request.json"), true, false))
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withBody(fromResource("email_template-response.json"))
               .withStatus(HttpStatus.SC_OK)

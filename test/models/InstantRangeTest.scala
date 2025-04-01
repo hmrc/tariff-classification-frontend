@@ -18,8 +18,9 @@ package models
 
 import java.net.URLDecoder
 import java.time.Instant
+import base.SpecBase
 
-class InstantRangeTest extends ModelsBaseSpec {
+class InstantRangeTest extends SpecBase {
 
   private val range = InstantRange(
     min = Instant.EPOCH,

@@ -21,8 +21,7 @@ import connectors.BindingTariffClassificationConnector
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -48,8 +47,10 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Get Events by reference" should {
     "retrieve a list of events" in {
-      when(connector.findFilteredEvents("reference", NoPagination(), Set.empty)) thenReturn Future.successful(
-        Paged(manyEvents)
+      when(connector.findFilteredEvents("reference", NoPagination(), Set.empty)).thenReturn(
+        Future.successful(
+          Paged(manyEvents)
+        )
       )
 
       await(service.getEvents("reference", NoPagination())) shouldBe Paged(manyEvents)
@@ -70,9 +71,10 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
       when(
         connector.findFilteredEvents("reference", NoPagination(), Set(EventType.SAMPLE_STATUS_CHANGE))
-      ) thenReturn Future
-        .successful(Paged(filteredEvents, NoPagination(), 1))
-
+      ).thenReturn(
+        Future
+          .successful(Paged(filteredEvents, NoPagination(), 1))
+      )
       await(
         service.getFilteredEvents("reference", NoPagination(), Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
       ) shouldBe Paged(

@@ -20,8 +20,7 @@ import models._
 import models.request.FileStoreInitiateRequest
 import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.libs.Files.TemporaryFile
@@ -176,8 +175,10 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "GET cancel ruling email" should {
 
     "return OK and HTML content type" in {
-      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn successful(
-        initiateResponse
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])).thenReturn(
+        successful(
+          initiateResponse
+        )
       )
 
       val result = await(
@@ -219,7 +220,7 @@ class CancelRulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
           any[String],
           any[Operator]
         )(any[HeaderCarrier])
-      ) thenReturn successful(caseWithStatusCANCELLED)
+      ).thenReturn(successful(caseWithStatusCANCELLED))
 
       val result = await(
         controller(caseWithStatusCOMPLETED).cancelRuling(caseWithStatusCOMPLETED.reference, "id")(

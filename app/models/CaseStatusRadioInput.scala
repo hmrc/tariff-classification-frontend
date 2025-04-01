@@ -49,5 +49,5 @@ object CaseStatusRadioInput extends Enumerable.Implicits {
   }
 
   implicit val enumerable: Enumerable[CaseStatusRadioInput] =
-    Enumerable((changeCaseStatusValues ++ releaseOrSuppressValues).map(v => v.toString -> v): _*)
+    Enumerable((changeCaseStatusValues ++ releaseOrSuppressValues).map(v => v.toString -> v)*)
 }

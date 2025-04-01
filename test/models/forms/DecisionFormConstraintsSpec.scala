@@ -16,14 +16,15 @@
 
 package models.forms
 
-import models.{CommodityCode, ModelsBaseSpec}
+import base.SpecBase
+import models.CommodityCode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.*
 import play.api.data.Form.FromJsonMaxChars
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import services.CommodityCodeService
 
-class DecisionFormConstraintsSpec extends ModelsBaseSpec {
+class DecisionFormConstraintsSpec extends SpecBase {
 
   private val commodityCodeService                     = mock[CommodityCodeService]
   private val decisionForm                             = new DecisionForm(new CommodityCodeConstraints())

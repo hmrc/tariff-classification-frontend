@@ -29,7 +29,7 @@ class RulingConnectorSpec extends ConnectorTest {
     "POST to the Ruling Store" in {
       stubFor(
         post("/search-for-advance-tariff-rulings/ruling/id")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(ACCEPTED)
           )
@@ -46,7 +46,7 @@ class RulingConnectorSpec extends ConnectorTest {
     "propagate errors" in {
       stubFor(
         post("/search-for-advance-tariff-rulings/ruling/id")
-          .thenReturn(
+          .willReturn(
             aResponse()
               .withStatus(BAD_GATEWAY)
           )

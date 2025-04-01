@@ -22,8 +22,8 @@
 @import views.html.managementtools.liabilityStatus
 
 @(
-  field: ReportField[_],
-  result: ReportResultField[_],
+  field: ReportField[?],
+  result: ReportResultField[?],
   users: Map[String, Operator],
   teams: Map[String, Queue],
   id: String,

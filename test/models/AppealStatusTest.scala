@@ -18,8 +18,9 @@ package models
 
 import models.AppealStatus.{ALLOWED, DISMISSED, IN_PROGRESS}
 import models.AppealType.{ADR, APPEAL_TIER_1, REVIEW}
+import base.SpecBase
 
-class AppealStatusTest extends ModelsBaseSpec {
+class AppealStatusTest extends SpecBase {
 
   "Appeal format" should {
 

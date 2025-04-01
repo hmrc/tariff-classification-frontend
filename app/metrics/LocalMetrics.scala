@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package metrics
 
-import base.SpecBase
+import com.codahale.metrics.{MetricRegistry, Timer}
 
-abstract class ModelsBaseSpec extends SpecBase {}
+class LocalMetrics(val registry: MetricRegistry) {
+  def startTimer(metric: String): Timer.Context     = registry.timer(s"$metric-timer").time()
+  def stopTimer(context: Timer.Context): Long       = context.stop()
+  def incrementSuccessCounter(metric: String): Unit = registry.counter(s"$metric-success-counter").inc()
+  def incrementFailedCounter(metric: String): Unit  = registry.counter(s"$metric-failed-counter").inc()
+}

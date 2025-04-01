@@ -23,8 +23,7 @@ import models.forms.KeywordForm
 import models.forms.v2.{ChangeKeywordStatusForm, EditApprovedKeywordForm}
 import models.viewmodels.ManagerToolsKeywordsTab
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status

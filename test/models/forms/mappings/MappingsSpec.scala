@@ -16,7 +16,7 @@
 
 package models.forms.mappings
 
-import models.ModelsBaseSpec
+import base.SpecBase
 import play.api.data.{Form, FormError}
 import utils.Enumerable
 
@@ -31,11 +31,11 @@ object MappingsSpec {
     val values: Set[Foo] = Set(Bar, Baz)
 
     implicit val fooEnumerable: Enumerable[Foo] =
-      Enumerable(values.toSeq.map(v => v.toString -> v): _*)
+      Enumerable(values.toSeq.map(v => v.toString -> v)*)
   }
 }
 
-class MappingsSpec extends ModelsBaseSpec with Mappings {
+class MappingsSpec extends SpecBase with Mappings {
 
   import MappingsSpec._
 

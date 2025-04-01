@@ -20,8 +20,7 @@ import config.AppConfig
 import models._
 import models.request._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.when
+import org.mockito.Mockito.*
 import play.api.http.Status
 import play.api.mvc.Request
 import play.api.test.Helpers._
@@ -51,7 +50,7 @@ class OperatorDashboardControllerSpec extends ControllerBaseSpec {
   private val casesService = mock[CasesService]
 
   override def beforeEach(): Unit =
-    when(casesService.countCasesByQueue(any[HeaderCarrier])) thenReturn casesCounted
+    when(casesService.countCasesByQueue(any[HeaderCarrier])).thenReturn(Future(casesCounted))
 
   when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
     .thenReturn(Future.successful(Paged.empty[Case]))

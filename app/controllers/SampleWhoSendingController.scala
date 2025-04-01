@@ -55,7 +55,7 @@ class SampleWhoSendingController @Inject() (
     c: Case,
     notFilledForm: Form[Option[SampleSend]],
     options: Option[String] = None
-  )(implicit request: AuthenticatedRequest[_]): Html =
+  )(implicit request: AuthenticatedRequest[?]): Html =
     change_sample_send(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =

@@ -16,10 +16,10 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 import play.api.data.FormError
 
-class KeywordFormTest extends ModelsBaseSpec {
+class KeywordFormTest extends SpecBase {
 
   "Keywords form " should {
     "validate 'keyword'" in {

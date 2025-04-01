@@ -20,8 +20,7 @@ import audit.AuditService
 import connectors.BindingTariffClassificationConnector
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify, verifyNoInteractions, verifyNoMoreInteractions}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -125,7 +124,7 @@ class KeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Retrieve auto complete keywords" should {
 
     "return a list of keywords" in {
-      when(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])) thenReturn successful(Paged(Seq(keyword)))
+      when(connector.findAllKeywords(any[Pagination])(any[HeaderCarrier])).thenReturn(successful(Paged(Seq(keyword))))
 
       await(service.findAll()) shouldBe Seq.empty[Keyword]
     }

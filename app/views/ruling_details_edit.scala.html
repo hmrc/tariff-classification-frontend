@@ -33,7 +33,7 @@
 )
 
 
-@(c: Case, files: Seq[StoredAttachment], decisionForm: Form[DecisionFormData])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, files: Seq[StoredAttachment], decisionForm: Form[DecisionFormData])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.edit.ruling"),

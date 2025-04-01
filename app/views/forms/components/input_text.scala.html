@@ -39,7 +39,7 @@
     @field.errors.zipWithIndex.map { case (error, i) =>
         <span class="govuk-error-message" id="@{field.id}-error-@{i}">
             <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>
-            @customErrorMessage.getOrElse( messages(error.message, error.args: _*))
+            @customErrorMessage.getOrElse( messages(error.message, error.args*))
         </span>
     }
 

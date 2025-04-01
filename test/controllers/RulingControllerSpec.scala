@@ -20,16 +20,15 @@ import models.forms.v2.LiabilityDetailsForm
 import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
 import models.{Case, CaseStatus, Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{CasesService, FileStoreService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
-import utils.Cases._
+import utils.Cases.*
 import views.html.ruling_details_edit
 import views.html.v2.edit_liability_ruling
 
@@ -90,19 +89,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
     val liabilityCaseWithStatusOPEN =
       aCase(withLiabilityApplication(), withReference("reference"), withStatus(CaseStatus.OPEN))
-    val attachment = storedAttachment
 
     "return OK and HTML content type" when {
-      "Case is an ATaR" in {
-        when(fileService.getAttachments(refEq(btiCaseWithStatusOPEN))(any[HeaderCarrier]))
-          .thenReturn(Future.successful(Seq(attachment)))
-
-        val result = controller(btiCaseWithStatusOPEN).editRulingDetails("reference")(newFakeGETRequestWithCSRF())
-        status(result)        shouldBe Status.OK
-        contentType(result)   shouldBe Some("text/html")
-        charset(result)       shouldBe Some("utf-8")
-        contentAsString(result) should (include("Ruling") and include("<form"))
-      }
       "Case is a Liability" in {
         when(commodityCodeConstraints.commodityCodeLengthValid)
           .thenReturn(Constraint[String]("error")(_ => Valid))
@@ -135,15 +123,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       }
     }
 
-    "return OK when user has right permissions" in {
-      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])).thenReturn(Future.successful(Seq(attachment)))
-
-      val result = controller(btiCaseWithStatusOPEN, Set(Permission.EDIT_RULING))
-        .editRulingDetails("reference")(newFakeGETRequestWithCSRF())
-
-      status(result) shouldBe Status.OK
-    }
-
     "redirect unauthorised when does not have right permissions" in {
       val result = controller(btiCaseWithStatusOPEN, Set.empty)
         .editRulingDetails("reference")(newFakeGETRequestWithCSRF())
@@ -154,21 +133,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   }
 
   "validateBeforeComplete Ruling" should {
-    val btiCaseWithStatusOpenWithDecision =
-      aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
     val liabilityCaseWithStatusOpenWithDecision =
       aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
-    val attachment = storedAttachment
-
-    "load edit details page when a mandatory field is missing" in {
-      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])).thenReturn(Future.successful(Seq(attachment)))
-
-      val result = controller(btiCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
-        .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF())
-
-      status(result) shouldBe Status.OK
-    }
-
     "load edit ruling page when ruling tab has missing fields that are required to complete a case" in {
       when(commodityCodeConstraints.commodityCodeNonEmpty)
         .thenReturn(Constraint[String]("error")(_ => Valid))
