@@ -19,8 +19,6 @@ package models
 import base.SpecBase
 import play.api.libs.json.{JsError, Json}
 
-import java.time.Instant
-
 class CountrySpec extends SpecBase {
   "Country" should {
     "handle round-trip serialization/deserialization" when {
