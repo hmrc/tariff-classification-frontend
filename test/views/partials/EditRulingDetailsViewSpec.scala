@@ -29,7 +29,7 @@ import java.time.Instant
 
 class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
 
-  private val decisionForm                       = new DecisionForm(mock[CommodityCodeConstraints])
+  private val decisionForm                       = new DecisionForm()
   val rulingDetailsEditView: ruling_details_edit = app.injector.instanceOf[ruling_details_edit]
 
   "Edit Ruling Details" should {

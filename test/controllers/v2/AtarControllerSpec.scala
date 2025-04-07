@@ -32,7 +32,7 @@ class AtarControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val fileService              = mock[FileStoreService]
   private val event                    = mock[Event]
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
-  private val decisionForm             = new DecisionForm(commodityCodeConstraints)
+  private val decisionForm             = new DecisionForm()
   private val keywordsService          = mock[KeywordsService]
   private val countriesService         = mock[CountriesService]
   private val atarView                 = mock[atar_view]

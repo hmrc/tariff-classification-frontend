@@ -27,7 +27,7 @@ import services.CommodityCodeService
 class DecisionFormConstraintsSpec extends SpecBase {
 
   private val commodityCodeService                     = mock[CommodityCodeService]
-  private val decisionForm                             = new DecisionForm(new CommodityCodeConstraints())
+  private val decisionForm                             = new DecisionForm()
   private val commodityCodeValidLengthErrorMessage     = "decision_form.error.bindingCommodityCode.valid.length"
   private val commodityCodeValidNumberTypeErrorMessage = "decision_form.error.bindingCommodityCode.valid.number"
   private val commodityCodeValidEvenDigitsErrorMessage = "decision_form.error.bindingCommodityCode.valid.evenDigits"

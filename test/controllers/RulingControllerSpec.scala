@@ -17,7 +17,7 @@
 package controllers
 
 import models.forms.v2.LiabilityDetailsForm
-import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormMapper}
+import models.forms.{CommodityCodeConstraints, DecisionForm, DecisionFormData, DecisionFormMapper}
 import models.{Case, CaseStatus, Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{never, reset, verify, when}
@@ -41,7 +41,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val mapper                   = mock[DecisionFormMapper]
   private val operator                 = Operator(id = "id")
   private val commodityCodeConstraints = mock[CommodityCodeConstraints]
-  private val decisionForm             = new DecisionForm(commodityCodeConstraints)
+  private val decisionForm             = new DecisionForm()
   private val liabilityDetailsForm     = new LiabilityDetailsForm(commodityCodeConstraints, realAppConfig)
 
   private lazy val editLiabilityView = injector.instanceOf[edit_liability_ruling]
@@ -85,6 +85,41 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     realAppConfig
   )
 
+  "case to decision form data mapper " should {
+
+    "create valid decision form from a valid case " in {
+
+      val caseWithAtt                        = btiCaseExample.copy(attachments = Seq(attachment("url.to.publish")))
+      val decisionFormData: DecisionFormData = controller(caseWithAtt).caseToDecisionFormData(caseWithAtt)
+      val decision                           = caseWithAtt.decision.get
+
+      decision.bindingCommodityCode                       shouldBe decisionFormData.bindingCommodityCode
+      decision.goodsDescription                           shouldBe decisionFormData.goodsDescription
+      decision.justification                              shouldBe decisionFormData.justification
+      decision.methodSearch.getOrElse("")                 shouldBe decisionFormData.methodSearch
+      decision.methodExclusion.getOrElse("")              shouldBe decisionFormData.methodExclusion
+      decision.methodCommercialDenomination.getOrElse("") shouldBe decisionFormData.methodCommercialDenomination
+      decision.explanation.getOrElse("")                  shouldBe decisionFormData.explanation
+      decisionFormData.attachments                        shouldBe Seq("url.to.publish")
+    }
+
+    "create empty decision form when a case does not have a decision" in {
+
+      val empty                    = ""
+      val caseWithEmptyDecision    = btiCaseExample.copy(decision = Option.empty)
+      val result: DecisionFormData = controller(caseWithEmptyDecision).caseToDecisionFormData(caseWithEmptyDecision)
+
+      result.bindingCommodityCode         shouldBe empty
+      result.goodsDescription             shouldBe empty
+      result.justification                shouldBe empty
+      result.methodSearch                 shouldBe empty
+      result.methodExclusion              shouldBe empty
+      result.methodCommercialDenomination shouldBe empty
+      result.attachments                  shouldBe Seq.empty
+      result.explanation                  shouldBe empty
+    }
+
+  }
   "Edit Ruling" should {
     val btiCaseWithStatusOPEN = aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN))
     val liabilityCaseWithStatusOPEN =
@@ -154,7 +189,7 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
   "validateBeforeComplete Ruling" should {
     val btiCaseWithStatusOpenWithDecision =
-      aCase(withBTIApplication, withReference("reference"), withStatus(CaseStatus.OPEN), withDecision())
+      aCase(withBTIApplication, withReference("12345678"), withStatus(CaseStatus.OPEN), withDecision())
     val liabilityCaseWithStatusOpenWithDecision =
       aLiabilityCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
     val attachment = storedAttachment
