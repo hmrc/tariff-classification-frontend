@@ -16,11 +16,11 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.Pagination
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers._
 import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
-class SearchSpec extends IntegrationTest with MockitoSugar {
+class SearchSpec extends IntegrationTest {
 
   "Search by 'Case Reference'" should {
 

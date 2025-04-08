@@ -16,13 +16,13 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{Case, Pagination}
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers._
 import utils.Cases._
 import utils.JsonFormatters._
 import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
-class CaseSpec extends IntegrationTest with MockitoSugar {
+class CaseSpec extends IntegrationTest {
 
   private val c: Case = aCase(withReference("1"), withoutAgent())
 

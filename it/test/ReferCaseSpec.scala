@@ -16,13 +16,13 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{CaseStatus, Operator, Role}
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.JsonFormatters._
 import utils.{CasePayloads, Cases, EventPayloads}
 
-class ReferCaseSpec extends IntegrationTest with MockitoSugar {
+class ReferCaseSpec extends IntegrationTest {
 
   "Case Refer" should {
     val owner              = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))

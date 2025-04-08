@@ -18,6 +18,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{AppealType, CaseStatus, Operator, Role}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
+import play.api.libs.ws.readableAsString
 import play.api.test.Helpers._
 import utils.CasePayloads
 import utils.Cases.{aCase, withDecision}

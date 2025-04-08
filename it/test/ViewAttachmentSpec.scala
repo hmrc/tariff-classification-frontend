@@ -18,14 +18,14 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import models.CaseStatus
 import models.response.FileMetadata
 import org.apache.pekko.util.ByteString
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.JsonFormatters.{caseFormat, fileMetaDataFormat}
 import utils.{CasePayloads, Cases}
 
-class ViewAttachmentSpec extends IntegrationTest with MockitoSugar {
+class ViewAttachmentSpec extends IntegrationTest {
 
   private val cse     = CasePayloads.jsonOf(Cases.btiCaseExample.copy(status = CaseStatus.COMPLETED))
   private val caseRef = 123456

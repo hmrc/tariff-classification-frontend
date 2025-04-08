@@ -16,13 +16,13 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{CaseStatus, Decision, Operator, Role}
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.JsonFormatters._
 import utils.{CasePayloads, Cases}
 
-class CompleteCaseSpec extends IntegrationTest with MockitoSugar {
+class CompleteCaseSpec extends IntegrationTest {
 
   "Case Complete with decision" should {
 

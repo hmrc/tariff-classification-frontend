@@ -18,6 +18,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import models.CaseStatus
 import models.response.FileMetadata
 import play.api.libs.ws.WSResponse
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers._
 import utils.JsonFormatters._
 import utils.{CasePayloads, Cases}
@@ -131,7 +132,7 @@ class PdfGenerationSpec extends IntegrationTest {
         await(requestWithSession(s"/pdf/ruling/$caseRef").get())
 
       response.status shouldBe OK
-      response.body     should include(messages("not_authorised.paragraph1"))
+      response.body.should(include(messages("not_authorised.paragraph1")))
     }
 
   }

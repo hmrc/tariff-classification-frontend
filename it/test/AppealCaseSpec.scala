@@ -16,14 +16,14 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{CaseStatus, Operator, Pagination, Role}
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSResponse
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers._
 import utils.Cases.{aCase, withDecision}
 import utils.JsonFormatters._
 import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
-class AppealCaseSpec extends IntegrationTest with MockitoSugar {
+class AppealCaseSpec extends IntegrationTest {
 
   val owner: Some[Operator] = Some(Operator("111", role = Role.CLASSIFICATION_OFFICER))
   val caseWithStatusCOMPLETE: String =

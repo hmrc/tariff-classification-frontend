@@ -16,11 +16,11 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.NoPagination
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers._
 import utils.{CasePayloads, CaseQueueBuilder, ReportPayloads}
 
-class RootSpec extends IntegrationTest with MockitoSugar with CaseQueueBuilder {
+class RootSpec extends IntegrationTest with CaseQueueBuilder {
 
   "Root" should {
 

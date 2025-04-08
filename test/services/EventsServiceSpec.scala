@@ -56,6 +56,28 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
       await(service.getEvents("reference", NoPagination())) shouldBe Paged(manyEvents)
     }
   }
+  "find Referral Events" should {
+    "retrieve a map of reference and events" in {
+      when(connector.findReferralEvents(Set("reference"))).thenReturn(
+        Future.successful(
+          manyEvents.map(x => ("reference", x)).toMap
+        )
+      )
+
+      await(service.findReferralEvents(Set("reference"))) shouldBe manyEvents.map(x => ("reference", x)).toMap
+    }
+  }
+  "find Completion Events" should {
+    "retrieve a  map of reference and events" in {
+      when(connector.findCompletionEvents(Set("reference"))).thenReturn(
+        Future.successful(
+          manyEvents.map(x => ("reference", x)).toMap
+        )
+      )
+
+      await(service.findCompletionEvents(Set("reference"))) shouldBe manyEvents.map(x => ("reference", x)).toMap
+    }
+  }
 
   "Get Filtered Events by reference" should {
     "retrieve a list of events" in {
