@@ -3,7 +3,7 @@ import sbt.Keys.baseDirectory
 import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "3.4.2"
+ThisBuild / scalaVersion := "3.5.2"
 
 lazy val microservice = Project("tariff-classification-frontend", file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
