@@ -14,11 +14,9 @@ lazy val microservice = Project("tariff-classification-frontend", file("."))
     CodeCoverageSettings()
   )
   .settings(
-    Test / fork := true,
+    Test / fork := false,
     Test / unmanagedSourceDirectories += baseDirectory.value / "test/util",
     Test / resourceDirectory := baseDirectory.value / "test" / "resources",
-    //    works only when fork is true
-    Test / javaOptions += "-Xmx6G"
   )
   .settings(
     TwirlKeys.templateImports ++= Seq(
