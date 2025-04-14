@@ -16,15 +16,15 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 import play.api.data.validation.{Invalid, Valid}
 
 import java.util.Calendar
 
-class FormConstraintsTest extends ModelsBaseSpec {
+class FormConstraintsTest extends SpecBase {
 
   private val currentYear: Int = Calendar.getInstance().get(Calendar.YEAR)
-  //TODO read from appconfig
+  // TODO read from appconfig
   private val yearLowBound: Int = 2010
 
   "FormConstraintsTest" when {

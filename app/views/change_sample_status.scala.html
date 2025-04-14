@@ -27,7 +27,7 @@
         backLink: back_link
 )
 
-@(c: Case, form: Form[Option[SampleStatus]])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[Option[SampleStatus]])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.change.sample.status"),

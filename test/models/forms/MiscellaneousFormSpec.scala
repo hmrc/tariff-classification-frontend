@@ -17,9 +17,10 @@
 package models.forms
 
 import models._
+import base.SpecBase
 import models.forms.v2.MiscellaneousForm
 
-class MiscellaneousFormSpec extends ModelsBaseSpec {
+class MiscellaneousFormSpec extends SpecBase {
 
   "Bind from request" should {
     "Bind an empty form" in {

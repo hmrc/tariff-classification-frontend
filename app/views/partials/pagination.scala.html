@@ -19,7 +19,7 @@
 @(id: String = "pagination",
         singularName: String = "result",
         pluralName: String = "results",
-        pager: Paged[_],
+        pager: Paged[?],
         onChange: Int => Call,
         containerClass: Option[String] = None,
         counterClass: Option[String] = None,
@@ -30,7 +30,7 @@
 
     @if(pager.pageCount > 1) {
         <div id="@id-links" class="govuk-grid-column-one-half @linksClass.getOrElse("")">
-            @defining(pager.pageCount) { pageCount: Int =>
+            @defining(pager.pageCount) { (pageCount: Int) =>
                 <p class="govuk-body">
                     @* Previous Page *@
                     @if(pager.pageIndex > 1) {

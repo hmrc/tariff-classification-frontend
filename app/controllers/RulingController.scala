@@ -58,7 +58,7 @@ class RulingController @Inject() (
         getCaseAndThen(c =>
           c.application.`type` match {
             case ApplicationType.ATAR =>
-              val formData = mapper.caseToDecisionFormData(c)
+              val formData = caseToDecisionFormData(c)
               val df       = decisionForm.btiForm().fill(formData)
               editBTIRulingView(df, c)
 
@@ -76,7 +76,7 @@ class RulingController @Inject() (
         getCaseAndThen(c =>
           c.application.`type` match {
             case ApplicationType.ATAR =>
-              val formData               = mapper.caseToDecisionFormData(c)
+              val formData               = caseToDecisionFormData(c)
               val decisionFormWithErrors = decisionForm.btiCompleteForm.fillAndValidate(formData)
               editBTIRulingView(decisionFormWithErrors, c)
             case ApplicationType.LIABILITY =>
@@ -135,7 +135,7 @@ class RulingController @Inject() (
       }
 
   private def editBTIRulingView(f: Form[DecisionFormData], c: Case)(implicit
-    request: AuthenticatedRequest[_]
+    request: AuthenticatedRequest[?]
   ): Future[Result] =
     fileStoreService
       .getAttachments(c)
@@ -143,7 +143,7 @@ class RulingController @Inject() (
       .map(Ok(_))
 
   private def editLiabilityRulingView(f: Form[Decision], c: Case)(implicit
-    request: AuthenticatedRequest[_]
+    request: AuthenticatedRequest[?]
   ): Future[Result] = {
 
     val caseHeaderViewModel  = CaseHeaderViewModel.fromCase(c)
@@ -155,7 +155,25 @@ class RulingController @Inject() (
 
   private def getCaseAndThen(
     toResult: Case => Future[Result]
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Result] =
+  )(implicit request: AuthenticatedCaseRequest[?]): Future[Result] =
     toResult(request.`case`)
 
+  def caseToDecisionFormData(c: Case): DecisionFormData = {
+    val optionOfDecision = c.decision
+    optionOfDecision match
+      case Some(d) =>
+        DecisionFormData(
+          d.bindingCommodityCode,
+          d.goodsDescription,
+          d.methodSearch.getOrElse(""),
+          d.justification,
+          d.methodCommercialDenomination.getOrElse(""),
+          d.methodExclusion.getOrElse(""),
+          c.attachments.filter(_.shouldPublishToRulings).map(_.id),
+          d.explanation.getOrElse(""),
+          d.effectiveEndDate,
+          explicitEndDate = d.effectiveEndDate.isDefined
+        )
+      case None => DecisionFormData()
+  }
 }

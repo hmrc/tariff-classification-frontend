@@ -49,7 +49,7 @@ class CorrespondenceCaseDetailsViewSpec extends ViewSpec {
       val c              = aCorrespondenceCase()
       val caseDetailsTab = CaseDetailsViewModel.fromCase(c)
 
-      val doc = view(correspondence_case_details(caseDetailsTab))
+      val doc = view(correspondence_case_details.render(caseDetailsTab, authenticatedManagerFakeRequest, messages))
 
       doc shouldNot containElementWithID("edit-correspondence-details")
     }
@@ -58,7 +58,7 @@ class CorrespondenceCaseDetailsViewSpec extends ViewSpec {
       val c              = aCorrespondenceCase()
       val caseDetailsTab = CaseDetailsViewModel.fromCase(c)
 
-      val doc = view(correspondence_case_details(caseDetailsTab))
+      val doc = view(correspondence_case_details.ref.f(caseDetailsTab)(authenticatedManagerFakeRequest, messages))
 
       val summary = doc.getElementById("summary")
       summary.text() shouldBe "A short summary"

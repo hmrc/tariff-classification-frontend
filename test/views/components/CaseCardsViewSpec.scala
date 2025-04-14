@@ -52,7 +52,7 @@ class CaseCardsViewSpec extends ViewSpec {
     }
 
     "display the number of cases on My Cases tile when plural" in {
-      val doc = view(cases_cards(Map.empty, 2, 0, 0))
+      val doc = view(cases_cards.render(Map.empty, 2, 0, 0, authenticatedManagerFakeRequest, messages))
 
       doc.getElementById("my-cases-id").text() should include(
         messages("operator.dashboard.classification.my-cases.progress.plural", 2)
@@ -61,7 +61,7 @@ class CaseCardsViewSpec extends ViewSpec {
     }
 
     "display the number of cases on My Cases tile when singular" in {
-      val doc = view(cases_cards(Map.empty, 1, 0, 0))
+      val doc = view(cases_cards.ref.f(Map.empty, 1, 0, 0)(authenticatedManagerFakeRequest, messages))
 
       doc.getElementById("my-cases-id").text() should include(
         messages("operator.dashboard.classification.my-cases.progress.singular", 1)

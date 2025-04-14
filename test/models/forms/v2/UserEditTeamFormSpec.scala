@@ -16,9 +16,9 @@
 
 package models.forms.v2
 
-import models.ModelsBaseSpec
+import base.SpecBase
 
-class UserEditTeamFormSpec extends ModelsBaseSpec {
+class UserEditTeamFormSpec extends SpecBase {
 
   "Bind from request" should {
 

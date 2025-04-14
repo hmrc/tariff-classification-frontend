@@ -28,7 +28,7 @@
 )
 
 
-@(c: Case, form: Form[Option[SampleStatus]])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[Option[SampleStatus]])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
     pageTitle = messages("case.liability.provide-samples"),

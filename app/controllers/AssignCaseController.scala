@@ -72,7 +72,7 @@ class AssignCaseController @Inject() (
 
       }
 
-  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[_]): Boolean =
+  override protected def isValidCase(c: Case)(implicit request: AuthenticatedRequest[?]): Boolean =
     (c.queueId, c.assignee) match {
       case (Some(_), None)                                                 => true
       case (Some(_), Some(operator)) if request.operator.id != operator.id => true

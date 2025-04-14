@@ -24,7 +24,7 @@ case class Operator(
   email: Option[String] = None,
   role: Role = Role.CLASSIFICATION_OFFICER,
   memberOfTeams: Seq[String] = Seq.empty,
-  managerOfTeams: Seq[String] = Seq.empty, //being a member is the same as being the manager, don't use this
+  managerOfTeams: Seq[String] = Seq.empty, // being a member is the same as being the manager, don't use this
   permissions: Set[Permission] = Set.empty,
   deleted: Boolean = false
 ) {

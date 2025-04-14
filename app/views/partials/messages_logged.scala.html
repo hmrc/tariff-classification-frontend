@@ -28,7 +28,7 @@
 
 @import models.forms.MessageFormData
 
-@(messagesLogged: MessagesTabViewModel, messageForm: Form[MessageFormData])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(messagesLogged: MessagesTabViewModel, messageForm: Form[MessageFormData])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
     @error_summary(messageForm.errors)
 

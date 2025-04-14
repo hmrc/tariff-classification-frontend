@@ -18,6 +18,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import models.CaseStatus
 import models.response.FileMetadata
 import play.api.libs.ws.WSResponse
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers._
 import utils.JsonFormatters._
 import utils.{CasePayloads, Cases}

@@ -71,7 +71,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      val doc = view(activity_details(activityTab, ActivityForm.form))
+      val doc = view(activity_details.render(activityTab, ActivityForm.form, authenticatedManagerFakeRequest, messages))
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("name")
@@ -89,7 +89,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
       val activityTab = ActivityViewModel.fromCase(c, Paged(Seq(e)), queues)
 
-      val doc = view(activity_details(activityTab, ActivityForm.form))
+      val doc = view(activity_details.ref.f(activityTab, ActivityForm.form)(authenticatedManagerFakeRequest, messages))
 
       doc                                                  should containElementWithID("activity-events-row-0-operator")
       doc.getElementById("activity-events-row-0-operator") should containText("Unknown")
@@ -761,8 +761,7 @@ class ActivityDetailsViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("reassign-queue-link")
     }
 
-    "Not render 'Reassign Link' when valid state but no permissions " in {
-
+    "Not render 'Reassign Link' when valid state but no permissions " in
       Set(CaseStatus.OPEN, CaseStatus.REFERRED, CaseStatus.SUSPENDED).foreach { status =>
         val c = aCase(
           withAssignee(Some(Operator("id"))),
@@ -775,7 +774,6 @@ class ActivityDetailsViewSpec extends ViewSpec {
 
         doc shouldNot containElementWithID("reassign-queue-link")
       }
-    }
 
     "render notification banner when note was added" in {
 

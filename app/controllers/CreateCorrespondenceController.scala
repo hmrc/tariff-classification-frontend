@@ -74,7 +74,7 @@ class CreateCorrespondenceController @Inject() (
         .fold(
           formWithErrors => Future.successful(Ok(create_correspondence(formWithErrors))),
           correspondenceApp =>
-            casesService.createCase(correspondenceApp, request.operator).map { caseCreated: Case =>
+            casesService.createCase(correspondenceApp, request.operator).map { (caseCreated: Case) =>
               Redirect(routes.CreateCorrespondenceController.displayQuestion(caseCreated.reference))
             }
         )
@@ -88,7 +88,7 @@ class CreateCorrespondenceController @Inject() (
   private def getCaseAndRenderChoiceView(
     reference: String,
     form: Form[String] = formReleaseChoice
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[?]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(c: Case) => successful(Ok(releaseCaseQuestionView(c, form)))
       case _             => successful(Ok(case_not_found(reference)))

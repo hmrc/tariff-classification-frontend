@@ -23,6 +23,9 @@ import java.time.Clock
 class AppConfigSpec extends SpecBase {
 
   "Config" should {
+    "decision Lifetime Days" in {
+      realAppConfig.decisionLifetimeDays shouldBe 1
+    }
 
     "Build local Binding Tariff Base URL" in {
       realAppConfig.bindingTariffClassificationUrl shouldBe "http://localhost:9580"

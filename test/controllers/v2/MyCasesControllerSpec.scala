@@ -20,7 +20,6 @@ import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models._
 import models.viewmodels.{AssignedToMeTab, CompletedByMeTab, ReferredByMeTab}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -28,7 +27,7 @@ import services.{CasesService, EventsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{Cases, Events}
 import views.html.v2.my_cases_view
-
+import org.mockito.Mockito.*
 import scala.concurrent.Future
 
 class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
@@ -50,14 +49,14 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   "MyCasesController" should {
 
     "return 200 and the correct content when no tab has ben specified" in {
-      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase())))
+      when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase()))))
 
-      given(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.referralEventsById))
+      when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.referralEventsById))
 
-      given(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.completionEventsById))
+      when(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES))).displayMyCases()(fakeRequest)
 
@@ -76,14 +75,14 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "return 200 OK with the correct subNavigation tab for AssignedToMe" in {
-      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase().copy(daysElapsed = 35))))
+      when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aLiabilityCase().copy(daysElapsed = 35)))))
 
-      given(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.referralEventsById))
+      when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.referralEventsById))
 
-      given(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.completionEventsById))
+      when(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(AssignedToMeTab)(fakeRequest))
 
@@ -93,14 +92,14 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "return 200 OK with the correct subNavigation tab for ReferredByMe" in {
-      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+      when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35)))))
 
-      given(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.referralEventsById))
+      when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.referralEventsById))
 
-      given(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.completionEventsById))
+      when(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
@@ -110,14 +109,14 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "return 200 OK with the correct subNavigation tab for ReferredByMe without any details for the event" in {
-      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+      when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35)))))
 
-      given(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.referralEventsById))
+      when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.referralEventsById))
 
-      given(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.completionEventsById))
+      when(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(ReferredByMeTab)(fakeRequest))
 
@@ -127,14 +126,14 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "return 200 OK with the correct subNavigation tab for CompletedByMe" in {
-      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.liabilityLiveCaseExample)))
+      when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.liabilityLiveCaseExample))))
 
-      given(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.referralEventsById))
+      when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.referralEventsById))
 
-      given(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.completionEventsById))
+      when(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
 
@@ -144,14 +143,14 @@ class MyCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "return 200 OK with the correct subNavigation tab for CompletedByMe without any details for the event" in {
-      given(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35))))
+      when(casesService.getCasesByAssignee(any[Operator], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(Cases.aCase(), Cases.aCase().copy(daysElapsed = 35)))))
 
-      given(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.referralEventsById))
+      when(eventService.findReferralEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.referralEventsById))
 
-      given(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
-        .willReturn(Future.successful(Events.completionEventsById))
+      when(eventService.findCompletionEvents(any[Set[String]])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(Events.completionEventsById))
 
       val result = await(controller(Set(Permission.VIEW_MY_CASES)).displayMyCases(CompletedByMeTab)(fakeRequest))
 

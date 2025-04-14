@@ -18,10 +18,11 @@ package models.forms
 
 import models.Decision
 import models.constraints.StopOnFirstFail
-import models.forms.FormConstraints._
+import models.forms.FormConstraints.*
 import models.forms.mappings.Constraints
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.*
+import play.api.data.validation.Constraint
 
 import java.time.Instant
 import javax.inject.Inject
@@ -40,7 +41,6 @@ case class DecisionFormData(
 )
 
 class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
-
   def btiForm(): Form[DecisionFormData] =
     Form[DecisionFormData](
       mapping(
@@ -49,7 +49,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
             commodityCodeConstraints.commodityCodeLengthValid,
             commodityCodeConstraints.commodityCodeNumbersValid,
             commodityCodeConstraints.commodityCodeEvenDigitsValid
-          ): _*
+          )*
         ),
         "goodsDescription"             -> text,
         "methodSearch"                 -> text,
@@ -60,13 +60,13 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
         "explanation"                  -> text,
         "expiryDate"                   -> FormDate.optionalDate(),
         "expiryDate.explicitEndDate"   -> boolean
-      )(DecisionFormData.apply)(DecisionFormData.unapply).verifying(
+      )(DecisionFormData.apply)(o => Some(Tuple.fromProductTyped(o))).verifying(
         "atar.editRuling.expiryDate.error.required.all",
         formData => if (formData.explicitEndDate) formData.expiryDate.isDefined else true
       )
     )
 
-  val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
+  lazy val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
       "bindingCommodityCode" -> text
         .verifying(
@@ -86,7 +86,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
       "explanation" -> text.verifying(customNonEmpty("decision_form.error.decisionExplanation.required")),
       "expiryDate"  -> FormDate.optionalDate(),
       "expiryDate.explicitEndDate" -> boolean
-    )(DecisionFormData.apply)(DecisionFormData.unapply).verifying(
+    )(DecisionFormData.apply)(o => Some(Tuple.fromProductTyped(o))).verifying(
       "atar.editRuling.expiryDate.error.required.all",
       formData => if (formData.explicitEndDate) formData.expiryDate.isDefined else true
     )
@@ -118,7 +118,7 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
             commodityCodeConstraints.commodityCodeLengthValid,
             commodityCodeConstraints.commodityCodeNumbersValid,
             commodityCodeConstraints.commodityCodeEvenDigitsValid
-          ): _*
+          )*
         ),
         "goodsDescription" -> text,
         "methodSearch"     -> text,

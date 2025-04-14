@@ -56,7 +56,7 @@ class SampleReturnController @Inject() (
     c: Case,
     notFilledForm: Form[Option[SampleReturn]],
     options: Option[String] = None
-  )(implicit request: AuthenticatedRequest[_]): Html =
+  )(implicit request: AuthenticatedRequest[?]): Html =
     change_sample_return(c, notFilledForm)
 
   override def chooseStatus(reference: String, options: Option[String] = None): Action[AnyContent] =

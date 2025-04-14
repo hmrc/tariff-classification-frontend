@@ -26,7 +26,7 @@ object ActivityForm {
   val form: Form[ActivityFormData] = Form(
     mapping(
       "note" -> textNonEmpty("error.empty.note")
-    )(ActivityFormData.apply)(ActivityFormData.unapply)
+    )(ActivityFormData.apply)(o => Some(o.note))
   )
 
 }

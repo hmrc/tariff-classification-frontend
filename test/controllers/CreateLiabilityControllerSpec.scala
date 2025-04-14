@@ -20,7 +20,6 @@ import models._
 import models.forms.LiabilityForm
 import models.request.AuthenticatedRequest
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
 import play.api.data.FormBinding.Implicits.formBinding
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -28,6 +27,7 @@ import services.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.html.create_liability
+import org.mockito.Mockito.*
 
 import scala.concurrent.Future._
 
@@ -90,8 +90,8 @@ class CreateLiabilityControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect on success" in {
-      given(casesService.createCase(any[LiabilityOrder], any[Operator])(any[HeaderCarrier]))
-        .willReturn(successful(aCase(withReference("reference"))))
+      when(casesService.createCase(any[LiabilityOrder], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(successful(aCase(withReference("reference"))))
       val request = newFakePOSTRequestWithCSRF().withFormUrlEncodedBody(
         "item-name"        -> "item name",
         "trader-name"      -> "Trader",

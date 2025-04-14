@@ -42,16 +42,16 @@
         @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors) {
             <span class="govuk-error-message" id="error-message-date-input">
                 @dateField.errors.map { error =>
-                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
+                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args*)
                 }
                 @dayField.errors.map { error =>
-                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
+                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args*)
                 }
                 @monthField.errors.map { error =>
-                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
+                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args*)
                 }
                 @yearField.errors.map { error =>
-                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args: _*)
+                    <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args*)
                 }
             </span>
         }

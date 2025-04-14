@@ -34,9 +34,16 @@ class AdvancedSearchResultImagesViewSpec extends ViewSpec {
       doc should containElementWithID("advanced_search_results-empty")
       doc shouldNot containElementWithID("advanced_search_images-results")
     }
+    "Render No Results using .render" in {
+
+      val doc = view(advanced_search_results_images.render(Paged.empty[SearchResult]))
+
+      doc should containElementWithID("advanced_search_results-empty")
+      doc shouldNot containElementWithID("advanced_search_images-results")
+    }
 
     "Render with Results" in {
-      //Given
+      // Given
       val c = aCase(
         withReference("reference"),
         withStatus(CaseStatus.OPEN),
@@ -52,7 +59,7 @@ class AdvancedSearchResultImagesViewSpec extends ViewSpec {
       )
       val searchResult = SearchResult(c, storedAttachments)
 
-      val doc = view(advanced_search_results_images(Paged(Seq(searchResult))))
+      val doc = view(advanced_search_results_images.ref.f(Paged(Seq(searchResult))))
 
       doc shouldNot containElementWithID("advanced_search_results-empty")
       doc should containElementWithID("advanced_search_images-results")

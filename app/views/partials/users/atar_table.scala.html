@@ -25,7 +25,7 @@
 @import views.html.partials.error_summary
 @import controllers.Tab
 
-@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(atarTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[?], messages: Messages)
     @error_summary(form.errors, keySwaps = Map("atarCases" -> "atarCases-0"))
     <h2 class="govuk-heading-l">@messages("users.user.atar.heading")</h2>
     @helper.form(action = MoveCasesController.postMoveATaRCases(userID).withFragment(Tab.ATAR_TAB.name), Symbol("id") -> "atarCases", Symbol("novalidate") -> "novalidate") {
@@ -82,7 +82,7 @@
                         @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
                             <div class="multiple-choice">
                                 <fieldset  class="govuk-fieldset">
-                                @defining(s"${form("atarCases").id}-$index") { id: String =>
+                                @defining(s"${form("atarCases").id}-$index") { (id: String) =>
                                     <div class="govuk-checkboxes" data-module="govuk-checkboxes">
                                         <div class="govuk-checkboxes__item">
                                             <input class="govuk-checkboxes__input" id="@{id}" name="@{form("atarCases").name}[@index]" type="checkbox" value="@{result.reference}" @if(form("atarCases").hasErrors){aria-describedby="error-message-@{form("atarCases").id}-input"} @if(form("atarCases").value.contains(result.reference)){checked="checked"}>

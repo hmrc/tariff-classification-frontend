@@ -16,7 +16,6 @@
 
 package views.forms.components
 
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import views.ViewMatchers._
@@ -30,7 +29,7 @@ class InputTextViewSpec extends ViewSpec {
     val form = Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(FormData.unapply)
+      )(FormData.apply)(o => Option(o.value))
     ).fill(FormData("v"))
 
     "Render" in {
@@ -45,16 +44,18 @@ class InputTextViewSpec extends ViewSpec {
     }
 
     "Disable autocomplete when required" in {
-      //When
-      val doc = view(input_text(form("field"), "Label", disableAutoComplete = true))
+      // When
+      val doc =
+        view(input_text.ref.f(form("field"), "Label", None, None, None, None, None, true, None, "group")(messages))
 
       doc.getElementById("field") should haveAttribute("autocomplete", "off")
     }
     "enable an error prefix for screen reader" in {
       lazy val emptyForm = Map[String, String]()
       val formWithError  = form.bind(emptyForm).apply("field")
-      val doc            = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
+      val doc =
+        view(input_text.render(formWithError, "Span", None, None, None, None, None, false, None, "group", messages))
+      doc.getElementsByClass("govuk-visually-hidden").text() shouldBe errorPrefix
     }
   }
 

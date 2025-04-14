@@ -20,8 +20,9 @@ import models.CaseStatus.CaseStatus
 import utils.Cases._
 
 import java.time.Instant
+import base.SpecBase
 
-class PermissionTest extends ModelsBaseSpec {
+class PermissionTest extends SpecBase {
 
   private val readOnly                           = Operator(id = "id", role = Role.READ_ONLY)
   private val teamMember                         = Operator(id = "id", role = Role.CLASSIFICATION_OFFICER)

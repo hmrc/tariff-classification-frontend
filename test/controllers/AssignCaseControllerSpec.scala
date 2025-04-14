@@ -18,7 +18,7 @@ package controllers
 
 import models._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.mvc.Result

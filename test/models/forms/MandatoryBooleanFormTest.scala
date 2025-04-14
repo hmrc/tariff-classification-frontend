@@ -16,13 +16,13 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 
-class MandatoryBooleanFormTest extends ModelsBaseSpec {
+class MandatoryBooleanFormTest extends SpecBase {
 
   "Boolean Form 'Bind From Request'" should {
     "fail on empty request" in {
-      BooleanForm.form.bindFromRequest(Map("state" -> Seq())).hasErrors shouldBe true
+      BooleanForm.form.bindFromRequest(Map("state" -> Seq())).hasErrors   shouldBe true
       BooleanForm.form.bindFromRequest(Map("state" -> Seq(""))).hasErrors shouldBe true
     }
 

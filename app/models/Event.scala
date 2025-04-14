@@ -38,7 +38,7 @@ case class Event(
 )
 
 object Event {
-  val latestFirst: Ordering[Instant] = Ordering.fromLessThan(_ isAfter _)
+  val latestFirst: Ordering[Instant] = Ordering.fromLessThan(_.isAfter(_))
 }
 
 sealed trait Details {

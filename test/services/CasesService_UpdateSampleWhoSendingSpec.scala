@@ -19,8 +19,7 @@ package services
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -48,9 +47,9 @@ class CasesService_UpdateSampleWhoSendingSpec
       val originalCase       = aCase.copy(sample = aCase.sample.copy(whoIsSending = Some(SampleSend.TRADER)))
       val caseUpdated        = aCase.copy(sample = aCase.sample.copy(whoIsSending = Some(SampleSend.AGENT)))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(service.updateWhoSendSample(originalCase, Some(SampleSend.AGENT), operator)) shouldBe caseUpdated
 

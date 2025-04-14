@@ -37,7 +37,7 @@ class AppealStatusViewSpec extends ViewSpec {
       doc.text() shouldBe ""
     }
 
-    //ADR
+    // ADR
     "render under mediation for IN_PROGRESS ADR" in {
 
       val c = aCase(
@@ -49,7 +49,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      val doc = view(appeal_status(c, "id"))
+      val doc = view(appeal_status.ref.f(c, "id"))
 
       doc.text() shouldBe "UNDER MEDIATION"
     }
@@ -65,7 +65,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      val doc = view(appeal_status(c, "id"))
+      val doc = view(appeal_status.render(c, "id"))
 
       doc.text() shouldBe "COMPLETED"
     }
@@ -86,7 +86,7 @@ class AppealStatusViewSpec extends ViewSpec {
       doc.text() shouldBe "COMPLETED"
     }
 
-    //REVIEW
+    // REVIEW
     "render under review for IN_PROGRESS REVIEW" in {
 
       val c = aCase(

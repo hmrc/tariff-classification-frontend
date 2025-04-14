@@ -16,9 +16,10 @@
 
 package models.forms
 
-import models.{AppealStatus, AppealType, ModelsBaseSpec}
+import models.{AppealStatus, AppealType}
+import base.SpecBase
 
-class AppealFormTest extends ModelsBaseSpec {
+class AppealFormTest extends SpecBase {
 
   "Status Form: Bind from request" should {
     "Bind empty" in {

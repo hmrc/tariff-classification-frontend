@@ -35,8 +35,8 @@ object Reports {
       .getOrElse(messages("reporting.team.unknown"))
 
   def formatField(
-    field: ReportField[_],
-    result: ReportResultField[_],
+    field: ReportField[?],
+    result: ReportResultField[?],
     usersByPid: Map[String, Operator],
     teamsById: Map[String, Queue]
   )(implicit messages: Messages): String = result match {
@@ -62,7 +62,7 @@ object Reports {
   }
 
   def formatCaseReport(report: CaseReport, usersByPid: Map[String, Operator], teamsById: Map[String, Queue])(
-    row: Map[String, ReportResultField[_]]
+    row: Map[String, ReportResultField[?]]
   )(implicit messages: Messages): List[String] =
     report.fields.toSeq.map { field =>
       row

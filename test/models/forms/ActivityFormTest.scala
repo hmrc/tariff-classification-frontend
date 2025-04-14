@@ -16,9 +16,9 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 
-class ActivityFormTest extends ModelsBaseSpec {
+class ActivityFormTest extends SpecBase {
 
   "Bind from request" should {
     "Bind empty" in {

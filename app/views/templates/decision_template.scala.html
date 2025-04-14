@@ -23,7 +23,7 @@
 
 @(c: Case, d: Decision)(implicit messages: Messages)
 
-@defining(c.application.asLiabilityOrder) { liab: LiabilityOrder =>
+@defining(c.application.asLiabilityOrder) { (liab: LiabilityOrder) =>
 <div class="print-document" id="page-1">
     <div class="header" data-render-header="yes">
         <div class="govuk-grid-row" data-column="one-third">

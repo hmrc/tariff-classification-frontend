@@ -171,7 +171,7 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       ("decisionLetter", decisionLetter, xlsDecisionTransformer, decisionLetterHeadings, Seq.empty)
     )
 
-    input.foreach(args => (test _).tupled(args))
+    input.foreach(args => test.tupled(args))
   }
 
   "resolve" must {
@@ -201,6 +201,6 @@ class PdfGeneratorServiceSpec extends SpecBase with ScalaFutures {
       ("does not start with a custom resolver '*/'", "test/resources/fop/file.xls", "test/resources/fop/file.xls")
     )
 
-    input.foreach(args => (test _).tupled(args))
+    input.foreach(args => test.tupled(args))
   }
 }

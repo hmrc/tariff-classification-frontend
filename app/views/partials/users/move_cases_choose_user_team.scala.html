@@ -31,7 +31,7 @@
 @(
         form: Form[String],
         queues: List[Queue]
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @heading = @{messages("users.move_cases.choose_users_team.header")}
 

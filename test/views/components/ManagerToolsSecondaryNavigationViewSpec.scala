@@ -23,13 +23,10 @@ import views.html.components.manager_tools_secondary_navigation
 
 class ManagerToolsSecondaryNavigationViewSpec extends ViewSpec {
 
-  def managerToolsSecondaryNavigationView(selectedTab: SubNavigationTab): Html =
-    manager_tools_secondary_navigation(selectedTab)
-
   "ManagerToolsSecondaryNavigation" should {
 
     "display Users tab" in {
-      val doc = view(managerToolsSecondaryNavigationView(ManagerToolsUsersTab))
+      val doc = view(manager_tools_secondary_navigation(ManagerToolsUsersTab))
 
       doc should containElementWithID("sub_nav_manager_tools_users_tab")
 
@@ -39,7 +36,7 @@ class ManagerToolsSecondaryNavigationViewSpec extends ViewSpec {
     }
 
     "display Keywords tab" in {
-      val doc = view(managerToolsSecondaryNavigationView(ManagerToolsKeywordsTab))
+      val doc = view(manager_tools_secondary_navigation.ref.f(ManagerToolsKeywordsTab)(messages))
 
       doc should containElementWithID("sub_nav_manager_tools_keywords_tab")
 
@@ -49,7 +46,7 @@ class ManagerToolsSecondaryNavigationViewSpec extends ViewSpec {
     }
 
     "display Reports tab" in {
-      val doc = view(managerToolsSecondaryNavigationView(ManagerToolsReportsTab))
+      val doc = view(manager_tools_secondary_navigation.render(ManagerToolsReportsTab, messages))
 
       doc should containElementWithID("sub_nav_manager_tools_reports_tab")
 

@@ -21,11 +21,11 @@ import connectors.BindingTariffClassificationConnector
 import models.Role.Role
 import models.{NoPagination, Operator, Paged, Pagination}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.reset
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
 class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
@@ -49,7 +49,7 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     val manager     = mock[Operator]
 
     "delegate to connector" in {
-      given(connector.updateUser(refEq(updatedUser))(any[HeaderCarrier])) willReturn successful(updatedUser)
+      when(connector.updateUser(refEq(updatedUser))(any[HeaderCarrier])).thenReturn(successful(updatedUser))
 
       await(service.updateUser(oldUser, updatedUser, manager)) shouldBe updatedUser
     }
@@ -58,7 +58,7 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Get User" should {
 
     "delegate to the connector" in {
-      given(connector.getUserDetails("PID")) willReturn successful(Some(operator))
+      when(connector.getUserDetails("PID")).thenReturn(successful(Some(operator)))
 
       await(service.getUser("PID")) shouldBe Some(operator)
 
@@ -71,7 +71,7 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     val manager     = mock[Operator]
 
     "delegate to connector" in {
-      given(connector.markDeleted(refEq(oldUser))(any[HeaderCarrier])) willReturn successful(updatedUser)
+      when(connector.markDeleted(refEq(oldUser))(any[HeaderCarrier])).thenReturn(successful(updatedUser))
 
       await(service.markDeleted(oldUser, manager)) shouldBe updatedUser
     }
@@ -80,8 +80,8 @@ class UserServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   "Get all users" should {
 
     "return all users" in {
-      given(connector.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Operator("1"))))
+      when(connector.getAllUsers(any[Seq[Role]], any[String], any[Pagination])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(Operator("1")))))
       await(service.getAllUsers(Seq(models.Role.CLASSIFICATION_OFFICER), "2", NoPagination())) shouldBe Paged(
         Seq(Operator("1"))
       )

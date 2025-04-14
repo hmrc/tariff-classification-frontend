@@ -24,7 +24,7 @@ GET         /reports/choose-teams                               controllers.Repo
 POST        /reports/choose-teams                               controllers.ReportingController.postChangeTeamsFilter(report: models.reporting.Report, pagination: models.Pagination ?= models.SearchPagination())
 GET         /reports/:name                                      controllers.ReportingController.getReportByName(name: String)
 
-GET         /cases                                              controllers.Default.redirect(to = controllers.routes.IndexController.get.url)
+GET         /cases                                              controllers.Default.redirect(to = controllers.routes.IndexController.get().url)
 GET         /cases/:reference                                   controllers.CaseController.get(reference: String)
 GET         /cases/:reference/sample                            controllers.CaseController.sampleDetails(reference: String)
 

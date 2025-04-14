@@ -61,7 +61,7 @@ object ReportDateForm extends Mappings {
           mapping(
             min(dateRangeKey) -> date,
             max(dateRangeKey) -> endDateInclusive
-          )(InstantRange.apply)(InstantRange.unapply).bind(data)
+          )(InstantRange.apply)(o => Some(Tuple.fromProductTyped(o))).bind(data)
         } else {
           Right(InstantRange.allTime)
         }
@@ -70,7 +70,7 @@ object ReportDateForm extends Mappings {
       mapping(
         min(dateRangeKey) -> date,
         max(dateRangeKey) -> endDateInclusive
-      )(InstantRange.apply)(InstantRange.unapply).unbind(value)
+      )(InstantRange.apply)(o => Some(Tuple.fromProductTyped(o))).unbind(value)
   }
 
   val form: Form[ReportDateFormData] = Form(
@@ -80,6 +80,6 @@ object ReportDateForm extends Mappings {
         "reporting.choose_date.invalid_end_date",
         range => range.max.isAfter(range.min)
       )
-    )(ReportDateFormData.apply)(ReportDateFormData.unapply)
+    )(ReportDateFormData.apply)(o => Some(Tuple.fromProductTyped(o)))
   )
 }

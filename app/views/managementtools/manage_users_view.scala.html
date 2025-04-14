@@ -29,7 +29,7 @@
         fullMainContent: full_main_content_layout
 )
 
-@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(activeSubNav : SubNavigationTab = ManagerToolsReportsTab, users : UsersTabViewModel, usersCount: Map[String, List[Case]])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
  pageTitle = messages("management.manage-users-title"),

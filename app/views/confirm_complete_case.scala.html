@@ -27,7 +27,7 @@
 )
 
 
-@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 
 @callToRedirect =@{

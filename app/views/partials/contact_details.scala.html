@@ -22,7 +22,7 @@
 @(applicant: ApplicantTabViewModel)(implicit  messages: Messages)
 <h3 class="govuk-heading-m">Contact details</h3>
 
-    @defining(applicant.contact) { co: Contact =>
+    @defining(applicant.contact) { (co: Contact) =>
         <dl class="govuk-summary-list">
 
             <div class="govuk-summary-list__row">

@@ -16,12 +16,12 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 import play.api.data.Form
 
 import java.time.{ZoneOffset, ZonedDateTime}
 
-class FormDateTest extends ModelsBaseSpec {
+class FormDateTest extends SpecBase {
 
   private val test         = Form(FormDate.date("invalid.date"))
   private val optionalTest = Form(FormDate.optionalDate("", "invalid.date"))
@@ -34,42 +34,34 @@ class FormDateTest extends ModelsBaseSpec {
       test.bindFromRequest(Map.empty).errors should have length 1
     }
 
-    "disallow empty fields" in {
+    "disallow empty fields" in
       assertInvalid(
         day = emptyStr,
         month = emptyStr,
         year = emptyStr,
         List("invalid.date.error.required.all")
       )
-    }
 
-    "disallow empty day" in {
+    "disallow empty day" in
       assertInvalid(day = emptyStr, month = "1", year = "2000", List("invalid.date.error.required.one"))
-    }
 
-    "disallow empty month" in {
+    "disallow empty month" in
       assertInvalid(day = "1", month = emptyStr, year = "2000", List("invalid.date.error.required.one"))
-    }
 
-    "disallow empty year" in {
+    "disallow empty year" in
       assertInvalid(day = "1", month = "1", year = emptyStr, List("invalid.date.error.required.one"))
-    }
 
-    "disallow empty month and year" in {
+    "disallow empty month and year" in
       assertInvalid(day = "1", month = emptyStr, year = emptyStr, List("invalid.date.error.required.two"))
-    }
 
-    "disallow empty day and month" in {
+    "disallow empty day and month" in
       assertInvalid(day = emptyStr, month = emptyStr, year = "2000", List("invalid.date.error.required.two"))
-    }
 
-    "disallow empty day and year" in {
+    "disallow empty day and year" in
       assertInvalid(day = emptyStr, month = "1", year = emptyStr, List("invalid.date.error.required.two"))
-    }
 
-    "verify invalid date" in {
+    "verify invalid date" in
       assertInvalid(day = "30", month = "02", year = "2019", List("invalid.date.error.invalid"))
-    }
 
     "maps to data" in {
       test
@@ -100,42 +92,34 @@ class FormDateTest extends ModelsBaseSpec {
       assertOptionalInvalid(day = emptyStr, month = emptyStr, year = emptyStr, List(), hasEndDate = false)
     }
 
-    "disallow empty fields" in {
+    "disallow empty fields" in
       assertOptionalInvalid(
         day = emptyStr,
         month = emptyStr,
         year = emptyStr,
         List("invalid.date.error.required.all")
       )
-    }
 
-    "disallow empty day" in {
+    "disallow empty day" in
       assertOptionalInvalid(day = emptyStr, month = "1", year = "2000", List("invalid.date.error.required.one"))
-    }
 
-    "disallow empty month" in {
+    "disallow empty month" in
       assertOptionalInvalid(day = "1", month = emptyStr, year = "2000", List("invalid.date.error.required.one"))
-    }
 
-    "disallow empty year" in {
+    "disallow empty year" in
       assertOptionalInvalid(day = "1", month = "1", year = emptyStr, List("invalid.date.error.required.one"))
-    }
 
-    "disallow empty month and year" in {
+    "disallow empty month and year" in
       assertOptionalInvalid(day = "1", month = emptyStr, year = emptyStr, List("invalid.date.error.required.two"))
-    }
 
-    "disallow empty day and month" in {
+    "disallow empty day and month" in
       assertOptionalInvalid(day = emptyStr, month = emptyStr, year = "2000", List("invalid.date.error.required.two"))
-    }
 
-    "disallow empty day and year" in {
+    "disallow empty day and year" in
       assertOptionalInvalid(day = emptyStr, month = "1", year = emptyStr, List("invalid.date.error.required.two"))
-    }
 
-    "verify invalid date" in {
+    "verify invalid date" in
       assertOptionalInvalid(day = "30", month = "02", year = "2019", List("invalid.date.error.invalid"))
-    }
 
     "not verify invalid date when not required" in {
       assertOptionalInvalid(day = "30", month = "02", year = "2019", List(), hasEndDate = false)

@@ -20,7 +20,7 @@
 @import views.html.partials._
 @import models.viewmodels.NoTabSelected
 @import views.html.partials.statuses.{appeal_status, case_status}
-@import controllers.routes._
+@import controllers.routes.OperatorDashboardController
 @import controllers.v2.routes.MyCasesController
 @import models.viewmodels.CompletedByMeTab
 @import utils.Dates
@@ -32,7 +32,7 @@
 )
 
 
-@(c: Case)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(
     pageTitle = messages("page.title.ruling.cancelled"),

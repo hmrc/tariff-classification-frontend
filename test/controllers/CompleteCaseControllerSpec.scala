@@ -20,7 +20,7 @@ import models._
 import models.forms.v2.LiabilityDetailsForm
 import models.forms.{CommodityCodeConstraints, DecisionForm}
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.{MimeTypes, Status}
 import play.api.i18n.Messages

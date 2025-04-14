@@ -16,14 +16,14 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{CancelReason, Cancellation, CaseStatus}
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import utils.CasePayloads
 import utils.Cases._
 import utils.JsonFormatters._
 
-class ExtendedUseCaseSpec extends IntegrationTest with MockitoSugar {
+class ExtendedUseCaseSpec extends IntegrationTest {
 
   "Case Extended Use Change" should {
     val c = aCase(

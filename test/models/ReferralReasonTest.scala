@@ -16,7 +16,9 @@
 
 package models
 
-class ReferralReasonTest extends ModelsBaseSpec {
+import base.SpecBase
+
+class ReferralReasonTest extends SpecBase {
 
   "format" should {
     "render to String" in {

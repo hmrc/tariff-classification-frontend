@@ -19,7 +19,6 @@ package metrics
 import com.codahale.metrics.{MetricRegistry, Timer}
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito
-import org.mockito.Mockito._
 import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AsyncWordSpecLike
@@ -27,7 +26,7 @@ import org.scalatest.{BeforeAndAfterAll, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{MessagesAbstractController, Results}
 import play.api.test.{FakeRequest, Helpers}
-
+import org.mockito.Mockito.*
 import scala.concurrent.Future
 
 class HasMetricsSpec
@@ -41,7 +40,7 @@ class HasMetricsSpec
     val timer: Timer.Context                = mock[Timer.Context]
     val metrics: MetricRegistry             = mock[MetricRegistry]
     override val localMetrics: LocalMetrics = mock[LocalMetrics]
-    when(localMetrics.startTimer(anyString())) thenReturn timer
+    when(localMetrics.startTimer(anyString())).thenReturn(timer)
   }
 
   class TestHasMetrics extends HasMetrics with MockHasMetrics

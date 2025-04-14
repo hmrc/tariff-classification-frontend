@@ -17,16 +17,18 @@
 package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
-import models._
+import models.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.`given`
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.v2.gateway_cases_view
+import org.mockito.Mockito.*
+
+import scala.concurrent.Future
 
 class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
 
@@ -46,8 +48,8 @@ class GatewayCasesControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   "GatewayCasesController" should {
 
     "return 200 and the correct content when no tab has ben specified" in {
-      given(casesService.getCasesByQueue(any[Queue], any[Pagination], any[Set[ApplicationType]])(any[HeaderCarrier]))
-        .willReturn(Paged(Seq(Cases.btiNewCase, Cases.aCase(), Cases.correspondenceCaseExample)))
+      when(casesService.getCasesByQueue(any[Queue], any[Pagination], any[Set[ApplicationType]])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(Cases.btiNewCase, Cases.aCase(), Cases.correspondenceCaseExample))))
 
       val result = await(controller(Set(Permission.VIEW_QUEUE_CASES))).displayGatewayCases()(fakeRequest)
 

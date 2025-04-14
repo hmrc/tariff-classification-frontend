@@ -18,8 +18,9 @@ package models.forms.v2
 
 import models._
 import utils.Cases
+import base.SpecBase
 
-class MiscDetailsFormSpec extends ModelsBaseSpec {
+class MiscDetailsFormSpec extends SpecBase {
 
   private val miscCase        = Cases.miscellaneousCaseExample
   private val sampleEmptyCase = Cases.miscellaneousCaseExample.copy(application = Cases.miscExampleWithMissingName)
@@ -34,7 +35,7 @@ class MiscDetailsFormSpec extends ModelsBaseSpec {
 
   "MiscDetailsForm" should {
     "Fail to bind" when {
-      "a case with mandatorys field is missing" in {
+      "a case with mandatorys field is missing" in
         MiscDetailsForm
           .miscDetailsForm(sampleEmptyCase)
           .fold(
@@ -45,10 +46,9 @@ class MiscDetailsFormSpec extends ModelsBaseSpec {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
-    "Bind valid form" in {
+    "Bind valid form" in
       MiscDetailsForm
         .miscDetailsForm(miscCase)
         .fold(
@@ -56,41 +56,36 @@ class MiscDetailsFormSpec extends ModelsBaseSpec {
           aCase => aCase shouldBe miscCase
         )
 
-    }
-
     "fail to bind with correct error messages" when {
 
-      "summary is empty" in {
+      "summary is empty" in
         MiscDetailsForm
           .miscDetailsForm(sampleEmptyCase)
           .fold(
             form => {
-              form.hasErrors                      shouldBe true
-              form.errors.size                    shouldBe 1
-              form.errors.map(_.key)              shouldBe Seq("summary")
+              form.hasErrors         shouldBe true
+              form.errors.size       shouldBe 1
+              form.errors.map(_.key) shouldBe Seq("summary")
               form.error("summary").map(_.message shouldBe "Enter a summary")
 
             },
             _ => "form should not succeed"
           )
 
-      }
-
-      "case type is not recognised" in {
+      "case type is not recognised" in
         MiscDetailsForm
           .miscDetailsForm(miscCase)
           .copy(data = Map("caseType" -> "unrecognised"))
           .fold(
             form => {
-              form.hasErrors                      shouldBe true
-              form.errors.size                    shouldBe 1
-              form.errors.map(_.key)              shouldBe Seq("caseType")
+              form.hasErrors         shouldBe true
+              form.errors.size       shouldBe 1
+              form.errors.map(_.key) shouldBe Seq("caseType")
               form.error("summary").map(_.message shouldBe "error.empty.miscCaseType")
 
             },
             _ => "form should not succeed"
           )
-      }
     }
 
     "Fill" should {

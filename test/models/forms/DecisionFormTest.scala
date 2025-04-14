@@ -16,14 +16,13 @@
 
 package models.forms
 
-import models.{Decision, ModelsBaseSpec}
-import org.mockito.BDDMockito._
+import models.Decision
 import play.api.data.FormError
-import play.api.data.validation.{Constraint, Invalid, Valid, ValidationResult}
+import base.SpecBase
 
 import java.time.Instant
 
-class DecisionFormTest extends ModelsBaseSpec {
+class DecisionFormTest extends SpecBase {
 
   private val decision = Decision(
     bindingCommodityCode = "0100000000",
@@ -54,14 +53,10 @@ class DecisionFormTest extends ModelsBaseSpec {
     explicitEndDate = true
   )
 
-  private def formProvider(commodityCodeConstraints: CommodityCodeConstraints) =
-    new DecisionForm(commodityCodeConstraints)
-
   "liability form" should {
     "bind the form from the request" when {
       "provided with blank values" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
-        val form = formProvider(mockedCommodityCodeConstraint)
+        val form = new DecisionForm(new CommodityCodeConstraints)
           .liabilityForm(decision)
           .bindFromRequest(emptyParams)
 
@@ -69,8 +64,7 @@ class DecisionFormTest extends ModelsBaseSpec {
       }
 
       "provided with valid values" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
-        val form = formProvider(mockedCommodityCodeConstraint).liabilityForm(decision).bindFromRequest(params)
+        val form = new DecisionForm(new CommodityCodeConstraints).liabilityForm(decision).bindFromRequest(params)
 
         form.hasErrors shouldBe false
         form.get       shouldBe decision
@@ -78,19 +72,23 @@ class DecisionFormTest extends ModelsBaseSpec {
     }
     "bind the form from a decision model" when {
       "provided with valid values" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
-        val form                          = formProvider(mockedCommodityCodeConstraint).liabilityForm(decision)
+        val form = new DecisionForm(new CommodityCodeConstraints).liabilityForm(decision)
 
         form.hasErrors shouldBe false
         form.data      shouldBe params.view.mapValues(v => v.head).toMap
+      }
+      "provided decision is not provided" in {
+        val form = new DecisionForm(new CommodityCodeConstraints).liabilityForm()
+
+        form.hasErrors shouldBe false
       }
     }
   }
   "liability complete form" should {
     "bind the form from the request" when {
       "provided with valid values" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
-        val form = formProvider(mockedCommodityCodeConstraint).liabilityCompleteForm(decision).bindFromRequest(params)
+        val form =
+          new DecisionForm(new CommodityCodeConstraints).liabilityCompleteForm(decision).bindFromRequest(params)
 
         form.hasErrors shouldBe false
         form.get       shouldBe decision
@@ -98,8 +96,7 @@ class DecisionFormTest extends ModelsBaseSpec {
     }
     "bind the form from a decision model" when {
       "provided with valid values" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
-        val form                          = formProvider(mockedCommodityCodeConstraint).liabilityCompleteForm(decision)
+        val form = new DecisionForm(new CommodityCodeConstraints).liabilityCompleteForm(decision)
 
         form.hasErrors shouldBe false
         form.data      shouldBe params.view.mapValues(v => v.head).toMap
@@ -107,32 +104,35 @@ class DecisionFormTest extends ModelsBaseSpec {
     }
     "return validation errors" when {
       "provided with invalid values" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(Valid)
-        val form = formProvider(mockedCommodityCodeConstraint)
+        val form = new DecisionForm(new CommodityCodeConstraints)
           .liabilityCompleteForm(decision)
           .bindFromRequest(emptyParams)
 
-        form.hasErrors         shouldBe true
-        form.errors.size       shouldBe 3
-        form.errors.map(_.key) shouldBe Seq("goodsDescription", "methodSearch", "justification")
+        form.hasErrors   shouldBe true
+        form.errors.size shouldBe 6
+        form.errors.map(_.key) shouldBe Seq(
+          "bindingCommodityCode",
+          "bindingCommodityCode",
+          "bindingCommodityCode",
+          "goodsDescription",
+          "methodSearch",
+          "justification"
+        )
       }
     }
   }
   "bti complete form" should {
     "bind data correctly" when {
       "provided with valid values" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint()
-        val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(validDecisionFormData)
+        val form = new DecisionForm(new CommodityCodeConstraints).btiCompleteForm
+          .fillAndValidate(validDecisionFormData.copy(bindingCommodityCode = "12345678"))
 
         form.hasErrors shouldBe false
       }
     }
     "return validation errors" when {
       "all fields are empty" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(validationResultForEmpty =
-          Invalid("decision_form.error.bindingCommodityCode.required")
-        )
-        val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(DecisionFormData())
+        val form = new DecisionForm(new CommodityCodeConstraints).btiCompleteForm.fillAndValidate(DecisionFormData())
 
         form.hasErrors shouldBe true
 
@@ -147,26 +147,21 @@ class DecisionFormTest extends ModelsBaseSpec {
     }
     "return commodity code invalid error" when {
       "provided by an invalid commodity code" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(
-          validationResultForEmpty = Valid,
-          validationResultForValidLength = Invalid("decision_form.error.bindingCommodityCode.valid")
-        )
-
-        val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(validDecisionFormData)
+        val form = new DecisionForm(new CommodityCodeConstraints).btiCompleteForm
+          .fillAndValidate(validDecisionFormData.copy(bindingCommodityCode = "dsaxwafcdbj"))
 
         form.hasErrors shouldBe true
 
-        form.errors shouldBe Seq(FormError("bindingCommodityCode", "decision_form.error.bindingCommodityCode.valid"))
+        form.errors shouldBe Seq(
+          FormError("bindingCommodityCode", "decision_form.error.bindingCommodityCode.valid.number")
+        )
       }
     }
     "return only commodity code empty validation error" when {
       "validation fails both on commodityCodeNonEmpty and commodityCodeValid" in {
-        val mockedCommodityCodeConstraint = mockCommodityCodeConstraint(
-          validationResultForEmpty = Invalid("decision_form.error.bindingCommodityCode.required"),
-          validationResultForValidLength = Invalid("decision_form.error.bindingCommodityCode.valid")
-        )
-
-        val form = formProvider(mockedCommodityCodeConstraint).btiCompleteForm.fillAndValidate(validDecisionFormData)
+        val form =
+          new DecisionForm(new CommodityCodeConstraints).btiCompleteForm
+            .fillAndValidate(validDecisionFormData.copy(bindingCommodityCode = ""))
 
         form.hasErrors shouldBe true
 
@@ -174,24 +169,4 @@ class DecisionFormTest extends ModelsBaseSpec {
       }
     }
   }
-
-  private def mockCommodityCodeConstraint(
-    validationResultForEmpty: ValidationResult = Valid,
-    validationResultForValidLength: ValidationResult = Valid,
-    validationResultForValidNumberType: ValidationResult = Valid,
-    validationResultForValidEvenDigits: ValidationResult = Valid
-  ): CommodityCodeConstraints = {
-    val mockCommodityCodeConstraints = mock[CommodityCodeConstraints]
-    given(mockCommodityCodeConstraints.commodityCodeLengthValid)
-      .willReturn(Constraint[String]("error")(_ => validationResultForValidLength))
-    given(mockCommodityCodeConstraints.commodityCodeNumbersValid)
-      .willReturn(Constraint[String]("error")(_ => validationResultForValidNumberType))
-    given(mockCommodityCodeConstraints.commodityCodeEvenDigitsValid)
-      .willReturn(Constraint[String]("error")(_ => validationResultForValidEvenDigits))
-
-    given(mockCommodityCodeConstraints.commodityCodeNonEmpty)
-      .willReturn(Constraint[String]("error")(_ => validationResultForEmpty))
-    mockCommodityCodeConstraints
-  }
-
 }

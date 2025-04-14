@@ -16,11 +16,12 @@
 
 package models.forms
 
-import models.{Case, Decision, ModelsBaseSpec}
-import utils.Cases._
+import models.{Case, Decision}
+import utils.Cases.*
 import utils.DecisionForms
+import base.SpecBase
 
-class DecisionFormMapperSpec extends ModelsBaseSpec {
+class DecisionFormMapperSpec extends SpecBase {
 
   private val validForm = DecisionForms.validForm
   private val testCase  = btiCaseExample
@@ -59,35 +60,6 @@ class DecisionFormMapperSpec extends ModelsBaseSpec {
 
       attachments should contain only attToPublish
     }
-  }
-
-  "case to decision form data mapper " should {
-
-    "create valid decision form from a valid case " in {
-
-      val caseWithAtt              = testCase.copy(attachments = Seq(attachment("url.to.publish")))
-      val result: DecisionFormData = mapper.caseToDecisionFormData(caseWithAtt)
-
-      compareAllFields(result, testCase.decision.get)
-      result.attachments shouldBe Seq("url.to.publish")
-    }
-
-    "create empty decision form when a case does not have a decision" in {
-
-      val empty                    = ""
-      val caseWithEmptyDecision    = testCase.copy(decision = Option.empty)
-      val result: DecisionFormData = mapper.caseToDecisionFormData(caseWithEmptyDecision)
-
-      result.bindingCommodityCode         shouldBe empty
-      result.goodsDescription             shouldBe empty
-      result.justification                shouldBe empty
-      result.methodSearch                 shouldBe empty
-      result.methodExclusion              shouldBe empty
-      result.methodCommercialDenomination shouldBe empty
-      result.attachments                  shouldBe Seq.empty
-      result.explanation                  shouldBe empty
-    }
-
   }
 
   private def compareAllFields(form: DecisionFormData, decision: Decision): Unit = {

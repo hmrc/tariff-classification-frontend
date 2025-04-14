@@ -22,7 +22,7 @@ import models._
 import models.request.AuthenticatedRequest
 import models.viewmodels.CaseHeaderViewModel
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{reset, times, verify, when}
+import org.mockito.Mockito.*
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
@@ -149,7 +149,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         any[Form[Boolean]],
         anyString(),
         anyString()
-      )(any[AuthenticatedRequest[_]], any[Messages])
+      )(any[AuthenticatedRequest[?]], any[Messages])
     }
 
   }
@@ -164,7 +164,7 @@ class AttachmentsControllerSpec extends ControllerBaseSpec with BeforeAndAfterEa
         any[Form[Boolean]],
         anyString(),
         anyString()
-      )(any[AuthenticatedRequest[_]], any[Messages])
+      )(any[AuthenticatedRequest[?]], any[Messages])
     ).thenReturn(Html("heading"))
     when(casesService.getOne(refEq(testReference))(any[HeaderCarrier])).thenReturn(successful(Some(aCase)))
     when(fileService.getAttachments(refEq(aCase))(any[HeaderCarrier])).thenReturn(successful(Seq.empty))

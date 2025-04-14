@@ -16,9 +16,10 @@
 
 package models.forms
 
-import models.{Contact, LiabilityOrder, LiabilityStatus, ModelsBaseSpec}
+import models.{Contact, LiabilityOrder, LiabilityStatus}
+import base.SpecBase
 
-class LiabilityFormTest extends ModelsBaseSpec {
+class LiabilityFormTest extends SpecBase {
 
   "Bind from request" should {
     "Bind an empty form" in {
@@ -70,7 +71,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "Invalid entry"
     }
 
@@ -85,7 +86,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "error.empty.trader-name"
     }
 
@@ -100,7 +101,7 @@ class LiabilityFormTest extends ModelsBaseSpec {
 
       form.hasErrors shouldBe true
       form.errors      should have(size(1))
-      //TODO get message for messages
+      // TODO get message for messages
       form.errors.head.message shouldBe "error.empty.item-name"
     }
   }

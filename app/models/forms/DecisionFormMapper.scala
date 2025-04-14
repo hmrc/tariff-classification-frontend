@@ -35,27 +35,6 @@ class DecisionFormMapper {
 
     c.copy(decision = Some(decision), attachments = attachments)
   }
-
-  def caseToDecisionFormData(c: Case): DecisionFormData = {
-
-    val form = c.decision map { d: Decision =>
-      DecisionFormData(
-        d.bindingCommodityCode,
-        d.goodsDescription,
-        d.methodSearch.getOrElse(""),
-        d.justification,
-        d.methodCommercialDenomination.getOrElse(""),
-        d.methodExclusion.getOrElse(""),
-        c.attachments.filter(_.shouldPublishToRulings).map(_.id),
-        d.explanation.getOrElse(""),
-        d.effectiveEndDate,
-        explicitEndDate = if (d.effectiveEndDate.isDefined) true else false
-      )
-    }
-
-    form.getOrElse(DecisionFormData())
-  }
-
   private def amendDecision(decision: Decision, form: DecisionFormData): Decision =
     decision.copy(
       bindingCommodityCode = form.bindingCommodityCode,

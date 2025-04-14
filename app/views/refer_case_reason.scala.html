@@ -29,7 +29,7 @@
         backLink: back_link
 )
 
-@(c: Case, form: Form[CaseReferral])(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, form: Form[CaseReferral])(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @inputTextContent(labelText: String) = {
 @input_text(

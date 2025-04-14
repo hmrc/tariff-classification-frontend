@@ -74,7 +74,7 @@ class ReleaseCaseController @Inject() (
     }
 
   private def releaseCase(f: Form[String], caseRef: String)(implicit
-    request: AuthenticatedCaseRequest[_]
+    request: AuthenticatedCaseRequest[?]
   ): Future[Result] =
     getCaseAndRenderView(
       caseRef,
@@ -85,7 +85,7 @@ class ReleaseCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.VIEW_CASES)).async { implicit request =>
-      def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) =
+      def queueNotFound(implicit request: AuthenticatedCaseRequest[?]) =
         successful(resource_not_found(s"Case Queue"))
 
       renderView(

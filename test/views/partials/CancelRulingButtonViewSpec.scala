@@ -46,7 +46,7 @@ class CancelRulingButtonViewSpec extends ViewSpec {
       val c         = Cases.btiCaseExample.copy(status = CaseStatus.OPEN)
       val rulingTab = RulingTabViewModel.fromCase(c)
 
-      val doc = view(cancel_ruling_section(rulingTab))
+      val doc = view(cancel_ruling_section.ref.f(rulingTab))
 
       doc shouldNot containElementWithID(cancelButtonId)
     }
@@ -55,7 +55,7 @@ class CancelRulingButtonViewSpec extends ViewSpec {
       val c         = Cases.btiCaseWithExpiredRuling
       val rulingTab = RulingTabViewModel.fromCase(c)
 
-      val doc = view(cancel_ruling_section(rulingTab))
+      val doc = view(cancel_ruling_section.render(rulingTab))
 
       doc shouldNot containElementWithID(cancelButtonId)
     }

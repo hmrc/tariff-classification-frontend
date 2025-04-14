@@ -40,8 +40,8 @@ class RulingConnector @Inject() (
       val fullURL = s"${configuration.rulingUrl}/search-for-advance-tariff-rulings/ruling/$id"
       http
         .post(url"$fullURL")
-        .setHeader(authHeaders(configuration): _*)
-        .execute[HttpResponse](throwOnFailure(readEitherOf(readRaw)), ec)
+        .setHeader(authHeaders(configuration)*)
+        .execute[HttpResponse](using throwOnFailure(readEitherOf(using readRaw)), ec)
         .map(_ => ())
     }
 }

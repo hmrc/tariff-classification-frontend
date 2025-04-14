@@ -21,7 +21,7 @@ import models.Case
 import models.request.NewEventRequest
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 trait ConnectorCaptor {

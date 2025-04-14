@@ -20,7 +20,7 @@ import base.SpecBase
 import models.request.IdentifierRequest
 import play.api.mvc.{AnyContent, BodyParser, Request, Result}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class BaseFakeIdentifierAction extends IdentifierAction with SpecBase {
 
@@ -28,8 +28,6 @@ class BaseFakeIdentifierAction extends IdentifierAction with SpecBase {
     block(IdentifierRequest(request, "id"))
 
   override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
-
-  override lazy val executionContext: ExecutionContext = executionContext
 }
 
 object FakeIdentifierAction extends BaseFakeIdentifierAction {

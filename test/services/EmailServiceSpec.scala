@@ -19,8 +19,7 @@ package services
 import connectors.EmailConnector
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import play.api.libs.json.{Format, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -40,8 +39,8 @@ class EmailServiceSpec extends ServiceSpecBase {
     val template    = mock[EmailTemplate]
 
     "Throw exception for non-bti" in {
-      given(aCase.application).willReturn(application)
-      given(application.isBTI).willReturn(false)
+      when(aCase.application).thenReturn(application)
+      when(application.isBTI).thenReturn(false)
 
       val exception = intercept[IllegalArgumentException] {
         await(service.sendCaseCompleteEmail(aCase, anOperator))
@@ -56,18 +55,18 @@ class EmailServiceSpec extends ServiceSpecBase {
         .atZone(ZoneOffset.UTC)
         .toInstant
 
-      given(aCase.reference).willReturn("ref")
-      given(aCase.application).willReturn(application)
-      given(aCase.createdDate).willReturn(aDate)
-      given(application.isBTI).willReturn(true)
-      given(application.asATAR).willReturn(application)
-      given(application.contact).willReturn(contact)
-      given(application.goodName).willReturn("item")
+      when(aCase.reference).thenReturn("ref")
+      when(aCase.application).thenReturn(application)
+      when(aCase.createdDate).thenReturn(aDate)
+      when(application.isBTI).thenReturn(true)
+      when(application.asATAR).thenReturn(application)
+      when(application.contact).thenReturn(contact)
+      when(application.goodName).thenReturn("item")
 
-      given(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Email[_]]]))
-        .willReturn(successful((): Unit))
-      given(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]]))
-        .willReturn(successful(template))
+      when(connector.send(any[CaseCompletedEmail])(any[HeaderCarrier], any[Writes[Email[?]]]))
+        .thenReturn(successful((): Unit))
+      when(connector.generate(any[CaseCompletedEmail])(any[HeaderCarrier], any[Format[CaseCompletedEmailParameters]]))
+        .thenReturn(successful(template))
 
       await(service.sendCaseCompleteEmail(aCase, anOperator))
 
@@ -84,7 +83,7 @@ class EmailServiceSpec extends ServiceSpecBase {
             )
           )
         )
-      )(any[HeaderCarrier], any[Writes[Email[_]]])
+      )(any[HeaderCarrier], any[Writes[Email[?]]])
     }
   }
 

@@ -17,10 +17,10 @@
 package models
 
 import models.response.{FileMetadata, ScanStatus}
-
+import base.SpecBase
 import java.time.Instant
 
-class StoredAttachmentTest extends ModelsBaseSpec {
+class StoredAttachmentTest extends SpecBase {
 
   "'Is Image'" should {
 

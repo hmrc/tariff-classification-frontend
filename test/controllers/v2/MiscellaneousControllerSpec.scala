@@ -24,7 +24,7 @@ import models.response.{FileStoreInitiateResponse, UpscanFormTemplate}
 import models.viewmodels._
 import models.viewmodels.miscellaneous._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
@@ -77,18 +77,20 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
   "Miscellaneous Controller" should {
     "display miscellaneous case" in {
       val c = aCase(withReference("reference"), withMiscellaneousApplication)
-      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])) thenReturn Future.successful(attachments)
+      when(fileService.getAttachments(any[Case])(any[HeaderCarrier])).thenReturn(Future.successful(attachments))
 
       when(
         eventService
           .getFilteredEvents(any[String], any[Pagination], any[Option[Set[EventType.Value]]])(any[HeaderCarrier])
-      ) thenReturn Future(pagedEvent)
+      ).thenReturn(Future(pagedEvent))
 
-      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])) thenReturn Future.successful(
-        initiateResponse
+      when(fileService.initiate(any[FileStoreInitiateRequest])(any[HeaderCarrier])).thenReturn(
+        Future.successful(
+          initiateResponse
+        )
       )
 
-      when(queueService.getAll) thenReturn Future(queues)
+      when(queueService.getAll).thenReturn(Future(queues))
 
       when(
         miscellaneousView(
@@ -104,8 +106,8 @@ class MiscellaneousControllerSpec extends ControllerBaseSpec with BeforeAndAfter
           any[Form[ActivityFormData]],
           any[Seq[StoredAttachment]],
           any[PrimaryNavigationTab]
-        )(any[AuthenticatedRequest[_]], any[Messages])
-      ) thenReturn Html("body")
+        )(any[AuthenticatedRequest[?]], any[Messages])
+      ).thenReturn(Html("body"))
 
       val result = await(controller(c, Set(Permission.EDIT_CORRESPONDENCE)))
         .displayMiscellaneous("reference")(newFakeGETRequestWithCSRF())

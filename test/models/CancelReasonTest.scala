@@ -16,7 +16,9 @@
 
 package models
 
-class CancelReasonTest extends ModelsBaseSpec {
+import base.SpecBase
+
+class CancelReasonTest extends SpecBase {
 
   "Review format" should {
     "format 'Annulled'" in {

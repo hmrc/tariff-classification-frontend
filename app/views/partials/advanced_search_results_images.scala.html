@@ -25,7 +25,7 @@
 }else{
     <div class="govuk-grid-row" id="advanced_search_images-results">
         @for((result: SearchResult, index: Int) <- results.results.zipWithIndex) {
-            @defining(result.attachments.filter(att => att.scanStatus.contains(ScanStatus.READY) && att.url.isDefined && att.isImage)) { attachments: Seq[StoredAttachment] =>
+            @defining(result.attachments.filter(att => att.scanStatus.contains(ScanStatus.READY) && att.url.isDefined && att.isImage)) { (attachments: Seq[StoredAttachment]) =>
                 @if(attachments.nonEmpty) {
                     @for((attachment: StoredAttachment, attIndex: Int) <- attachments.zipWithIndex) {
                         @thumbnail(

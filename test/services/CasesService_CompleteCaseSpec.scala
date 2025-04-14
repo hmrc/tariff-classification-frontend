@@ -19,8 +19,7 @@ package services
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
@@ -49,7 +48,7 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
     reset(config)
     reset(emailService)
 
-    given(config.clock).willReturn(clock)
+    when(config.clock).thenReturn(clock)
   }
 
   "Complete Case" should {
@@ -63,15 +62,15 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
           Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
         val caseUpdated = aLiability.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
-        given(config.decisionLifetimeYears).willReturn(1)
-        given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(
+        when(config.decisionLifetimeYears).thenReturn(1)
+        when(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).thenReturn(
           successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L))
         )
-        given(pdfService.generateFopPdf(any[Html], any[String]))
-          .willReturn(successful(PdfFile(Array.emptyByteArray)))
-        given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-        given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-          .willReturn(successful(mock[Event]))
+        when(pdfService.generateFopPdf(any[Html], any[String]))
+          .thenReturn(successful(PdfFile(Array.emptyByteArray)))
+        when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+        when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+          .thenReturn(successful(mock[Event]))
 
         await(serviceMockConfig.completeCase(originalCase, operator)(hc, messages)) shouldBe caseUpdated
 
@@ -98,15 +97,15 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
         val emailTemplate         = EmailTemplate("plain", "html", "from", "subject", "services")
         val updatedEndDateInstant = Some(date("2020-12-31"))
 
-        given(config.decisionLifetimeYears).willReturn(3)
-        given(config.decisionLifetimeDays).willReturn(1)
-        given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-        given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-          .willReturn(successful(mock[Event]))
-        given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
-          .willReturn(Future.successful(emailTemplate))
-        given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
-          .willReturn(Future.successful(()))
+        when(config.decisionLifetimeYears).thenReturn(3)
+        when(config.decisionLifetimeDays).thenReturn(1)
+        when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+        when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+          .thenReturn(successful(mock[Event]))
+        when(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
+          .thenReturn(Future.successful(emailTemplate))
+        when(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
+          .thenReturn(Future.successful(()))
 
         await(serviceMockConfig.completeCase(originalCase, operator)(hc, messages)) shouldBe caseUpdated
 
@@ -137,14 +136,14 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
         val emailTemplate         = EmailTemplate("plain", "html", "from", "subject", "services")
         val updatedEndDateInstant = Some(date("2022-01-01"))
 
-        given(connector.updateCase(any[Case])(any[HeaderCarrier]))
-          .willReturn(successful(atarCase))
-        given(connector.createEvent(refEq(atarCase), any[NewEventRequest])(any[HeaderCarrier]))
-          .willReturn(successful(mock[Event]))
-        given(emailService.sendCaseCompleteEmail(refEq(atarCase), refEq(operator))(any[HeaderCarrier]))
-          .willReturn(Future.successful(emailTemplate))
-        given(rulingConnector.notify(refEq(atarCase.reference))(any[HeaderCarrier]))
-          .willReturn(Future.successful(()))
+        when(connector.updateCase(any[Case])(any[HeaderCarrier]))
+          .thenReturn(successful(atarCase))
+        when(connector.createEvent(refEq(atarCase), any[NewEventRequest])(any[HeaderCarrier]))
+          .thenReturn(successful(mock[Event]))
+        when(emailService.sendCaseCompleteEmail(refEq(atarCase), refEq(operator))(any[HeaderCarrier]))
+          .thenReturn(Future.successful(emailTemplate))
+        when(rulingConnector.notify(refEq(atarCase.reference))(any[HeaderCarrier]))
+          .thenReturn(Future.successful(()))
 
         await(serviceMockConfig.completeCase(atarCase, operator)(hc, messages))
 
@@ -173,10 +172,10 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
       val originalDecision   = Decision("code", None, None, "justification", "goods")
       val originalCase       = aBTI.copy(status = CaseStatus.OPEN, decision = Some(originalDecision))
 
-      given(config.decisionLifetimeYears).willReturn(1)
-      given(queue.id).willReturn("queue_id")
-      given(connector.updateCase(any[Case])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException("Failed to update the Case")))
+      when(config.decisionLifetimeYears).thenReturn(1)
+      when(queue.id).thenReturn("queue_id")
+      when(connector.updateCase(any[Case])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException("Failed to update the Case")))
 
       intercept[RuntimeException] {
         await(serviceMockConfig.completeCase(originalCase, operator)(hc, messages))
@@ -197,13 +196,13 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
       val caseUpdated   = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "services")
 
-      given(config.decisionLifetimeYears).willReturn(1)
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException("Failed to create Event")))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
-        .willReturn(Future.successful(emailTemplate))
-      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).willReturn(Future.successful(()))
+      when(config.decisionLifetimeYears).thenReturn(1)
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException("Failed to create Event")))
+      when(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(emailTemplate))
+      when(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier])).thenReturn(Future.successful(()))
 
       await(serviceMockConfig.completeCase(originalCase, operator)(hc, messages)) shouldBe caseUpdated
 
@@ -223,12 +222,12 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
         Decision("code", Some(date("2018-01-01")), Some(date("2019-01-01")), "justification", "goods")
       val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
-      given(config.decisionLifetimeYears).willReturn(1)
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException("Failed to send Email")))
+      when(config.decisionLifetimeYears).thenReturn(1)
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
+      when(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException("Failed to send Email")))
 
       await(serviceMockConfig.completeCase(originalCase, operator)(hc, messages)) shouldBe caseUpdated
 
@@ -256,14 +255,14 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
       val caseUpdated   = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
       val emailTemplate = EmailTemplate("plain", "html", "from", "subject", "services")
 
-      given(config.decisionLifetimeYears).willReturn(1)
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
-      given(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
-        .willReturn(Future.successful(emailTemplate))
-      given(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
-        .willReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
+      when(config.decisionLifetimeYears).thenReturn(1)
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
+      when(emailService.sendCaseCompleteEmail(refEq(caseUpdated), refEq(operator))(any[HeaderCarrier]))
+        .thenReturn(Future.successful(emailTemplate))
+      when(rulingConnector.notify(refEq(originalCase.reference))(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new RuntimeException("Failed to notify ruling store")))
 
       await(serviceMockConfig.completeCase(originalCase, operator)(hc, messages)) shouldBe caseUpdated
 
@@ -303,12 +302,12 @@ class CasesService_CompleteCaseSpec extends CasesServiceSpecBase with BeforeAndA
       )
     val caseUpdated = aBTI.copy(status = CaseStatus.COMPLETED, decision = Some(updatedDecision))
 
-    given(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).willReturn(
+    when(fileStoreService.upload(any[FileUpload])(any[HeaderCarrier])).thenReturn(
       successful(FileStoreAttachment("id", s"LiabilityDecision_${originalCase.reference}", "application/pdf", 0L))
     )
-    given(pdfService.generateFopPdf(any[Html], any[String]))
-      .willReturn(successful(PdfFile(Array.emptyByteArray)))
-    given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
+    when(pdfService.generateFopPdf(any[Html], any[String]))
+      .thenReturn(successful(PdfFile(Array.emptyByteArray)))
+    when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
 
     await(serviceMockConfig.regenerateDocuments(originalCase, operator)) shouldBe caseUpdated
 

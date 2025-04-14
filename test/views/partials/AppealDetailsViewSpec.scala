@@ -50,7 +50,7 @@ class AppealDetailsViewSpec extends ViewSpec {
       )
       val appealTab = AppealTabViewModel.fromCase(c).get
 
-      val doc = view(appeal_details(appealTab))
+      val doc = view(appeal_details.render(appealTab, authenticatedManagerFakeRequest, messages))
 
       doc                                           should containElementWithID("appeal_details-0")
       doc.getElementById("appeal_details-0-type")   should containText("Appeal tier 1 status")
@@ -65,7 +65,7 @@ class AppealDetailsViewSpec extends ViewSpec {
       )
       val appealTab = AppealTabViewModel.fromCase(c).get
 
-      val doc = view(appeal_details(appealTab))
+      val doc = view(appeal_details.ref.f(appealTab)(authenticatedManagerFakeRequest, messages))
 
       doc                                           should containElementWithID("appeal_details-0")
       doc.getElementById("appeal_details-0-type")   should containText("Appeal tier 1 status")

@@ -48,7 +48,10 @@ class AttachmentsListViewSpec extends ViewSpec {
         timestamp = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
-      val doc = view(attachments_list("MODULE", Seq(attachment), caseRef = caseRef))
+      val doc = view(
+        attachments_list
+          .render("MODULE", Seq(attachment), false, false, false, caseRef, authenticatedManagerFakeRequest, messages)
+      )
 
       doc                                      should containElementWithID("MODULE-table")
       doc                                      should containElementWithID("MODULE-row-0")

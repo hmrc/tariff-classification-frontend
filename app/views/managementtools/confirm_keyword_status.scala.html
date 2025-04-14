@@ -27,7 +27,7 @@
         main: main
 )
 
-@(keyword: String, approved: Boolean, goodsName: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(keyword: String, approved: Boolean, goodsName: String)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @approvedOrRejected = @{if(approved){"approved"}else{"rejected"}}
 

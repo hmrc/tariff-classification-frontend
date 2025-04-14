@@ -16,10 +16,10 @@
 
 package views.forms.components
 
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import models.ApplicationType
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
-import views.ViewMatchers._
+import views.ViewMatchers.*
 import views.ViewSpec
 import views.html.forms.components.{input_radiogroup, input_text}
 
@@ -30,7 +30,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
     val form = Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(FormData.unapply)
+      )(FormData.apply)(o => Option(o.value))
     )
 
     "Render 'None'" in {
@@ -47,7 +47,26 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
     "Render 'None' - Preselected when Field is Empty" in {
 
-      val doc = view(input_radiogroup(id = "ID", field = form("field"), options = Seq.empty, allowNone = true))
+      val doc = view(
+        input_radiogroup.ref.f(
+          form("field"),
+          Seq.empty,
+          true,
+          None,
+          None,
+          None,
+          None,
+          "ID",
+          true,
+          None,
+          None,
+          None,
+          Seq(),
+          None,
+          false,
+          None
+        )(messages)
+      )
 
       doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
@@ -57,7 +76,27 @@ class InputRadioGroupViewSpec extends ViewSpec {
 
       val filledForm = form.fill(FormData(""))
 
-      val doc = view(input_radiogroup(id = "ID", field = filledForm("field"), options = Seq.empty, allowNone = true))
+      val doc = view(
+        input_radiogroup.render(
+          form("field"),
+          Seq.empty,
+          true,
+          None,
+          None,
+          None,
+          None,
+          "ID",
+          true,
+          None,
+          None,
+          None,
+          Seq(),
+          None,
+          false,
+          None,
+          messages
+        )
+      )
 
       doc                           should containElementWithID("ID-none")
       doc.getElementById("ID-none") should haveAttribute("checked", "checked")
@@ -71,7 +110,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
         input_radiogroup(
           id = "ID",
           field = filledForm("field"),
-          options = Seq.empty,
+          options = Seq(RadioOption("value", "label")),
           allowNone = true,
           preSelect = false
         )
@@ -131,7 +170,7 @@ class InputRadioGroupViewSpec extends ViewSpec {
       lazy val emptyForm = Map[String, String]()
       val formWithError  = form.bind(emptyForm).apply("field")
       val doc            = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
+      doc.getElementsByClass("govuk-visually-hidden").text() shouldBe errorPrefix
     }
   }
 

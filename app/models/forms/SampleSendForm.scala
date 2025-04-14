@@ -31,7 +31,7 @@ object SampleSendForm {
   }
 
   private val mapping: Mapping[Option[SampleSend]] = Forms.mapping[Option[SampleSend], String](
-    "sample-sender" -> fieldNonEmpty("error.empty.sample.sender").verifying(emptyOr(oneOf(SampleSend.values)): _*)
+    "sample-sender" -> fieldNonEmpty("error.empty.sample.sender").verifying(emptyOr(oneOf(SampleSend.values))*)
   )(v => SampleSend.values.find(_.toString == v))(_.map(_.toString))
 
   val form: Form[Option[SampleSend]] = Form[Option[SampleSend]](mapping)

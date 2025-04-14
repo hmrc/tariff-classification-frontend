@@ -31,7 +31,7 @@ trait CasesServiceSpecBase extends ServiceSpecBase {
   protected val emailService: EmailService         = mock[EmailService]
   protected val fileStoreService: FileStoreService = mock[FileStoreService]
   protected val countriesService: CountriesService =
-    mock[CountriesService] //used to be injector.instanceOf for CasesService_CompleteCaseSpec
+    mock[CountriesService] // used to be injector.instanceOf for CasesService_CompleteCaseSpec
   protected val reportingService: ReportingService              = mock[ReportingService]
   protected val pdfService: PdfGeneratorService                 = mock[PdfGeneratorService]
   protected val connector: BindingTariffClassificationConnector = mock[BindingTariffClassificationConnector]

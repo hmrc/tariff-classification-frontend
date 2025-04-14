@@ -34,7 +34,7 @@ object Tab {
   // Liabilities
   case object C592_TAB extends Tab("c592_tab")
 
-  //Correspondence
+  // Correspondence
   private case object CASE_DETAILS_TAB extends Tab("case_details_tab")
   case object CONTACT_TAB extends Tab("contact_details_tab")
   case object MESSAGES_TAB extends Tab("messages_tab")

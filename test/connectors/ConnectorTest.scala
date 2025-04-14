@@ -18,7 +18,7 @@ package connectors
 
 import base.SpecBase
 import config.AppConfig
-import org.mockito.Mockito.when
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterAll
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.{ResourceFiles, WiremockTestServer}
@@ -34,15 +34,15 @@ trait ConnectorTest extends SpecBase with WiremockTestServer with ResourceFiles 
   override def beforeAll(): Unit = {
     super.beforeAll()
 
-    when(mockAppConfig.maxUriLength) thenReturn 2048
-    when(mockAppConfig.fileStoreUrl) thenReturn getUrl
-    when(mockAppConfig.bindingTariffClassificationUrl) thenReturn getUrl
-    when(mockAppConfig.rulingUrl) thenReturn getUrl
+    when(mockAppConfig.maxUriLength).thenReturn(2048L)
+    when(mockAppConfig.fileStoreUrl).thenReturn(getUrl)
+    when(mockAppConfig.bindingTariffClassificationUrl).thenReturn(getUrl)
+    when(mockAppConfig.rulingUrl).thenReturn(getUrl)
 
-    when(mockAppConfig.emailUrl) thenReturn getUrl
-    when(mockAppConfig.emailRendererUrl) thenReturn getUrl
+    when(mockAppConfig.emailUrl).thenReturn(getUrl)
+    when(mockAppConfig.emailRendererUrl).thenReturn(getUrl)
 
-    when(mockAppConfig.apiToken) thenReturn fakeAuthToken
+    when(mockAppConfig.apiToken).thenReturn(fakeAuthToken)
   }
 
 }

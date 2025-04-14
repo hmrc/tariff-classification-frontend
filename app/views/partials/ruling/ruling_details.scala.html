@@ -25,7 +25,7 @@
 @import views.html.partials.ruling._
 @import views.html.partials.{attachments_list, tab_heading}
 
-@(ruling: RulingTabViewModel, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: AuthenticatedRequest[_], messages: Messages, appConfig: AppConfig)
+@(ruling: RulingTabViewModel, decisionForm: Option[Form[DecisionFormData]], files: Seq[StoredAttachment])(implicit request: AuthenticatedRequest[?], messages: Messages, appConfig: AppConfig)
 
     @tab_heading("ruling", messages("case.menu.ruling-advance"))
 

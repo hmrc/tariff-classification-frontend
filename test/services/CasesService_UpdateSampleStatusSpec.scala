@@ -19,8 +19,7 @@ package services
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -45,9 +44,9 @@ class CasesService_UpdateSampleStatusSpec extends CasesServiceSpecBase with Befo
       val originalCase       = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ACT)))
       val caseUpdated        = aCase.copy(sample = aCase.sample.copy(status = None))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(service.updateSampleStatus(originalCase, None, operator)) shouldBe caseUpdated
 
@@ -69,9 +68,9 @@ class CasesService_UpdateSampleStatusSpec extends CasesServiceSpecBase with Befo
       val originalCase       = aCase.copy(sample = aCase.sample.copy(status = None))
       val caseUpdated        = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.DESTROYED)))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(service.updateSampleStatus(originalCase, Some(SampleStatus.DESTROYED), operator)) shouldBe caseUpdated
 
@@ -91,7 +90,7 @@ class CasesService_UpdateSampleStatusSpec extends CasesServiceSpecBase with Befo
       val operator: Operator = Operator("operator-id")
       val originalCase       = aCase.copy(sample = aCase.sample.copy(status = Some(SampleStatus.MOVED_TO_ELM)))
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.updateSampleStatus(originalCase, None, operator))
@@ -107,9 +106,9 @@ class CasesService_UpdateSampleStatusSpec extends CasesServiceSpecBase with Befo
       val originalCase       = aCase.copy(sample = Sample())
       val caseUpdated        = aCase.copy(sample = Sample())
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException()))
 
       await(service.updateSampleStatus(originalCase, None, operator)) shouldBe caseUpdated
 

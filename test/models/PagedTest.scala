@@ -17,8 +17,9 @@
 package models
 
 import play.api.libs.json.{JsObject, Json}
+import base.SpecBase
 
-class PagedTest extends ModelsBaseSpec {
+class PagedTest extends SpecBase {
 
   "Paged" should {
     "map" in {

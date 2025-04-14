@@ -34,7 +34,8 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
 
     "Not render table if empty" in {
 
-      val doc = view(advanced_search_keywords(SearchForm.form, Seq.empty))
+      val doc =
+        view(advanced_search_keywords.render(SearchForm.form, Seq.empty, messages, authenticatedManagerFakeRequest))
 
       doc shouldNot containElementWithID("advanced_search_keywords-list")
     }
@@ -47,7 +48,7 @@ class AdvancedSearchKeywordsViewSpec extends ViewSpec {
         )
       )
 
-      val doc = view(advanced_search_keywords(form, Seq.empty))
+      val doc = view(advanced_search_keywords.ref.f(form, Seq.empty)(messages, authenticatedManagerFakeRequest))
       doc shouldNot containElementWithID("advanced_search_keywords-list")
     }
 

@@ -16,10 +16,10 @@
 
 package models.forms
 
-import models.ModelsBaseSpec
+import base.SpecBase
 import play.api.data.validation.{Invalid, Valid}
 
-class CommodityCodeConstraintsSpec extends ModelsBaseSpec {
+class CommodityCodeConstraintsSpec extends SpecBase {
 
   "commodityCodeNonEmpty" should {
     "return invalid when there is no commodity code supplied" in {

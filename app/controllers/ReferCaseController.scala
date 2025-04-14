@@ -62,7 +62,7 @@ class ReferCaseController @Inject() (
       implicit request => Ok(refer_case_reason(request.`case`, ReferCaseForm.form))
     }
 
-  //TODO Form binding needs reworking, currently optional fields generate multiple errors for the refferTo field
+  // TODO Form binding needs reworking, currently optional fields generate multiple errors for the refferTo field
   def postReferCaseReason(reference: String): Action[AnyContent] =
     (verify.authenticated andThen verify.casePermissions(reference) andThen verify.mustHave(Permission.REFER_CASE))
       .async { implicit request =>
@@ -83,7 +83,7 @@ class ReferCaseController @Inject() (
   private def renderReferCaseEmail(
     fileId: Option[String],
     uploadForm: Form[String]
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(implicit request: AuthenticatedCaseRequest[?]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
     val fileUploadSuccessRedirect =

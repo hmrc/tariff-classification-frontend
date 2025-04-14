@@ -30,7 +30,7 @@ class OpenCasesSecondaryNavigationViewSpec extends ViewSpec {
   "OpenCasesSecondaryNavigation" should {
 
     "display ATaR tab" in {
-      val doc = view(openCasesSecondaryNavigationView(ATaRTab))
+      val doc = view(open_cases_secondary_navigation(ATaRTab))
 
       doc should containElementWithID("sub_nav_atar_tab")
 
@@ -40,7 +40,7 @@ class OpenCasesSecondaryNavigationViewSpec extends ViewSpec {
     }
 
     "display Liability tab" in {
-      val doc = view(openCasesSecondaryNavigationView(LiabilitiesTab))
+      val doc = view(open_cases_secondary_navigation.ref.f(LiabilitiesTab))
 
       doc should containElementWithID("sub_nav_liability_tab")
 
@@ -50,7 +50,7 @@ class OpenCasesSecondaryNavigationViewSpec extends ViewSpec {
     }
 
     "display Correspondence tab" in {
-      val doc = view(openCasesSecondaryNavigationView(CorrespondenceTab))
+      val doc = view(open_cases_secondary_navigation.render(CorrespondenceTab))
 
       doc should containElementWithID("sub_nav_correspondence_tab")
 
@@ -60,7 +60,7 @@ class OpenCasesSecondaryNavigationViewSpec extends ViewSpec {
     }
 
     "display Miscellaneous tab" in {
-      val doc = view(openCasesSecondaryNavigationView(MiscellaneousTab))
+      val doc = view(open_cases_secondary_navigation(MiscellaneousTab))
 
       doc should containElementWithID("sub_nav_miscellaneous_tab")
 

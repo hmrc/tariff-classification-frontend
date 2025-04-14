@@ -16,7 +16,6 @@
 
 package views.forms.components
 
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.data.Forms.{mapping, number}
 import views.ViewMatchers._
@@ -31,14 +30,14 @@ class InputNumberViewSpec extends ViewSpec {
     lazy val form = Form(
       mapping(
         "field" -> number
-      )(FormData.apply)(FormData.unapply)
+      )(FormData.apply)(o => Option(o.value))
     ).fill(FormData(5))
 
     lazy val emptyForm = Map[String, String]()
 
     "Render" in {
 
-      val doc = view(input_number(form("field"), "Label"))
+      val doc = view(input_number.render(form("field"), "Label", None, None, None, None, None, messages))
 
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
@@ -52,7 +51,7 @@ class InputNumberViewSpec extends ViewSpec {
     "Render with Optional Fields" in {
 
       val doc =
-        view(input_number(form("field"), "Label", hint = Some("some-hint"), maxLength = Some(10), minLength = Some(1)))
+        view(input_number.ref.f(form("field"), "Label", None, Some("some-hint"), None, Some(10), Some(1))(messages))
 
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
@@ -70,8 +69,8 @@ class InputNumberViewSpec extends ViewSpec {
 
       val doc = view(input_number(formWithError, "Label"))
 
-      doc should containElementWithID("error-message-field-input")
-      doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
+      doc                                                      should containElementWithID("error-message-field-input")
+      doc.getElementsByClass("govuk-visually-hidden").text() shouldBe errorPrefix
     }
   }
 

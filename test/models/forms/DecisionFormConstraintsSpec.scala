@@ -16,14 +16,15 @@
 
 package models.forms
 
-import models.{CommodityCode, ModelsBaseSpec}
+import base.SpecBase
+import models.CommodityCode
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.*
 import play.api.data.Form.FromJsonMaxChars
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import services.CommodityCodeService
 
-class DecisionFormConstraintsSpec extends ModelsBaseSpec {
+class DecisionFormConstraintsSpec extends SpecBase {
 
   private val commodityCodeService                     = mock[CommodityCodeService]
   private val decisionForm                             = new DecisionForm(new CommodityCodeConstraints())
@@ -36,41 +37,32 @@ class DecisionFormConstraintsSpec extends ModelsBaseSpec {
 
     when(commodityCodeService.find(any[String])).thenReturn(Some(CommodityCode("code")))
 
-    "pass if the commodity code is empty" in {
+    "pass if the commodity code is empty" in
       assertNoErrors("")
-    }
 
-    "pass if the commodity code value contains between 6 and 22 digits and has an even number of digits" in {
+    "pass if the commodity code value contains between 6 and 22 digits and has an even number of digits" in
       assertNoErrors("0409000000")
-    }
 
-    "pass if the commodity code value contains 6 digits" in {
+    "pass if the commodity code value contains 6 digits" in
       assertNoErrors("040900")
-    }
 
-    "pass if the commodity code value contains 22 digits" in {
+    "pass if the commodity code value contains 22 digits" in
       assertNoErrors("0409000000234567890000")
-    }
 
-    "fail if the commodity code value contains more than 22 digits" in {
+    "fail if the commodity code value contains more than 22 digits" in
       assertOnlyOneError("040900000023456789012345", Seq(commodityCodeValidLengthErrorMessage))
-    }
 
-    "fail if the commodity code value contains less than 6 digits" in {
+    "fail if the commodity code value contains less than 6 digits" in
       assertOnlyOneError("0409", Seq(commodityCodeValidLengthErrorMessage))
-    }
 
-    "fail if the commodity code value contains non numeric characters" in {
+    "fail if the commodity code value contains non numeric characters" in
       assertOnlyOneError("12345Q", Seq(commodityCodeValidNumberTypeErrorMessage))
-    }
 
-    "fail if the commodity code value contains special characters" in {
+    "fail if the commodity code value contains special characters" in
       assertOnlyOneError("12345!", Seq(commodityCodeValidNumberTypeErrorMessage))
-    }
 
-    "fail if the commodity code value contains an odd number of digits" in {
+    "fail if the commodity code value contains an odd number of digits" in
       assertOnlyOneError("1234567", Seq(commodityCodeValidEvenDigitsErrorMessage))
-    }
   }
 
   private def commodityCodeJsValue(value: String): JsValue =

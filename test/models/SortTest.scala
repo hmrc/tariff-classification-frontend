@@ -16,7 +16,9 @@
 
 package models
 
-class SortTest extends ModelsBaseSpec {
+import base.SpecBase
+
+class SortTest extends SpecBase {
 
   "SortField Binder" should {
 

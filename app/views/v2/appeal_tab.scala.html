@@ -20,11 +20,11 @@
 
 @this()
 
-@(appealTabViewModel: AppealTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(appealTabViewModel: AppealTabViewModel)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @tab_heading("appeal", messages("case.menu.appeal"))
 
-@defining(appealTabViewModel.appeals) { appeals: Seq[Appeal] =>
+@defining(appealTabViewModel.appeals) { (appeals: Seq[Appeal]) =>
  <table id="appeal_details" class="govuk-table">
   <caption class="govuk-table__caption">@messages("case.v2.liability.appeals.tab_paragraph")</caption>
   <thead class="govuk-table__head">

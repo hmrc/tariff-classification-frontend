@@ -27,14 +27,14 @@ import java.time.{LocalDate, LocalTime, ZoneOffset}
 
 sealed abstract class Report extends Product with Serializable {
   def name: String
-  def sortBy: ReportField[_]
+  def sortBy: ReportField[?]
   def sortOrder: SortDirection.Value
   def caseTypes: Set[ApplicationType]
   def statuses: Set[PseudoCaseStatus.Value]
   def liabilityStatuses: Set[LiabilityStatus.Value]
   def teams: Set[String]
   def dateRange: InstantRange
-  def fields: NonEmptySeq[ReportField[_]]
+  def fields: NonEmptySeq[ReportField[?]]
 }
 
 object Report {
@@ -421,8 +421,8 @@ object Report {
 
 case class SummaryReport(
   name: String,
-  groupBy: NonEmptySeq[ReportField[_]],
-  sortBy: ReportField[_],
+  groupBy: NonEmptySeq[ReportField[?]],
+  sortBy: ReportField[?],
   sortOrder: SortDirection.Value = SortDirection.ASCENDING,
   caseTypes: Set[ApplicationType] = Set.empty,
   statuses: Set[PseudoCaseStatus.Value] = Set.empty,
@@ -432,7 +432,7 @@ case class SummaryReport(
   maxFields: Seq[ReportField[Long]] = Seq.empty,
   includeCases: Boolean = false
 ) extends Report {
-  override val fields: NonEmptySeq[ReportField[_]] =
+  override val fields: NonEmptySeq[ReportField[?]] =
     groupBy.append(ReportField.Count).concat(maxFields.toList)
 }
 
@@ -463,7 +463,7 @@ object SummaryReport {
       val teams     = params(teamsKey)(requestParams).getOrElse(Set.empty)
       val groupBy = orderedParams(groupByKey)(requestParams)
         .map(_.flatMap(ReportField.fields.get))
-        .flatMap(NonEmptySeq.fromSeq[ReportField[_]])
+        .flatMap(NonEmptySeq.fromSeq[ReportField[?]])
       val caseTypes = params(caseTypesKey)(requestParams)
         .map(_.map(bindApplicationType).collect { case Some(value) => value })
         .getOrElse(Set.empty)
@@ -520,8 +520,8 @@ object SummaryReport {
 
 case class CaseReport(
   name: String,
-  fields: NonEmptySeq[ReportField[_]],
-  sortBy: ReportField[_] = ReportField.Reference,
+  fields: NonEmptySeq[ReportField[?]],
+  sortBy: ReportField[?] = ReportField.Reference,
   sortOrder: SortDirection.Value = SortDirection.ASCENDING,
   caseTypes: Set[ApplicationType] = Set.empty,
   statuses: Set[PseudoCaseStatus.Value] = Set.empty,
@@ -603,7 +603,7 @@ object CaseReport {
 }
 
 case class QueueReport(
-  sortBy: ReportField[_] = ReportField.Team,
+  sortBy: ReportField[?] = ReportField.Team,
   sortOrder: SortDirection.Value = SortDirection.ASCENDING,
   caseTypes: Set[ApplicationType] = Set.empty,
   statuses: Set[PseudoCaseStatus.Value] = Set.empty,
@@ -613,7 +613,7 @@ case class QueueReport(
   dateRange: InstantRange = InstantRange.allTime
 ) extends Report {
   override val name = "Number of cases in queues"
-  override val fields: NonEmptySeq[ReportField[_]] =
+  override val fields: NonEmptySeq[ReportField[?]] =
     NonEmptySeq.of(ReportField.Team, ReportField.CaseType, ReportField.Count)
 }
 

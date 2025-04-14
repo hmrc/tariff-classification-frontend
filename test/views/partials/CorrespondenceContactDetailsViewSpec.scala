@@ -46,7 +46,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
       val c              = aCorrespondenceCase()
       val caseDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
-      val doc = view(correspondence_contact_details(caseDetailsTab))
+      val doc = view(correspondence_contact_details.render(caseDetailsTab, authenticatedManagerFakeRequest, messages))
 
       doc shouldNot containElementWithID("edit-contact-details")
     }
@@ -55,7 +55,7 @@ class CorrespondenceContactDetailsViewSpec extends ViewSpec {
       val c                 = aCorrespondenceCase()
       val contactDetailsTab = ContactDetailsTabViewModel.fromCase(c)
 
-      val doc = view(correspondence_contact_details(contactDetailsTab))
+      val doc = view(correspondence_contact_details.ref.f(contactDetailsTab)(authenticatedManagerFakeRequest, messages))
 
       val summary = doc.getElementById("correspondence-starter")
       summary.text() shouldBe "Starter"

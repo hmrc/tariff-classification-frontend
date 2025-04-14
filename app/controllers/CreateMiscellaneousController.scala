@@ -64,7 +64,7 @@ class CreateMiscellaneousController @Inject() (
         .fold(
           formWithErrors => Future(Ok(create_misc(formWithErrors))),
           miscApp =>
-            casesService.createCase(miscApp, request.operator).map { caseCreated: Case =>
+            casesService.createCase(miscApp, request.operator).map { (caseCreated: Case) =>
               Redirect(routes.CreateMiscellaneousController.displayQuestion(caseCreated.reference))
             }
         )
@@ -77,7 +77,7 @@ class CreateMiscellaneousController @Inject() (
 
   private def getCaseAndRenderChoiceView(
     reference: String
-  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[_]): Future[Result] =
+  )(implicit hc: HeaderCarrier, request: AuthenticatedRequest[?]): Future[Result] =
     casesService.getOne(reference).flatMap {
       case Some(_: Case) => Future(Redirect(routes.ReleaseCaseController.releaseCase(reference)))
       case _             => Future(Ok(case_not_found(reference)))

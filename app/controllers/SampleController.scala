@@ -55,7 +55,7 @@ class SampleController @Inject() (
   override protected def status(c: Case): Option[SampleStatus] = c.sample.status
 
   protected def chooseStatusView(c: Case, notFilledForm: Form[Option[SampleStatus]], options: Option[String])(implicit
-    request: AuthenticatedRequest[_]
+    request: AuthenticatedRequest[?]
   ): Html =
     c.application.`type` match {
       case ApplicationType.LIABILITY =>

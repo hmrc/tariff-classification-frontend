@@ -41,7 +41,7 @@
     <p class="govuk-body">Add a keyword to your search</p>
 
     <div class="govuk-form-group boxed boxed-content">
-    @defining(moveUnAddedKeywordToTable(f)) { form: Form[Search] =>
+    @defining(moveUnAddedKeywordToTable(f)) { (form: Form[Search]) =>
         <div id="advanced_search_keywords">
             <div>
                 <label class="govuk-label" for="keyword_0">Search keyword</label>
@@ -65,7 +65,7 @@
             @for((index: Int, keyword: String) <- keywords) {
                 <div class="govuk-summary-list__row" id="advanced_search_keywords-list-row-@{index}">
                     <dd class="govuk-summary-list__value">
-                    @defining(form(s"keyword[$index]")) { field: Field =>
+                    @defining(form(s"keyword[$index]")) { (field: Field) =>
                         <span id="advanced_search_keywords-list-row-@{index}-label">@keyword</span>
                         <input id="advanced_search_keywords-list-row-@{index}-input" name="@{field.name}" type="hidden" value="@keyword"/>
                     }

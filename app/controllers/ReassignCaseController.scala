@@ -55,7 +55,7 @@ class ReassignCaseController @Inject() (
     }
 
   private def reassignToQueue(f: Form[String], origin: String)(implicit
-    request: AuthenticatedCaseRequest[_]
+    request: AuthenticatedCaseRequest[?]
   ): Future[Result] =
     validateAndRenderView(c =>
       for {
@@ -88,7 +88,7 @@ class ReassignCaseController @Inject() (
     (verify.authenticated
       andThen verify.casePermissions(reference)
       andThen verify.mustHave(Permission.ASSIGN_CASE)).async { implicit request =>
-      def queueNotFound(implicit request: AuthenticatedCaseRequest[_]) =
+      def queueNotFound(implicit request: AuthenticatedCaseRequest[?]) =
         successful(resource_not_found(s"Case Queue"))
 
       renderView(

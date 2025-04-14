@@ -16,13 +16,13 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{Case, Pagination}
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers._
 import utils.Cases._
 import utils.JsonFormatters._
 import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
-class LiabilitySpec extends IntegrationTest with MockitoSugar {
+class LiabilitySpec extends IntegrationTest {
 
   private val liabilityCase: Case = aCase(withReference("1"), withLiabilityApplication())
 
@@ -98,8 +98,7 @@ class LiabilitySpec extends IntegrationTest with MockitoSugar {
       response.body     should include("id=\"liability-entry-number\"")
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/v2/1/liability")
-    }
   }
 }

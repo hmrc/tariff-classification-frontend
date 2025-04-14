@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import models.request.{IdentifierRequest, OptionalDataRequest}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import models.cache.CacheMap
@@ -38,7 +38,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
       "set userAnswers to 'None' in the request" in {
         val dataCacheService = mock[DataCacheService]
-        when(dataCacheService.fetch("id")) thenReturn Future(None)
+        when(dataCacheService.fetch("id")).thenReturn(Future(None))
         val action = new Harness(dataCacheService)
 
         val futureResult = action.callTransform(IdentifierRequest(fakeRequest, "id"))
@@ -54,7 +54,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
 
       "build a userAnswers object and add it to the request" in {
         val dataCacheService = mock[DataCacheService]
-        when(dataCacheService.fetch("id")) thenReturn Future(Some(new CacheMap("id", Map())))
+        when(dataCacheService.fetch("id")).thenReturn(Future(Some(new CacheMap("id", Map()))))
         val action = new Harness(dataCacheService)
 
         val futureResult = action.callTransform(IdentifierRequest(fakeRequest, "id"))

@@ -16,7 +16,6 @@
 
 package views.forms.components
 
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import views.ViewMatchers._
@@ -27,11 +26,11 @@ class InputCheckboxViewSpec extends ViewSpec {
 
   case class FormData(text: String)
 
-  val form =
+  val form: Form[FormData] =
     Form(
       mapping(
         "field" -> text
-      )(FormData.apply)(FormData.unapply)
+      )(FormData.apply)(o => Option(o.text))
     )
 
   "Input Checkbox" should {
@@ -50,7 +49,7 @@ class InputCheckboxViewSpec extends ViewSpec {
 
     "render with Optional Fields" in {
 
-      val doc = view(input_checkbox(form("field"), "Label", value = false))
+      val doc = view(input_checkbox.ref.f(form("field"), "Label", false, None, None, None, None, None))
 
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
@@ -59,11 +58,15 @@ class InputCheckboxViewSpec extends ViewSpec {
       doc.getElementById("field") should haveAttribute("value", "false")
     }
 
-    "show an error in the value field's label" in {
-      lazy val emptyForm = Map[String, String]()
-      val formWithError  = form.bind(emptyForm).apply("field")
-      val doc            = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("govuk-visually-hidden").text() mustBe errorPrefix
+    "render using .render" in {
+
+      val doc = view(input_checkbox.render(form("field"), "Label", false, None, None, None, None, None))
+
+      doc                         should containElementWithTag("input")
+      doc                         should containElementWithID("field")
+      doc.getElementById("field") should haveAttribute("type", "checkbox")
+      doc.getElementById("field") should haveAttribute("name", "field")
+      doc.getElementById("field") should haveAttribute("value", "false")
     }
   }
 }

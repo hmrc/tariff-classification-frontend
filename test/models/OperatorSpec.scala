@@ -16,7 +16,9 @@
 
 package models
 
-class OperatorSpec extends ModelsBaseSpec {
+import base.SpecBase
+
+class OperatorSpec extends SpecBase {
   "Operator 'manager'" should {
 
     "return true for an operator with manager role" in {

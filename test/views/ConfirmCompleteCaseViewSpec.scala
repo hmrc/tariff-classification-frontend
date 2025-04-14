@@ -34,7 +34,7 @@ class ConfirmCompleteCaseViewSpec extends ViewSpec {
       val doc = view(confirmCompleteCaseView(c))
       lazy val expected =
         s"The Laptop ATaR case has been completed A ruling certificate has been created with an expiry date of ${Dates
-          .format(Instant.now().plus(-10, DAYS))} Next steps Back to home Back to open ATaR cases"
+            .format(Instant.now().plus(-10, DAYS))} Next steps Back to home Back to open ATaR cases"
       lazy val actual = doc.getElementById("main-content").text()
 
       actual should startWith(expected)

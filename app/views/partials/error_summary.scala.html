@@ -23,7 +23,7 @@
         <div class="govuk-error-summary__body">
             <ul role="list" class="govuk-list govuk-error-summary__list">
                 @for((error: FormError, index: Int) <- errors.zipWithIndex) {
-                        <li><a href="#@keySwaps.getOrElse(error.key.replaceAll("""[\.\[\]]""", "_"), error.key.replaceAll("""[\.\[\]]""", "_"))">@messages(error.message, error.args:_*)</a></li>
+                        <li><a href="#@keySwaps.getOrElse(error.key.replaceAll("""[\.\[\]]""", "_"), error.key.replaceAll("""[\.\[\]]""", "_"))">@messages(error.message, error.args*)</a></li>
                 }
             </ul>
         </div>

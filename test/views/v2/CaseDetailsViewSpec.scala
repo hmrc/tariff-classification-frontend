@@ -17,7 +17,7 @@
 package views.v2
 
 import models.viewmodels.correspondence.CaseDetailsViewModel
-import utils.Cases.{aCase, withCorrespondenceApplication}
+import utils.Cases.{btiCaseExample, corrApplicationExample}
 import views.ViewMatchers.containText
 import views.ViewSpec
 import views.html.partials.correspondence_case_details
@@ -25,14 +25,23 @@ import views.html.partials.correspondence_case_details
 class CaseDetailsViewSpec extends ViewSpec {
 
   "Case Details" should {
+    val caseDetails =
+      btiCaseExample.copy(application = corrApplicationExample.copy(relatedBTIReferences = List("one", "two")))
+    val caseDetailsViewModel = CaseDetailsViewModel.fromCase(caseDetails)
 
     "render successfully" in {
-      val caseDetails = aCase(withCorrespondenceApplication)
+      val doc =
+        view(correspondence_case_details.render(caseDetailsViewModel, authenticatedManagerFakeRequest, messages))
+      doc.getElementById("case-details-summary") should containText("A short summary")
+    }
 
-      val caseDetailsTab = CaseDetailsViewModel.fromCase(caseDetails)
+    "view using apply successfully" in {
+      val doc = view(correspondence_case_details(caseDetailsViewModel))
+      doc.getElementById("case-details-summary") should containText("A short summary")
+    }
 
-      val doc = view(correspondence_case_details(caseDetailsTab))
-
+    "view using ref and f successfully" in {
+      val doc = view(correspondence_case_details.ref.f(caseDetailsViewModel)(authenticatedManagerFakeRequest, messages))
       doc.getElementById("case-details-summary") should containText("A short summary")
     }
   }

@@ -23,13 +23,12 @@ import models.response._
 import org.apache.pekko.stream.scaladsl.Source
 import org.apache.pekko.util.ByteString
 import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 import play.api.libs.Files.TemporaryFile
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import utils.Cases._
-
+import org.mockito.Mockito.*
 import java.io.File
 import java.nio.file.Path
 import java.time.Instant
@@ -139,7 +138,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
     )
 
     "delegate to connector" in {
-      given(connector.initiate(initiateRequest)).willReturn(successful(initiateResponse))
+      when(connector.initiate(initiateRequest)).thenReturn(successful(initiateResponse))
 
       await(service.initiate(initiateRequest)) shouldBe initiateResponse
     }
@@ -152,13 +151,13 @@ class FileStoreServiceSpec extends ServiceSpecBase {
       val content = mock[TemporaryFile]
       val path    = mock[Path]
       val file    = mock[File]
-      given(upload.content) willReturn content
-      given(content.path) willReturn path
-      given(path.toFile) willReturn file
-      given(file.length()) willReturn 1
+      when(upload.content).thenReturn(content)
+      when(content.path).thenReturn(path)
+      when(path.toFile).thenReturn(file)
+      when(file.length()).thenReturn(1L)
 
       val metadata = FileMetadata(id = "id", fileName = Some("name"), mimeType = Some("mimetype"))
-      given(connector.upload(upload)) willReturn Future.successful(metadata)
+      when(connector.upload(upload)).thenReturn(Future.successful(metadata))
 
       await(service.upload(upload)) shouldBe FileStoreAttachment("id", "name", "mimetype", 1)
     }
@@ -168,7 +167,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
     val file = mock[FileMetadata]
 
     "Delegate to Connector" in {
-      given(connector.get("id")) willReturn Future.successful(Some(file))
+      when(connector.get("id")).thenReturn(Future.successful(Some(file)))
       await(service.getFileMetadata("id")) shouldBe Some(file)
     }
   }
@@ -178,7 +177,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
     "call the connector" in {
       val id   = "id"
       val file = mock[FileMetadata]
-      given(connector.get(id)) willReturn Future.successful(Some(file))
+      when(connector.get(id)).thenReturn(Future.successful(Some(file)))
 
       service.removeAttachment(id)
 
@@ -191,7 +190,7 @@ class FileStoreServiceSpec extends ServiceSpecBase {
     val fileContent = Some(Source.single(ByteString("Some file content".getBytes())))
 
     "call the connector" in {
-      given(connector.downloadFile(any[String])(any[HeaderCarrier])).willReturn(successful(fileContent))
+      when(connector.downloadFile(any[String])(any[HeaderCarrier])).thenReturn(successful(fileContent))
 
       await(service.downloadFile("http://localhost:4572/foo")) shouldBe fileContent
     }
@@ -266,14 +265,14 @@ class FileStoreServiceSpec extends ServiceSpecBase {
     )
 
   private def givenFileStoreReturnsNoAttachments(): Unit = {
-    given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn successful(Seq.empty)
-    given(connector.get(any[String])(any[HeaderCarrier])) willReturn successful(None)
+    when(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])).thenReturn(successful(Seq.empty))
+    when(connector.get(any[String])(any[HeaderCarrier])).thenReturn(successful(None))
   }
 
   private def givenFileStoreReturnsAttachments(attachments: FileMetadata*): Unit =
-    given(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])) willReturn successful(attachments)
+    when(connector.get(any[Seq[Attachment]])(any[HeaderCarrier])).thenReturn(successful(attachments))
 
   private def givenFileStoreReturnsAttachment(attachment: FileMetadata): Unit =
-    given(connector.get(any[String])(any[HeaderCarrier])) willReturn successful(Some(attachment))
+    when(connector.get(any[String])(any[HeaderCarrier])).thenReturn(successful(Some(attachment)))
 
 }

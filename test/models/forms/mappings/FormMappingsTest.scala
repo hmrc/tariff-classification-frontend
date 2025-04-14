@@ -16,10 +16,11 @@
 
 package models.forms.mappings
 
-import models.{CancelReason, ModelsBaseSpec}
+import models.CancelReason
+import base.SpecBase
 import play.api.data.FormError
 
-class FormMappingsTest extends ModelsBaseSpec {
+class FormMappingsTest extends SpecBase {
 
   "One of" should {
 

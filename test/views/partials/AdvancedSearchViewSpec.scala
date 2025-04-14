@@ -39,12 +39,15 @@ class AdvancedSearchViewSpec extends ViewSpec {
 
     "Render Results" in {
       val results = Some(Paged(Seq(SearchResult(aCase(), Seq.empty))))
-      val doc     = view(advancedSearchView(form, results, Seq.empty, defaultTab))
+      val doc =
+        view(advancedSearchView.ref.f(form, results, Seq.empty, defaultTab)(authenticatedManagerFakeRequest, messages))
       doc should containElementWithID("advanced_search-results_and_filters")
     }
 
     "Always Render Input 'status'" in {
-      view(advancedSearchView(form, None, Seq.empty, defaultTab)) should
+      view(
+        advancedSearchView.render(form, None, Seq.empty, defaultTab, authenticatedManagerFakeRequest, messages)
+      ) should
         containElementWithAttribute("name", "status[0]")
 
       view(advancedSearchView(form, None, Seq.empty, defaultTab)) should

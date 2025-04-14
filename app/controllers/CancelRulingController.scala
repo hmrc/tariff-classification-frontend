@@ -82,7 +82,7 @@ class CancelRulingController @Inject() (
   private def renderCancelRulingEmail(
     fileId: Option[String],
     uploadForm: Form[String]
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(implicit request: AuthenticatedCaseRequest[?]): Future[Html] = {
     val uploadFileId = fileId.getOrElse(UUID.randomUUID().toString)
 
     val fileUploadSuccessRedirect =

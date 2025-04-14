@@ -22,7 +22,7 @@ import models.CancelReason.CancelReason
 import models.CaseStatus._
 import models.{CaseStatus => _, _}
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier

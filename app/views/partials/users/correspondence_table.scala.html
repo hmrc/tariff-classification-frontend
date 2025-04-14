@@ -25,7 +25,7 @@
 @import views.html.partials.{error_summary}
 @import controllers.Tab
 
-@(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(corresTab: ApplicationsTab, form: Form[Set[String]], userID:String)(implicit request: AuthenticatedRequest[?], messages: Messages)
  @error_summary(form.errors, keySwaps = Map("corrCases" -> "corrCases-0"))
  <h2 class="govuk-heading-l">@messages("users.user.correspondence.heading")</h2>
  @helper.form(action = MoveCasesController.postMoveCorrCases(userID).withFragment(Tab.CORRESPONDENCE_TAB.name), Symbol("id") -> "corrCases", Symbol("novalidate") -> "novalidate") {
@@ -79,7 +79,7 @@
       @if(result.status == CaseStatus.OPEN || result.status == CaseStatus.REFERRED || result.status == CaseStatus.SUSPENDED){
         <div class="multiple-choice">
          <fieldset class="govuk-fieldset">
-          @defining(s"${form("corrCases").id}-$index") { id: String =>
+          @defining(s"${form("corrCases").id}-$index") { (id: String) =>
            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
              <input class="govuk-checkboxes__input" id="@{id}" name="@{form("corrCases").name}[@index]" type="checkbox" value="@{result.reference}" @if(form("corrCases").hasErrors){aria-describedby="error-message-@{form("corrCases").id}-input"} @if(form("corrCases").value.contains(result.reference)){checked="checked"}>

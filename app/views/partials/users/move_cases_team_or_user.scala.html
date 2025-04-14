@@ -33,7 +33,7 @@
 @(
         numberOfCases:Integer,
         form: Form[TeamOrUser]
-)(implicit request: AuthenticatedRequest[_], messages: Messages)
+)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @heading = @{if(numberOfCases == 1){
     messages("users.move_cases.team_or_user.header.single")

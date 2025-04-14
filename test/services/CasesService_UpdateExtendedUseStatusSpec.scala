@@ -19,8 +19,7 @@ package services
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify, verifyNoMoreInteractions}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
@@ -51,9 +50,9 @@ class CasesService_UpdateExtendedUseStatusSpec
         withDecision(cancellation = Some(Cancellation(reason = CancelReason.ANNULLED)))
       )
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(successful(mock[Event]))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(successful(mock[Event]))
 
       await(service.updateExtendedUseStatus(originalCase, status = false, operator)) shouldBe caseUpdated
 
@@ -101,7 +100,7 @@ class CasesService_UpdateExtendedUseStatusSpec
         )
       )
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(failed(new RuntimeException()))
 
       intercept[RuntimeException] {
         await(service.updateExtendedUseStatus(originalCase, status = false, operator))
@@ -123,9 +122,9 @@ class CasesService_UpdateExtendedUseStatusSpec
         )
       )
 
-      given(connector.updateCase(any[Case])(any[HeaderCarrier])).willReturn(successful(caseUpdated))
-      given(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
-        .willReturn(failed(new RuntimeException()))
+      when(connector.updateCase(any[Case])(any[HeaderCarrier])).thenReturn(successful(caseUpdated))
+      when(connector.createEvent(refEq(caseUpdated), any[NewEventRequest])(any[HeaderCarrier]))
+        .thenReturn(failed(new RuntimeException()))
 
       await(service.updateExtendedUseStatus(originalCase, status = true, operator)) shouldBe caseUpdated
 

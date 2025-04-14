@@ -1085,7 +1085,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
 
   "Connector 'Case Report'" should {
     "fetch cases report" in {
-      val expectedResults: Paged[Map[String, ReportResultField[_]]] = Paged(
+      val expectedResults: Paged[Map[String, ReportResultField[?]]] = Paged(
         Seq(
           Map(
             ReportField.Reference.fieldName  -> StringResultField(ReportField.Reference.fieldName, Some("1")),

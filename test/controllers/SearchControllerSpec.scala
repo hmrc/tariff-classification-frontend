@@ -19,7 +19,6 @@ package controllers
 import models._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
 import play.api.http.Status
 import play.api.test.Helpers._
 import services.{CasesService, FileStoreService, KeywordsService}
@@ -27,7 +26,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases._
 import views.SearchTab
 import views.html.advanced_search
-
+import org.mockito.Mockito.*
 import java.time.Instant
 import scala.concurrent.Future
 
@@ -64,8 +63,10 @@ class SearchControllerSpec extends ControllerBaseSpec {
   "Search" should {
 
     "redirect to case if searching by reference and the case exists" in {
-      given(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])) willReturn Future.successful(
-        Some(mock[Case])
+      when(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])).thenReturn(
+        Future.successful(
+          Some(mock[Case])
+        )
       )
       val result = await(controller.search(defaultTab, reference = Some("reference"), page = 2)(fakeRequest))
 
@@ -74,8 +75,10 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect to case if searching by reference with padding and the case exists" in {
-      given(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])) willReturn Future.successful(
-        Some(mock[Case])
+      when(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])).thenReturn(
+        Future.successful(
+          Some(mock[Case])
+        )
       )
       val result = await(controller.search(defaultTab, reference = Some(" reference "), page = 2)(fakeRequest))
 
@@ -84,10 +87,12 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "render the advanced search page if searching by reference and the case does not exist" in {
-      given(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])) willReturn Future.successful(
-        None
+      when(casesService.getOne(ArgumentMatchers.eq("reference"))(any[HeaderCarrier])).thenReturn(
+        Future.successful(
+          None
+        )
       )
-      given(keywordsService.findAll()(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[Keyword])
+      when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
       val result = await(controller.search(defaultTab, reference = Some("reference"), page = 2)(fakeRequest))
 
       status(result)        shouldBe Status.OK
@@ -98,7 +103,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "render the advanced search page if searching by reference but it is empty" in {
-      given(keywordsService.findAll()(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[Keyword])
+      when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
       val result = await(controller.search(defaultTab, reference = Some(" "), page = 2)(fakeRequest))
 
       status(result)        shouldBe Status.OK
@@ -109,14 +114,18 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "not render results if empty" in {
-      given(
+      when(
         casesService.search(refEq(Search()), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])
-      ) willReturn Future
-        .successful(Paged.empty[Case])
-      given(fileStoreService.getAttachments(refEq(Seq.empty))(any[HeaderCarrier])) willReturn Future.successful(
-        Map.empty[Case, Seq[StoredAttachment]]
+      ).thenReturn(
+        Future
+          .successful(Paged.empty[Case])
       )
-      given(keywordsService.findAll()(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[Keyword])
+      when(fileStoreService.getAttachments(refEq(Seq.empty))(any[HeaderCarrier])).thenReturn(
+        Future.successful(
+          Map.empty[Case, Seq[StoredAttachment]]
+        )
+      )
+      when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
 
       val result = await(controller.search(defaultTab, search = Search(), page = 2)(fakeRequest))
 
@@ -145,14 +154,18 @@ class SearchControllerSpec extends ControllerBaseSpec {
           shouldPublishToRulings = true
         )
 
-      given(
+      when(
         casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])
-      ) willReturn Future
-        .successful(Paged(Seq(c)))
-      given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(
-        Map(c -> Seq(attachment))
+      ).thenReturn(
+        Future
+          .successful(Paged(Seq(c)))
       )
-      given(keywordsService.findAll()(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[Keyword])
+      when(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])).thenReturn(
+        Future.successful(
+          Map(c -> Seq(attachment))
+        )
+      )
+      when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
 
       val request = fakeRequest.withFormUrlEncodedBody(
         "case_source"    -> "trader",
@@ -176,7 +189,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
       val search = Search(caseSource = Some("trader"))
 
-      given(keywordsService.findAll()(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[Keyword])
+      when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
 
       val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "a")
       val result  = await(controller.search(defaultTab, search = search, page = 2)(request))
@@ -207,14 +220,18 @@ class SearchControllerSpec extends ControllerBaseSpec {
           shouldPublishToRulings = true
         )
 
-      given(
+      when(
         casesService.search(refEq(search), refEq(Sort()), refEq(SearchPagination(2)))(any[HeaderCarrier])
-      ) willReturn Future
-        .successful(Paged(Seq(c)))
-      given(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])) willReturn Future.successful(
-        Map(c -> Seq(attachment))
+      ).thenReturn(
+        Future
+          .successful(Paged(Seq(c)))
       )
-      given(keywordsService.findAll()(any[HeaderCarrier])) willReturn Future.successful(Seq.empty[Keyword])
+      when(fileStoreService.getAttachments(refEq(Seq(c)))(any[HeaderCarrier])).thenReturn(
+        Future.successful(
+          Map(c -> Seq(attachment))
+        )
+      )
+      when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
 
       val request = fakeRequest.withFormUrlEncodedBody(
         "case_source"    -> "trader",

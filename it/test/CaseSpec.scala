@@ -16,13 +16,13 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.{Case, Pagination}
-import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.test.Helpers._
 import utils.Cases._
 import utils.JsonFormatters._
 import utils.{CasePayloads, EventPayloads, KeywordsPayloads}
 
-class CaseSpec extends IntegrationTest with MockitoSugar {
+class CaseSpec extends IntegrationTest {
 
   private val c: Case = aCase(withReference("1"), withoutAgent())
 
@@ -45,9 +45,8 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       response.body     should include("Case not found")
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1")
-    }
   }
 
   "Case Summary" should {
@@ -127,9 +126,8 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       response.body     should include("id=\"trader-heading\"")
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1")
-    }
   }
 
   "Case Ruling Details" should {
@@ -160,9 +158,8 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#ruling_tab"))
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1/ruling")
-    }
   }
 
   "Case activity details" should {
@@ -202,9 +199,8 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#activity_tab"))
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1/activity")
-    }
   }
 
   "Case attachments details" should {
@@ -235,9 +231,8 @@ class CaseSpec extends IntegrationTest with MockitoSugar {
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#attachments_tab"))
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1/attachments")
-    }
   }
 
 }

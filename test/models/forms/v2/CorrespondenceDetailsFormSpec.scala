@@ -18,8 +18,9 @@ package models.forms.v2
 
 import models._
 import utils.Cases
+import base.SpecBase
 
-class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
+class CorrespondenceDetailsFormSpec extends SpecBase {
 
   private val correspondenceCase = Cases.correspondenceCaseExample
   private val sampleEmptyCase = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)
@@ -34,7 +35,7 @@ class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
 
   "CorrespondenceDetailsForm" should {
     "Fail to bind" when {
-      "a case with mandatorys are missing" in {
+      "a case with mandatorys are missing" in
         CorrespondenceDetailsForm
           .correspondenceDetailsForm(sampleEmptyCase)
           .fold(
@@ -45,10 +46,9 @@ class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
-    "Bind valid form" in {
+    "Bind valid form" in
       CorrespondenceDetailsForm
         .correspondenceDetailsForm(correspondenceCase)
         .fold(
@@ -56,25 +56,22 @@ class CorrespondenceDetailsFormSpec extends ModelsBaseSpec {
           aCase => aCase shouldBe correspondenceCase
         )
 
-    }
-
     "fail to bind with correct error messages" when {
 
-      "summary is empty" in {
+      "summary is empty" in
         CorrespondenceDetailsForm
           .correspondenceDetailsForm(caseWithoutSummary)
           .fold(
             form => {
-              form.hasErrors                      shouldBe true
-              form.errors.size                    shouldBe 1
-              form.errors.map(_.key)              shouldBe Seq("summary")
+              form.hasErrors         shouldBe true
+              form.errors.size       shouldBe 1
+              form.errors.map(_.key) shouldBe Seq("summary")
               form.error("summary").map(_.message shouldBe "Enter a summary")
 
             },
             _ => "form should not succeed"
           )
 
-      }
     }
 
     "Fill" should {

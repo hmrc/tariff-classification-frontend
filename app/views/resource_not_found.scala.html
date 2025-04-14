@@ -15,7 +15,7 @@
  *@
 
 @import models.request.AuthenticatedRequest
-@import controllers.routes._
+@import controllers.routes.OperatorDashboardController
 
 @import models.viewmodels.NoTabSelected
 @import views.html.includes.main
@@ -24,7 +24,7 @@
     main: main
 )
 
-@(resource: String = "Resource")(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(resource: String = "Resource")(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @main(pageTitle = messages("service.name"), customPrimaryNavTab = NoTabSelected) {
 

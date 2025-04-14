@@ -72,7 +72,7 @@ object FormDate extends Mappings {
     mapping(
       booleanField -> Forms.boolean,
       ""           -> of[Option[Instant]](optionalDateFormat)
-    )(OptionalDateForm.apply)(OptionalDateForm.unapply)
+    )(OptionalDateForm.apply)(o => Some(Tuple.fromProductTyped(o)))
       .transform(d => d.instant, d => OptionalDateForm(d.isEmpty, d))
 
   }

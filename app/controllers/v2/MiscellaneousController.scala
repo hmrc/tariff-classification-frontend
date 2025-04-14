@@ -67,7 +67,7 @@ class MiscellaneousController @Inject() (
     activityForm: Form[ActivityFormData] = ActivityForm.form,
     messageForm: Form[MessageFormData] = MessageForm.form,
     uploadForm: Form[String] = UploadAttachmentForm.form
-  )(implicit request: AuthenticatedCaseRequest[_]): Future[Html] = {
+  )(implicit request: AuthenticatedCaseRequest[?]): Future[Html] = {
 
     val miscellaneousCase: Case = request.`case`
     val uploadFileId            = fileId.getOrElse(UUID.randomUUID().toString)

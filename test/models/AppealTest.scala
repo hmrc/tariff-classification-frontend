@@ -17,10 +17,11 @@
 package models
 
 import utils.Cases._
+import base.SpecBase
 
 import java.util.UUID
 
-class AppealTest extends ModelsBaseSpec {
+class AppealTest extends SpecBase {
 
   private def randomId(): String = UUID.randomUUID().toString
 

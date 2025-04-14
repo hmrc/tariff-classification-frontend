@@ -17,11 +17,12 @@
 package models.forms
 
 import models._
+import base.SpecBase
 import utils.Cases
 
 import java.time.Instant
 
-class LiabilityDetailsFormTest extends ModelsBaseSpec {
+class LiabilityDetailsFormTest extends SpecBase {
 
   private val liability = LiabilityOrder(
     Contact(name = "contact-name", email = "contact@email.com", Some("contact-phone")),

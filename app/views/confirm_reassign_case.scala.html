@@ -34,7 +34,7 @@
 )
 
 
-@(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(c: Case, queue: Queue, originUrl: String)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @backToCase =@{
     if(c.application.isCorrespondence) {

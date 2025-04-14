@@ -37,7 +37,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = None)
 
-      val doc = view(attachments_state_message(Seq(attachment)))
+      val doc = view(attachments_state_message.render(Seq(attachment), false, true, authenticatedManagerFakeRequest))
 
       doc shouldNot containElementWithID("attachment-state-message")
     }
@@ -46,7 +46,7 @@ class AttachmentsStateMessageViewSpec extends ViewSpec {
 
       val attachment = Cases.storedAttachment.copy(scanStatus = Some(ScanStatus.READY))
 
-      val doc = view(attachments_state_message(Seq(attachment)))
+      val doc = view(attachments_state_message.ref.f(Seq(attachment), false, true)(authenticatedManagerFakeRequest))
 
       doc shouldNot containElementWithID("attachment-state-message")
     }

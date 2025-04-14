@@ -21,7 +21,7 @@
 @(
   report: reporting.CaseReport,
   options: Pagination,
-  results: Paged[Map[String, ReportResultField[_]]],
+  results: Paged[Map[String, ReportResultField[?]]],
   users: Map[String, Operator],
   teams: Map[String, Queue],
   id: String

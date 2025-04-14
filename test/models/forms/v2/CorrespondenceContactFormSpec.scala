@@ -18,8 +18,9 @@ package models.forms.v2
 
 import models._
 import utils.Cases
+import base.SpecBase
 
-class CorrespondenceContactFormSpec extends ModelsBaseSpec {
+class CorrespondenceContactFormSpec extends SpecBase {
 
   private val correspondenceCase = Cases.correspondenceCaseExample
   private val sampleEmptyCase = Cases.correspondenceCaseExample.copy(application = Cases.corrExampleWithMissingFields)
@@ -53,7 +54,7 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
 
   "CorrespondenceContactForm" should {
     "Fail to bind" when {
-      "a case with mandatorys are missing" in {
+      "a case with mandatorys are missing" in
         CorrespondenceContactForm
           .correspondenceContactForm(sampleEmptyCase)
           .fold(
@@ -64,10 +65,9 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
-    "Bind valid form" in {
+    "Bind valid form" in
       CorrespondenceContactForm
         .correspondenceContactForm(correspondenceCase)
         .fold(
@@ -75,42 +75,36 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
           aCase => aCase shouldBe correspondenceCase
         )
 
-    }
-
     "fail to bind with correct error messages" when {
 
-      "correspondenceStarter is empty" in {
+      "correspondenceStarter is empty" in
         CorrespondenceContactForm
           .correspondenceContactForm(emptyCaseWithEmail)
           .fold(
             form => {
-              form.hasErrors                                    shouldBe true
-              form.errors.size                                  shouldBe 1
-              form.errors.map(_.key)                            shouldBe Seq("correspondenceStarter")
+              form.hasErrors         shouldBe true
+              form.errors.size       shouldBe 1
+              form.errors.map(_.key) shouldBe Seq("correspondenceStarter")
               form.error("correspondenceStarter").map(_.message shouldBe "Enter a case source")
 
             },
             _ => "form should not succeed"
           )
 
-      }
-
-      "email is not valid" in {
+      "email is not valid" in
         CorrespondenceContactForm
           .correspondenceContactForm(emptyCaseWithInvalidEmail)
           .fold(
             form => {
-              form.hasErrors                    shouldBe true
-              form.errors.size                  shouldBe 1
-              form.errors.map(_.key)            shouldBe Seq("email")
+              form.hasErrors         shouldBe true
+              form.errors.size       shouldBe 1
+              form.errors.map(_.key) shouldBe Seq("email")
               form.error("email").map(_.message shouldBe "case.liability.error.trader.email")
             },
             _ => "form should not succeed"
           )
 
-      }
-
-      "postcode is not valid" in {
+      "postcode is not valid" in
         CorrespondenceContactForm
           .correspondenceContactForm(emptyCaseWithInvalidPostcode)
           .fold(
@@ -125,7 +119,6 @@ class CorrespondenceContactFormSpec extends ModelsBaseSpec {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
     "Fill" should {

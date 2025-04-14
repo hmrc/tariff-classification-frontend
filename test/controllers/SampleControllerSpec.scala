@@ -19,8 +19,7 @@ package controllers
 import models.SampleStatus.SampleStatus
 import models._
 import org.mockito.ArgumentMatchers.{any, refEq}
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{never, reset, verify}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.test.Helpers._
@@ -126,8 +125,8 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "update & redirect - For Case" in {
       val c = aCase(withReference("reference"), withDecision())
 
-      given(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(c))
+      when(casesService.updateSampleStatus(refEq(c), any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(c))
 
       val result = await(
         controller(c)
@@ -175,8 +174,8 @@ class SampleControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     "return OK when user has right permissions" in {
       val c = aCase(withReference("reference"), withStatus(CaseStatus.COMPLETED), withDecision())
 
-      given(casesService.updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier]))
-        .willReturn(Future.successful(c))
+      when(casesService.updateSampleStatus(any[Case], any[Option[SampleStatus]], any[Operator])(any[HeaderCarrier]))
+        .thenReturn(Future.successful(c))
 
       val result = await(
         controller(c, Set(Permission.EDIT_SAMPLE))

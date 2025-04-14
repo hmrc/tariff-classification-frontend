@@ -58,7 +58,7 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val goodsTab = GoodsTabViewModel.fromCase(`case`)
 
-      val doc = view(application_details(goodsTab))
+      val doc = view(application_details.render(goodsTab, messages))
 
       doc should containElementWithID("app-details-previous-ruling-reference")
       doc should containElementWithID("app-details-envisaged-code")
@@ -81,9 +81,9 @@ class ApplicationDetailsViewSpec extends ViewSpec {
 
       val goodsTab = GoodsTabViewModel.fromCase(`case`)
 
-      val doc = view(application_details(goodsTab))
+      val doc = view(application_details.ref.f(goodsTab)(messages))
 
-      //Then
+      // Then
       doc should containElementWithID("app-details-similar-ruling-reference")
       doc.getElementById("app-details-similar-ruling-reference") should containText("related BTI 1 related BTI 2")
 

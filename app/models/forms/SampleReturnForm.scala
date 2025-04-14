@@ -31,7 +31,7 @@ object SampleReturnForm {
   }
 
   private val mapping: Mapping[Option[SampleReturn]] = Forms.mapping[Option[SampleReturn], String](
-    "return" -> fieldNonEmpty("error.empty.sample.return").verifying(emptyOr(oneOf(SampleReturn.values)): _*)
+    "return" -> fieldNonEmpty("error.empty.sample.return").verifying(emptyOr(oneOf(SampleReturn.values))*)
   )(v => SampleReturn.values.find(_.toString == v))(_.map(_.toString))
 
   val form: Form[Option[SampleReturn]] = Form[Option[SampleReturn]](mapping)

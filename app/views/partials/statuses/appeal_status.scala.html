@@ -18,7 +18,7 @@
 
 @(c: Case, id: String)
 
-@defining(Appeal.highestAppealFromDecision(c.decision)) { appeal: Option[Appeal] =>
+@defining(Appeal.highestAppealFromDecision(c.decision)) { (appeal: Option[Appeal]) =>
 
     @if(appeal.isDefined) {
         <strong id="@id" class="govuk-body govuk-tag govuk-tag--red">

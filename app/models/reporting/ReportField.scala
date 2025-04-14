@@ -54,7 +54,7 @@ object ReportField {
   val ContactName: StringField              = StringField("contact_name")
   val ContactEmail: StringField             = StringField("contact_email")
 
-  val fields: Map[String, ReportField[_]] = List(
+  val fields: Map[String, ReportField[?]] = List(
     Count,
     Reference,
     Status,

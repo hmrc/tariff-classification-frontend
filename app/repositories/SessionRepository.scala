@@ -24,7 +24,7 @@ import org.mongodb.scala.model.{IndexModel, IndexOptions, ReplaceOptions}
 import play.api.Configuration
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-
+import org.mongodb.scala.SingleObservableFuture
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,7 @@ class SessionRepository @Inject() (config: Configuration, mongoComponent: MongoC
           keys = ascending("lastUpdated"),
           indexOptions = IndexOptions()
             .name("userAnswersExpiry")
-            .expireAfter(config.get[Int]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+            .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
         )
       )
     ) {

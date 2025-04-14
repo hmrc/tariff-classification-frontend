@@ -43,7 +43,7 @@ class AttachmentViewSpec extends ViewSpec {
       val stored =
         Cases.storedAttachment.copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.FAILED))
 
-      val doc = view(attachment("MODULE", stored, caseRef))
+      val doc = view(attachment.render("MODULE", stored, caseRef, None))
 
       doc                                      should containElementWithID("MODULE-file")
       doc                                      should containElementWithID("MODULE-file-status")
@@ -56,7 +56,7 @@ class AttachmentViewSpec extends ViewSpec {
         Cases.storedAttachment
           .copy(id = "FILE_ID", fileName = Some("name"), scanStatus = Some(ScanStatus.READY), url = None)
 
-      val doc = view(attachment("MODULE", stored, caseRef))
+      val doc = view(attachment.ref.f("MODULE", stored, caseRef, None))
 
       doc                                      should containElementWithID("MODULE-file")
       doc                                      should containElementWithID("MODULE-file-status")

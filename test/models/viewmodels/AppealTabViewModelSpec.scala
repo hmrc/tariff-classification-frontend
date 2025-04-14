@@ -17,9 +17,10 @@
 package models.viewmodels
 
 import models._
+import base.SpecBase
 import utils.Cases
 
-class AppealTabViewModelSpec extends ModelsBaseSpec {
+class AppealTabViewModelSpec extends SpecBase {
 
   val dummyCase: Case = Cases.aCaseWithCompleteDecision.copy(
     status = CaseStatus.COMPLETED,
@@ -51,13 +52,21 @@ class AppealTabViewModelSpec extends ModelsBaseSpec {
 
       val op = Cases.operatorWithPermissions.copy(permissions = Set(Permission.APPEAL_CASE))
 
-      val canceledCase = dummyCase.copy(status = CaseStatus.CANCELLED)
+      val canceledCase = dummyCase.copy(
+        status = CaseStatus.CANCELLED,
+        decision = Some(
+          Cases.decision.copy(
+            appeal = Seq.empty,
+            cancellation = Some(Cancellation(CancelReason.ANNULLED, applicationForExtendedUse = true))
+          )
+        )
+      )
 
       val appealTabViewModel = AppealTabViewModel.fromCase(canceledCase, op)
 
       val expected = AppealTabViewModel(
         caseReference = "123456",
-        appeals = Seq(Appeal("id", AppealStatus.IN_PROGRESS, AppealType.APPEAL_TIER_1)),
+        appeals = Seq.empty,
         Some("Yes"),
         permissionForExtendedUse = true
       )

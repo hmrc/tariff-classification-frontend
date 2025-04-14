@@ -16,15 +16,16 @@
 
 package models.forms
 
-import models.{ModelsBaseSpec, SampleSend}
+import models.SampleSend
+import base.SpecBase
 
-class SampleSendFormTest extends ModelsBaseSpec {
+class SampleSendFormTest extends SpecBase {
 
   "Bind from request" should {
     "Bind empty" in {
       val form = SampleSendForm.form.bindFromRequest(Map())
 
-      form.hasErrors            shouldBe true
+      form.hasErrors shouldBe true
       form.errors.map(_.message shouldBe "error.empty.sample.sender")
     }
 

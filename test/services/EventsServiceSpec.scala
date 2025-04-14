@@ -21,8 +21,7 @@ import connectors.BindingTariffClassificationConnector
 import models._
 import models.request.NewEventRequest
 import org.mockito.ArgumentMatchers._
-import org.mockito.BDDMockito._
-import org.mockito.Mockito.{reset, verify, verifyNoMoreInteractions}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
@@ -48,11 +47,35 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
 
   "Get Events by reference" should {
     "retrieve a list of events" in {
-      given(connector.findFilteredEvents("reference", NoPagination(), Set.empty)) willReturn Future.successful(
-        Paged(manyEvents)
+      when(connector.findFilteredEvents("reference", NoPagination(), Set.empty)).thenReturn(
+        Future.successful(
+          Paged(manyEvents)
+        )
       )
 
       await(service.getEvents("reference", NoPagination())) shouldBe Paged(manyEvents)
+    }
+  }
+  "find Referral Events" should {
+    "retrieve a map of reference and events" in {
+      when(connector.findReferralEvents(Set("reference"))).thenReturn(
+        Future.successful(
+          manyEvents.map(x => ("reference", x)).toMap
+        )
+      )
+
+      await(service.findReferralEvents(Set("reference"))) shouldBe manyEvents.map(x => ("reference", x)).toMap
+    }
+  }
+  "find Completion Events" should {
+    "retrieve a  map of reference and events" in {
+      when(connector.findCompletionEvents(Set("reference"))).thenReturn(
+        Future.successful(
+          manyEvents.map(x => ("reference", x)).toMap
+        )
+      )
+
+      await(service.findCompletionEvents(Set("reference"))) shouldBe manyEvents.map(x => ("reference", x)).toMap
     }
   }
 
@@ -68,11 +91,12 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
         )
       )
 
-      given(
+      when(
         connector.findFilteredEvents("reference", NoPagination(), Set(EventType.SAMPLE_STATUS_CHANGE))
-      ) willReturn Future
-        .successful(Paged(filteredEvents, NoPagination(), 1))
-
+      ).thenReturn(
+        Future
+          .successful(Paged(filteredEvents, NoPagination(), 1))
+      )
       await(
         service.getFilteredEvents("reference", NoPagination(), Some(Set(EventType.SAMPLE_STATUS_CHANGE)))
       ) shouldBe Paged(
@@ -92,8 +116,8 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     val aCase           = Cases.btiCaseExample
 
     "post a new note to the backend via the connector" in {
-      given(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
-        .willReturn(successful(event))
+      when(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
+        .thenReturn(successful(event))
 
       await(service.addNote(aCase, aNote, operator, clock)) shouldBe event
 
@@ -102,8 +126,8 @@ class EventsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
     }
 
     "propagate the error if the connector fails" in {
-      given(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
-        .willReturn(failed(new IllegalStateException))
+      when(connector.createEvent(refEq(aCase), refEq(newEventRequest))(any[HeaderCarrier]))
+        .thenReturn(failed(new IllegalStateException))
 
       intercept[IllegalStateException] {
         await(service.addNote(aCase, aNote, operator, clock))

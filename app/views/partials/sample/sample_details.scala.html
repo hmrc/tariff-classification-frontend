@@ -20,7 +20,7 @@
 @import views.html.partials.sample.sample_status_events_table
 @import views.html.partials.sample.sample_details_bti
 
-@(sample: SampleTabViewModel)(implicit request: AuthenticatedRequest[_], messages: Messages)
+@(sample: SampleTabViewModel)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @sample_details_bti(sample)
 

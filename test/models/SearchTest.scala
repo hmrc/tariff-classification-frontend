@@ -17,8 +17,9 @@
 package models
 
 import java.net.URLDecoder
+import base.SpecBase
 
-class SearchTest extends ModelsBaseSpec {
+class SearchTest extends SpecBase {
 
   private val populatedSearch = Search(
     caseSource = Some("trader-name"),
