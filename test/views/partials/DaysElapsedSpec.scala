@@ -26,7 +26,7 @@ class DaysElapsedSpec extends ViewSpec {
 
     "render days elapsed in bold when 30 or over" in {
 
-      val doc = view(days_elapsed(30))
+      val doc = view(days_elapsed.render(30, "days-elapsed", appConfig))
 
       doc                                should containElementWithID("days-elapsed")
       doc.getElementById("days-elapsed") should haveTag("span")
@@ -36,7 +36,7 @@ class DaysElapsedSpec extends ViewSpec {
 
     "render days elapsed with normal font weight when under 30" in {
 
-      val doc = view(days_elapsed(29))
+      val doc = view(days_elapsed.ref.f(29, "days-elapsed")(appConfig))
 
       doc                                should containElementWithID("days-elapsed")
       doc.getElementById("days-elapsed") should haveTag("span")

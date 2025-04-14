@@ -18,9 +18,8 @@ package models.forms
 
 import models.Decision
 import play.api.data.FormError
-import play.api.data.validation.{Constraint, Valid, ValidationResult}
-import org.mockito.Mockito.*
 import base.SpecBase
+
 import java.time.Instant
 
 class DecisionFormTest extends SpecBase {
@@ -57,7 +56,7 @@ class DecisionFormTest extends SpecBase {
   "liability form" should {
     "bind the form from the request" when {
       "provided with blank values" in {
-        val form = new DecisionForm()
+        val form = new DecisionForm(new CommodityCodeConstraints)
           .liabilityForm(decision)
           .bindFromRequest(emptyParams)
 
@@ -65,7 +64,7 @@ class DecisionFormTest extends SpecBase {
       }
 
       "provided with valid values" in {
-        val form = new DecisionForm().liabilityForm(decision).bindFromRequest(params)
+        val form = new DecisionForm(new CommodityCodeConstraints).liabilityForm(decision).bindFromRequest(params)
 
         form.hasErrors shouldBe false
         form.get       shouldBe decision
@@ -73,13 +72,13 @@ class DecisionFormTest extends SpecBase {
     }
     "bind the form from a decision model" when {
       "provided with valid values" in {
-        val form = new DecisionForm().liabilityForm(decision)
+        val form = new DecisionForm(new CommodityCodeConstraints).liabilityForm(decision)
 
         form.hasErrors shouldBe false
         form.data      shouldBe params.view.mapValues(v => v.head).toMap
       }
       "provided decision is not provided" in {
-        val form = new DecisionForm().liabilityForm()
+        val form = new DecisionForm(new CommodityCodeConstraints).liabilityForm()
 
         form.hasErrors shouldBe false
       }
@@ -88,7 +87,8 @@ class DecisionFormTest extends SpecBase {
   "liability complete form" should {
     "bind the form from the request" when {
       "provided with valid values" in {
-        val form = new DecisionForm().liabilityCompleteForm(decision).bindFromRequest(params)
+        val form =
+          new DecisionForm(new CommodityCodeConstraints).liabilityCompleteForm(decision).bindFromRequest(params)
 
         form.hasErrors shouldBe false
         form.get       shouldBe decision
@@ -96,7 +96,7 @@ class DecisionFormTest extends SpecBase {
     }
     "bind the form from a decision model" when {
       "provided with valid values" in {
-        val form = new DecisionForm().liabilityCompleteForm(decision)
+        val form = new DecisionForm(new CommodityCodeConstraints).liabilityCompleteForm(decision)
 
         form.hasErrors shouldBe false
         form.data      shouldBe params.view.mapValues(v => v.head).toMap
@@ -104,7 +104,7 @@ class DecisionFormTest extends SpecBase {
     }
     "return validation errors" when {
       "provided with invalid values" in {
-        val form = new DecisionForm()
+        val form = new DecisionForm(new CommodityCodeConstraints)
           .liabilityCompleteForm(decision)
           .bindFromRequest(emptyParams)
 
@@ -124,7 +124,7 @@ class DecisionFormTest extends SpecBase {
   "bti complete form" should {
     "bind data correctly" when {
       "provided with valid values" in {
-        val form = new DecisionForm().btiCompleteForm
+        val form = new DecisionForm(new CommodityCodeConstraints).btiCompleteForm
           .fillAndValidate(validDecisionFormData.copy(bindingCommodityCode = "12345678"))
 
         form.hasErrors shouldBe false
@@ -132,7 +132,7 @@ class DecisionFormTest extends SpecBase {
     }
     "return validation errors" when {
       "all fields are empty" in {
-        val form = new DecisionForm().btiCompleteForm.fillAndValidate(DecisionFormData())
+        val form = new DecisionForm(new CommodityCodeConstraints).btiCompleteForm.fillAndValidate(DecisionFormData())
 
         form.hasErrors shouldBe true
 
@@ -147,7 +147,7 @@ class DecisionFormTest extends SpecBase {
     }
     "return commodity code invalid error" when {
       "provided by an invalid commodity code" in {
-        val form = new DecisionForm().btiCompleteForm
+        val form = new DecisionForm(new CommodityCodeConstraints).btiCompleteForm
           .fillAndValidate(validDecisionFormData.copy(bindingCommodityCode = "dsaxwafcdbj"))
 
         form.hasErrors shouldBe true
@@ -160,7 +160,8 @@ class DecisionFormTest extends SpecBase {
     "return only commodity code empty validation error" when {
       "validation fails both on commodityCodeNonEmpty and commodityCodeValid" in {
         val form =
-          new DecisionForm().btiCompleteForm.fillAndValidate(validDecisionFormData.copy(bindingCommodityCode = ""))
+          new DecisionForm(new CommodityCodeConstraints).btiCompleteForm
+            .fillAndValidate(validDecisionFormData.copy(bindingCommodityCode = ""))
 
         form.hasErrors shouldBe true
 

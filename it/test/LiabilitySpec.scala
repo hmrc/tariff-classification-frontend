@@ -98,8 +98,7 @@ class LiabilitySpec extends IntegrationTest {
       response.body     should include("id=\"liability-entry-number\"")
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/v2/1/liability")
-    }
   }
 }

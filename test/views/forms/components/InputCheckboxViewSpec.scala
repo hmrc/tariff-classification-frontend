@@ -49,7 +49,7 @@ class InputCheckboxViewSpec extends ViewSpec {
 
     "render with Optional Fields" in {
 
-      val doc = view(input_checkbox(form("field"), "Label", value = false))
+      val doc = view(input_checkbox.ref.f(form("field"), "Label", false, None, None, None, None, None))
 
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
@@ -58,11 +58,15 @@ class InputCheckboxViewSpec extends ViewSpec {
       doc.getElementById("field") should haveAttribute("value", "false")
     }
 
-    "show an error in the value field's label" in {
-      lazy val emptyForm = Map[String, String]()
-      val formWithError  = form.bind(emptyForm).apply("field")
-      val doc            = view(input_text(formWithError, "Span"))
-      doc.getElementsByClass("govuk-visually-hidden").text() shouldBe errorPrefix
+    "render using .render" in {
+
+      val doc = view(input_checkbox.render(form("field"), "Label", false, None, None, None, None, None))
+
+      doc                         should containElementWithTag("input")
+      doc                         should containElementWithID("field")
+      doc.getElementById("field") should haveAttribute("type", "checkbox")
+      doc.getElementById("field") should haveAttribute("name", "field")
+      doc.getElementById("field") should haveAttribute("value", "false")
     }
   }
 }

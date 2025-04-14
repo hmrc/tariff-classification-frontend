@@ -23,9 +23,12 @@ import models.{Operator, Permission, Role}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.AnyContentAsEmpty
-import play.api.test.CSRFTokenHelper._
+import play.api.test.CSRFTokenHelper.*
 import play.api.test.{FakeHeaders, FakeRequest}
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
+import repositories.SessionRepository
+
+import scala.reflect.ClassTag
 
 abstract class ViewSpec extends SpecBase {
 

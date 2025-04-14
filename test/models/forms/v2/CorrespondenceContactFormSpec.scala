@@ -54,7 +54,7 @@ class CorrespondenceContactFormSpec extends SpecBase {
 
   "CorrespondenceContactForm" should {
     "Fail to bind" when {
-      "a case with mandatorys are missing" in {
+      "a case with mandatorys are missing" in
         CorrespondenceContactForm
           .correspondenceContactForm(sampleEmptyCase)
           .fold(
@@ -65,10 +65,9 @@ class CorrespondenceContactFormSpec extends SpecBase {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
-    "Bind valid form" in {
+    "Bind valid form" in
       CorrespondenceContactForm
         .correspondenceContactForm(correspondenceCase)
         .fold(
@@ -76,11 +75,9 @@ class CorrespondenceContactFormSpec extends SpecBase {
           aCase => aCase shouldBe correspondenceCase
         )
 
-    }
-
     "fail to bind with correct error messages" when {
 
-      "correspondenceStarter is empty" in {
+      "correspondenceStarter is empty" in
         CorrespondenceContactForm
           .correspondenceContactForm(emptyCaseWithEmail)
           .fold(
@@ -94,9 +91,7 @@ class CorrespondenceContactFormSpec extends SpecBase {
             _ => "form should not succeed"
           )
 
-      }
-
-      "email is not valid" in {
+      "email is not valid" in
         CorrespondenceContactForm
           .correspondenceContactForm(emptyCaseWithInvalidEmail)
           .fold(
@@ -109,9 +104,7 @@ class CorrespondenceContactFormSpec extends SpecBase {
             _ => "form should not succeed"
           )
 
-      }
-
-      "postcode is not valid" in {
+      "postcode is not valid" in
         CorrespondenceContactForm
           .correspondenceContactForm(emptyCaseWithInvalidPostcode)
           .fold(
@@ -126,7 +119,6 @@ class CorrespondenceContactFormSpec extends SpecBase {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
     "Fill" should {

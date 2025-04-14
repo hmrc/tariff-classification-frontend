@@ -22,7 +22,6 @@ import models.{Case, CaseStatus, Operator, Permission}
 import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
-import play.api.data.validation.{Constraint, Valid}
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.{CasesService, FileStoreService}
@@ -40,8 +39,8 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   private val fileService              = mock[FileStoreService]
   private val mapper                   = mock[DecisionFormMapper]
   private val operator                 = Operator(id = "id")
-  private val commodityCodeConstraints = mock[CommodityCodeConstraints]
-  private val decisionForm             = new DecisionForm()
+  private val commodityCodeConstraints = new CommodityCodeConstraints
+  private val decisionForm             = new DecisionForm(commodityCodeConstraints)
   private val liabilityDetailsForm     = new LiabilityDetailsForm(commodityCodeConstraints, realAppConfig)
 
   private lazy val editLiabilityView = injector.instanceOf[edit_liability_ruling]
@@ -54,7 +53,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     reset(casesService)
     reset(fileService)
     reset(mapper)
-    reset(commodityCodeConstraints)
   }
 
   private def controller(c: Case) = new RulingController(
@@ -88,7 +86,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
   "case to decision form data mapper " should {
 
     "create valid decision form from a valid case " in {
-
       val caseWithAtt                        = btiCaseExample.copy(attachments = Seq(attachment("url.to.publish")))
       val decisionFormData: DecisionFormData = controller(caseWithAtt).caseToDecisionFormData(caseWithAtt)
       val decision                           = caseWithAtt.decision.get
@@ -104,7 +101,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "create empty decision form when a case does not have a decision" in {
-
       val empty                    = ""
       val caseWithEmptyDecision    = btiCaseExample.copy(decision = Option.empty)
       val result: DecisionFormData = controller(caseWithEmptyDecision).caseToDecisionFormData(caseWithEmptyDecision)
@@ -138,12 +134,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
         contentAsString(result) should (include("Ruling") and include("<form"))
       }
       "Case is a Liability" in {
-        when(commodityCodeConstraints.commodityCodeLengthValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
-        when(commodityCodeConstraints.commodityCodeNumbersValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
-        when(commodityCodeConstraints.commodityCodeEvenDigitsValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
         val result = controller(
           liabilityCaseWithStatusOPEN,
           permission = Set(Permission.EDIT_RULING)
@@ -154,12 +144,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       }
 
       "Case is an Liability with incorrect permissions" in {
-        when(commodityCodeConstraints.commodityCodeLengthValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
-        when(commodityCodeConstraints.commodityCodeNumbersValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
-        when(commodityCodeConstraints.commodityCodeEvenDigitsValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
         val result = controller(
           liabilityCaseWithStatusOPEN,
           permission = Set.empty[Permission]
@@ -204,14 +188,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "load edit ruling page when ruling tab has missing fields that are required to complete a case" in {
-      when(commodityCodeConstraints.commodityCodeNonEmpty)
-        .thenReturn(Constraint[String]("error")(_ => Valid))
-      when(commodityCodeConstraints.commodityCodeLengthValid)
-        .thenReturn(Constraint[String]("error")(_ => Valid))
-      when(commodityCodeConstraints.commodityCodeNumbersValid)
-        .thenReturn(Constraint[String]("error")(_ => Valid))
-      when(commodityCodeConstraints.commodityCodeEvenDigitsValid)
-        .thenReturn(Constraint[String]("error")(_ => Valid))
       val result = controller(Cases.liabilityCaseExample, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF())
 
@@ -219,14 +195,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
     }
 
     "load edit C592 page when C592 tab has missing fields that are required to complete a case" in {
-      when(commodityCodeConstraints.commodityCodeNonEmpty)
-        .thenReturn(Constraint[String]("error")(_ => Valid))
-      when(commodityCodeConstraints.commodityCodeLengthValid)
-        .thenReturn(Constraint[String]("error")(_ => Valid))
-      when(commodityCodeConstraints.commodityCodeNumbersValid)
-        .thenReturn(Constraint[String]("error")(_ => Valid))
-      when(commodityCodeConstraints.commodityCodeEvenDigitsValid)
-        .thenReturn(Constraint[String]("error")(_ => Valid))
       val result = controller(liabilityCaseWithStatusOpenWithDecision, Set(Permission.EDIT_RULING))
         .validateBeforeComplete("reference")(newFakeGETRequestWithCSRF())
 
@@ -289,12 +257,6 @@ class RulingControllerSpec extends ControllerBaseSpec with BeforeAndAfterEach {
       }
 
       "case is a Liability" in {
-        when(commodityCodeConstraints.commodityCodeLengthValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
-        when(commodityCodeConstraints.commodityCodeNumbersValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
-        when(commodityCodeConstraints.commodityCodeEvenDigitsValid)
-          .thenReturn(Constraint[String]("error")(_ => Valid))
         val result =
           controller(liabilityCaseWithStatusOPEN).updateRulingDetails("reference")(newFakePOSTRequestWithCSRF())
         verify(casesService, never()).updateCase(any[Case], any[Case], any[Operator])(any[HeaderCarrier])

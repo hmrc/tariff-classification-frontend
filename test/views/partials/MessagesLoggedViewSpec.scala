@@ -50,7 +50,8 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val messagesTab = MessagesTabViewModel.fromCase(c)
 
-        val doc = view(partials.messages_logged(messagesTab, MessageForm.form))
+        val doc =
+          view(partials.messages_logged.render(messagesTab, MessageForm.form, requestWithAddMsgPermission, messages))
 
         doc shouldNot containElementWithID("activity-events-row-0-operator")
       }
@@ -77,7 +78,7 @@ class MessagesLoggedViewSpec extends ViewSpec {
 
         val doc =
           view(
-            partials.messages_logged(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages)
+            partials.messages_logged.ref.f(messagesTab, MessageForm.form)(requestWithAddNotePermission, messages)
           )
 
         doc                                                 should containElementWithID("messages-events-row-0-name")

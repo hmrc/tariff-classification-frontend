@@ -49,7 +49,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      val doc = view(appeal_status(c, "id"))
+      val doc = view(appeal_status.ref.f(c, "id"))
 
       doc.text() shouldBe "UNDER MEDIATION"
     }
@@ -65,7 +65,7 @@ class AppealStatusViewSpec extends ViewSpec {
         )
       )
 
-      val doc = view(appeal_status(c, "id"))
+      val doc = view(appeal_status.render(c, "id"))
 
       doc.text() shouldBe "COMPLETED"
     }

@@ -71,14 +71,14 @@ class ActivityTabSpec extends ViewSpec {
 
     "display add-note-submit for user with correct permissions" in {
 
-      val doc = view(activityTab(activityViewModel, activityForm)(requestWithAddNotePermission, messages))
+      val doc = view(activityTab.ref.f(activityViewModel, activityForm)(requestWithAddNotePermission, messages))
 
       doc should containElementWithID("add-note-submit")
     }
 
     "not display add-note-submit for user with correct permissions" in {
 
-      val doc = view(activityTab(activityViewModel, activityForm)(operatorRequest, messages))
+      val doc = view(activityTab.render(activityViewModel, activityForm, operatorRequest, messages))
 
       doc shouldNot containElementWithID("add-note-submit")
     }

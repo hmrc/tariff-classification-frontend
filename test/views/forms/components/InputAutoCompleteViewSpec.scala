@@ -16,9 +16,9 @@
 
 package views.forms.components
 
-import play.api.data.Form
+import play.api.data.{Field, Form}
 import play.api.data.Forms.{mapping, text}
-import views.ViewMatchers._
+import views.ViewMatchers.*
 import views.ViewSpec
 import views.html.components.input_accessible_auto_complete
 
@@ -32,7 +32,7 @@ class InputAutoCompleteViewSpec extends ViewSpec {
       )(FormData.apply)(o => Option(o.value))
     ).fill(FormData("v"))
 
-    "Render" in {
+    "apply" in {
 
       val doc = view(
         input_accessible_auto_complete(
@@ -40,6 +40,44 @@ class InputAutoCompleteViewSpec extends ViewSpec {
           label = Some("Label"),
           autoCompleteOptions = Seq("A", "B")
         )
+      )
+
+      doc should containElementWithID("keyword-search-wrapper")
+    }
+    "Render" in {
+
+      val doc = view(
+        input_accessible_auto_complete.render(
+          form.apply("field"),
+          Some("Label"),
+          None,
+          None,
+          None,
+          None,
+          Seq("A", "B"),
+          None,
+          None,
+          messages,
+          request
+        )
+      )
+
+      doc should containElementWithID("keyword-search-wrapper")
+    }
+    "ref.f" in {
+
+      val doc = view(
+        input_accessible_auto_complete.ref.f(
+          form.apply("field"),
+          Some("Label"),
+          None,
+          None,
+          None,
+          None,
+          Seq("A", "B"),
+          None,
+          None
+        )(messages, request)
       )
 
       doc should containElementWithID("keyword-search-wrapper")

@@ -22,9 +22,10 @@ import models.forms.FormConstraints.*
 import models.forms.mappings.Constraints
 import play.api.data.Form
 import play.api.data.Forms.*
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.validation.Constraint
 
 import java.time.Instant
+import javax.inject.Inject
 
 case class DecisionFormData(
   bindingCommodityCode: String = "",
@@ -39,36 +40,15 @@ case class DecisionFormData(
   explicitEndDate: Boolean = false
 )
 
-class DecisionForm() extends Constraints {
-  def commodityCodeNonEmpty: Constraint[String] =
-    customNonEmpty("decision_form.error.bindingCommodityCode.required")
-
-  def commodityCodeLengthValid: Constraint[String] = Constraint("constraints.commoditycode.length") {
-    case s: String if (s.length >= 6) && (s.length <= 22) => Valid
-    case _: String =>
-      Invalid("decision_form.error.bindingCommodityCode.valid.length")
-  }
-
-  def commodityCodeNumbersValid: Constraint[String] = Constraint("constraints.commoditycode.number") {
-    case s: String if s.matches("[0-9]+") => Valid
-    case _: String =>
-      Invalid("decision_form.error.bindingCommodityCode.valid.number")
-  }
-
-  def commodityCodeEvenDigitsValid: Constraint[String] = Constraint("constraints.commoditycode.evenDigits") {
-    case s: String if s.length % 2 == 0 => Valid
-    case _: String =>
-      Invalid("decision_form.error.bindingCommodityCode.valid.evenDigits")
-  }
-
+class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints) extends Constraints {
   def btiForm(): Form[DecisionFormData] =
     Form[DecisionFormData](
       mapping(
         "bindingCommodityCode" -> text.verifying(
           emptyOr(
-            commodityCodeLengthValid,
-            commodityCodeNumbersValid,
-            commodityCodeEvenDigitsValid
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
           )*
         ),
         "goodsDescription"             -> text,
@@ -86,15 +66,15 @@ class DecisionForm() extends Constraints {
       )
     )
 
-  val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
+  lazy val btiCompleteForm: Form[DecisionFormData] = Form[DecisionFormData](
     mapping(
       "bindingCommodityCode" -> text
         .verifying(
-          StopOnFirstFail.apply(
-            commodityCodeNonEmpty,
-            commodityCodeLengthValid,
-            commodityCodeNumbersValid,
-            commodityCodeEvenDigitsValid
+          StopOnFirstFail(
+            commodityCodeConstraints.commodityCodeNonEmpty,
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
           )
         ),
       "goodsDescription" -> text.verifying(customNonEmpty("decision_form.error.itemDescription.required")),
@@ -135,9 +115,9 @@ class DecisionForm() extends Constraints {
       mapping(
         "bindingCommodityCode" -> text.verifying(
           emptyOr(
-            commodityCodeLengthValid,
-            commodityCodeNumbersValid,
-            commodityCodeEvenDigitsValid
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
           )*
         ),
         "goodsDescription" -> text,
@@ -151,10 +131,10 @@ class DecisionForm() extends Constraints {
     Form[Decision](
       mapping(
         "bindingCommodityCode" -> text.verifying(
-          commodityCodeNonEmpty,
-          commodityCodeLengthValid,
-          commodityCodeNumbersValid,
-          commodityCodeEvenDigitsValid
+          commodityCodeConstraints.commodityCodeNonEmpty,
+          commodityCodeConstraints.commodityCodeLengthValid,
+          commodityCodeConstraints.commodityCodeNumbersValid,
+          commodityCodeConstraints.commodityCodeEvenDigitsValid
         ),
         "goodsDescription" -> text.verifying(customNonEmpty("Enter a goods description")),
         "methodSearch"     -> text.verifying(customNonEmpty("Enter the searches performed")),

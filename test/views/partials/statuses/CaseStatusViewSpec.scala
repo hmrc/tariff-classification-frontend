@@ -48,7 +48,7 @@ class CaseStatusViewSpec extends ViewSpec {
         withDecision(cancellation = Some(Cancellation(CancelReason.ANNULLED)))
       )
 
-      val doc = view(case_status(c, "id"))
+      val doc = view(case_status.ref.f(c, "id", false))
 
       doc.text()             shouldBe "CANCELLED - 55"
       doc.getElementById("id") should haveClass("govuk-tag--red")
@@ -56,7 +56,7 @@ class CaseStatusViewSpec extends ViewSpec {
 
     "render EXPIRED for expired rulings" in {
 
-      val doc = view(case_status(Cases.btiCaseWithExpiredRuling, "id"))
+      val doc = view(case_status.render(Cases.btiCaseWithExpiredRuling, "id", false))
 
       doc.text()             shouldBe "case status EXPIRED"
       doc.getElementById("id") should haveClass("govuk-tag--green")

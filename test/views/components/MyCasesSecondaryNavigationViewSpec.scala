@@ -37,7 +37,7 @@ class MyCasesSecondaryNavigationViewSpec extends ViewSpec {
     }
 
     "display ReferredByMe tab" in {
-      val doc = view(myCasesSecondaryView(ReferredByMeTab))
+      val doc = view(myCasesSecondaryView.ref.f(ReferredByMeTab)(messages))
 
       doc should containElementWithID("sub_nav_referred_by_me_tab")
 
@@ -47,7 +47,7 @@ class MyCasesSecondaryNavigationViewSpec extends ViewSpec {
     }
 
     "display CompletedByMe tab" in {
-      val doc = view(myCasesSecondaryView(CompletedByMeTab))
+      val doc = view(myCasesSecondaryView.render(CompletedByMeTab, messages))
 
       doc should containElementWithID("sub_nav_completed_by_me_tab")
 

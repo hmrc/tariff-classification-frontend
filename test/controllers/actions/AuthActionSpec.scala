@@ -123,9 +123,8 @@ class AuthActionSpec extends ControllerBaseSpec {
         await(bodyOf(result)(mat)) shouldBe "internalId"
       }
 
-      "not be present in IdentifierAction when it is not available from AuthConnector" in {
+      "not be present in IdentifierAction when it is not available from AuthConnector" in
         assertThrows[MissingSessionIdException](await(handleAuth(None, fakeRequest)))
-      }
 
     }
 

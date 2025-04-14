@@ -40,14 +40,14 @@ class SampleStatusEventsTableViewSpec extends ViewSpec {
     }
 
     "render status change events correctly" in {
-      val doc = view(sampleStatusEventsTableView(Paged(sampleStatusChangeEvents)))
+      val doc = view(sampleStatusEventsTableView.ref.f(Paged(sampleStatusChangeEvents))(messages))
       doc.getElementById("sample-status-events-row-0") should containText(
         "Sample status changed from awaiting sample to destroyed"
       )
     }
 
     "render status return events correctly" in {
-      val doc = view(sampleStatusEventsTableView(Paged(sampleStatusReturnChangeEvents)))
+      val doc = view(sampleStatusEventsTableView.render(Paged(sampleStatusReturnChangeEvents), messages))
       doc.getElementById("sample-status-events-row-0") should containText("Returning sample changed from yes to no")
     }
 

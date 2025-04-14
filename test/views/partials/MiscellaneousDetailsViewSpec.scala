@@ -35,10 +35,8 @@ class MiscellaneousDetailsViewSpec extends ViewSpec {
       val caseDetailsTab = DetailsViewModel.fromCase(c)
 
       val doc = view(
-        miscellaneous_case_details(caseDetailsTab)(
-          requestWithPermissions(Permission.EDIT_MISCELLANEOUS),
-          messages
-        )
+        miscellaneous_case_details
+          .render(caseDetailsTab, requestWithPermissions(Permission.EDIT_MISCELLANEOUS), messages)
       )
 
       val editMisc = doc.getElementById("edit-miscellaneous-details")
@@ -68,7 +66,10 @@ class MiscellaneousDetailsViewSpec extends ViewSpec {
       val c              = aMiscellaneousCase()
       val caseDetailsTab = DetailsViewModel.fromCase(c)
 
-      val doc = view(miscellaneous_case_details(caseDetailsTab))
+      val doc = view(
+        miscellaneous_case_details.ref
+          .f(caseDetailsTab)(requestWithPermissions(Permission.EDIT_MISCELLANEOUS), messages)
+      )
 
       val detailedDescription = doc.getElementById("detailed-description")
       detailedDescription.text() shouldBe "A detailed description"

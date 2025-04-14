@@ -53,7 +53,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val c            = aCase().copy(caseBoardsFileNumber = Some("file 123"))
       val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
-      val doc = view(case_trader(applicantTab))
+      val doc = view(case_trader.render(applicantTab, messages))
 
       val boardFileNumber = doc.getElementById("boards-file-number")
       boardFileNumber.text() shouldBe "file 123"
@@ -64,7 +64,7 @@ class CaseTraderViewSpec extends ViewSpec {
       val c            = aCase()
       val applicantTab = ApplicantTabViewModel.fromCase(c, Map.empty)
 
-      val doc = view(case_trader(applicantTab))
+      val doc = view(case_trader.ref.f(applicantTab)(messages))
 
       doc shouldNot containElementWithID("boards-file-number-label")
       doc shouldNot containElementWithID("boards-file-number")

@@ -29,7 +29,7 @@ import java.time.Instant
 
 class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
 
-  private val decisionForm                       = new DecisionForm()
+  private val decisionForm                       = new DecisionForm(mock[CommodityCodeConstraints])
   val rulingDetailsEditView: ruling_details_edit = app.injector.instanceOf[ruling_details_edit]
 
   "Edit Ruling Details" should {
@@ -40,7 +40,9 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withOptionalApplicationFields(envisagedCommodityCode = Some("envisaged code"))
       )
 
-      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm()))
+      val doc = view(
+        rulingDetailsEditView.ref.f(c, Seq.empty, decisionForm.btiForm())(authenticatedManagerFakeRequest, messages)
+      )
 
       doc                                               should containElementWithID("envisagedCommodityCodeValue")
       doc.getElementById("envisagedCommodityCodeValue") should containText("envisaged code")
@@ -52,7 +54,9 @@ class EditRulingDetailsViewSpec extends ViewSpec with MockitoSugar {
         withOptionalApplicationFields(envisagedCommodityCode = None)
       )
 
-      val doc = view(rulingDetailsEditView(c, Seq.empty, decisionForm.btiForm()))
+      val doc = view(
+        rulingDetailsEditView.render(c, Seq.empty, decisionForm.btiForm(), authenticatedManagerFakeRequest, messages)
+      )
 
       doc should containElementWithID("envisagedCommodityCodeValue")
     }

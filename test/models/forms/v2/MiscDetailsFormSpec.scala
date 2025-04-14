@@ -35,7 +35,7 @@ class MiscDetailsFormSpec extends SpecBase {
 
   "MiscDetailsForm" should {
     "Fail to bind" when {
-      "a case with mandatorys field is missing" in {
+      "a case with mandatorys field is missing" in
         MiscDetailsForm
           .miscDetailsForm(sampleEmptyCase)
           .fold(
@@ -46,10 +46,9 @@ class MiscDetailsFormSpec extends SpecBase {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
-    "Bind valid form" in {
+    "Bind valid form" in
       MiscDetailsForm
         .miscDetailsForm(miscCase)
         .fold(
@@ -57,11 +56,9 @@ class MiscDetailsFormSpec extends SpecBase {
           aCase => aCase shouldBe miscCase
         )
 
-    }
-
     "fail to bind with correct error messages" when {
 
-      "summary is empty" in {
+      "summary is empty" in
         MiscDetailsForm
           .miscDetailsForm(sampleEmptyCase)
           .fold(
@@ -75,9 +72,7 @@ class MiscDetailsFormSpec extends SpecBase {
             _ => "form should not succeed"
           )
 
-      }
-
-      "case type is not recognised" in {
+      "case type is not recognised" in
         MiscDetailsForm
           .miscDetailsForm(miscCase)
           .copy(data = Map("caseType" -> "unrecognised"))
@@ -91,7 +86,6 @@ class MiscDetailsFormSpec extends SpecBase {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
     "Fill" should {

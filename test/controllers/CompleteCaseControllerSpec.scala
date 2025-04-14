@@ -39,7 +39,7 @@ class CompleteCaseControllerSpec extends ControllerBaseSpec with BeforeAndAfterE
   private val casesService         = mock[CasesService]
   private val operator             = Operator(id = "id")
   private val commodityCodeService = mock[CommodityCodeService]
-  private val decisionForm         = new DecisionForm()
+  private val decisionForm         = new DecisionForm(new CommodityCodeConstraints())
   private val liabilityDetailsForm =
     new LiabilityDetailsForm(new CommodityCodeConstraints(), realAppConfig)
 

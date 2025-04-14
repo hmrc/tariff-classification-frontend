@@ -22,10 +22,7 @@ import models.*
 import models.ApplicationType.ATAR
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-
-import scala.Unit.unbox
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
 class ManageKeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
   private val connector             = mock[BindingTariffClassificationConnector]

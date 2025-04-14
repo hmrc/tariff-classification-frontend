@@ -38,8 +38,10 @@ class CaseActionButtonsViewSpec extends ViewSpec {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
       val doc = view(
-        caseActionButtonsPartial(
-          CaseViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
+        caseActionButtonsPartial.render(
+          CaseViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions),
+          authenticatedManagerFakeRequest,
+          messages
         )
       )
 
@@ -52,9 +54,9 @@ class CaseActionButtonsViewSpec extends ViewSpec {
       val c = aLiabilityCase(withReference("reference"), withStatus(CaseStatus.NEW), withLiabilityApplication())
 
       val doc = view(
-        caseActionButtonsPartial(
+        caseActionButtonsPartial.ref.f(
           CaseViewModel.fromCase(c, Cases.operatorWithoutPermissions)
-        )
+        )(authenticatedManagerFakeRequest, messages)
       )
 
       doc shouldNot containElementWithID("action-this-case-button")

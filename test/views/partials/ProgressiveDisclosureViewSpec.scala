@@ -27,7 +27,15 @@ class ProgressiveDisclosureViewSpec extends ViewSpec {
 
     "Render title only when body not present" in {
 
-      val doc = view(progressive_disclosure("MODULE", "summary"))
+      val doc = view(progressive_disclosure.render("MODULE", "summary", None, false))
+
+      doc should containElementWithID("MODULE-title")
+      doc shouldNot containElementWithID("MODULE-body")
+      doc.getElementById("MODULE-title") should containText("summary")
+    }
+    "Render title only when body not present using .ref.f" in {
+
+      val doc = view(progressive_disclosure.ref.f("MODULE", "summary", None, false))
 
       doc should containElementWithID("MODULE-title")
       doc shouldNot containElementWithID("MODULE-body")

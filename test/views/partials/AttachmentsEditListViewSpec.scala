@@ -37,6 +37,13 @@ class AttachmentsEditListViewSpec extends ViewSpec {
       doc shouldNot containElementWithID("MODULE-div")
       doc should containElementWithID("MODULE-empty-div")
     }
+    "Render Nothing given no attachments when using .render" in {
+
+      val doc = view(attachments_edit_list.render("MODULE", Seq.empty, false, caseRef, messages))
+
+      doc shouldNot containElementWithID("MODULE-div")
+      doc should containElementWithID("MODULE-empty-div")
+    }
 
     "Render attachments" in {
       val attachment = Cases.storedAttachment.copy(
@@ -47,7 +54,7 @@ class AttachmentsEditListViewSpec extends ViewSpec {
         timestamp = ZonedDateTime.of(2019, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant
       )
 
-      val doc = view(attachments_edit_list("MODULE", Seq(attachment), caseRef = caseRef))
+      val doc = view(attachments_edit_list.ref.f("MODULE", Seq(attachment), false, caseRef)(messages))
 
       doc                                      should containElementWithID("MODULE-div")
       doc                                      should containElementWithID("MODULE-row-0")

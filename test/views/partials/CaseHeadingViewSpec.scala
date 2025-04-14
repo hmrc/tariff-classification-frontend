@@ -47,7 +47,7 @@ class CaseHeadingViewSpec extends ViewSpec {
         withoutDecision()
       )
 
-      val doc = view(case_heading(c))
+      val doc = view(case_heading.ref.f(c, true, None, None)(messages))
 
       doc shouldNot containElementWithID("appeal-status")
     }
@@ -58,7 +58,7 @@ class CaseHeadingViewSpec extends ViewSpec {
         withDecision(appeal = Seq(Appeal("id", AppealStatus.ALLOWED, AppealType.APPEAL_TIER_1)))
       )
 
-      val doc = view(case_heading(c))
+      val doc = view(case_heading.render(c, true, None, None, messages))
 
       doc                                 should containElementWithID("appeal-status")
       doc.getElementById("appeal-status") should containText("APPEAL ALLOWED")

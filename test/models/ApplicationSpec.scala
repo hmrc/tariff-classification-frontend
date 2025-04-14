@@ -108,11 +108,10 @@ class ApplicationSpec extends SpecBase {
       Cases.btiApplicationExample.asATAR shouldBe a[BTIApplication]
     }
 
-    "fail to case another type" in {
+    "fail to case another type" in
       assertThrows[RuntimeException] {
         Cases.liabilityApplicationExample.asATAR
       }
-    }
 
   }
 
@@ -122,11 +121,10 @@ class ApplicationSpec extends SpecBase {
       Cases.liabilityApplicationExample.asLiabilityOrder shouldBe a[LiabilityOrder]
     }
 
-    "fail to case another type" in {
+    "fail to case another type" in
       assertThrows[RuntimeException] {
         Cases.btiApplicationExample.asLiabilityOrder
       }
-    }
 
     "Application 'As Correspondence'" should {
 
@@ -134,11 +132,10 @@ class ApplicationSpec extends SpecBase {
         Cases.correspondenceExample.asCorrespondence shouldBe a[CorrespondenceApplication]
       }
 
-      "fail to case another type" in {
+      "fail to case another type" in
         assertThrows[RuntimeException] {
           Cases.btiApplicationExample.asCorrespondence
         }
-      }
     }
 
     "Application 'As Misc'" should {
@@ -147,11 +144,10 @@ class ApplicationSpec extends SpecBase {
         Cases.miscExample.asMisc shouldBe a[MiscApplication]
       }
 
-      "fail to case another type" in {
+      "fail to case another type" in
         assertThrows[RuntimeException] {
           Cases.btiApplicationExample.asMisc
         }
-      }
     }
 
     "Application goodsName" should {

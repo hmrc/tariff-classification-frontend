@@ -45,9 +45,8 @@ class CaseSpec extends IntegrationTest {
       response.body     should include("Case not found")
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1")
-    }
   }
 
   "Case Summary" should {
@@ -127,9 +126,8 @@ class CaseSpec extends IntegrationTest {
       response.body     should include("id=\"trader-heading\"")
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1")
-    }
   }
 
   "Case Ruling Details" should {
@@ -160,9 +158,8 @@ class CaseSpec extends IntegrationTest {
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#ruling_tab"))
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1/ruling")
-    }
   }
 
   "Case activity details" should {
@@ -202,9 +199,8 @@ class CaseSpec extends IntegrationTest {
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#activity_tab"))
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1/activity")
-    }
   }
 
   "Case attachments details" should {
@@ -235,9 +231,8 @@ class CaseSpec extends IntegrationTest {
       response.header("Location") should be(Some("/manage-tariff-classifications/cases/v2/1/atar#attachments_tab"))
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/cases/1/attachments")
-    }
   }
 
 }

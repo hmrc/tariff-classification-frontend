@@ -51,8 +51,9 @@ class AdvancedSearchCasesViewSpec extends ViewSpec {
         val c = aLiabilityCase(withReference("reference"), withStatus(status), withLiabilityApplication())
 
         val doc = view(
-          advanced_search_cases(
-            CaseViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions)
+          advanced_search_cases.render(
+            CaseViewModel.fromCase(c, Cases.operatorWithReleaseOrSuppressPermissions),
+            messages
           )
         )
 

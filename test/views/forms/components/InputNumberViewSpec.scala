@@ -37,7 +37,7 @@ class InputNumberViewSpec extends ViewSpec {
 
     "Render" in {
 
-      val doc = view(input_number(form("field"), "Label"))
+      val doc = view(input_number.render(form("field"), "Label", None, None, None, None, None, messages))
 
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")
@@ -51,7 +51,7 @@ class InputNumberViewSpec extends ViewSpec {
     "Render with Optional Fields" in {
 
       val doc =
-        view(input_number(form("field"), "Label", hint = Some("some-hint"), maxLength = Some(10), minLength = Some(1)))
+        view(input_number.ref.f(form("field"), "Label", None, Some("some-hint"), None, Some(10), Some(1))(messages))
 
       doc                         should containElementWithTag("input")
       doc                         should containElementWithID("field")

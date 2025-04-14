@@ -35,7 +35,7 @@ class CorrespondenceDetailsFormSpec extends SpecBase {
 
   "CorrespondenceDetailsForm" should {
     "Fail to bind" when {
-      "a case with mandatorys are missing" in {
+      "a case with mandatorys are missing" in
         CorrespondenceDetailsForm
           .correspondenceDetailsForm(sampleEmptyCase)
           .fold(
@@ -46,10 +46,9 @@ class CorrespondenceDetailsFormSpec extends SpecBase {
             },
             _ => "form should not succeed"
           )
-      }
     }
 
-    "Bind valid form" in {
+    "Bind valid form" in
       CorrespondenceDetailsForm
         .correspondenceDetailsForm(correspondenceCase)
         .fold(
@@ -57,11 +56,9 @@ class CorrespondenceDetailsFormSpec extends SpecBase {
           aCase => aCase shouldBe correspondenceCase
         )
 
-    }
-
     "fail to bind with correct error messages" when {
 
-      "summary is empty" in {
+      "summary is empty" in
         CorrespondenceDetailsForm
           .correspondenceDetailsForm(caseWithoutSummary)
           .fold(
@@ -75,7 +72,6 @@ class CorrespondenceDetailsFormSpec extends SpecBase {
             _ => "form should not succeed"
           )
 
-      }
     }
 
     "Fill" should {

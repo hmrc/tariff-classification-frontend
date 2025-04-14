@@ -352,9 +352,8 @@ class SearchSpec extends IntegrationTest {
       response.body     should include("id=\"advanced_search-results_and_filters\"")
     }
 
-    "redirect on auth failure" in {
+    "redirect on auth failure" in
       verifyNotAuthorisedFor("/search")
-    }
   }
 
 }

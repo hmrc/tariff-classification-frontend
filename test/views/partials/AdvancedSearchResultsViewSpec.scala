@@ -80,7 +80,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
       val searchResult = SearchResult(c, Seq.empty)
 
-      implicit val doc: Document = view(advanced_search_results(results = Paged(Seq(searchResult))))
+      implicit val doc: Document = view(advanced_search_results.ref.f(Paged(Seq(searchResult))))
 
       val expectedElementIds =
         Seq(
@@ -149,7 +149,7 @@ class AdvancedSearchResultsViewSpec extends ViewSpec {
 
       val searchResult = SearchResult(c, Seq(storedAttachment))
 
-      implicit val doc: Document = view(advanced_search_results(Paged(Seq(searchResult))))
+      implicit val doc: Document = view(advanced_search_results.render(Paged(Seq(searchResult))))
 
       val expectedElementIds =
         Seq(

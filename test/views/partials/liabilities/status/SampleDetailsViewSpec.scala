@@ -50,7 +50,7 @@ class SampleDetailsViewSpec extends ViewSpec {
     "not show sample return details when sample has no status" in {
 
       val doc = view(
-        sampleDetailsView(
+        sampleDetailsView.ref.f(
           SampleStatusTabViewModel(
             "caseReference",
             isSampleBeingSent = false,
@@ -59,7 +59,7 @@ class SampleDetailsViewSpec extends ViewSpec {
             "location",
             sampleActivity = Paged.empty[Event]
           )
-        )
+        )(authenticatedManagerFakeRequest, messages)
       )
       doc.getElementById("liability-sending-samples_answer") should containText("No")
       doc shouldNot containElementWithID("liability-returning-samples")
@@ -69,7 +69,7 @@ class SampleDetailsViewSpec extends ViewSpec {
     "show sample location" in {
 
       val doc = view(
-        sampleDetailsView(
+        sampleDetailsView.render(
           SampleStatusTabViewModel(
             "caseReference",
             isSampleBeingSent = true,
@@ -77,7 +77,9 @@ class SampleDetailsViewSpec extends ViewSpec {
             None,
             "location",
             sampleActivity = Paged.empty[Event]
-          )
+          ),
+          authenticatedManagerFakeRequest,
+          messages
         )
       )
       doc.getElementById("sample-status-value") should containText("location")
