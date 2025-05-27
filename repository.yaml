@@ -1,5 +1,8 @@
-digital-service: Digital Tariffs
+digital-service: ATaR / Advance Tariff Rulings
+description: The frontend for the internal Advance Tariff Rulings Case Manager service for reviewing & answering ATaR applications.
 repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DDBBADF71
+type: Service
+service-type: Frontend
 test-repositories:
-  - digital-tariffs-operational-performance-tests
   - digital-tariffs-acceptance-tests
+  - digital-tariffs-operational-performance-tests
