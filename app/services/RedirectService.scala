@@ -42,6 +42,6 @@ class RedirectService @Inject() {
       case ApplicationType.MISCELLANEOUS =>
         Redirect(controllers.v2.routes.MiscellaneousController.displayMiscellaneous(reference, fileId))
           .flashing(request2flash)
-      case _ => BadRequest
+      case null => BadRequest
     }
 }

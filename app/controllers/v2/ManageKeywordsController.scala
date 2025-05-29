@@ -63,9 +63,9 @@ class ManageKeywordsController @Inject() (
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
         caseKeywords <- keywordService.fetchCaseKeywords()
-        allKeywords  <- keywordService.findAll(NoPagination())
-        manageKeywordsViewModel = ManageKeywordsViewModel
-                                    .forManagedTeams(caseKeywords.results, allKeywords.results)
+        manageKeywordsViewModel =
+          ManageKeywordsViewModel
+            .forManagedTeams(caseKeywords.pagedCaseKeywords.results, caseKeywords.pagedKeywords.results)
       } yield Ok(
         manageKeywordsView(
           activeSubNav,
@@ -76,30 +76,38 @@ class ManageKeywordsController @Inject() (
     }
 
   def postDisplayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
-    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
-      keywordService.findAll(NoPagination()).flatMap { keywords =>
-        val keywordNames = keywords.results.map(_.name)
-        KeywordForm
-          .formWithAutoReverse(keywordNames)
-          .bindFromRequest()
-          .fold(
-            formWithErrors =>
-              for {
-                caseKeywords <- keywordService.fetchCaseKeywords()
-                manageKeywordsViewModel = ManageKeywordsViewModel
-                                            .forManagedTeams(caseKeywords.results, keywords.results)
-              } yield BadRequest(
-                manageKeywordsView(
-                  activeSubNav,
-                  manageKeywordsViewModel,
-                  formWithErrors
+    (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      for {
+        manageKeywordsData <- keywordService.fetchCaseKeywords()
+
+        result <- {
+          val keywordNames = manageKeywordsData.pagedKeywords.results.map(_.name)
+          KeywordForm
+            .formWithAutoReverse(keywordNames)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => {
+                val viewModel = ManageKeywordsViewModel
+                  .forManagedTeams(
+                    manageKeywordsData.pagedCaseKeywords.results,
+                    manageKeywordsData.pagedKeywords.results
+                  )
+                Future.successful(
+                  BadRequest(
+                    manageKeywordsView(
+                      activeSubNav,
+                      viewModel,
+                      formWithErrors
+                    )
+                  )
                 )
-              ),
-            keyword =>
-              successful(Redirect(controllers.v2.routes.ManageKeywordsController.editApprovedKeywords(keyword)))
-          )
-      }
-    )
+              },
+              keyword =>
+                successful(Redirect(controllers.v2.routes.ManageKeywordsController.editApprovedKeywords(keyword)))
+            )
+        }
+      } yield result
+    }
 
   def newKeyword: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
