@@ -29,19 +29,19 @@ class RedirectService @Inject() {
   def redirectApplication(reference: String, fileId: Option[String] = None)(implicit
     request: AuthenticatedCaseRequest[AnyContent]
   ): Result =
-    request.`case`.application.`type` match {
-      case ApplicationType.ATAR =>
+    Option(request.`case`.application.`type`) match {
+      case Some(ApplicationType.ATAR) =>
         Redirect(controllers.v2.routes.AtarController.displayAtar(reference, fileId))
           .flashing(request2flash)
-      case ApplicationType.LIABILITY =>
+      case Some(ApplicationType.LIABILITY) =>
         Redirect(controllers.v2.routes.LiabilityController.displayLiability(reference, fileId))
           .flashing(request2flash)
-      case ApplicationType.CORRESPONDENCE =>
+      case Some(ApplicationType.CORRESPONDENCE) =>
         Redirect(controllers.v2.routes.CorrespondenceController.displayCorrespondence(reference, fileId))
           .flashing(request2flash)
-      case ApplicationType.MISCELLANEOUS =>
+      case Some(ApplicationType.MISCELLANEOUS) =>
         Redirect(controllers.v2.routes.MiscellaneousController.displayMiscellaneous(reference, fileId))
           .flashing(request2flash)
-      case null => BadRequest
+      case None => BadRequest
     }
 }
