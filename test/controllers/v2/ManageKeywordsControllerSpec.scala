@@ -90,23 +90,17 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   )
 
   "displayManageKeywords" should {
-    val pagedKeywords     = Paged(keywords)
-    val pagedCaseKeywords = Paged(Seq(caseKeyword))
-    val manageKeywordsData = ManageKeywordsData(
-      pagedCaseKeywords = pagedCaseKeywords,
-      pagedKeywords = pagedKeywords
-    )
-
     "return 200 OK and HTML content type" in {
-
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
       when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .thenReturn(Future.successful(manageKeywordsData))
+        .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(newFakeGETRequestWithCSRF()))
-
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
+
     }
 
     "return unauthorised with no permissions" in {
@@ -511,17 +505,12 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
   "postDisplayManageKeywords" should {
     "redirect to editApprovedKeywords if the keyword has been selected" in {
-      val pagedKeywords     = Paged(keywords)
-      val pagedCaseKeywords = Paged(Seq(caseKeyword))
-      val manageKeywordsData = ManageKeywordsData(
-        pagedCaseKeywords = pagedCaseKeywords,
-        pagedKeywords = pagedKeywords
-      )
 
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
-        .thenReturn(Future(pagedKeywords))
+        .thenReturn(Future(Paged(keywords)))
+
       when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .thenReturn(Future(manageKeywordsData))
+        .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -536,17 +525,12 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     }
 
     "return Bad Request with form with errors" in {
-      // Create the ManageKeywordsData object that your new service method returns
-      val pagedKeywords     = Paged(keywords)
-      val pagedCaseKeywords = Paged(Seq(caseKeyword))
-      val manageKeywordsData = ManageKeywordsData(
-        pagedCaseKeywords = pagedCaseKeywords,
-        pagedKeywords = pagedKeywords
-      )
 
-      // Mock the new getCaseKeywords method instead of the old separate calls
+      when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(keywords)))
+
       when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .thenReturn(Future.successful(manageKeywordsData))
+        .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))

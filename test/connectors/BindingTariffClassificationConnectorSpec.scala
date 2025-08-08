@@ -1212,13 +1212,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val caseHeader  = CaseHeader("ref", None, None, None, ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)
       val caseKeyword = CaseKeyword(keyword, List(caseHeader))
 
-      // Create the ManageKeywordsData structure that the endpoint now returns
-      val manageKeywordsData = ManageKeywordsData(
-        pagedCaseKeywords = Paged(Seq(caseKeyword)),
-        pagedKeywords = Paged(Seq(keyword)) // Include the keywords data
-      )
-
-      val response = Json.toJson(manageKeywordsData).toString()
+      val response = Json.toJson(Paged(Seq(caseKeyword))).toString()
 
       stubFor(
         get(urlEqualTo("/case-keywords"))
@@ -1229,10 +1223,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      // Update the assertion to match the new return type
-      val result = await(connector.getCaseKeywords())
-      result.pagedCaseKeywords shouldBe Paged(Seq(caseKeyword))
-      result.pagedKeywords     shouldBe Paged(Seq(keyword))
+      await(connector.getCaseKeywords()) shouldBe Paged(Seq(caseKeyword))
 
       verify(
         getRequestedFor(urlEqualTo("/case-keywords"))
