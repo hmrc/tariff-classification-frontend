@@ -51,7 +51,7 @@
 <script @CSPNonce.attr type="text/javascript">
       element = document.querySelector('#keyword-search-wrapper')
       id = 'autocomplete-minLength'
-      accessibleAutocomplete({
+      HMRCAccessibleAutocomplete({
         element: element,
         id: @Html(Json.toJson(field.id).toString),
         name: @Html(Json.toJson(field.name).toString),
