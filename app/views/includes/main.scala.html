@@ -19,11 +19,15 @@
 @import views.html.includes.govuk_wrapper
 @import config.AppConfig
 @import views.html.helper.CSPNonce
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteCss
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcAccessibleAutocompleteJavascript
 
 @this(
         config: AppConfig,
         govukWrapper: govuk_wrapper,
-        primary_navigation: components.primary_navigation
+        primary_navigation: components.primary_navigation,
+        autocompleteCss: HmrcAccessibleAutocompleteCss,
+        autocompleteJavascript: HmrcAccessibleAutocompleteJavascript
 )
 
 @(
@@ -38,6 +42,8 @@
 )(contentBlock: Html)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @head = {
+@autocompleteCss()
+@autocompleteJavascript()
 @additionalJS.getOrElse({})
   <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/newMain.css")">
 <!--    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLWQQZB" height="0" width="0" style="display: none;visibility: hidden;"></iframe></noscript>-->
