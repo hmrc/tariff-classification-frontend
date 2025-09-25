@@ -266,7 +266,7 @@ compositeMode: Boolean = false)(implicit messages: Messages)
                 Yours sincerely,
             </p>
             <p class="govuk-body">
-                @c.assignee.map(_.name).getOrElse("")
+                @c.assignee.map(_.name).getOrElse("HMRC Officer")
             </p>
             <p class="govuk-body">
                 HMRC Tariff Classification Service
