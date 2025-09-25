@@ -262,6 +262,15 @@ compositeMode: Boolean = false)(implicit messages: Messages)
             <p class="govuk-body">
                 @messages("pdf.ruling.section.acknowledgement") <a class="govuk-link">@messages("pdf.ruling.section.phishing.mail")</a>
             </p>
+            <p class="govuk-body">
+                Yours sincerely,
+            </p>
+            <p class="govuk-body">
+                @c.assignee.map(_.name).getOrElse("")
+            </p>
+            <p class="govuk-body">
+                HMRC Tariff Classification Service
+            </p>
         </div>
     </div>
 </div>
