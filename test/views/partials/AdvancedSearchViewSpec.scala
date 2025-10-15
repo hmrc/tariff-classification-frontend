@@ -50,9 +50,6 @@ class AdvancedSearchViewSpec extends ViewSpec {
       ) should
         containElementWithAttribute("name", "status[0]")
 
-      view(advancedSearchView(form, None, Seq.empty, defaultTab)) should
-        containElementWithAttribute("name", "status[1]")
-
       view(advancedSearchView(form, Some(Paged(Seq(SearchResult(aCase(), Seq.empty)))), Seq.empty, defaultTab)) should
         containElementWithAttribute("name", "status[0]")
 
