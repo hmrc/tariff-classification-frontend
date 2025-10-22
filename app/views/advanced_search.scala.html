@@ -154,7 +154,7 @@
                                     field = form("status"),
                                     options = Seq(
                                         CheckOption("Open", PseudoCaseStatus.OPEN.toString, checked = formHasStatus(PseudoCaseStatus.OPEN)),
-                                        CheckOption("Completed", PseudoCaseStatus.LIVE.toString, checked = formHasStatus(PseudoCaseStatus.LIVE)),
+                                        CheckOption("Completed", PseudoCaseStatus.COMPLETED.toString, checked = formHasStatus(PseudoCaseStatus.COMPLETED)),
                                         CheckOption("Expired", PseudoCaseStatus.EXPIRED.toString, checked = formHasStatus(PseudoCaseStatus.EXPIRED)),
                                         CheckOption("Cancelled", PseudoCaseStatus.CANCELLED.toString, checked = formHasStatus(PseudoCaseStatus.CANCELLED)),
                                         CheckOption("New", PseudoCaseStatus.NEW.toString, checked = formHasStatus(PseudoCaseStatus.NEW)),
