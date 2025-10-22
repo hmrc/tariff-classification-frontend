@@ -294,7 +294,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'Search'" should {
 
     "handle no filters" in {
-      val url = "/cases?sort_direction=asc&sort_by=commodity-code&page=1&page_size=2"
+      val url = "/cases?sort_direction=asc&sort_by=commodity-code&page=1&page_size=2&is_advance_search=true"
 
       stubFor(
         get(urlEqualTo(url))
@@ -329,7 +329,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         s"&keyword=K1" +
         s"&keyword=K2" +
         s"&page=1" +
-        s"&page_size=2"
+        s"&page_size=2" +
+        s"&is_advance_search=true"
 
       stubFor(
         get(urlEqualTo(url))
@@ -368,7 +369,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'trader name'" in {
-      val url = "/cases?sort_direction=asc&sort_by=commodity-code&case_source=trader&page=1&page_size=2"
+      val url =
+        "/cases?sort_direction=asc&sort_by=commodity-code&case_source=trader&page=1&page_size=2&is_advance_search=true"
 
       stubFor(
         get(urlEqualTo(url))
@@ -393,7 +395,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'commodity code'" in {
-      val url = "/cases?sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code&page=1&page_size=2"
+      val url =
+        "/cases?sort_direction=asc&sort_by=commodity-code&commodity_code=comm-code&page=1&page_size=2&is_advance_search=true"
 
       stubFor(
         get(urlEqualTo(url))
@@ -420,7 +423,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'decision_details'" in {
-      val url = s"/cases?sort_direction=asc&sort_by=commodity-code&decision_details=decision-details&page=1&page_size=2"
+      val url =
+        s"/cases?sort_direction=asc&sort_by=commodity-code&decision_details=decision-details&page=1&page_size=2&is_advance_search=true"
 
       stubFor(
         get(urlEqualTo(url))
@@ -447,7 +451,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "filter by 'keyword'" in {
-      val url = "/cases?sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2&page=1&page_size=2"
+      val url =
+        "/cases?sort_direction=asc&sort_by=commodity-code&keyword=K1&keyword=K2&page=1&page_size=2&is_advance_search=true"
 
       stubFor(
         get(urlEqualTo(url))
@@ -474,7 +479,8 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     }
 
     "get cases by 'status'" in {
-      val url = s"/cases?sort_direction=asc&sort_by=commodity-code&status=OPEN&status=LIVE&page=1&page_size=2"
+      val url =
+        s"/cases?sort_direction=asc&sort_by=commodity-code&status=OPEN&status=LIVE&page=1&page_size=2&is_advance_search=true"
 
       stubFor(
         get(urlEqualTo(url))
@@ -503,7 +509,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
     "get cases by 'application type'" in {
       val url =
         s"/cases?sort_direction=asc&sort_by=commodity-code&application_type=BTI&" +
-          s"application_type=LIABILITY_ORDER&application_type=CORRESPONDENCE&application_type=MISCELLANEOUS&page=1&page_size=2"
+          s"application_type=LIABILITY_ORDER&application_type=CORRESPONDENCE&application_type=MISCELLANEOUS&page=1&page_size=2&is_advance_search=true"
 
       stubFor(
         get(urlEqualTo(url))

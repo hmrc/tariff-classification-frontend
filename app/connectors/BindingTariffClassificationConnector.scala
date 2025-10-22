@@ -279,7 +279,7 @@ class BindingTariffClassificationConnector @Inject() (
       ).filter(_.isDefined).map(_.get)
 
       val fullURL =
-        s"${appConfig.bindingTariffClassificationUrl}/cases?${(reqParams ++ optParams).mkString("&")}&page=${pagination.page}&page_size=${pagination.pageSize}"
+        s"${appConfig.bindingTariffClassificationUrl}/cases?${(reqParams ++ optParams).mkString("&")}&page=${pagination.page}&page_size=${pagination.pageSize}&is_advance_search=true"
 
       client
         .get(url"$fullURL")
