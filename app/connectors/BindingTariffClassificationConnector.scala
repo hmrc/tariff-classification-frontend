@@ -20,21 +20,22 @@ import com.codahale.metrics.MetricRegistry
 import com.google.inject.Inject
 import config.AppConfig
 import metrics.HasMetrics
-import models.CaseStatus._
+import models.*
+import models.CaseStatus.*
 import models.EventType.EventType
 import models.Role.Role
-import models._
-import models.reporting._
+import models.reporting.*
 import models.request.NewEventRequest
 import org.apache.pekko.stream.Materializer
 import org.apache.pekko.stream.scaladsl.Source
 import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
 import play.api.mvc.QueryStringBindable
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import utils.JsonFormatters._
-import play.api.libs.ws.writeableOf_JsValue
+import utils.JsonFormatters.*
+
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -414,9 +415,10 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Keyword]]
     }
 
-  def getCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
+  def getCaseKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     withMetricsTimerAsync("get-case-keywords") { _ =>
-      val fullURL = s"${appConfig.bindingTariffClassificationUrl}/case-keywords"
+      val fullURL =
+        s"${appConfig.bindingTariffClassificationUrl}/case-keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
 
       client
         .get(url"$fullURL")

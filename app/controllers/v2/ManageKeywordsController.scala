@@ -59,23 +59,41 @@ class ManageKeywordsController @Inject() (
   val keywordForm: Form[String]                     = KeywordForm.form
   private val changeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
 
-  def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def displayManageKeywords(
+    pagination: Pagination = models.NoPagination(),
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
+  ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
+      println(s"[DEBUG] pagination = ${pagination}")
       for {
-        caseKeywords <- keywordService.fetchCaseKeywords()
-        allKeywords  <- keywordService.findAll(NoPagination())
+        caseKeywords <- keywordService.fetchCaseKeywords(pagination).map { ck =>
+                          println(s"[DEBUG] pageSize = ${ck.pageSize}")
+                          println(s"[DEBUG] pageCount = ${ck.pageCount}")
+                          println(s"[DEBUG] Size = ${ck.results.size}")
+                          ck
+                        }
+        allKeywords <- keywordService.findAll(NoPagination())
         manageKeywordsViewModel = ManageKeywordsViewModel
-                                    .forManagedTeams(caseKeywords.results, allKeywords.results)
+                                    .forManagedTeams(caseKeywords, allKeywords.results)
+        _ = println(s"[DEBUG] manageKeywordsViewModel pageCount = ${manageKeywordsViewModel.keywordsForApprovalTab.searchResult.pageCount}")
+        _ = println(s"[DEBUG] manageKeywordsViewModel pagesize = ${manageKeywordsViewModel.keywordsForApprovalTab.searchResult.pageSize}")
+        _ = println(s"[DEBUG] manageKeywordsViewModel Size = ${manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size}")
+
       } yield Ok(
         manageKeywordsView(
           activeSubNav,
           manageKeywordsViewModel,
-          keywordForm
+          keywordForm,
+          if (pagination.pageSize == Pagination.unlimited) None else Some(pagination)
         )
       )
     }
 
-  def postDisplayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def postDisplayManageKeywords(
+    pagination: Pagination = models.NoPagination(),
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
+  ): Action[AnyContent] = {
+    println(s"[DEBUG] pagination post = ${pagination}")
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       keywordService.findAll(NoPagination()).flatMap { keywords =>
         val keywordNames = keywords.results.map(_.name)
@@ -85,14 +103,18 @@ class ManageKeywordsController @Inject() (
           .fold(
             formWithErrors =>
               for {
-                caseKeywords <- keywordService.fetchCaseKeywords()
+                caseKeywords <- keywordService.fetchCaseKeywords(pagination).map { ck =>
+                                  println(s"[DEBUG] caseKeywords = $ck")
+                                  ck
+                                }
                 manageKeywordsViewModel = ManageKeywordsViewModel
-                                            .forManagedTeams(caseKeywords.results, keywords.results)
+                                            .forManagedTeams(caseKeywords, keywords.results)
               } yield BadRequest(
                 manageKeywordsView(
                   activeSubNav,
                   manageKeywordsViewModel,
-                  formWithErrors
+                  formWithErrors,
+                  if (pagination.pageSize == Pagination.unlimited) None else Some(pagination)
                 )
               ),
             keyword =>
@@ -100,6 +122,7 @@ class ManageKeywordsController @Inject() (
           )
       }
     )
+  }
 
   def newKeyword: Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>

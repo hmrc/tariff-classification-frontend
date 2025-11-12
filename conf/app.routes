@@ -209,8 +209,8 @@ POST        /users/move/move-cases-user-choose-team              controllers.v2.
 GET         /users/move/move-cases-user-team                     controllers.v2.MoveCasesController.chooseOneOfUsersTeams()
 POST        /users/move/move-cases-user-team                     controllers.v2.MoveCasesController.postChooseOneOfUsersTeams()
 
-GET        /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.displayManageKeywords()
-POST       /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.postDisplayManageKeywords()
+GET        /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.displayManageKeywords(pagination:models.Pagination ?= models.NoPagination())
+POST       /keywords/manage-keywords                             controllers.v2.ManageKeywordsController.postDisplayManageKeywords(pagination:models.Pagination ?= models.NoPagination())
 
 GET        /keywords/keyword-create                              controllers.v2.ManageKeywordsController.newKeyword()
 POST       /keywords/keyword-create                              controllers.v2.ManageKeywordsController.createKeyword()

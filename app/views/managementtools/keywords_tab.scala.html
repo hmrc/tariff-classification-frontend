@@ -19,10 +19,15 @@
 @import models.request.AuthenticatedRequest
 @import models.viewmodels.managementtools._
 @import controllers.v2.routes._
+@import views.html.partials.pagination
 
 @import views.html.components.change_case_status_button
 
-@(manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[?], messages: Messages)
+@(
+    manageKeywordsViewModel: ManageKeywordsViewModel,
+    keywordForm: Form[String],
+    paginationParams: Option[Pagination]
+)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
     @heading(messages("management.manage-keywords.heading"))
 
@@ -62,6 +67,13 @@
                     }
                 }
             </div>
+            @if(paginationParams.isDefined) {
+                @pagination(
+                    id = "keywords-tab-pagination_bottom",
+                    pager = manageKeywordsViewModel.keywordsForApprovalTab.searchResult,
+                    onChange = page => controllers.v2.routes.ManageKeywordsController.displayManageKeywords(paginationParams.get.withPage(page))
+                )
+            }
         </div>
         <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.allKeywordsTab.elementId">
             <h2 class="govuk-heading-l">@messages("management.manage-keywords.search-all-keywords.heading")</h2>

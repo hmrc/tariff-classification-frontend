@@ -35,7 +35,7 @@ class KeywordsTabSpec extends ViewSpec {
       "Space grade aluminium spinner",
       ApplicationType.LIABILITY,
       CaseStatusKeywordViewModel(CaseStatus.REFERRED, overdue = false),
-      approved = true
+      notApproved = true
     )
 
   val emptyMangageKeywordsTab: ManageKeywordsTab =

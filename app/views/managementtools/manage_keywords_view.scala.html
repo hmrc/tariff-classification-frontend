@@ -30,7 +30,12 @@
 )
 
 
-@(activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab, manageKeywordsViewModel: ManageKeywordsViewModel, keywordForm: Form[String])(implicit request: AuthenticatedRequest[?], messages: Messages)
+@(
+    activeSubNav : SubNavigationTab = ManagerToolsKeywordsTab,
+    manageKeywordsViewModel: ManageKeywordsViewModel,
+    keywordForm: Form[String],
+        paginationParams: Option[Pagination]
+)(implicit request: AuthenticatedRequest[?], messages: Messages)
 
 @additionalCSS = {
     <link rel="stylesheet" href='@routes.Assets.at("stylesheets/autocomplete.css")'/>
@@ -48,5 +53,5 @@
     additionalCSS = Some(additionalCSS),
     additionalJS = Some(additonalJS)
 ) {
-    @keywords_tab(manageKeywordsViewModel, keywordForm)
+    @keywords_tab(manageKeywordsViewModel, keywordForm, paginationParams)
 }

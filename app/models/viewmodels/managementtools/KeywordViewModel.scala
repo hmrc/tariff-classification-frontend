@@ -26,9 +26,9 @@ case class KeywordViewModel(
   goods: String,
   caseType: ApplicationType,
   status: CaseStatusKeywordViewModel,
-  approved: Boolean
+  notApproved: Boolean
 ) {
-  def isApproved: Boolean = approved
+  def isNotApproved: Boolean = notApproved
 }
 
 case class CaseStatusKeywordViewModel(
