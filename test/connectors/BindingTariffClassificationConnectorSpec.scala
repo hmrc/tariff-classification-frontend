@@ -1284,6 +1284,42 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
+
+    "return case keywords with pagination and approved filter" in {
+      val caseKeywordRow = CaseKeywordRow(
+        keyword = "AKeyword",
+        reference = "ref",
+        user = Some("user1"),
+        goods = Some("Laptop"),
+        caseType = "BTI",
+        status = "OPEN",
+        liabilityStatus = None,
+        daysElapsed = 5L,
+        overdue = false,
+        approved = false,
+        createdDate = Instant.now()
+      )
+
+      val response = Json.toJson(Paged(Seq(caseKeywordRow))).toString()
+
+      stubFor(
+        get(urlEqualTo("/case-keywords?page=1&page_size=100&approved=false"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(response)
+          )
+      )
+
+      await(connector.getCaseKeywords(pagination = NoPagination(), approved = Some(false))) shouldBe Paged(
+        Seq(caseKeywordRow)
+      )
+
+      verify(
+        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=100&approved=false"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
   }
 
   "Connector 'delete Keyword'" should {
