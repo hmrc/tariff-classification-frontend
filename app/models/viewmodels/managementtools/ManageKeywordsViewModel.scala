@@ -16,7 +16,10 @@
 
 package models.viewmodels.managementtools
 
-import models._
+import models.*
+
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 case class ManageKeywordsTab(tabMessageKey: String, elementId: String, searchResult: Paged[KeywordViewModel])
 
@@ -27,45 +30,49 @@ case class ManageKeywordsViewModel(
 )
 
 object ManageKeywordsViewModel {
-  def forManagedTeams(caseKeywords: Seq[CaseKeyword], allKeywords: Seq[Keyword]): ManageKeywordsViewModel = {
+  def forManagedTeams(
+    caseKeywords: Paged[CaseKeywordRow],
+    allKeywords: Seq[Keyword]
+  ): ManageKeywordsViewModel = {
 
     val approvedKeywords = allKeywords.filter(_.approved)
 
-    val keywordViewModel = caseKeywords.flatMap(caseKeyword =>
-      caseKeyword.cases.map { caseHeader =>
-        val overdue = (caseHeader.caseType, caseHeader.liabilityStatus) match {
-          case (ApplicationType.LIABILITY, Some(LiabilityStatus.LIVE)) if caseHeader.daysElapsed >= 5 => true
-          case (_, _) if caseHeader.daysElapsed >= 30                                                 => true
-          case _                                                                                      => false
-        }
+    val keywordViewModel = caseKeywords.results.map { row =>
 
-        val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, overdue)
+      val caseStatusViewModel = CaseStatusKeywordViewModel(
+        caseStatus = CaseStatus.withName(row.status),
+        overdue = row.overdue
+      )
 
-        val notApprovedRejected = !allKeywords.exists(kw => caseKeyword.keyword.name == kw.name)
-
-        KeywordViewModel(
-          caseHeader.reference,
-          caseKeyword.keyword.name,
-          caseHeader.assignee
-            .map { assignee =>
-              assignee.name match {
-                case Some(s) if s.trim.nonEmpty => s
-                case _                          => assignee.id
-              }
-            }
-            .getOrElse(""),
-          caseHeader.goodsName.getOrElse(""),
-          caseHeader.caseType,
-          caseStatus,
-          notApprovedRejected
-        )
-      }
-    )
+      KeywordViewModel(
+        reference = row.reference,
+        keyword = row.keyword,
+        name = row.user.getOrElse(""),
+        goods = row.goods.getOrElse(""),
+        caseType = ApplicationType.withName(row.caseType),
+        status = caseStatusViewModel,
+        approved = !row.approved
+      )
+    }
 
     ManageKeywordsViewModel(
       "Manage keywords",
-      ManageKeywordsTab("keywordsApproval", "approval_tab", Paged(keywordViewModel.filter(_.isApproved))),
-      KeywordsTabViewModel("allKeywords", "all_keywords", Set("approved_keywords"), approvedKeywords.map(_.name))
+      ManageKeywordsTab(
+        "keywordsApproval",
+        "approval_tab",
+        Paged(
+          results = keywordViewModel.filter(_.approved),
+          pageIndex = caseKeywords.pageIndex,
+          pageSize = caseKeywords.pageSize,
+          resultCount = caseKeywords.resultCount
+        )
+      ),
+      KeywordsTabViewModel(
+        "allKeywords",
+        "all_keywords",
+        Set("approved_keywords"),
+        approvedKeywords.map(_.name)
+      )
     )
   }
 

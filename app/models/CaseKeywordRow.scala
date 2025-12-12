@@ -15,6 +15,22 @@
  */
 
 package models
+
+import models.CaseStatus.CaseStatus
 import models.LiabilityStatus.LiabilityStatus
 
-case class Keyword(name: String, approved: Boolean = false)
+import java.time.Instant
+
+case class CaseKeywordRow(
+  keyword: String,
+  reference: String,
+  user: Option[String],
+  goods: Option[String],
+  caseType: String,
+  status: String,
+  liabilityStatus: Option[String],
+  daysElapsed: Long,
+  overdue: Boolean,
+  approved: Boolean,
+  createdDate: Instant
+)

@@ -20,8 +20,10 @@ import audit.AuditService
 import connectors.BindingTariffClassificationConnector
 import models.*
 import models.ApplicationType.ATAR
+import org.mockito.ArgumentMatchers.{any, refEq}
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
+import java.time.Instant
 import scala.concurrent.Future
 
 class ManageKeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach {
@@ -29,58 +31,73 @@ class ManageKeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach 
   private val auditService          = mock[AuditService]
   private val manageKeywordsService = new ManageKeywordsService(auditService, connector)
   private val keyWord               = Keyword(name = "keyword")
-  private val caseKeyWord = CaseKeyword(
-    keyword = keyWord,
-    cases = List(
-      CaseHeader(
-        reference = "sdcd",
-        assignee = None,
-        team = None,
-        goodsName = None,
-        caseType = ATAR,
-        status = CaseStatus.NEW,
-        daysElapsed = 3,
-        liabilityStatus = None
-      )
-    )
+
+  // CHANGED: Use CaseKeywordRow instead of CaseKeyword
+  private val caseKeywordRow = CaseKeywordRow(
+    keyword = "keyword",
+    reference = "sdcd",
+    user = None,
+    goods = None,
+    caseType = "BTI",
+    status = "NEW",
+    liabilityStatus = None,
+    daysElapsed = 3L,
+    overdue = false,
+    approved = false,
+    createdDate = Instant.now()
   )
+
   private val user = Operator("operator")
+
   override protected def afterEach(): Unit = {
     super.afterEach()
     reset(connector)
   }
 
   "createKeyword" should {
-    "return a new password" in {
+    "return a new keyword" in {
       when(connector.createKeyword(keyWord)).thenReturn(Future.successful(keyWord))
       await(manageKeywordsService.createKeyword(keyWord, user, ChangeKeywordStatusAction.CREATED)) shouldBe keyWord
     }
   }
+
   "fetchAll" should {
-    "return all passwords" in {
+    "return all keywords" in {
       val pagination = NoPagination()
-      when(connector.findAllKeywords(pagination)).thenReturn(Future.successful(Seq(keyWord)))
-      await(manageKeywordsService.findAll(pagination)) shouldBe Seq(keyWord)
+      when(connector.findAllKeywords(pagination)).thenReturn(Future.successful(Paged(Seq(keyWord))))
+      await(manageKeywordsService.findAll(pagination)) shouldBe Paged(Seq(keyWord))
     }
   }
+
   "fetchCaseKeywords" should {
-    "return all passwords" in {
-      when(connector.getCaseKeywords()).thenReturn(Future.successful(Seq(caseKeyWord)))
-      await(manageKeywordsService.fetchCaseKeywords()) shouldBe Seq(caseKeyWord)
+    "return all case keyword rows" in {
+      // CHANGED: Updated mock to match new signature
+      when(connector.getCaseKeywords(any[Pagination], any[Option[Boolean]])(any))
+        .thenReturn(Future.successful(Paged(Seq(caseKeywordRow))))
+
+      await(manageKeywordsService.fetchCaseKeywords()) shouldBe Paged(Seq(caseKeywordRow))
+    }
+
+    "return filtered case keyword rows by approved status" in {
+      when(connector.getCaseKeywords(any[Pagination], refEq(Some(false)))(any))
+        .thenReturn(Future.successful(Paged(Seq(caseKeywordRow))))
+
+      await(manageKeywordsService.fetchCaseKeywords(approved = Some(false))) shouldBe Paged(Seq(caseKeywordRow))
     }
   }
+
   /*  "deleteKeyword" should {
-    "return all passwords" in {
-      when(connector.deleteKeyword(keyWord)).thenReturn(Future.successful(Seq(caseKeyWord)))
+    "return all keywords" in {
+      when(connector.deleteKeyword(keyWord)).thenReturn(Future.successful(Seq(caseKeywordRow)))
       when(auditService.auditManagerKeywordDeleted(Operator("sd"), keyWord)).thenReturn(Unit)
      // doNothing().doThrow(new RuntimeException()).when(auditService.auditManagerKeywordDeleted(Operator("sd"), keyWord))
       await(manageKeywordsService.deleteKeyword(keyWord, Operator("sd"))).isCompleted
     }
   }
   "renameKeyword" should {
-    "return a new password" in {
+    "return a new keyword" in {
       val newKeyWord = Keyword("new keyword")
-      when(connector.deleteKeyword(keyWord)).thenReturn(Future.successful(Seq(caseKeyWord)))
+      when(connector.deleteKeyword(keyWord)).thenReturn(Future.successful(Seq(caseKeywordRow)))
       when(connector.createKeyword(keyWord)).thenReturn(Future.successful(keyWord))
       when(connector.createKeyword(newKeyWord)).thenReturn(Future.successful(newKeyWord))
       await(manageKeywordsService.renameKeyword(keyWord,newKeyWord, user)) shouldBe newKeyWord

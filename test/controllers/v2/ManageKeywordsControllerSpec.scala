@@ -18,7 +18,7 @@ package controllers.v2
 
 import controllers.{ControllerBaseSpec, RequestActionsWithPermissions}
 import models.ChangeKeywordStatusAction.ChangeKeywordStatusAction
-import models._
+import models.*
 import models.forms.KeywordForm
 import models.forms.v2.{ChangeKeywordStatusForm, EditApprovedKeywordForm}
 import models.viewmodels.ManagerToolsKeywordsTab
@@ -27,13 +27,14 @@ import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.data.Form
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{CasesService, ManageKeywordsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Cases
 import views.html.case_not_found
-import views.html.managementtools._
+import views.html.managementtools.*
 
+import java.time.Instant
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -48,9 +49,18 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
   )
   val keywordForm: Form[String]                     = KeywordForm.formWithAuto(keywords.map(_.name))
   val editKeywordForm: EditApprovedKeywordForm.type = EditApprovedKeywordForm
-  val caseKeyword: CaseKeyword = CaseKeyword(
-    Keyword("BOOK"),
-    List(CaseHeader("ref", None, None, Some("NOTEBOOK"), ApplicationType.ATAR, CaseStatus.REFERRED, 0, None))
+  val caseKeywordRow: CaseKeywordRow = CaseKeywordRow(
+    keyword = "BOOK",
+    reference = "ref",
+    user = None,
+    goods = Some("NOTEBOOK"),
+    caseType = "BTI",
+    status = "REFERRED",
+    liabilityStatus = None,
+    daysElapsed = 10L,
+    overdue = false,
+    approved = false,
+    createdDate = Instant.now()
   )
   val dummyCase: Case = Cases.caseAssignedExample
 
@@ -93,8 +103,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 200 OK and HTML content type" in {
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
-      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .thenReturn(Future(Paged(Seq(caseKeyword))))
+      when(keywordService.fetchCaseKeywords(any[Pagination], any[Option[Boolean]])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(newFakeGETRequestWithCSRF()))
       status(result)      shouldBe Status.OK
@@ -509,8 +519,8 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
 
-      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .thenReturn(Future(Paged(Seq(caseKeyword))))
+      when(keywordService.fetchCaseKeywords(any[Pagination], any[Option[Boolean]])(any[HeaderCarrier]))
+        .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
@@ -530,7 +540,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
         .thenReturn(Future(Paged(keywords)))
 
       when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
-        .thenReturn(Future(Paged(Seq(caseKeyword))))
+        .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(
         controller(Set(Permission.MANAGE_USERS))
