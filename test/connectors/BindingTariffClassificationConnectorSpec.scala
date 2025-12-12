@@ -17,13 +17,15 @@
 package connectors
 
 import cats.data.NonEmptySeq
-import com.github.tomakehurst.wiremock.client.WireMock._
-import models._
-import models.reporting._
-import play.api.http.Status._
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import models.*
+import models.reporting.*
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.UpstreamErrorResponse
-import utils._
+import utils.*
+
+import java.time.Instant
 
 class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQueueBuilder {
 
@@ -1212,16 +1214,25 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   }
 
   "Connector 'getCaseKeywords'" should {
-
     "return case keywords" in {
-      val keyword     = Keyword("AKeyword", approved = true)
-      val caseHeader  = CaseHeader("ref", None, None, None, ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)
-      val caseKeyword = CaseKeyword(keyword, List(caseHeader))
+      val caseKeywordRow = CaseKeywordRow(
+        keyword = "AKeyword",
+        reference = "ref",
+        user = None,
+        goods = None,
+        caseType = "BTI",
+        status = "REFERRED",
+        liabilityStatus = None,
+        daysElapsed = 10L,
+        overdue = false,
+        approved = true,
+        createdDate = Instant.now()
+      )
 
-      val response = Json.toJson(Paged(Seq(caseKeyword))).toString()
+      val response = Json.toJson(Paged(Seq(caseKeywordRow))).toString()
 
       stubFor(
-        get(urlEqualTo("/case-keywords"))
+        get(urlEqualTo("/case-keywords?page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
               .withStatus(OK)
@@ -1229,17 +1240,88 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.getCaseKeywords()) shouldBe Paged(Seq(caseKeyword))
+      await(connector.getCaseKeywords()) shouldBe Paged(Seq(caseKeywordRow))
 
       verify(
-        getRequestedFor(urlEqualTo("/case-keywords"))
+        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=2147483647"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "return case keywords with pagination and approved filter" in {
+      val caseKeywordRow = CaseKeywordRow(
+        keyword = "AKeyword",
+        reference = "ref",
+        user = Some("user1"),
+        goods = Some("Laptop"),
+        caseType = "BTI",
+        status = "OPEN",
+        liabilityStatus = None,
+        daysElapsed = 5L,
+        overdue = false,
+        approved = false,
+        createdDate = Instant.now()
+      )
+
+      val response = Json.toJson(Paged(Seq(caseKeywordRow))).toString()
+
+      stubFor(
+        get(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(response)
+          )
+      )
+
+      await(connector.getCaseKeywords(pagination = NoPagination(), approved = Some(false))) shouldBe Paged(
+        Seq(caseKeywordRow)
+      )
+
+      verify(
+        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
+
+    "return unapproved case keywords with pagination" in {
+      val caseKeywordRow = CaseKeywordRow(
+        keyword = "AKeyword",
+        reference = "ref",
+        user = Some("user1"),
+        goods = Some("Laptop"),
+        caseType = "BTI",
+        status = "OPEN",
+        liabilityStatus = None,
+        daysElapsed = 5L,
+        overdue = false,
+        approved = false,
+        createdDate = Instant.now()
+      )
+
+      val response = Json.toJson(Paged(Seq(caseKeywordRow))).toString()
+
+      stubFor(
+        get(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(response)
+          )
+      )
+
+      await(connector.getCaseKeywords(pagination = NoPagination(), approved = Some(false))) shouldBe Paged(
+        Seq(caseKeywordRow)
+      )
+
+      verify(
+        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
   }
 
   "Connector 'delete Keyword'" should {
-
     "delete the keyword given" in {
       val keyword = Keyword("AKeyword", approved = true)
       stubFor(
