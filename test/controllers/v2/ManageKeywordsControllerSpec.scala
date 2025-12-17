@@ -539,7 +539,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
 
-      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+      when(keywordService.fetchCaseKeywords(any[Pagination], any[Option[Boolean]])(any[HeaderCarrier]))
         .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(
