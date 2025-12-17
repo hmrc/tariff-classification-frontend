@@ -1303,7 +1303,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val response = Json.toJson(Paged(Seq(caseKeywordRow))).toString()
 
       stubFor(
-        get(urlEqualTo("/case-keywords?page=1&page_size=100&approved=false"))
+        get(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
           .willReturn(
             aResponse()
               .withStatus(OK)
@@ -1316,7 +1316,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
 
       verify(
-        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=100&approved=false"))
+        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
