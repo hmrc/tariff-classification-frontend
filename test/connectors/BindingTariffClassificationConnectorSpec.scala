@@ -1284,7 +1284,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       )
     }
 
-    "return case keywords with pagination and approved filter" in {
+    "return unapproved case keywords with pagination" in {
       val caseKeywordRow = CaseKeywordRow(
         keyword = "AKeyword",
         reference = "ref",
