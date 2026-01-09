@@ -1214,7 +1214,6 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   }
 
   "Connector 'getCaseKeywords'" should {
-
     "return case keywords" in {
       val caseKeywordRow = CaseKeywordRow(
         keyword = "AKeyword",
@@ -1323,7 +1322,6 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   }
 
   "Connector 'delete Keyword'" should {
-
     "delete the keyword given" in {
       val keyword = Keyword("AKeyword", approved = true)
       stubFor(
