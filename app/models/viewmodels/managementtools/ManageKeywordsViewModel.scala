@@ -18,9 +18,6 @@ package models.viewmodels.managementtools
 
 import models.*
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-
 case class ManageKeywordsTab(tabMessageKey: String, elementId: String, searchResult: Paged[KeywordViewModel])
 
 case class ManageKeywordsViewModel(
@@ -31,17 +28,25 @@ case class ManageKeywordsViewModel(
 
 object ManageKeywordsViewModel {
   def forManagedTeams(
-    caseKeywords: Paged[CaseKeywordRow],
-    allKeywords: Seq[Keyword]
-  ): ManageKeywordsViewModel = {
+       caseKeywords: Paged[CaseKeywordRow],
+       allKeywords: Seq[Keyword]
+     ): ManageKeywordsViewModel = {
 
     val approvedKeywords = allKeywords.filter(_.approved)
+    val approvedKeywordNames: Set[String] = approvedKeywords.map(_.name).toSet
 
-    val keywordViewModel = caseKeywords.results.map { row =>
+    val keywordViewModel = caseKeywords.results.view.map { row =>
+      val overdue = (row.caseType, row.liabilityStatus) match {
+        case ("LIABILITY_ORDER", Some("LIVE")) if row.daysElapsed >= 5 => true
+        case (_, _) if row.daysElapsed >= 30                           => true
+        case _                                                         => false
+      }
+
+      val isNotApproved = !approvedKeywordNames.contains(row.keyword)
 
       val caseStatusViewModel = CaseStatusKeywordViewModel(
         caseStatus = CaseStatus.withName(row.status),
-        overdue = row.overdue
+        overdue = overdue
       )
 
       KeywordViewModel(
@@ -51,9 +56,9 @@ object ManageKeywordsViewModel {
         goods = row.goods.getOrElse(""),
         caseType = ApplicationType.withName(row.caseType),
         status = caseStatusViewModel,
-        approved = !row.approved
+        approved = isNotApproved
       )
-    }
+    }.toSeq
 
     ManageKeywordsViewModel(
       "Manage keywords",
@@ -75,12 +80,11 @@ object ManageKeywordsViewModel {
       )
     )
   }
-
 }
 
 case class KeywordsTabViewModel(
-  tabMessageKey: String,
-  elementId: String,
-  keyword: Set[String],
-  globalKeywords: Seq[String]
+ tabMessageKey: String,
+ elementId: String,
+ keyword: Set[String],
+ globalKeywords: Seq[String]
 )

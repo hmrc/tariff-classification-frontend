@@ -1822,10 +1822,7 @@ class JsonFormattersSpec extends SpecBase {
           caseType = "BTI",
           status = "REFERRED",
           liabilityStatus = Some("LIVE"),
-          daysElapsed = 10L,
-          overdue = false,
-          approved = true,
-          createdDate = Instant.parse("2020-01-01T09:00:00.00Z")
+          daysElapsed = 10L
         )
         val json         = Json.toJson(original)
         val deserialized = json.as[CaseKeywordRow]
@@ -1842,10 +1839,7 @@ class JsonFormattersSpec extends SpecBase {
           caseType = "BTI",
           status = "NEW",
           liabilityStatus = None,
-          daysElapsed = 0L,
-          overdue = false,
-          approved = false,
-          createdDate = Instant.parse("2020-01-01T09:00:00.00Z")
+          daysElapsed = 0L
         )
         val json         = Json.toJson(original)
         val deserialized = json.as[CaseKeywordRow]

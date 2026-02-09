@@ -1223,10 +1223,7 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         caseType = "BTI",
         status = "REFERRED",
         liabilityStatus = None,
-        daysElapsed = 10L,
-        overdue = false,
-        approved = true,
-        createdDate = Instant.now()
+        daysElapsed = 10L
       )
 
       val response = Json.toJson(Paged(Seq(caseKeywordRow))).toString()
@@ -1257,16 +1254,13 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         caseType = "BTI",
         status = "OPEN",
         liabilityStatus = None,
-        daysElapsed = 5L,
-        overdue = false,
-        approved = false,
-        createdDate = Instant.now()
+        daysElapsed = 5L
       )
 
       val response = Json.toJson(Paged(Seq(caseKeywordRow))).toString()
 
       stubFor(
-        get(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
+        get(urlEqualTo("/case-keywords?page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
               .withStatus(OK)
@@ -1274,12 +1268,12 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.getCaseKeywords(pagination = NoPagination(), approved = Some(false))) shouldBe Paged(
+      await(connector.getCaseKeywords(pagination = NoPagination())) shouldBe Paged(
         Seq(caseKeywordRow)
       )
 
       verify(
-        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
+        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=2147483647"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
@@ -1293,16 +1287,13 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
         caseType = "BTI",
         status = "OPEN",
         liabilityStatus = None,
-        daysElapsed = 5L,
-        overdue = false,
-        approved = false,
-        createdDate = Instant.now()
+        daysElapsed = 5L
       )
 
       val response = Json.toJson(Paged(Seq(caseKeywordRow))).toString()
 
       stubFor(
-        get(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
+        get(urlEqualTo("/case-keywords?page=1&page_size=2147483647"))
           .willReturn(
             aResponse()
               .withStatus(OK)
@@ -1310,12 +1301,12 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.getCaseKeywords(pagination = NoPagination(), approved = Some(false))) shouldBe Paged(
+      await(connector.getCaseKeywords(pagination = NoPagination())) shouldBe Paged(
         Seq(caseKeywordRow)
       )
 
       verify(
-        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=2147483647&approved=false"))
+        getRequestedFor(urlEqualTo("/case-keywords?page=1&page_size=2147483647"))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }

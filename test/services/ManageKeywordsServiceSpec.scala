@@ -41,10 +41,7 @@ class ManageKeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach 
     caseType = "BTI",
     status = "NEW",
     liabilityStatus = None,
-    daysElapsed = 3L,
-    overdue = false,
-    approved = false,
-    createdDate = Instant.now()
+    daysElapsed = 3L
   )
 
   private val user = Operator("operator")
@@ -72,17 +69,10 @@ class ManageKeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach 
   "fetchCaseKeywords" should {
     "return all case keyword rows" in {
       // CHANGED: Updated mock to match new signature
-      when(connector.getCaseKeywords(any[Pagination], any[Option[Boolean]])(any))
+      when(connector.getCaseKeywords(any[Pagination])(any))
         .thenReturn(Future.successful(Paged(Seq(caseKeywordRow))))
 
       await(manageKeywordsService.fetchCaseKeywords()) shouldBe Paged(Seq(caseKeywordRow))
-    }
-
-    "return filtered case keyword rows by approved status" in {
-      when(connector.getCaseKeywords(any[Pagination], refEq(Some(false)))(any))
-        .thenReturn(Future.successful(Paged(Seq(caseKeywordRow))))
-
-      await(manageKeywordsService.fetchCaseKeywords(approved = Some(false))) shouldBe Paged(Seq(caseKeywordRow))
     }
   }
 

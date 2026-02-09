@@ -62,7 +62,7 @@ class ManageKeywordsController @Inject() (
   def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
-        caseKeywords <- keywordService.fetchCaseKeywords(approved = Some(false))
+        caseKeywords <- keywordService.fetchCaseKeywords()
         allKeywords  <- keywordService.findAll(NoPagination())
         manageKeywordsViewModel = ManageKeywordsViewModel.forManagedTeams(
                                     caseKeywords,
@@ -88,7 +88,7 @@ class ManageKeywordsController @Inject() (
           .fold(
             formWithErrors =>
               for {
-                caseKeywords <- keywordService.fetchCaseKeywords(approved = Some(false))
+                caseKeywords <- keywordService.fetchCaseKeywords()
                 manageKeywordsViewModel = ManageKeywordsViewModel.forManagedTeams(
                                             caseKeywords,
                                             keywords.results

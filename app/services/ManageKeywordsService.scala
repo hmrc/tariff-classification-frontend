@@ -42,10 +42,9 @@ class ManageKeywordsService @Inject() (auditService: AuditService, connector: Bi
     connector.findAllKeywords(pagination)
 
   def fetchCaseKeywords(
-    pagination: Pagination = NoPagination(),
-    approved: Option[Boolean] = None
+    pagination: Pagination = NoPagination()
   )(implicit hc: HeaderCarrier): Future[Paged[CaseKeywordRow]] =
-    connector.getCaseKeywords(pagination, approved)
+    connector.getCaseKeywords(pagination)
 
   def deleteKeyword(keyword: Keyword, user: Operator)(implicit hc: HeaderCarrier): Future[Unit] =
     connector.deleteKeyword(keyword).map(_ => auditService.auditManagerKeywordDeleted(user, keyword))

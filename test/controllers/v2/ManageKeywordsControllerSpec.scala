@@ -57,10 +57,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     caseType = "BTI",
     status = "REFERRED",
     liabilityStatus = None,
-    daysElapsed = 10L,
-    overdue = false,
-    approved = false,
-    createdDate = Instant.now()
+    daysElapsed = 10L
   )
   val dummyCase: Case = Cases.caseAssignedExample
 
@@ -103,7 +100,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 200 OK and HTML content type" in {
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
-      when(keywordService.fetchCaseKeywords(any[Pagination], any[Option[Boolean]])(any[HeaderCarrier]))
+      when(keywordService.fetchCaseKeywords(any[Pagination]))
         .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(newFakeGETRequestWithCSRF()))
@@ -519,7 +516,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
 
-      when(keywordService.fetchCaseKeywords(any[Pagination], any[Option[Boolean]])(any[HeaderCarrier]))
+      when(keywordService.fetchCaseKeywords(any[Pagination]))
         .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(
@@ -539,7 +536,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
 
-      when(keywordService.fetchCaseKeywords(any[Pagination], any[Option[Boolean]])(any[HeaderCarrier]))
+      when(keywordService.fetchCaseKeywords(any[Pagination]))
         .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(
