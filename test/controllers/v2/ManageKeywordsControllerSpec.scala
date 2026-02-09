@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import utils.Cases
 import views.html.case_not_found
 import views.html.managementtools.*
 
-import java.time.Instant
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
@@ -100,23 +99,20 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 200 OK and HTML content type" in {
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
-      when(keywordService.fetchCaseKeywords(any[Pagination]))
+      when(keywordService.fetchCaseKeywords(any[Pagination])(any[HeaderCarrier]))
         .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(newFakeGETRequestWithCSRF()))
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-
     }
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).displayManageKeywords()(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
-
     }
-
   }
 
   "newKeyword" should {
@@ -159,7 +155,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       redirectLocation(result) shouldBe Some(
         controllers.v2.routes.ManageKeywordsController.displayConfirmKeyword("newkeyword").path()
       )
-
     }
 
     "return unauthorised with no permissions" in {
@@ -182,7 +177,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include(messages("management.create-keyword.error.empty.keyword"))
-
     }
 
     "render error if duplicate keyword entered" in {
@@ -200,7 +194,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       contentAsString(result) should include("error-summary")
       contentAsString(result) should include(messages("management.create-keyword.error.duplicate.keyword"))
     }
-
   }
 
   "Approve, Reject Keyword" should {
@@ -233,7 +226,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
           )
           .path()
       )
-
     }
 
     "return unauthorised with no permissions" in {
@@ -254,14 +246,12 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-
     }
 
     "return unauthorised with no permissions" in {
       val result = await(controller(Set()).displayConfirmKeyword("KEYWORD")(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
-
     }
   }
 
@@ -280,7 +270,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-
     }
 
     "return case not found when case is not found" in {
@@ -296,7 +285,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       contentType(result)   shouldBe Some("text/html")
       charset(result)       shouldBe Some("utf-8")
       contentAsString(result) should include("We could not find a Case with reference")
-
     }
 
     "return unauthorised with no permissions" in {
@@ -306,7 +294,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       val result = await(controller(Set()).changeKeywordStatus("keywordName", "reference")(fakeRequest))
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
-
     }
   }
 
@@ -324,7 +311,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-
     }
 
     "return unauthorised with no permissions" in {
@@ -339,9 +325,9 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       status(result)           shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.SecurityController.unauthorized().url)
-
     }
   }
+
   "editApprovedKeywords" should {
 
     "return 200 OK and HTML content type" in {
@@ -351,7 +337,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result)      shouldBe Status.OK
       contentType(result) shouldBe Some("text/html")
       charset(result)     shouldBe Some("utf-8")
-
     }
 
     "return unauthorised with no permissions" in {
@@ -429,7 +414,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe
         Some(controllers.v2.routes.ManageKeywordsController.displayConfirmationKeywordDeleted().url)
-
     }
 
     "render errors when duplicate keyword is entered for renaming" in {
@@ -506,7 +490,6 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       )
 
       status(result) shouldBe Status.BAD_REQUEST
-
     }
   }
 
@@ -516,7 +499,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
 
-      when(keywordService.fetchCaseKeywords(any[Pagination]))
+      when(keywordService.fetchCaseKeywords(any[Pagination])(any[HeaderCarrier]))
         .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(
@@ -536,7 +519,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
 
-      when(keywordService.fetchCaseKeywords(any[Pagination]))
+      when(keywordService.fetchCaseKeywords(any[Pagination])(any[HeaderCarrier]))
         .thenReturn(Future(Paged(Seq(caseKeywordRow))))
 
       val result = await(
@@ -546,7 +529,5 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
 
       status(result) shouldBe Status.BAD_REQUEST
     }
-
   }
-
 }
