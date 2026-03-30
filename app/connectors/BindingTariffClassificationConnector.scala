@@ -414,22 +414,14 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Keyword]]
     }
 
-  def getCaseKeywords(pagination: Pagination = NoPagination())
-                     (implicit hc: HeaderCarrier): Future[Paged[CaseKeywordRow]] =
+  def getCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     withMetricsTimerAsync("get-case-keywords") { _ =>
-      val baseURL = s"${appConfig.bindingTariffClassificationUrl}/case-keywords"
-
-      val queryParams = Seq(
-        Some(s"page=${pagination.page}"),
-        Some(s"page_size=${pagination.pageSize}"),
-      ).flatten.mkString("&")
-
-      val fullURL = if (queryParams.nonEmpty) s"$baseURL?$queryParams" else baseURL
+      val fullURL = s"${appConfig.bindingTariffClassificationUrl}/case-keywords"
 
       client
         .get(url"$fullURL")
         .setHeader(authHeaders(appConfig)*)
-        .execute[Paged[CaseKeywordRow]]
+        .execute[Paged[CaseKeyword]]
     }
 
   def deleteKeyword(keyword: Keyword)(implicit hc: HeaderCarrier): Future[Unit] =

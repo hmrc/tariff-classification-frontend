@@ -136,7 +136,9 @@ object JsonFormatters {
   implicit val eventFormat: OFormat[Event] = Json.using[Json.WithDefaultValues].format[Event]
   implicit val newEventRequestFormat: OFormat[NewEventRequest] =
     Json.using[Json.WithDefaultValues].format[NewEventRequest]
-  implicit val formatCaseKeyword: OFormat[CaseKeywordRow] = Json.format[CaseKeywordRow]
+
+  implicit val formatCaseHeader: OFormat[CaseHeader]   = Json.format[CaseHeader]
+  implicit val formatCaseKeyword: OFormat[CaseKeyword] = Json.format[CaseKeyword]
   implicit val emailCompleteParamsFormat: OFormat[CaseCompletedEmailParameters] =
     Json.format[CaseCompletedEmailParameters]
   implicit val emailCompleteFormat: OFormat[CaseCompletedEmail] = Json.format[CaseCompletedEmail]
