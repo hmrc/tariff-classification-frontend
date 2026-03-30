@@ -1811,65 +1811,83 @@ class JsonFormattersSpec extends SpecBase {
       }
     }
   }
-  "CaseKeywordRow" should {
+  "CaseHeader" should {
     "handle round-trip serialization/deserialization" when {
       "all the values are present" in {
-        val original = CaseKeywordRow(
-          keyword = "BOOK",
-          reference = "ref",
-          user = Some("user123"),
-          goods = Some("NOTEBOOK"),
-          caseType = "BTI",
-          status = "REFERRED",
-          liabilityStatus = Some("LIVE"),
-          daysElapsed = 10L
+        val original = CaseHeader(
+          reference = "sdf",
+          assignee = Some(Operator("ds")),
+          team = Some("sdf"),
+          goodsName = Some("sdf"),
+          caseType = ATAR,
+          status = CaseStatus.CANCELLED,
+          daysElapsed = 3,
+          liabilityStatus = Some(LiabilityStatus.LIVE)
         )
         val json         = Json.toJson(original)
-        val deserialized = json.as[CaseKeywordRow]
+        val deserialized = json.as[CaseHeader]
 
         deserialized shouldBe original
       }
-
-      "all the optional values are None" in {
-        val original = CaseKeywordRow(
-          keyword = "BOOK",
-          reference = "ref",
-          user = None,
-          goods = None,
-          caseType = "BTI",
-          status = "NEW",
-          liabilityStatus = None,
-          daysElapsed = 0L
+      "all the values are None" in {
+        val original = CaseHeader(
+          reference = "sdf",
+          assignee = None,
+          team = None,
+          goodsName = None,
+          caseType = ATAR,
+          status = CaseStatus.CANCELLED,
+          daysElapsed = 3,
+          liabilityStatus = None
         )
         val json         = Json.toJson(original)
-        val deserialized = json.as[CaseKeywordRow]
+        val deserialized = json.as[CaseHeader]
 
         deserialized shouldBe original
       }
     }
-
     "fail to deserialize" when {
       "json is empty" in {
         val json = Json.obj()
-        json.validate[CaseKeywordRow] shouldBe a[JsError]
+        json.validate[CaseHeader] shouldBe a[JsError]
       }
-
-      "there is type mismatch" in {
-        val json = Json.obj(
-          "keyword"     -> 123,
-          "reference"   -> true,
-          "caseType"    -> 456,
-          "status"      -> false,
-          "daysElapsed" -> "text",
-          "overdue"     -> "yes",
-          "approved"    -> 789
-        )
-        json.validate[CaseKeywordRow] shouldBe a[JsError]
-      }
-
       "there is a json array" in {
         val json = Json.arr("min" -> "ad", "max" -> 23)
-        json.validate[CaseKeywordRow] shouldBe a[JsError]
+        json.validate[CaseHeader] shouldBe a[JsError]
+      }
+    }
+  }
+  "CaseKeyword" should {
+    "handle round-trip serialization/deserialization" when {
+      "all the values are present" in {
+        val original = CaseKeyword(
+          Keyword("sdf", true),
+          List(
+            CaseHeader(
+              reference = "sdf",
+              assignee = None,
+              team = None,
+              goodsName = None,
+              caseType = ATAR,
+              status = CaseStatus.CANCELLED,
+              daysElapsed = 3,
+              liabilityStatus = None
+            )
+          )
+        )
+        val json         = Json.toJson(original)
+        val deserialized = json.as[CaseKeyword]
+        deserialized shouldBe original
+      }
+    }
+    "fail to deserialize" when {
+      "json is empty" in {
+        val json = Json.obj()
+        json.validate[CaseKeyword] shouldBe a[JsError]
+      }
+      "there is a json array" in {
+        val json = Json.arr("min" -> "ad", "max" -> 23)
+        json.validate[CaseKeyword] shouldBe a[JsError]
       }
     }
   }
