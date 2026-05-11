@@ -65,7 +65,8 @@ class ManageKeywordsServiceSpec extends ServiceSpecBase with BeforeAndAfterEach 
   }
   "fetchCaseKeywords" should {
     "return all passwords" in {
-      when(connector.getCaseKeywords()).thenReturn(Future.successful(Seq(caseKeyWord)))
+      val pagination = models.SearchPagination()
+      when(connector.getCaseKeywords(pagination)).thenReturn(Future.successful(Seq(caseKeyWord)))
       await(manageKeywordsService.fetchCaseKeywords()) shouldBe Seq(caseKeyWord)
     }
   }

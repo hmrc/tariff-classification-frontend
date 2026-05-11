@@ -32,8 +32,7 @@ class KeywordsForApprovalTableSpec extends ViewSpec {
       "Alex Smith",
       "Space grade aluminium spinner",
       ApplicationType.LIABILITY,
-      CaseStatusKeywordViewModel(CaseStatus.REFERRED, overdue = false),
-      approved = true
+      CaseStatusKeywordViewModel(CaseStatus.REFERRED, overdue = false)
     )
 
   val manageKeywordsTab: ManageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword", Paged(Seq(keyword)))
