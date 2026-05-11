@@ -36,10 +36,10 @@
         <li class="moj-sub-navigation__item">
         @if(selectedTab == ManagerToolsKeywordsTab) {
             <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link govuk-link" aria-current="page"
-            href="@routes.ManageKeywordsController.displayManageKeywords()">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
+            href="@routes.ManageKeywordsController.displayManageKeywords(SearchPagination())">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
         } else {
             <a id ="sub_nav_manager_tools_keywords_tab" class="moj-sub-navigation__link govuk-link"
-            href="@routes.ManageKeywordsController.displayManageKeywords()">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
+            href="@routes.ManageKeywordsController.displayManageKeywords(SearchPagination())">@messages("operator.dashboard.classification.manager-tools.tab-keywords")</a>
         }
         </li>
         <li class="moj-sub-navigation__item">

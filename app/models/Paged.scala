@@ -27,6 +27,7 @@ case class Paged[T](results: Seq[T], pageIndex: Int, pageSize: Int, resultCount:
   def filter(predicate: T => Boolean): Paged[T]    = this.copy(results = results.filter(predicate))
   def filterNot(predicate: T => Boolean): Paged[T] = this.copy(results = results.filterNot(predicate))
   def size: Int                                    = results.size
+  def resultSize: Int                              = resultCount
   def pageCount: Int                               = Math.ceil(resultCount.toDouble / pageSize).toInt
   def isEmpty: Boolean                             = results.isEmpty
   def nonEmpty: Boolean                            = results.nonEmpty

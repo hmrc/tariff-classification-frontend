@@ -839,13 +839,23 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
   "Connector 'getAllUsers'" should {
 
     "get all users" in {
-      val ref           = "PID1"
-      val validOperator = Cases.operatorWithPermissions.copy(id = ref)
-      val json          = Json.toJson(validOperator).toString()
+      val operator = Cases.operatorWithPermissions.copy(id = "PID1")
+
+      val pagedResponse = Paged(
+        results = Seq(operator)
+      )
+
+      val json = Json.toJson(pagedResponse).toString()
+
+      val roles = Seq(models.Role.CLASSIFICATION_OFFICER)
+      val team  = "2"
+
+      val searchParam = s"role=${roles.mkString(",")}&member_of_teams=$team"
+      val url =
+        s"/users?$searchParam&page=${pagination.page}&page_size=${pagination.pageSize}"
 
       stubFor(
-        put(urlEqualTo(s"/users/$ref"))
-          .withRequestBody(equalToJson(json))
+        get(urlEqualTo(url))
           .willReturn(
             aResponse()
               .withStatus(OK)
@@ -853,10 +863,10 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
           )
       )
 
-      await(connector.updateUser(validOperator)) shouldBe validOperator
+      await(connector.getAllUsers(roles, team, pagination)) shouldBe pagedResponse
 
       verify(
-        putRequestedFor(urlEqualTo(s"/users/$ref"))
+        getRequestedFor(urlEqualTo(url))
           .withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
@@ -985,6 +995,32 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       postRequestedFor(urlEqualTo(s"/users"))
         .withHeader("X-Api-Token", equalTo(fakeAuthToken))
     )
+  }
+
+  "Connector 'getUserDetails'" should {
+
+    "return user details when user exists" in {
+      val id = "PID1"
+
+      val operator = Cases.operatorWithPermissions.copy(id = id)
+      val json     = Json.toJson(operator).toString()
+
+      stubFor(
+        get(urlEqualTo(s"/users/$id"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(json)
+          )
+      )
+
+      await(connector.getUserDetails(id)) shouldBe Some(operator)
+
+      verify(
+        getRequestedFor(urlEqualTo(s"/users/$id"))
+          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+      )
+    }
   }
 
   "Connector 'delete User'" should {
@@ -1218,22 +1254,26 @@ class BindingTariffClassificationConnectorSpec extends ConnectorTest with CaseQu
       val caseHeader  = CaseHeader("ref", None, None, None, ApplicationType.ATAR, CaseStatus.REFERRED, 0, None)
       val caseKeyword = CaseKeyword(keyword, List(caseHeader))
 
+      val pagination = models.SearchPagination()
+
       val response = Json.toJson(Paged(Seq(caseKeyword))).toString()
 
       stubFor(
-        get(urlEqualTo("/case-keywords"))
-          .willReturn(
-            aResponse()
-              .withStatus(OK)
-              .withBody(response)
-          )
+        get(
+          urlEqualTo("/case-keywords?page=1&page_size=50")
+        ).willReturn(
+          aResponse()
+            .withStatus(OK)
+            .withBody(response)
+        )
       )
 
-      await(connector.getCaseKeywords()) shouldBe Paged(Seq(caseKeyword))
+      await(connector.getCaseKeywords(pagination)) shouldBe Paged(Seq(caseKeyword))
 
       verify(
-        getRequestedFor(urlEqualTo("/case-keywords"))
-          .withHeader("X-Api-Token", equalTo(fakeAuthToken))
+        getRequestedFor(
+          urlEqualTo("/case-keywords?page=1&page_size=50")
+        ).withHeader("X-Api-Token", equalTo(fakeAuthToken))
       )
     }
   }
