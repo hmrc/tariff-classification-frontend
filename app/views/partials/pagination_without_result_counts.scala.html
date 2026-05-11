@@ -1,0 +1,146 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.Paged
+@import views.partials.PaginationUtil
+
+@(id: String = "pagination",
+        pager: Paged[?],
+        onChange: Int => Call,
+        neighbourPagesAmount: Int = 5
+)(implicit messages: Messages)
+
+@if(pager.pageCount > 1) {
+
+    @defining(
+        PaginationUtil.surroundingPages(
+            pager.pageIndex,
+            pager.pageCount,
+            neighbourPagesAmount
+        )
+    ) { pages =>
+
+        <nav id="@id" class="govuk-pagination" aria-label="@messages("aria.label.pagination")">
+
+            @* Previous *@
+            @if(pager.pageIndex > 1) {
+                <div class="govuk-pagination__prev">
+                    <a class="govuk-link govuk-pagination__link"
+                    href="@onChange(pager.pageIndex - 1)"
+                    rel="prev">
+
+                        <svg class="govuk-pagination__icon govuk-pagination__icon--prev"
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="13" width="15"
+                        aria-hidden="true"
+                        focusable="false"
+                        viewBox="0 0 15 13">
+                            <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                        </svg>
+
+                        <span class="govuk-pagination__link-title">
+                        @messages("pagination.previous")
+                        </span>
+
+                    </a>
+                </div>
+            }
+
+            <ul class="govuk-pagination__list">
+
+                @* LEFT ELLIPSIS + FIRST PAGE *@
+                @if(pages.headOption.exists(_ > 1)) {
+
+                    <li class="govuk-pagination__item">
+                        <a class="govuk-link govuk-pagination__link"
+                        href="@onChange(1)"
+                        aria-label="@messages("aria.label.page.number", 1)">
+                            1
+                        </a>
+                    </li>
+
+                    <li class="govuk-pagination__item govuk-pagination__item--ellipsis">
+                                &ctdot;
+                    </li>
+                }
+
+                @for(pageNumber <- pages) {
+
+                    <li class="govuk-pagination__item
+        @if(pageNumber == pager.pageIndex) { govuk-pagination__item--current }">
+
+                    @if(pageNumber == pager.pageIndex) {
+                        <span aria-current="page">
+                        @pageNumber
+                        </span>
+                    } else {
+                        <a class="govuk-link govuk-pagination__link"
+                        href="@onChange(pageNumber)"
+                        aria-label="@messages("aria.label.page.number", pageNumber)">
+                        @pageNumber
+                        </a>
+                    }
+
+                    </li>
+                }
+
+                @* RIGHT ELLIPSIS + LAST PAGE *@
+                @if(pages.lastOption.exists(_ < pager.pageCount)) {
+
+                    <li class="govuk-pagination__item govuk-pagination__item--ellipsis">
+                                &ctdot;
+                    </li>
+
+                    <li class="govuk-pagination__item">
+                        <a class="govuk-link govuk-pagination__link"
+                        href="@onChange(pager.pageCount)"
+                        aria-label="@messages("aria.label.page.number", pager.pageCount)">
+                        @pager.pageCount
+                        </a>
+                    </li>
+                }
+
+            </ul>
+
+            @* Next *@
+            @if(pager.pageIndex < pager.pageCount) {
+                <div class="govuk-pagination__next">
+                    <a class="govuk-link govuk-pagination__link"
+                    href="@onChange(pager.pageIndex + 1)"
+                    rel="next">
+
+                        <span class="govuk-pagination__link-title">
+                        @messages("pagination.next")
+                        </span>
+
+                        <svg class="govuk-pagination__icon govuk-pagination__icon--next"
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="13" width="15"
+                        aria-hidden="true"
+                        focusable="false"
+                        viewBox="0 0 15 13">
+                            <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                        </svg>
+
+                    </a>
+                </div>
+            }
+
+        </nav>
+
+    }
+
+}

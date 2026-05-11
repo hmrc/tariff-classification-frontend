@@ -93,7 +93,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
     "return 200 OK and HTML content type" in {
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
-      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+      when(keywordService.fetchCaseKeywords(refEq(SearchPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(controller(Set(Permission.MANAGE_USERS)).displayManageKeywords()(newFakeGETRequestWithCSRF()))
@@ -509,7 +509,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
 
-      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+      when(keywordService.fetchCaseKeywords(refEq(SearchPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(
@@ -529,7 +529,7 @@ class ManageKeywordsControllerSpec extends ControllerBaseSpec with BeforeAndAfte
       when(keywordService.findAll(refEq(NoPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(keywords)))
 
-      when(keywordService.fetchCaseKeywords()(any[HeaderCarrier]))
+      when(keywordService.fetchCaseKeywords(refEq(SearchPagination()))(any[HeaderCarrier]))
         .thenReturn(Future(Paged(Seq(caseKeyword))))
 
       val result = await(
