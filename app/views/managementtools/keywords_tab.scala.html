@@ -60,6 +60,19 @@
         <div class="govuk-tabs__panel" id="@manageKeywordsViewModel.keywordsForApprovalTab.elementId">
             <h2 class="govuk-heading-l">@messages("management.manage-keywords.approve-tab.heading")</h2>
             <div class="govuk-form-group govuk-body">
+
+                @if(paginationParams.isDefined) {
+                    @defining(manageKeywordsViewModel.keywordsForApprovalTab.searchResult) { paged =>
+                        @defining(if (paged.resultCount == 0) 0 else ((paged.pageIndex - 1) * paged.pageSize) + 1) { start =>
+                            @defining(Math.min(paged.pageIndex * paged.pageSize, paged.resultCount)) { end =>
+                                <p class="govuk-body">
+                                    @Html(messages("management.manage-keywords.approve-tab.pagination", start, end, paged.resultCount))
+                                </p>
+                            }
+                        }
+                    }
+                }
+
                 @{
                     manageKeywordsViewModel.keywordsForApprovalTab.searchResult.size match {
                         case 0 => "There are no keywords waiting for approval."

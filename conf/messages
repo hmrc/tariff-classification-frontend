@@ -1367,6 +1367,7 @@ users.move_cases.choose_user.choose_team.single={0} is a member of {1} teams. Wh
 management.manage-keywords-title=Manage keywords
 management.manage-keywords.heading=Manage keywords
 management.manage-keywords.approve-tab.heading=Keywords for approval
+management.manage-keywords.approve-tab.pagination=Showing <strong>{0}</strong> to <strong>{1}</strong> of <strong>{2}</strong> keywords
 management.manage-keywords.approve-tab-title=Approve keywords ({0})
 management.manage-keywords.all-tab-title=All keywords ({0})
 management.manage-keywords.create-new-keyword-button=Create new keyword
