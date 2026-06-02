@@ -51,7 +51,7 @@ class KeywordsTabSpec extends ViewSpec {
   val form: Form[String] = KeywordForm.formWithAuto(keywords.map(_.name))
 
   def manageKeywordsView(t: ManageKeywordsViewModel = manageKeywordsViewModel): HtmlFormat.Appendable =
-    keywords_tab(t, form)
+    keywords_tab(t, form, Some(models.SearchPagination()))
 
   "KeywordTab" should {
 
