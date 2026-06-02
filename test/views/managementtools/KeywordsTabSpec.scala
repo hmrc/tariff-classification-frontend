@@ -34,11 +34,10 @@ class KeywordsTabSpec extends ViewSpec {
       "Alex Smith",
       "Space grade aluminium spinner",
       ApplicationType.LIABILITY,
-      CaseStatusKeywordViewModel(CaseStatus.REFERRED, overdue = false),
-      approved = true
+      CaseStatusKeywordViewModel(CaseStatus.REFERRED, overdue = false)
     )
 
-  val emptyMangageKeywordsTab: ManageKeywordsTab =
+  val emptyManageKeywordsTab: ManageKeywordsTab =
     ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq.empty))
   val manageKeywordsTab: ManageKeywordsTab = ManageKeywordsTab("keyword_approval", "keyword_tab", Paged(Seq(keyword)))
   val keywordsTabViewModel: KeywordsTabViewModel =
@@ -69,7 +68,7 @@ class KeywordsTabSpec extends ViewSpec {
 
     "show correct message when there are no keywords for approval" in {
       val doc = view(
-        manageKeywordsView(manageKeywordsViewModel.copy(keywordsForApprovalTab = emptyMangageKeywordsTab))
+        manageKeywordsView(manageKeywordsViewModel.copy(keywordsForApprovalTab = emptyManageKeywordsTab))
       )
       doc.getElementById("keyword_tab") should containText("There are no keywords waiting for approval.")
     }

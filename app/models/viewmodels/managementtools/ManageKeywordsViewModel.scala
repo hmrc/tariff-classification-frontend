@@ -44,8 +44,6 @@ object ManageKeywordsViewModel {
 
         val caseStatus = CaseStatusKeywordViewModel(caseHeader.status, overdue)
 
-        val notApprovedRejected = !allKeywords.exists(kw => caseKeyword.keyword.name == kw.name)
-
         KeywordViewModel(
           caseHeader.reference,
           caseKeyword.keyword.name,
@@ -59,8 +57,7 @@ object ManageKeywordsViewModel {
             .getOrElse(""),
           caseHeader.goodsName.getOrElse(""),
           caseHeader.caseType,
-          caseStatus,
-          notApprovedRejected
+          caseStatus
         )
       }
     }
@@ -71,7 +68,7 @@ object ManageKeywordsViewModel {
         "keywordsApproval",
         "approval_tab",
         Paged(
-          keywordViewModel.filter(_.isApproved),
+          keywordViewModel,
           caseKeywords.pageIndex,
           caseKeywords.pageSize,
           caseKeywords.resultCount
