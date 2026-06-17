@@ -41,7 +41,7 @@
   </xsl:attribute-set>
 
   <xsl:attribute-set name="print-header">
-    <xsl:attribute name="color">#00703C</xsl:attribute>
+    <xsl:attribute name="color">#0F7A52</xsl:attribute>
     <xsl:attribute name="font-family">GDS Transport,Arial,sans-serif</xsl:attribute>
     <xsl:attribute name="font-weight">700</xsl:attribute>
     <xsl:attribute name="font-size">1.2em</xsl:attribute>
@@ -70,7 +70,7 @@
   </xsl:attribute-set>
 
   <xsl:attribute-set name="information-box">
-    <xsl:attribute name="border">1px solid #00703C</xsl:attribute>
+    <xsl:attribute name="border">1px solid #0F7A52</xsl:attribute>
     <xsl:attribute name="background-color">#e1f3f1</xsl:attribute>
     <xsl:attribute name="text-align">center</xsl:attribute>
     <xsl:attribute name="font-weight">700</xsl:attribute>
