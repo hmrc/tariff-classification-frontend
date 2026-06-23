@@ -414,10 +414,9 @@ class BindingTariffClassificationConnector @Inject() (
         .execute[Paged[Keyword]]
     }
 
-  def getCaseKeywords(pagination: Pagination)(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
+  def getCaseKeywords()(implicit hc: HeaderCarrier): Future[Paged[CaseKeyword]] =
     withMetricsTimerAsync("get-case-keywords") { _ =>
-      val fullURL =
-        s"${appConfig.bindingTariffClassificationUrl}/case-keywords?page=${pagination.page}&page_size=${pagination.pageSize}"
+      val fullURL = s"${appConfig.bindingTariffClassificationUrl}/case-keywords"
 
       client
         .get(url"$fullURL")
