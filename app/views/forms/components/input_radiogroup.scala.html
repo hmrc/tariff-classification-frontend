@@ -34,9 +34,17 @@
         headingCaption: Option[String] = None
 )(implicit messages: Messages)
 
+@describedBy = @{
+    (
+        ariaDescribedBy.toSeq ++
+        hint.map(_ => s"${field.id}-hint").toSeq ++
+        Option.when(field.hasErrors)(s"error-message-${field.id}-input").toSeq
+    ).mkString(" ")
+}
+
 <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}" @{customGroupId.map(x => s"id=$x").getOrElse(s"id=${field.id}")}>
 
-    <fieldset @{ariaDescribedBy.map(aria => s"aria-describedby=$aria")} class="govuk-fieldset">
+    <fieldset @if(describedBy.nonEmpty){aria-describedby="@describedBy"} class="govuk-fieldset">
 
         @if(legendAsPageHeading) {
             <legend class="govuk-fieldset__legend @if(legendAsPageHeading){govuk-fieldset__legend--xl}">
