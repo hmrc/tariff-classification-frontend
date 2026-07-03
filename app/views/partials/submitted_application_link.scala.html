@@ -20,5 +20,7 @@
 @(caseReference: String)(implicit messages: Messages)
 
 <p class="govuk-body">
- <a  id="submitted-application-link" class="govuk-link" target="_blank" href="@PdfDownloadController.applicationPdf(caseReference)"> @messages("case.decision.ruling.review.appeal.link") </a>
+ <a id="submitted-application-link" class="govuk-link" target="_blank" href="@PdfDownloadController.applicationPdf(caseReference)">
+  @messages("case.decision.ruling.review.appeal.link") @messages("link.opensInNewTab")
+ </a>
 </p>

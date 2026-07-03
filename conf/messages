@@ -195,6 +195,7 @@ case.decision.ruling.certificate.link=download the ruling as a pdf (opens in a n
 case.decision.ruling.letter.link=download the cover letter as a pdf (opens in a new window or tab)
 case.decision.ruling.certificate.title=Ruling certificate and cover letter
 case.decision.ruling.review.appeal.link=Download original application as a pdf
+link.opensInNewTab=(opens in new tab)
 liability.decision.ruling.certificate.title=Liability decision
 liability.decision.ruling.certificate.link=View PDF document for this liability.
 case.decision.holder.information=Information for the ATaR holder
