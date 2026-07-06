@@ -73,9 +73,9 @@ class RemoveAttachmentViewSpec extends ViewSpec {
     "render without errors check form" in {
       val doc = view(renderWithoutError)
 
-      doc.getElementById("remove-attachment-true-label").text() shouldBe "Yes"
+      doc.getElementById("remove-attachment-true-label").text()  shouldBe "Yes"
       doc.getElementById("remove-attachment-false-label").text() shouldBe "No"
-      doc.getElementById("remove-attachment-button").text() shouldBe "Confirm"
+      doc.getElementById("remove-attachment-button").text()      shouldBe "Confirm"
     }
   }
 
