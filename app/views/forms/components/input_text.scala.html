@@ -27,6 +27,13 @@
         customGroupClasses : String = "",
 )(implicit messages: Messages)
 
+@describedBy = @{
+    (
+        hint.map(_ => s"${field.id}-hint").toSeq ++
+        field.errors.indices.map(index => s"${field.id}-error-$index")
+    ).mkString(" ")
+}
+
 <div class="govuk-form-group @customGroupClasses @if(field.hasErrors){govuk-form-group--error}">
     <label class="govuk-label" for="@{field.id}">
         <span class="@if(labelClass.nonEmpty){@labelClass}">@label</span>
@@ -47,7 +54,7 @@
         class="govuk-input @inputClass @if(field.hasErrors){govuk-input--error}"
         type="text"
         autocomplete="@if(disableAutoComplete){off}else{on}"
-        aria-describedby=@{field.id}
+        @if(describedBy.nonEmpty){aria-describedby="@describedBy"}
         id=@{field.id}
         name="@{field.name}"
         value="@{field.value}"

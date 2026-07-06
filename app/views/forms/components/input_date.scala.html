@@ -29,8 +29,17 @@
         formControlUnBold: Boolean = false
 )(implicit messages: Messages)
 
+@hasErrors = @{dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors}
+@errorId = @{s"${dateField.id}-error"}
+@describedBy = @{
+    (
+        hint.map(_ => s"${dateField.id}-hint").toSeq ++
+        Option.when(hasErrors)(errorId).toSeq
+    ).mkString(" ")
+}
+
 <div id="@{dateField.id}" class="govuk-form-group @formGroupClass @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors) {govuk-form-group--error}">
-    <fieldset class="govuk-fieldset @inputClass" id="@fieldsetId" @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors || hint.nonEmpty){ aria-describedby="@if(hint.nonEmpty){@{dateField.id}-hint}@if(dateField.hasErrors && hint.nonEmpty){ }@if(dateField.hasErrors){error-message-date-input}"}>
+    <fieldset class="govuk-fieldset @inputClass" id="@fieldsetId" @if(describedBy.nonEmpty){aria-describedby="@describedBy"}>
         <legend class="govuk-fieldset__legend @labelClass">
             @legend
         </legend>
@@ -39,8 +48,8 @@
             <span class="govuk-hint" id="@{dateField.id}-hint">@hint</span>
         }
 
-        @if(dateField.hasErrors || dayField.hasErrors || monthField.hasErrors || yearField.hasErrors) {
-            <span class="govuk-error-message" id="error-message-date-input">
+        @if(hasErrors) {
+            <span class="govuk-error-message" id="@errorId">
                 @dateField.errors.map { error =>
                     <span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args*)
                 }
