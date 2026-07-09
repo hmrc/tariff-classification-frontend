@@ -26,13 +26,20 @@
         contentHtml : Option[Html] = None
 )(implicit messages: Messages)
 
+@describedBy = @{
+    (
+        hint.map(_ => s"${field.id}-hint").toSeq ++
+        Option.when(field.hasErrors)(s"error-message-${field.id}-input").toSeq
+    ).mkString(" ")
+}
+
 <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}">
-    <fieldset id="@{field.id}" class="govuk-fieldset">
+    <fieldset id="@{field.id}" @if(describedBy.nonEmpty){aria-describedby="@describedBy"} class="govuk-fieldset">
         <legend class="govuk-fieldset__legend">
             <span class="bold-small @if(legendClass.nonEmpty){@{legendClass.get}}">@legend</span>
         </legend>
         @if(hint.nonEmpty){
-            <span class="govuk-hint">@{hint.get}</span>
+            <span class="govuk-hint" id="@{field.id}-hint">@{hint.get}</span>
         }
         @field.errors.map { error =>
             <span class="govuk-error-message" id="error-message-@{field.id}-input"><span class="govuk-visually-hidden">@messages("error.browser.title.prefix")</span>@messages(error.message, error.args*)</span>
