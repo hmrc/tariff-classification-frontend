@@ -59,23 +59,29 @@ class ManageKeywordsController @Inject() (
   val keywordForm: Form[String]                     = KeywordForm.form
   private val changeKeywordStatusForm: Form[String] = ChangeKeywordStatusForm.form
 
-  def displayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def displayManageKeywords(
+    pagination: Pagination = models.SearchPagination(),
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
+  ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async { implicit request =>
       for {
-        caseKeywords <- keywordService.fetchCaseKeywords()
+        caseKeywords <- keywordService.fetchCaseKeywords(pagination)
         allKeywords  <- keywordService.findAll(NoPagination())
-        manageKeywordsViewModel = ManageKeywordsViewModel
-                                    .forManagedTeams(caseKeywords.results, allKeywords.results)
+        manageKeywordsViewModel = ManageKeywordsViewModel.forManagedTeams(caseKeywords, allKeywords.results)
       } yield Ok(
         manageKeywordsView(
           activeSubNav,
           manageKeywordsViewModel,
-          keywordForm
+          keywordForm,
+          Some(pagination)
         )
       )
     }
 
-  def postDisplayManageKeywords(activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab): Action[AnyContent] =
+  def postDisplayManageKeywords(
+    pagination: Pagination = models.SearchPagination(),
+    activeSubNav: SubNavigationTab = ManagerToolsKeywordsTab
+  ): Action[AnyContent] =
     (verify.authenticated andThen verify.mustHave(Permission.MANAGE_USERS)).async(implicit request =>
       keywordService.findAll(NoPagination()).flatMap { keywords =>
         val keywordNames = keywords.results.map(_.name)
@@ -85,14 +91,14 @@ class ManageKeywordsController @Inject() (
           .fold(
             formWithErrors =>
               for {
-                caseKeywords <- keywordService.fetchCaseKeywords()
-                manageKeywordsViewModel = ManageKeywordsViewModel
-                                            .forManagedTeams(caseKeywords.results, keywords.results)
+                caseKeywords <- keywordService.fetchCaseKeywords(pagination)
+                manageKeywordsViewModel = ManageKeywordsViewModel.forManagedTeams(caseKeywords, keywords.results)
               } yield BadRequest(
                 manageKeywordsView(
                   activeSubNav,
                   manageKeywordsViewModel,
-                  formWithErrors
+                  formWithErrors,
+                  Some(pagination)
                 )
               ),
             keyword =>
