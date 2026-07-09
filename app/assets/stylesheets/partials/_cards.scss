@@ -2,8 +2,6 @@
   border: 1px solid #dee0e2;
   flex-basis: 31%;
   flex-grow: 0;
-  margin-right: 1em;
-  margin-bottom: 2em;
   border-bottom: 0px;
   padding: 12px;
   background-color: #f8f8f8;
@@ -185,7 +183,17 @@
 .flex-container .link-text {
     text-decoration: none;
     display: block;
+    margin-right: 1em;
+    margin-bottom: 2em;
 
+    &:focus {
+      color: #0b0c0c;
+      background-color: #ffdd00;
+      outline: 3px solid #ffdd00;
+      outline-offset: 0;
+      box-shadow: 0 0 0 5px #0b0c0c;
+      text-decoration: none;
+    }
 }
 .flex-container .link-text:hover {
     color: #fff;
