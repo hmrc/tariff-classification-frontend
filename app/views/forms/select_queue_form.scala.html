@@ -23,7 +23,7 @@
     @helper.CSRF.formField
 
     <div class="govuk-form-group @if(field.hasErrors){govuk-form-group--error}" id="@{field.id}" >
-        <fieldset class="govuk-fieldset">
+        <fieldset @if(field.hasErrors){aria-describedby="error-message-@{field.id}-input"} class="govuk-fieldset">
             <legend class="govuk-fieldset__legend">
             @if(legend.nonEmpty) {
                 <span class="@if(legendClass.nonEmpty){@{legendClass.get}}">@legend</span>
