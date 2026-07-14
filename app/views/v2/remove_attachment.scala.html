@@ -23,11 +23,20 @@
 
 @this(
         main: main,
-        case_heading: views.html.v2.case_heading,
+        caseStatus: views.html.v2.case_status,
         backLink: back_link
 )
 
 @(c: CaseHeaderViewModel, form: Form[Boolean], fileId: String, fileName: String)(implicit request: AuthenticatedRequest[?], messages: Messages)
+
+@caseDetails = {
+    @c.businessName.map { businessName =>
+        <h2 class="govuk-heading-m">@businessName</h2>
+    }
+    <div id="case-status-body" class="govuk-body">
+        @caseStatus(c.caseStatus)
+    </div>
+}
 
 @main(
     pageTitle = messages("page.title.remove.attachment"),
@@ -37,12 +46,17 @@
 
     @error_summary(form.errors, keySwaps = Map("state" -> "remove-attachment-true"))
 
-    @case_heading(c, Some(messages("case.attachments.remove_attachment.heading", fileName)))
-
     @helper.form(action = AttachmentsController.confirmRemoveAttachment(c.referenceNumber, fileId, fileName), Symbol("id") -> "remove-attachment", Symbol("novalidate") -> "novalidate") {
         @helper.CSRF.formField
 
-        @input_yes_no(form("state"), "remove-attachment")
+        @input_yes_no(
+            field = form("state"),
+            componentId = "remove-attachment",
+            contentHtml = Some(caseDetails),
+            label = Some(messages("case.attachments.remove_attachment.heading", fileName)),
+            legendAsPageHeading = true,
+            headingCaption = Some(messages("case.heading.secondary.nosuffix", c.caseType.prettyName, c.referenceNumber))
+        )
 
         <button class="govuk-button" id="remove-attachment-button" type="submit">@messages("case.attachment.remove_attachment.confirm")</button>
     }
