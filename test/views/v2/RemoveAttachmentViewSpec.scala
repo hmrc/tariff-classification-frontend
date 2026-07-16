@@ -65,17 +65,17 @@ class RemoveAttachmentViewSpec extends ViewSpec {
       val doc = view(renderWithoutError)
 
       doc
-        .getElementsByClass("govuk-heading-xl")
+        .getElementsByClass("govuk-fieldset__heading")
         .text()
         .trim shouldBe "Are you sure you want to remove name test from this case?"
     }
 
     "render without errors check form" in {
-      val doc                   = view(renderWithoutError)
-      val expected: Seq[String] = Seq("Yes", "No", "Confirm")
-      val actual: Seq[String]   = doc.getElementsByTag("form").text().split(" ").toSeq
+      val doc = view(renderWithoutError)
 
-      actual shouldBe expected
+      doc.getElementById("remove-attachment-true-label").text()  shouldBe "Yes"
+      doc.getElementById("remove-attachment-false-label").text() shouldBe "No"
+      doc.getElementById("remove-attachment-button").text()      shouldBe "Confirm"
     }
   }
 
