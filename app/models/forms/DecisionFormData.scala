@@ -131,10 +131,12 @@ class DecisionForm @Inject() (commodityCodeConstraints: CommodityCodeConstraints
     Form[Decision](
       mapping(
         "bindingCommodityCode" -> text.verifying(
-          commodityCodeConstraints.commodityCodeNonEmpty,
-          commodityCodeConstraints.commodityCodeLengthValid,
-          commodityCodeConstraints.commodityCodeNumbersValid,
-          commodityCodeConstraints.commodityCodeEvenDigitsValid
+          StopOnFirstFail(
+            commodityCodeConstraints.commodityCodeNonEmpty,
+            commodityCodeConstraints.commodityCodeLengthValid,
+            commodityCodeConstraints.commodityCodeNumbersValid,
+            commodityCodeConstraints.commodityCodeEvenDigitsValid
+          )
         ),
         "goodsDescription" -> text.verifying(customNonEmpty("Enter a goods description")),
         "methodSearch"     -> text.verifying(customNonEmpty("Enter the searches performed")),

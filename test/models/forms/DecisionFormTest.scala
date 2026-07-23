@@ -109,10 +109,8 @@ class DecisionFormTest extends SpecBase {
           .bindFromRequest(emptyParams)
 
         form.hasErrors   shouldBe true
-        form.errors.size shouldBe 6
+        form.errors.size shouldBe 4
         form.errors.map(_.key) shouldBe Seq(
-          "bindingCommodityCode",
-          "bindingCommodityCode",
           "bindingCommodityCode",
           "goodsDescription",
           "methodSearch",
