@@ -21,7 +21,7 @@ import models.Permission
 import models.request.AuthenticatedCaseRequest
 import play.api.mvc._
 import services.CasesService
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Notification._
 
@@ -37,7 +37,7 @@ class ReopenCaseController @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   override protected val config: AppConfig         = appConfig
   override protected val caseService: CasesService = casesService

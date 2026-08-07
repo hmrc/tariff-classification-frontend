@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CasesService, QueuesService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.{confirmation_case_creation, create_misc, misc_details_edit}
 import views.html.{case_not_found, release_case, resource_not_found}
@@ -49,7 +49,7 @@ class CreateMiscellaneousController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   private val form: Form[MiscApplication] = MiscellaneousForm.newMiscForm
 

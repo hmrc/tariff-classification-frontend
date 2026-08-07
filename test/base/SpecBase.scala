@@ -70,6 +70,9 @@ trait SpecBase
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
+  def fakeGetRequest(queryString: String): FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest("GET", s"/?$queryString")
+
   def fakeRequestWithSessionId(sessionId: String): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(SessionKeys.sessionId -> sessionId)
 

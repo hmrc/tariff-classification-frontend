@@ -23,7 +23,7 @@ import models.{Case, Permission}
 import play.api.data.Form
 import play.api.mvc._
 import services.CasesService
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.assign_case
 
@@ -40,7 +40,7 @@ class AssignCaseController @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   private lazy val takeOwnershipForm: Form[Boolean] = TakeOwnerShipForm.form
 

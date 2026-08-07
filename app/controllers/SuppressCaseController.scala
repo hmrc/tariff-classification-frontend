@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services.{CasesService, DataCacheService, FileStoreService}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedAndMultipartFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_supressed_case, suppress_case_email, suppress_case_reason}
 
@@ -50,7 +50,7 @@ class SuppressCaseController @Inject() (
     extends FrontendController(mcc)
     with I18nSupport
     with UpscanErrorHandling
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedAndMultipartFormBinding {
 
   private val NoteCacheKey = "note"
   private def cacheKey(reference: String) =

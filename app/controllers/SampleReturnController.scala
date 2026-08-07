@@ -26,7 +26,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.change_sample_return
 
@@ -44,7 +44,7 @@ class SampleReturnController @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleReturn]]
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 

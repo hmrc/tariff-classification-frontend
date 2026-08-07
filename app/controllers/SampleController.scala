@@ -26,7 +26,7 @@ import play.api.mvc._
 import play.twirl.api.Html
 import services.CasesService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{change_correspondence_sending_sample, change_liablity_sending_sample, change_sample_status}
 
@@ -46,7 +46,7 @@ class SampleController @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with StatusChangeAction[Option[SampleStatus]]
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   override protected val requiredPermission: Permission = Permission.EDIT_SAMPLE
 

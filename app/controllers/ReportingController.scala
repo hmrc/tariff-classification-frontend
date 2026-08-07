@@ -28,7 +28,7 @@ import models.viewmodels.{ManagerToolsReportsTab, SubNavigationTab}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{QueuesService, ReportingService, UserService}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.managementtools._
 import views.html.report_not_found
@@ -56,7 +56,7 @@ class ReportingController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   private lazy val chooseDatesForm = ReportDateForm.form
   private lazy val chooseTeamsForm = ReportTeamForm.form

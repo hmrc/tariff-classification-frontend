@@ -167,11 +167,8 @@ class SearchControllerSpec extends ControllerBaseSpec {
       )
       when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
 
-      val request = fakeRequest.withFormUrlEncodedBody(
-        "case_source"    -> "trader",
-        "commodity_code" -> "00"
-      )
-      val result = await(controller.search(defaultTab, search = search, page = 2)(request))
+      val request = fakeGetRequest("case_source=trader&commodity_code=00")
+      val result  = await(controller.search(defaultTab, search = search, page = 2)(request))
 
       status(result)                                                shouldBe Status.OK
       contentType(result)                                           shouldBe Some("text/html")
@@ -191,7 +188,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
 
       when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
 
-      val request = fakeRequest.withFormUrlEncodedBody("commodity_code" -> "a")
+      val request = fakeGetRequest("commodity_code=a")
       val result  = await(controller.search(defaultTab, search = search, page = 2)(request))
 
       status(result)        shouldBe Status.OK
@@ -233,10 +230,7 @@ class SearchControllerSpec extends ControllerBaseSpec {
       )
       when(keywordsService.findAll()(any[HeaderCarrier])).thenReturn(Future.successful(Seq.empty[Keyword]))
 
-      val request = fakeRequest.withFormUrlEncodedBody(
-        "case_source"    -> "trader",
-        "commodity_code" -> "00"
-      )
+      val request = fakeGetRequest("case_source=trader&commodity_code=00")
       val result =
         await(controller(Set(Permission.ADVANCED_SEARCH)).search(defaultTab, search = search, page = 2)(request))
 
@@ -244,12 +238,9 @@ class SearchControllerSpec extends ControllerBaseSpec {
     }
 
     "redirect unauthorised when does not have right permissions" in {
-      val search = Search(caseSource = Some("trader"), commodityCode = Some("00"))
-      val request = fakeRequest.withFormUrlEncodedBody(
-        "case_source"    -> "trader",
-        "commodity_code" -> "00"
-      )
-      val result = await(controller(Set.empty).search(defaultTab, search = search, page = 2)(request))
+      val search  = Search(caseSource = Some("trader"), commodityCode = Some("00"))
+      val request = fakeGetRequest("case_source=trader&commodity_code=00")
+      val result  = await(controller(Set.empty).search(defaultTab, search = search, page = 2)(request))
 
       status(result)             shouldBe Status.SEE_OTHER
       redirectLocation(result).get should include("unauthorized")
