@@ -23,7 +23,7 @@ import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.mvc._
 import services.{CasesService, QueuesService}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.v2.confirmation_case_creation
 import views.html.{release_case, resource_not_found}
@@ -45,7 +45,7 @@ class ReleaseCaseController @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   private lazy val releaseCaseForm: Form[String]   = ReleaseCaseForm.form
   override protected val config: AppConfig         = appConfig

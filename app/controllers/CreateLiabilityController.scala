@@ -23,7 +23,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.CasesService
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.create_liability
 
@@ -40,7 +40,7 @@ class CreateLiabilityController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   private val form: Form[LiabilityOrder] = LiabilityForm.newLiabilityForm
 

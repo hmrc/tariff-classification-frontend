@@ -23,7 +23,7 @@ import models.request.AuthenticatedCaseRequest
 import play.api.data.Form
 import play.api.mvc._
 import services.{CasesService, QueuesService}
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.{confirm_reassign_case, reassign_queue_case, resource_not_found}
 
@@ -44,7 +44,7 @@ class ReassignCaseController @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with RenderCaseAction
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   private lazy val form: Form[String] = ReleaseCaseForm.form
 

@@ -22,7 +22,7 @@ import models.ApplicationType
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.TabCacheService
-import uk.gov.hmrc.play.bootstrap.controller.WithUnsafeDefaultFormBinding
+import uk.gov.hmrc.play.bootstrap.controller.WithUrlEncodedOnlyFormBinding
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -38,7 +38,7 @@ class TabCacheController @Inject() (
 )(implicit ec: ExecutionContext)
     extends FrontendController(mcc)
     with Logging
-    with WithUnsafeDefaultFormBinding {
+    with WithUrlEncodedOnlyFormBinding {
 
   def post(reference: String, itemType: ApplicationType): Action[AnyContent] =
     identify.async { implicit request =>
