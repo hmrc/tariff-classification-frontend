@@ -31,9 +31,9 @@
     pageTitle = messages("page.title.document.not.found")
 ) {
     <div id="case-not-found-section">
-        <h2 class="govuk-heading-xl">
+        <h1 class="govuk-heading-xl">
             @messages("errors.document-not-found.title")
-        </h2>
+        </h1>
         <p class="govuk-body">@messages("errors.document-not-found.message", documentType, reference)</p>
         <a href="@IndexController.get()" class="govuk-link">@messages("errors.all.back")</a>
     </div>
