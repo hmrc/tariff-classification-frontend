@@ -41,7 +41,6 @@ class ShutteringFilter @Inject() (
     .toIndexedSeq
     .map(path => Call("GET", path.trim))
 
-  // Static assets must stay available so the shutter page itself can be styled
   private lazy val assetPathPrefixes: Seq[String] = Seq(
     controllers.routes.Assets.at("").url,
     uk.gov.hmrc.hmrcfrontend.controllers.routes.Assets.at("").url
