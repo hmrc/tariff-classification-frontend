@@ -1579,3 +1579,7 @@ hmrc.logo.encoded.image=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CA
 
 pagination.next = Next
 pagination.previous = Previous
+
+shutter.title = Sorry, the service is unavailable
+shutter.heading = Sorry, the service is unavailable
+shutter.message = This service is unavailable due to maintenance.

@@ -18,6 +18,7 @@ package filters
 
 import org.apache.pekko.stream.Materializer
 import com.google.inject.{Inject, Singleton}
+import play.api.i18n.MessagesApi
 import play.api.mvc.Results.ServiceUnavailable
 import play.api.mvc._
 import _root_.config.AppConfig
@@ -27,7 +28,9 @@ import scala.concurrent.Future
 
 @Singleton
 class ShutteringFilter @Inject() (
-  appConfig: AppConfig
+  appConfig: AppConfig,
+  messagesApi: MessagesApi,
+  shutterPage: shutterPage
 )(implicit val mat: Materializer)
     extends Filter {
 
@@ -38,10 +41,19 @@ class ShutteringFilter @Inject() (
     .toIndexedSeq
     .map(path => Call("GET", path.trim))
 
+  private lazy val assetPathPrefixes: Seq[String] = Seq(
+    controllers.routes.Assets.at("").url,
+    uk.gov.hmrc.hmrcfrontend.controllers.routes.Assets.at("").url
+  )
+
   private def toCall(rh: RequestHeader): Call =
     Call(rh.method, rh.uri)
 
+  private def isAsset(rh: RequestHeader): Boolean =
+    rh.method == "GET" && assetPathPrefixes.exists(rh.path.startsWith)
+
   override def apply(next: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] =
-    if (shuttered && !excludedPaths.contains(toCall(rh))) Future.successful(ServiceUnavailable(shutterPage()(rh)))
+    if (shuttered && !excludedPaths.contains(toCall(rh)) && !isAsset(rh))
+      Future.successful(ServiceUnavailable(shutterPage()(rh, messagesApi.preferred(rh))))
     else next(rh)
 }
