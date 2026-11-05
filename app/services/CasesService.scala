@@ -473,11 +473,12 @@ class CasesService @Inject() (
       _ = auditService.auditRulingCancelled(original, updated, operator)
 
       // Notify the Ruling store
-      _ = rulingConnector
-            .notify(original.reference)
-            .recoverWith(
-              suppressThrownError(s"Failed to notify the Ruling Store during ruling cancellation. ${original.reference}")
-            )
+      _ =
+        rulingConnector
+          .notify(original.reference)
+          .recoverWith(
+            suppressThrownError(s"Failed to notify the Ruling Store during ruling cancellation. ${original.reference}")
+          )
     } yield updated
   }
 
