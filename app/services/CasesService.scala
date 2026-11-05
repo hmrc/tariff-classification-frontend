@@ -296,7 +296,7 @@ class CasesService @Inject() (
           }
           .recoverWith(
             suppressThrownError(
-              s"[sendCaseCompleteEmail] Failed to send email for case ${updated.reference}",
+              s"Failed to send the case complete notification email ${updated.reference}",
               Some("Attempted to send an email to the applicant which failed")
             )
           )
