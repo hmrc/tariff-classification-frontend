@@ -296,7 +296,7 @@ class CasesService @Inject() (
           }
           .recoverWith(
             suppressThrownError(
-              s"[sendCaseCompleteEmail] Failed to send email for case ${updated.reference}",
+              s"Failed to send the case complete notification email ${updated.reference}",
               Some("Attempted to send an email to the applicant which failed")
             )
           )
@@ -332,7 +332,7 @@ class CasesService @Inject() (
             rulingConnector
               .notify(original.reference)
               .recoverWith(
-                suppressThrownError(s"[completeCase] Failed to notify the ruling store for case ${original.reference}")
+                suppressThrownError(s"Failed to notify the ruling store during case completion ${original.reference}")
               )
           }
 
@@ -345,33 +345,33 @@ class CasesService @Inject() (
   ): Future[Case] = {
 
     logger.info(
-      s"[CasesService][regenerateDocuments] Starting to regenerate documents for case: ${completedCase.reference}"
+      s"Starting to regenerate documents for case: ${completedCase.reference}"
     )
 
     for {
       caseWithPdf <- completedCase.decision
                        .map { decision =>
                          logger.info(
-                           s"[CasesService][regenerateDocuments] Decision found for case: ${completedCase.reference}. Uploading documents..."
+                           s"Decision found for case: ${completedCase.reference}. Uploading documents..."
                          )
 
                          uploadCaseDocuments(completedCase, decision, operator)
                            .flatMap { uploadedCase =>
                              logger.info(
-                               s"[CasesService][regenerateDocuments] Documents uploaded successfully for case: ${completedCase.reference}"
+                               s"Documents uploaded successfully for case: ${completedCase.reference}"
                              )
                              Future.successful(uploadedCase)
                            }
                            .recoverWith { case ex: Exception =>
                              logger.error(
-                               s"[CasesService][regenerateDocuments] Failed to upload documents for case: ${completedCase.reference}. Exception: ${ex.getMessage}"
+                               s"Failed to upload documents for case: ${completedCase.reference}. Exception: ${ex.getMessage}"
                              )
                              Future.failed(ex)
                            }
                        }
                        .getOrElse {
                          logger.warn(
-                           s"[CasesService][regenerateDocuments] No decision found for case: ${completedCase.reference}. Skipping document upload."
+                           s"No decision found for case: ${completedCase.reference}. Skipping document upload."
                          )
                          Future.successful(completedCase)
                        }
@@ -473,11 +473,12 @@ class CasesService @Inject() (
       _ = auditService.auditRulingCancelled(original, updated, operator)
 
       // Notify the Ruling store
-      _ = rulingConnector
-            .notify(original.reference)
-            .recoverWith(
-              suppressThrownError(s"[cancelRuling] Failed to notify the ruling store for case ${original.reference}")
-            )
+      _ =
+        rulingConnector
+          .notify(original.reference)
+          .recoverWith(
+            suppressThrownError(s"Failed to notify the Ruling Store during ruling cancellation. ${original.reference}")
+          )
     } yield updated
   }
 
@@ -778,14 +779,14 @@ class CasesService @Inject() (
       .map(_ => ())
       .recoverWith(
         suppressThrownError(
-          s"[addEvent] Could not create Event for case [${original.reference}] with payload [${event.details}]"
+          s"Could not create Event for case [${original.reference}] with payload [${event.details}] while adding"
         )
       )
   }
 
   private def suppressThrownError[T](message: String, result: T = ()): PartialFunction[Throwable, Future[T]] = {
     case t: Throwable =>
-      logger.error(s"[CasesService]$message", t)
+      logger.error(s"Suppress thrown error [$message]", t)
       Future.successful(result)
   }
 

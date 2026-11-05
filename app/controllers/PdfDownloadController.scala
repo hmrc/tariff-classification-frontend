@@ -61,7 +61,7 @@ class PdfDownloadController @Inject() (
                 regeneratedCase <- caseService.regenerateDocuments(cse, request.operator)
                 _ =
                   logger.info(
-                    s"[PdfDownloadController][getRulingPdf] new decisionPdf: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}"
+                    s"Created a new decision PDF while getting the ruling: ${regeneratedCase.decision.flatMap(_.decisionPdf).map(_.id)}"
                   )
                 fileDownloadResult <- retryDownload(appConfig.downloadMaxRetries, appConfig.downloadRetryInterval) {
                                         downloadFile(regeneratedCase.decision.flatMap(_.decisionPdf)).value
@@ -93,7 +93,7 @@ class PdfDownloadController @Inject() (
               for {
                 regeneratedCase <- caseService.regenerateDocuments(cse, request.operator)
                 letter = regeneratedCase.decision.flatMap(_.letterPdf)
-                _      = logger.info(s"[PdfDownloadController][getLetterPdf] new letterPdf: ${letter.map(_.id)}")
+                _      = logger.info(s"New letter PDF created during Get Letter: ${letter.map(_.id)}")
                 fileDownloadResult <- retryDownload(appConfig.downloadMaxRetries, appConfig.downloadRetryInterval) {
                                         downloadFile(letter).value
                                       }
@@ -130,7 +130,7 @@ class PdfDownloadController @Inject() (
   private def retryDownload[T](maxRetries: Int, delay: FiniteDuration)(
     block: => Future[Option[T]]
   ): Future[Option[T]] = {
-    logger.info(s"[PdfDownloadController][retryDownload] attempt: $maxRetries")
+    logger.info(s"Retrying the PDF download: $maxRetries")
     block.flatMap {
       case Some(result) => Future.successful(Some(result))
       case None if maxRetries > 1 =>
